@@ -344,6 +344,9 @@ table.parts { width: 100%; border-collapse: collapse; font-size: 13px; }
   .titleblock .dwg { font-size: 12px; }
   .explode input { width: 100px; }
   .tgroup .tbtn { padding: 0 8px; }
+  /* Barre d'outils plus large que l'écran : défilement horizontal. */
+  .tgroup { max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+  .tgroup::-webkit-scrollbar { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; }

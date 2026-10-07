@@ -1,12 +1,16 @@
 import * as THREE from 'three';
-import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { mat } from './materials.js';
 
 // Bibliothèque de formes paramétriques (unités : mètres, Y vers le haut).
 // Chaque fonction retourne un Mesh ou un Group prêt à positionner.
+// Les pièces d'un même matériau d'une forme composée sont fusionnées en un
+// seul maillage (moins d'appels de dessin) ; arêtes adoucies ou chanfreinées
+// pour accrocher la lumière, comme une pièce usinée.
 
 const V = (a) => (a instanceof THREE.Vector3 ? a : new THREE.Vector3(...a));
+const TAN30 = Math.tan(Math.PI / 6);
+const COS30 = Math.cos(Math.PI / 6);
 
 function orient(obj, axis) {
   if (axis === 'x') obj.rotation.z = -Math.PI / 2;
@@ -24,6 +28,208 @@ function mesh(geometry, material) {
   return m;
 }
 
+// ------------------------------------------------------------ géométries de base
+
+/**
+ * Révolution autour de Y d'un profil [[r, y], ...] parcouru du centre bas
+ * vers le centre haut par l'extérieur. Normales franches entre segments du
+ * profil (chanfreins nets), lisses autour de l'axe — ou facettées (hexagone).
+ */
+function revolveGeo(profile, seg, faceted = false) {
+  const pos = [], nor = [], uv = [], idx = [];
+  for (let i = 0; i < profile.length - 1; i++) {
+    const [r0, y0] = profile[i];
+    const [r1, y1] = profile[i + 1];
+    const dr = r1 - r0, dy = y1 - y0;
+    const l = Math.hypot(dr, dy);
+    if (l < 1e-9) continue;
+    const nr = dy / l, ny = -dr / l;
+    const base = pos.length / 3;
+    for (let j = 0; j <= seg; j++) {
+      const t = (j / seg) * Math.PI * 2;
+      const s = Math.sin(t), c = Math.cos(t);
+      pos.push(r0 * s, y0, r0 * c, r1 * s, y1, r1 * c);
+      nor.push(nr * s, ny, nr * c, nr * s, ny, nr * c);
+      uv.push(j / seg, i / profile.length, j / seg, (i + 1) / profile.length);
+    }
+    for (let j = 0; j < seg; j++) {
+      const a = base + j * 2, b = a + 2, c = a + 1, d = a + 3;
+      if (r0 > 1e-9) idx.push(a, b, c);
+      if (r1 > 1e-9) idx.push(b, d, c);
+    }
+  }
+  let geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  geo.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3));
+  geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+  geo.setIndex(idx);
+  if (faceted) {
+    geo = geo.toNonIndexed();
+    geo.computeVertexNormals();
+  }
+  return geo;
+}
+
+/** Profil de cylindre (ou cône) à arêtes chanfreinées à 30° (une seule arête vive vue de face). */
+function cylProfile(rb, rt, len, cMax = 0.004) {
+  const h = len / 2;
+  const rmin = Math.min(rb > 0 ? rb : Infinity, rt > 0 ? rt : Infinity);
+  const c = Math.min(rmin * 0.1, len * 0.12, cMax);
+  if (!(c > 0.0012)) return [[0, -h], [rb, -h], [rt, h], [0, h]];
+  const cy = c * TAN30;
+  const p = [[0, -h]];
+  if (rb > 0) p.push([rb - c, -h], [rb, -h + cy]);
+  if (rt > 0) p.push([rt, h - cy], [rt - c, h]);
+  p.push([0, h]);
+  return p;
+}
+
+function cylGeo(r, len, { r2, seg = 28, open = false } = {}) {
+  const rt = r2 ?? r;
+  if (open) return new THREE.CylinderGeometry(rt, r, len, seg, 1, true);
+  return revolveGeo(cylProfile(r, rt, len), seg, seg <= 8);
+}
+
+/** Boîte à arêtes arrondies (2 facettes par arrondi, 108 triangles). */
+function roundBoxGeo(w, h, d, r) {
+  const H = [w / 2, h / 2, d / 2];
+  const I = H.map((x) => Math.max(x - r, 0));
+  const pos = [], nor = [], uv = [], idx = [];
+  // [axe normal, axe u, axe v, sens]
+  const faces = [[0, 1, 2, 1], [0, 1, 2, -1], [1, 2, 0, 1], [1, 2, 0, -1], [2, 0, 1, 1], [2, 0, 1, -1]];
+  const p = [0, 0, 0], q = [0, 0, 0], n = [0, 0, 0];
+  for (const [k, u, v, s] of faces) {
+    const base = pos.length / 3;
+    const cu = [-H[u], -I[u], I[u], H[u]], cv = [-H[v], -I[v], I[v], H[v]];
+    for (let j = 0; j < 4; j++) {
+      for (let i = 0; i < 4; i++) {
+        p[k] = s * H[k]; p[u] = cu[i]; p[v] = cv[j];
+        for (let a = 0; a < 3; a++) { q[a] = Math.max(-I[a], Math.min(I[a], p[a])); n[a] = p[a] - q[a]; }
+        const l = Math.hypot(n[0], n[1], n[2]) || 1;
+        for (let a = 0; a < 3; a++) { n[a] /= l; pos.push(q[a] + n[a] * r); nor.push(n[a]); }
+        uv.push(i / 3, j / 3);
+      }
+    }
+    for (let j = 0; j < 3; j++) {
+      for (let i = 0; i < 3; i++) {
+        const a = base + j * 4 + i, b = a + 1, c = a + 4, e = a + 5;
+        if (s > 0) idx.push(a, b, e, a, e, c);
+        else idx.push(a, e, b, a, c, e);
+      }
+    }
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  geo.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3));
+  geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+  geo.setIndex(idx);
+  return geo;
+}
+
+function boxGeo(w, h, d, r = 0) {
+  if (r > 0) return roundBoxGeo(w, h, d, Math.min(r, w / 2, h / 2, d / 2));
+  // Arrondi automatique très léger : un reflet le long des arêtes.
+  const ra = Math.min(Math.min(w, h, d) * 0.08, 0.0035);
+  return ra >= 0.002 ? roundBoxGeo(w, h, d, ra) : new THREE.BoxGeometry(w, h, d);
+}
+
+/** Hexagone (surplat af, hauteur h) chanfreiné à 30° ; trou rond optionnel. Axe Y, centré. */
+function hexGeo(af, h, { hole = 0, top = true, bottom = true } = {}) {
+  const R = af / 2 / COS30;
+  if (hole > 0) {
+    // Écrou : extrusion d'un hexagone percé, chanfreins des deux faces (et fraisure du trou).
+    const b = Math.min(af * 0.06, h * 0.2);
+    const bt = b * TAN30;
+    const rs = R - b / COS30;
+    const shape = new THREE.Shape();
+    for (let i = 0; i <= 6; i++) {
+      const a = -Math.PI / 2 + (i * Math.PI) / 3;
+      if (i === 0) shape.moveTo(Math.cos(a) * rs, Math.sin(a) * rs);
+      else shape.lineTo(Math.cos(a) * rs, Math.sin(a) * rs);
+    }
+    const p = new THREE.Path();
+    p.absarc(0, 0, hole + b, 0, Math.PI * 2, true);
+    shape.holes.push(p);
+    const depth = Math.max(h - 2 * bt, h * 0.2);
+    const geo = new THREE.ExtrudeGeometry(shape, {
+      depth, bevelEnabled: true, bevelSize: b, bevelThickness: bt, bevelSegments: 1, curveSegments: 10,
+    });
+    geo.translate(0, 0, -depth / 2);
+    geo.rotateX(-Math.PI / 2);
+    geo.scale(1, h / (depth + 2 * bt), 1);
+    return geo;
+  }
+  const c = R * 0.14, cy = c * TAN30;
+  const y0 = -h / 2, y1 = h / 2;
+  const prof = [[0, y0]];
+  if (bottom) prof.push([R - c, y0], [R, y0 + cy]); else prof.push([R, y0]);
+  if (top) prof.push([R, y1 - cy], [R - c, y1]); else prof.push([R, y1]);
+  prof.push([0, y1]);
+  return revolveGeo(prof, 6, true);
+}
+
+/**
+ * Filetage suggéré : profil ondulé peu profond (reflets en bandes) de y0 à y1,
+ * rayon r, conique jusqu'à r1 ; chanfrein en bas. Côté droit d'un profil de révolution.
+ */
+function threadProfile(r, y0, y1, { r1 = r, pitch, maxTurns = 7, chamferBottom = true } = {}) {
+  const len = y1 - y0;
+  const n = Math.max(1, Math.min(maxTurns, Math.round(len / (pitch || r * 0.3))));
+  const p = len / n;
+  const depth = Math.min(p * 0.17, r * 0.06);
+  const out = [];
+  const c = Math.min(r * 0.15, len * 0.1);
+  if (chamferBottom) out.push([r - c, y0], [r, y0 + c * TAN30]);
+  else out.push([r, y0]);
+  for (let i = 0; i < n; i++) {
+    const ya = y0 + p * i;
+    const rr = r + (r1 - r) * ((i + 0.5) / n);
+    if (i > 0 || !chamferBottom) out.push([rr, ya]);
+    out.push([rr - depth, ya + p * 0.5]);
+  }
+  out.push([r1, y1]);
+  return out;
+}
+
+/** Applique position / rotation à une géométrie. */
+function place(geo, pos = [0, 0, 0], rot = null) {
+  const m = new THREE.Matrix4().compose(
+    V(pos),
+    new THREE.Quaternion().setFromEuler(new THREE.Euler(...(rot || [0, 0, 0]))),
+    new THREE.Vector3(1, 1, 1),
+  );
+  return geo.applyMatrix4(m);
+}
+
+/** Oriente une géométrie construite selon Y vers l'axe donné. */
+function alongAxis(geo, axis) {
+  if (axis === 'x') geo.rotateZ(-Math.PI / 2);
+  else if (axis === '-x') geo.rotateZ(Math.PI / 2);
+  else if (axis === 'z') geo.rotateX(Math.PI / 2);
+  else if (axis === '-z') geo.rotateX(-Math.PI / 2);
+  else if (axis === '-y') geo.rotateX(Math.PI);
+  return geo;
+}
+
+/** Fusionne des géométries placées (position, normal, uv) en une seule. */
+function mergeGeo(list) {
+  const geos = list.filter(Boolean).map((g) => {
+    const x = g.index ? g.toNonIndexed() : g;
+    if (!x.attributes.uv) x.setAttribute('uv', new THREE.Float32BufferAttribute(new Float32Array(x.attributes.position.count * 2), 2));
+    if (!x.attributes.normal) x.computeVertexNormals();
+    for (const k of Object.keys(x.attributes)) if (!['position', 'normal', 'uv'].includes(k)) x.deleteAttribute(k);
+    return x;
+  });
+  return geos.length === 1 ? geos[0] : mergeGeometries(geos, false);
+}
+
+/** Un seul maillage à partir de plusieurs géométries placées. */
+function solid(material, ...geos) {
+  return mesh(mergeGeo(geos.flat()), material);
+}
+
+// ------------------------------------------------------------------ API
+
 /** Positionne / oriente un objet. rot en radians [x, y, z]. */
 export function at(obj, pos = [0, 0, 0], rot = null, scale = null) {
   obj.position.copy(V(pos));
@@ -39,39 +245,41 @@ export function group(...children) {
 }
 
 export function box(w, h, d, material = 'red', { r = 0, pos, rot } = {}) {
-  const geo = r > 0
-    ? new RoundedBoxGeometry(w, h, d, 2, Math.min(r, w / 2, h / 2, d / 2))
-    : new THREE.BoxGeometry(w, h, d);
-  const m = mesh(geo, material);
+  const m = mesh(boxGeo(w, h, d, r), material);
   if (pos) at(m, pos, rot);
   return m;
 }
 
 /** Cylindre de rayon r, longueur len, le long de l'axe donné, centré à l'origine. */
 export function cyl(r, len, material = 'steel', { axis = 'y', r2, seg = 28, pos, open = false } = {}) {
-  const geo = new THREE.CylinderGeometry(r2 ?? r, r, len, seg, 1, open);
-  const inner = mesh(geo, material);
+  const inner = mesh(cylGeo(r, len, { r2, seg, open }), material);
   orient(inner, axis);
   const g = group(inner);
   if (pos) g.position.copy(V(pos));
   return g;
 }
 
+function ringGeo(rOut, rIn, thick, seg) {
+  const h = thick / 2;
+  const c = Math.min((rOut - rIn) * 0.18, thick * 0.3, 0.003);
+  const prof = c > 0.0003
+    ? [[rIn, -h], [rOut - c, -h], [rOut, -h + c * TAN30], [rOut, h - c * TAN30], [rOut - c, h], [rIn, h], [rIn, -h]]
+    : [[rIn, -h], [rOut, -h], [rOut, h], [rIn, h], [rIn, -h]];
+  return revolveGeo(prof, seg, seg <= 8);
+}
+
 /** Anneau épais (rondelle, bride) : rayon ext., rayon int., épaisseur. */
 export function ring(rOut, rIn, thick, material = 'steel', { axis = 'y', seg = 32, pos } = {}) {
-  const shape = new THREE.Shape();
-  shape.absarc(0, 0, rOut, 0, Math.PI * 2, false);
-  const hole = new THREE.Path();
-  hole.absarc(0, 0, rIn, 0, Math.PI * 2, true);
-  shape.holes.push(hole);
-  const geo = new THREE.ExtrudeGeometry(shape, { depth: thick, bevelEnabled: false, curveSegments: seg });
-  geo.translate(0, 0, -thick / 2);
-  geo.rotateX(Math.PI / 2); // épaisseur selon Y
-  const m = mesh(geo, material);
+  const m = mesh(ringGeo(rOut, rIn, thick, seg), material);
   orient(m, axis);
   const g = group(m);
   if (pos) g.position.copy(V(pos));
   return g;
+}
+
+/** Rondelle plate (épaisseur selon l'axe), chanfreinée. */
+export function washer(rOut, rIn, thick, material = 'steel', { axis = 'y', pos } = {}) {
+  return ring(rOut, rIn, thick, material, { axis, seg: 24, pos });
 }
 
 /** Tore (joint torique, anneau de levage). Plan perpendiculaire à l'axe. */
@@ -134,8 +342,7 @@ export function tube(points, r, material = 'black', { seg = 48, closed = false, 
 export function rod(a, b, r, material = 'steel', seg = 16) {
   const A = V(a), B = V(b);
   const len = A.distanceTo(B);
-  const geo = new THREE.CylinderGeometry(r, r, len, seg);
-  const m = mesh(geo, material);
+  const m = mesh(cylGeo(r, len, { seg }), material);
   m.position.copy(A).add(B).multiplyScalar(0.5);
   m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), B.clone().sub(A).normalize());
   return m;
@@ -225,25 +432,39 @@ export function gear(rRoot, rTip, teeth, thick, material = 'black', { axis = 'z'
   return g;
 }
 
-/** Écrou hexagonal. */
+/** Écrou hexagonal (surplat size, hauteur h) : chanfreins 30° et trou taraudé. */
 export function nut(size, h, material = 'steel', { axis = 'y', pos } = {}) {
-  const g = cyl(size / 2 / Math.cos(Math.PI / 6), h, material, { axis, seg: 6, pos });
+  const m = mesh(hexGeo(size, h, { hole: size * 0.29 }), material);
+  orient(m, axis);
+  const g = group(m);
+  if (pos) g.position.copy(V(pos));
   return g;
 }
 
 /** Boulon à tête hexagonale le long de -axe (tête en haut à l'origine). */
 export function bolt(d, len, material = 'steel', { axis = 'y', head = 'hex', pos } = {}) {
   const hh = d * 0.65;
-  const headGeo = head === 'square'
-    ? new THREE.BoxGeometry(d * 1.6, hh, d * 1.6)
-    : head === 'button'
-      ? new THREE.SphereGeometry(d * 0.95, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2)
-      : new THREE.CylinderGeometry(d * 0.95, d * 0.95, hh, 6);
-  const h = mesh(headGeo, material);
-  h.position.y = head === 'button' ? 0 : hh / 2;
-  const s = mesh(new THREE.CylinderGeometry(d / 2, d / 2, len, 12), material);
-  s.position.y = -len / 2;
-  const inner = group(h, s);
+  let headGeo;
+  if (head === 'square') {
+    headGeo = revolveGeo([[0, 0], [d * 0.8 * Math.SQRT2, 0], [d * 0.8 * Math.SQRT2, hh * 0.8], [d * 0.95, hh], [0, hh]], 4, true);
+    headGeo.rotateY(Math.PI / 4);
+  } else if (head === 'button') {
+    headGeo = new THREE.SphereGeometry(d * 0.95, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2);
+  } else {
+    const R = d * 0.95, c = R * 0.16;
+    // Tête hexagonale chanfreinée sur une portée ronde.
+    headGeo = mergeGeo([
+      revolveGeo([[0, hh * 0.1], [R, hh * 0.1], [R, hh - c * TAN30], [R - c, hh], [0, hh]], 6, true),
+      revolveGeo([[0, 0], [R * COS30 * 0.98, 0], [R * COS30 * 0.98, hh * 0.1], [0, hh * 0.1]], 12),
+    ]);
+  }
+  const r = d / 2;
+  // Tige : lisse sous la tête, filetée vers le bout (filet suggéré si la vis est visible).
+  const threadLen = Math.min(len * 0.6, Math.max(d * 2.5, len * 0.4));
+  const prof = d >= 0.012 && len > d * 1.5
+    ? [[0, -len], ...threadProfile(r, -len, -len + threadLen, { pitch: d * 0.2, maxTurns: 7 }), [r, 0], [0, 0]]
+    : cylProfile(r, r, len).map(([x, y]) => [x, y - len / 2]);
+  const inner = group(solid(material, headGeo, revolveGeo(prof, 10)));
   orient(inner, axis);
   const g = group(inner);
   if (pos) g.position.copy(V(pos));
@@ -259,7 +480,9 @@ export function spring(r, wire, len, turns, material = 'black', { axis = 'y', po
     const a = t * turns * Math.PI * 2;
     pts.push(new THREE.Vector3(Math.cos(a) * r, t * len - len / 2, Math.sin(a) * r));
   }
-  const m = mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), n * 2, wire, 8, false), material);
+  const geo = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), n * 2, wire, 8, false);
+  geo.userData.edgeAngle = 60; // pas de contours le long du fil
+  const m = mesh(geo, material);
   orient(m, axis);
   const g = group(m);
   if (pos) g.position.copy(V(pos));
@@ -275,28 +498,48 @@ export function hydCylinder(len, bore, { material = 'red', rodR, ext = 0.45, eye
   rodR = rodR ?? r * 0.55;
   const barrelLen = len * (1 - ext);
   const g = new THREE.Group();
+  const X = (geo) => alongAxis(geo, 'x');
   // Fût creux, fond fermé, presse-étoupe percé, piston et tige à l'intérieur.
   g.add(at(shell(r, r * 0.8, barrelLen - r, material, { axis: 'x' }), [barrelLen / 2, 0, 0]));
-  g.add(at(cyl(r * 1.12, r * 0.5, material, { axis: 'x' }), [r * 0.25, 0, 0]));
-  g.add(at(ring(r * 1.12, rodR * 1.04, r * 0.5, material, { axis: 'x' }), [barrelLen - r * 0.25, 0, 0]));
+  const body = [
+    place(X(cylGeo(r * 1.12, r * 0.5)), [r * 0.25, 0, 0]),
+    place(X(ringGeo(r * 1.12, rodR * 1.04, r * 0.5, 32)), [barrelLen - r * 0.25, 0, 0]),
+    // Cordons de soudure fond / tête.
+    place(X(ringGeo(r * 1.03, r * 0.9, r * 0.08, 32)), [r * 0.54, 0, 0]),
+    place(X(ringGeo(r * 1.03, r * 0.9, r * 0.08, 32)), [barrelLen - r * 0.54, 0, 0]),
+  ];
+  // Bossages des orifices d'alimentation (côté fond et côté tige), raccords sur le dessus.
+  const steel = [];
+  const ports = barrelLen > r * 3.2 ? [r * 1.05, barrelLen - r * 1.1] : [];
+  for (const px of ports) {
+    body.push(place(boxGeo(r * 0.55, r * 0.36, r * 0.55, r * 0.06), [px, r * 1.0, 0]));
+    steel.push(place(hexGeo(r * 0.34, r * 0.14), [px, r * 1.25, 0]));
+    steel.push(place(cylGeo(r * 0.12, r * 0.16), [px, r * 1.38, 0]));
+  }
+  const dark = [];
   const pistonX = barrelLen * 0.42;
-  g.add(at(cyl(r * 0.79, r * 0.5, 'darkSteel', { axis: 'x' }), [pistonX, 0, 0]));
-  g.add(at(torus(r * 0.79, r * 0.05, 'rubber', { axis: 'x' }), [pistonX, 0, 0]));
+  dark.push(place(X(cylGeo(r * 0.79, r * 0.5)), [pistonX, 0, 0]));
+  const rubber = [place(new THREE.TorusGeometry(r * 0.79, r * 0.05, 8, 32).rotateY(Math.PI / 2), [pistonX, 0, 0])];
+  // Racleur de tige à la sortie du presse-étoupe.
+  rubber.push(place(X(ringGeo(rodR * 1.25, rodR * 1.0, r * 0.06, 24)), [barrelLen + r * 0.03, 0, 0]));
   const rodLen = len - pistonX;
   g.add(at(cyl(rodR, rodLen, 'chrome', { axis: 'x' }), [pistonX + rodLen / 2, 0, 0]));
   g.userData.hasInterior = true;
   if (eyes === 'eye') {
-    g.add(at(ring(r * 0.75, r * 0.32, r * 0.7, material, { axis: 'z' }), [-r * 0.6, 0, 0]));
-    g.add(at(ring(rodR * 1.5, rodR * 0.6, rodR * 1.3, 'darkSteel', { axis: 'z' }), [len + rodR * 0.9, 0, 0]));
+    body.push(place(alongAxis(ringGeo(r * 0.75, r * 0.32, r * 0.7, 28), 'z'), [-r * 0.6, 0, 0]));
+    dark.push(place(alongAxis(ringGeo(r * 0.33, r * 0.22, r * 0.72, 20), 'z'), [-r * 0.6, 0, 0]));
+    // Œil de tige vissé + contre-écrou.
+    dark.push(place(alongAxis(ringGeo(rodR * 1.5, rodR * 0.6, rodR * 1.3, 28), 'z'), [len + rodR * 0.9, 0, 0]));
+    dark.push(place(X(hexGeo(rodR * 1.7, rodR * 0.45)), [len - rodR * 0.95, 0, 0]));
+    steel.push(place(alongAxis(ringGeo(rodR * 0.62, rodR * 0.42, rodR * 1.34, 20), 'z'), [len + rodR * 0.9, 0, 0]));
   } else if (eyes === 'clevis') {
-    g.add(at(box(r * 0.6, r * 1.2, r * 1.6, material), [-r * 0.3, 0, 0]));
-    const fork = group(
-      at(box(rodR * 3, rodR * 2.2, rodR * 0.6, 'darkSteel'), [0, 0, rodR * 0.9]),
-      at(box(rodR * 3, rodR * 2.2, rodR * 0.6, 'darkSteel'), [0, 0, -rodR * 0.9]),
-    );
-    fork.position.x = len + rodR * 1.2;
-    g.add(fork);
+    body.push(place(boxGeo(r * 0.6, r * 1.2, r * 1.6), [-r * 0.3, 0, 0]));
+    const fx = len + rodR * 1.2;
+    dark.push(place(boxGeo(rodR * 3, rodR * 2.2, rodR * 0.6), [fx, 0, rodR * 0.9]));
+    dark.push(place(boxGeo(rodR * 3, rodR * 2.2, rodR * 0.6), [fx, 0, -rodR * 0.9]));
   }
+  g.add(solid(material, body), solid('darkSteel', dark), solid('rubber', rubber));
+  if (steel.length) g.add(solid('steel', steel));
   if (axis !== 'x') {
     const outer = new THREE.Group();
     outer.add(g);
@@ -310,14 +553,28 @@ export function hydCylinder(len, bore, { material = 'red', rodR, ext = 0.45, eye
 
 /** Vanne à bille : corps + leviers. Axe de passage selon l'axe donné. */
 export function ballValve(size, material = 'brass', { axis = 'x', handle = 'red' } = {}) {
-  const r = size / 2;
+  const s = size, r = s / 2;
+  const X = (geo) => alongAxis(geo, 'x');
   const g = new THREE.Group();
-  g.add(cyl(r * 1.15, size * 1.9, material, { axis: 'x' }));
-  g.add(cyl(r * 1.45, size * 0.9, material, { axis: 'x' }));
-  g.add(at(nut(size * 1.05, size * 0.3, material, { axis: 'x' }), [size * 1.0, 0, 0]));
-  g.add(at(nut(size * 1.05, size * 0.3, material, { axis: 'x' }), [-size * 1.0, 0, 0]));
-  g.add(at(cyl(r * 0.35, size * 0.7, 'steel'), [0, r * 1.6, 0]));
-  g.add(at(box(size * 2.6, size * 0.12, size * 0.35, handle), [size * 1.1, r * 1.95, 0]));
+  // Corps : boisseau renflé, embouts filetés, écrous hexagonaux, bossage de tige.
+  g.add(solid(material,
+    X(revolveGeo([[0, -0.47 * s], [r * 1.2, -0.47 * s], [r * 1.42, -0.32 * s], [r * 1.45, 0], [r * 1.42, 0.32 * s], [r * 1.2, 0.47 * s], [0, 0.47 * s]], 20)),
+    X(cylGeo(r * 1.15, s * 1.9)),
+    place(X(hexGeo(s * 1.05, s * 0.3)), [s * 1.0, 0, 0]),
+    place(X(hexGeo(s * 1.05, s * 0.3)), [-s * 1.0, 0, 0]),
+    place(cylGeo(r * 0.55, s * 0.22), [0, s * 0.74, 0]),
+  ));
+  // Tige et écrou de manœuvre.
+  g.add(solid('steel',
+    place(cylGeo(r * 0.35, s * 0.7, { seg: 16 }), [0, r * 1.6, 0]),
+    place(hexGeo(s * 0.36, s * 0.12), [0, s * 1.09, 0]),
+  ));
+  // Levier plat avec poignée gainée.
+  g.add(solid(handle,
+    place(boxGeo(s * 2.6, s * 0.1, s * 0.3, s * 0.03), [s * 1.1, r * 1.95, 0]),
+    place(new THREE.BoxGeometry(s * 0.5, s * 0.1, s * 0.36), [0, r * 1.95, 0]),
+    place(boxGeo(s * 1.0, s * 0.16, s * 0.38, s * 0.07), [s * 1.88, r * 1.95, 0]),
+  ));
   return axisWrap(g, axis);
 }
 
@@ -330,14 +587,41 @@ function axisWrap(g, axis) {
   return outer;
 }
 
+/** Embout fileté avec cône d'étanchéité 37° (JIC), de y0 à y1 le long de +Y, rayon de base rb. */
+function nippleProfile(rb, y0, y1, neck = 0.18) {
+  const L = y1 - y0;
+  const yThread = y0 + L * neck;
+  const yCone = y1 - L * 0.22;
+  return [
+    [0, y0], [rb * 0.82, y0], [rb * 0.82, yThread],
+    ...threadProfile(rb, yThread, yCone, { pitch: rb * 0.3, maxTurns: 4, chamferBottom: false }),
+    [rb * 0.66, y1], [rb * 0.42, y1], [rb * 0.42, y1 - L * 0.04], [0, y1 - L * 0.04],
+  ];
+}
+
 /** Raccord hydraulique simple (hexagone + embout), le long de +Y. */
 export function fitting(d, len, material = 'steel', { axis = 'y', tee = false, elbow = false } = {}) {
   const g = new THREE.Group();
-  g.add(at(nut(d * 1.25, len * 0.28, material), [0, 0, 0]));
-  g.add(at(cyl(d * 0.42, len * 0.75, material), [0, len * 0.42, 0]));
-  g.add(at(cyl(d * 0.38, len * 0.6, material), [0, -len * 0.35, 0]));
-  if (tee) g.add(at(cyl(d * 0.4, len * 0.7, material, { axis: 'x' }), [len * 0.3, len * 0.3, 0]));
-  if (elbow) g.add(at(cyl(d * 0.4, len * 0.6, material, { axis: 'z' }), [0, len * 0.7, len * 0.25]));
+  const L = len;
+  const geos = [
+    // Six-pans central.
+    hexGeo(d * 1.25, L * 0.28),
+    // Embout supérieur fileté à cône 37°.
+    revolveGeo(nippleProfile(d * 0.42, L * 0.12, elbow ? L * 0.7 : L * 0.795), 10),
+    // Queue inférieure : filetage conique (NPT / BSPT).
+    revolveGeo([[0, -L * 0.65],
+      ...threadProfile(d * 0.36, -L * 0.65, -L * 0.18, { r1: d * 0.4, pitch: d * 0.12, maxTurns: 4 }),
+      [d * 0.32, -L * 0.18], [d * 0.32, -L * 0.12], [0, -L * 0.12]], 10),
+  ];
+  if (tee) {
+    geos.push(place(boxGeo(d * 0.95, d * 0.95, d * 0.95, d * 0.12), [0, L * 0.3, 0]));
+    geos.push(place(alongAxis(revolveGeo(nippleProfile(d * 0.4, d * 0.3, L * 0.65), 10), 'x'), [0, L * 0.3, 0]));
+  }
+  if (elbow) {
+    geos.push(place(boxGeo(d * 0.95, d * 0.95, d * 0.95, d * 0.2), [0, L * 0.7, 0]));
+    geos.push(place(alongAxis(revolveGeo(nippleProfile(d * 0.4, d * 0.3, L * 0.55), 10), 'z'), [0, L * 0.7, 0]));
+  }
+  g.add(solid(material, geos));
   return axis === 'y' ? g : axisWrapY(g, axis);
 }
 
@@ -353,10 +637,30 @@ function axisWrapY(g, axis) {
 /** Manomètre : boîtier + cadran blanc, face selon +axe. */
 export function gauge(r, { axis = 'z', face = 'white' } = {}) {
   const g = new THREE.Group();
-  g.add(cyl(r, r * 0.55, 'steel', { axis: 'z' }));
+  const Z = (geo) => alongAxis(geo, 'z');
+  // Boîtier inox embouti avec lunette sertie.
+  g.add(solid('chrome', Z(revolveGeo([
+    [0, -r * 0.275], [r * 0.9, -r * 0.275], [r * 0.98, -r * 0.2], [r * 0.98, r * 0.2],
+    [r, r * 0.22], [r, r * 0.29], [r * 0.95, r * 0.33], [r * 0.88, r * 0.33], [r * 0.87, r * 0.27], [0, r * 0.27],
+  ], 24))));
   g.add(at(cyl(r * 0.86, r * 0.05, face, { axis: 'z' }), [0, 0, r * 0.28]));
-  g.add(at(box(r * 0.08, r * 0.7, r * 0.02, 'black'), [0, r * 0.25, r * 0.31], [0, 0, -0.6]));
-  g.add(at(cyl(r * 0.18, r * 0.5, 'brass', { axis: 'y' }), [0, -r * 1.15, 0]));
+  // Graduations sur 270°, moyeu, aiguille.
+  const ticks = [];
+  for (let i = 0; i <= 10; i++) {
+    const a = (-135 + i * 27) * (Math.PI / 180);
+    const major = i % 2 === 0;
+    const l = r * (major ? 0.16 : 0.08);
+    const rr = r * 0.74 - l / 2;
+    ticks.push(place(new THREE.BoxGeometry(r * (major ? 0.035 : 0.018), l, r * 0.01), [Math.sin(a) * rr, Math.cos(a) * rr, r * 0.31], [0, 0, -a]));
+  }
+  ticks.push(place(Z(cylGeo(r * 0.07, r * 0.04, { seg: 16 })), [0, 0, r * 0.33]));
+  g.add(solid('black', ticks));
+  g.add(solid('red', place(new THREE.BoxGeometry(r * 0.045, r * 0.7, r * 0.012), [Math.sin(0.6) * r * 0.25, Math.cos(0.6) * r * 0.25, r * 0.322], [0, 0, -0.6])));
+  // Raccord inférieur : six-pans + queue filetée.
+  g.add(solid('brass',
+    place(hexGeo(r * 0.42, r * 0.2), [0, -r * 1.0, 0]),
+    revolveGeo([[0, -r * 1.4], ...threadProfile(r * 0.17, -r * 1.4, -r * 1.1, { maxTurns: 3 }), [r * 0.17, -r * 0.9], [0, -r * 0.9]], 12),
+  ));
   return axisWrapZ(g, axis);
 }
 
@@ -374,9 +678,48 @@ function axisWrapZ(g, axis) {
 /** Filtre (tête + cuve), cuve vers le bas, hauteur h. */
 export function filterCanister(r, h, material = 'black', { head = 'darkSteel' } = {}) {
   const g = new THREE.Group();
-  g.add(at(box(r * 2.4, r * 0.9, r * 2.0, head, { r: r * 0.15 }), [0, -r * 0.45, 0]));
-  g.add(at(shell(r, r * 0.86, h - r * 1.3, material), [0, -r * 0.9 - (h - r * 1.3) / 2, 0]));
-  g.add(at(cyl(r * 0.85, r * 0.4, material, { r2: r }), [0, -h + r * 0.2, 0]));
+  const X = (geo) => alongAxis(geo, 'x');
+  // Tête usinée : orifices entrée / sortie sur les côtés, indicateur de colmatage en façade.
+  g.add(solid(head,
+    place(boxGeo(r * 2.4, r * 0.9, r * 2.0, r * 0.15), [0, -r * 0.45, 0]),
+    place(X(cylGeo(r * 0.36, r * 2.52)), [0, -r * 0.45, 0]),
+    place(alongAxis(cylGeo(r * 0.22, r * 2.1), 'z'), [0, -r * 0.45, 0]),
+  ));
+  g.add(solid('steel',
+    place(X(hexGeo(r * 0.42, r * 0.1)), [r * 1.31, -r * 0.45, 0]),
+    place(X(hexGeo(r * 0.42, r * 0.1)), [-r * 1.31, -r * 0.45, 0]),
+    place(alongAxis(cylGeo(r * 0.14, r * 0.12), 'z'), [0, -r * 0.45, r * 1.08]),
+  ));
+  const bodyLen = h - r * 1.3;
+  g.add(at(shell(r, r * 0.86, bodyLen, material), [0, -r * 0.9 - bodyLen / 2, 0]));
+  // Collerette de vissage, fond bombé et six-pans de démontage.
+  g.add(solid(material,
+    place(ringGeo(r * 1.05, r * 0.86, r * 0.1, 32), [0, -r * 0.95, 0]),
+    place(cylGeo(r * 0.85, r * 0.28, { r2: r }), [0, -h + r * 0.26, 0]),
+    place(hexGeo(r * 0.5, r * 0.12, { top: false }), [0, -h + r * 0.06, 0]),
+  ));
+  // Élément filtrant plissé (visible en coupe).
+  const pleats = 20, ro = r * 0.78, ri = r * 0.6;
+  const pts = [];
+  for (let i = 0; i < pleats * 2; i++) {
+    const a = (i / (pleats * 2)) * Math.PI * 2;
+    const rr = i % 2 ? ri : ro;
+    pts.push(new THREE.Vector2(Math.cos(a) * rr, Math.sin(a) * rr));
+  }
+  const elemLen = bodyLen * 0.88;
+  const elemShape = new THREE.Shape(pts);
+  const hole = new THREE.Path();
+  hole.absarc(0, 0, r * 0.4, 0, Math.PI * 2, true);
+  elemShape.holes.push(hole);
+  const elem = new THREE.ExtrudeGeometry(elemShape, { depth: elemLen, bevelEnabled: false, curveSegments: 12 });
+  elem.translate(0, 0, -elemLen / 2);
+  elem.rotateX(Math.PI / 2);
+  const elemY = -r * 0.9 - bodyLen / 2;
+  g.add(solid('cream', place(elem, [0, elemY, 0])));
+  g.add(solid('steel',
+    place(ringGeo(r * 0.8, r * 0.4, r * 0.05, 20), [0, elemY + elemLen / 2 + r * 0.025, 0]),
+    place(ringGeo(r * 0.8, r * 0.4, r * 0.05, 20), [0, elemY - elemLen / 2 - r * 0.025, 0]),
+  ));
   g.userData.hasInterior = true;
   return g;
 }
@@ -385,28 +728,70 @@ export function filterCanister(r, h, material = 'black', { head = 'darkSteel' } 
 export function valveBank(n, { sw = 0.05, h = 0.16, d = 0.12, levers = true, material = 'black' } = {}) {
   const g = new THREE.Group();
   const total = n * sw + 0.08;
-  g.add(at(box(0.04, h * 1.1, d * 1.05, material), [-total / 2 + 0.02, 0, 0]));
-  g.add(at(box(0.04, h * 1.1, d * 1.05, material), [total / 2 - 0.02, 0, 0]));
+  const Z = (geo) => alongAxis(geo, 'z');
+  const X = (geo) => alongAxis(geo, 'x');
+  const body = [
+    place(boxGeo(0.04, h * 1.1, d * 1.05, 0.004), [-total / 2 + 0.02, 0, 0]),
+    place(boxGeo(0.04, h * 1.1, d * 1.05, 0.004), [total / 2 - 0.02, 0, 0]),
+  ];
+  const caps = [], steel = [], knobs = [];
+  const capR = Math.min(sw * 0.3, h * 0.16);
+  const plug = Math.min(sw * 0.42, d * 0.22, 0.03);
   for (let i = 0; i < n; i++) {
     const x = -total / 2 + 0.04 + sw * (i + 0.5);
-    g.add(at(box(sw * 0.92, h, d, material, { r: 0.004 }), [x, 0, 0]));
-    g.add(at(box(sw * 0.7, h * 0.35, d * 0.25, 'darkSteel'), [x, h * 0.2, d * 0.62]));
+    body.push(place(boxGeo(sw * 0.92, h, d, 0.004), [x, 0, 0]));
+    // Chapeau de tiroir (ressort de rappel) côté face, embout côté levier.
+    caps.push(place(boxGeo(sw * 0.74, h * 0.36, d * 0.05, 0.002), [x, h * 0.2, d * 0.525]));
+    caps.push(place(Z(cylGeo(capR, d * 0.2)), [x, h * 0.2, d * 0.65]));
+    caps.push(place(Z(cylGeo(capR * 0.55, d * 0.12, { seg: 16 })), [x, h * 0.2, -d * 0.5]));
+    // Orifices de travail A / B (bouchons six-pans) sur le dessus.
+    for (const z of [-d * 0.22, d * 0.22]) steel.push(place(hexGeo(plug, plug * 0.4), [x, h / 2 + plug * 0.2, z]));
     if (levers) {
-      g.add(at(cyl(0.006, h * 0.9, 'steel'), [x, h * 0.95, -d * 0.2], [0.25, 0, 0]));
-      g.add(at(cyl(0.012, 0.04, 'black'), [x, h * 1.4, -d * 0.31]));
+      steel.push(place(cylGeo(0.006, h * 0.9, { seg: 12 }), [0, 0, 0], [0.25, 0, 0]).translate(x, h * 0.95, -d * 0.2));
+      knobs.push(place(revolveGeo([[0, -0.02], [0.009, -0.02], [0.014, -0.008], [0.015, 0.006], [0.011, 0.018], [0, 0.021]], 16), [x, h * 1.4, -d * 0.31]));
     }
   }
+  // Tirants et écrous sur les flasques d'extrémité, orifices P / T.
+  for (const sx of [-1, 1]) {
+    for (const [y, z] of [[h * 0.32, d * 0.3], [-h * 0.32, d * 0.3], [h * 0.32, -d * 0.3], [-h * 0.32, -d * 0.3]]) {
+      steel.push(place(X(hexGeo(0.016, 0.006)), [sx * (total / 2 + 0.003), y, z]));
+    }
+    steel.push(place(X(hexGeo(plug * 1.1, 0.008)), [sx * (total / 2 + 0.004), -h * 0.05, 0]));
+  }
+  g.add(solid(material, body), solid('darkSteel', caps), solid('steel', steel));
+  if (knobs.length) g.add(solid('black', knobs));
   return g;
 }
 
 /** Boîtier électrique avec couvercle. */
 export function enclosure(w, h, d, material = 'grey') {
   const g = new THREE.Group();
-  g.add(box(w, h, d, material, { r: 0.01 }));
-  g.add(at(box(w * 0.94, h * 0.94, 0.008, material, { r: 0.004 }), [0, 0, d / 2 + 0.004]));
+  // Caisson + porte (joint visible au pourtour).
+  g.add(solid(material,
+    boxGeo(w, h, d, 0.01),
+    place(boxGeo(w * 0.94, h * 0.94, 0.008, 0.004), [0, 0, d / 2 + 0.004]),
+  ));
+  // Vis de porte, charnières côté gauche.
+  const steel = [];
   for (const sx of [-1, 1]) for (const sy of [-1, 1]) {
-    g.add(at(cyl(0.008, 0.01, 'steel', { axis: 'z' }), [sx * (w / 2 - 0.03), sy * (h / 2 - 0.03), d / 2 + 0.01]));
+    steel.push(place(alongAxis(cylGeo(0.008, 0.01, { seg: 16 }), 'z'), [sx * (w / 2 - 0.03), sy * (h / 2 - 0.03), d / 2 + 0.01]));
   }
+  const hl = Math.min(h * 0.14, 0.06);
+  for (const sy of [-1, 1]) {
+    steel.push(place(cylGeo(0.0055, hl, { seg: 12 }), [-w * 0.47 - 0.004, sy * h * 0.3, d / 2 + 0.006]));
+  }
+  g.add(solid('steel', steel));
+  // Serrure quart de tour côté droit, presse-étoupes sous le caisson.
+  const blk = [place(alongAxis(cylGeo(0.011, 0.008, { seg: 16 }), 'z'), [w * 0.4, 0, d / 2 + 0.012])];
+  blk.push(place(new THREE.BoxGeometry(0.014, 0.004, 0.003), [w * 0.4, 0, d / 2 + 0.017]));
+  const ng = Math.max(1, Math.min(3, Math.floor(w / 0.09)));
+  const gs = Math.min(0.02, d * 0.3, w * 0.15);
+  for (let i = 0; i < ng; i++) {
+    const x = (i - (ng - 1) / 2) * (w / (ng + 1));
+    blk.push(place(hexGeo(gs, gs * 0.3), [x, -h / 2 - gs * 0.15, 0]));
+    blk.push(place(revolveGeo([[0, 0], [gs * 0.42, 0], [gs * 0.42, -gs * 0.14], [gs * 0.3, -gs * 0.3], [0, -gs * 0.3]], 14), [x, -h / 2 - gs * 0.3, 0]));
+  }
+  g.add(solid('black', blk));
   return g;
 }
 
@@ -430,4 +815,77 @@ export function merged(objects, material) {
 /** Répète un objet sur une liste de positions (instances groupées). */
 export function repeat(factory, positions) {
   return group(positions.map((p, i) => at(factory(i), p)));
+}
+
+// ------------------------------------------------------------------ contours
+
+const edgeCache = new WeakMap();
+
+/**
+ * Arêtes vives d'une géométrie (angle entre faces > seuil, bords libres),
+ * en paires de points [x0, y0, z0, x1, y1, z1, ...]. Les sommets confondus
+ * sont soudés (0,05 mm). Résultat mis en cache par géométrie.
+ */
+export function featureEdges(geo, thresholdDeg = 40) {
+  const posAttr = geo.attributes.position;
+  if (!posAttr) return new Float32Array(0);
+  thresholdDeg = geo.userData.edgeAngle ?? thresholdDeg;
+  const hit = edgeCache.get(geo);
+  if (hit && hit.version === posAttr.version && hit.angle === thresholdDeg) return hit.edges;
+  const pos = posAttr.array;
+  const idx = geo.index ? geo.index.array : null;
+  const nv = posAttr.count;
+  const triCount = idx ? idx.length / 3 : nv / 3;
+  const weld = new Int32Array(nv);
+  const map = new Map();
+  let nu = 0;
+  const q = 2e4;
+  for (let i = 0; i < nv; i++) {
+    const k = (Math.round(pos[i * 3] * q) * 2097152 + Math.round(pos[i * 3 + 1] * q)) * 2097152 + Math.round(pos[i * 3 + 2] * q);
+    let w = map.get(k);
+    if (w === undefined) { w = nu++; map.set(k, w); }
+    weld[i] = w;
+  }
+  const cosT = Math.cos((thresholdDeg * Math.PI) / 180);
+  const normals = new Float32Array(triCount * 3);
+  const edges = new Map();
+  const out = [];
+  const vs = [0, 0, 0];
+  for (let t = 0; t < triCount; t++) {
+    const a = idx ? idx[t * 3] : t * 3, b = idx ? idx[t * 3 + 1] : t * 3 + 1, c = idx ? idx[t * 3 + 2] : t * 3 + 2;
+    const ax = pos[a * 3], ay = pos[a * 3 + 1], az = pos[a * 3 + 2];
+    const ux = pos[b * 3] - ax, uy = pos[b * 3 + 1] - ay, uz = pos[b * 3 + 2] - az;
+    const vx = pos[c * 3] - ax, vy = pos[c * 3 + 1] - ay, vz = pos[c * 3 + 2] - az;
+    let nx = uy * vz - uz * vy, ny = uz * vx - ux * vz, nz = ux * vy - uy * vx;
+    const l = Math.hypot(nx, ny, nz);
+    if (l < 1e-14) continue; // triangle dégénéré
+    nx /= l; ny /= l; nz /= l;
+    normals[t * 3] = nx; normals[t * 3 + 1] = ny; normals[t * 3 + 2] = nz;
+    vs[0] = a; vs[1] = b; vs[2] = c;
+    for (let j = 0; j < 3; j++) {
+      const p = vs[j], r = vs[(j + 1) % 3];
+      const wp = weld[p], wr = weld[r];
+      if (wp === wr) continue;
+      const key = wp < wr ? wp * nu + wr : wr * nu + wp;
+      const o = edges.get(key);
+      if (o === undefined) edges.set(key, t * 4 + j);
+      else if (o >= 0) {
+        const t2 = Math.floor(o / 4);
+        const dot = nx * normals[t2 * 3] + ny * normals[t2 * 3 + 1] + nz * normals[t2 * 3 + 2];
+        if (dot <= cosT) out.push(pos[p * 3], pos[p * 3 + 1], pos[p * 3 + 2], pos[r * 3], pos[r * 3 + 1], pos[r * 3 + 2]);
+        edges.set(key, -1);
+      }
+    }
+  }
+  // Bords libres (tubes ouverts, demi-sphères…).
+  for (const o of edges.values()) {
+    if (o < 0) continue;
+    const t = Math.floor(o / 4), j = o % 4;
+    const tri = [idx ? idx[t * 3] : t * 3, idx ? idx[t * 3 + 1] : t * 3 + 1, idx ? idx[t * 3 + 2] : t * 3 + 2];
+    const p = tri[j], r = tri[(j + 1) % 3];
+    out.push(pos[p * 3], pos[p * 3 + 1], pos[p * 3 + 2], pos[r * 3], pos[r * 3 + 1], pos[r * 3 + 2]);
+  }
+  const res = new Float32Array(out);
+  edgeCache.set(geo, { version: posAttr.version, angle: thresholdDeg, edges: res });
+  return res;
 }
