@@ -22,6 +22,7 @@ const S = {
   expanded: new Set(), // groupes éclatés sur place (clés de chemins)
   filter: '',
   labels: true,
+  edges: true, // contours des pièces (traits du dessin)
   isolate: false,
   explode: 0,
   section: { on: false, axis: 'z', pos: 0.5, flip: false, scope: 'all' },
@@ -29,6 +30,7 @@ const S = {
 let viewer = null;
 
 try { S.labels = localStorage.getItem('pieces3d.labels') !== '0'; } catch { /* préférence non disponible */ }
+try { S.edges = localStorage.getItem('pieces3d.edges') !== '0'; } catch { /* préférence non disponible */ }
 
 // ------------------------------------------------------------------ démarrage
 
@@ -135,6 +137,7 @@ function ensureViewer() {
     },
   });
   viewer.setLabels(S.labels);
+  viewer.setEdges(S.edges);
   return viewer;
 }
 
@@ -723,6 +726,14 @@ function bindChrome() {
     lb.setAttribute('aria-pressed', String(S.labels));
     viewer?.setLabels(S.labels);
     try { localStorage.setItem('pieces3d.labels', S.labels ? '1' : '0'); } catch { /* ignoré */ }
+  });
+  const eb = $('#btn-edges');
+  eb.setAttribute('aria-pressed', String(S.edges));
+  eb.addEventListener('click', () => {
+    S.edges = !S.edges;
+    eb.setAttribute('aria-pressed', String(S.edges));
+    viewer?.setEdges(S.edges);
+    try { localStorage.setItem('pieces3d.edges', S.edges ? '1' : '0'); } catch { /* ignoré */ }
   });
   const iso = $('#btn-isolate');
   iso.addEventListener('click', () => {
