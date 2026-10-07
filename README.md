@@ -53,8 +53,8 @@ sont préfixées : `#du311.P032`.
 - Chaque page du manuel original reste consultable (bouton « Page du manuel »).
 
 Site en ligne : https://frankyray21.github.io/pieces-3d/ (republié
-automatiquement à chaque push sur la branche par défaut, voir
-`.github/workflows/pages.yml`).
+automatiquement à chaque push sur la branche `main`, voir
+`.github/workflows/pages.yml`). DU311 : https://frankyray21.github.io/pieces-3d/#du311.P010
 
 ## Démarrer
 
