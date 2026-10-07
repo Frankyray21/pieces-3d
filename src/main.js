@@ -22,7 +22,7 @@ const S = {
   expanded: new Set(), // groupes éclatés sur place (clés de chemins)
   filter: '',
   labels: true,
-  edges: true, // contours des pièces (traits du dessin)
+  edges: false, // contours des pièces (traits du dessin), sur demande
   isolate: false,
   explode: 0,
   section: { on: false, axis: 'z', pos: 0.5, flip: false, scope: 'all' },
@@ -30,7 +30,8 @@ const S = {
 let viewer = null;
 
 try { S.labels = localStorage.getItem('pieces3d.labels') !== '0'; } catch { /* préférence non disponible */ }
-try { S.edges = localStorage.getItem('pieces3d.edges') !== '0'; } catch { /* préférence non disponible */ }
+// Contours de dessin : désactivés par défaut (rendu photo), à la demande.
+try { S.edges = localStorage.getItem('pieces3d.edges') === '1'; } catch { /* préférence non disponible */ }
 
 // ------------------------------------------------------------------ démarrage
 

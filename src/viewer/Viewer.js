@@ -28,7 +28,7 @@ function studioEnvironment(renderer) {
   const scene = new THREE.Scene();
   const R = 30;
   const dome = new THREE.SphereGeometry(R, 48, 24);
-  const top = new THREE.Color(0.95, 0.96, 0.98), hor = new THREE.Color(0.5, 0.52, 0.55), low = new THREE.Color(0.14, 0.14, 0.15);
+  const top = new THREE.Color(1.0, 1.0, 1.02), hor = new THREE.Color(0.74, 0.76, 0.79), low = new THREE.Color(0.46, 0.46, 0.47);
   const col = [];
   const c = new THREE.Color();
   const p = dome.attributes.position;
@@ -50,6 +50,9 @@ function studioEnvironment(renderer) {
   panel(6, 16, 4.0, [-14, 8, 18]); // clé, avant-gauche
   panel(4, 16, 2.4, [22, 6, -6]); // contre-jour droite
   panel(16, 3, 1.5, [10, 2.5, 20]); // bande basse frontale
+  panel(5, 14, 2.2, [16, 7, 16]); // bande latérale droite
+  panel(14, 4, 1.2, [-12, 1.5, -16]); // réflecteur bas arrière
+  panel(20, 20, 0.9, [0, -22, 0]); // sol clair (réflecteur) : dessous des pièces lisible
   const pmrem = new THREE.PMREMGenerator(renderer);
   const tex = pmrem.fromScene(scene, 0.02).texture;
   pmrem.dispose();
@@ -199,7 +202,7 @@ export class Viewer {
     this.selectedObjs = [];
     this.isolate = false;
     this.labelsVisible = true;
-    this.edgesVisible = true;
+    this.edgesVisible = false;
     this.labels = [];
     this.tweens = [];
     this.section = { on: false, axis: 'z', pos: 0.5, flip: false, scope: 'all' };
@@ -228,13 +231,13 @@ export class Viewer {
 
     const scene = new THREE.Scene();
     scene.environment = studioEnvironment(renderer);
-    scene.environmentIntensity = 0.45;
+    scene.environmentIntensity = 0.8; // reflets du studio : rendu photo, sans zones noires
     this.scene = scene;
 
     // Éclairage studio : ciel / sol, clé (ombre), débouchage, contre-jour lié à la caméra.
-    this.hemi = new THREE.HemisphereLight(0xf2f5fa, 0x5b5650, 0.25);
+    this.hemi = new THREE.HemisphereLight(0xf2f5fa, 0x8d8983, 0.3);
     scene.add(this.hemi);
-    const key = new THREE.DirectionalLight(0xfff7ee, 1.8);
+    const key = new THREE.DirectionalLight(0xfff7ee, 1.55);
     key.castShadow = false;
     key.shadow.mapSize.set(2048, 2048);
     key.shadow.bias = -0.0003;
@@ -242,10 +245,10 @@ export class Viewer {
     key.shadow.blurSamples = 12;
     scene.add(key, key.target);
     this.sun = key;
-    const fill = new THREE.DirectionalLight(0xe6eeff, 0.55);
+    const fill = new THREE.DirectionalLight(0xe6eeff, 0.5);
     scene.add(fill, fill.target);
     this.fill = fill;
-    const rim = new THREE.DirectionalLight(0xffffff, 0.7);
+    const rim = new THREE.DirectionalLight(0xffffff, 0.45);
     scene.add(rim, rim.target);
     this.rim = rim;
 
@@ -969,7 +972,7 @@ export class Viewer {
       const u = p.quad.material.uniforms;
       u.toneMappingExposure.value = r.toneMappingExposure;
       u.groundAO.value = 0; // pas d'assombrissement au sol
-      u.aoStrength.value = useAO ? 0.6 : 0;
+      u.aoStrength.value = useAO ? 0.4 : 0; // creux fins seulement, jamais d'ombrage
       u.edgeStrength.value = this.edgesVisible ? 0.85 : 0;
       u.cameraNear.value = this.camera.near;
       u.cameraFar.value = this.camera.far;
