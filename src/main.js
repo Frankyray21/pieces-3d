@@ -77,7 +77,7 @@ async function route() {
   // Page d'accueil (adresse sans « # ») : la liste des équipements.
   const home = raw === '' || token === 'catalogue';
   $('#catalogue').hidden = !home;
-  if (home) { renderCatalogue(); return; }
+  if (home) { document.title = 'Équipements · Pièces 3D'; renderCatalogue(); return; }
   if (token === 'controle') return openIssues();
   if (eq.assemblies.has(token)) return openAssembly(token);
   if (eq.documents.has(token)) return openDocument(token);
