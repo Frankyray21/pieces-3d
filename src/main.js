@@ -308,7 +308,7 @@ function renderRail() {
   const errors = eq.issues.filter((r) => r.flags.some((f) => f.level === 'error')).length;
   $('#rail').innerHTML = `
     <div class="equip"><strong>${esc(eq.name)}</strong><span>${esc(eq.category)} · n° de série ${esc(eq.serial)}</span></div>
-    <div><h2>Assemblages${n3d && !partial ? ' 3D' : ''}</h2>${partial ? `<p class="legend"><span class="sheet m3d">3D</span><span>${n3d} assemblages en 3D, les autres avec les dessins du manuel. Ouvrir : ${[...eq.assemblies.values()].filter((a) => models[a.id] && !models[a.parent]).map((a) => `<button type="button" class="lnk" data-go="${a.id}">${a.id} ${esc(a.titleFr)}</button>`).join(' ; ')}</span></p>` : ''}<ul class="tree">${node(eq.root)}</ul></div>
+    <div><h2>Assemblages${n3d && !partial ? ' 3D' : ''}</h2>${partial ? `<p class="legend"><span class="sheet m3d">3D</span><span>${n3d} assemblages en 3D, les autres avec les dessins du manuel. Ouvrir : ${[...eq.assemblies.values()].filter((a) => models[a.id] && !models[a.parent]).map((a) => `<button type="button" class="lnk" data-go="${a.id}">${a.id} ${esc(a.titleFr)}</button>`).join('')}</span></p>` : ''}<ul class="tree">${node(eq.root)}</ul></div>
     <div><h2>Schémas et listes</h2><ul class="tree">${docs}</ul></div>
     <div><h2>Manuel</h2><ul class="tree">
       <li><button type="button" class="node ${cur === 'controle' ? 'cur' : ''}" data-go="controle"><span class="sheet">QC</span><span class="t">Contrôle des listes</span><span class="n">${errors ? `<span class="alert">${errors}</span> / ` : ''}${eq.issues.length}</span></button></li>
