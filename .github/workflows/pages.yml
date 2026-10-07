@@ -4,6 +4,7 @@ name: GitHub Pages
 
 on:
   push:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -11,6 +12,8 @@ permissions:
   pages: write
   id-token: write
 
+# Seul main déclenche le déploiement : un push sur une branche de travail ne
+# peut plus annuler un déploiement en cours.
 concurrency:
   group: pages
   cancel-in-progress: true
