@@ -454,7 +454,7 @@ function renderDetail() {
       <button type="button" class="close" id="d-close" aria-label="Fermer la fiche">×</button>
     </div>
     ${trail}
-    <div class="pnline">${row.pn ? `<span class="pnbig">${esc(row.pn)}</span><button type="button" class="chip" id="d-copy">Copier le n°</button>` : `<span class="meta">${row.supplier ? `N° fournisseur : <span class="mono">${esc(row.supplier)}</span>` : 'Aucun numéro de pièce'}</span>`}</div>
+    <div class="pnline">${row.pn ? `<span class="pnbig">${esc(row.pn)}</span>` : `<span class="meta">${row.supplier ? `N° fournisseur : <span class="mono">${esc(row.supplier)}</span>` : 'Aucun numéro de pièce'}</span>`}</div>
     ${mirror}${flags}${used}
     <div class="actions">
       ${group ? `<button type="button" class="btn primary" id="d-tog">${open ? 'Rassembler ce groupe' : 'Éclater ce groupe'}</button>` : ''}
@@ -464,7 +464,6 @@ function renderDetail() {
       ${row.see ? row.see.map((s) => `<button type="button" class="btn" data-page="${s}">Voir ${s}</button>`).join('') : ''}
     </div>`;
   $('#d-close').addEventListener('click', () => select(null));
-  $('#d-copy')?.addEventListener('click', () => copy(row.pn, `N° ${row.pn} copié`));
   $('#d-tog')?.addEventListener('click', () => toggleGroup(path));
   $('#d-cut')?.addEventListener('click', () => {
     if (cutActive) setSection({ on: false });
@@ -687,15 +686,6 @@ function toast(msg, ms = 2200) {
   t.hidden = false;
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => { t.hidden = true; }, ms);
-}
-
-async function copy(text, okMsg) {
-  try {
-    await navigator.clipboard.writeText(text);
-    toast(okMsg);
-  } catch {
-    toast('Copie automatique refusée par le navigateur : sélectionnez le numéro et faites Ctrl+C.');
-  }
 }
 
 init();
