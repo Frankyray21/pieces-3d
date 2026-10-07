@@ -7,6 +7,14 @@
       "category": "Foreuse sur chenilles",
       "thumbnail": "equipment/cubex-mri-5200/pages/F01.jpg",
       "status": "3D procédurale — 14 assemblages, 7 schémas"
+    },
+    {
+      "id": "du311",
+      "name": "Sandvik DU311-TVK",
+      "manufacturer": "Sandvik",
+      "category": "Foreuse sur chenilles",
+      "thumbnail": "equipment/du311/pages/P010.webp",
+      "status": "Dessins et listes du manuel — 172 assemblages, 15 schémas (pas encore de 3D)"
     }
   ]
 }

@@ -33,6 +33,8 @@ function normalize(data) {
   const eq = {
     ...data,
     pageUrl: (sheet) => base + data.document.pagePattern.replace('{sheet}', sheet),
+    sheetId: sheetNaming(Object.keys(data.sheetTitles)[0] || 'F01'),
+    sheetOwner: new Map(),
     assemblies: new Map(),
     documents: new Map(),
     rows: [],
@@ -53,6 +55,10 @@ function normalize(data) {
     eq.rows.push(...asm.parts);
   }
   for (const asm of eq.assemblies.values()) asm.children.sort();
+  // Page du manuel → assemblage ou document qui la contient (dessins et listes).
+  const own = (sheet, id) => { if (!eq.sheetOwner.has(sheet)) eq.sheetOwner.set(sheet, id); };
+  for (const asm of eq.assemblies.values()) [asm.id, ...(asm.sheets || []), ...(asm.lists || [])].forEach((s) => own(s, asm.id));
+  for (const d of data.documents) d.sheets.forEach((s) => own(s, d.id));
   for (const d of data.documents) {
     const source = { type: 'document', id: d.id, sheet: d.sheets[d.sheets.length - 1] };
     const doc = { ...d, parts: d.parts.map((r) => row(r, source)) };
@@ -61,6 +67,12 @@ function normalize(data) {
   }
   analyze(eq);
   return eq;
+}
+
+// Numérotation des pages d'après un exemple : « F01 » → F01, F02… ; « P001 » → P001, P002…
+function sheetNaming(sample) {
+  const [, prefix, digits] = /^(\D*)(\d+)$/.exec(sample) || [null, 'F', '01'];
+  return (num) => `${prefix}${String(num).padStart(digits.length, '0')}`;
 }
 
 export function normPn(pn) {
@@ -134,12 +146,20 @@ function lev1(a, b) {
   return edits + (a.length - i) + (b.length - j) === 1;
 }
 
+// Numérotation interne à préfixe de lettres (Sandvik : CX011242, SH00010-1.250) :
+// un seul chiffre d'écart désigne une variante ou une autre taille, pas une frappe.
+function sequential(a, b) {
+  if (a.length !== b.length || !/^[A-Z]{2}/.test(a) || !/^[A-Z]{2}/.test(b)) return false;
+  for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return /\d/.test(a[i]) && /\d/.test(b[i]);
+  return false;
+}
+
 function analyze(eq) {
   const byPn = new Map();
   for (const r of eq.rows) {
     r.flags = [];
     if (r.flag === 'missing-row') r.flags.push({ level: 'warn', text: 'Ligne absente de la liste du manuel.' });
-    if (r.flag === 'no-pn' || (!r.pn && !r.pseudo && !r.supplier)) r.flags.push({ level: 'warn', text: 'Aucun numéro de pièce au manuel.' });
+    if (r.flag === 'no-pn' || (!r.pn && !r.pseudo && !r.supplier && !r.nss)) r.flags.push({ level: 'warn', text: 'Aucun numéro de pièce au manuel.' });
     const n = normPn(r.pn);
     if (!n) continue;
     if (!byPn.has(n)) byPn.set(n, []);
@@ -162,7 +182,7 @@ function analyze(eq) {
   const sheetsOf = (pn) => new Set(byPn.get(pn).map((r) => r.source.id));
   for (let i = 0; i < pns.length; i++) {
     for (let j = i + 1; j < pns.length; j++) {
-      if (!lev1(pns[i], pns[j])) continue;
+      if (!lev1(pns[i], pns[j]) || sequential(pns[i], pns[j])) continue;
       const si = sheetsOf(pns[i]);
       if ([...sheetsOf(pns[j])].some((x) => si.has(x))) continue;
       for (const a of byPn.get(pns[i])) for (const b of byPn.get(pns[j])) {

@@ -315,3 +315,4 @@ table.parts { width: 100%; border-collapse: collapse; font-size: 13px; }
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; }
 }
+.docview figure.portrait { width: min(100%, 860px); }

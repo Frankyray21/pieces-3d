@@ -4,3 +4,4 @@ dist-artifact
 scratch
 .DS_Store
 *.log
+__pycache__
