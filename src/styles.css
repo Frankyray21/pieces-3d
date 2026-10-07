@@ -97,18 +97,6 @@ button { cursor: pointer; }
 .res:hover, .res.on { background: var(--hover); }
 .res .pn { font-family: var(--f-mono); font-weight: 600; }
 .res .where { grid-column: 2; color: var(--muted); font-size: 12px; }
-.cart-btn {
-  display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 12px; border-radius: 8px;
-  border: 1px solid var(--line); background: var(--surface);
-}
-.cart-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; }
-.cart-btn svg circle { fill: currentColor; stroke: none; }
-.cart-btn .count {
-  min-width: 22px; height: 22px; padding: 0 6px; border-radius: 11px; display: grid; place-items: center;
-  background: var(--line); font: 600 12px/1 var(--f-mono);
-}
-.cart-btn.has .count { background: var(--accent); color: var(--accent-ink); }
-
 .workspace { display: grid; grid-template-columns: var(--rail-w) minmax(0, 1fr) var(--panel-w); min-height: 0; }
 .pane { min-height: 0; min-width: 0; }
 
@@ -232,9 +220,6 @@ button.chip:hover { border-color: var(--accent); }
 .btn:hover { border-color: var(--ink); }
 .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
 .btn.primary:hover { filter: brightness(1.06); }
-.stepper { display: inline-flex; align-items: center; border: 1px solid var(--line-strong); border-radius: 8px; height: 34px; overflow: hidden; background: var(--surface); }
-.stepper button { width: 30px; height: 100%; border: 0; background: none; font-size: 16px; }
-.stepper input { width: 46px; height: 100%; border: 0; text-align: center; background: none; font-family: var(--f-mono); }
 .tablewrap { overflow: auto; flex: 1; min-height: 0; }
 table.parts { width: 100%; border-collapse: collapse; font-size: 13px; }
 .parts thead th {
@@ -255,14 +240,7 @@ table.parts { width: 100%; border-collapse: collapse; font-size: 13px; }
 .parts .c-pn { font-family: var(--f-mono); white-space: nowrap; font-size: 12.5px; }
 .parts .c-qty { text-align: right; font-variant-numeric: tabular-nums; width: 3em; }
 .parts .c-desc { min-width: 0; }
-.parts .c-add { width: 36px; padding-right: 12px; }
 .parts .sub-row td { color: var(--muted); }
-.addbtn {
-  width: 26px; height: 26px; border-radius: 7px; border: 1px solid var(--line-strong); background: var(--surface);
-  font-size: 16px; line-height: 1; display: grid; place-items: center;
-}
-.addbtn:hover { border-color: var(--accent); color: var(--accent); }
-.addbtn.in { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
 .ico { font-weight: 700; margin-left: 4px; }
 .ico.error { color: var(--error); }
 .ico.warn { color: var(--warn); }
@@ -273,31 +251,6 @@ table.parts { width: 100%; border-collapse: collapse; font-size: 13px; }
 .issues button:hover { background: var(--hover); }
 .issues .top { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
 .issues .why { font-size: 12px; color: var(--muted); }
-
-/* ---------------------------------------------------------------- tiroir commande */
-.drawer {
-  position: fixed; inset: 0 0 0 auto; width: min(520px, 100%); z-index: 40; background: var(--surface);
-  border-left: 1px solid var(--line); box-shadow: var(--shadow); display: flex; flex-direction: column;
-  padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);
-}
-.drawer header { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-bottom: 1px solid var(--line); }
-.drawer h2 { margin: 0; font: 700 24px/1 var(--f-display); text-transform: uppercase; }
-.drawer .x { margin-left: auto; }
-.drawer .body { flex: 1; overflow: auto; padding: 6px 0; }
-.drawer .empty { padding: 28px 18px; color: var(--muted); display: grid; gap: 8px; }
-.line { display: grid; grid-template-columns: 1fr auto auto; gap: 4px 10px; align-items: center; padding: 10px 16px; border-bottom: 1px solid var(--line); }
-.line .pn { font: 600 14px var(--f-mono); }
-.line .d { grid-column: 1; font-size: 13px; }
-.line .w { grid-column: 1; font-size: 11.5px; color: var(--muted); }
-.line .stepper { grid-row: 1 / span 3; grid-column: 2; }
-.line .rm { grid-row: 1 / span 3; grid-column: 3; border: 0; background: none; color: var(--muted); font-size: 18px; }
-.drawer footer { border-top: 1px solid var(--line); padding: 12px 16px 16px; display: grid; gap: 10px; }
-.drawer footer label { font-size: 12px; color: var(--muted); }
-.drawer textarea {
-  width: 100%; height: 120px; resize: vertical; border: 1px solid var(--line); border-radius: 8px; padding: 8px;
-  background: var(--surface-2); color: var(--ink); font: 12px/1.4 var(--f-mono);
-}
-.scrim { position: fixed; inset: 0; background: rgba(10, 14, 20, 0.38); z-index: 35; }
 
 /* ---------------------------------------------------------------- page du manuel */
 .modal { position: fixed; inset: 0; z-index: 50; background: rgba(8, 12, 16, 0.86); display: flex; flex-direction: column; }
@@ -338,7 +291,7 @@ table.parts { width: 100%; border-collapse: collapse; font-size: 13px; }
 @media (max-width: 900px) {
   :root { --top-h: 52px; }
   .topbar { gap: 8px; padding: 0 12px; }
-  .crumbs, .cart-label { display: none; }
+  .crumbs { display: none; }
   .brand span { display: none; }
   .search { flex: 1; }
   .workspace { grid-template-columns: minmax(0, 1fr); }

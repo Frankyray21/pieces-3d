@@ -2,7 +2,7 @@
 
 Plateforme qui transforme les manuels de pièces (PDF) en modèles 3D
 interactifs avec vue éclatée, pour visualiser l'équipement et identifier les
-pièces à commander.
+pièces (numéro, quantité, page du manuel).
 
 Premier équipement : **Cubex / MRI 5200** (foreuse sur chenilles, manuel
 P15125-MRI rév. 03, 28 pages).
@@ -18,8 +18,6 @@ P15125-MRI rév. 03, 28 pages).
   liste, et inversement. Double-clic pour descendre dans un sous-assemblage.
 - **Recherche** par numéro de pièce, numéro fournisseur ou description, sur
   tout le manuel (assemblages + schémas).
-- **Liste de commande** : quantités, regroupement par numéro, texte prêt à
-  coller dans un courriel, export CSV.
 - **Schémas et listes** (F19 à F28) : hydraulique, pneumatique, télécommande,
   alimentation principale, console IP67, commandes de forage et de mise en
   place.

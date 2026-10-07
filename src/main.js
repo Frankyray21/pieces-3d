@@ -2,7 +2,6 @@ import './styles.css';
 import { Viewer } from './viewer/Viewer.js';
 import { buildProcedural } from './viewer/assembly.js';
 import { loadIndex, loadEquipment, search, sourceLabel } from './data/equipment.js';
-import { createCart } from './ui/cart.js';
 import cubexModels from './models/cubex-mri-5200/index.js';
 
 // Modèles 3D disponibles par équipement (builders procéduraux).
@@ -23,7 +22,6 @@ const S = {
   explode: 0,
 };
 let viewer = null;
-const cart = createCart(() => { renderCartButton(); if (!$('#drawer').hidden) renderDrawer(); refreshAddButtons(); });
 
 try { S.labels = localStorage.getItem('pieces3d.labels') !== '0'; } catch { /* préférence non disponible */ }
 
@@ -31,7 +29,6 @@ try { S.labels = localStorage.getItem('pieces3d.labels') !== '0'; } catch { /* p
 
 async function init() {
   bindChrome();
-  renderCartButton();
   try {
     S.index = await loadIndex();
     S.eq = await loadEquipment(S.index[0].id);
@@ -242,7 +239,7 @@ function renderPanel() {
     const groups = eq.issues.slice().sort((a, b) => sevRank(b) - sevRank(a));
     panel.innerHTML = `
       <div class="phead"><h1>Contrôle des listes</h1>
-        <p class="sub">${eq.issues.length} lignes du manuel méritent une vérification avant de commander : même numéro avec des descriptions différentes, numéros presque identiques (une frappe d'écart), lignes ou numéros absents. Cliquez une ligne pour l'ouvrir.</p></div>
+        <p class="sub">${eq.issues.length} lignes du manuel méritent une vérification : même numéro avec des descriptions différentes, numéros presque identiques (une frappe d'écart), lignes ou numéros absents. Cliquez une ligne pour l'ouvrir.</p></div>
       <div class="tablewrap"><ul class="issues">${groups.map((r) => {
         const f = r.flags.find((x) => x.level === 'error') || r.flags.find((x) => x.level === 'warn');
         return `<li><button type="button" data-row="${esc(r.key)}">
@@ -265,7 +262,7 @@ function renderPanel() {
     </div>
     <div class="detail" id="detail" hidden></div>
     <div class="tablewrap" id="tablewrap"><table class="parts">
-      <thead><tr><th class="c-ref">Réf.</th><th>N° pièce</th><th class="c-qty">Qté</th><th>Description</th><th class="c-add"><span class="sr">Ajouter</span></th></tr></thead>
+      <thead><tr><th class="c-ref">Réf.</th><th>N° pièce</th><th class="c-qty">Qté</th><th>Description</th></tr></thead>
       <tbody id="rows"></tbody></table></div>`;
   $('#filter').addEventListener('input', (e) => { S.filter = e.target.value; renderRows(); });
   renderRows();
@@ -287,40 +284,20 @@ function renderRows() {
     const sub = r.ref.includes('.');
     const refTxt = r.link && r.pseudo ? '→' : sub ? '↳' : esc(r.ref);
     const pn = r.pn ? esc(r.pn) : r.supplier ? `<span title="N° fournisseur">${esc(r.supplier)}</span>` : '<span class="ico warn">—</span>';
-    const canAdd = !!(r.pn || r.supplier || !r.pseudo);
     return `<tr data-ref="${esc(r.ref)}" class="${sub ? 'sub-row' : ''} ${r.ref === S.selected ? 'sel' : ''}">
       <td class="c-ref"><span class="${r.link ? 'link' : ''}">${refTxt}</span></td>
       <td class="c-pn">${pn}${ico}</td>
       <td class="c-qty">${r.qty ?? '—'}</td>
       <td class="c-desc">${esc(r.desc)}${r.link ? ` <span class="linkchip">${r.link} ›</span>` : ''}</td>
-      <td class="c-add">${canAdd ? `<button type="button" class="addbtn ${cart.has(r) ? 'in' : ''}" data-add="${esc(r.ref)}" title="Ajouter à la commande" aria-label="Ajouter ${esc(r.pn || r.desc)} à la commande">${cart.has(r) ? '✓' : '+'}</button>` : ''}</td>
     </tr>`;
-  }).join('') || '<tr><td colspan="5" style="padding:18px 14px;color:var(--muted)">Aucune ligne ne correspond au filtre.</td></tr>';
+  }).join('') || '<tr><td colspan="4" style="padding:18px 14px;color:var(--muted)">Aucune ligne ne correspond au filtre.</td></tr>';
   tb.querySelectorAll('tr[data-ref]').forEach((tr) => {
     const ref = tr.dataset.ref;
-    tr.addEventListener('click', (e) => {
-      if (e.target.closest('[data-add]')) return;
-      select(ref, { focus: true });
-    });
+    tr.addEventListener('click', () => select(ref, { focus: true }));
     tr.addEventListener('dblclick', () => { const r = rowByRef(ref); if (r?.link) go(r.link); });
     tr.addEventListener('mouseenter', () => { const r = rowByRef(ref); if (viewer && S.view.type === 'assembly' && r) viewer.setHover(ref3d(r)); });
     tr.addEventListener('mouseleave', () => viewer?.setHover(null));
   });
-  tb.querySelectorAll('[data-add]').forEach((b) => b.addEventListener('click', () => {
-    const r = rowByRef(b.dataset.add);
-    cart.add(r, r.qty && r.qty <= 4 ? r.qty : 1, S.eq.name);
-    toast(`Ajouté : ${r.pn || r.desc}`);
-  }));
-}
-
-function refreshAddButtons() {
-  document.querySelectorAll('#rows [data-add]').forEach((b) => {
-    const r = rowByRef(b.dataset.add);
-    const inCart = r && cart.has(r);
-    b.classList.toggle('in', inCart);
-    b.textContent = inCart ? '✓' : '+';
-  });
-  if (S.selected) renderDetail();
 }
 
 function rowByRef(ref) {
@@ -364,9 +341,6 @@ function renderDetail() {
   const used = others.length ? `<div class="meta">Aussi listé : <span class="lnk">${others.map((o) => `<button type="button" class="chip" data-row="${esc(o.key)}">${o.source.sheet} réf. ${esc(o.ref)}</button>`).join(' ')}</span></div>` : '';
   const mirror = row.mirrorOf ? `<div class="flag info">Pièce symétrique (côté gauche) : la 3D met en évidence la pièce droite, réf. ${esc(row.mirrorOf)}.</div>` : '';
   const ids = [row.supplier && `Fournisseur ${esc(row.supplier)}`, row.sandvik && row.sandvik !== 'N/A' && `Sandvik ${esc(row.sandvik)}`].filter(Boolean).join(' · ');
-  const canAdd = !!(row.pn || row.supplier || !row.pseudo);
-  const inCart = cart.has(row);
-  const defQty = row.qty && row.qty <= 4 ? row.qty : 1;
   box.innerHTML = `
     <div class="row1">
       <span class="ref ${long ? 'long' : ''}">${esc(row.ref)}</span>
@@ -377,21 +351,12 @@ function renderDetail() {
     <div class="pnline">${row.pn ? `<span class="pnbig">${esc(row.pn)}</span><button type="button" class="chip" id="d-copy">Copier le n°</button>` : `<span class="meta">${row.supplier ? `N° fournisseur : <span class="mono">${esc(row.supplier)}</span>` : 'Aucun numéro de pièce'}</span>`}</div>
     ${mirror}${flags}${used}
     <div class="actions">
-      ${canAdd ? `<span class="stepper"><button type="button" id="d-minus" aria-label="Moins">−</button><input id="d-qty" inputmode="numeric" value="${defQty}" aria-label="Quantité"><button type="button" id="d-plus" aria-label="Plus">+</button></span>
-      <button type="button" class="btn primary" id="d-add">${inCart ? 'Ajouter encore' : 'Ajouter à la commande'}</button>` : ''}
       ${row.link ? `<button type="button" class="btn" data-go="${row.link}">Ouvrir ${row.link} ›</button>` : ''}
       ${S.view.type === 'assembly' ? '<button type="button" class="btn" id="d-focus">Centrer</button>' : ''}
       ${row.see ? row.see.map((s) => `<button type="button" class="btn" data-page="${s}">Voir ${s}</button>`).join('') : ''}
     </div>`;
   $('#d-close').addEventListener('click', () => select(null));
   $('#d-copy')?.addEventListener('click', () => copy(row.pn, `N° ${row.pn} copié`));
-  const qty = $('#d-qty');
-  $('#d-minus')?.addEventListener('click', () => { qty.value = Math.max(1, (+qty.value || 1) - 1); });
-  $('#d-plus')?.addEventListener('click', () => { qty.value = (+qty.value || 0) + 1; });
-  $('#d-add')?.addEventListener('click', () => {
-    cart.add(row, Math.max(1, +qty.value || 1), eq.name);
-    toast(`Ajouté à la commande : ${qty.value} × ${row.pn || row.desc}`);
-  });
   $('#d-focus')?.addEventListener('click', () => { if (viewer?.hasRef(ref3d(row))) { viewer.focusRef(ref3d(row)); if (narrow()) setPane('stage'); } });
   box.querySelectorAll('[data-row]').forEach((b) => b.addEventListener('click', () => jumpToRow(b.dataset.row)));
 }
@@ -453,85 +418,6 @@ function bindSearch() {
   });
 }
 
-// ------------------------------------------------------------------ commande
-
-function renderCartButton() {
-  const n = cart.count();
-  $('#cart-count').textContent = n;
-  $('#cart-btn').classList.toggle('has', n > 0);
-}
-
-function openDrawer() {
-  $('#drawer').hidden = false;
-  let scrim = $('#scrim');
-  if (!scrim) {
-    scrim = document.createElement('div');
-    scrim.id = 'scrim';
-    scrim.className = 'scrim';
-    scrim.addEventListener('click', closeDrawer);
-    document.body.appendChild(scrim);
-  }
-  scrim.hidden = false;
-  renderDrawer();
-}
-
-function closeDrawer() {
-  $('#drawer').hidden = true;
-  const s = $('#scrim');
-  if (s) s.hidden = true;
-}
-
-function renderDrawer() {
-  const eq = S.eq;
-  const d = $('#drawer');
-  const items = cart.items;
-  const embedded = window.self !== window.top;
-  d.innerHTML = `
-    <header><h2>Liste de commande</h2><button type="button" class="btn x" id="c-close">Fermer</button></header>
-    <div class="body">${items.length ? items.map((i) => `
-      <div class="line" data-key="${esc(i.key)}">
-        <span class="pn">${esc(i.pn || i.supplier || 'Sans numéro')}</span>
-        <span class="d">${esc(i.desc)}</span>
-        <span class="w">${esc(i.where.join(' · '))}</span>
-        <span class="stepper"><button type="button" data-step="-1" aria-label="Moins">−</button><input value="${i.qty}" inputmode="numeric" aria-label="Quantité" id="q-${esc(i.key)}"><button type="button" data-step="1" aria-label="Plus">+</button></span>
-        <button type="button" class="rm" data-rm aria-label="Retirer">×</button>
-      </div>`).join('') : `<div class="empty"><strong>La liste est vide.</strong><span>Cliquez une pièce dans la 3D ou dans la liste, puis « Ajouter à la commande ». Les pièces sont regroupées par numéro.</span></div>`}</div>
-    ${items.length ? `<footer>
-      <label for="c-text">Texte de la demande (à coller dans un courriel ou un bon de commande)</label>
-      <textarea id="c-text" readonly>${esc(cart.asText(eq))}</textarea>
-      <div class="actions">
-        <button type="button" class="btn primary" id="c-copy">Copier la demande</button>
-        <button type="button" class="btn" id="c-csv">Copier en CSV</button>
-        ${embedded ? '' : '<button type="button" class="btn" id="c-dl">Télécharger CSV</button>'}
-        <button type="button" class="btn" id="c-clear">Vider</button>
-      </div></footer>` : ''}`;
-  $('#c-close').addEventListener('click', closeDrawer);
-  d.querySelectorAll('.line').forEach((line) => {
-    const key = line.dataset.key;
-    const input = line.querySelector('input');
-    line.querySelectorAll('[data-step]').forEach((b) => b.addEventListener('click', () => cart.setQty(key, (+input.value || 1) + +b.dataset.step)));
-    input.addEventListener('change', () => cart.setQty(key, +input.value || 1));
-    line.querySelector('[data-rm]').addEventListener('click', () => cart.remove(key));
-  });
-  $('#c-copy')?.addEventListener('click', () => copy(cart.asText(eq), 'Demande copiée', $('#c-text')));
-  $('#c-csv')?.addEventListener('click', () => copy(cart.asCsv(eq), 'CSV copié', $('#c-text')));
-  $('#c-dl')?.addEventListener('click', () => {
-    const blob = new Blob(['﻿' + cart.asCsv(eq)], { type: 'text/csv;charset=utf-8' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `commande-${eq.id}.csv`;
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-  });
-  const clear = $('#c-clear');
-  clear?.addEventListener('click', () => {
-    if (clear.dataset.armed) { cart.clear(); return; }
-    clear.dataset.armed = '1';
-    clear.textContent = 'Confirmer : vider';
-    setTimeout(() => { if (clear.isConnected) { delete clear.dataset.armed; clear.textContent = 'Vider'; } }, 3000);
-  });
-}
-
 // ------------------------------------------------------------------ pages du manuel
 
 let zoom = 'fit';
@@ -577,7 +463,7 @@ function renderCatalogue() {
   const c = $('#catalogue');
   c.innerHTML = `<div class="cat-inner">
     <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><h1>Équipements</h1><button type="button" class="btn" data-go="${S.eq.root}" style="margin-left:auto">Retour à la 3D</button></div>
-    <p>Chaque équipement provient d'un manuel de pièces : listes extraites page par page, assemblages en 3D éclatée, schémas, et liste de commande.</p>
+    <p>Chaque équipement provient d'un manuel de pièces : listes extraites page par page, assemblages en 3D éclatée, schémas et contrôle des listes.</p>
     <div class="cards">
       ${S.index.map((e) => `<button type="button" class="card" data-go="${S.eq.root}">
         <img src="${esc(e.thumbnail)}" alt="Couverture du manuel ${esc(e.name)}">
@@ -611,7 +497,6 @@ function bindChrome() {
     if (p) { e.preventDefault(); openPage(p.dataset.page); }
   });
   $('#brand').addEventListener('click', () => go('catalogue'));
-  $('#cart-btn').addEventListener('click', openDrawer);
   document.querySelectorAll('#mtabs button').forEach((b) => b.addEventListener('click', () => setPane(b.dataset.pane)));
   const slider = $('#explode');
   slider.addEventListener('input', () => { S.explode = slider.value / 100; viewer?.setExplode(S.explode, { animate: false }); });
@@ -644,7 +529,6 @@ function bindChrome() {
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
     if (!$('#modal').hidden) closePage();
-    else if (!$('#drawer').hidden) closeDrawer();
     else if (S.selected) select(null);
   });
   bindSearch();
