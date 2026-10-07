@@ -12,10 +12,18 @@ P15125-MRI rév. 03, 28 pages).
 - **Assemblages en 3D** (F04 à F18) : vue générale, chenille, maillons, moteur
   de translation, châssis, plancher, moteur principal et pompes, réservoir
   hydraulique, pompe à eau, toit, mât, tables, tête de rotation.
-- **Vue éclatée animée** (curseur ou boutons), repères numérotés identiques aux
-  bulles du manuel, mode « Isoler » pour estomper les autres pièces.
+- **Vue éclatée à tous les niveaux** : chaque groupe de pièces s'éclate sur
+  place (bouton ▸ dans la liste ou double-clic en 3D), puis chacun de ses
+  sous-groupes, jusqu'au plus petit ensemble du manuel (ex. vue générale ›
+  chenille › maillons F06). « Tout éclater » ouvre tous les niveaux d'un coup.
+  Repères numérotés identiques aux bulles du manuel, mode « Isoler ».
+- **Vue en coupe** : plan de coupe hachuré (longueur, largeur, hauteur),
+  position réglable, sur tout le modèle ou seulement la pièce sélectionnée.
+  « Voir en coupe » est proposé pour les pièces qui ont un intérieur : vérins
+  (piston et tige), filtres (élément filtrant), réservoir d'air, cloche
+  d'accouplement du moteur, et chaque groupe.
 - **Sélection croisée** : cliquer une pièce en 3D sélectionne sa ligne dans la
-  liste, et inversement. Double-clic pour descendre dans un sous-assemblage.
+  liste (y compris dans un sous-groupe éclaté), et inversement.
 - **Recherche** par numéro de pièce, numéro fournisseur ou description, sur
   tout le manuel (assemblages + schémas).
 - **Schémas et listes** (F19 à F28) : hydraulique, pneumatique, télécommande,

@@ -4,7 +4,7 @@
 const AXIS_Y = 0.26; // hauteur de l'axe du moteur au-dessus de ses pattes
 
 export function F10(api) {
-  const { box, cyl, ring, torus, tube, at, group, bolt, nut } = api.S;
+  const { box, cyl, ring, torus, tube, at, group, bolt, nut, shell } = api.S;
   const P = (ref, obj, e) => api.part(ref, obj, e);
   const y = AXIS_Y;
 
@@ -43,7 +43,7 @@ export function F10(api) {
   P('9', cyl(0.052, 0.022, 'black', { axis: 'x', pos: [0.385, y, 0] }), [0.36, 0, 0]);
   P('7', cyl(0.055, 0.05, 'steel', { axis: 'x', pos: [0.42, y, 0] }), [0.47, 0, 0]);
   P('11', group(
-    at(cyl(0.215, 0.2, 'steel', { axis: 'x', r2: 0.13, seg: 36 }), [0.385, y, 0]),
+    at(shell(0.215, 0.195, 0.2, 'steel', { axis: 'x', r2Out: 0.13, r2In: 0.11, seg: 36 }), [0.385, y, 0]),
     at(ring(0.22, 0.13, 0.02, 'steel', { axis: 'x' }), [0.295, y, 0]),
   ), [0.62, 0, 0]);
   P('10', at(box(0.1, 0.008, 0.08, 'orange'), [0.39, y + 0.18, 0], [0, 0, 0.25]), [0.62, 0.3, 0]);
@@ -84,7 +84,7 @@ export function F10(api) {
 }
 
 export function F09(api) {
-  const { box, cyl, ring, torus, tube, at, group, plate, extrude, valveBank, enclosure, ballValve, fitting, filterCanister, gear } = api.S;
+  const { box, cyl, ring, torus, tube, at, group, plate, extrude, valveBank, enclosure, ballValve, fitting, filterCanister, gear, shell } = api.S;
   const P = (ref, obj, e) => api.part(ref, obj, e);
 
   // 1 — Plaque principale avec découpes
@@ -159,7 +159,7 @@ export function F09(api) {
   [-0.18, -0.42].forEach((z) => P('18', group(box(0.06, 0.05, 0.05, 'black'), at(cyl(0.02, 0.06, 'black'), [0, 0.05, 0])).translateX(bx + 0.15).translateY(0.62).translateZ(z), [0, 1.25, 0]));
   // 25 — Admission d'air ; 26 — Filtre atmosphérique ; 27 — élément
   P('25', cyl(0.05, 0.42, 'black', { axis: 'z', pos: [bx - 0.12, 0.6, 0.02] }), [0, 1.2, 0.15]);
-  P('26', group(cyl(0.12, 0.1, 'black'), at(cyl(0.125, 0.015, 'black'), [0, 0.06, 0]), at(cyl(0.012, 0.03, 'steel'), [0, 0.08, 0])).translateX(bx - 0.12).translateY(0.65).translateZ(0.3), [0, 1.45, 0.25]);
+  P('26', group(shell(0.12, 0.108, 0.1, 'black'), at(cyl(0.125, 0.015, 'black'), [0, 0.06, 0]), at(cyl(0.012, 0.03, 'steel'), [0, 0.08, 0])).translateX(bx - 0.12).translateY(0.65).translateZ(0.3), [0, 1.45, 0.25]);
   P('27', group(ring(0.09, 0.05, 0.12, 'cream'), ...Array.from({ length: 16 }, (_, i) => { const a = (i / 16) * Math.PI * 2; return at(box(0.004, 0.12, 0.03, 'darkSteel'), [Math.cos(a) * 0.09, 0, Math.sin(a) * 0.09], [0, -a, 0]); })).translateX(bx - 0.12).translateY(0.64).translateZ(0.3), [0, 1.7, 0.45]);
   // 17 — Boyau 1 1/2" x 34" ; 23 — boyau 2" x 36"
   P('17', tube([[bx + 0.2, 0.5, -0.3], [bx + 0.35, 0.7, -0.1], [bx + 0.5, 0.5, 0.15], [0.55, 0.12, 0.3]], 0.03, 'steel'), [0, 0.95, 0.2]);

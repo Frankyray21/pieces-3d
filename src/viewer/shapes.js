@@ -85,6 +85,37 @@ export function torus(R, r, material = 'rubber', { axis = 'y', pos } = {}) {
   return g;
 }
 
+function flipGeometry(geo) {
+  const idx = geo.index.array;
+  for (let i = 0; i < idx.length; i += 3) { const t = idx[i]; idx[i] = idx[i + 2]; idx[i + 2] = t; }
+  const n = geo.attributes.normal.array;
+  for (let i = 0; i < n.length; i++) n[i] = -n[i];
+  return geo;
+}
+
+/**
+ * Tube à paroi épaisse (fût de vérin, cuve de filtre, cloche) le long de
+ * l'axe donné : intérieur creux visible en vue coupée. r2Out / r2In : rayons
+ * à l'extrémité +axe (pour une forme conique).
+ */
+export function shell(rOut, rIn, len, material = 'steel', { axis = 'y', r2Out, r2In, seg = 32, pos } = {}) {
+  const ro2 = r2Out ?? rOut, ri2 = r2In ?? rIn;
+  const outer = new THREE.CylinderGeometry(ro2, rOut, len, seg, 1, true);
+  const inner = flipGeometry(new THREE.CylinderGeometry(ri2, rIn, len, seg, 1, true));
+  const top = new THREE.RingGeometry(ri2, ro2, seg);
+  top.rotateX(-Math.PI / 2);
+  top.translate(0, len / 2, 0);
+  const bottom = new THREE.RingGeometry(rIn, rOut, seg);
+  bottom.rotateX(Math.PI / 2);
+  bottom.translate(0, -len / 2, 0);
+  const m = mesh(mergeGeometries([outer, inner, top, bottom]), material);
+  orient(m, axis);
+  const g = group(m);
+  g.userData.hasInterior = true;
+  if (pos) g.position.copy(V(pos));
+  return g;
+}
+
 /** Tube suivant une suite de points (boyau, tuyau, cadre tubulaire). */
 export function tube(points, r, material = 'black', { seg = 48, closed = false, tension = 0.5, sharp = false } = {}) {
   const pts = points.map(V);
@@ -244,16 +275,16 @@ export function hydCylinder(len, bore, { material = 'red', rodR, ext = 0.45, eye
   rodR = rodR ?? r * 0.55;
   const barrelLen = len * (1 - ext);
   const g = new THREE.Group();
-  const barrel = cyl(r, barrelLen, material, { axis: 'x' });
-  barrel.position.x = barrelLen / 2;
-  const capA = cyl(r * 1.12, r * 0.5, material, { axis: 'x' });
-  capA.position.x = r * 0.25;
-  const capB = cyl(r * 1.12, r * 0.5, material, { axis: 'x' });
-  capB.position.x = barrelLen - r * 0.25;
-  const rodLen = len - barrelLen;
-  const rd = cyl(rodR, rodLen, 'chrome', { axis: 'x' });
-  rd.position.x = barrelLen + rodLen / 2;
-  g.add(barrel, capA, capB, rd);
+  // Fût creux, fond fermé, presse-étoupe percé, piston et tige à l'intérieur.
+  g.add(at(shell(r, r * 0.8, barrelLen - r, material, { axis: 'x' }), [barrelLen / 2, 0, 0]));
+  g.add(at(cyl(r * 1.12, r * 0.5, material, { axis: 'x' }), [r * 0.25, 0, 0]));
+  g.add(at(ring(r * 1.12, rodR * 1.04, r * 0.5, material, { axis: 'x' }), [barrelLen - r * 0.25, 0, 0]));
+  const pistonX = barrelLen * 0.42;
+  g.add(at(cyl(r * 0.79, r * 0.5, 'darkSteel', { axis: 'x' }), [pistonX, 0, 0]));
+  g.add(at(torus(r * 0.79, r * 0.05, 'rubber', { axis: 'x' }), [pistonX, 0, 0]));
+  const rodLen = len - pistonX;
+  g.add(at(cyl(rodR, rodLen, 'chrome', { axis: 'x' }), [pistonX + rodLen / 2, 0, 0]));
+  g.userData.hasInterior = true;
   if (eyes === 'eye') {
     g.add(at(ring(r * 0.75, r * 0.32, r * 0.7, material, { axis: 'z' }), [-r * 0.6, 0, 0]));
     g.add(at(ring(rodR * 1.5, rodR * 0.6, rodR * 1.3, 'darkSteel', { axis: 'z' }), [len + rodR * 0.9, 0, 0]));
@@ -344,8 +375,9 @@ function axisWrapZ(g, axis) {
 export function filterCanister(r, h, material = 'black', { head = 'darkSteel' } = {}) {
   const g = new THREE.Group();
   g.add(at(box(r * 2.4, r * 0.9, r * 2.0, head, { r: r * 0.15 }), [0, -r * 0.45, 0]));
-  g.add(at(cyl(r, h - r * 1.3, material), [0, -r * 0.9 - (h - r * 1.3) / 2, 0]));
+  g.add(at(shell(r, r * 0.86, h - r * 1.3, material), [0, -r * 0.9 - (h - r * 1.3) / 2, 0]));
   g.add(at(cyl(r * 0.85, r * 0.4, material, { r2: r }), [0, -h + r * 0.2, 0]));
+  g.userData.hasInterior = true;
   return g;
 }
 

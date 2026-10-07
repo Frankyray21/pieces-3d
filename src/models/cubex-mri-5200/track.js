@@ -45,8 +45,12 @@ function shoeGeometry(pitch, width) {
   return mergeGeometries(parts.map((g) => g.toNonIndexed()));
 }
 
-/** Chaîne complète (patins + maillons + axes) en InstancedMesh. */
-function chain(api) {
+/**
+ * Chaîne complète (patins + maillons + axes) en InstancedMesh. Les positions
+ * du brin supérieur proches de `gaps` (x) sont laissées vides pour accueillir
+ * les maillons détaillés de la feuille F06.
+ */
+function chain(api, gaps = []) {
   const { half, pathR, wheelY, shoes, width } = TRACK;
   const L = 4 * half + 2 * Math.PI * pathR;
   const pitch = L / shoes;
@@ -61,8 +65,17 @@ function chain(api) {
   const m = new THREE.Matrix4();
   const q = new THREE.Quaternion();
   const s1 = new THREE.Vector3(1, 1, 1);
+  const zero = new THREE.Matrix4().makeScale(0, 0, 0);
+  const inGap = (p, n) => n[1] > 0.99 && gaps.some((x) => Math.abs(p[0] - x) < pitch * 0.85);
   for (let i = 0; i < shoes; i++) {
     const { p, n } = stadium((i + 0.5) * pitch, TRACK);
+    if (inGap(p, n)) {
+      shoesM.setMatrixAt(i, zero);
+      linksM.setMatrixAt(i * 2, zero);
+      linksM.setMatrixAt(i * 2 + 1, zero);
+      pinsM.setMatrixAt(i, zero);
+      continue;
+    }
     const ang = Math.atan2(n[1], n[0]) + Math.PI / 2; // normale (0,-1) → angle 0
     q.setFromAxisAngle(new THREE.Vector3(0, 0, 1), ang);
     // Patin : face extérieure vers la normale.
@@ -90,8 +103,14 @@ export function F05(api, opts = {}) {
   const { wheelY, half } = TRACK;
   const P = (ref, obj, e, o) => api.part(ref, obj, e, o);
 
-  // 1 — Chaîne / patins
-  P('1', chain(api), [0, 0, 0.95]);
+  // 1 — Chaîne / patins : chaîne simplifiée + un ensemble standard et un
+  // ensemble maître détaillés (F06) sur le brin supérieur, éclatables sur place.
+  const links = api.sub('F06');
+  links.position.set(0.08, 0.51, 0);
+  const ch = chain(api, [-0.3, 0.46]);
+  ch.position.set(-0.08, -0.51, 0);
+  links.add(ch);
+  P('1', links, [0, 0, 0.95]);
 
   // 18 — Cadre de chenille (caisson ouvert)
   const frame = group(

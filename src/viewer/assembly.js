@@ -82,6 +82,11 @@ function finalize(model) {
     refs.get(r).push(p);
   });
   model.refs = refs;
+  // Chaque assemblage (et chaque sous-assemblage inséré par api.sub) est un
+  // « groupe » éclatable sur place par la visionneuse.
+  root.userData.isAssembly = true;
+  root.userData.assemblyId = model.id;
+  root.userData.parts = parts;
   return model;
 }
 
