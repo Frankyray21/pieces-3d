@@ -3,9 +3,10 @@ import { Viewer } from './viewer/Viewer.js';
 import { buildProcedural } from './viewer/assembly.js';
 import { loadIndex, loadEquipment, search, sourceLabel } from './data/equipment.js';
 import cubexModels from './models/cubex-mri-5200/index.js';
+import du311Models from './models/du311/index.js';
 
 // Modèles 3D disponibles par équipement (builders procéduraux).
-const MODELS = { 'cubex-mri-5200': cubexModels };
+const MODELS = { 'cubex-mri-5200': cubexModels, du311: du311Models };
 
 const $ = (sel) => document.querySelector(sel);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));

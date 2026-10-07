@@ -1,0 +1,21 @@
+{
+  "id": "du311",
+  "name": "DU311",
+  "manufacturer": "",
+  "category": "",
+  "serial": "",
+  "document": {
+    "title": "",
+    "reference": "",
+    "preparedBy": "",
+    "date": "",
+    "sheets": 0,
+    "pagePattern": "pages/{sheet}.jpg"
+  },
+  "specs": [],
+  "weights": [],
+  "sheetTitles": {},
+  "root": "",
+  "assemblies": {},
+  "documents": []
+}
