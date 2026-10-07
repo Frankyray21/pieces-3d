@@ -49,5 +49,5 @@ export function F13(api) {
     P('18', at(cyl(0.035, 0.22, 'cream'), [0.62, T - 0.2, z]), [0, -0.75, 0]);
   });
   void ballValve;
-  return { view: { dir: [0.9, 0.75, 1.05] } };
+  return { view: { dir: [0.9, 0.75, 1.05], section: { axis: 'y', pos: 0.75 } } };
 }

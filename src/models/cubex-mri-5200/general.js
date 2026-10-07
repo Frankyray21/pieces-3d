@@ -83,5 +83,6 @@ export function F04(api) {
   ).translateX(sx).translateY(sh + 0.015).translateZ(sz), [0.3, 0.45, 1.25]);
 
   void ring;
-  return { view: { dir: [1, 0.55, 1.15] } };
+  // La console posée à côté élargit la boîte : le plan par défaut passe par l'axe de la machine.
+  return { view: { dir: [1, 0.55, 1.15], section: { axis: 'z', pos: 0.29 } } };
 }

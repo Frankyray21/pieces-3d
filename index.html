@@ -32,19 +32,33 @@
       <div class="docview" id="docview" hidden></div>
       <div class="tools" id="tools">
         <div class="explode">
-          <button type="button" class="tbtn" id="btn-assemble" title="Assembler">Assembler</button>
-          <label class="sr" for="explode">Vue éclatée</label>
+          <button type="button" class="tbtn" id="btn-assemble" title="Tout rassembler">Assembler</button>
+          <label class="sr" for="explode">Éclatement de l'assemblage affiché</label>
           <input id="explode" type="range" min="0" max="100" value="0">
-          <button type="button" class="tbtn" id="btn-explode" title="Éclater">Éclater</button>
+          <button type="button" class="tbtn" id="btn-explode" title="Éclater l'assemblage affiché">Éclater</button>
+          <button type="button" class="tbtn strong" id="btn-explode-all" title="Éclater chaque groupe jusqu'au plus petit ensemble">Tout éclater</button>
         </div>
         <div class="tgroup">
+          <button type="button" class="tbtn" id="btn-section" aria-pressed="false" title="Vue en coupe">Coupe</button>
           <button type="button" class="tbtn" id="btn-labels" aria-pressed="true" title="Afficher les repères du manuel">Repères</button>
           <button type="button" class="tbtn" id="btn-isolate" aria-pressed="false" title="Estomper les autres pièces">Isoler</button>
           <button type="button" class="tbtn" id="btn-frame" title="Recadrer">Recadrer</button>
           <button type="button" class="tbtn" id="btn-page" title="Voir la page du manuel">Page du manuel</button>
         </div>
+        <div class="sectionbar" id="sectionbar" hidden>
+          <span class="lbl">Plan de coupe</span>
+          <div class="seg" role="group" aria-label="Orientation du plan de coupe">
+            <button type="button" class="tbtn" data-axis="x" aria-pressed="false">Longueur</button>
+            <button type="button" class="tbtn" data-axis="z" aria-pressed="true">Largeur</button>
+            <button type="button" class="tbtn" data-axis="y" aria-pressed="false">Hauteur</button>
+          </div>
+          <label class="sr" for="secpos">Position du plan de coupe</label>
+          <input id="secpos" type="range" min="2" max="98" value="50">
+          <button type="button" class="tbtn" id="sec-flip">Inverser</button>
+          <button type="button" class="tbtn" id="sec-scope" aria-pressed="false" title="Couper seulement la pièce ou le groupe sélectionné">Pièce sélectionnée</button>
+        </div>
       </div>
-      <p class="hint" id="hint">Cliquez une pièce pour l'identifier · double-clic : ouvrir le sous-assemblage · glisser : tourner · clic droit : déplacer</p>
+      <p class="hint" id="hint">Clic : identifier une pièce · double-clic sur un groupe : l'éclater sur place · glisser : tourner · clic droit : déplacer</p>
       <div class="titleblock" id="titleblock"></div>
       <div class="loading" id="loading" hidden>Construction du modèle…</div>
     </section>

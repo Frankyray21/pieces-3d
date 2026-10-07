@@ -49,7 +49,7 @@ export function F12(api) {
 }
 
 export function F11(api) {
-  const { box, cyl, ring, tube, at, group, extrude, valveBank, enclosure, ballValve, fitting, filterCanister, gauge } = api.S;
+  const { box, cyl, ring, tube, at, group, extrude, valveBank, enclosure, ballValve, fitting, filterCanister, gauge, shell } = api.S;
   const P = (ref, obj, e) => api.part(ref, obj, e);
   const H = 0.9, HX = 0.42, HZ = 0.62;
 
@@ -130,7 +130,7 @@ export function F11(api) {
   }
 
   // Face avant (+X) : 29 filtre retour (+30 élément), 32 collecteur retour, 31 vanne 1 1/2", 33 valve ASCO, 28 niveau
-  P('29', at(group(cyl(0.07, 0.07, 'darkSteel'), at(cyl(0.065, 0.2, 'lightGrey'), [0, -0.13, 0])), [HX + 0.08, 0.58, -0.35]), [0.4, 0.1, 0]);
+  P('29', at(group(cyl(0.07, 0.07, 'darkSteel'), at(shell(0.065, 0.056, 0.2, 'lightGrey'), [0, -0.13, 0])), [HX + 0.08, 0.58, -0.35]), [0.4, 0.1, 0]);
   P('30', at(cyl(0.045, 0.16, 'cream'), [HX + 0.08, 0.44, -0.35]), [0.65, -0.1, 0]);
   P('32', at(box(0.08, 0.1, 0.3, 'black', { r: 0.01 }), [HX + 0.04, 0.12, -0.05]), [0.35, -0.1, 0]);
   P('31', at(ballValve(0.04, 'brass', { axis: 'x' }), [HX + 0.12, 0.12, -0.32]), [0.45, -0.1, -0.1]);
@@ -143,5 +143,5 @@ export function F11(api) {
   }
   P('12', group(cyl(0.015, 0.06, 'steel', { axis: 'z' }), at(cyl(0.02, 0.025, 'black', { axis: 'z' }), [0, 0, 0.04])).translateX(-0.07).translateY(0.12).translateZ(HZ + 0.03), [0, -0.05, 0.4]);
   void tube;
-  return { view: { dir: [0.85, 0.7, 1.1] } };
+  return { view: { dir: [0.85, 0.7, 1.1], section: { axis: 'x' } } };
 }

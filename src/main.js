@@ -4,6 +4,7 @@ import { buildProcedural } from './viewer/assembly.js';
 import { loadIndex, loadEquipment, search, sourceLabel } from './data/equipment.js';
 import cubexModels from './models/cubex-mri-5200/index.js';
 import du311Models from './models/du311/index.js';
+import './ui/resize.js';
 
 // Modèles 3D disponibles par équipement (builders procéduraux).
 const MODELS = { 'cubex-mri-5200': cubexModels, du311: du311Models };
@@ -11,16 +12,19 @@ const MODELS = { 'cubex-mri-5200': cubexModels, du311: du311Models };
 const $ = (sel) => document.querySelector(sel);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const narrow = () => window.matchMedia('(max-width: 900px)').matches;
+const keyOf = (path) => path.join('>');
 
 const S = {
   index: [],
   eq: null,
   view: null, // { type: 'assembly' | 'document' | 'issues', id }
-  selected: null,
+  selected: null, // chemin de repères depuis l'assemblage affiché, ex. ['F14', '1', '4']
+  expanded: new Set(), // groupes éclatés sur place (clés de chemins)
   filter: '',
   labels: true,
   isolate: false,
   explode: 0,
+  section: { on: false, axis: 'z', pos: 0.5, flip: false, scope: 'all' },
 };
 let viewer = null;
 
@@ -81,17 +85,52 @@ function go(token) {
   else location.hash = h;
 }
 
+// ------------------------------------------------------------------ chemins dans l'arbre des pièces
+
+function isAsmView() {
+  return S.view?.type === 'assembly';
+}
+
+/** Ligne de la liste désignée par un chemin (assemblage affiché → sous-groupes). */
+function rowAt(path) {
+  if (!path?.length) return null;
+  if (S.view.type === 'document') return S.eq.documents.get(S.view.id).parts.find((r) => r.ref === path[0]) || null;
+  let asm = S.eq.assemblies.get(S.view.id);
+  let row = null;
+  for (let i = 0; i < path.length; i++) {
+    row = asm?.parts.find((p) => p.ref === path[i]) || null;
+    if (!row) return null;
+    if (i < path.length - 1) asm = S.eq.assemblies.get(row.link);
+  }
+  return row;
+}
+
+/** Chemin des objets 3D (les pièces gauches symétriques pointent vers la pièce droite). */
+function path3d(path) {
+  const out = [];
+  for (let i = 0; i < path.length; i++) {
+    const row = rowAt(path.slice(0, i + 1));
+    out.push(row?.mirrorOf || path[i]);
+  }
+  return out;
+}
+
+function isGroupPath(path) {
+  if (!is3d()) return false;
+  const row = rowAt(path);
+  return !!row?.link && viewer.isGroup(path3d(path));
+}
+
 // ------------------------------------------------------------------ assemblages 3D
 
 function ensureViewer() {
   if (viewer) return viewer;
   viewer = new Viewer($('#viewport'), {
-    onHover: (ref) => markRow(ref, 'hov'),
-    onSelect: (ref, { double }) => {
-      if (!ref) { select(null); return; }
-      const row = rowFor3d(ref);
-      if (double && row?.link) { go(row.link); return; }
-      select(row ? row.ref : ref, { from3d: true });
+    onHover: (path) => markRow(path, 'hov'),
+    onSelect: (path, { double }) => {
+      if (!path) { select(null); return; }
+      if (double && isGroupPath(path)) { toggleGroup(path); return; }
+      select(path, { from3d: true });
     },
   });
   viewer.setLabels(S.labels);
@@ -100,26 +139,13 @@ function ensureViewer() {
 
 // Vrai quand la vue courante est un assemblage modélisé en 3D (sinon : dessins du manuel).
 function is3d() {
-  return !!viewer && S.view?.type === 'assembly' && S.view.is3d;
+  return !!viewer && isAsmView() && S.view.is3d;
 }
 
-function currentAssembly() {
-  return S.view?.type === 'assembly' ? S.eq.assemblies.get(S.view.id) : null;
-}
-
-function rowFor3d(ref) {
-  const asm = currentAssembly();
-  return asm?.parts.find((p) => p.ref === ref) || null;
-}
-
-function ref3d(row) {
-  return row.mirrorOf || row.ref;
-}
-
-async function openAssembly(id, { select: selRef = null } = {}) {
+async function openAssembly(id, { select: selPath = null } = {}) {
   const eq = S.eq;
   const asm = eq.assemblies.get(id);
-  const same = S.view?.type === 'assembly' && S.view.id === id;
+  const same = isAsmView() && S.view.id === id;
   const builders = MODELS[eq.id] || {};
   const has3d = !!builders[id];
   S.view = { type: 'assembly', id, is3d: has3d };
@@ -131,29 +157,75 @@ async function openAssembly(id, { select: selRef = null } = {}) {
   $('#hint').hidden = !has3d;
   document.title = `${asm.titleFr} · ${eq.name} · Pièces 3D`;
   if (!has3d) {
-    if (!same) { S.selected = null; showSheets(asm.sheets || [id]); }
+    if (!same) { S.selected = null; S.expanded.clear(); showSheets(asm.sheets || [id]); }
+    renderSectionBar();
   } else if (!same) {
     S.selected = null;
+    S.expanded.clear();
+    S.section = { ...S.section, on: false, scope: 'all' };
     const v = ensureViewer();
     $('#loading').hidden = false;
     await new Promise((r) => requestAnimationFrame(() => setTimeout(r, 0)));
     const model = buildProcedural(builders, id);
     $('#loading').hidden = true;
     if (model) {
-      v.setExplode(0, { animate: false });
       v.setModel(model);
       v.setIsolate(S.isolate);
+      S.section.axis = model.view.section?.axis || 'z';
+      S.section.pos = model.view.section?.pos ?? 0.5;
       if (S.explode > 0) {
         v.setExplode(S.explode);
-        v.frame({ exploded: S.explode > 0.3 });
+        v.frame();
       }
     }
+    renderSectionBar();
   }
   renderRail();
   renderCrumbs();
   renderTitleblock(asm);
   renderPanel();
-  if (selRef) select(selRef, { focus: true });
+  if (selPath) select(selPath, { focus: true });
+}
+
+/** Éclate (ou rassemble) un groupe sur place, avec ses parents. */
+function toggleGroup(path, force) {
+  if (!viewer || !isGroupPath(path)) return;
+  const key = keyOf(path);
+  const open = force ?? !S.expanded.has(key);
+  if (open) {
+    if (S.explode < 0.99) setMainExplode(1, { frame: false });
+    for (let i = 1; i <= path.length; i++) {
+      const sub = path.slice(0, i);
+      if (!isGroupPath(sub)) continue;
+      S.expanded.add(keyOf(sub));
+      viewer.setGroupExplode(path3d(sub), 1);
+    }
+    viewer.focusPath(path3d(path));
+  } else {
+    for (const k of [...S.expanded]) if (k === key || k.startsWith(`${key}>`)) S.expanded.delete(k);
+    viewer.setGroupExplode(path3d(path), 0);
+    viewer.focusPath(path3d(path));
+  }
+  renderRows();
+  renderDetail();
+}
+
+function setMainExplode(t, { frame = true } = {}) {
+  S.explode = t;
+  $('#explode').value = Math.round(t * 100);
+  viewer?.setExplode(t);
+  if (frame) viewer?.frame();
+}
+
+function explodeEverything(on) {
+  if (!viewer) return;
+  S.explode = on ? 1 : 0;
+  $('#explode').value = on ? 100 : 0;
+  viewer.explodeAll(on ? 1 : 0);
+  S.expanded = new Set(on ? viewer.groupPaths().map(keyOf) : []);
+  viewer.frame();
+  renderRows();
+  renderDetail();
 }
 
 // ------------------------------------------------------------------ documents (schémas + listes)
@@ -167,6 +239,7 @@ function openDocument(id) {
   document.title = `${doc.titleFr} · ${eq.name} · Pièces 3D`;
   $('#viewport').hidden = true;
   $('#tools').hidden = true;
+  $('#sectionbar').hidden = true;
   $('#hint').hidden = true;
   $('#titleblock').hidden = true;
   showSheets(doc.sheets);
@@ -243,14 +316,14 @@ function renderRail() {
 
 function renderCrumbs() {
   const eq = S.eq;
-  const parts = [];
-  if (S.view.type === 'assembly') {
+  const chain = [];
+  if (isAsmView()) {
     let id = S.view.id;
-    while (id) { parts.unshift(id); id = eq.assemblies.get(id).parent; }
+    while (id) { chain.unshift(id); id = eq.assemblies.get(id).parent; }
   }
   const items = [`<button type="button" data-go="${eq.root}">${esc(eq.name)}</button>`];
-  if (S.view.type === 'assembly') {
-    parts.forEach((id, i) => items.push(`<button type="button" class="${i === parts.length - 1 ? 'cur' : ''}" data-go="${id}">${id} · ${esc(eq.assemblies.get(id).titleFr)}</button>`));
+  if (isAsmView()) {
+    chain.forEach((id, i) => items.push(`<button type="button" class="${i === chain.length - 1 ? 'cur' : ''}" data-go="${id}">${id} · ${esc(eq.assemblies.get(id).titleFr)}</button>`));
   } else if (S.view.type === 'document') {
     const d = eq.documents.get(S.view.id);
     items.push(`<button type="button" class="cur" data-go="${d.id}">${esc(d.titleFr)}</button>`);
@@ -264,22 +337,21 @@ function renderTitleblock(asm) {
   const eq = S.eq;
   const ref = eq.document.reference.split(',')[0];
   $('#titleblock').innerHTML = `
+    <button type="button" class="tb-page" data-page="${asm.sheet}" title="Ouvrir la page ${asm.sheet} du manuel">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2.5h8.5L19 7v14.5H6z"/><path d="M14.5 2.5V7H19"/><path d="M9 11h7M9 14h7M9 17h4.5"/></svg>
+      <strong>${asm.sheet}</strong><small>Manuel</small>
+    </button>
+    <div class="tb-grid">
     <div><span class="k">Projet</span><span class="v">${esc(eq.name)}</span></div>
     <div><span class="k">Client</span><span class="v">${esc(eq.manufacturer)}</span></div>
     <div class="wide"><span class="k">Titre</span><span class="v">${esc(asm.title)}</span></div>
     <div><span class="k">Feuille</span><span class="v">${asm.sheet} · ${asm.parts.length} lignes</span></div>
     <div><span class="k">Préparé</span><span class="v">${esc(eq.document.date)}</span></div>
-    <div class="wide"><span class="v dwg">${asm.pn ? `${esc(asm.pn)} rév. ${esc(asm.rev || '0')}` : `${esc(ref)}-${asm.sheet}-03`}</span></div>`;
+    <div class="wide"><span class="v dwg">${asm.pn ? `${esc(asm.pn)} rév. ${esc(asm.rev || '0')}` : `${esc(ref)}-${asm.sheet}-03`}</span></div>
+    </div>`;
 }
 
 // ------------------------------------------------------------------ panneau des pièces
-
-function viewRows() {
-  const eq = S.eq;
-  if (S.view.type === 'assembly') return eq.assemblies.get(S.view.id).parts;
-  if (S.view.type === 'document') return eq.documents.get(S.view.id).parts;
-  return [];
-}
 
 function renderPanel() {
   const eq = S.eq;
@@ -298,7 +370,7 @@ function renderPanel() {
     panel.querySelectorAll('[data-row]').forEach((b) => b.addEventListener('click', () => jumpToRow(b.dataset.row)));
     return;
   }
-  const isAsm = S.view.type === 'assembly';
+  const isAsm = isAsmView();
   const src = isAsm ? eq.assemblies.get(S.view.id) : eq.documents.get(S.view.id);
   const list = isAsm ? [src.sheet] : src.sheets;
   const sheets = list.length > 3 ? `${list[0]} à ${list[list.length - 1]}` : list.join(' / ');
@@ -324,65 +396,97 @@ function sevRank(r) {
   return r.flags.some((f) => f.level === 'error') ? 2 : 1;
 }
 
-function renderRows() {
+/** Lignes affichées : l'assemblage courant, et sous chaque groupe éclaté, ses propres pièces. */
+function visibleRows() {
   const q = S.filter.trim().toUpperCase();
-  const rows = viewRows().filter((r) => !q || `${r.ref} ${r.pn} ${r.desc} ${r.supplier || ''}`.toUpperCase().includes(q));
+  const out = [];
+  const match = (r) => !q || `${r.ref} ${r.pn} ${r.desc} ${r.supplier || ''}`.toUpperCase().includes(q);
+  if (S.view.type === 'document') {
+    S.eq.documents.get(S.view.id).parts.forEach((r) => { if (match(r)) out.push({ r, path: [r.ref], depth: 0 }); });
+    return out;
+  }
+  const walk = (asm, prefix, depth) => {
+    for (const r of asm.parts) {
+      const path = [...prefix, r.ref];
+      const group = isGroupPath(path);
+      const open = group && S.expanded.has(keyOf(path));
+      if (match(r) || open) out.push({ r, path, depth, group, open });
+      if (open) walk(S.eq.assemblies.get(r.link), path, depth + 1);
+    }
+  };
+  walk(S.eq.assemblies.get(S.view.id), [], 0);
+  return out;
+}
+
+function renderRows() {
   const tb = $('#rows');
   if (!tb) return;
-  tb.innerHTML = rows.map((r) => {
+  const selKey = S.selected ? keyOf(S.selected) : '';
+  const rows = visibleRows();
+  tb.innerHTML = rows.map(({ r, path, depth, group, open }) => {
     const f = r.flags.find((x) => x.level === 'error') || r.flags.find((x) => x.level === 'warn');
     const ico = f ? `<span class="ico ${f.level}" title="${esc(f.text)}">${f.level === 'error' ? '✕' : '!'}</span>` : '';
     const sub = r.ref.includes('.');
-    const refTxt = r.link && r.pseudo ? '→' : sub ? '↳' : esc(r.ref);
+    const refTxt = sub ? '↳' : esc(r.ref);
     const pn = r.pn ? esc(r.pn) : r.nss ? '<span title="Non vendu séparément">NSS</span>' : r.supplier ? `<span title="N° fournisseur">${esc(r.supplier)}</span>` : '<span class="ico warn">—</span>';
-    return `<tr data-ref="${esc(r.ref)}" class="${sub ? 'sub-row' : ''} ${r.ref === S.selected ? 'sel' : ''}">
-      <td class="c-ref"><span class="${r.link ? 'link' : ''}">${refTxt}</span></td>
+    const key = keyOf(path);
+    const tog = group
+      ? `<button type="button" class="tog" data-tog="${esc(key)}" aria-expanded="${open}" title="${open ? 'Rassembler ce groupe' : 'Éclater ce groupe sur place'}" aria-label="${open ? 'Rassembler' : 'Éclater'} le groupe ${esc(r.desc)}">${open ? '▾' : '▸'}</button>`
+      : '<span class="tog-sp"></span>';
+    return `<tr data-key="${esc(key)}" data-key3d="${esc(keyOf(path3d(path)))}" class="${sub ? 'sub-row' : ''} ${depth ? 'nested' : ''} ${key === selKey ? 'sel' : ''}">
+      <td class="c-ref" style="--d:${depth}">${tog}<span class="refb ${r.link ? 'link' : ''}">${refTxt}</span></td>
       <td class="c-pn">${pn}${ico}</td>
       <td class="c-qty">${r.qty ?? '—'}</td>
-      <td class="c-desc">${esc(r.desc)}${r.link ? ` <span class="linkchip">${r.link} ›</span>` : ''}</td>
+      <td class="c-desc">${esc(r.desc)}${r.link ? ` <button type="button" class="linkchip" data-go="${r.link}" title="Ouvrir la page ${r.link}">${r.link} ›</button>` : ''}</td>
     </tr>`;
   }).join('') || '<tr><td colspan="4" style="padding:18px 14px;color:var(--muted)">Aucune ligne ne correspond au filtre.</td></tr>';
-  tb.querySelectorAll('tr[data-ref]').forEach((tr) => {
-    const ref = tr.dataset.ref;
-    tr.addEventListener('click', () => select(ref, { focus: true }));
-    tr.addEventListener('dblclick', () => { const r = rowByRef(ref); if (r?.link) go(r.link); });
-    tr.addEventListener('mouseenter', () => { const r = rowByRef(ref); if (is3d() && r) viewer.setHover(ref3d(r)); });
+  const byKey = new Map(rows.map((x) => [keyOf(x.path), x]));
+  tb.querySelectorAll('tr[data-key]').forEach((tr) => {
+    const item = byKey.get(tr.dataset.key);
+    tr.addEventListener('click', (e) => {
+      if (e.target.closest('[data-tog], [data-go]')) return;
+      select(item.path, { focus: true });
+    });
+    tr.addEventListener('dblclick', (e) => {
+      if (e.target.closest('[data-tog], [data-go]')) return;
+      if (item.group) toggleGroup(item.path);
+    });
+    tr.addEventListener('mouseenter', () => { if (is3d()) viewer.setHover(path3d(item.path)); });
     tr.addEventListener('mouseleave', () => viewer?.setHover(null));
   });
+  tb.querySelectorAll('[data-tog]').forEach((b) => b.addEventListener('click', () => toggleGroup(byKey.get(b.dataset.tog).path)));
 }
 
-function rowByRef(ref) {
-  return viewRows().find((r) => r.ref === ref) || null;
-}
-
-function markRow(ref, cls) {
+function markRow(path, cls) {
   document.querySelectorAll(`#rows tr.${cls}`).forEach((tr) => tr.classList.remove(cls));
-  if (!ref) return;
-  const rows = viewRows().filter((r) => ref3d(r) === ref);
-  rows.forEach((r) => document.querySelector(`#rows tr[data-ref="${CSS.escape(r.ref)}"]`)?.classList.add(cls));
+  if (!path) return;
+  document.querySelectorAll(`#rows tr[data-key3d="${CSS.escape(keyOf(path))}"]`).forEach((tr) => tr.classList.add(cls));
 }
 
-function select(ref, { focus = false, from3d = false } = {}) {
-  S.selected = ref;
-  const row = ref ? rowByRef(ref) : null;
+function select(path, { focus = false, from3d = false } = {}) {
+  S.selected = path?.length ? path : null;
+  const row = S.selected ? rowAt(S.selected) : null;
   document.querySelectorAll('#rows tr.sel').forEach((tr) => tr.classList.remove('sel'));
   if (row) {
-    const tr = document.querySelector(`#rows tr[data-ref="${CSS.escape(ref)}"]`);
+    const tr = document.querySelector(`#rows tr[data-key="${CSS.escape(keyOf(S.selected))}"]`);
     tr?.classList.add('sel');
     if (tr && from3d) tr.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   }
   if (is3d()) {
-    viewer.setSelected(row ? ref3d(row) : null);
-    if (row && focus && viewer.hasRef(ref3d(row)) && !narrow()) viewer.focusRef(ref3d(row));
+    const p3 = row ? path3d(S.selected) : null;
+    viewer.setSelected(p3);
+    if (row && focus && viewer.resolve(p3).length && !narrow()) viewer.focusPath(p3);
   }
   renderDetail();
+  renderSectionBar();
   if (row && from3d && narrow()) toast(`Réf. ${row.ref} · ${row.pn || '—'} · ${row.desc}`, 3500);
 }
 
 function renderDetail() {
   const box = $('#detail');
   if (!box) return;
-  const row = S.selected ? rowByRef(S.selected) : null;
+  const path = S.selected;
+  const row = path ? rowAt(path) : null;
   if (!row) { box.hidden = true; box.innerHTML = ''; return; }
   const eq = S.eq;
   box.hidden = false;
@@ -392,24 +496,45 @@ function renderDetail() {
   const used = others.length ? `<div class="meta">Aussi listé : <span class="lnk">${others.map((o) => `<button type="button" class="chip" data-row="${esc(o.key)}">${o.source.sheet} réf. ${esc(o.ref)}</button>`).join(' ')}</span></div>` : '';
   const mirror = row.mirrorOf ? `<div class="flag info">Pièce symétrique (côté gauche) : la 3D met en évidence la pièce droite, réf. ${esc(row.mirrorOf)}.</div>` : '';
   const ids = [row.supplier && `Fournisseur ${esc(row.supplier)}`, row.sandvik && row.sandvik !== 'N/A' && `Sandvik ${esc(row.sandvik)}`].filter(Boolean).join(' · ');
+  // Fil du groupe : où se trouve la pièce dans l'arbre des sous-assemblages.
+  const trail = path.length > 1 ? `<div class="trail">Dans ${path.slice(0, -1).map((_, i) => {
+    const g = rowAt(path.slice(0, i + 1));
+    return `<button type="button" class="chip" data-sel="${esc(keyOf(path.slice(0, i + 1)))}">${esc(g.link)} · ${esc(eq.assemblies.get(g.link)?.titleFr || g.desc)}</button>`;
+  }).join(' › ')}</div>` : '';
+  const group = isGroupPath(path);
+  const open = group && S.expanded.has(keyOf(path));
+  const p3 = is3d() ? path3d(path) : null;
+  const cutHere = p3 && viewer?.hasInterior(p3);
+  const cutActive = S.section.on && S.section.scope === 'selection';
   box.innerHTML = `
     <div class="row1">
-      <span class="ref ${long ? 'long' : ''}">${esc(row.ref)}</span>
+      <span class="ref ${long ? 'long' : ''}">${long ? '▸' : esc(row.ref)}</span>
       <div style="min-width:0"><h3>${esc(row.desc)}</h3>
         <div class="meta">${row.qty != null ? `Qté au manuel : ${row.qty}` : 'Qté non indiquée'} · feuille ${row.source.sheet}${ids ? ` · ${ids}` : ''}</div></div>
       <button type="button" class="close" id="d-close" aria-label="Fermer la fiche">×</button>
     </div>
-    <div class="pnline">${row.pn ? `<span class="pnbig">${esc(row.pn)}</span><button type="button" class="chip" id="d-copy">Copier le n°</button>` : `<span class="meta">${row.supplier ? `N° fournisseur : <span class="mono">${esc(row.supplier)}</span>` : 'Aucun numéro de pièce'}</span>`}</div>
+    ${trail}
+    <div class="pnline">${row.pn ? `<span class="pnbig">${esc(row.pn)}</span>` : `<span class="meta">${row.supplier ? `N° fournisseur : <span class="mono">${esc(row.supplier)}</span>` : 'Aucun numéro de pièce'}</span>`}</div>
     ${mirror}${flags}${used}
     <div class="actions">
-      ${row.link ? `<button type="button" class="btn" data-go="${row.link}">Ouvrir ${row.link} ›</button>` : ''}
+      ${group ? `<button type="button" class="btn primary" id="d-tog">${open ? 'Rassembler ce groupe' : 'Éclater ce groupe'}</button>` : ''}
+      ${cutHere ? `<button type="button" class="btn" id="d-cut">${cutActive ? 'Quitter la coupe' : 'Voir en coupe'}</button>` : ''}
       ${is3d() ? '<button type="button" class="btn" id="d-focus">Centrer</button>' : ''}
+      ${row.link ? `<button type="button" class="btn" data-go="${row.link}">Ouvrir ${row.link} ›</button>` : ''}
       ${row.see ? row.see.map((s) => `<button type="button" class="btn" data-page="${s}">Voir ${s}</button>`).join('') : ''}
     </div>`;
   $('#d-close').addEventListener('click', () => select(null));
-  $('#d-copy')?.addEventListener('click', () => copy(row.pn, `N° ${row.pn} copié`));
-  $('#d-focus')?.addEventListener('click', () => { if (viewer?.hasRef(ref3d(row))) { viewer.focusRef(ref3d(row)); if (narrow()) setPane('stage'); } });
+  $('#d-tog')?.addEventListener('click', () => toggleGroup(path));
+  $('#d-cut')?.addEventListener('click', () => {
+    if (cutActive) setSection({ on: false });
+    else {
+      setSection({ on: true, scope: 'selection', ...viewer.autoSection(p3) });
+      viewer.focusPath(p3);
+    }
+  });
+  $('#d-focus')?.addEventListener('click', () => { viewer?.focusPath(p3); if (narrow()) setPane('stage'); });
   box.querySelectorAll('[data-row]').forEach((b) => b.addEventListener('click', () => jumpToRow(b.dataset.row)));
+  box.querySelectorAll('[data-sel]').forEach((b) => b.addEventListener('click', () => select(b.dataset.sel.split('>'), { focus: true })));
 }
 
 function jumpToRow(key) {
@@ -417,15 +542,37 @@ function jumpToRow(key) {
   const r = eq.rows.find((x) => x.key === key);
   if (!r) return;
   if (r.source.type === 'assembly') {
-    if (S.view?.type === 'assembly' && S.view.id === r.source.id) select(r.ref, { focus: true });
-    else { history.replaceState(null, '', `#${hashFor(r.source.id)}`); openAssembly(r.source.id, { select: r.ref }); }
+    if (isAsmView() && S.view.id === r.source.id) select([r.ref], { focus: true });
+    else { history.replaceState(null, '', `#${hashFor(r.source.id)}`); openAssembly(r.source.id, { select: [r.ref] }); }
   } else {
     history.replaceState(null, '', `#${hashFor(r.source.id)}`);
     openDocument(r.source.id);
-    select(r.ref);
-    document.querySelector(`#rows tr[data-ref="${CSS.escape(r.ref)}"]`)?.scrollIntoView({ block: 'center' });
+    select([r.ref]);
+    document.querySelector(`#rows tr[data-key="${CSS.escape(r.ref)}"]`)?.scrollIntoView({ block: 'center' });
   }
   if (narrow()) setPane('panel');
+}
+
+// ------------------------------------------------------------------ vue en coupe
+
+function setSection(patch) {
+  S.section = { ...S.section, ...patch };
+  if (S.section.scope === 'selection' && !S.selected) S.section.scope = 'all';
+  viewer?.setSection(S.section);
+  renderSectionBar();
+  renderDetail();
+}
+
+function renderSectionBar() {
+  const bar = $('#sectionbar');
+  const sec = S.section;
+  $('#btn-section').setAttribute('aria-pressed', String(sec.on));
+  bar.hidden = !sec.on || !is3d();
+  bar.querySelectorAll('[data-axis]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.axis === sec.axis)));
+  $('#secpos').value = Math.round(sec.pos * 100);
+  const scope = $('#sec-scope');
+  scope.disabled = !S.selected;
+  scope.setAttribute('aria-pressed', String(sec.scope === 'selection'));
 }
 
 // ------------------------------------------------------------------ recherche
@@ -517,7 +664,7 @@ function renderCatalogue() {
   const c = $('#catalogue');
   c.innerHTML = `<div class="cat-inner">
     <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><h1>Équipements</h1><button type="button" class="btn" data-go="${S.eq.root}" style="margin-left:auto">Retour</button></div>
-    <p>Chaque équipement provient d'un manuel de pièces : listes extraites page par page, assemblages en 3D éclatée, schémas et contrôle des listes.</p>
+    <p>Chaque équipement provient d'un manuel de pièces : listes extraites page par page, assemblages en 3D éclatée jusqu'au plus petit ensemble, vues en coupe, schémas et contrôle des listes.</p>
     <div class="cards">
       ${S.index.map((e) => `<button type="button" class="card" data-hash="#${esc(hashFor('', e.id))}">
         <img src="${esc(e.thumbnail)}" alt="Couverture du manuel ${esc(e.name)}">
@@ -542,8 +689,7 @@ function bindChrome() {
     if (g) {
       e.preventDefault();
       const t = g.dataset.go;
-      if (S.eq?.assemblies.has(t) && narrow()) setPane('stage');
-      if (S.eq?.documents.has(t) && narrow()) setPane('stage');
+      if ((S.eq?.assemblies.has(t) || S.eq?.documents.has(t)) && narrow()) setPane('stage');
       go(t);
       return;
     }
@@ -554,17 +700,17 @@ function bindChrome() {
   });
   $('#brand').addEventListener('click', () => go('catalogue'));
   document.querySelectorAll('#mtabs button').forEach((b) => b.addEventListener('click', () => setPane(b.dataset.pane)));
+
   const slider = $('#explode');
   slider.addEventListener('input', () => { S.explode = slider.value / 100; viewer?.setExplode(S.explode, { animate: false }); });
-  slider.addEventListener('change', () => viewer?.frame({ exploded: S.explode > 0.3 }));
-  const animateTo = (t) => {
-    S.explode = t;
-    slider.value = t * 100;
-    viewer?.setExplode(t);
-    viewer?.frame({ exploded: t > 0.3 });
-  };
-  $('#btn-assemble').addEventListener('click', () => animateTo(0));
-  $('#btn-explode').addEventListener('click', () => animateTo(1));
+  slider.addEventListener('change', () => {
+    if (S.explode < 0.02 && S.expanded.size) { explodeEverything(false); return; }
+    viewer?.frame();
+  });
+  $('#btn-assemble').addEventListener('click', () => explodeEverything(false));
+  $('#btn-explode').addEventListener('click', () => setMainExplode(1));
+  $('#btn-explode-all').addEventListener('click', () => explodeEverything(true));
+
   const lb = $('#btn-labels');
   lb.setAttribute('aria-pressed', String(S.labels));
   lb.addEventListener('click', () => {
@@ -580,8 +726,16 @@ function bindChrome() {
     viewer?.setIsolate(S.isolate);
     if (S.isolate && !S.selected) toast('Sélectionnez une pièce : les autres seront estompées.');
   });
-  $('#btn-frame').addEventListener('click', () => viewer?.frame({ exploded: S.explode > 0.3 }));
-  $('#btn-page').addEventListener('click', () => { if (S.view?.type === 'assembly') openPage(S.view.id); });
+  $('#btn-frame').addEventListener('click', () => viewer?.frame());
+  $('#btn-page').addEventListener('click', () => { if (isAsmView()) openPage(S.view.id); });
+
+  // Vue en coupe
+  $('#btn-section').addEventListener('click', () => setSection({ on: !S.section.on, scope: S.section.on ? S.section.scope : 'all' }));
+  document.querySelectorAll('#sectionbar [data-axis]').forEach((b) => b.addEventListener('click', () => setSection({ axis: b.dataset.axis })));
+  $('#secpos').addEventListener('input', (e) => setSection({ pos: e.target.value / 100 }));
+  $('#sec-flip').addEventListener('click', () => setSection({ flip: !S.section.flip }));
+  $('#sec-scope').addEventListener('click', () => setSection({ scope: S.section.scope === 'selection' ? 'all' : 'selection' }));
+
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
     if (!$('#modal').hidden) closePage();
@@ -597,20 +751,6 @@ function toast(msg, ms = 2200) {
   t.hidden = false;
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => { t.hidden = true; }, ms);
-}
-
-async function copy(text, okMsg, fallbackEl) {
-  try {
-    await navigator.clipboard.writeText(text);
-    toast(okMsg);
-  } catch {
-    if (fallbackEl) {
-      fallbackEl.value = text;
-      fallbackEl.focus();
-      fallbackEl.select();
-      toast('Copie automatique refusée : le texte est sélectionné, faites Ctrl+C.');
-    } else toast('Copie automatique refusée par le navigateur.');
-  }
 }
 
 init();

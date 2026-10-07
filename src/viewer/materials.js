@@ -44,8 +44,20 @@ export function mat(name) {
 
 const variants = new Map();
 
-function variant(base, kind) {
-  const key = `${base.uuid}:${kind}`;
+/** Plan de coupe partagé par toutes les variantes « coupées » (déplacé par la visionneuse). */
+export const sectionPlane = new THREE.Plane(new THREE.Vector3(0, 0, -1), 0);
+
+// En coupe, les faces arrière visibles à travers le plan sont peintes d'une
+// couleur pleine hachurée, comme une coupe sur un dessin technique.
+const CAP = `#include <dithering_fragment>
+  if (!gl_FrontFacing) {
+    float hatch = step(0.72, fract((gl_FragCoord.x + gl_FragCoord.y) * 0.085));
+    vec3 cap = diffuseColor.rgb * 0.62 + 0.06;
+    gl_FragColor = vec4(mix(cap, cap * 0.42, hatch), 1.0);
+  }`;
+
+function variant(base, kind, cut) {
+  const key = `${base.uuid}:${kind}:${cut ? 1 : 0}`;
   let v = variants.get(key);
   if (v) return v;
   v = base.clone();
@@ -60,16 +72,32 @@ function variant(base, kind) {
     v.opacity = 0.1;
     v.depthWrite = false;
   }
+  if (cut) {
+    v.clippingPlanes = [sectionPlane];
+    v.clipShadows = true;
+    v.side = THREE.DoubleSide;
+    if (kind !== 'ghost') {
+      v.onBeforeCompile = (shader) => {
+        shader.fragmentShader = shader.fragmentShader.replace('#include <dithering_fragment>', CAP);
+      };
+      v.customProgramCacheKey = () => 'section-cap';
+    }
+  }
   variants.set(key, v);
   return v;
 }
 
-/** Applique un état visuel ('base' | 'hover' | 'select' | 'ghost') à un objet et ses enfants. */
-export function applyState(object, state) {
+/**
+ * Applique un état visuel ('base' | 'hover' | 'select' | 'ghost') à un objet
+ * et ses enfants, avec ou sans plan de coupe.
+ */
+export function applyState(object, state, cut = false) {
   object.traverse((o) => {
     if (!o.isMesh) return;
     if (!o.userData.baseMaterial) o.userData.baseMaterial = o.material;
     const base = o.userData.baseMaterial;
-    o.material = state === 'base' ? base : variant(base, state);
+    o.material = state === 'base' && !cut ? base : variant(base, state, cut);
+    o.userData.state = state;
+    o.userData.cut = cut;
   });
 }

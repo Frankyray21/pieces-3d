@@ -9,7 +9,7 @@ export const FRAME = {
 };
 
 export function F08(api) {
-  const { box, cyl, ring, tube, rod, at, group, extrude, hydCylinder, ballValve, fitting, nut, gauge } = api.S;
+  const { box, cyl, ring, tube, rod, at, group, extrude, hydCylinder, ballValve, fitting, nut, gauge, shell } = api.S;
   const P = (ref, obj, e) => api.part(ref, obj, e);
   const { topY, halfW, actuator } = FRAME;
 
@@ -103,7 +103,7 @@ export function F08(api) {
 
   // 12 — Réservoir d'air (selon Z, dans le châssis) + 11 soupape + 9/10 raccords + 8 collecteur
   P('12', group(
-    cyl(0.2, 0.62, 'black', { axis: 'z' }),
+    shell(0.2, 0.188, 0.62, 'black', { axis: 'z' }),
     at(cyl(0.2, 0.08, 'black', { axis: 'z', r2: 0.13 }), [0, 0, 0.35]),
     at(cyl(0.13, 0.08, 'black', { axis: 'z', r2: 0.2 }), [0, 0, -0.35]),
     at(box(0.3, 0.04, 0.5, 'black'), [0, -0.21, 0]),
