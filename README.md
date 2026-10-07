@@ -9,8 +9,11 @@ pièces (numéro, quantité, page du manuel).
 - **Cubex / MRI 5200** (foreuse sur chenilles, manuel P15125-MRI rév. 03,
   28 pages) : assemblages en 3D.
 - **Sandvik DU311-TVK** n° de série 10680 (manuel de pièces du 2020-07-02,
-  510 pages) : 172 assemblages et 15 schémas, affichés avec les dessins du
-  manuel (pas encore de 3D). Le PDF d'origine (69 Mo) est conservé dans la
+  510 pages) : 172 assemblages et 15 schémas. En 3D : le mât 10 pi (P130,
+  avec vérin d'avance P132, plaque porte-tête P134, barres de guidage P136)
+  et la tête de rotation RH6230 (P138, avec émerillon d'air P140 et boîte
+  d'engrenages P142). Les autres assemblages s'affichent avec les dessins du
+  manuel. Le PDF d'origine (69 Mo) est conservé dans la
   release GitHub `manuel-du311`, pas dans le dépôt.
 
 Le catalogue (logo en haut à gauche) permet de passer d'un équipement à

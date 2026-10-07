@@ -210,6 +210,9 @@ function renderRail() {
   const issueCount = (id) => eq.assemblies.get(id).parts.filter((p) => p.flags.some((f) => f.level === 'error')).length;
   // Grande arborescence : seule la branche de l'assemblage courant est dépliée.
   const big = eq.assemblies.size > 40;
+  const models = MODELS[eq.id] || {};
+  const n3d = [...eq.assemblies.keys()].filter((id) => models[id]).length;
+  const partial = n3d > 0 && n3d < eq.assemblies.size;
   const path = new Set();
   for (let a = eq.assemblies.get(cur); a; a = eq.assemblies.get(a.parent)) path.add(a.id);
   const node = (id) => {
@@ -218,7 +221,7 @@ function renderRail() {
     const open = !big || id === eq.root || path.has(id);
     const kids = a.children.length && open ? `<ul class="tree">${a.children.map(node).join('')}</ul>` : '';
     return `<li><button type="button" class="node ${id === cur ? 'cur' : ''}" data-go="${id}">
-      <span class="sheet">${id}</span><span class="t">${a.children.length && !open ? '▸ ' : ''}${esc(a.titleFr)}</span>
+      <span class="sheet ${partial && models[id] ? 'm3d' : ''}">${id}</span><span class="t">${a.children.length && !open ? '▸ ' : ''}${esc(a.titleFr)}</span>
       <span class="n">${err ? `<span class="alert" title="Numéros à vérifier">!</span> ` : ''}${a.parts.length}</span></button>${kids}</li>`;
   };
   const docs = [...eq.documents.values()].map((d) => `<li><button type="button" class="node ${d.id === cur ? 'cur' : ''}" data-go="${d.id}">
@@ -226,7 +229,7 @@ function renderRail() {
   const errors = eq.issues.filter((r) => r.flags.some((f) => f.level === 'error')).length;
   $('#rail').innerHTML = `
     <div class="equip"><strong>${esc(eq.name)}</strong><span>${esc(eq.category)} · n° de série ${esc(eq.serial)}</span></div>
-    <div><h2>Assemblages${Object.keys(MODELS[eq.id] || {}).length ? ' 3D' : ''}</h2><ul class="tree">${node(eq.root)}</ul></div>
+    <div><h2>Assemblages${n3d && !partial ? ' 3D' : ''}</h2>${partial ? `<p class="legend"><span class="sheet m3d">3D</span><span>${n3d} assemblages modélisés : ${[...eq.assemblies.values()].filter((a) => models[a.id] && !models[a.parent]).map((a) => `<button type="button" class="lnk" data-go="${a.id}">${a.id} ${esc(a.titleFr)}</button>`).join(' ; ')}. Les autres s'affichent avec les dessins du manuel.</span></p>` : ''}<ul class="tree">${node(eq.root)}</ul></div>
     <div><h2>Schémas et listes</h2><ul class="tree">${docs}</ul></div>
     <div><h2>Manuel</h2><ul class="tree">
       <li><button type="button" class="node ${cur === 'controle' ? 'cur' : ''}" data-go="controle"><span class="sheet">QC</span><span class="t">Contrôle des listes</span><span class="n">${errors ? `<span class="alert">${errors}</span> / ` : ''}${eq.issues.length}</span></button></li>
@@ -266,7 +269,7 @@ function renderTitleblock(asm) {
     <div class="wide"><span class="k">Titre</span><span class="v">${esc(asm.title)}</span></div>
     <div><span class="k">Feuille</span><span class="v">${asm.sheet} · ${asm.parts.length} lignes</span></div>
     <div><span class="k">Préparé</span><span class="v">${esc(eq.document.date)}</span></div>
-    <div class="wide"><span class="v dwg">${esc(ref)}-${asm.sheet}-03</span></div>`;
+    <div class="wide"><span class="v dwg">${asm.pn ? `${esc(asm.pn)} rév. ${esc(asm.rev || '0')}` : `${esc(ref)}-${asm.sheet}-03`}</span></div>`;
 }
 
 // ------------------------------------------------------------------ panneau des pièces
