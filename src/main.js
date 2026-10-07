@@ -285,12 +285,18 @@ function renderTitleblock(asm) {
   const eq = S.eq;
   const ref = eq.document.reference.split(',')[0];
   $('#titleblock').innerHTML = `
+    <button type="button" class="tb-page" data-page="${asm.sheet}" title="Ouvrir la page ${asm.sheet} du manuel">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2.5h8.5L19 7v14.5H6z"/><path d="M14.5 2.5V7H19"/><path d="M9 11h7M9 14h7M9 17h4.5"/></svg>
+      <strong>${asm.sheet}</strong><small>Manuel</small>
+    </button>
+    <div class="tb-grid">
     <div><span class="k">Projet</span><span class="v">${esc(eq.name)}</span></div>
     <div><span class="k">Client</span><span class="v">${esc(eq.manufacturer)}</span></div>
     <div class="wide"><span class="k">Titre</span><span class="v">${esc(asm.title)}</span></div>
     <div><span class="k">Feuille</span><span class="v">${asm.sheet} · ${asm.parts.length} lignes</span></div>
     <div><span class="k">Préparé</span><span class="v">${esc(eq.document.date)}</span></div>
-    <div class="wide"><span class="v dwg">${esc(ref)}-${asm.sheet}-03</span></div>`;
+    <div class="wide"><span class="v dwg">${esc(ref)}-${asm.sheet}-03</span></div>
+    </div>`;
 }
 
 // ------------------------------------------------------------------ panneau des pièces
