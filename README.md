@@ -21,8 +21,8 @@ pièces (numéro, quantité, page du manuel).
   manuel. Le PDF d'origine (69 Mo) est conservé dans la
   release GitHub `manuel-du311`, pas dans le dépôt.
 
-Le catalogue (logo en haut à gauche) permet de passer d'un équipement à
-l'autre. Les adresses du premier équipement restent `#F05` ; celles des autres
+La page d'accueil (adresse sans « # », ou le logo en haut à gauche) liste
+les équipements et permet de passer de l'un à l'autre. Les adresses du premier équipement restent `#F05` ; celles des autres
 sont préfixées : `#du311.P032`.
 
 ## Ce que fait l'application

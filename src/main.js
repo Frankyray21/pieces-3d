@@ -74,8 +74,10 @@ async function route() {
     S.selected = null;
   }
   const eq = S.eq;
-  $('#catalogue').hidden = token !== 'catalogue';
-  if (token === 'catalogue') { renderCatalogue(); return; }
+  // Page d'accueil (adresse sans « # ») : la liste des équipements.
+  const home = raw === '' || token === 'catalogue';
+  $('#catalogue').hidden = !home;
+  if (home) { renderCatalogue(); return; }
   if (token === 'controle') return openIssues();
   if (eq.assemblies.has(token)) return openAssembly(token);
   if (eq.documents.has(token)) return openDocument(token);
@@ -671,11 +673,11 @@ function closePage() { const m = $('#modal'); m.hidden = true; m.innerHTML = '';
 function renderCatalogue() {
   const c = $('#catalogue');
   c.innerHTML = `<div class="cat-inner">
-    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><h1>Équipements</h1><button type="button" class="btn" data-go="${S.eq.root}" style="margin-left:auto">Retour</button></div>
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><h1>Équipements</h1>${S.view ? `<button type="button" class="btn" data-go="${S.eq.root}" style="margin-left:auto">Retour à ${esc(S.eq.name)}</button>` : ''}</div>
     <p>Chaque équipement provient d'un manuel de pièces : listes extraites page par page, assemblages en 3D éclatée jusqu'au plus petit ensemble, vues en coupe, schémas et contrôle des listes.</p>
     <div class="cards">
-      ${S.index.map((e) => `<button type="button" class="card" data-hash="#${esc(hashFor('', e.id))}">
-        <img src="${esc(e.thumbnail)}" alt="Couverture du manuel ${esc(e.name)}">
+      ${S.index.map((e) => `<button type="button" class="card" data-hash="#${esc(e.id)}.">
+        <img src="${esc(e.thumbnail)}" alt="${esc(e.name)}">
         <span class="cb"><strong>${esc(e.name)}</strong><span>${esc(e.manufacturer)} · ${esc(e.category)}</span><span>${esc(e.status)}</span></span></button>`).join('')}
       <div class="card add"><strong>Ajouter un équipement</strong>
         <ol><li>Déposer le PDF du manuel de pièces.</li><li>Extraire les listes (outil <span class="mono">tools/extract_parts.py</span>, ou <span class="mono">tools/extract_sandvik.py</span> pour un manuel Sandvik) et relire.</li><li>Modéliser chaque assemblage (formes paramétriques) ou importer un modèle CAO (.glb).</li></ol>
