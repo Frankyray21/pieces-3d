@@ -18,7 +18,7 @@ pièces (numéro, quantité, page du manuel).
 
 Le catalogue (logo en haut à gauche) permet de passer d'un équipement à
 l'autre. Les adresses du premier équipement restent `#F05` ; celles des autres
-sont préfixées : `#du311/P032`.
+sont préfixées : `#du311.P032`.
 
 ## Ce que fait l'application
 

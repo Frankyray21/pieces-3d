@@ -49,17 +49,18 @@ function loadError(err) {
 }
 
 // Adresse : « #F05 » pour le premier équipement du catalogue (liens existants),
-// « #du311/P024 » pour les autres.
+// « #du311.P024 » pour les autres (un lien d'Artifact claude.ai ne transmet que
+// lettres, chiffres et « . _ ~ - » ; « / » reste accepté en lecture).
 function hashFor(token, id = S.eq.id) {
-  return id === S.index[0].id ? token : `${id}/${token}`;
+  return id === S.index[0].id ? token : `${id}.${token}`;
 }
 
 async function route() {
   const raw = decodeURIComponent(location.hash.replace(/^#/, ''));
-  const slash = raw.indexOf('/');
-  const known = slash > 0 && S.index.some((e) => e.id === raw.slice(0, slash));
-  const id = known ? raw.slice(0, slash) : S.index[0].id;
-  const token = known ? raw.slice(slash + 1) : raw;
+  const m = /^([^./]+)[./](.*)$/.exec(raw);
+  const known = !!m && S.index.some((e) => e.id === m[1]);
+  const id = known ? m[1] : S.index[0].id;
+  const token = known ? m[2] : raw;
   if (S.eq?.id !== id) {
     try {
       S.eq = await loadEquipment(id);
@@ -302,7 +303,7 @@ function renderRail() {
   const errors = eq.issues.filter((r) => r.flags.some((f) => f.level === 'error')).length;
   $('#rail').innerHTML = `
     <div class="equip"><strong>${esc(eq.name)}</strong><span>${esc(eq.category)} · n° de série ${esc(eq.serial)}</span></div>
-    <div><h2>Assemblages${n3d && !partial ? ' 3D' : ''}</h2>${partial ? `<p class="legend"><span class="sheet m3d">3D</span><span>${n3d} assemblages modélisés : ${[...eq.assemblies.values()].filter((a) => models[a.id] && !models[a.parent]).map((a) => `<button type="button" class="lnk" data-go="${a.id}">${a.id} ${esc(a.titleFr)}</button>`).join(' ; ')}. Les autres s'affichent avec les dessins du manuel.</span></p>` : ''}<ul class="tree">${node(eq.root)}</ul></div>
+    <div><h2>Assemblages${n3d && !partial ? ' 3D' : ''}</h2>${partial ? `<p class="legend"><span class="sheet m3d">3D</span><span>${n3d} assemblages en 3D, les autres avec les dessins du manuel. Ouvrir : ${[...eq.assemblies.values()].filter((a) => models[a.id] && !models[a.parent]).map((a) => `<button type="button" class="lnk" data-go="${a.id}">${a.id} ${esc(a.titleFr)}</button>`).join(' ; ')}</span></p>` : ''}<ul class="tree">${node(eq.root)}</ul></div>
     <div><h2>Schémas et listes</h2><ul class="tree">${docs}</ul></div>
     <div><h2>Manuel</h2><ul class="tree">
       <li><button type="button" class="node ${cur === 'controle' ? 'cur' : ''}" data-go="controle"><span class="sheet">QC</span><span class="t">Contrôle des listes</span><span class="n">${errors ? `<span class="alert">${errors}</span> / ` : ''}${eq.issues.length}</span></button></li>
@@ -640,6 +641,10 @@ function openPage(sheet) {
     </div>
     <div class="canvas"><img src="${esc(eq.pageUrl(s))}" alt="Page ${s} du manuel" id="p-img"></div>`;
   const img = $('#p-img');
+  // Page absente (publication allégée : pages de liste laissées de côté).
+  img.addEventListener('error', () => {
+    m.querySelector('.canvas').innerHTML = `<p class="missing">La page ${s} n'est pas incluse dans cette version du site.${owner ? ' Sa liste de pièces est reprise dans « Ouvrir la liste ».' : ''}</p>`;
+  });
   const fit = () => {
     const c = m.querySelector('.canvas');
     const ratio = img.naturalHeight ? img.naturalWidth / img.naturalHeight : 1.5;

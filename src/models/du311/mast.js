@@ -39,7 +39,7 @@ export function P136(api) {
 export const CYL = { length: 2.95, trunnion: 2.37 };
 
 export function P132(api) {
-  const { box, cyl, ring, bolt, nut, fitting, at, group } = api.S;
+  const { box, cyl, ring, shell, bolt, nut, fitting, at, group } = api.S;
   const P = (ref, obj, e) => api.part(ref, obj, e);
   const { length: L, trunnion: T } = CYL;
   const side = (x) => [x, 0, 0];
@@ -58,11 +58,11 @@ export function P132(api) {
   P('14', cyl(0.055, 0.05, 'darkSteel', { pos: [0, L - 0.75, 0] }), side(-0.45));
 
   // 7 — tube intérieur (dépasse sous le tube extérieur), 4 — presse-étoupes du tube intérieur
-  P('7', cyl(0.0625, 1.52, 'black', { pos: [0, 1.33 + 0.76, 0] }), side(0.3));
+  P('7', shell(0.0625, 0.05, 1.52, 'black', { pos: [0, 1.33 + 0.76, 0] }), side(0.3));
   P('4', ring(0.07, 0.062, 0.04, 'darkSteel', { pos: [0, 1.35, 0] }), side(0.5));
   P('4', ring(0.07, 0.062, 0.04, 'darkSteel', { pos: [0, 2.83, 0] }), side(0.5));
   // 6 — tube extérieur, 2 — presse-étoupes du tube extérieur
-  P('6', cyl(0.085, 0.79, 'black', { pos: [0, 1.98 + 0.395, 0], seg: 40 }), side(0.75));
+  P('6', shell(0.085, 0.07, 0.79, 'black', { pos: [0, 1.98 + 0.395, 0], seg: 40 }), side(0.75));
   P('2', ring(0.095, 0.0625, 0.04, 'darkSteel', { pos: [0, 1.96, 0] }), side(1.0));
   P('2', ring(0.095, 0.0625, 0.04, 'darkSteel', { pos: [0, 2.79, 0] }), side(1.0));
   // 8 / 9 — demi-pistons du grand piston, 3 — clavettes de cisaillement (à l'intérieur)
