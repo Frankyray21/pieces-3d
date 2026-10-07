@@ -3,6 +3,7 @@ import { Viewer } from './viewer/Viewer.js';
 import { buildProcedural } from './viewer/assembly.js';
 import { loadIndex, loadEquipment, search, sourceLabel } from './data/equipment.js';
 import cubexModels from './models/cubex-mri-5200/index.js';
+import './ui/resize.js';
 
 // Modèles 3D disponibles par équipement (builders procéduraux).
 const MODELS = { 'cubex-mri-5200': cubexModels };
