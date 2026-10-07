@@ -1,0 +1,12 @@
+{
+  "equipment": [
+    {
+      "id": "cubex-mri-5200",
+      "name": "Cubex / MRI 5200",
+      "manufacturer": "Machines Roger International",
+      "category": "Foreuse sur chenilles",
+      "thumbnail": "equipment/cubex-mri-5200/pages/F01.jpg",
+      "status": "3D procédurale — 14 assemblages, 7 schémas"
+    }
+  ]
+}

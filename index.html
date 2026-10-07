@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pièces 3D</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+</head>
+<body>
+<!--APP-->
+<div class="shell" id="shell">
+  <header class="topbar">
+    <button class="brand" id="brand" type="button" title="Catalogue des équipements">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 3 7v10l9 5 9-5V7l-9-5Zm0 2.3 6.6 3.7L12 11.7 5.4 8 12 4.3ZM5 9.7l6 3.4v6.6l-6-3.3V9.7Zm8 10v-6.6l6-3.4v6.7l-6 3.3Z"/></svg>
+      <span>Pièces 3D</span>
+    </button>
+    <nav class="crumbs" id="crumbs" aria-label="Fil d'Ariane"></nav>
+    <div class="search">
+      <label class="sr" for="q">Rechercher une pièce</label>
+      <input id="q" type="search" autocomplete="off" placeholder="N° de pièce ou description (ex. 2717074, roller)">
+      <div class="results" id="results" hidden></div>
+    </div>
+    <button class="cart-btn" id="cart-btn" type="button">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h2l2.2 9.2a1 1 0 0 0 1 .8h7.6a1 1 0 0 0 1-.7L20 8H7.2"/><circle cx="10" cy="19" r="1.4"/><circle cx="17" cy="19" r="1.4"/></svg>
+      <span class="cart-label">Commande</span>
+      <span class="count" id="cart-count">0</span>
+    </button>
+  </header>
+
+  <main class="workspace" id="workspace" data-pane="stage">
+    <nav class="rail pane" id="rail" aria-label="Assemblages"></nav>
+
+    <section class="stage pane" id="stage">
+      <div class="viewport" id="viewport"></div>
+      <div class="docview" id="docview" hidden></div>
+      <div class="tools" id="tools">
+        <div class="explode">
+          <button type="button" class="tbtn" id="btn-assemble" title="Assembler">Assembler</button>
+          <label class="sr" for="explode">Vue éclatée</label>
+          <input id="explode" type="range" min="0" max="100" value="0">
+          <button type="button" class="tbtn" id="btn-explode" title="Éclater">Éclater</button>
+        </div>
+        <div class="tgroup">
+          <button type="button" class="tbtn" id="btn-labels" aria-pressed="true" title="Afficher les repères du manuel">Repères</button>
+          <button type="button" class="tbtn" id="btn-isolate" aria-pressed="false" title="Estomper les autres pièces">Isoler</button>
+          <button type="button" class="tbtn" id="btn-frame" title="Recadrer">Recadrer</button>
+          <button type="button" class="tbtn" id="btn-page" title="Voir la page du manuel">Page du manuel</button>
+        </div>
+      </div>
+      <p class="hint" id="hint">Cliquez une pièce pour l'identifier · double-clic : ouvrir le sous-assemblage · glisser : tourner · clic droit : déplacer</p>
+      <div class="titleblock" id="titleblock"></div>
+      <div class="loading" id="loading" hidden>Construction du modèle…</div>
+    </section>
+
+    <aside class="panel pane" id="panel" aria-label="Pièces"></aside>
+  </main>
+
+  <nav class="mtabs" id="mtabs" aria-label="Sections">
+    <button type="button" data-pane="rail">Assemblages</button>
+    <button type="button" data-pane="stage" class="on">Vue</button>
+    <button type="button" data-pane="panel">Pièces</button>
+  </nav>
+</div>
+
+<section class="catalogue" id="catalogue" hidden></section>
+<div class="drawer" id="drawer" hidden></div>
+<div class="modal" id="modal" hidden></div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+<!--/APP-->
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>

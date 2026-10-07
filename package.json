@@ -1,0 +1,19 @@
+{
+  "name": "pieces-3d",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Plateforme de visualisation 3D éclatée des manuels de pièces — identification et commande de pièces",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "build:artifact": "vite build && node scripts/build-artifact.mjs"
+  },
+  "dependencies": {
+    "three": "^0.169.0"
+  },
+  "devDependencies": {
+    "vite": "^5.4.21"
+  }
+}
