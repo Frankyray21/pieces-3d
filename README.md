@@ -28,6 +28,10 @@ P15125-MRI rév. 03, 28 pages).
   les lignes et numéros absents.
 - Chaque page du manuel original reste consultable (bouton « Page du manuel »).
 
+Site en ligne : https://frankyray21.github.io/pieces-3d/ (republié
+automatiquement à chaque push sur la branche par défaut, voir
+`.github/workflows/pages.yml`).
+
 ## Démarrer
 
 ```bash
