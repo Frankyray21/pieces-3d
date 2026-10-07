@@ -214,9 +214,7 @@ export class Viewer {
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true, powerPreference: 'high-performance' });
     renderer.toneMapping = THREE.NeutralToneMapping;
     renderer.toneMappingExposure = 1.0;
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.VSMShadowMap; // pénombre douce et régulière
-    renderer.shadowMap.autoUpdate = false; // ombres recalculées seulement si la scène bouge
+    renderer.shadowMap.enabled = false; // aucune ombre portée dans la 3D
     renderer.localClippingEnabled = true;
     container.appendChild(renderer.domElement);
     this.renderer = renderer;
@@ -237,7 +235,7 @@ export class Viewer {
     this.hemi = new THREE.HemisphereLight(0xf2f5fa, 0x5b5650, 0.25);
     scene.add(this.hemi);
     const key = new THREE.DirectionalLight(0xfff7ee, 1.8);
-    key.castShadow = true;
+    key.castShadow = false;
     key.shadow.mapSize.set(2048, 2048);
     key.shadow.bias = -0.0003;
     key.shadow.radius = 6;
@@ -253,7 +251,7 @@ export class Viewer {
 
     const ground = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.ShadowMaterial({ opacity: 0.2 }));
     ground.rotation.x = -Math.PI / 2;
-    ground.receiveShadow = true;
+    ground.visible = false; // pas d'ombre au sol
     scene.add(ground);
     this.ground = ground;
     this.grid = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), gridMaterial());
@@ -970,8 +968,8 @@ export class Viewer {
       const p = this._ensurePost();
       const u = p.quad.material.uniforms;
       u.toneMappingExposure.value = r.toneMappingExposure;
-      u.groundAO.value = this.theme?.groundAO ?? 0.6;
-      u.aoStrength.value = useAO ? 1 : 0;
+      u.groundAO.value = 0; // pas d'assombrissement au sol
+      u.aoStrength.value = useAO ? 0.6 : 0;
       u.edgeStrength.value = this.edgesVisible ? 0.85 : 0;
       u.cameraNear.value = this.camera.near;
       u.cameraFar.value = this.camera.far;
@@ -979,8 +977,8 @@ export class Viewer {
       r.setRenderTarget(p.rt);
       r.render(this.scene, this.camera);
       if (useAO) {
-        // Rayon d'AO proportionnel à la distance de vue : même rendu à tout zoom.
-        const rad = Math.min(dist * 0.06, (this._modelSize || 5) * 0.08);
+        // AO limitée aux creux fins (quelques cm) : jamais d'effet d'ombre.
+        const rad = Math.min(0.05, Math.max(0.012, dist * 0.004));
         p.gtao.updateGtaoMaterial({ radius: rad, thickness: rad * 2 });
         p.gtao.render(r, null, p.rt);
       }
