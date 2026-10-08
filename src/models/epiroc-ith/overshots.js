@@ -96,9 +96,9 @@ export function overshot(api, cfg) {
   let x = b1;
   if (!ug) surfaceUpper();
   else ugUpper();
-  swivel(x);
+  const top = swivel(x);
   L.done();
-  return { view: SIDE };
+  return { view: { ...SIDE, anchors: { top: top * d, mouth: (cfg.sizeAdapter ? -1.9 : 0) * d } } };
 
   // Surface : corps pivot (Arrow) ou tête filetée (Excore), coulisse et barre de charge.
   function surfaceUpper() {
@@ -187,6 +187,7 @@ export function overshot(api, cfg) {
         L.add(ref('sleeves'), sl, { row: 'C' });
       }
     }
+    const top = has('sleeves') ? e1 + 1.5 : e1 + 0.35;
     if (has('releaseTool')) {
       const tool = S.group(
         S.cyl(0.08 * d, 2.6 * d, 'black', { axis: 'x', pos: X(e1 - 1.5, 3.2) }),
@@ -194,6 +195,7 @@ export function overshot(api, cfg) {
       );
       add('releaseTool', tool, { follow: ref('collar'), extra: [0, 0.4, 0] });
     }
+    return top;
   }
 }
 

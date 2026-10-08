@@ -766,9 +766,10 @@ export class Viewer {
         const key = path.join('>');
         const el = document.createElement('button');
         el.type = 'button';
-        el.className = `balloon lvl-${Math.min(depth, 3)}`;
-        el.textContent = ref.length > 3 ? '▸' : ref;
-        el.title = ref.length > 3 ? `Groupe ${ref}` : `Repère ${ref}`;
+        const long = ref.length > 6;
+        el.className = `balloon lvl-${Math.min(depth, 3)}${ref.length > 2 && !long ? ' wide' : ''}`;
+        el.textContent = long ? '▸' : ref;
+        el.title = long ? `Groupe ${ref}` : `Repère ${ref}`;
         el.addEventListener('pointerdown', (e) => e.stopPropagation());
         el.addEventListener('click', (e) => { e.stopPropagation(); this.onSelect(path, { double: false }); });
         el.addEventListener('dblclick', (e) => { e.stopPropagation(); this.onSelect(path, { double: true }); });

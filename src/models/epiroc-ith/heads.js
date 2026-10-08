@@ -36,6 +36,7 @@ export function head(api, cfg) {
   const fam = type === 'discovore' ? 'discovore' : owl ? 'owl' : 'excore';
   const M = { ...MAT[fam], ...(cfg.mat || {}) };
   const L = layout(api, D);
+  const anchor = { latch: 0, top: 0 };
   const has = (role) => R[role] != null;
   const ref = (role, i = 0) => (Array.isArray(R[role]) ? R[role][Math.min(i, R[role].length - 1)] : R[role]);
   const X = (x, y = 0, z = 0) => [x * D, y * D, z * D];
@@ -192,7 +193,9 @@ export function head(api, cfg) {
   else spearTop();
 
   L.done();
-  return { view: SIDE };
+  // Repères pour l'insertion dans un carottier (mètres, axe de la tête) :
+  // face d'appui de l'épaulement, milieu des cliquets, bout de la tête.
+  return { view: { ...SIDE, anchors: { shoulder: (lb1 - 0.02) * D, latch: anchor.latch * D, top: anchor.top * D } } };
 
   // DiscovOre : corps intermédiaire, corps de verrou à fenêtres, cliquets
   // poussés par un ressort, boîtier de rappel coiffant le tout (l'overshot
@@ -224,6 +227,8 @@ export function head(api, cfg) {
     if (has('latchSpring')) add('latchSpring', S.spring(0.05 * D, 0.012 * D, 0.16 * D, 6, 'steel', { axis: 'y', pos: X((lw0 + lw1) / 2) }), { follow: ref('latchBody'), extra: [0, 0, 1.4] });
     // Boîtier de rappel : tube à fenêtres et trous, coiffe à gorge en haut.
     const rc0 = lw0 - 0.1, rc1 = lt1 + 1.9;
+    anchor.latch = (lw0 + lw1) / 2;
+    anchor.top = rc1 + (has('bolt') ? 0.15 : 0);
     if (has('retCase')) {
       const wins = [win(UP, 0.8, rc0 - 0.01, lw1 + 0.15), win(DOWN, 0.8, rc0 - 0.01, lw1 + 0.15)];
       for (const x of [rc0 + 1.8, rc0 + 2.35]) wins.push(...hole(0, x, 0.05, 0.5, false), ...hole(PI * 0.75, x + 0.2, 0.05, 0.5, false));
@@ -322,6 +327,8 @@ export function head(api, cfg) {
     if (has('casePins')) for (const s of [1, -1]) L.add(ref('casePins'), pinZ(0.045, 0.6, rc0 + 0.95, s * 0.22), { follow: ref('retCase'), extra: [0, s * 0.5, 1.4] });
     // Base de lance et lance.
     const b0 = rc1 - 0.55, b1 = rc1 + 0.62;
+    anchor.latch = (lw0 + lw1) / 2;
+    anchor.top = b1 + 0.95;
     if (has('spearBase')) {
       add('spearBase', lat([[0, b0], [0.47, b0], [0.47, rc1], [0.5, rc1 + 0.02], [0.5, rc1 + 0.14], [0.32, rc1 + 0.4], [0.3, b1], [0.13, b1], [0.13, b1 - 0.36], [0, b1 - 0.36]], M.body), { row: 'A' });
     }

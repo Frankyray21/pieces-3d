@@ -153,6 +153,9 @@ details.more summary { cursor: pointer; margin: 0 6px; color: var(--muted); font
 .balloon.is-dim { opacity: 0.25; }
 .balloon.lvl-1 { width: 19px; height: 19px; font-size: 10px; border-style: dashed; }
 .balloon.lvl-2, .balloon.lvl-3 { width: 17px; height: 17px; font-size: 9.5px; border-style: dotted; }
+/* Repère de plus de deux caractères (« 16A », « Rshell ») : pastille allongée. */
+.balloon.wide { width: auto; min-width: 22px; padding: 0 5px; border-radius: 11px; }
+.balloon.wide.lvl-1, .balloon.wide.lvl-2, .balloon.wide.lvl-3 { padding: 0 4px; border-radius: 10px; }
 .tools {
   position: absolute; left: 12px; right: 12px; top: 12px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; pointer-events: none;
 }

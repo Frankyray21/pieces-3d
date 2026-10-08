@@ -31,9 +31,22 @@ pièces (numéro, quantité, page du manuel).
   repris du TVK (même numéro, même liste ; voir `src/models/reuse.js`). Le PDF
   d'origine (101 Mo) est dans la release GitHub `manuel-du311-std`.
 
+- **Epiroc — outils de carottage ITH** (`epiroc-ith`, catalogue « Core
+  Drilling Tools — In-The-Hole », 108 pages en planches doubles) : 78
+  assemblages et 44 listes de trousses, consommables et conversions, 3 006
+  lignes ; numéros par taille (N, N2, N3, H, H3, BU, BTWU…). En 3D : les 26
+  têtes (DiscovOre, Excore, OWL L-Latch, OWL standard, de surface et
+  souterraines, B à P), les 15 overshots (Arrow 3S, Excore II), les 19
+  carottiers complets (tête et overshot en sous-assemblages, tube intérieur
+  logé dans le tube extérieur, visible en coupe), les émerillons d'eau, les
+  presse-étoupes et les outils (avance-tubage, coupe-tiges, raccords de
+  verrouillage, outils de chargement, carottier 48TT). La page d'accueil de
+  l'équipement (table des matières, P002) présente un exemplaire de chaque
+  famille. Pages du catalogue en WebP couleur (P001 à P108).
+
 La page d'accueil (adresse sans « # », ou le logo en haut à gauche) liste
 les équipements et permet de passer de l'un à l'autre. Les adresses du premier équipement restent `#F05` ; celles des autres
-sont préfixées : `#du311.P032`, `#du311-std.P050`.
+sont préfixées : `#du311.P032`, `#du311-std.P050`, `#epiroc-ith.P019`.
 
 ## Ce que fait l'application
 
@@ -91,6 +104,7 @@ src/data/equipment.js                       chargement + contrôle qualité
 src/main.js, src/ui/                        interface
 tools/extract_parts.py                      extraction des listes depuis le PDF
 tools/extract_sandvik.py                    extraction complète d'un manuel Sandvik
+tools/extract_epiroc.py                     extraction du catalogue Epiroc (tableaux, pages)
 ```
 
 ## Ajouter un équipement
@@ -118,7 +132,28 @@ tools/extract_sandvik.py                    extraction complète d'un manuel San
    manuel. Une variante d'une machine déjà modélisée reprend les modèles des
    assemblages identiques avec `reuse()` (`src/models/reuse.js`).
 
+Un catalogue d'outils (Epiroc) suit le même schéma : `tools/extract_epiroc.py
+catalogue.pdf > data.json` lit les tableaux (cases fusionnées recopiées,
+colonnes de tailles), la description de chaque page étant dans `PAGES` ;
+`--pages dossier` rend les pages en WebP. Champs propres aux catalogues :
+`sizes` (numéro par taille, affiché regroupé), `pnText` (« Voir p. 54 »,
+« Sur demande »), `group` (ensemble de pièces 3D, ex. tube intérieur
+complet), `no3d` (clé, option non dessinée) ; les repères répétés d'une liste
+et les plages (« 1-5 », « B,2-14 ») sont résolus automatiquement. Les
+modèles (`src/models/epiroc-ith/`) sont des constructeurs paramétrés par
+famille (têtes, overshots, carottiers…) avec une table rôle → repère par
+page.
+
 ## Limites actuelles
+
+- Catalogue Epiroc : les tubes et les tiges des carottiers sont raccourcis
+  (1 m et 0,6 m) comme sur les dessins coupés du catalogue. Le contrôle des
+  listes relève des anomalies du catalogue, par exemple le numéro 3760012099
+  (bille de 22 mm) donné à la soupape d'arrêt BTWU (p. 66), 9469705243 pour
+  l'axe et le ressort de la tête H Excore (p. 39), 3760017262 pour l'outil de
+  libération et un cliquet (p. 71), 3760017570 (trousse de conversion) pour
+  l'adaptateur de taille P (p. 30), et des numéros mal imprimés (9460705061,
+  946705120, 3460017234, « 376 011016 »).
 
 - Les modèles 3D sont des **reconstitutions paramétriques** fidèles à la
   disposition et aux proportions des dessins, pas les fichiers CAO du
