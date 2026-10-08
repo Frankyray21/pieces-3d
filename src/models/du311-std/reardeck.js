@@ -4,13 +4,13 @@
 // enrouleur de câble à l'avant du pont, filtre coalescent, poteaux porte-câble.
 // Formes simplifiées d'après les vues des pages 416 et 420 ; repère machine
 // (voir layout.js), le pont prolonge le capot moteur vers l'arrière.
-import { M } from './layout.js';
+import { M, body } from './layout.js';
 
 const X0 = M.rear, X1 = M.engine.x0; // -4.4 → -2.75
 const HOOD = { x0: X0 + 0.02, x1: -3.6, top: 1.95 };
-const REEL = { x: -3.08, y: 1.32, r: 0.55, w: 0.46 };
+export const REEL = { x: -3.08, y: 1.32, r: 0.55, w: 0.46 };
 const REEL_DRIVE = REEL.x - REEL.w / 2 - 0.14; // motoréducteur côté arrière
-const DRIVE = { x: -3.95, yMotor: 0.76, yComp: 1.36, z: -0.55 };
+export const DRIVE = { x: -3.95, yMotor: 0.76, yComp: 1.36, z: -0.55 };
 
 export function P416(api) {
   const { box, cyl, ring, tube, torus, plate, fitting, filterCanister, enclosure, at, group } = api.S;
@@ -65,9 +65,11 @@ export function P416(api) {
       ...[0.06, 0.1, 0.14, 0.18, 0.22].map((y) => at(ring(0.14, 0.1, 0.012, 'charcoal', { seg: 24 }), [0, y, 0])),
       at(box(0.24, 0.06, 0.24, 'darkSteel', { r: 0.01 }), [0, 0.29, 0]),
     ).translateX(DRIVE.x).translateY(FT + 0.35).translateZ(s * 0.16 - 0.05).rotateX(s * 0.45)),
-    at(cyl(0.28, 0.07, 'darkSteel', { axis: 'z', seg: 48 }), [DRIVE.x, DRIVE.yComp, DRIVE.z]),
-    ...Array.from({ length: 5 }, (_, i) => at(box(0.035, 0.42, 0.04, 'darkSteel'), [DRIVE.x, DRIVE.yComp, DRIVE.z + 0.03], [0, 0, (i / 5) * Math.PI])),
-    at(cyl(0.06, 0.12, 'steel', { axis: 'z' }), [DRIVE.x, DRIVE.yComp, DRIVE.z + 0.08]),
+    body('flywheel', group(
+      at(cyl(0.28, 0.07, 'darkSteel', { axis: 'z', seg: 48 }), [DRIVE.x, DRIVE.yComp, DRIVE.z]),
+      ...Array.from({ length: 5 }, (_, i) => at(box(0.035, 0.42, 0.04, 'darkSteel'), [DRIVE.x, DRIVE.yComp, DRIVE.z + 0.03], [0, 0, (i / 5) * Math.PI])),
+      at(cyl(0.06, 0.12, 'steel', { axis: 'z' }), [DRIVE.x, DRIVE.yComp, DRIVE.z + 0.08]),
+    )),
     tube([[DRIVE.x + 0.1, FT + 0.62, 0.11], [DRIVE.x + 0.3, FT + 0.7, 0.2], [-3.66, FT + 0.6, 0.45]], 0.035, 'steel', { seg: 16 }),
     // paliers de l'arbre de l'enrouleur
     ...[REEL_DRIVE, REEL.x + REEL.w / 2 + 0.06].map((x) => group(
@@ -93,23 +95,27 @@ export function P416(api) {
   // 6 — transmission : poulie 10,3 po du moteur, courroies trapézoïdales vers le volant du surpresseur
   const rS = 0.131, rL = 0.28;
   P('6', group(
-    at(cyl(rS, 0.09, 'darkSteel', { axis: 'z', seg: 36 }), [DRIVE.x, DRIVE.yMotor, DRIVE.z]),
+    body('sheave', group(
+      at(cyl(rS, 0.09, 'darkSteel', { axis: 'z', seg: 36 }), [DRIVE.x, DRIVE.yMotor, DRIVE.z]),
+      ...Array.from({ length: 4 }, (_, i) => at(box(0.02, rS * 1.6, 0.095, 'steel'), [DRIVE.x, DRIVE.yMotor, DRIVE.z], [0, 0, (i / 4) * Math.PI])),
+    )),
     ...[-0.025, 0, 0.025].map((dz) => at(torus(rS, 0.006, 'black', { axis: 'z' }), [DRIVE.x, DRIVE.yMotor, DRIVE.z + dz])),
     ...[-0.025, 0, 0.025].flatMap((dz) => [1, -1].map((s) => tube([[DRIVE.x + s * rS, DRIVE.yMotor, DRIVE.z + dz], [DRIVE.x + s * rL, DRIVE.yComp, DRIVE.z + dz]], 0.008, 'black', { sharp: true, seg: 2 }))),
   ), [0, 0, -0.55]);
 
   // 2 — enrouleur de câble type 20.1 K560 (axe longitudinal) et son motoréducteur
   P('2', group(
-    ...[-1, 1].map((s) => group(
+    body('reel', group(...[-1, 1].map((s) => group(
       at(ring(REEL.r, REEL.r - 0.04, 0.02, 'grey', { axis: 'x', seg: 64 }), [0, 0, 0]),
       ...Array.from({ length: 8 }, (_, i) => {
         const a = (i / 8) * Math.PI * 2;
         return at(box(0.015, REEL.r - 0.2, 0.04, 'grey'), [0, Math.cos(a) * (REEL.r + 0.18) / 2, Math.sin(a) * (REEL.r + 0.18) / 2], [a, 0, 0]);
       }),
     ).translateX(REEL.x + s * REEL.w / 2)),
-    at(cyl(0.2, REEL.w, 'grey', { axis: 'x', seg: 40 }), [REEL.x, 0, 0]),
-    at(cyl(0.36, REEL.w - 0.06, 'black', { axis: 'x', seg: 48 }), [REEL.x, 0, 0]),
-    at(cyl(0.035, REEL.w + 0.3, 'steel', { axis: 'x' }), [REEL.x, 0, 0]),
+      at(cyl(0.2, REEL.w, 'grey', { axis: 'x', seg: 40 }), [REEL.x, 0, 0]),
+      at(cyl(0.36, REEL.w - 0.06, 'black', { axis: 'x', seg: 48 }), [REEL.x, 0, 0]),
+      at(cyl(0.035, REEL.w + 0.3, 'steel', { axis: 'x' }), [REEL.x, 0, 0]),
+    )),
     at(box(0.18, 0.28, 0.28, 'charcoal', { r: 0.015 }), [REEL_DRIVE, 0, 0]),
     at(cyl(0.09, 0.22, 'blue', { axis: 'z' }), [REEL_DRIVE, 0.04, 0.24]),
     at(enclosure(0.16, 0.14, 0.1, 'grey'), [REEL_DRIVE, 0.22, 0]),

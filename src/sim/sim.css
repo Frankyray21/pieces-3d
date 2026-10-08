@@ -1,0 +1,48 @@
+/* Page de simulation (développement) : scène à gauche, commandes à droite. */
+:root {
+  --ink: #16202b; --muted: #5a6776; --line: #d3dae2; --surface: #fff; --surface-2: #f4f6f9;
+  --accent: #d9590b; --warn: #9a6400; --warn-soft: #fbefd5;
+  --stage-a: #a7b1bb; --stage-b: #626d78; --stage-ink: #f3f6f9;
+  --f-display: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --f-body: 'IBM Plex Sans', system-ui, sans-serif;
+  --f-mono: 'IBM Plex Mono', ui-monospace, monospace;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body { font: 14px/1.4 var(--f-body); color: var(--ink); background: var(--surface-2); }
+.sim { display: grid; grid-template: 48px 1fr / 1fr 360px; height: 100vh; }
+.bar { grid-column: 1 / -1; display: flex; align-items: center; gap: 12px; padding: 0 16px; background: #16202b; color: #fff; }
+.bar strong { font: 600 19px var(--f-display); letter-spacing: 0.02em; }
+.bar .tag { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; padding: 2px 8px; border-radius: 10px; background: var(--accent); }
+.bar .status { margin-left: auto; color: #ffd38a; font-size: 13px; }
+.stage { position: relative; background: radial-gradient(120% 90% at 50% 20%, var(--stage-a), var(--stage-b)); overflow: hidden; }
+.viewport { position: absolute; inset: 0; }
+.viewport canvas { display: block; touch-action: none; }
+.label-layer { position: absolute; inset: 0; pointer-events: none; }
+.hover, .pose { position: absolute; left: 12px; padding: 4px 10px; border-radius: 4px; font-size: 12px; color: var(--stage-ink); background: rgba(22, 32, 43, 0.55); pointer-events: none; }
+.hover { top: 12px; }
+.pose { bottom: 12px; font-family: var(--f-mono); }
+.panel { overflow-y: auto; background: var(--surface); border-left: 1px solid var(--line); padding: 8px 16px 24px; }
+.panel section { border-bottom: 1px solid var(--line); padding: 10px 0; }
+.panel h2 { margin: 0 0 8px; font: 600 15px var(--f-display); letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
+.ctl { margin: 8px 0; }
+.ctl-h { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; }
+.ctl-h output { font-family: var(--f-mono); color: var(--muted); }
+.ctl-r { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+.ctl-r input[type=range] { flex: 1; accent-color: var(--accent); }
+.jog { width: 30px; height: 28px; border: 1px solid var(--line); border-radius: 4px; background: var(--surface-2); font-size: 16px; cursor: pointer; touch-action: none; }
+.btns { display: flex; flex-wrap: wrap; gap: 6px; }
+.btn { padding: 6px 10px; border: 1px solid var(--line); border-radius: 4px; background: var(--surface-2); cursor: pointer; font: 500 13px var(--f-body); touch-action: none; }
+.btn:hover, .jog:hover { border-color: var(--accent); }
+.btn.stop { background: #b3232b; color: #fff; border-color: #b3232b; }
+.note { margin: 6px 0 0; font-size: 12px; color: var(--muted); }
+.sw { display: flex; align-items: center; gap: 8px; }
+.rams { width: 100%; border-collapse: collapse; font-size: 12px; }
+.rams th { text-align: left; color: var(--muted); font-weight: 500; }
+.rams td { padding: 3px 4px 3px 0; font-family: var(--f-mono); }
+.gauge { display: block; height: 8px; border-radius: 4px; background: var(--surface-2); border: 1px solid var(--line); overflow: hidden; min-width: 90px; }
+.gauge i { display: block; height: 100%; background: var(--accent); }
+@media (max-width: 860px) {
+  .sim { grid-template: 48px 55vh 1fr / 1fr; }
+  .panel { border-left: 0; border-top: 1px solid var(--line); }
+}

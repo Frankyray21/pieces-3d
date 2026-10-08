@@ -5,7 +5,7 @@
 // (P012) et finition (P020). La roue, la télécommande ERIS sur trépied et le
 // câble CAN livrés avec la machine sont posés au sol à droite, comme sur la
 // vue de la page 10. Repère machine : voir layout.js.
-import { M, WHEEL, wheel } from './layout.js';
+import { M, WHEEL, wheel, body, flex } from './layout.js';
 import { SLIDE, MCP } from './slide.js';
 import { FEED } from './feed.js';
 
@@ -32,13 +32,13 @@ export function P010(api) {
   const mcp = api.sub('P156');
   mcp.rotation.y = Math.PI / 2;
   mcp.position.set(MCP_X, SLIDE.rot.y, 0);
-  P('6', mcp, [1.2, 0.35, 0]);
+  P('6', body('roll', mcp), [1.2, 0.35, 0]);
 
   // 8 — avance à carrousel dressée, face tête de rotation vers l'avant
   const feed = api.sub('P028');
   feed.rotation.y = Math.PI / 2;
   feed.position.set(FEED_POS.x, FEED_POS.y, FEED_POS.z);
-  P('8', feed, [2.0, 0.4, 0]);
+  P('8', body('ext', feed), [2.0, 0.4, 0]);
 
   // 7 — extinction d'incendie, 12 — finition (repère machine)
   P('7', api.sub('P012'), [0, 0.9, 0]);
@@ -81,10 +81,11 @@ export function P012(api) {
   const run1 = [[0.3, FT + 0.02, 0.4], [1.4, FT + 0.02, 0.4], [1.4, FT + 0.02, -0.4], [0.3, FT + 0.02, -0.4]];
   const run2 = [[-4.3, 1.02, 0.78], [-2.8, 1.02, 0.78], [-2.8, 1.02, -0.78], [-4.3, 1.02, -0.78]];
   P('1', group(
-    tube(run1, 0.006, 'red', { sharp: true, seg: 6 }),
+    body('front', tube(run1, 0.006, 'red', { sharp: true, seg: 6 })),
     tube(run2, 0.006, 'red', { sharp: true, seg: 6 }),
     tube([[-2.7, M.engine.top - 0.02, 0.9], [-1.15, M.engine.top - 0.02, 0.9], [-1.15, M.engine.top - 0.02, -0.9], [-2.7, M.engine.top - 0.02, -0.9]], 0.006, 'red', { sharp: true, seg: 6 }),
-    ...[...run1, ...run2].map((p) => at(torus(0.012, 0.004, 'black', { axis: 'x' }), p)),
+    ...run1.map((p) => body('front', at(torus(0.012, 0.004, 'black', { axis: 'x' }), p))),
+    ...run2.map((p) => at(torus(0.012, 0.004, 'black', { axis: 'x' }), p)),
   ), [0, 0.5, 0]);
 
   // 2 — trousse manuelle
@@ -107,19 +108,23 @@ export function P012(api) {
     // té de distribution et flexibles vers les buses
     at(box(0.06, 0.06, 0.06, 'brass'), tee),
     tube([[tank[0], tank[1] + 0.03, tank[2]], [-3.8, 1.04, 0.6], tee], 0.012, 'black', { seg: 12 }),
-    ...nozzles.map((n) => tube([tee, [tee[0], 0.92, 0.3], [n[0], 0.92, 0.3 * Math.sign(n[2])], [n[0], n[1] - 0.04, n[2]]], 0.008, 'black', { sharp: true, seg: 8 })),
+    // (la buse avant est sur le châssis avant : son flexible passe l'articulation)
+    ...nozzles.map((n) => {
+      const pts = [tee, [tee[0], 0.92, 0.3], [n[0], 0.92, 0.3 * Math.sign(n[2])], [n[0], n[1] - 0.04, n[2]]];
+      return n[0] > 0 ? flex(api.S, pts, ['chassis', 'chassis', 'front', 'front'], 0.008, 'black', { sharp: true, seg: 8 }) : tube(pts, 0.008, 'black', { sharp: true, seg: 8 });
+    }),
     // buses V-1/2 et supports
     ...nozzles.flatMap((n) => [
       at(box(0.05, 0.012, 0.05, 'darkSteel'), [n[0], n[1] + 0.03, n[2]]),
       at(cyl(0.012, 0.05, 'brass', { r2: 0.016 }), [n[0], n[1], n[2]]),
-    ]),
+    ].map((o) => (n[0] > 0 ? body('front', o) : o))),
     // module de commande (ICM) et afficheur dans la cabine, déclencheurs manuels
     at(box(0.16, 0.12, 0.08, 'red', { r: 0.01 }), [-0.95, FT + 0.6, -0.3]),
     at(box(0.1, 0.07, 0.04, 'black', { r: 0.006 }), [-0.3, FT + 0.85, 0.75]),
     ...[[-4.3, 1.2, -0.99], [-0.32, FT + 0.82, 0.18], [0.82, 1.3, -0.95]].flatMap((p) => [
       at(box(0.06, 0.1, 0.05, 'red', { r: 0.006 }), p),
       at(cyl(0.018, 0.025, 'darkSteel', { axis: 'z' }), [p[0], p[1] + 0.02, p[2] + Math.sign(p[2] || 1) * 0.035]),
-    ]),
+    ].map((o) => (p[0] > 0 ? body('front', o) : o))),
   ), [0, 0.7, 0.3]);
   return { view: { dir: [0.9, 1.1, 1.0] } };
 }
@@ -145,7 +150,7 @@ export function P020(api) {
     decal(0.32, 0.08, 'black', [-3.2 - 0.8, 1.85, 0.962]),
     decal(0.32, 0.08, 'black', [-3.2 - 0.8, 1.85, -0.962]),
     ...[[-2.4, 1.5], [-2.0, 1.5]].map(([x, y]) => decal(0.08, 0.08, 'safety', [x, y, -0.982])),
-    decal(0.08, 0.08, 'safety', [M.nose - 0.25, 0.75, M.frameZ + 0.017]),
+    body('front', decal(0.08, 0.08, 'safety', [M.nose - 0.25, 0.75, M.frameZ + 0.017])),
   ), [0, 0, 0.4]);
   // 10 — autocollant des commandes de conduite (pupitre de la cabine)
   P('10', at(box(0.12, 0.003, 0.18, 'white'), [-0.3, M.frameTop + 0.752, 0.45]), [0, 0.3, 0]);
@@ -159,18 +164,19 @@ export function P020(api) {
 
   // 3 — boyau d'air 1,5 po x 170 po : du réservoir tampon de la glissière au pied de l'avance
   const dthFoot = F([-0.42, 0.31, -0.14]);
-  P('3', tube([[2.6, 1.34, 0.39], [2.62, 1.45, 0.7], [3.1, 1.0, 1.0], [3.55, 0.6, 0.95], [dthFoot[0], dthFoot[1] - 0.06, dthFoot[2]]], 0.026, 'black', { seg: 48 }), [0.3, -0.2, 0.4]);
+  P('3', flex(api.S, [[2.6, 1.34, 0.39], [2.62, 1.45, 0.7], [3.1, 1.0, 1.0], [3.55, 0.6, 0.95], [dthFoot[0], dthFoot[1] - 0.06, dthFoot[2]]],
+    ['front', 'front', 'front', ['front', 'ext', 0.6], 'ext'], 0.026, 'black', { seg: 48 }), [0.3, -0.2, 0.4]);
   // 8 — gaine de protection sur le boyau DTH, près de l'émerillon
   const tdTop = F([0, FEED.tdY + 0.48, FEED.AX]);
   const sockEnd = F([-0.15, FEED.tdY + 0.75, FEED.AX]);
-  P('8', tube([[tdTop[0], tdTop[1] + 0.06, tdTop[2]], sockEnd], 0.042, 'charcoal', { sharp: true, seg: 2 }), [0.3, 0.3, 0]);
+  P('8', body('feed', tube([[tdTop[0], tdTop[1] + 0.06, tdTop[2]], sockEnd], 0.042, 'charcoal', { sharp: true, seg: 2 })), [0.3, 0.3, 0]);
   // 5 / 6 — sangles 8 po et 20 po, 7 — colliers de boyaux (sur les boyaux de l'avance)
-  const ringAt = (p, r, mat, axis = 'y') => at(torus(r, 0.006, mat, { axis }), F(p));
-  P('5', group(...[[-0.62, 2.2, 0.15], [-0.55, 1.4, 0.08]].map((p) => ringAt(p, 0.035, 'black'))), [0.2, 0, 0.3]);
-  P('6', group(...[[-0.78, 2.6, 0.35], [-0.72, 1.4, 0.2]].map((p) => ringAt(p, 0.045, 'black'))), [0.2, 0, 0.45]);
+  const ringAt = (p, r, mat, b) => body(b, at(torus(r, 0.006, mat), F(p)));
+  P('5', group(ringAt([-0.62, 2.2, 0.15], 0.035, 'black', ['ext', 'feed', 0.6]), ringAt([-0.55, 1.4, 0.08], 0.035, 'black', ['ext', 'feed', 0.3])), [0.2, 0, 0.3]);
+  P('6', group(ringAt([-0.78, 2.6, 0.35], 0.045, 'black', ['ext', 'feed', 0.5]), ringAt([-0.72, 1.4, 0.2], 0.045, 'black', ['ext', 'feed', 0.25])), [0.2, 0, 0.45]);
   P('7', group(
-    ...[[-0.5, 0.55, -0.05], [-0.72, 1.9, 0.27]].map((p) => ringAt(p, 0.038, 'steel')),
-    at(torus(0.034, 0.006, 'steel', { axis: 'x' }), [1.2, 0.88, M.frameZ + 0.05]),
+    ...[[-0.5, 0.55, -0.05], [-0.42, 0.36, -0.14]].map((p) => ringAt(p, 0.038, 'steel', 'ext')),
+    body('front', at(torus(0.034, 0.006, 'steel', { axis: 'x' }), [1.2, 0.88, M.frameZ + 0.05])),
   ), [0.2, 0, 0.55]);
   return { view: { dir: [1.1, 0.6, 1.2] } };
 }

@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simulation DU311 (essai)</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+</head>
+<body>
+<!-- Page de développement : servie par « npm run dev » (http://localhost:5173/sim.html),
+     absente du site publié (la compilation ne prend que index.html). -->
+<div class="sim">
+  <header class="bar">
+    <strong>Simulation mécanique — Sandvik DU311 s/n 10703</strong>
+    <span class="tag">essai, hors site</span>
+    <span class="status" id="status" role="status" aria-live="polite"></span>
+  </header>
+  <section class="stage" id="stage">
+    <div class="viewport" id="viewport"></div>
+    <div class="hover" id="hover" hidden></div>
+    <div class="pose" id="pose"></div>
+  </section>
+  <aside class="panel" id="panel" aria-label="Commandes"></aside>
+</div>
+<script type="module" src="/src/sim/main.js"></script>
+</body>
+</html>

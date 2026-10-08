@@ -106,6 +106,33 @@ tools/extract_parts.py                      extraction des listes depuis le PDF
 tools/extract_sandvik.py                    extraction complète d'un manuel Sandvik
 ```
 
+## Simulation mécanique (développement, hors site)
+
+Le DU311 (s/n 10703) a une première simulation mécanique, articulée sur le même
+modèle 3D que le site : braquage du porteur articulé et translation (roues et
+enrouleur de câble qui tournent), stabilisateurs avant et arrière,
+basculement du cadre de la glissière (jusqu'à la position de translation, mât
+couché sur le pont avant), translation latérale, rotation de l'avance,
+extension sur le MCP, course et rotation de la tête, stinger, plaque à coins,
+indexage du carrousel et bras de serrage, surpresseur. Les vérins suivent
+leurs deux axes ; les flexibles se redessinent ; des verrouillages bloquent les
+mouvements dangereux (translation stabilisateurs sortis, descente de la tête
+avec les bras sur l'axe, indexage bras engagés…) et le contact au sol arrête
+stinger et avance.
+
+```bash
+npm run dev                    # puis http://localhost:5173/sim.html
+node scripts/check-sim.mjs     # courses des vérins, débattements, contact au sol
+```
+
+La page `sim.html` n'est servie que par le serveur de développement : `npm run
+build` ne compile que `index.html`, la simulation n'est donc pas publiée sur le
+site. Fichiers : `src/sim/kinematics.js` (corps, liaisons, vérins, flexibles),
+`src/sim/du311-std.js` (axes, débattements, vitesses, verrouillages, positions),
+`src/sim/main.js` (page). Les pièces mobiles sont étiquetées dans les builders
+du DU311 (`body()`, `ram()`, `flex()` de `src/models/du311-std/layout.js`), sans
+effet sur le rendu du site.
+
 ## Ajouter un équipement
 
 1. Rendre les pages du PDF en images :

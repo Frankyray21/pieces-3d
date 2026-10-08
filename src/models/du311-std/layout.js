@@ -47,3 +47,23 @@ export function wheel(S, { side = 1 } = {}) {
     }),
   );
 }
+
+// Étiquettes de simulation (sans effet sur le rendu du site) : corps mobile
+// auquel appartient un objet, vérin entre deux corps, flexible dont chaque point
+// suit un corps. Les noms de corps sont ceux de src/sim/du311-std.js ; un objet
+// sans étiquette suit son parent (le châssis arrière par défaut).
+export function body(name, obj) {
+  obj.userData.body = name;
+  return obj;
+}
+
+export function ram(id, a, b, obj) {
+  obj.userData.ram = { id, a, b };
+  return obj;
+}
+
+export function flex(S, points, bodies, r, material, opts = {}) {
+  const m = S.tube(points, r, material, opts);
+  m.userData.flex = { points, bodies, r, material, opts };
+  return m;
+}

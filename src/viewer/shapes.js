@@ -575,6 +575,9 @@ export function hydCylinder(len, bore, { material = 'red', rodR, ext = 0.45, eye
   const rodLen = len - pistonX;
   g.add(at(cyl(rodR, rodLen, 'chrome', { axis: 'x' }), [pistonX + rodLen / 2, 0, 0]));
   g.userData.hasInterior = true;
+  // Axes d'articulation (repère local, le long de X) pour une simulation : œil
+  // arrière et œil de tige.
+  g.userData.cylinder = { rear: eyes === 'eye' ? -r * 0.6 : -r * 0.3, pin: eyes === 'eye' ? len + rodR * 0.9 : len + rodR * 1.2, bore, rodR };
   if (eyes === 'eye') {
     body.push(place(alongAxis(ringGeo(r * 0.75, r * 0.32, r * 0.7, 28), 'z'), [-r * 0.6, 0, 0]));
     dark.push(place(alongAxis(ringGeo(r * 0.33, r * 0.22, r * 0.72, 20), 'z'), [-r * 0.6, 0, 0]));

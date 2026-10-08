@@ -8,13 +8,35 @@
 // tête de rotation) vers +Z, carrousel du côté +X. L'axe de forage passe à
 // z = AX devant la plaque porte-tête.
 
+import { body, ram, flex } from './layout.js';
+
 export const FEED = {
   L: 3.0, W: 0.4, D: 0.32, // mât
   AX: 0.505, // axe de forage
   tdY: 2.35, // tête de rotation (sur les trous les plus bas de la plaque)
   car: { x: 0.62, z: 0.12, r: 0.34, rp: 0.27, y0: 0.45, y1: 2.62 },
   frame: { xc: 0.35, z0: -0.16, z1: -0.3, y0: 0.35, y1: 2.65, bar: 0.265 },
+  // arbre des bras de serrage (x, z), haut de l'arbre, hauteurs des deux bras
+  clamp: { x: 0.38, z: 0.55, top: 1.92, arms: [0.85, 1.75] },
+  // vérins stinger (x, z) et dessous de leurs patins bas
+  stingers: [[-0.32, -0.02], [1.02, -0.17]],
+  stingerFoot: -0.255,
 };
+
+// Point de transfert : alvéole du carrousel atteinte par le bout des bras de
+// serrage (intersection du cercle des alvéoles et du cercle décrit par les bras),
+// du côté du mât. Les plaques sont dessinées avec leur première alvéole à ce point.
+{
+  const { car: C, clamp: K, AX } = FEED;
+  const arm = Math.hypot(K.x, AX - K.z);
+  const dx = C.x - K.x, dz = C.z - K.z, d = Math.hypot(dx, dz);
+  const a = (arm * arm - C.rp * C.rp + d * d) / (2 * d), h = Math.sqrt(arm * arm - a * a);
+  const bx = K.x + (a * dx) / d, bz = K.z + (a * dz) / d;
+  const cands = [[bx - (h * dz) / d, bz + (h * dx) / d], [bx + (h * dz) / d, bz - (h * dx) / d]];
+  FEED.transfer = cands.reduce((m, c) => (c[0] < m[0] ? c : m));
+  // angle des alvéoles dans le plan des plaques (sens des rotations autour de +Y)
+  FEED.pocketA0 = Math.atan2(-(FEED.transfer[1] - C.z), FEED.transfer[0] - C.x);
+}
 
 export function P028(api) {
   const { box, cyl, ring, tube, fitting, valveBank, extrude, hydCylinder, plate, at, group } = api.S;
@@ -31,7 +53,7 @@ export function P028(api) {
     });
     const holes = [[0, 0, 0.055]];
     if (pockets) for (let i = 0; i < 17; i++) {
-      const a = (i / 17) * Math.PI * 2 + 0.2;
+      const a = (i / 17) * Math.PI * 2 + FEED.pocketA0;
       holes.push([Math.cos(a) * C.rp, Math.sin(a) * C.rp, holeR]);
     }
     const m = extrude(pts, t, mat, { holes });
@@ -56,22 +78,22 @@ export function P028(api) {
   P('9', group(
     at(cyl(0.065, 1.9, 'black', { seg: 32 }), [0, 1.05, 0.06]),
     at(cyl(0.075, 0.06, 'darkSteel', { seg: 32 }), [0, 2.0, 0.06]),
-    at(cyl(0.04, 0.42, 'chrome'), [0, 2.2, 0.06]),
+    body('feed', at(cyl(0.04, 0.42, 'chrome'), [0, 2.2, 0.06])),
     at(cyl(0.075, 0.06, 'darkSteel', { seg: 32 }), [0, 0.12, 0.06]),
   ), [0, 0, 0.35]);
 
   // 6 — plaque porte-tête : plaque, boîtiers de glissières sur les barres, tourillons du vérin
   const H = 26.5 * IN;
-  P('6', group(
+  P('6', body('feed', group(
     at(box(0.56, H, 0.04, 'grey'), [0, tdY - 0.05, 0.25]),
     ...[1, -1].map((s) => at(box(0.06, H, 0.09, 'grey'), [s * (hw - 0.015), tdY - 0.05, 0.19])),
     ...[1, -1].map((s) => at(box(0.012, H - 0.04, 0.06, 'white'), [s * (hw - 0.038), tdY - 0.05, 0.19])),
     at(box(0.16, 0.12, 0.1, 'grey'), [0, tdY - 0.15, 0.17]),
     at(cyl(0.025, 0.2, 'steel', { axis: 'x' }), [0, tdY - 0.15, 0.17]),
     ...[[-0.2, 0.25], [0.2, 0.25], [-0.2, -0.32], [0.2, -0.32]].map(([x, dy]) => at(box(0.1, 0.12, 0.015, 'grey'), [x, tdY + dy, 0.278])),
-  ), [0, 0, 0.6]);
+  )), [0, 0, 0.6]);
   // 4 — tête de rotation RH6230-A-SP ME12-SS #24 (bride arrière contre la plaque)
-  P('4', at(api.sub('P050'), [0, tdY, AX]), [0, 0.3, 1.1]);
+  P('4', body('feed', at(api.sub('P050'), [0, tdY, AX])), [0, 0.3, 1.1]);
 
   // Pied de l'avance : 1 centreur fixe, 3 mâchoires Ø 3,5 po, 2 plaque à coins et son vérin
   P('1', group(
@@ -81,10 +103,12 @@ export function P028(api) {
     ...[1, -1].map((s) => at(cyl(0.03, 0.2, 'black', { axis: 'x' }), [s * 0.24, -0.04, AX - 0.06])),
   ), [0, -0.3, 0.6]);
   P('3', ring(0.095, 0.05, 0.12, 'darkSteel', { seg: 32, pos: [0, -0.04, AX] }), [0, -0.5, 0.8]);
+  // (la plaque et sa chape coulissent vers -X pour libérer l'axe : corps « slip »)
   P('2', group(
-    at(plate(0.34, 0.34, 0.03, 'grey', { cutouts: [[0, 0.05, 0.08, 0.2]], r: 0.02 }), [0, 0.11, AX]),
-    at(hydCylinder(0.3, 0.05, { material: 'black' }), [-0.52, 0.11, AX]),
-    at(box(0.06, 0.06, 0.08, 'grey'), [-0.2, 0.11, AX]),
+    body('slip', at(plate(0.34, 0.34, 0.03, 'grey', { cutouts: [[0, 0.05, 0.08, 0.2]], r: 0.02 }), [0, 0.11, AX])),
+    ram('slip', 'ext', 'slip', at(hydCylinder(0.53, 0.05, { material: 'black', ext: 0.4 }), [-0.75, 0.11, AX])),
+    body('slip', at(box(0.06, 0.06, 0.08, 'grey'), [-0.2, 0.11, AX])),
+    at(box(0.62, 0.03, 0.06, 'grey'), [-0.46, 0.065, AX - 0.08]),
   ), [-0.3, 0, 0.7]);
   // 10 — clapet de retenue de charge, 15 — collecteur des centreurs, 16 — raccords rapides 1/4 po
   P('10', at(box(0.1, 0.12, 0.08, 'steel', { r: 0.005 }), [0.08, 0.2, -hd - 0.05]), [0, -0.2, -0.4]);
@@ -97,13 +121,12 @@ export function P028(api) {
   const stinger = () => group(
     at(cyl(0.056, 2.4, 'black', { seg: 32 }), [0, 1.5, 0]),
     ...[0.3, 2.7].map((y) => at(ring(0.066, 0.03, 0.06, 'darkSteel'), [0, y, 0])),
-    at(cyl(0.032, 0.5, 'chrome'), [0, 2.95, 0]),
-    at(cyl(0.032, 0.5, 'chrome'), [0, 0.05, 0]),
-    at(cyl(0.058, 0.07, 'darkSteel'), [0, 3.22, 0]),
-    at(cyl(0.058, 0.07, 'darkSteel'), [0, -0.22, 0]),
+    // tiges (assez longues pour rester dans le fût en extension) et patins
+    body('stingUp', group(at(cyl(0.032, 1.0, 'chrome'), [0, 2.7, 0]), at(cyl(0.058, 0.07, 'darkSteel'), [0, 3.22, 0]))),
+    body('stingDn', group(at(cyl(0.032, 1.0, 'chrome'), [0, 0.3, 0]), at(cyl(0.058, 0.07, 'darkSteel'), [0, -0.22, 0]))),
     ...[0.42, 2.58].map((y) => at(box(0.06, 0.1, 0.07, 'blue', { r: 0.005 }), [0, y, 0.08])),
   );
-  const SA = [-0.32, -0.02], SB = [1.02, -0.17];
+  const [SA, SB] = FEED.stingers;
   P('7', at(stinger(), [SA[0], 0, SA[1]]), [-0.6, 0, 0]);
   P('7', at(stinger(), [SB[0], 0, SB[1]]), [0.6, 0, 0]);
   // 8 — jeu de supports des stinger (collier sur le vérin, bras vers le mât ou le cadre)
@@ -139,7 +162,7 @@ export function P028(api) {
 
   // 22 — carrousel 17 tiges : arbre central, plaques à alvéoles haute et basse, mécanisme
   // d'indexage, cadre arrière, arbre des bras de serrage et ses deux bras
-  const PIV = [0.38, 0.55], PIV_TOP = 1.92;
+  const PIV = [FEED.clamp.x, FEED.clamp.z], PIV_TOP = FEED.clamp.top;
   const armDir = [-PIV[0], AX - PIV[1]];
   const armLen = Math.hypot(...armDir);
   // Plat horizontal entre deux points (x, z) à la hauteur y.
@@ -155,14 +178,17 @@ export function P028(api) {
     );
     g.position.set(PIV[0], y, PIV[1]);
     g.rotation.y = -Math.atan2(armDir[1], armDir[0]);
-    return g;
+    return body('clamp', g);
   };
   P('22', group(
-    at(cyl(0.05, C.y1 - C.y0 + 0.2, 'steel'), [C.x, (C.y0 + C.y1) / 2, C.z]),
-    at(disc(C.r, 0.02, 0.05, 'grey'), [C.x, C.y1 - 0.08, C.z]),
-    at(disc(C.r, 0.02, 0.05, 'grey'), [C.x, C.y0 + 0.14, C.z]),
-    at(ring(0.1, 0.05, 0.08, 'darkSteel'), [C.x, C.y1 - 0.12, C.z]),
-    at(ring(0.1, 0.05, 0.08, 'darkSteel'), [C.x, C.y0 + 0.18, C.z]),
+    // partie tournante (corps « carousel ») : arbre, plaques à alvéoles, moyeux
+    body('carousel', group(
+      at(cyl(0.05, C.y1 - C.y0 + 0.2, 'steel'), [C.x, (C.y0 + C.y1) / 2, C.z]),
+      at(disc(C.r, 0.02, 0.05, 'grey'), [C.x, C.y1 - 0.08, C.z]),
+      at(disc(C.r, 0.02, 0.05, 'grey'), [C.x, C.y0 + 0.14, C.z]),
+      at(ring(0.1, 0.05, 0.08, 'darkSteel'), [C.x, C.y1 - 0.12, C.z]),
+      at(ring(0.1, 0.05, 0.08, 'darkSteel'), [C.x, C.y0 + 0.18, C.z]),
+    )),
     at(hydCylinder(0.28, 0.05, { material: 'black' }), [C.x - 0.02, C.y1 + 0.04, C.z + 0.25]),
     at(box(0.12, 0.08, 0.12, 'grey'), [C.x - 0.08, C.y1 + 0.04, C.z + 0.25]),
     // cadre rectangulaire du carrousel (montants arrière, paliers de l'arbre)
@@ -173,7 +199,7 @@ export function P028(api) {
     at(cyl(0.035, PIV_TOP - C.y0 + 0.02, 'steel'), [PIV[0], (C.y0 + PIV_TOP) / 2, PIV[1]]),
     link([C.x, C.z], PIV, C.y0 + 0.02, 0.1, 0.05),
     link([hw, 0.1], PIV, PIV_TOP - 0.03, 0.1, 0.05),
-    arm(0.85), arm(1.75),
+    ...FEED.clamp.arms.map(arm),
   ), [0.75, 0, 0]);
   // 11 — rampe des tiges (plaque d'appui sous les alvéoles, rebord vers l'axe de forage)
   P('11', group(
@@ -181,15 +207,15 @@ export function P028(api) {
     at(box(0.22, 0.012, 0.16, 'darkSteel'), [C.x - 0.33, C.y0 + 0.035, C.z + 0.2], [0, 0.6, 0]),
   ), [0.75, -0.25, 0]);
   // 14 — guides de tiges (deux plaques à alvéoles à mi-hauteur)
-  P('14', group(
+  P('14', body('carousel', group(
     at(disc(C.r - 0.01, 0.012, 0.052, 'grey'), [C.x, 1.3, C.z]),
     at(disc(C.r - 0.01, 0.012, 0.052, 'grey'), [C.x, 2.05, C.z]),
-  ), [0.95, 0, 0]);
+  )), [0.95, 0, 0]);
   // 13 — mâchoires des bras de serrage (Ø 3,5 po), au bout des deux bras
-  P('13', group(
-    ...[0.85, 1.75].flatMap((y) => [1, -1].map((s) => at(box(0.05, 0.08, 0.025, 'darkSteel'), [s * 0.055, y, AX + 0.02]))),
-    ...[0.85, 1.75].map((y) => at(ring(0.07, 0.046, 0.08, 'darkSteel', { seg: 28 }), [0, y, AX])),
-  ), [0, 0, 0.6]);
+  P('13', body('clamp', group(
+    ...FEED.clamp.arms.flatMap((y) => [1, -1].map((s) => at(box(0.05, 0.08, 0.025, 'darkSteel'), [s * 0.055, y, AX + 0.02]))),
+    ...FEED.clamp.arms.map((y) => at(ring(0.07, 0.046, 0.08, 'darkSteel', { seg: 28 }), [0, y, AX])),
+  )), [0, 0, 0.6]);
   // 24 — banc de vannes du carrousel (3 sections) sous son capot, sur le bras haut
   P('24', group(
     at(valveBank(3, { sw: 0.05, h: 0.12, d: 0.1 }), [C.x, C.y1 + 0.16, C.z - 0.2]),
@@ -209,21 +235,25 @@ export function P028(api) {
     at(cyl(0.022, 0.025, 'red', { axis: 'x' }), [-hw - 0.07, 0.85, 0.1]),
   ), [-0.4, 0, 0.2]);
   // 20 — butée de l'émerillon d'air
-  P('20', group(
+  P('20', body('feed', group(
     at(box(0.03, 0.2, 0.03, 'grey'), [-0.12, tdY + 0.38, AX - 0.13]),
     at(box(0.03, 0.03, 0.12, 'grey'), [-0.12, tdY + 0.47, AX - 0.08]),
-  ), [-0.3, 0.3, 0]);
-  // 21 — boucle de boyaux de la tête (4 flexibles et échelles porte-boyaux)
-  const hoses = [-0.03, -0.01, 0.01, 0.03].map((d) => tube([
+  )), [-0.3, 0.3, 0]);
+  // 21 — boucle de boyaux de la tête (4 flexibles et échelles porte-boyaux) : bout haut sur
+  // la tête (corps « feed »), bout bas sur le flanc du mât, boucle entre les deux
+  const loop = ['feed', 'feed', ['ext', 'feed', 0.6], ['ext', 'feed', 0.3], 'ext'];
+  const hoses = [-0.03, -0.01, 0.01, 0.03].map((d) => flex(api.S, [
     [-0.2, tdY + 0.25, AX - 0.05 + d], [-0.5, tdY + 0.55, 0.3 + d], [-0.62, 2.2, 0.15 + d], [-0.55, 1.4, 0.08 + d], [-hw - 0.03, 1.15, 0.08 + d],
-  ], 0.012, 'black', { seg: 48 }));
+  ], loop, 0.012, 'black', { seg: 48 }));
   P('21', group(
     ...hoses,
-    ...[[-0.6, 2.5, 0.2], [-0.6, 1.85, 0.11]].map((p) => at(box(0.04, 0.025, 0.14, 'darkSteel'), p)),
+    body(['ext', 'feed', 0.75], at(box(0.04, 0.025, 0.14, 'darkSteel'), [-0.6, 2.5, 0.2])),
+    body(['ext', 'feed', 0.45], at(box(0.04, 0.025, 0.14, 'darkSteel'), [-0.6, 1.85, 0.11])),
   ), [-0.5, 0, 0.2]);
   // 23 — boyau d'air DTH 1,5 po : de l'émerillon, grande boucle côté gauche jusqu'au pied
   P('23', group(
-    tube([[0, tdY + 0.48, AX], [-0.15, tdY + 0.75, AX], [-0.55, 3.15, 0.45], [-0.78, 2.6, 0.35], [-0.72, 1.4, 0.2], [-0.5, 0.55, -0.05], [-0.42, 0.36, -0.14]], 0.03, 'black', { seg: 72 }),
+    flex(api.S, [[0, tdY + 0.48, AX], [-0.15, tdY + 0.75, AX], [-0.55, 3.15, 0.45], [-0.78, 2.6, 0.35], [-0.72, 1.4, 0.2], [-0.5, 0.55, -0.05], [-0.42, 0.36, -0.14]],
+      ['feed', 'feed', ['ext', 'feed', 0.8], ['ext', 'feed', 0.5], ['ext', 'feed', 0.25], 'ext', 'ext'], 0.03, 'black', { seg: 72 }),
     at(fitting(0.05, 0.07, 'steel'), [-0.42, 0.31, -0.14]),
   ), [-0.7, 0, 0.3]);
   return { view: { dir: [1.0, 0.45, 1.3] } };
