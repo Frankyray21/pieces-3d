@@ -178,7 +178,11 @@ function badge(s) {
 function pnHtml(r, big = false) {
   const val = (v) => (isPnText(v) ? `<span class="${big ? 'pnbig' : ''}">${esc(v)}</span>` : `<span class="pnt">${esc(v === '-' ? '—' : v)}</span>`);
   if (r.sizes) {
-    return sizeGroups(r).map(([v, ss]) => `<span class="szl"><span class="sz">${esc(ss.join(' · '))}</span>${val(v)}</span>`).join('');
+    // Étiquette de plusieurs tailles (« NW · HW · HWT ») au-dessus du numéro.
+    return sizeGroups(r).map(([v, ss]) => {
+      const label = ss.join(' · ');
+      return `<span class="szl${!big && label.length > 5 ? ' stack' : ''}"><span class="sz">${esc(label)}</span>${val(v)}</span>`;
+    }).join('');
   }
   if (r.pn) return big ? `<span class="pnbig">${esc(r.pn)}</span>` : esc(r.pn);
   if (r.pnText) return `<span class="pnt">${esc(r.pnText)}</span>`;

@@ -11,8 +11,10 @@ const ROWS = [
   ['P074', 'P079'],
   ['P056', 'P058', 'P097', 'P098', 'P099'],
   ['P100', 'P102', 'P061', 'P094-LI'],
-  ['P060', 'P055', 'P094'],
+  ['P060', 'P105', 'P094', 'P094-NH'],
 ];
+// Les carottiers complets (3 à 4 m) et la trousse à rouleaux (2,5 m) écraseraient
+// le présentoir : on les ouvre depuis la liste.
 
 /** Repère de la table des matières : numéro de page (« 94n » pour P094-NH). */
 export const tocRef = (id) => {

@@ -42,7 +42,9 @@ pièces (numéro, quantité, page du manuel).
   presse-étoupes et les outils (avance-tubage, coupe-tiges, raccords de
   verrouillage, outils de chargement, carottier 48TT). La page d'accueil de
   l'équipement (table des matières, P002) présente un exemplaire de chaque
-  famille. Pages du catalogue en WebP couleur (P001 à P108).
+  famille de têtes, d'overshots et d'outils (les carottiers complets, longs de
+  3 à 4 m, s'ouvrent depuis la liste). Pages du catalogue en WebP couleur
+  (P001 à P108).
 
 La page d'accueil (adresse sans « # », ou le logo en haut à gauche) liste
 les équipements et permet de passer de l'un à l'autre. Les adresses du premier équipement restent `#F05` ; celles des autres

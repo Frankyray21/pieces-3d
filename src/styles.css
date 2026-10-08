@@ -282,6 +282,7 @@ table.parts { width: 100%; border-collapse: collapse; font-size: 13px; }
 /* Numéros par taille (N, N2, N3…) : une ligne par numéro, ses tailles en étiquette. */
 .szl { display: flex; align-items: baseline; gap: 6px; line-height: 1.5; }
 .parts .szl { white-space: normal; }
+.parts .szl.stack { flex-direction: column; align-items: flex-start; gap: 0; }
 .sz { font: 600 10.5px/1.35 var(--f-body); color: var(--muted); letter-spacing: 0.02em; max-width: 13em; }
 .parts .sz { flex: none; min-width: 2.6em; }
 .pnt { font-family: var(--f-body); color: var(--muted); font-size: 12px; white-space: normal; }
