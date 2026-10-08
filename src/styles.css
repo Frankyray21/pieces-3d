@@ -300,6 +300,8 @@ table.parts { width: 100%; border-collapse: collapse; font-size: 13px; }
 .modal .canvas { flex: 1; overflow: auto; display: grid; place-items: center; padding: 0 16px 16px; }
 .modal img { background: #fff; max-width: none; transition: width 0.15s; }
 .modal .missing { max-width: 34em; margin: 0; padding: 18px 20px; border: 1px solid #3d4b5b; border-radius: 8px; color: #dfe6ee; background: #1d2631; line-height: 1.5; }
+.modal .missing a { color: #ffb27a; }
+.docview .missing { margin: 0; padding: 18px 20px; color: #3a4552; line-height: 1.5; }
 
 /* ---------------------------------------------------------------- catalogue */
 .catalogue { position: fixed; inset: 0; z-index: 45; background: var(--bg); overflow: auto; padding: 32px 16px 48px; padding-top: calc(32px + env(safe-area-inset-top, 0px)); }

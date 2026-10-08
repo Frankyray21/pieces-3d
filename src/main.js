@@ -4,10 +4,15 @@ import { buildProcedural } from './viewer/assembly.js';
 import { loadIndex, loadEquipment, search, sourceLabel } from './data/equipment.js';
 import cubexModels from './models/cubex-mri-5200/index.js';
 import du311Models from './models/du311/index.js';
+import du311StdModels from './models/du311-std/index.js';
 import './ui/resize.js';
 
 // Modèles 3D disponibles par équipement (builders procéduraux).
-const MODELS = { 'cubex-mri-5200': cubexModels, du311: du311Models };
+const MODELS = { 'cubex-mri-5200': cubexModels, du311: du311Models, 'du311-std': du311StdModels };
+
+// Version complète du site (toutes les pages du manuel) : la publication
+// allégée en Artifact y renvoie pour les pages qu'elle n'inclut pas.
+const SITE = 'https://frankyray21.github.io/pieces-3d/';
 
 const $ = (sel) => document.querySelector(sel);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -268,8 +273,15 @@ function showSheets(sheets) {
   dv.querySelectorAll('img').forEach((img) => {
     img.addEventListener('click', () => openPage(img.dataset.sheet));
     img.addEventListener('load', () => img.closest('figure').classList.toggle('portrait', img.naturalHeight > img.naturalWidth));
+    img.addEventListener('error', () => { img.closest('figure').innerHTML = missingPage(img.dataset.sheet); });
   });
   dv.scrollTop = 0;
+}
+
+/** Message à la place d'une page absente de cette publication (version allégée). */
+function missingPage(s, extra = '') {
+  const full = location.href.startsWith(SITE) ? '' : ` <a href="${SITE}${esc(location.hash)}" target="_blank" rel="noopener">Voir la version complète du site</a>.`;
+  return `<p class="missing">La page ${s} n'est pas incluse dans cette version du site.${extra}${full}</p>`;
 }
 
 async function openIssues() {
@@ -649,7 +661,7 @@ function openPage(sheet) {
   const img = $('#p-img');
   // Page absente (publication allégée : pages de liste laissées de côté).
   img.addEventListener('error', () => {
-    m.querySelector('.canvas').innerHTML = `<p class="missing">La page ${s} n'est pas incluse dans cette version du site.${owner ? ' Sa liste de pièces est reprise dans « Ouvrir la liste ».' : ''}</p>`;
+    m.querySelector('.canvas').innerHTML = missingPage(s, owner ? ' Sa liste de pièces est reprise dans « Ouvrir la liste ».' : '');
   });
   const fit = () => {
     const c = m.querySelector('.canvas');

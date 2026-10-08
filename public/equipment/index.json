@@ -15,6 +15,14 @@
       "category": "Foreuse sur chenilles",
       "thumbnail": "equipment/du311/thumbnail.webp",
       "status": "3D : machine complète, châssis, avance V30, mât et tête de rotation (10 assemblages) — dessins et listes pour les 172 assemblages, 15 schémas"
+    },
+    {
+      "id": "du311-std",
+      "name": "Sandvik DU311",
+      "manufacturer": "Sandvik",
+      "category": "Foreuse sur roues",
+      "thumbnail": "equipment/du311-std/thumbnail.webp",
+      "status": "Variante du DU311-TVK (s/n 10703) — dessins et listes pour les 189 assemblages, 29 schémas et listes électriques ; 3D : tête de rotation ME12 (P050)"
     }
   ]
 }

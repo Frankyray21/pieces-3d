@@ -35,19 +35,32 @@ const walk = (dir) => readdirSync(dir).flatMap((f) => {
   const p = join(dir, f);
   return statSync(p).isDirectory() ? walk(p) : [p];
 });
+// Si cela ne suffit pas, les derniers équipements du catalogue sont publiés sans
+// les pages de leur manuel (listes, recherche et 3D restent complètes ; la page
+// renvoie alors à la version complète du site).
 const all = walk(join(dist, 'equipment')).map((p) => p.slice(dist.length + 1)).sort();
+const catalogue = JSON.parse(readFileSync(join(dist, 'equipment', 'index.json'), 'utf8')).equipment;
 let files = all;
+let note = '';
 if (all.length + 1 > MAX_FILES) {
   const skip = new Set();
-  for (const { id } of JSON.parse(readFileSync(join(dist, 'equipment', 'index.json'), 'utf8')).equipment) {
+  for (const { id } of catalogue) {
     const data = JSON.parse(readFileSync(join(dist, 'equipment', id, 'data.json'), 'utf8'));
     for (const a of Object.values(data.assemblies)) {
       for (const s of a.lists || []) skip.add(`equipment/${id}/${data.document.pagePattern.replace('{sheet}', s)}`);
     }
   }
   files = all.filter((f) => !skip.has(f));
+  note = `${all.length - files.length} pages de liste laissées de côté`;
 }
+const dropped = [];
+for (const { id } of [...catalogue].reverse()) {
+  if (files.length + 1 <= MAX_FILES) break;
+  files = files.filter((f) => !f.startsWith(`equipment/${id}/pages/`));
+  dropped.push(id);
+}
+if (dropped.length) note += `${note ? ' ; ' : ''}sans pages du manuel : ${dropped.join(', ')}`;
 if (files.length + 1 > MAX_FILES) throw new Error(`${files.length + 1} fichiers : au-delà de la limite de ${MAX_FILES}`);
 writeFileSync('dist-artifact/files.json', `${JSON.stringify(files, null, 1)}\n`);
 const mb = files.reduce((n, f) => n + statSync(join(dist, f)).size, 0) / 1e6;
-console.log(`dist-artifact/files.json : ${files.length} fichiers de données (${mb.toFixed(1)} Mo), ${all.length - files.length} pages de liste laissées de côté`);
+console.log(`dist-artifact/files.json : ${files.length} fichiers de données (${mb.toFixed(1)} Mo)${note ? `, ${note}` : ''}`);

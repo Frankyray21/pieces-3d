@@ -22,10 +22,18 @@ pièces (numéro, quantité, page du manuel).
   d'engrenages P142). Les autres assemblages s'affichent avec les dessins du
   manuel. Le PDF d'origine (69 Mo) est conservé dans la
   release GitHub `manuel-du311`, pas dans le dépôt.
+- **Sandvik DU311** n° de série 10703 (`du311-std`, variante sur roues du
+  DU311-TVK : porteur 4 roues, carrousel de tiges 6 pi, extinction
+  d'incendie, pont arrière ; manuel du 2021-12-10, 640 pages) : 189
+  assemblages et 29 schémas et listes électriques. En 3D : la tête de
+  rotation RH6230 ME12-SS #24 (P050, même construction que celle du TVK avec
+  moteurs ME12), son émerillon d'air (P052) et sa boîte d'engrenages (P054),
+  repris du TVK (même numéro, même liste ; voir `src/models/reuse.js`). Le PDF
+  d'origine (101 Mo) est dans la release GitHub `manuel-du311-std`.
 
 La page d'accueil (adresse sans « # », ou le logo en haut à gauche) liste
 les équipements et permet de passer de l'un à l'autre. Les adresses du premier équipement restent `#F05` ; celles des autres
-sont préfixées : `#du311.P032`.
+sont préfixées : `#du311.P032`, `#du311-std.P050`.
 
 ## Ce que fait l'application
 
@@ -56,7 +64,8 @@ sont préfixées : `#du311.P032`.
 
 Site en ligne : https://frankyray21.github.io/pieces-3d/ (republié
 automatiquement à chaque push sur la branche `main`, voir
-`.github/workflows/pages.yml`). DU311 : https://frankyray21.github.io/pieces-3d/#du311.P010
+`.github/workflows/pages.yml`). DU311-TVK : https://frankyray21.github.io/pieces-3d/#du311.P010 ;
+DU311 : https://frankyray21.github.io/pieces-3d/#du311-std.P050
 
 ## Démarrer
 
@@ -94,9 +103,11 @@ tools/extract_sandvik.py                    extraction complète d'un manuel San
    et le relire (les tableaux insérés comme images se transcrivent à la main).
 3. Écrire `public/equipment/<id>/data.json` (format : voir le Cubex) et ajouter
    l'équipement dans `public/equipment/index.json`.
-   Pour un manuel Sandvik (« Parts Manual »), `tools/extract_sandvik.py`
-   produit directement `data.json` (table des matières, listes, liens entre
-   assemblages, schémas) ; pages rendues en WebP gris pour alléger le site :
+   Pour un manuel Sandvik (« Parts Manual »), `tools/extract_sandvik.py
+   manuel.pdf <id>` produit directement `data.json` (table des matières,
+   listes, liens entre assemblages, schémas) ; la fiche de l'équipement (nom,
+   n° de série, caractéristiques) est un profil `<id>` de `PROFILES` dans le
+   script. Pages rendues en WebP gris pour alléger le site :
    `pdftoppm -scale-to 2200 -gray -png` puis conversion WebP qualité 70.
    Un PDF de plus de 25 Mo se dépose dans une release GitHub plutôt que dans
    le dépôt.
@@ -104,7 +115,8 @@ tools/extract_sandvik.py                    extraction complète d'un manuel San
    objet, [dx, dy, dz])`, ou fournir un fichier `.glb` exporté de la CAO dont
    les nœuds sont nommés `ref-<numéro>` (l'éclaté est alors calculé
    automatiquement). Un assemblage sans modèle s'affiche avec ses dessins du
-   manuel.
+   manuel. Une variante d'une machine déjà modélisée reprend les modèles des
+   assemblages identiques avec `reuse()` (`src/models/reuse.js`).
 
 ## Limites actuelles
 

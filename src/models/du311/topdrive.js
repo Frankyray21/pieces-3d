@@ -172,62 +172,81 @@ export function P140(api) {
   return { view: { dir: [0.8, 0.45, 1.2] } };
 }
 
-// P138 — Tête de rotation complète : boîte d'engrenages, deux moteurs ME18,
-// émerillon d'air, piston cannelé et ressort, raccord d'usure #28.
-export function P138(api) {
+// Tête de rotation complète RH6230-A-SP : boîte d'engrenages, deux moteurs,
+// émerillon d'air, piston cannelé et ressort, raccord d'usure. Paramètres :
+// repères de la liste (R), feuilles des sous-assemblages (sub), moteurs
+// (k : échelle ME18 = 1), raccord d'usure (rSub, rayon du filetage).
+const TK_ASSY = {
+  sub: { gearbox: 'P142', swivel: 'P140' },
+  R: {
+    piston: '1', spring: '2', saverSub: '3', swivel: '4', insert: '5', motor: '6', cap: '7',
+    pistonRing: '8', swivelRing: '9', gearbox: '10', insertBolt: '11', flangeBolt: '12',
+    motorBolt: '13', insertWasher: '14', motorWasher: '15', flangeWasher: '16',
+  },
+  k: 1,
+  rSub: 0.05,
+};
+
+export function topdriveAssembly(api, { sub, R, k, rSub }) {
   const { box, cyl, ring, torus, spring, gear, bolt, at, group } = api.S;
   const P = (ref, obj, e) => api.part(ref, obj, e);
 
-  P('10', api.sub('P142'), [0, 0, 0]);
+  P(R.gearbox, api.sub(sub.gearbox), [0, 0, 0]);
 
-  // 6 — moteurs hydrauliques sur les pignons ; 7 — bouchons M12 ; 13 / 15 — vis et rondelles
+  // Moteurs hydrauliques sur les pignons (corps et capot à l'échelle k, bride
+  // identique) ; bouchons M12 (TK seulement) ; vis et rondelles de bride.
   const motor = () => group(
     at(box(0.15, 0.03, 0.15, 'black', { r: 0.004 }), [0, 0.015, 0]),
     at(box(0.13, 0.07, 0.17, 'black', { r: 0.008 }), [0, 0.065, 0.01]),
-    at(cyl(0.085, 0.13, 'black', { seg: 36 }), [0, 0.165, 0]),
-    at(cyl(0.07, 0.02, 'darkSteel', { seg: 36 }), [0, 0.24, 0]),
+    at(cyl(0.085 * k, 0.13 * k, 'black', { seg: 36 }), [0, 0.1 + 0.065 * k, 0]),
+    at(cyl(0.07 * k, 0.02, 'darkSteel', { seg: 36 }), [0, 0.11 + 0.13 * k, 0]),
     at(cyl(0.012, 0.06, 'steel'), [0, -0.03, 0]),
     at(cyl(0.015, 0.01, 'steel', { axis: 'z' }), [0.035, 0.065, 0.1]),
     at(cyl(0.015, 0.01, 'steel', { axis: 'z' }), [-0.035, 0.065, 0.1]),
   );
   for (const s of [1, -1]) {
-    P('6', at(motor(), [s * XP, 0.14, 0]), [s * 0.12, 0.5, 0]);
-    P('7', cyl(0.009, 0.012, 'red', { axis: 'x', pos: [s * (XP + 0.066), 0.205, 0] }), [s * 0.3, 0.55, 0]);
+    P(R.motor, at(motor(), [s * XP, 0.14, 0]), [s * 0.12, 0.5, 0]);
+    if (R.cap) P(R.cap, cyl(0.009, 0.012, 'red', { axis: 'x', pos: [s * (XP + 0.066), 0.205, 0] }), [s * 0.3, 0.55, 0]);
     for (const [dx, dz] of [[0.06, 0.06], [-0.06, 0.06], [0.06, -0.06], [-0.06, -0.06]]) {
-      P('13', bolt(0.5 * IN, 1.5 * IN, 'black', { pos: [s * XP + dx, 0.173, dz] }), [s * 0.12, 0.85, 0]);
-      P('15', ring(0.013, 0.0066, 0.003, 'steel', { pos: [s * XP + dx, 0.1715, dz] }), [s * 0.12, 0.75, 0]);
+      P(R.motorBolt, bolt(0.5 * IN, 1.5 * IN, 'black', { pos: [s * XP + dx, 0.173, dz] }), [s * 0.12, 0.85, 0]);
+      P(R.motorWasher, ring(0.013, 0.0066, 0.003, 'steel', { pos: [s * XP + dx, 0.1715, dz] }), [s * 0.12, 0.75, 0]);
     }
   }
 
-  // 4 — émerillon d'air vissé en haut de l'arbre ; 9 — joint torique sous l'émerillon
-  P('4', at(api.sub('P140'), [0, 0.2 - 0.0533, 0]), [0, 0.75, 0]);
-  P('9', torus(0.06, 0.003, 'rubber', { pos: [0, 0.2, 0] }), [0, 0.45, 0]);
-  // 1 — piston cannelé, 8 — son joint torique, 2 — ressort (dans l'arbre, sortent à droite)
-  P('1', group(
+  // Émerillon d'air vissé en haut de l'arbre et son joint torique
+  P(R.swivel, at(api.sub(sub.swivel), [0, 0.2 - 0.0533, 0]), [0, 0.75, 0]);
+  P(R.swivelRing, torus(0.06, 0.003, 'rubber', { pos: [0, 0.2, 0] }), [0, 0.45, 0]);
+  // Piston cannelé, son joint torique et ressort (dans l'arbre, sortent à droite)
+  P(R.piston, group(
     at(cyl(0.035, 0.04, 'steel'), [0, 0.17, 0]),
     at(gear(0.022, 0.028, 10, 0.1, 'steel', { axis: 'y' }), [0, 0.1, 0]),
   ), [0.55, 0.35, 0]);
-  P('8', torus(0.035, 0.003, 'rubber', { pos: [0, 0.185, 0] }), [0.55, 0.5, 0]);
-  P('2', spring(0.03, 0.004, 0.11, 7, 'steel', { pos: [0, 0.0, 0] }), [0.55, 0.15, 0]);
-  // 5 — insert cannelé au bas de l'arbre, 11 / 14 — sa vis et sa rondelle
-  P('5', group(
+  P(R.pistonRing, torus(0.035, 0.003, 'rubber', { pos: [0, 0.185, 0] }), [0.55, 0.5, 0]);
+  P(R.spring, spring(0.03, 0.004, 0.11, 7, 'steel', { pos: [0, 0.0, 0] }), [0.55, 0.15, 0]);
+  // Insert cannelé au bas de l'arbre, sa vis et sa rondelle
+  P(R.insert, group(
     ring(0.045, 0.025, 0.035, 'steel', { pos: [0, -0.24, 0] }),
     gear(0.05, 0.062, 8, 0.01, 'steel', { axis: 'y', hole: 0.025, pos: [0, -0.255, 0] }),
   ), [0, -0.35, 0.3]);
-  P('11', bolt(0.25 * IN, 0.75 * IN, 'steel', { axis: '-y', pos: [0.035, -0.262, 0] }), [0, -0.45, 0.3]);
-  P('14', ring(0.008, 0.0035, 0.0015, 'steel', { pos: [0.035, -0.2612, 0] }), [0, -0.4, 0.3]);
-  // 3 — raccord d'usure #28 (filetage en haut, six pans en bas)
-  P('3', group(
-    at(cyl(0.05, 0.045, 'steel'), [0, -0.2775, 0]),
-    ...[-0.264, -0.274, -0.284, -0.294].map((y) => at(torus(0.05, 0.002, 'steel'), [0, y, 0])),
+  P(R.insertBolt, bolt(0.25 * IN, 0.75 * IN, 'steel', { axis: '-y', pos: [0.035, -0.262, 0] }), [0, -0.45, 0.3]);
+  P(R.insertWasher, ring(0.008, 0.0035, 0.0015, 'steel', { pos: [0.035, -0.2612, 0] }), [0, -0.4, 0.3]);
+  // Raccord d'usure (filetage en haut, six pans en bas)
+  P(R.saverSub, group(
+    at(cyl(rSub, 0.045, 'steel'), [0, -0.2775, 0]),
+    ...[-0.264, -0.274, -0.284, -0.294].map((y) => at(torus(rSub, 0.002, 'steel'), [0, y, 0])),
     at(cyl(0.065, 0.07, 'steel', { seg: 6 }), [0, -0.335, 0]),
   ), [0, -0.55, 0]);
 
-  // 12 / 16 — boulons de la bride arrière (2 colonnes de 5) et rondelles
+  // Boulons de la bride arrière (2 colonnes de 5) et rondelles
   for (const x of [-0.12, 0.12]) for (const y of [-0.13, -0.065, 0, 0.065, 0.13]) {
-    P('12', bolt(0.75 * IN, 2.25 * IN, 'steel', { axis: 'z', pos: [x, y, -0.192] }), [0, 0, -0.45]);
-    P('16', ring(0.02, 0.01, 0.003, 'steel', { axis: 'z', pos: [x, y, -0.1935] }), [0, 0, -0.36]);
+    P(R.flangeBolt, bolt(0.75 * IN, 2.25 * IN, 'steel', { axis: 'z', pos: [x, y, -0.192] }), [0, 0, -0.45]);
+    P(R.flangeWasher, ring(0.02, 0.01, 0.003, 'steel', { axis: 'z', pos: [x, y, -0.1935] }), [0, 0, -0.36]);
   }
   void cyl;
   return { view: { dir: [0.85, 0.6, 1.2] } };
+}
+
+// P138 — DU311-TVK : moteurs ME18, raccord d'usure #28, bouchons M12.
+export function P138(api) {
+  return topdriveAssembly(api, TK_ASSY);
 }

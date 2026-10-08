@@ -4,7 +4,9 @@ Extraction complète d'un manuel de pièces Sandvik (format « Parts Manual »
 généré par Antenna House : un dessin par page paire, la liste en page impaire).
 
 Usage :
-    python3 tools/extract_sandvik.py manuel.pdf > public/equipment/<id>/data.json
+    python3 tools/extract_sandvik.py manuel.pdf [id] > public/equipment/<id>/data.json
+
+id : profil de l'équipement dans PROFILES (défaut : du311).
 
 Le manuel est découpé d'après sa table des matières (« * TITRE....page ») :
 chaque entrée devient un assemblage identifié par sa première page (« P024 »),
@@ -14,8 +16,8 @@ description, Page, kg, NOTE) ; la colonne « Page » donne le lien vers le
 sous-assemblage. Les chapitres de schémas (air, hydraulique, électrique)
 deviennent des documents.
 
-Les champs descriptifs de l'équipement (nom, fabricant, fiche technique) sont
-à compléter dans le JSON produit ; voir EQUIPMENT ci-dessous.
+Les champs descriptifs de l'équipement (nom, fabricant, fiche technique)
+viennent de son profil ; voir PROFILES ci-dessous.
 """
 import json
 import re
@@ -30,8 +32,8 @@ DOC_CHAPTERS = re.compile(r"SCHEMATIC", re.I)
 
 TOC_ENTRY = re.compile(r"^\s*(\*+)\s*(.+?)\s*\.{3,}\s*(\d+)\s*$")
 TOC_CHAPTER = re.compile(r"^\s*(\d+)\s{2,}([A-Z].+?)\s*$")
-HEAD_PN = re.compile(r"^\s*(?:Page|DU\S+)?\s{2,}([A-Z0-9][A-Z0-9-]*)(?: (\d+))?\s*(?:\s{2,}\S.*)?$")
-REF = re.compile(r"^(\d+(?:\.\d+)?[*#]?|[A-Z]{1,3}\d{0,2}|KEY)$")
+HEAD_PN = re.compile(r"^\s*(?:Page|DU\S+)?\s{2,}([A-Z0-9][A-Z0-9-]*)(?: (\d+|[A-Z]{1,2}))?\s*(?:\s{2,}\S.*)?$")
+REF = re.compile(r"^([*#]?\d+(?:\.\d+)?[A-Z]?[*#]?|[A-Z]{1,3}\d{0,2}|KEY)$")
 DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 COLS = ("ref", "pn", "qty", "uom", "item", "spare", "page", "kg", "note")
 
@@ -79,18 +81,33 @@ def group_lines(words, tol=2.0):
 
 
 def column_edges(header, left):
-    """Bords droits des cellules, déduits des titres centrés de l'en-tête."""
-    def center(*names):
+    """Bords droits des cellules (un mot va dans la cellule de son centre).
+
+    Titres centrés sur leur colonne (manuel DU311-TVK) : chaque bord est le
+    symétrique du précédent par rapport au centre du titre. Si un titre sort
+    alors de sa propre cellule, les titres sont alignés à gauche (manuel
+    DU311) : une colonne commence juste avant son titre. Une colonne absente
+    de l'en-tête (« NOTE ») reçoit une largeur nulle."""
+    titles = [("Ref.",), ("Part", "No."), ("QTY",), ("UOM",), ("Item", "name"),
+              ("Spare", "part", "description"), ("Page",), ("kg",), ("NOTE",)]
+    spans = []
+    for names in titles:
         ws = [w for w in header if w["text"] in names]
-        return (min(w["x0"] for w in ws) + max(w["x1"] for w in ws)) / 2
-    centers = [center("Ref."), center("Part", "No."), center("QTY"), center("UOM"),
-               center("Item", "name"), center("Spare", "part", "description"),
-               center("Page"), center("kg"), center("NOTE")]
+        spans.append((min(w["x0"] for w in ws), max(w["x1"] for w in ws)) if ws else None)
     edges, edge = [], left
-    for c in centers:
-        edge = 2 * c - edge
+    for span in spans:
+        if span:
+            edge = span[0] + span[1] - edge
         edges.append(edge)
-    return edges
+    lo = left
+    for span, hi in zip(spans, edges):
+        if span and not (lo - 1 <= span[0] and span[1] <= hi + 1):
+            break
+        lo = hi
+    else:
+        return edges
+    nxt = [next((t[0] - 3 for t in spans[k + 1:] if t), float("inf")) for k in range(len(spans))]
+    return nxt
 
 
 def parse_list(page):
@@ -209,6 +226,10 @@ def main(path):
     assemblies, documents, titles = {}, [], {}
     for e in toc:
         first = info[e["page"] - 1]
+        # Certains manuels font précéder le titre du numéro de l'assemblage
+        # (« CX035575 ASSY, TOPDRIVE ») : le numéro est déjà affiché à part.
+        if first["pn"] and e["title"].startswith(first["pn"] + " "):
+            e["title"] = e["title"][len(first["pn"]) + 1:].strip()
         pages = []
         for pg in range(e["page"], e["end"] + 1):
             p = info[pg - 1]
@@ -255,36 +276,72 @@ def main(path):
     sys.stdout.write("\n")
 
 
-# Valeurs relevées dans le manuel DU311-TVK s/n 10680 (page couverture, table
-# des matières, vue générale p. 10). À adapter pour un autre manuel.
-EQUIPMENT = {
-    "id": "du311",
-    "name": "Sandvik DU311-TVK",
-    "manufacturer": "Sandvik",
-    "category": "Foreuse sur chenilles",
-    "serial": "10680",
-    "document": {
-        "title": "Parts Manual DU311-TVK",
-        "reference": "10680",
-        "preparedBy": "Sandvik",
-        "date": "2020-07-02",
-        "pagePattern": "pages/{sheet}.webp",
+# Profils d'équipement : valeurs relevées dans chaque manuel (page couverture,
+# table des matières, vue générale et listes). Un profil par manuel.
+PROFILES = {
+    # DU311-TVK s/n 10680 (release « manuel-du311 »)
+    "du311": {
+        "id": "du311",
+        "name": "Sandvik DU311-TVK",
+        "manufacturer": "Sandvik",
+        "category": "Foreuse sur chenilles",
+        "serial": "10680",
+        "document": {
+            "title": "Parts Manual DU311-TVK",
+            "reference": "10680",
+            "preparedBy": "Sandvik",
+            "date": "2020-07-02",
+            "pagePattern": "pages/{sheet}.webp",
+        },
+        "specs": [
+            ["Modèle", "DU311-TVK"],
+            ["Groupe de pompage électrique", "60 HP, 575 V, 60 Hz"],
+            ["Moteur diesel", "Deutz D914L04"],
+            ["Tête de rotation", "RH6230-A"],
+            ["Surpresseur d'air", "Le Roi"],
+        ],
+        "weights": [
+            ["Poids total (vue générale)", "38 317 lb"],
+        ],
     },
-    "specs": [
-        ["Modèle", "DU311-TVK"],
-        ["Groupe de pompage électrique", "60 HP, 575 V, 60 Hz"],
-        ["Moteur diesel", "Deutz D914L04"],
-        ["Tête de rotation", "RH6230-A"],
-        ["Surpresseur d'air", "Le Roi"],
-    ],
-    "weights": [
-        ["Poids total (vue générale)", "38 317 lb"],
-    ],
+    # DU311 s/n 10703 (release « manuel-du311-std ») : porteur sur roues,
+    # carrousel de tiges 6 pi, extinction d'incendie, pont arrière.
+    "du311-std": {
+        "id": "du311-std",
+        "name": "Sandvik DU311",
+        "manufacturer": "Sandvik",
+        "category": "Foreuse sur roues",
+        "serial": "10703",
+        "document": {
+            "title": "Parts Manual DU311",
+            "reference": "10703",
+            "preparedBy": "Sandvik",
+            "date": "2021-12-10",
+            "pagePattern": "pages/{sheet}.webp",
+        },
+        "specs": [
+            ["Modèle", "DU311"],
+            ["Groupe de pompage électrique", "60 HP, 575 V, 60 Hz (CX028746)"],
+            ["Moteur électrique (pont arrière)", "75 HP, 575 V, 60 Hz (CX003314)"],
+            ["Moteur diesel", "Mercedes 904, 174 HP (CP000388)"],
+            ["Porteur", "4 roues 12.00-20 (CP000243)"],
+            ["Tête de rotation", "RH6230-A, ME12-SS #24 (CX035575)"],
+            ["Avance", "6 pi basic (CX036191), carrousel de tiges 6 pi"],
+            ["Surpresseur d'air", "Le Roi (CP48501)"],
+            ["Extinction d'incendie", "Automatique (CX037391)"],
+        ],
+        "weights": [
+            ["Poids total (vue générale)", "50 809 lb"],
+        ],
+    },
 }
 
+EQUIPMENT = PROFILES["du311"]
 MODEL = EQUIPMENT["document"]["title"].split()[-1]
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        sys.exit(__doc__)
+    if len(sys.argv) not in (2, 3) or (len(sys.argv) == 3 and sys.argv[2] not in PROFILES):
+        sys.exit(__doc__ + f"\nProfils : {', '.join(PROFILES)}")
+    EQUIPMENT = PROFILES[sys.argv[2] if len(sys.argv) == 3 else "du311"]
+    MODEL = EQUIPMENT["document"]["title"].split()[-1]
     main(sys.argv[1])
