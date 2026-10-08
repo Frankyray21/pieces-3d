@@ -25,10 +25,23 @@ pièces (numéro, quantité, page du manuel).
 - **Sandvik DU311** n° de série 10703 (`du311-std`, variante sur roues du
   DU311-TVK : porteur 4 roues, carrousel de tiges 6 pi, extinction
   d'incendie, pont arrière ; manuel du 2021-12-10, 640 pages) : 189
-  assemblages et 29 schémas et listes électriques. En 3D : la tête de
-  rotation RH6230 ME12-SS #24 (P050, même construction que celle du TVK avec
-  moteurs ME12), son émerillon d'air (P052) et sa boîte d'engrenages (P054),
-  repris du TVK (même numéro, même liste ; voir `src/models/reuse.js`). Le PDF
+  assemblages et 29 schémas et listes électriques. En 3D : la machine
+  complète (P010) avec le porteur articulé sur roues (P208 : châssis avant et
+  arrière, articulation et vérins de direction, essieux et roues 12.00-20,
+  cabine de translation, capot moteur, stabilisateurs, groupe de pompage,
+  bancs de vannes, collecteurs, filtres et graissage), le pont arrière (P416 :
+  surpresseur et son moteur 75 HP entraîné par courroies, enrouleur de câble,
+  filtre coalescent, poteaux porte-câble), la glissière (P164 : caisson et
+  stabilisateurs avant, cadre basculant, chariot de translation, actionneur
+  rotatif, réservoir d'air), le MCP (P156 : plaque de liaison et vérin
+  d'extension), l'avance 6 pi à carrousel de 17 tiges (P028 : mât, plaque
+  porte-tête, vérins stinger, centreur, cadre du carrousel, bras de
+  serrage, boyaux), l'extinction d'incendie (P012) et la finition (P020), en
+  formes simplifiées aux dimensions estimées sur les vues du manuel (repère
+  commun dans `src/models/du311-std/layout.js`). La tête de rotation RH6230
+  ME12-SS #24 (P050, même construction que celle du TVK avec moteurs ME12),
+  son émerillon d'air (P052) et sa boîte d'engrenages (P054) sont repris du
+  TVK (même numéro, même liste ; voir `src/models/reuse.js`). Le PDF
   d'origine (101 Mo) est dans la release GitHub `manuel-du311-std`.
 
 La page d'accueil (adresse sans « # », ou le logo en haut à gauche) liste
@@ -65,7 +78,7 @@ sont préfixées : `#du311.P032`, `#du311-std.P050`.
 Site en ligne : https://frankyray21.github.io/pieces-3d/ (republié
 automatiquement à chaque push sur la branche `main`, voir
 `.github/workflows/pages.yml`). DU311-TVK : https://frankyray21.github.io/pieces-3d/#du311.P010 ;
-DU311 : https://frankyray21.github.io/pieces-3d/#du311-std.P050
+DU311 : https://frankyray21.github.io/pieces-3d/#du311-std.P010
 
 ## Démarrer
 
