@@ -14,6 +14,13 @@ export const FLOOR = {
   boltZ: 0.4,
 };
 
+// Moteur F10 dans le plancher : tourné de -90° autour de Y, posé en (0.4, 0, -0.3).
+const MOTOR_AT = [0.4, -0.3];
+// Presse-étoupes des câbles du moteur sur le plancher (repère plancher x, z), à côté de la cloche.
+const MOTOR_GLANDS = [[0.6, 0.07], [0.6, 0.13]];
+/** Point du plancher (x, y, z) → repère du moteur F10. */
+const toMotor = ([x, y, z]) => [z - MOTOR_AT[1], y, -(x - MOTOR_AT[0])];
+
 // ------------------------------------------------------------ matériaux propres
 
 let CUSTOM = null;
@@ -423,7 +430,10 @@ function flangeAdaptor(K, c, n, pts, sz) {
   b.add('steel', K.bentTubeGeo(path, sz.tr, sz.tr * 2.6));
   const end = path[path.length - 1];
   const dEnd = end.clone().sub(path[path.length - 2]).normalize();
-  b.add('steel', G.aim(G.lathe([[0, -0.004], [sz.tr * 1.05, -0.004], [sz.tr * 1.05, 0], [sz.cr * 0.94, 0], [sz.cr, sz.ch * 0.15], [sz.cr, sz.ch * 0.85], [sz.cr * 0.94, sz.ch], [sz.tr * 0.7, sz.ch], [0, sz.ch]], 28), end, dEnd));
+  // Collet d'extrémité à bride : gorge de joint torique et alésage (passage d'huile) visibles.
+  const rb = sz.tr * 0.72;
+  b.add('steel', G.aim(G.lathe([[0, -0.004], [sz.tr * 1.05, -0.004], [sz.tr * 1.05, 0], [sz.cr * 0.94, 0], [sz.cr, sz.ch * 0.15], [sz.cr, sz.ch * 0.85], [sz.cr * 0.94, sz.ch], [rb * 1.32, sz.ch], [rb * 1.32, sz.ch - 0.0025], [rb * 1.12, sz.ch - 0.0025], [rb * 1.12, sz.ch], [rb, sz.ch], [rb, sz.ch * 0.12], [0, sz.ch * 0.12]], 28), end, dEnd));
+  b.add('blackCast', G.aim(G.cyl(rb * 0.98, 0.0008, { seg: 20 }), end.clone().addScaledVector(dEnd, sz.ch * 0.12 + 0.0006), dEnd));
   return b.group();
 }
 
@@ -532,8 +542,12 @@ export function F10(api) {
     misc.add('black', G.xf(G.toAxis(G.hex(0.036, 0.012), '-z'), [x, y + 0.3, -0.116]));
     misc.add('black', G.xf(G.toAxis(G.lathe([[0, 0], [0.015, 0], [0.015, 0.012], [0.012, 0.024], [0.008, 0.028], [0, 0.028]], 16), '-z'), [x, y + 0.3, -0.122]));
   }
-  misc.add('rubber', new THREE.TubeGeometry(new THREE.CatmullRomCurve3([[0.07, y + 0.3, -0.148], [0.07, y + 0.28, -0.2], [0.05, y + 0.12, -0.26], [0.02, 0.06, -0.29]].map(K.V3)), 24, 0.0075, 8));
-  misc.add('rubber', new THREE.TubeGeometry(new THREE.CatmullRomCurve3([[0.16, y + 0.3, -0.148], [0.16, y + 0.27, -0.21], [0.13, y + 0.1, -0.27], [0.1, 0.06, -0.29]].map(K.V3)), 24, 0.0065, 8));
+  // Câbles d'alimentation : des presse-étoupes de la boîte vers ceux du plancher (F09), à côté de la cloche.
+  const [gA, gB] = MOTOR_GLANDS.map(([x, z]) => toMotor([x, 0.024, z]));
+  const cableA = [[0.07, y + 0.3, -0.148], [0.07, y + 0.275, -0.215], [0.11, y + 0.15, -0.27], [0.28, 0.11, -0.268], [gA[0] - 0.01, 0.07, gA[2] - 0.015], [gA[0], 0.05, gA[2]], gA];
+  const cableB = [[0.16, y + 0.3, -0.148], [0.16, y + 0.275, -0.215], [0.2, y + 0.15, -0.29], [0.34, 0.12, -0.29], [gB[0] - 0.01, 0.075, gB[2] - 0.015], [gB[0], 0.055, gB[2]], gB];
+  const cab = K.bag();
+  for (const c of [cableA, cableB]) cab.add('rubber', new THREE.TubeGeometry(new THREE.CatmullRomCurve3(c.map(K.V3), false, 'centripetal'), 40, 0.0075, 8));
   // Anneau de levage, plaque signalétique (lisse) rivetée.
   blue.add('blue', G.xf(G.cyl(0.016, 0.06), [-0.12, y + 0.225, 0]));
   steel.add('steel', G.xf(G.cyl(0.022, 0.007), [-0.12, y + 0.258, 0]));
@@ -557,7 +571,7 @@ export function F10(api) {
     const a = (i / 9) * Math.PI * 2;
     misc.add('black', G.xf(G.box(0.045, 0.004, 0.13), [-0.33, y + Math.sin(a) * 0.13, Math.cos(a) * 0.13], [-a, 0, 0.35]));
   }
-  [blue.group(), fins.group({ noEdges: true }), steel.group(), inner.group(), misc.group()].forEach((g) => motor.add(g));
+  [blue.group(), fins.group({ noEdges: true }), steel.group(), inner.group(), misc.group(), cab.group({ noEdges: true })].forEach((g) => motor.add(g));
   motor.userData.hasInterior = true;
   P('5', motor, [0, 0, 0]);
 
@@ -789,7 +803,7 @@ export function F09(api) {
   const pl = K.bag();
   // Tôle de 25 mm oxycoupée : arêtes adoucies, découpes à coins arrondis (repère (x, -z)).
   const cut = (x, z, w, d) => G.roundRect(w, d, 0.012, 3).map(([u, v]) => [x + u, -z + v]).reverse();
-  const holesXZ = [[-0.74, -0.08, 0.042], [1.06, 0.62, 0.009], [1.06, -0.62, 0.009], [-1.08, 0.66, 0.009], [-1.08, -0.66, 0.009], [0.2, 0.66, 0.009], [-0.4, 0.66, 0.009]];
+  const holesXZ = [[-0.74, -0.08, 0.042], [1.06, 0.62, 0.009], [1.06, -0.62, 0.009], [-1.08, 0.66, 0.009], [-1.08, -0.66, 0.009], [0.2, 0.66, 0.009], [-0.4, 0.66, 0.009], ...MOTOR_GLANDS.map(([x, z]) => [x, z, 0.012])];
   pl.add('red', G.shape(G.roundRect(2.3, 1.5, 0.045, 6), 0.025, {
     polys: [[0.8, -0.2, 0.24, 0.4], [bx, bz, 0.34, 0.34], [0.98, 0.16, 0.07, 0.15], [0.98, -0.3, 0.07, 0.15]].map((c) => cut(...c)),
     holes: holesXZ.map(([x, z, r]) => [x, -z, r]),
@@ -799,6 +813,8 @@ export function F09(api) {
   for (const s of [1, -1]) pl.add('red', G.xf(G.box(0.3, 0.012, 0.04, 0.003), [0.8, 0.006, -0.2 + s * 0.225]));
   // Butées de tension du moteur (cornières soudées + vis-vérins).
   const welds = K.bag();
+  // Cordons des plats de renfort (deux rives).
+  for (const s of [1, -1]) for (const e of [-1, 1]) welds.add('red', K.weldGeo([0.655, 0.001, -0.2 + s * 0.225 + e * 0.0205], [0.945, 0.001, -0.2 + s * 0.225 + e * 0.0205], 0.004));
   for (const z of [-0.48, -0.12]) {
     pl.add('red', G.xf(G.box(0.012, 0.07, 0.07, 0.003), [0.715, 0.035, z]));
     pl.add('red', G.xf(G.box(0.05, 0.012, 0.07, 0.003), [0.74, 0.006, z]));
@@ -823,7 +839,18 @@ export function F09(api) {
   plS.add('steel', G.xf(G.cyl(0.03, 0.04), [-0.74, 0.035, -0.08]));
   plS.add('steel', G.xf(G.hex(0.075, 0.016), [-0.74, -0.033, -0.08]));
   plS.add('steel', G.xf(G.cyl(0.03, 0.03), [-0.74, -0.055, -0.08]));
+  // Presse-étoupes des câbles d'alimentation du moteur (plastique noir, contre-écrou dessous).
+  const gl = K.bag();
+  for (const [x, z] of MOTOR_GLANDS) {
+    gl.add('plastic', [
+      G.xf(G.hex(0.03, 0.008), [x, 0.004, z]),
+      G.xf(G.lathe([[0, 0], [0.0145, 0], [0.0145, 0.008, 1], [0.012, 0.014, 1], [0.009, 0.016], [0, 0.016]], 16), [x, 0.008, z]),
+      G.xf(G.hex(0.03, 0.007), [x, -0.0285, z]),
+      G.xf(G.cyl(0.011, 0.012, { seg: 14 }), [x, -0.038, z]),
+    ]);
+  }
   const plate = pl.group();
+  gl.build().forEach((m) => plate.add(m));
   plS.build().forEach((m) => plate.add(m));
   welds.build({ noEdges: true }).forEach((m) => plate.add(m));
   P('1', plate, [0, 0, 0]);
@@ -831,7 +858,7 @@ export function F09(api) {
   // ---------------------- moteur principal (F10), axe selon Z (poulie à -Z)
   const motor = api.sub('F10');
   motor.rotation.y = -Math.PI / 2;
-  motor.position.set(0.4, 0, -0.3);
+  motor.position.set(MOTOR_AT[0], 0, MOTOR_AT[1]);
   P('F10', motor, [0, 0.75, 0]);
 
   // --------------------------------- 22 — embase du surpresseur (oblongs de tension)
@@ -993,8 +1020,11 @@ function booster(K, bx, yc, bz) {
   for (const dx of [-0.065, 0, 0.065]) for (const dy of [-0.038, 0.038]) st.add('steel', K.boltGeo([bx + dx, yc - 0.1 + dy, bz + 0.125], [0, 0, 1], 0.007, { washer: false }));
   st.add('chrome', G.xf(G.toAxis(G.cyl(0.016, 0.01), 'x'), [bx + 0.172, yc - 0.15, bz + 0.05]));
   st.add('steel', G.xf(G.toAxis(G.hex(0.022, 0.01), 'x'), [bx + 0.172, yc - 0.195, bz - 0.05]));
-  st.add('steel', G.xf(G.cyl(0.006, 0.2, { seg: 8 }), [bx + 0.12, yc + 0.1, bz + 0.08], [0, 0, -0.35]));
-  st.add('red', G.xf(G.toAxis(G.torus(0.012, 0.003, 16, 6), 'z'), [bx + 0.085, yc + 0.2, bz + 0.08]));
+  // Jauge d'huile : bossage sur la face +Z du carter, tube coudé, poignée jaune (hors des ailettes).
+  blk.add('black', G.xf(G.toAxis(G.cyl(0.016, 0.014, { seg: 16 }), 'z'), [bx + 0.11, yc - 0.025, bz + 0.117]));
+  st.add('steel', G.xf(G.toAxis(G.hex(0.02, 0.008), 'z'), [bx + 0.11, yc - 0.025, bz + 0.128]));
+  st.add('steel', K.bentTubeGeo([[bx + 0.11, yc - 0.025, bz + 0.13], [bx + 0.11, yc - 0.025, bz + 0.142], [bx + 0.11, yc + 0.07, bz + 0.142]], 0.005, 0.012, 8));
+  st.add('safety', G.xf(G.toAxis(G.torus(0.011, 0.0032, 16, 6), 'z'), [bx + 0.11, yc + 0.083, bz + 0.142]));
   st.add('lightGrey', G.xf(G.box(0.004, 0.05, 0.08), [bx + 0.169, yc - 0.08, bz - 0.03]));
   // Cylindres : barils à ailettes rondes, brides de pied, culasses carrées.
   const cyls = [[Math.PI / 3, 0.115, 0.056, 0.088, 0.17, 0.155], [-Math.PI / 3, 0.115, 0.056, 0.088, 0.17, 0.155], [0, 0.125, 0.043, 0.066, 0.14, 0.12]];

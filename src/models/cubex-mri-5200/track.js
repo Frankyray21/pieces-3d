@@ -325,9 +325,10 @@ const BOLTS = [[-0.031, LK.zIn], [0.031, LK.zOut]];
 // Position de F06 dans F05 et demi-écart de ses deux ensembles (5 pas entre eux).
 const F06_AT = [0.08, 0.51];
 const F06_X = 2.5 * TRACK.pitch;
-// F07 : centre du clapet navette (z local) et sortie du raccord 7 vers le frein.
-const F07_VALVE_Z = -0.078;
-const F07_OUT = [-0.035, 0.114, F07_VALVE_Z - 0.068];
+// F07 : centre du clapet navette (au-dessus de la bride, ligne selon l'axe du moteur)
+// et bout fileté du raccord 7, d'où part le flexible du frein.
+const F07_VALVE = [0.075, 0.12, 0.032];
+const F07_OUT = [F07_VALVE[0] + 0.068, F07_VALVE[1], F07_VALVE[2]];
 
 function stadium(s) {
   const { half, pinR: R, wheelY } = TRACK;
@@ -408,7 +409,9 @@ function shoeGeo(detail) {
   const holes = [];
   if (detail) for (const [x, z] of BOLTS) for (const s of [1, -1]) holes.push(circ(x, s * z, 0.0085, 12));
   for (const x of [-0.031, 0.031]) holes.push(rrect(x, 0, 0.016, 0.05, 0.0079, detail ? 3 : 2));
-  const geos = [slabXZ(rrect(0, 0, 2 * half, w, 0.006, 1), 0, t, { holes, bevel: detail ? 0.0015 : 0, deg: 35 })];
+  // Tôle sans chanfrein : ses bouts affleurent ceux des crampons (profil laminé d'une pièce,
+  // pas de liseré clair en travers du pied des crampons).
+  const geos = [slabXZ(rrect(0, 0, 2 * half, w, 0.006, 1), 0, t, { holes, deg: 35 })];
   // Crampons : section trapézoïdale à sommet arrondi, sur toute la largeur.
   const gp = [[-0.012, t - 0.001], [0.012, t - 0.001], [0.0088, t + gh - 0.004], [0.0068, t + gh - 0.001], [0.004, t + gh], [-0.004, t + gh], [-0.0068, t + gh - 0.001], [-0.0088, t + gh - 0.004]];
   for (const gx of SH.gx) geos.push(slabXY(gp.map(([x, y]) => [x + gx, y]), -w / 2, w / 2, { deg: 50 }));
@@ -611,7 +614,7 @@ export function F05(api, opts = {}) {
   );
   cyl14.userData.hasInterior = true;
   P('14', cyl14, [0.3, 0.62, 0]);
-  P('13', G(M('steel', tf(hexG(0.014, 0.006), [0, 0.003, 0]), revolve([[0, 0.006], [0.004, 0.006], [0.004, 0.012], [0.0055, 0.014], [0.0035, 0.019], [0, 0.0195]], 10, 40))).translateX(0.3).translateY(Y0 + 0.053), [0.3, 0.85, 0]);
+  P('13', G(M('steel', tf(hexG(0.014, 0.006), [0, 0.003, 0]), revolve([[0, 0.006], [0.004, 0.006], [0.004, 0.012], [0.0055, 0.014], [0.0035, 0.019], [0, 0.0195]], 10, 40))).translateX(0.3).translateY(Y0 + 0.053), [0.3, 0.75, 0]);
   P('12', M('black', tf(springG(0.062, 0.012, 0.35, 6.5), [0.025, Y0, 0])), [-0.2, 0.62, 0]);
   P('11', M('black', tf(X(revolve([[0.026, -0.035], [0.06, -0.035], [0.065, -0.03], [0.065, 0.03], [0.06, 0.035], [0.026, 0.035], [0.026, -0.035]], 28, 40)), [-0.185, Y0, 0])), [-0.27, 0.62, 0]);
   P('10', M('darkSteel', tf(X(hexG(0.046, 0.028, 0.0245)), [-0.236, Y0, 0])), [-0.37, 0.62, 0]);
@@ -729,9 +732,10 @@ export function F05(api, opts = {}) {
   // Flexible de desserrage du frein : de la sortie du clapet navette (F07, réf. 7) à l'orifice du frein.
   // Repère F07 tourné de -90° autour de Y : (x, y, z) local → (sx - z, Y0 + y, zM + x).
   const f7 = [sx - F07_OUT[2], Y0 + F07_OUT[1], zM + F07_OUT[0]];
+  // Le raccord 7 pointe vers le moyeu, juste au-dessus du frein : courte boucle jusqu'à l'orifice.
   const hp = hoseParts([
-    [f7[0] + 0.008, f7[1], f7[2]], [f7[0] + 0.04, f7[1] + 0.012, f7[2] + 0.01], [f7[0] + 0.05, f7[1] + 0.05, f7[2] + 0.1],
-    [brakePort[0] + 0.035, brakePort[1] + 0.085, brakePort[2]], [brakePort[0], brakePort[1] + 0.04, brakePort[2]],
+    [f7[0], f7[1], f7[2] + 0.003], [f7[0] + 0.001, f7[1] + 0.008, f7[2] + 0.021], [sx - 0.022, Y0 + 0.165, -0.238],
+    [sx - 0.006, Y0 + 0.18, -0.256], [sx, Y0 + 0.16, brakePort[2]], [sx, brakePort[1] + 0.036, brakePort[2]],
   ], 0.0055);
   brake.add(M('hose', hp.hose), M('steel', hp.metal));
   P('28', brake, [-0.3, 0, -0.98]);
@@ -770,7 +774,8 @@ export function F05(api, opts = {}) {
   ), [0, -0.1, -0.55]);
 
   // Vue de trois quarts arrière, côté extérieur : barbotin et entraînement au premier plan.
-  return { view: { dir: [-0.9, 0.6, 1.0] } };
+  // Coupe par défaut dans le plan médian de la chenille (z = 0) : cadre, tendeur et ressort ouverts.
+  return { view: { dir: [-0.9, 0.6, 1.0], section: { axis: 'z', pos: 0.73 } } };
 }
 
 function at(obj, pos) {
@@ -827,8 +832,11 @@ export function F06(api) {
     if (boss) geos.push(tf(axis(revolve([[0.028, -0.002], [0.04, -0.002], [0.038, 0.004], [0.028, 0.004], [0.028, -0.002]], 28, 40), 'z'), [-h, 0, z + Math.sign(z) * (t / 2 + 0.002)]));
     return merge(geos);
   };
-  const pinHalf = half(pinEnd, zOut, circ(h, 0, pinR, 16), false);
-  const bushHalf = half(bushEnd, zIn, circ(-h, 0, bushR, 16), false);
+  // Les deux demi-maillons se chevauchent de 1,2 mm au droit de la denture :
+  // pas de fissure de rendu le long du joint.
+  const nb = bushEnd.length - split.length;
+  const pinHalf = half(pinEnd.map((p, i) => (i < split.length ? [p[0] - 0.0012, p[1]] : p)), zOut, circ(h, 0, pinR, 16), false);
+  const bushHalf = half(bushEnd.map((p, i) => (i === 0 || i >= nb ? [p[0] + 0.0012, p[1]] : p)), zIn, circ(-h, 0, bushR, 16), false);
   // Demi-maillons écartés en croix autour de l'axe et de la bague restés en place :
   // côté axe (10, 11) vers l'avant, côté bague (12, 13) vers l'arrière, aucun sous le patin.
   P('10', M('yellow', tf(pinHalf.clone(), [Xm, y0, 0])), [0.12, 0, 0.2]);
@@ -888,43 +896,43 @@ export function F07(api, opts = {}) {
   const adapter = merge(
     revolve([[0, -0.012], [0.0075, -0.012], [0.0082, -0.004], [0.0082, 0], [0, 0]], 12, 40),
     tf(hexG(0.022, 0.009), [0, 0.0045, 0]),
-    revolve([[0, 0.009], [0.0075, 0.009], [0.0075, 0.024], [0.0055, 0.03], [0.0035, 0.03], [0, 0.03]], 12, 40),
+    revolve([[0, 0.009], [0.0075, 0.009], [0.0075, 0.03], [0.0055, 0.036], [0.0035, 0.036], [0, 0.036]], 12, 40),
   );
   const nose = (len) => revolve([[0, 0], [0.0072, 0], [0.0072, len - 0.006], [0.0052, len], [0.0032, len], [0, len]], 12, 40);
+  // Tés orientables : passage selon l'axe du moteur (dessin F07), bouts arrière libres.
   const tee = merge(
     boxG(0.022, 0.02, 0.022, 0.003),
     tf(hexG(0.024, 0.014), [0, -0.017, 0]),
-    tf(axis(nose(0.028), 'z'), [0, 0, 0.011]),
-    tf(axis(nose(0.028), '-z'), [0, 0, -0.011]),
+    tf(axis(nose(0.028), 'x'), [0.011, 0, 0]),
+    tf(axis(nose(0.028), '-x'), [-0.011, 0, 0]),
   );
   const ports = [[-0.035, 0.032], [-0.08, -0.032]];
   ports.forEach(([x, z], i) => P('3', M('steel', tf(adapter.clone(), [x, yP, z])), [0, 0.08, i ? -0.03 : 0.03]));
-  ports.forEach(([x, z], i) => P('4', M('steel', tf(tee.clone(), [x, yP + 0.044, z])), [0, 0.16, i ? -0.06 : 0.06]));
-  const yT = yP + 0.044;
-  // Ligne du clapet : té A (-Z) → union 5 → clapet 6 → raccord 7 (vers le frein).
-  const zA = 0.032 - 0.039;
+  ports.forEach(([x, z], i) => P('4', M('steel', tf(tee.clone(), [x, F07_VALVE[1], z])), [0, 0.16, i ? -0.06 : 0.06]));
+  const [xV, yT, zL] = F07_VALVE; // centre du clapet, au-dessus de la bride
+  // Ligne du clapet selon +X : té A → union 5 → clapet 6 → raccord 7 (vers le frein).
+  const xA = -0.035 + 0.039; // bout avant du té A
   P('5', M('steel', tf(merge(
-    axis(hexG(0.022, 0.014), 'z'),
-    tf(axis(hexG(0.019, 0.012), 'z'), [0, 0, -0.013]),
-    tf(axis(nose(0.012), '-z'), [0, 0, -0.019]),
-  ), [-0.035, yT, zA - 0.007])), [0, 0.24, -0.05]);
-  const zV = F07_VALVE_Z; // centre du clapet
+    axis(hexG(0.022, 0.014), 'x'),
+    tf(axis(hexG(0.019, 0.012), 'x'), [0.013, 0, 0]),
+    tf(axis(nose(0.012), 'x'), [0.019, 0, 0]),
+  ), [xA + 0.007, yT, zL])), [0.05, 0.24, 0]);
   const valveBody = G(
-    M('brass', boxG(0.03, 0.03, 0.06, 0.003, [0, 0, 0]), tf(cylG(0.009, 0.008, 14), [0, -0.019, 0])),
+    M('brass', boxG(0.054, 0.024, 0.03, 0.003), tf(axis(cylG(0.009, 0.008, 14), '-z'), [0, 0, -0.019])),
     M('steel',
-      tf(axis(hexG(0.022, 0.008), 'z'), [0, 0, 0.034]),
-      tf(axis(hexG(0.022, 0.008), 'z'), [0, 0, -0.034]),
-      tf(hexG(0.016, 0.006), [0, -0.026, 0]),
+      tf(axis(hexG(0.022, 0.008), 'x'), [0.034, 0, 0]),
+      tf(axis(hexG(0.022, 0.008), 'x'), [-0.034, 0, 0]),
+      tf(axis(hexG(0.016, 0.006), 'z'), [0, 0, -0.026]),
     ),
   );
-  // Tube rigide : té B (-Z) → entrée inférieure du clapet.
-  const tb = hoseParts([[-0.08, yT, -0.075], [-0.08, yT - 0.006, -0.087], [-0.07, yT - 0.03, -0.094], [-0.048, yT - 0.043, -0.088], [-0.035, yT - 0.043, zV - 0.002], [-0.035, yT - 0.031, zV]], 0.0035, { ferrule: 2.6, seg: 28 });
-  valveBody.add(at(G(M('steel', tb.hose, tb.metal)), [0.035, -yT, -zV]));
-  P('6', at(valveBody, [-0.035, yT, zV]), [0, 0.32, -0.08]);
+  // Tube rigide : bout avant du té B → entrée latérale du clapet (côté -Z).
+  const tb = hoseParts([[-0.043, yT, -0.032], [-0.02, yT, -0.032], [0.035, yT, -0.031], [0.062, yT, -0.026], [xV, yT, -0.016], [xV, yT, -0.004]], 0.0035, { ferrule: 2.6, seg: 28 });
+  valveBody.add(at(G(M('steel', tb.hose, tb.metal)), [-xV, -yT, -zL]));
+  P('6', at(valveBody, [xV, yT, zL]), [0.08, 0.32, 0]);
   P('7', M('steel', tf(merge(
-    axis(hexG(0.019, 0.01), 'z'),
-    tf(axis(revolve([[0, 0], [0.0075, 0], [0.0068, 0.003], [0.0075, 0.006], [0.0068, 0.009], [0.0075, 0.012], [0.0068, 0.015], [0.0055, 0.018], [0, 0.018]], 12, 40), '-z'), [0, 0, -0.005]),
-    tf(axis(nose(0.014), 'z'), [0, 0, 0.005]),
-  ), [-0.035, yT, zV - 0.045])), [0, 0.4, -0.12]);
+    axis(hexG(0.019, 0.01), 'x'),
+    tf(axis(revolve([[0, 0], [0.0075, 0], [0.0068, 0.003], [0.0075, 0.006], [0.0068, 0.009], [0.0075, 0.012], [0.0068, 0.015], [0.0055, 0.018], [0, 0.018]], 12, 40), 'x'), [0.005, 0, 0]),
+    tf(axis(nose(0.014), '-x'), [-0.005, 0, 0]),
+  ), [xV + 0.045, yT, zL])), [0.12, 0.4, 0]);
   return { view: { dir: [0.9, 0.7, 1.1] } };
 }

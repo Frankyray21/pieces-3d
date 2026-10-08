@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { M, G, merge, tf, revolve, axis, circ, rrect, slabXY, slabXZ, prismX, boxG, cylG, hexG, boltHeadG } from './track.js';
+import { M, G, merge, tf, revolve, axis, circ, rrect, slabXY, slabXZ, prismX, boxG, cylG, hexG, boltHeadG, crease } from './track.js';
 
 // Vue générale (F04) : assemble les sous-assemblages à leur position sur la
 // machine. Repère machine : X vers l'avant (mât), Y vers le haut, +Z à droite.
@@ -40,6 +40,42 @@ function pipe(points, r, bend = 0.05, radial = 10) {
   });
   g.userData.edgeAngle = 60;
   return merge(g, caps);
+}
+
+/**
+ * Balayage d'une section ovale (rayon r(t) dans le plan, k·r selon Z) le long d'un arc
+ * de centre c et de rayon R, de l'angle a0 à a1 (plan XY). Bouts fermés.
+ */
+function sweepArc(c, R, a0, a1, r, k = 1, n = 24, radial = 12) {
+  const pos = [];
+  const ring = (i) => {
+    const t = i / n, a = a0 + (a1 - a0) * t, rr = r(t);
+    const u = [Math.cos(a), Math.sin(a)];
+    return Array.from({ length: radial }, (_, j) => {
+      const b = (j / radial) * 2 * PI;
+      return [c[0] + u[0] * (R + Math.cos(b) * rr), c[1] + u[1] * (R + Math.cos(b) * rr), Math.sin(b) * rr * k];
+    });
+  };
+  const rings = Array.from({ length: n + 1 }, (_, i) => ring(i));
+  const s = Math.sign(a1 - a0);
+  const tri = (A, B, C) => (s > 0 ? pos.push(...A, ...B, ...C) : pos.push(...A, ...C, ...B));
+  for (let i = 0; i < n; i++) {
+    for (let j = 0; j < radial; j++) {
+      const A = rings[i][j], B = rings[i][(j + 1) % radial], C = rings[i + 1][j], D = rings[i + 1][(j + 1) % radial];
+      tri(A, C, B); tri(B, C, D);
+    }
+  }
+  // Bouchons plats aux extrémités.
+  for (const [i, f] of [[0, 1], [n, -1]]) {
+    const ctr = rings[i].reduce((m, p) => [m[0] + p[0] / radial, m[1] + p[1] / radial, m[2] + p[2] / radial], [0, 0, 0]);
+    for (let j = 0; j < radial; j++) {
+      const A = rings[i][j], B = rings[i][(j + 1) % radial];
+      f > 0 ? tri(ctr, A, B) : tri(ctr, B, A);
+    }
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  return crease(g, 50);
 }
 
 /** Barre de section rectangulaire (w × d) entre deux points, arêtes adoucies. */
@@ -112,7 +148,7 @@ export function F04(api) {
 
   P('2', basket(), [-1.5, 0.45, 0]);
   // Attelage écarté au-delà du panier (à gauche du panier sur la feuille, pas caché derrière).
-  P('1', pintleHitch(), [-2.35, 0.75, 0]);
+  P('1', pintleHitch(), [-2.45, 1.35, 0.55]);
 
   // 6 — Support de console (tabouret) ; 7 — Console IP67 (bulles 6 / 7 inversées sur le dessin)
   const sx = 0.45, sz = 1.95, sh = 0.85;
@@ -206,16 +242,13 @@ function pintleHitch() {
   geos.push(prismX(rrect(0, 0, 0.15, 0.14, 0.012, 2).map(([a, b]) => [a, b + y]), x - 0.022, x, { bevel: 0.002 }));
   geos.push(prismX(rrect(0, 0, 0.08, 0.075, 0.015, 3).map(([a, b]) => [a, b + y - 0.005]), x - 0.135, x - 0.02, { bevel: 0.004 }));
   const hc = [x - 0.165, y - 0.01];
-  // Corne : de l'arrière-haut (126°) par le bas jusqu'au corps (330°).
-  const horn = new THREE.TorusGeometry(0.045, 0.018, 10, 24, (204 * PI) / 180);
-  horn.rotateZ((126 * PI) / 180);
-  geos.push(horn.translate(hc[0], hc[1], 0));
-  geos.push(new THREE.SphereGeometry(0.018, 12, 8).translate(hc[0] + 0.045 * Math.cos((126 * PI) / 180), hc[1] + 0.045 * Math.sin((126 * PI) / 180), 0));
-  // Linguet (verrou) articulé au-dessus de la corne.
-  const latch = new THREE.TorusGeometry(0.048, 0.008, 8, 16, PI * 0.45);
-  latch.rotateZ(PI * 0.35);
-  dark.push(latch.translate(hc[0], hc[1], 0));
-  dark.push(tf(boxG(0.035, 0.022, 0.03, 0.004), [x - 0.12, y + 0.045, 0]));
+  const deg = PI / 180;
+  // Corne forgée : section ovale, épaisse au corps (330°), affinée vers la pointe relevée (126°).
+  geos.push(sweepArc(hc, 0.045, 330 * deg, 126 * deg, (t) => 0.0205 - 0.0075 * t * t, 1.3, 28, 12));
+  geos.push(new THREE.SphereGeometry(1, 12, 8).scale(0.013, 0.013, 0.017).translate(hc[0] + 0.045 * Math.cos(126 * deg), hc[1] + 0.045 * Math.sin(126 * deg), 0));
+  // Linguet (verrou) : lame cintrée articulée sur le corps, posée sur la pointe de la corne.
+  dark.push(sweepArc(hc, 0.05, 58 * deg, 111 * deg, () => 0.0065, 2.1, 12, 10));
+  dark.push(prismX(rrect(0, 0, 0.042, 0.026, 0.006, 2).map(([a, b]) => [a, b + y + 0.044]), x - 0.14, x - 0.105, { bevel: 0.003 }));
   steel.push(tf(axis(cylG(0.007, 0.05, 12), 'z'), [x - 0.122, y + 0.048, 0]));
   // Goupille de sécurité à chaînette.
   steel.push(tf(axis(cylG(0.003, 0.05, 8), 'z'), [x - 0.1, y + 0.055, 0]));
@@ -239,7 +272,8 @@ function stool(sh) {
     red.push(boxG(2 * top + 0.02, 0.022, 0.003, 0.001, [0, sh + 0.011, s * (top + 0.0085)]));
     red.push(boxG(0.003, 0.022, 2 * top + 0.02, 0.001, [s * (top + 0.0085), sh + 0.011, 0]));
   }
-  // Pieds en tube carré 30 × 30, ceinture sous plateau, barreaux ronds décalés.
+  // Pieds en tube carré 30 × 30, ceinture sous plateau, un seul rang de barreaux ronds
+  // à mi-hauteur, dépassant aux angles (dessin F04 et photo F01).
   const legs = [[1, 1], [1, -1], [-1, 1], [-1, -1]];
   for (const [a, b] of legs) {
     red.push(bar([a * k(0.012), 0.012, b * k(0.012)], [a * top, sh - 0.004, b * top], 0.03));
@@ -250,11 +284,20 @@ function stool(sh) {
     red.push(boxG(2 * k(ya), 0.025, 0.02, 0.002, [0, ya, s * k(ya)]));
     red.push(boxG(0.02, 0.025, 2 * k(ya), 0.002, [s * k(ya), ya, 0]));
   }
-  for (const [y, alongX] of [[0.28, true], [0.31, false], [0.56, true], [0.59, false]]) {
-    const w = k(y);
+  {
+    const y = 0.37, w = k(y);
     for (const s of [1, -1]) {
-      const g = alongX ? tf(axis(cylG(0.008, 2 * w + 0.03, 10), 'x'), [0, y, s * w]) : tf(axis(cylG(0.008, 2 * w + 0.03, 10), 'z'), [s * w, y, 0]);
-      red.push(g);
+      red.push(tf(axis(cylG(0.009, 2 * w + 0.05, 12), 'x'), [0, y, s * w]));
+      red.push(tf(axis(cylG(0.009, 2 * w + 0.05, 12), 'z'), [s * w, y, 0]));
+    }
+    // Cordons de soudure des barreaux sur les pieds.
+    for (const [a, b] of legs) {
+      for (const along of ['x', 'z']) {
+        const ring = new THREE.TorusGeometry(0.0105, 0.0022, 4, 12);
+        if (along === 'x') ring.rotateY(PI / 2);
+        const off = 0.0165;
+        red.push(ring.translate(a * w - (along === 'x' ? a * off : 0), y, b * w - (along === 'z' ? b * off : 0)));
+      }
     }
   }
   // Embase du câble de console (bridée sur le pied arrière) et câble déroulé au sol.
@@ -281,8 +324,10 @@ const KF = 0.000494; // mètres par pixel
 function consoleIP67() {
   const D = 0.32, W = 0.42, hB = 0.15, hF = 0.06, bev = 0.004;
   const g = G();
-  // Coffret inox brossé à face inclinée (plus haut à l'arrière, côté machine).
-  g.add(M('lightGrey', slabXY([[-D / 2, 0], [D / 2, 0], [D / 2, hF], [-D / 2, hB]], -W / 2, W / 2, { bevel: bev, deg: 40 })));
+  // Coffret à face inclinée (plus haut à l'arrière, côté machine) : caisson, joint
+  // noir et couvercle débordant de 3 mm qui porte la façade.
+  const lidT = 0.0083; // couvercle + joint, mesurés selon la verticale
+  g.add(M('lightGrey', slabXY([[-D / 2, 0], [D / 2, 0], [D / 2, hF - lidT], [-D / 2, hB - lidT]], -W / 2, W / 2, { bevel: bev, deg: 40 })));
   // Repère de la face : x → droite de la photo (-Z), y → normale, z → bas de la photo (vers l'avant).
   const dx = D, dy = hF - hB, L = Math.hypot(dx, dy);
   const down = new THREE.Vector3(dx / L, dy / L, 0);
@@ -290,6 +335,8 @@ function consoleIP67() {
   const basis = new THREE.Matrix4().makeBasis(new THREE.Vector3(0, 0, -1), n, down).setPosition(0, (hB + hF) / 2 + bev, 0);
   const F = {};
   const add = (m, geo) => { (F[m] = F[m] || []).push(geo); };
+  add('lightGrey', tf(boxG(W + 0.006 - 0.003, 0.0065 - 0.003, L + 0.014, 0.0015), [0, -0.00325, 0]));
+  add('rubber', tf(boxG(W - 0.002, 0.0012, L + 0.006, 0.0002), [0, -0.0072, 0]));
   const at = (px, py, h = 0) => [(px - 495) * KF, h, (py - 405) * KF];
   const plate = (m, px, py, w, h, th, h0 = 0.0015, r = 0.003) => add(m, tf(boxG(w * KF, th, h * KF, Math.min(r, th / 2.5)), at(px, py, h0 + th / 2)));
   // Film de façade (polyester blanc) et zones imprimées.
@@ -308,8 +355,10 @@ function consoleIP67() {
   for (const py of [212, 377]) {
     plate('charcoal', 225, py, 180, 125, 0.0015, 0.0015, 0.004);
     add('white', tf(new THREE.TorusGeometry(0.03, 0.0012, 4, 28, PI * 1.5).rotateX(-PI / 2).rotateY(PI * 0.25), at(225, py, 0.0032)));
-    add('steel', tf(revolve([[0, 0], [0.023, 0], [0.023, 0.009], [0.021, 0.012], [0, 0.0125]], 28, 30), at(225, py, 0.003)));
-    add('black', tf(boxG(0.003, 0.0008, 0.016, 0.0003), at(225, py - 18, 0.0157)));
+    // Bouton : jupe noire moletée, disque central alu (photo F22).
+    add('black', tf(revolve([[0, 0], [0.024, 0], [0.024, 0.008], [0.0225, 0.0115], [0.0175, 0.0125], [0.0175, 0.011], [0, 0.011]], 24, 30), at(225, py, 0.003)));
+    add('steel', tf(revolve([[0, 0], [0.0172, 0], [0.0172, 0.0012], [0.016, 0.0018], [0, 0.0018]], 24, 30), at(225, py, 0.0138)));
+    add('white', tf(boxG(0.0022, 0.0006, 0.004, 0.0002), at(225, py - 41, 0.0151)));
   }
   // Afficheur couleur : lunette noire en relief, dalle, 4 touches.
   add('black', tf(slabXZ(rrect(0, 0, 227 * KF, 165 * KF, 0.008, 3), 0, 0.012, { holes: [rrect(0, -8 * KF, 197 * KF, 108 * KF, 0.002, 1)], bevel: 0.0015 }), at(491, 222, 0.0015)));
@@ -338,13 +387,17 @@ function consoleIP67() {
   keypad(495, 385, 240, 100, [420, 472, 524, 576], [365, 405]);
   keypad(495, 575, 300, 110, [390, 435, 480, 525, 570, 615], [553, 598]);
   // Manipulateurs : platine vissée, soufflet caoutchouc, poignée ergonomique.
+  // Manipulateurs (photo F22) : collerette claire vissée, gros soufflet noir, poignée noire
+  // (pommeau en T à gauche, levier coudé à droite), pas de bouton de couleur.
   for (const px of [215, 795]) {
-    plate('black', px, 570, 150, 140, 0.004, 0.0015, 0.004);
-    for (const [ox, oy] of [[-58, -55], [58, -55], [-58, 55], [58, 55]]) add('steel', tf(revolve([[0, 0], [0.0045, 0], [0.004, 0.0015], [0, 0.0022]], 10, 40), at(px + ox, 570 + oy, 0.0055)));
-    add('rubber', tf(revolve([[0, 0], [0.031, 0], [0.031, 0.006], [0.026, 0.01], [0.022, 0.014], [0.017, 0.021], [0.012, 0.03], [0.008, 0.032], [0, 0.032]], 24, 45), at(px, 570, 0.0055)));
+    add('lightGrey', tf(revolve([[0, 0], [0.036, 0], [0.036, 0.0022], [0.0345, 0.0032], [0, 0.0032]], 28, 40), at(px, 570, 0.0015)));
+    for (const [ox, oy] of [[-58, -55], [58, -55], [-58, 55], [58, 55]]) add('steel', tf(revolve([[0, 0], [0.0045, 0], [0.004, 0.0015], [0, 0.0022]], 10, 40), at(px + ox, 570 + oy, 0.0015)));
+    add('rubber', tf(revolve([[0, 0], [0.033, 0], [0.033, 0.006], [0.028, 0.01], [0.023, 0.015], [0.018, 0.022], [0.013, 0.03], [0.009, 0.032], [0, 0.032]], 24, 45), at(px, 570, 0.0047)));
     add('black', tf(revolve([[0, 0], [0.012, 0], [0.0135, 0.015], [0.0158, 0.04], [0.0162, 0.055], [0.0145, 0.067], [0.009, 0.0735], [0, 0.075]], 20, 40), at(px, 570, 0.034)));
-    add('red', tf(revolve([[0, 0], [0.0055, 0], [0.005, 0.003], [0, 0.0035]], 12, 40), at(px, 570, 0.1085)));
   }
+  // Pommeau en T (gauche) et levier déporté vers l'extérieur (droite).
+  add('black', tf(axis(cylG(0.011, 0.05, 16, 0.004), 'x'), at(215, 570, 0.1)));
+  add('black', tf(axis(cylG(0.0105, 0.058, 16, 0.004), 'x'), at(795 + 52, 570, 0.097)));
   // Vis du couvercle.
   for (const [px, py] of [[95, 135], [895, 135], [95, 675], [895, 675], [495, 135], [495, 675]]) add('steel', tf(revolve([[0, 0], [0.004, 0], [0.0035, 0.0015], [0, 0.002]], 10, 40), at(px, py, 0.0015)));
   for (const [m, list] of Object.entries(F)) {

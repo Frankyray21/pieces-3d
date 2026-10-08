@@ -217,6 +217,49 @@ function threads(x0, x1, rIn, rOut, n) {
   return out;
 }
 
+/**
+ * Paroi d'un trou lamé d'axe Z (centre x, y) dans une tôle de faces z0 < z1 :
+ * lamage de rayon rc et de profondeur dep côté face lamée (zc = z0 ou z1),
+ * trou de rayon r. La tôle est percée au rayon rc ; cette paroi la complète.
+ */
+function cbore(x, y, z0, z1, zc, r, rc, dep, material, seg = 20) {
+  const R = rc * 0.985;
+  const prof = zc === z1
+    ? [[z1, R], [z1 - dep, R], [z1 - dep, r], [z0, r], [z0, R]]
+    : [[z1, R], [z1, r], [z0 + dep, r], [z0 + dep, R], [z0, R]];
+  const g = new THREE.Group();
+  g.add(lathe(prof, material, seg));
+  g.rotation.y = -Math.PI / 2;
+  g.position.set(x, y, 0);
+  return g;
+}
+
+/** Écrou à créneaux d'axe X (surplat af, hauteur h, couronne vers +X) avec goupille fendue. */
+function castleNut(S, x, af, h, material = 'steel') {
+  const hh = h * 0.62, cr = af * 0.43;
+  const crown = [];
+  for (let i = 0; i < 6; i++) {
+    const a = (i * Math.PI) / 3 + Math.PI / 6;
+    const t = S.box(h - hh, af * 0.16, af * 0.2, material);
+    t.position.set(x + hh / 2, Math.cos(a) * cr * 0.92, Math.sin(a) * cr * 0.92);
+    t.rotation.x = a;
+    crown.push(t);
+  }
+  return [
+    at0(hexX(af, hh, material), [x - (h - hh) / 2, 0, 0]),
+    at0(S.ring(cr * 1.08, af * 0.3, h - hh, material, { axis: 'x', seg: 24 }), [x + hh / 2, 0, 0]),
+    ...crown,
+    // Goupille fendue dans un créneau (tête en boucle, branches rabattues)
+    at0(S.cyl(af * 0.035, af * 1.05, 'zinc', { seg: 8 }), [x + hh / 2, 0, 0]),
+    S.torus(af * 0.06, af * 0.03, 'zinc', { axis: 'z', pos: [x + hh / 2, af * 0.58, 0] }),
+  ];
+}
+
+function at0(obj, pos) {
+  obj.position.set(...pos);
+  return obj;
+}
+
 /** Prisme hexagonal d'axe X (surplat af), percé optionnellement. */
 function hexX(af, len, material, hole = 0) {
   const R = af / Math.sqrt(3);
@@ -464,6 +507,21 @@ export function F18(api) {
   ), [-0.6, 0, 0]);
 
   // 4 — Moteurs de rotation (bride ovale 2 trous, bloc de distribution, cloche à fond plat)
+  // Flexibles (photo F01) : coudes 37° sur les orifices A / B, par-dessus le
+  // moteur, derrière lui puis à travers les deux trous du support de boyaux du
+  // chariot (F16 7) ; ceux du moteur -Z passent sous le joint tournant.
+  // Points [x, y, z] du repère F18 ; départ au bout du coude, vers +X.
+  const tail = (z) => [[0.426, -0.215, z], [0.452, -0.224, z], [0.48, -0.226, z], [0.54, -0.226, z]];
+  const routes = {
+    1: [
+      [[0.287, 0.1156, 0.19], [0.335, 0.114, 0.19], [0.38, 0.095, 0.195], [0.402, 0.04, 0.2], [0.4, -0.1, 0.205], [0.403, -0.16, 0.21], ...tail(0.2125)],
+      [[0.287, 0.1156, 0.14], [0.335, 0.116, 0.15], [0.38, 0.097, 0.165], [0.403, 0.04, 0.178], [0.4, -0.1, 0.185], [0.403, -0.16, 0.1875], ...tail(0.1875)],
+    ],
+    '-1': [
+      [[0.287, 0.1156, -0.14], [0.335, 0.114, -0.14], [0.38, 0.095, -0.14], [0.4, 0.04, -0.14], [0.4, -0.09, -0.13], [0.397, -0.122, -0.09], [0.395, -0.14, 0], [0.397, -0.155, 0.08], [0.41, -0.19, 0.1125], ...tail(0.1125)],
+      [[0.287, 0.1156, -0.19], [0.335, 0.114, -0.19], [0.38, 0.095, -0.192], [0.402, 0.04, -0.195], [0.402, -0.1, -0.19], [0.398, -0.165, -0.13], [0.395, -0.185, -0.02], [0.397, -0.19, 0.08], [0.41, -0.205, 0.1375], ...tail(0.1375)],
+    ],
+  };
   const flange = starOutline(sUnion(0.03, sdCircle(0, 0, 0.07), sdBox(0, 0, 0.032, 0.108, 0.03)), 72, 0.2);
   for (const s of [1, -1]) {
     const m = fuse(S,
@@ -476,10 +534,13 @@ export function F18(api) {
       bolts(S, [1, -1].map((k) => [0.244, k * 0.088, 0]), 0.014, 0.05, 'darkSteel', { axis: 'x', washer: true }),
       at(box(0.058, 0.04, 0.1, 'black', { r: 0.008 }), [0.282, 0.078, 0]),
       ...[1, -1].map((k) => at(cyl(0.017, 0.016, 'black'), [0.282, 0.104, k * 0.025])),
+      // Coudes orientables (six-pans, cône 37°) sortant vers l'arrière
+      ...[1, -1].map((k) => at(S.fitting(0.022, 0.04, 'steel', { elbow: true }), [0.282, 0.1176, k * 0.025], [0, Math.PI / 2, 0])),
     );
     // Bride directement sur la face arrière du carter (x = 0.212)
     m.position.set(-0.012, -0.03, s * 0.165);
-    P('4', m, [0.42, 0, s * 0.2]);
+    const hoses = fuse(S, routes[s].map((pts) => S.hose(pts, 0.011)));
+    P('4', group(m, hoses), [0.42, 0, s * 0.2]);
   }
 
   // 6 — Joint tournant (eau) : nez fileté, corps, bride boulonnée, carré d'entraînement
@@ -530,7 +591,8 @@ export function F16(api) {
   for (const x of [-0.2, -0.1, 0, 0.1, 0.2]) pHoles.push([x, 0.0, 0.009]);
   for (const x of [-0.06, 0.06]) for (const z of [-0.06, 0.06]) pHoles.push([x, z, 0.012]);
   const housing = (s, x0, x1) => prismX([[0.205, -0.075], [0.262, -0.075], [0.262, 0.016], [0.241, 0.016], [0.241, -0.06], [0.205, -0.06]].map(([z, y]) => [s * z, y]), x0, x1, 'red');
-  const rail = (s, x0, x1) => tube([[x0, 0.05, s * 0.252], [x0 + 0.03, 0.088, s * 0.252], [x1 - 0.03, 0.088, s * 0.252], [x1, 0.05, s * 0.252]], 0.007, 'red', { sharp: true, seg: 6 });
+  // Rambarde sur le chant de la plaque, à l'extérieur des godets
+  const rail = (s, x0, x1) => tube([[x0, 0.05, s * 0.266], [x0 + 0.03, 0.088, s * 0.266], [x1 - 0.03, 0.088, s * 0.266], [x1, 0.05, s * 0.266]], 0.0065, 'red', { sharp: true, seg: 6 });
   P('1', fuse(S,
     prismY(outline, 0.016, 0.05, 'red', { holes: pHoles }),
     housing(1, -0.35, 0.56), housing(-1, -0.35, 0.35),
@@ -692,10 +754,13 @@ export function F15(api) {
   const sideHoles = [];
   // Flancs pleins : rangée de trous près du bord supérieur, petits groupes de
   // trous de fixation (comme sur le dessin F15).
-  for (let x = 0.5; x < 2.8; x += 0.22) sideHoles.push([x, 0.024, 0.016]);
+  // Trous lamés (lamage côté extérieur, comme sur le dessin F15)
+  const cbX = [];
+  for (let x = 0.5; x < 2.8; x += 0.22) { sideHoles.push([x, 0.024, 0.0235]); cbX.push(x); }
   for (const x of [0.75, 1.62, 2.25]) for (const dx of [0, 0.03]) for (const y of [-0.02, -0.05]) sideHoles.push([x + dx, y, 0.006]);
   for (const s of [1, -1]) {
     fr.push(prismZ([[0.32, -0.105], [L, -0.105], [L, 0.078], [0.32, 0.078]], s > 0 ? 0.16 : -0.18, s > 0 ? 0.18 : -0.16, red, { holes: sideHoles }));
+    for (const x of cbX) fr.push(cbore(x, 0.024, s > 0 ? 0.16 : -0.18, s > 0 ? 0.18 : -0.16, s * 0.18, 0.016, 0.0235, 0.005, red));
     fr.push(at(box(L - 0.32, 0.012, 0.05, red, { r: 0.0025 }), [(L + 0.32) / 2, 0.084, s * 0.175]));
     fr.push(at(box(L - 0.32, 0.022, 0.095, 'grey', { r: 0.003 }), [(L + 0.32) / 2, -0.116, s * 0.1975]));
     // Goussets horizontaux du sommet
@@ -720,12 +785,13 @@ export function F15(api) {
     fr.push(prismZ([[-0.38, -0.105], [0.32, -0.105], [0.32, 0.06], [-0.38, 0.06]], s > 0 ? 0.195 : -0.215, s > 0 ? 0.215 : -0.195, red, { holes: fh }));
     // Clavette sur le dessus du bloc
     fr.push(at(box(0.07, 0.012, 0.022, red), [0.22, 0.091, s * 0.1]));
-    // Charnières (axes 21) : 3 chapes par côté
+    // Charnières (axes 21) : 3 chapes par côté, oreilles en goutte (tôle
+    // épaisse à bout arrondi autour de l'axe, flanc incliné vers l'intérieur)
+    const knuckle = [[0.12, 0.085], [0.242, 0.085], ...arc(0.2, 0.13, 0.042, 0, 2.558, 12)].map(([z, y]) => [s * z, y]);
     for (const [x0, x1] of [[-0.3, -0.22], [-0.12, -0.06], [0.04, 0.12]]) {
-      fr.push(ring(0.042, 0.023, x1 - x0, red, { axis: 'x', pos: [(x0 + x1) / 2, 0.13, s * 0.2] }));
-      fr.push(at(box(x1 - x0, 0.045, 0.07, red), [(x0 + x1) / 2, 0.1075, s * 0.2]));
+      fr.push(prismX(knuckle, x0, x1, red, { holes: [[s * 0.2, 0.13, 0.023]], bevel: 0.003, curve: 16 }));
       // Graisseur de la chape (face extérieure)
-      fr.push(...nipple(S, [(x0 + x1) / 2, 0.11, s * 0.235], s > 0 ? 'z' : '-z'));
+      fr.push(...nipple(S, [(x0 + x1) / 2, 0.11, s * 0.242], s > 0 ? 'z' : '-z'));
     }
     // Pattes des vérins de tables (axes 17 / 27)
     for (const dx of [0.035, -0.035]) {
@@ -772,7 +838,7 @@ export function F15(api) {
     for (const y of [-0.06, -0.048, 0.035, 0.047]) wl.push([[2.64, y, s * 0.16], [2.8, y, s * 0.16]]);
     // Chapes de charnière sur le dessus du bloc de pied
     for (const [x0, x1] of [[-0.3, -0.22], [-0.12, -0.06], [0.04, 0.12]]) {
-      wl.push([[x0, 0.085, s * 0.215], [x0, 0.085, s * 0.165], [x1, 0.085, s * 0.165], [x1, 0.085, s * 0.215]]);
+      for (const x of [x0, x1]) wl.push([[x, 0.085, s * 0.215], [x, 0.085, s * 0.125]]);
     }
     // Pattes des vérins de tables sur les flancs du bloc
     for (const dx of [0.035, -0.035]) for (const e of [-0.0075, 0.0075]) wl.push([[-0.16 + dx + e, -0.127, s * 0.215], [-0.16 + dx + e, -0.07, s * 0.215]]);
@@ -788,7 +854,12 @@ export function F15(api) {
   P('M', fuse(S, fr), [0, 0, 0]);
 
   // 24 — Barres de guidage (sur les flancs)
-  for (const s of [1, -1]) P('24', box(2.6, 0.05, 0.05, 'grey', { r: 0.005, pos: [1.5, 0.115, s * 0.2] }), [0, 0.3, s * 0.12]);
+  for (const s of [1, -1]) {
+    P('24', fuse(S,
+      box(2.6, 0.05, 0.05, 'grey', { r: 0.005, pos: [1.5, 0.115, s * 0.2] }),
+      cyl(0.0065, 0.002, 'charcoal', { seg: 16, pos: [2.765, 0.1395, s * 0.2] }),
+    ), [0, 0.3, s * 0.12]);
+  }
   // 25 — Couvercle supérieur : bac à rebord, raidisseurs, chape en U du stinger
   const tray = (xFace, sx, h0, h1, lugU) => {
     const out = [];
@@ -840,9 +911,10 @@ export function F15(api) {
     const wt = [-0.35, -0.2, -0.18, 0.01].map((x) => seam.map(([z, y]) => [x, y, s * z]));
     for (const dx of [0.035, -0.035]) for (const e of [-0.0075, 0.0075]) wt.push([[-0.16 + dx + e, 0.215, s * 0.278], [-0.16 + dx + e, 0.33, s * 0.278]]);
     t.push(beads(S, wt, 0.008));
+    // Chapes de charnière : oreilles à fond arrondi sous le corps
+    const lug = [...arc(0.2, 0.13, 0.042, Math.PI, Math.PI * 2, 12), [0.244, 0.215], [0.156, 0.215]].map(([z, y]) => [s * z, y]);
     for (const [x0, x1] of [[-0.37, -0.31], [-0.21, -0.13], [-0.05, 0.03]]) {
-      t.push(ring(0.042, 0.023, x1 - x0, red, { axis: 'x', pos: [(x0 + x1) / 2, 0.13, s * 0.2] }));
-      t.push(at(box(x1 - x0, 0.078, 0.07, red), [(x0 + x1) / 2, 0.169, s * 0.2]));
+      t.push(prismX(lug, x0, x1, red, { holes: [[s * 0.2, 0.13, 0.023]], bevel: 0.003, curve: 16 }));
       t.push(...nipple(S, [(x0 + x1) / 2, 0.175, s * 0.235], s > 0 ? 'z' : '-z'));
     }
     // Oreilles du vérin de table, bossages des vérins de mâchoires
@@ -865,7 +937,11 @@ export function F15(api) {
   const insert = (s, x0, x1, rs, material, teeth = false) => {
     const dep = teeth ? 0.003 : 0;
     const seat = arc(0, rodY, rs + dep, Math.PI / 2, -Math.PI / 2, 18);
-    const prof = [[0, 0.46], [0.128, 0.46], [0.128, 0.72], [0, 0.72], ...seat].map(([z, y]) => [s * z, y]);
+    // Centreurs : feuillures le long des arêtes de la face d'appui (dessin F15)
+    const body = teeth
+      ? [[0, 0.46], [0.128, 0.46], [0.128, 0.72], [0, 0.72]]
+      : [[0, 0.476], [0.014, 0.476], [0.014, 0.46], [0.128, 0.46], [0.128, 0.72], [0.014, 0.72], [0.014, 0.704], [0, 0.704]];
+    const prof = [...body, ...seat].map(([z, y]) => [s * z, y]);
     return tilt(s, fuse(S,
       prismX(prof, x0, x1, material, { bevel: 0.003 }),
       teeth ? wickers(x0 + 0.004, x1 - 0.004, rodY, rs, s, 'darkSteel', { depth: dep }) : null,
@@ -903,32 +979,45 @@ export function F15(api) {
     c.rotation.x = Math.atan2(d.z, d.y);
     c.position.copy(A);
     P('20', c, [0, -0.1, s * 0.6]);
-    const pinX = (y) => group(cyl(0.012, 0.12, 'steel', { axis: 'x' }), at(cyl(0.02, 0.008, 'steel', { axis: 'x' }), [-0.064, 0, 0])).translateX(-0.16).translateY(y).translateZ(s * 0.33);
+    // Axes à tête, arrêtés par une goupille bêta (fil zingué) au bout opposé
+    const pinX = (y) => fuse(S,
+      cyl(0.012, 0.12, 'steel', { axis: 'x' }), at(cyl(0.02, 0.008, 'steel', { axis: 'x' }), [-0.064, 0, 0]),
+      S.torus(0.0142, 0.0016, 'zinc', { axis: 'x', pos: [0.051, 0, 0] }), cyl(0.0016, 0.03, 'zinc', { seg: 8, pos: [0.051, 0.002, 0] }),
+    ).translateX(-0.16).translateY(y).translateZ(s * 0.33);
     P('14', tilt(s, pinX(0.26)), [-0.45, -0.1, s * 0.6]);
-    P('15', tilt(s, cyl(0.019, 0.022, 'brass', { axis: 'x', pos: [-0.137, 0.26, s * 0.33] })), [-0.3, -0.1, s * 0.6]);
-    P('16', tilt(s, cyl(0.019, 0.016, 'brass', { axis: 'x', pos: [-0.183, 0.26, s * 0.33] })), [0.22, -0.1, s * 0.6]);
+    P('15', tilt(s, ring(0.019, 0.012, 0.022, 'brass', { axis: 'x', seg: 20, pos: [-0.137, 0.26, s * 0.33] })), [-0.3, -0.1, s * 0.6]);
+    P('16', tilt(s, ring(0.019, 0.012, 0.016, 'brass', { axis: 'x', seg: 20, pos: [-0.183, 0.26, s * 0.33] })), [0.22, -0.1, s * 0.6]);
     P(s > 0 ? '17' : '27', pinX(-0.1), [-0.45, -0.1, s * 0.6]);
-    P(s > 0 ? '18' : '28', cyl(0.019, 0.02, 'brass', { axis: 'x', pos: [-0.138, -0.1, s * 0.33] }), [-0.3, -0.1, s * 0.6]);
-    P('19', cyl(0.019, 0.02, 'brass', { axis: 'x', pos: [-0.182, -0.1, s * 0.33] }), [0.22, -0.1, s * 0.6]);
+    P(s > 0 ? '18' : '28', ring(0.019, 0.012, 0.02, 'brass', { axis: 'x', seg: 20, pos: [-0.138, -0.1, s * 0.33] }), [-0.3, -0.1, s * 0.6]);
+    P('19', ring(0.019, 0.012, 0.02, 'brass', { axis: 'x', seg: 20, pos: [-0.182, -0.1, s * 0.33] }), [0.22, -0.1, s * 0.6]);
   }
   // 21 — Axes de charnière des tables (tête + écrou) ; 13 / 22 — bagues à collerette
   for (const s of [1, -1]) {
+    // Axe à tête bombée, bout fileté réduit, écrou à créneaux + goupille fendue
     P('21', fuse(S,
-      lathe([[-0.415, 0], [-0.415, 0.032], [-0.4, 0.035], [-0.4, 0.022], [0.155, 0.022], [0.16, 0]], 'steel', 24),
-      at(hexX(0.05, 0.026, 'steel', 0.022), [0.143, 0, 0]),
+      lathe([[-0.415, 0], [-0.415, 0.026, 1], [-0.412, 0.032, 1], [-0.405, 0.035], [-0.4, 0.035], [-0.4, 0.022], [0.125, 0.022], [0.13, 0.016],
+        ...threads(0.13, 0.176, 0.0145, 0.016, 8), [0.179, 0.013], [0.179, 0]], 'steel', 24),
+      castleNut(S, 0.143, 0.05, 0.03),
     ).translateY(0.13).translateZ(s * 0.2), [-0.55, 0, 0]);
-    // Bagues à collerette des chapes de la table et du bloc de pied (en alternance)
+    // Bagues à collerette des chapes de la table et du bloc de pied (en
+    // alternance) : deux gorges de graissage, chanfreins
+    const bush = [[0, 0.0225], [0, 0.0295], [0.0015, 0.031], [0.0055, 0.031], [0.006, 0.0285], [0.018, 0.0285], [0.019, 0.0265], [0.025, 0.0265], [0.026, 0.0285],
+      [0.036, 0.0285], [0.037, 0.0265], [0.043, 0.0265], [0.044, 0.0285], [0.056, 0.0285], [0.058, 0.0265], [0.058, 0.0225], [0, 0.0225]];
     for (const x of [-0.37, -0.3, -0.21, -0.12, -0.05, 0.04]) {
-      P(s > 0 ? '13' : '22', at(lathe([[0, 0.0225], [0, 0.031], [0.006, 0.031], [0.006, 0.0285], [0.058, 0.0285], [0.058, 0.0225], [0, 0.0225]], 'brass', 20), [x - 0.006, 0.13, s * 0.2]), [0, 0.03, s * 0.28]);
+      P(s > 0 ? '13' : '22', at(lathe(bush, 'brass', 16), [x - 0.006, 0.13, s * 0.2]), [0, 0.03, s * 0.28]);
     }
   }
 
   // 23 — Support de jonction des boyaux (flanc +Z)
   P('23', fuse(S,
-    prismZ([[1.42, -0.09], [1.58, -0.09], [1.58, 0.05], [1.42, 0.05]], 0.18, 0.192, red, { holes: [[1.44, -0.07, 0.007], [1.56, -0.07, 0.007], [1.44, 0.03, 0.007], [1.56, 0.03, 0.007]] }),
+    prismZ([[1.424, -0.09], [1.576, -0.09], [1.576, 0.05], [1.424, 0.05]], 0.18, 0.192, red, { holes: [[1.44, -0.07, 0.007], [1.56, -0.07, 0.007], [1.44, 0.03, 0.007], [1.56, 0.03, 0.007]] }),
     prismX([[0.192, -0.02], [0.29, -0.02], [0.29, 0.06], [0.192, 0.06]], 1.494, 1.506, red, { holes: [[0.225, 0.02, 0.008], [0.255, 0.02, 0.008]] }),
     ring(0.026, 0.014, 0.05, red, { axis: 'x', pos: [1.5, 0.02, 0.305] }),
     prismY([[1.43, 0.192], [1.494, 0.192], [1.494, 0.26]], -0.02, -0.01, red),
+    // Vis de fixation sur le flanc (têtes hexagonales + rondelles)
+    bolts(S, [[1.44, -0.07], [1.56, -0.07], [1.44, 0.03], [1.56, 0.03]].map(([x, y]) => [x, y, 0.192]), 0.012, 0.03, 'steel', { axis: 'z', washer: true }),
+    // Cordons : patte et gousset sur la plaque
+    beads(S, [[[1.494, -0.02, 0.192], [1.494, 0.06, 0.192]], [[1.506, -0.02, 0.192], [1.506, 0.06, 0.192]], [[1.43, -0.02, 0.192], [1.494, -0.02, 0.192]]], 0.006),
   ), [0, 0, 0.35]);
 
   // Câble d'arrêt d'urgence (côté -Z) : 30 support bas, 31 attache, 32 ressort,

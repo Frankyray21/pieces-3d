@@ -312,7 +312,9 @@ export function F08(api) {
   // Purge en point bas : mamelon et petite vanne à bille.
   rs.add('steel', G.xf(G.toAxis(G.hex(0.03, 0.012), '-y'), [-0.5, rcv.y - 0.212, 0]));
   rv.add(S.at(S.ballValve(0.018, 'brass', { axis: 'y' }), [-0.5, rcv.y - 0.25, 0]));
-  rs.add('lightGrey', G.xf(G.box(0.12, 0.002, 0.07), [-0.6, rcv.y + rcv.r + 0.001, -0.02], [0.0, 0, 0]));
+  // Plaque signalétique lisse cintrée sur la virole (secteur autour de l'axe X).
+  const aNp = Math.acos(0.02 / rcv.r);
+  rs.add('lightGrey', G.sector(rcv.r + 0.0004, rcv.r + 0.0019, aNp - 0.175, aNp + 0.175, 0.12, 6).rotateY(Math.PI / 2).translate(-0.6, rcv.y, 0));
   for (const x of [-0.9, -0.44]) rs.add('steel', G.xf(G.toAxis(G.ring(0.209, 0.201, 0.035, 48), 'x'), [x, rcv.y, 0]));
   rs.add('steel', G.xf(G.toAxis(G.hex(0.07, 0.022), 'x'), [rcv.x + 0.425, rcv.y, 0]));
   rs.add('steel', G.xf(G.toAxis(G.hex(0.07, 0.022), '-x'), [rcv.x - 0.425, rcv.y + 0.06, 0]));
@@ -400,13 +402,21 @@ export function F08(api) {
   }
 
   // ---------- 30 raccords coudés, 31 adaptateurs, 32 vannes 1/2", 33 vanne 3/4" (flanc gauche, arrière)
-  const zv = -(halfW + 0.06);
+  // Coudes vissés dans le flanc (contre-écrou sur la tôle), vannes verticales,
+  // tige de manœuvre vers l'extérieur et poignée verte pendante (dessin F08).
+  const zv = -(halfW + 0.0375);
+  const qv = new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(
+    new THREE.Vector3(0, -1, 0), new THREE.Vector3(0, 0, -1), new THREE.Vector3(1, 0, 0)));
   [-2.15, -2.07, -1.99].forEach((x, i) => {
-    P('30', S.at(S.fitting(0.022, 0.05, 'steel', { elbow: true }), [x, 0.71, zv]), [0, 0.2, -0.3]);
+    const el = new THREE.Group();
+    el.add(S.at(S.fitting(0.022, 0.05, 'steel', { elbow: true }), [x, 0.71, zv]));
+    el.add(K.bag().add('steel', G.xf(G.toAxis(G.hex(0.03, 0.006), 'z'), [x, 0.71, -(halfW + 0.013)])).group());
+    P('30', el, [0, 0.2, -0.3]);
     P('31', S.at(S.fitting(0.026, 0.05, 'steel'), [x, 0.672, zv]), [0, 0.05, -0.3]);
-    const bv = S.ballValve(i < 2 ? 0.026 : 0.032, 'brass', { axis: 'y', handle: 'green' });
-    bv.position.set(x, 0.6, zv);
-    bv.rotation.y = Math.PI / 2;
+    const sv = i < 2 ? 0.026 : 0.032;
+    const bv = S.ballValve(sv, 'brass', { axis: 'x', handle: 'green' });
+    bv.position.set(x, 0.646 - 1.15 * sv, zv); // embout de 31 vissé dans la vanne
+    bv.quaternion.copy(qv);
     P(i < 2 ? '32' : '33', bv, [0, -0.15, -0.3]);
   });
 
