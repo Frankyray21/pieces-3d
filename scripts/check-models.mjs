@@ -3,7 +3,9 @@
 // ligne de la liste de pièces a un objet 3D (ou une pièce symétrique), et
 // mesure la taille du modèle (maillages, triangles).
 //
-// Les trousses (« SEAL KIT », « REPLACEMENT KIT »…) peuvent rester sans objet 3D.
+// Les trousses (« SEAL KIT », « REPLACEMENT KIT »…) et les lignes qui renvoient
+// à un schéma ou à une liste électrique (documents du manuel) peuvent rester
+// sans objet 3D.
 // Pour un équipement modélisé en partie, seuls les assemblages qui ont un
 // builder sont contrôlés.
 //
@@ -19,6 +21,7 @@ const { default: builders } = await import(`../src/models/${eq}/index.js`);
 const data = JSON.parse(readFileSync(new URL(`../public/equipment/${eq}/data.json`, import.meta.url), 'utf8'));
 const only = args;
 const partial = Object.keys(data.assemblies).some((id) => !builders[id]);
+const documents = new Set((data.documents || []).map((d) => d.id));
 let failed = false;
 
 function stats(root) {
@@ -49,7 +52,7 @@ for (const [id, asm] of Object.entries(data.assemblies)) {
   const rows = asm.parts.map(([ref, , , desc, extra = {}]) => ({ ref: String(ref), desc, ...extra }));
   for (const r of rows) {
     const target = r.mirrorOf || r.ref;
-    if (!model.refs.has(target) && !/\bKIT\b/i.test(r.desc)) missing.push(r.ref);
+    if (!model.refs.has(target) && !/\bKIT\b/i.test(r.desc) && !documents.has(r.link)) missing.push(r.ref);
   }
   const extra = [...model.refs.keys()].filter((k) => !rows.some((r) => r.ref === k));
   const nan = [];

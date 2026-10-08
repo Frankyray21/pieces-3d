@@ -240,7 +240,16 @@ def main(path):
                 pages.append(pg)
         drawings = [pg for pg in pages if info[pg - 1]["rows"] is None]
         lists = [pg for pg in pages if info[pg - 1]["rows"] is not None]
-        rows = [to_row(r, link_of) for pg in lists for r in info[pg - 1]["rows"]]
+        # Une liste reprise à l'identique sous chaque feuille de dessin n'est
+        # comptée qu'une fois (les listes qui se suivent sur plusieurs pages
+        # restent entières).
+        rows, seen = [], []
+        for pg in lists:
+            block = [to_row(r, link_of) for r in info[pg - 1]["rows"]]
+            if block in seen:
+                continue
+            seen.append(block)
+            rows += block
         for pg in drawings:
             titles[sid(pg)] = e["title"]
         for pg in lists:
