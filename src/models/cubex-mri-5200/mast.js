@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { mat } from '../../viewer/materials.js';
+import { creaseNormals } from '../../viewer/shapes.js';
 
 // Mât et tables (F14), mât (F15), table supérieure / chariot (F16),
 // table inférieure / avance d'extension (F17), tête de rotation (F18).
@@ -16,6 +17,7 @@ const EXT_TAB_X = 0.17;
 // ------------------------------------------------------------------ outils
 
 function mk(geo, material) {
+  if (geo.type === 'ExtrudeGeometry') geo = creaseNormals(geo);
   return new THREE.Mesh(geo, mat(material));
 }
 

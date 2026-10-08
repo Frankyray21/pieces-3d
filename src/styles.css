@@ -18,10 +18,11 @@
   --error: #b3232b;
   --error-soft: #f9dfe0;
   --hover: #e3edf8;
-  --stage-a: #f3f6f9;
-  --stage-b: #d9e0e7;
-  /* La scène (3D et dessins) reste claire dans les deux thèmes : texte posé dessus. */
-  --stage-ink: #4a5664;
+  /* Scène (3D et dessins) : gris studio moyen, identique dans les deux thèmes —
+     les pièces claires comme les pièces foncées s'y détachent. */
+  --stage-a: #a7b1bb;
+  --stage-b: #626d78;
+  --stage-ink: #f3f6f9;
   --shadow: 0 8px 28px rgba(22, 32, 43, 0.14);
   --f-display: 'Barlow Condensed', 'Arial Narrow', 'Roboto Condensed', sans-serif;
   --f-body: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -35,7 +36,7 @@
     --bg: #10151b; --surface: #171e27; --surface-2: #1d2631; --ink: #e5eaf0; --muted: #94a2b1;
     --line: #2a3542; --line-strong: #3d4b5b; --accent: #ff7c24; --accent-soft: #3a2414; --accent-ink: #1a0d03;
     --machine: #e0353d; --warn: #e5ad3f; --warn-soft: #33270f; --error: #ff6b70; --error-soft: #3a1719;
-    --hover: #1f2d3c; --stage-a: #dde3e9; --stage-b: #b4bec8; --stage-ink: #34404b; --shadow: 0 8px 28px rgba(0, 0, 0, 0.5);
+    --hover: #1f2d3c; --stage-a: #a7b1bb; --stage-b: #626d78; --stage-ink: #f3f6f9; --shadow: 0 8px 28px rgba(0, 0, 0, 0.5);
     color-scheme: dark;
   }
 }
@@ -43,7 +44,7 @@
   --bg: #10151b; --surface: #171e27; --surface-2: #1d2631; --ink: #e5eaf0; --muted: #94a2b1;
   --line: #2a3542; --line-strong: #3d4b5b; --accent: #ff7c24; --accent-soft: #3a2414; --accent-ink: #1a0d03;
   --machine: #e0353d; --warn: #e5ad3f; --warn-soft: #33270f; --error: #ff6b70; --error-soft: #3a1719;
-  --hover: #1f2d3c; --stage-a: #dde3e9; --stage-b: #b4bec8; --stage-ink: #34404b; --shadow: 0 8px 28px rgba(0, 0, 0, 0.5);
+  --hover: #1f2d3c; --stage-a: #a7b1bb; --stage-b: #626d78; --stage-ink: #f3f6f9; --shadow: 0 8px 28px rgba(0, 0, 0, 0.5);
   color-scheme: dark;
 }
 
@@ -179,7 +180,7 @@ details.more summary { cursor: pointer; margin: 0 6px; color: var(--muted); font
 .sectionbar input { width: 130px; accent-color: var(--accent); }
 .hint {
   position: absolute; left: 12px; bottom: 10px; margin: 0; max-width: calc(100% - 480px);
-  font-size: 12px; color: var(--stage-ink); pointer-events: none;
+  font-size: 12px; color: var(--stage-ink); pointer-events: none; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
 }
 .titleblock {
   position: absolute; right: 12px; bottom: 12px; display: flex; font-size: 10.5px; line-height: 1.25;
@@ -203,7 +204,8 @@ details.more summary { cursor: pointer; margin: 0 6px; color: var(--muted); font
 .titleblock .dwg { font: 600 15px/1.2 var(--f-mono); letter-spacing: 0.02em; }
 .loading {
   position: absolute; inset: 0; display: grid; place-items: center; font: 600 18px var(--f-display);
-  text-transform: uppercase; letter-spacing: 0.06em; color: var(--stage-ink); background: color-mix(in srgb, var(--stage-a) 60%, transparent);
+  text-transform: uppercase; letter-spacing: 0.06em; color: var(--stage-ink); background: color-mix(in srgb, var(--stage-b) 55%, transparent);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
 }
 .docview { position: absolute; inset: 0; overflow: auto; padding: 64px 16px 16px; display: grid; gap: 14px; align-content: start; justify-items: center; }
 .docview .sheettabs { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }

@@ -1088,16 +1088,20 @@ export class Viewer {
   _applyTheme() {
     const css = getComputedStyle(this.container);
     const v = (css.getPropertyValue('--stage-b') || css.getPropertyValue('--bg')).trim();
-    let dark = false;
+    let lum = 1;
     if (v) {
       try {
         const c = new THREE.Color().setStyle(v);
-        dark = 0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b < 0.12;
+        lum = 0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b;
       } catch { /* couleur non lisible : thème clair */ }
     }
-    this.theme = dark
+    const dark = lum < 0.35;
+    // Fond sombre, gris studio moyen ou clair : grille, contours et lumières adaptés.
+    this.theme = lum < 0.06
       ? { dark, grid: 0x9fb0c2, gridOpacity: 0.22, edge: 0x0b0c0e, rim: 1.3, fill: 0.55, exposure: 1.1 }
-      : { dark, grid: 0x7f8b98, gridOpacity: 0.42, edge: 0x16181b, rim: 0.8, fill: 0.4, exposure: 1 };
+      : dark
+        ? { dark, grid: 0xdfe5eb, gridOpacity: 0.3, edge: 0x111316, rim: 1.05, fill: 0.48, exposure: 1.05 }
+        : { dark, grid: 0x7f8b98, gridOpacity: 0.42, edge: 0x16181b, rim: 0.8, fill: 0.4, exposure: 1 };
     this.grid.material.uniforms.uColor.value.setHex(this.theme.grid);
     this.grid.material.uniforms.uOpacity.value = this.theme.gridOpacity;
     // Fond sombre : contre-jour et débouchage renforcés, pièces noires lisibles.
