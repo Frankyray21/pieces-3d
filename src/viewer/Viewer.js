@@ -11,8 +11,8 @@ const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 const AXES = { x: new THREE.Vector3(1, 0, 0), y: new THREE.Vector3(0, 1, 0), z: new THREE.Vector3(0, 0, 1) };
 // Un sous-groupe éclaté prend plus de place : on l'écarte d'autant de son parent.
 const SPREAD = 0.9;
-// Lumières fixes, orientées d'après la vue par défaut du modèle (aucune ombre
-// portée) : clé haute à gauche de l'œil, débouchage bas à droite.
+// Lumières (aucune ombre portée) orientées d'après la caméra, comme une table
+// tournante : clé haute à gauche de l'œil, débouchage bas à droite.
 // [azimut, élévation] en degrés, azimut 0 = côté caméra.
 const KEY_AZEL = [35, 60];
 // Clé à KEY_DIST rayons du modèle, éclairement KEY_LUX au centre.
@@ -24,32 +24,39 @@ const azEl = (az, el) => {
   return new THREE.Vector3(Math.cos(e) * Math.cos(a), Math.sin(e), Math.cos(e) * Math.sin(a));
 };
 
-// Rendu de tons : « aces » (filmique) donne le contraste et le rouge profond
-// d'une photo ; « neutral » (Khronos PBR Neutral) et « agx » en option.
+// Rendu de tons : « neutral » (Khronos PBR Neutral, conçu pour la photo
+// produit) garde la teinte des peintures : rouge MRI franc, jaune des
+// chenilles, bleu moteur, comme la photo F01 et les dessins (ACES virait le
+// rouge au cramoisi et le jaune à la moutarde). « aces » et « agx » en option.
 const TONE = { neutral: [THREE.NeutralToneMapping, 'NeutralToneMapping'], agx: [THREE.AgXToneMapping, 'AgXToneMapping'], aces: [THREE.ACESFilmicToneMapping, 'ACESFilmicToneMapping'] };
 
-// Studio : luminance du dôme (zénith, horizon, sol) et des boîtes à lumière
-// [largeur, hauteur, intensité, azimut, élévation, teinte]. Fond sombre et
-// grandes boîtes lumineuses, comme un studio photo : volumes marqués, vernis
-// saturés, reflets nets.
+// Studio : luminance du dôme (zénith, horizon, sol), courbe du dégradé
+// zénith-horizon et boîtes à lumière [largeur, hauteur, intensité, azimut,
+// élévation, teinte]. Fond sombre et grandes boîtes lumineuses, comme un
+// studio photo : volumes marqués, vernis saturés, reflets nets. Les faces
+// verticales vues d'en haut reflètent le bas du studio : deux réflecteurs au
+// sol, sur les côtés, y dessinent un reflet (peintures noires lisibles).
 const STUDIO = {
-  dome: [0.32, 0.11, 0.26],
+  dome: [0.32, 0.06, 0.16],
+  curve: 1.6,
   boxes: [
-    [16, 10, 1.4, 0, 88], // zénithale
-    [7, 9, 8, KEY_AZEL[0], 38, [1, 0.97, 0.93]], // clé, haute à gauche de l'œil
-    [6, 6, 1.5, FILL_AZEL[0], 12, [0.93, 0.96, 1]], // débouchage
-    [12, 6, 1.3, 180, 30], // fond haut : reflet large sur les dessus vernis
+    [16, 10, 2.0, 0, 88], // zénithale
+    [7, 9, 8, KEY_AZEL[0], 42, [1, 0.97, 0.93]], // clé, haute à gauche de l'œil
+    [6, 6, 0.9, FILL_AZEL[0], 12, [0.93, 0.96, 1]], // débouchage
+    [12, 4, 0.25, 180, 30], // fond haut : léger reflet sur les dessus vernis
     [2.6, 15, 4.5, 150, 10], // contre-jour gauche
     [2.6, 15, 3.8, -145, 10], // contre-jour droite
-    [16, 2.2, 1.0, 0, -3], // bande basse frontale (renvoi du sol)
+    [10, 4, 1.6, 85, -28], // réflecteur au sol, côté clé
+    [10, 4, 1.0, -85, -28], // réflecteur au sol, côté débouchage
+    [16, 2.2, 0.8, 0, -3], // bande basse frontale (renvoi du sol)
   ],
 };
 
 /**
  * Studio photo (éclairage d'ambiance et reflets), sans ombre : dôme sombre
- * (zénith gris, horizon sombre, sol clair éclairé : ligne d'horizon dans les
- * reflets du vernis, renvoi de lumière sous les pièces), boîtes à lumière. Construit pour une vue depuis
- * l'azimut 0 ; la scène le fait tourner selon la vue de chaque modèle.
+ * (zénith gris, horizon sombre, sol gris : ligne d'horizon dans les reflets
+ * du vernis, renvoi de lumière sous les pièces), boîtes à lumière. Construit
+ * pour une vue depuis l'azimut 0 ; la scène le fait tourner avec la caméra.
  */
 function studioEnvironment(renderer, cfg = STUDIO) {
   const scene = new THREE.Scene();
@@ -62,7 +69,7 @@ function studioEnvironment(renderer, cfg = STUDIO) {
   const p = dome.attributes.position;
   for (let i = 0; i < p.count; i++) {
     const y = p.getY(i) / R;
-    if (y >= 0) c.copy(hor).lerp(top, Math.pow(y, 0.7));
+    if (y >= 0) c.copy(hor).lerp(top, Math.pow(y, cfg.curve ?? 0.7));
     else c.copy(hor).lerp(low, Math.min(1, Math.pow(-y * 2.5, 0.8)));
     col.push(c.r, c.g, c.b);
   }
@@ -225,10 +232,12 @@ const COMPOSITE = {
  * mouvement, puis résolution, puis rendu direct).
  */
 export class Viewer {
-  constructor(container, { onHover, onSelect } = {}) {
+  constructor(container, { onHover, onSelect, insets } = {}) {
     this.container = container;
     this.onHover = onHover || (() => {});
     this.onSelect = onSelect || (() => {});
+    // Marges (px) couvertes par l'interface posée sur la vue : { top, bottom, left, right }
+    this.insets = insets || null;
     this.model = null;
     this.nodes = [];
     this.hoverKey = null;
@@ -246,7 +255,7 @@ export class Viewer {
     this._lowFrame = false;
     this._lastCam = new THREE.Matrix4();
     this._lastProj = new THREE.Matrix4();
-    this._perf = { last: 0, dts: [] };
+    this._perf = { last: 0, dts: [], sum: 0 };
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true, powerPreference: 'high-performance' });
     renderer.shadowMap.enabled = false; // aucune ombre dans la 3D
@@ -272,14 +281,14 @@ export class Viewer {
     // Clé : source à distance finie (décroissance douce), comme une boîte à
     // lumière de studio : léger dégradé de lumière sur les grands panneaux.
     this.key = new THREE.PointLight(0xfff2e4, 3.6, 0, 1);
-    this.fill = new THREE.DirectionalLight(0xdfe8ff, 0.6);
-    this.bounce = new THREE.DirectionalLight(0xf2ece4, 0.35);
+    this.fill = new THREE.DirectionalLight(0xdfe8ff, 0.4);
+    this.bounce = new THREE.DirectionalLight(0xf2ece4, 0.3);
     this.bounce.position.set(0.2, -1, 0.3);
     this.rim = new THREE.DirectionalLight(0xffffff, 0.8);
     scene.add(this.hemi);
     scene.add(this.key);
     for (const l of [this.fill, this.bounce, this.rim]) scene.add(l, l.target);
-    this.setLook({ tone: 'aces', exposure: 0.85 }); // exposition ajustée au thème
+    this.setLook({ tone: 'neutral', exposure: 1 }); // exposition ajustée au thème
 
     this.grid = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), gridMaterial());
     this.grid.rotation.x = -Math.PI / 2;
@@ -426,20 +435,31 @@ export class Viewer {
     gu.uStep.value = step;
     gu.uFade.value = span * 0.75;
     gu.uCenter.value.set(c.x, c.z);
-    // Lumières et studio orientés d'après la vue par défaut du modèle : clé
-    // ponctuelle à distance fixe du centre, autres lumières directionnelles.
-    const vd = this.model.view.dir || [1, 0.65, 1.1];
-    const viewAz = THREE.MathUtils.radToDeg(Math.atan2(vd[2], vd[0]));
+    // Clé ponctuelle à distance fixe du centre du modèle ; le studio est
+    // ensuite orienté d'après la caméra à chaque image (_placeLights).
     const rad = Math.max(0.3, size.length() / 2);
-    this.key.position.copy(c).addScaledVector(azEl(viewAz + KEY_AZEL[0], KEY_AZEL[1]), rad * KEY_DIST);
+    this._rig = { c: c.clone(), rad };
     this.key.intensity = KEY_LUX * Math.pow(rad * KEY_DIST, this.key.decay);
-    this.fill.position.copy(azEl(viewAz + FILL_AZEL[0], FILL_AZEL[1]));
-    this.scene.environmentRotation.set(0, -THREE.MathUtils.degToRad(viewAz), 0);
+    const vd = this.model.view.dir || [1, 0.65, 1.1];
+    this._placeLights(THREE.MathUtils.radToDeg(Math.atan2(vd[2], vd[0])));
 
     this.camera.near = Math.max(0.005, size.length() / 600);
     this.camera.far = size.length() * 30 + 10;
     this.camera.updateProjectionMatrix();
     this.invalidate();
+  }
+
+  /**
+   * Oriente le studio (boîtes à lumière, clé, débouchage) d'après l'azimut
+   * de la caméra (degrés), comme une table tournante dans un studio fixe :
+   * la face regardée est toujours éclairée, aucune face ne tombe dans le noir.
+   */
+  _placeLights(viewAz) {
+    if (!this._rig) return;
+    const { c, rad } = this._rig;
+    this.key.position.copy(c).addScaledVector(azEl(viewAz + KEY_AZEL[0], KEY_AZEL[1]), rad * KEY_DIST);
+    this.fill.position.copy(azEl(viewAz + FILL_AZEL[0], FILL_AZEL[1]));
+    this.scene.environmentRotation.set(0, -THREE.MathUtils.degToRad(viewAz), 0);
   }
 
   // -------------------------------------------------------------- éclaté
@@ -546,8 +566,11 @@ export class Viewer {
     const up = Math.abs(viewDir.y) > 0.98 ? new THREE.Vector3(0, 0, -1) : new THREE.Vector3(0, 1, 0);
     const right = new THREE.Vector3().crossVectors(up, viewDir).normalize();
     const camUp = new THREE.Vector3().crossVectors(viewDir, right).normalize();
-    const tanV = Math.tan(THREE.MathUtils.degToRad(this.camera.fov) / 2);
-    const tanH = tanV * this.camera.aspect;
+    const tanV0 = Math.tan(THREE.MathUtils.degToRad(this.camera.fov) / 2);
+    const tanH0 = tanV0 * this.camera.aspect;
+    // Cadrage dans la zone libre (barre d'outils en haut, cartouche en bas)
+    const u = this._usable();
+    const tanV = tanV0 * u.fy, tanH = tanH0 * u.fx;
     const proj = points.map((p) => { const v = p.clone().sub(c0); return [v.dot(right), v.dot(camUp), v.dot(viewDir)]; });
     let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
     proj.forEach(([x, y]) => { x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); });
@@ -556,7 +579,21 @@ export class Viewer {
     proj.forEach(([x, y, z]) => { dist = Math.max(dist, z + Math.abs(x - cx) / tanH, z + Math.abs(y - cy) / tanV); });
     dist *= box ? 1.35 : 1.06;
     const center = c0.addScaledVector(right, cx).addScaledVector(camUp, cy);
+    // Visée décalée : le centre du modèle tombe au centre de la zone libre
+    center.addScaledVector(camUp, u.oy * tanV0 * dist).addScaledVector(right, -u.ox * tanH0 * dist);
     this._moveCamera(center.clone().addScaledVector(viewDir, dist), center, instant);
+  }
+
+  /** Zone libre de la vue : fractions utiles (fx, fy) et décalage de son centre (ox, oy, en unités NDC / 2). */
+  _usable() {
+    const el = this.renderer.domElement;
+    const W = el.clientWidth, H = el.clientHeight;
+    const ins = this.insets?.();
+    if (!ins || !W || !H) return { fx: 1, fy: 1, ox: 0, oy: 0 };
+    const c = (v, max) => Math.min(Math.max(0, v || 0), max);
+    const t = c(ins.top, H * 0.3), b = c(ins.bottom, H * 0.3);
+    const l = c(ins.left, W * 0.3), r = c(ins.right, W * 0.3);
+    return { fx: (W - l - r) / W, fy: (H - t - b) / H, ox: (l - r) / W, oy: (t - b) / H };
   }
 
   /** Cadre une pièce ou un groupe (à son état final si une animation est en cours). */
@@ -969,6 +1006,7 @@ export class Viewer {
     this.rim.position.copy(t).addScaledVector(h, -dist).addScaledVector(side, dist * 0.6).addScaledVector(this.camera.up, dist * 0.3);
     this.rim.target.position.copy(t);
     this.rim.target.updateMatrixWorld();
+    this._placeLights(THREE.MathUtils.radToDeg(Math.atan2(h.z, h.x)));
     if (this.quality.post) {
       const p = this._ensurePost();
       const u = p.quad.material.uniforms;
@@ -1006,13 +1044,17 @@ export class Viewer {
     if (!moving) { pf.last = 0; return; }
     if (pf.last) {
       const dt = now - pf.last;
-      if (dt < 250) pf.dts.push(dt);
+      // Au-delà d'une seconde : pause (onglet masqué), pas une image lente.
+      if (dt < 1000) { pf.dts.push(dt); pf.sum += dt; }
     }
     pf.last = now;
-    if (pf.dts.length < 30) return;
+    // 30 images, ou au moins 8 images sur 1,5 s : une machine très lente
+    // (images de plusieurs centaines de ms) se dégrade aussi.
+    if (pf.dts.length < 30 && (pf.dts.length < 8 || pf.sum < 1500)) return;
     // Médiane : insensible aux à-coups ponctuels (compilation de shaders).
     const med = pf.dts.sort((a, b) => a - b)[pf.dts.length >> 1];
     pf.dts = [];
+    pf.sum = 0;
     const q = this.quality;
     if (med <= 40) return;
     if (q.ao && q.motionAO) q.motionAO = false; // AO seulement sur l'image fixe
@@ -1054,8 +1096,8 @@ export class Viewer {
       } catch { /* couleur non lisible : thème clair */ }
     }
     this.theme = dark
-      ? { dark, grid: 0x9fb0c2, gridOpacity: 0.22, edge: 0x0b0c0e, rim: 1.3, fill: 0.75, exposure: 0.95 }
-      : { dark, grid: 0x7f8b98, gridOpacity: 0.42, edge: 0x16181b, rim: 0.8, fill: 0.6, exposure: 0.85 };
+      ? { dark, grid: 0x9fb0c2, gridOpacity: 0.22, edge: 0x0b0c0e, rim: 1.3, fill: 0.55, exposure: 1.1 }
+      : { dark, grid: 0x7f8b98, gridOpacity: 0.42, edge: 0x16181b, rim: 0.8, fill: 0.4, exposure: 1 };
     this.grid.material.uniforms.uColor.value.setHex(this.theme.grid);
     this.grid.material.uniforms.uOpacity.value = this.theme.gridOpacity;
     // Fond sombre : contre-jour et débouchage renforcés, pièces noires lisibles.

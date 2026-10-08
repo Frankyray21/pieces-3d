@@ -16,13 +16,15 @@ import * as THREE from 'three';
 // stretch = étirement du relief fin (brossage), env = gain des reflets du
 // studio (les métaux reçoivent des réflecteurs, comme en photo produit).
 const FIN = {
-  paint: { fine: 0.035, wave: 0.012, rough: 0.16, tint: 0.07, fs: 14, cs: 0.9, env: 1 },
-  paintSatin: { fine: 0.05, wave: 0.016, rough: 0.2, tint: 0.09, fs: 14, cs: 0.9, env: 1 },
+  // Peinture sur tôle : peau d'orange et ondulation discrètes (une tôle peinte
+  // reste lisse en photo ; un relief marqué ferait « peinture martelée »).
+  paint: { fine: 0.018, wave: 0.005, rough: 0.16, tint: 0.07, fs: 14, cs: 0.9, env: 1 },
+  paintSatin: { fine: 0.026, wave: 0.007, rough: 0.2, tint: 0.09, fs: 14, cs: 0.9, env: 1 },
   // Peinture noire : se lit surtout par ses reflets (réflecteurs renforcés).
-  paintDark: { fine: 0.035, wave: 0.012, rough: 0.16, tint: 0.07, fs: 14, cs: 0.9, env: 1.8 },
+  paintDark: { fine: 0.02, wave: 0.005, rough: 0.16, tint: 0.07, fs: 14, cs: 0.9, env: 1.8 },
   machined: { fine: 0.05, wave: 0.006, rough: 0.14, tint: 0.05, fs: 9, cs: 1.6, stretch: 7, env: 2.1 },
   chrome: { fine: 0.006, wave: 0.002, rough: 0.03, tint: 0.02, fs: 9, cs: 1.6, env: 2.4 },
-  cast: { fine: 0.22, wave: 0.03, rough: 0.22, tint: 0.1, fs: 26, cs: 1.5, env: 1.6 },
+  cast: { fine: 0.13, wave: 0.02, rough: 0.22, tint: 0.1, fs: 26, cs: 1.5, env: 1.6 },
   rubber: { fine: 0.12, wave: 0.02, rough: 0.12, tint: 0.08, fs: 30, cs: 1.2, env: 1.5 },
   plastic: { fine: 0.04, wave: 0.01, rough: 0.12, tint: 0.05, fs: 20, cs: 1.2, env: 1.1 },
 };

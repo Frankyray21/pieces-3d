@@ -131,6 +131,14 @@ function isGroupPath(path) {
 function ensureViewer() {
   if (viewer) return viewer;
   viewer = new Viewer($('#viewport'), {
+    // Cadrage hors de la barre d'outils (haut) et du cartouche (bas)
+    insets: () => {
+      const vp = $('#viewport').getBoundingClientRect();
+      const tools = $('#tools'), tb = $('#titleblock');
+      const top = tools.hidden ? 0 : tools.getBoundingClientRect().bottom - vp.top + 6;
+      const bottom = tb.hidden || !tb.offsetHeight ? 0 : vp.bottom - tb.getBoundingClientRect().top + 6;
+      return { top, bottom };
+    },
     onHover: (path) => markRow(path, 'hov'),
     onSelect: (path, { double }) => {
       if (!path) { select(null); return; }
@@ -174,6 +182,7 @@ async function openAssembly(id, { select: selPath = null } = {}) {
     await new Promise((r) => requestAnimationFrame(() => setTimeout(r, 0)));
     const model = buildProcedural(builders, id);
     $('#loading').hidden = true;
+    renderTitleblock(asm); // avant le cadrage, qui évite le cartouche
     if (model) {
       v.setModel(model);
       v.setIsolate(S.isolate);

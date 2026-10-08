@@ -13,13 +13,14 @@ import * as SH from '../../viewer/shapes.js';
 // ------------------------------------------------------------ matériaux propres
 
 let OWN = null;
+// Alu moulé et gaine de boyau : finitions texturées de la palette commune.
+const PAL = { alu: 'castAlu', hose: 'hose' };
 function own(name) {
+  if (PAL[name]) return mat(PAL[name]);
   if (!OWN) {
     const off = { polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 };
     const mk = (Ctor, n, p) => { const m = new Ctor({ ...p, ...off }); m.name = n; return m; };
     OWN = {
-      // Aluminium moulé (têtes de filtre, régulateurs, pompe à huile).
-      alu: mk(THREE.MeshStandardMaterial, 'alu', { color: 0xbcc1c6, metalness: 0.62, roughness: 0.42 }),
       // Plastique blanc (boîtes de prises).
       plastic: mk(THREE.MeshPhysicalMaterial, 'plastic', { color: 0xe4e2da, metalness: 0, roughness: 0.5, clearcoat: 0.15, clearcoatRoughness: 0.5 }),
       // Pistons céramique de la pompe CAT.
@@ -28,8 +29,6 @@ function own(name) {
       tag: mk(THREE.MeshStandardMaterial, 'tag', { color: 0xd6d9dc, metalness: 0.8, roughness: 0.32 }),
       // Huile vue au travers des voyants.
       oil: mk(THREE.MeshPhysicalMaterial, 'oil', { color: 0xc7901f, metalness: 0, roughness: 0.12, clearcoat: 1, clearcoatRoughness: 0.05 }),
-      // Boyau caoutchouc (gaine extérieure), légèrement satiné.
-      hose: mk(THREE.MeshStandardMaterial, 'hose', { color: 0x1c1d20, metalness: 0, roughness: 0.6 }),
       // Tamis inox des crépines.
       mesh: mk(THREE.MeshStandardMaterial, 'mesh', { color: 0x8e949b, metalness: 0.75, roughness: 0.55 }),
       // Uréthane noir mat (croisillon d'accouplement, joints).
@@ -496,7 +495,8 @@ export function F12(api) {
     const B = bag();
     hub(B, 0.164, 0.2, 1);
     jaws(B, Math.PI / 2, 0.2, 0.229);
-    P('6', B.group(), [-0.06, 0, 0]);
+    // Éclatement le long de l'arbre, vers le moteur (comme au dessin).
+    P('6', B.group(), [0.06, 0, 0]);
   }
   {
     const B = bag(), pts = [];
@@ -506,13 +506,13 @@ export function F12(api) {
         [Math.cos(a + w * 0.55) * 0.0335, Math.sin(a + w * 0.55) * 0.0335], [Math.cos(a + w) * 0.017, Math.sin(a + w) * 0.017]);
     }
     B.add('~urethane', xf(shapeGeo(pts, 0.027, { holes: [[0, 0, 0.0095]], bevel: 0.002 }).rotateY(Math.PI / 2), [0.2145, 0, 0]));
-    P('5', B.group(), [0.05, 0.12, 0]);
+    P('5', B.group(), [0.12, 0, 0]);
   }
   {
     const B = bag();
     hub(B, 0.229, 0.266, -1);
     jaws(B, Math.PI / 2 + Math.PI / 3, 0.2, 0.229);
-    P('4', B.group(), [0.14, 0, 0]);
+    P('4', B.group(), [0.18, 0, 0]);
   }
 
   // 3 — Bride de moteur en L (rouge) : flasque arrondi percé, semelle boulonnée.
@@ -649,6 +649,14 @@ const SN = [Math.cos(PHI), Math.sin(PHI), 0]; // normale sortante de la face inc
 /** Point sur la face inclinée (hauteur y, côte z), décalé de off selon la normale. */
 const onS = (y, z, off = 0) => [sx(y) + SN[0] * off, y + SN[1] * off, z];
 const ROT_S = [0, 0, PHI]; // repère local (X sortant, Y montant) → face inclinée
+/** Point du repère local de la face : base onS(y, z), puis lx selon la normale, ly le long de la pente. */
+const onSL = (y, z, lx = 0, ly = 0) => [sx(y) + SN[0] * lx - SN[1] * ly, y + SN[1] * lx + SN[0] * ly, z];
+// Comme aux dessins F04 / F11 : refroidisseur 34 en bas de la face, sous la culasse ;
+// valve 33 à sa gauche (+Z) ; collecteur 32 en porte-à-faux sous l'extrémité +Z de la tablette.
+const CL = { y: 0.06, z: -0.02, off: 0.005, L: 0.38 };
+const CL_TABS = [[CL.L - 0.08, 0.13], [0.09, 0.09]]; // [position le long de la pente, largeur des pattes]
+const VA = { y: 0.3, z: 0.24 };
+const M32 = { x1: 0.545, y0: 0.48, y1: 0.55, z0: 0.3, z1: 0.37 };
 // Toit de protection / banc de translation (dessus, vers l'arrière).
 const RX = -0.25, RZ = -0.14;
 // Ligne d'air 2" (côté -Z) et ligne d'eau 1".
@@ -707,10 +715,18 @@ export function F11(api) {
     }
     B.soft('red', weld([sx(0.6) + 0.001, 0.6015, -0.325], [sx(0.6) + 0.001, 0.6015, 0.305], 0.0035));
     B.soft('red', weld([sx(0.588) + 0.002, 0.587, -0.325], [sx(0.588) + 0.002, 0.587, 0.305], 0.0035));
-    // Face inclinée : plats de rive, patte à deux trous, agrafes du tuyau d'eau.
+    // Face inclinée : plats de rive, pattes percées du refroidisseur 34, agrafes de la
+    // valve 33, oreilles du collecteur 32.
     for (const z of [0.5, -0.5]) B.add('red', xf(box(0.008, 0.2, 0.04, 0.002), onS(0.72, z, 0.004), ROT_S));
-    B.add('red', xf(extX([[-0.05, -0.02], [0.05, -0.02], [0.05, 0.02], [-0.05, 0.02]], 0.008, { holes: [[-0.028, 0, 0.006], [0.028, 0, 0.006]] }), onS(0.12, -0.12, 0.004), ROT_S));
-    for (const z of [-0.07, -0.035]) B.add('red', xf(box(0.022, 0.035, 0.006, 0.0015), onS(0.27, z, 0.011), ROT_S));
+    for (const [ly, w] of CL_TABS) {
+      const hw = w / 2 + 0.008;
+      B.add('red', xf(extX(roundPoly([[-hw, -0.022], [hw, -0.022], [hw, 0.022], [-hw, 0.022]], 0.004, 1), 0.008,
+        { holes: [[-(w / 2 - 0.014), 0, 0.0045], [w / 2 - 0.014, 0, 0.0045]] }), onSL(CL.y, CL.z, 0.004, ly), ROT_S));
+    }
+    for (const s of [-1, 1]) B.add('red', xf(box(0.03, 0.006, 0.05, 0.0015), onSL(VA.y, VA.z, 0.015, s * 0.0255), ROT_S));
+    for (const z of [M32.z0 - 0.003, M32.z1 + 0.003]) {
+      B.add('red', xf(shapeGeo([[sx(0.49) - 0.003, 0.49], [0.31, 0.49], [0.31, 0.54], [sx(0.54) - 0.003, 0.54]], 0.006), [0, 0, z]));
+    }
     // Côté -Z : pattes des blocs de serrage (ligne d'air et ligne d'eau).
     for (const [x, y, hh, zc, w] of [[-0.36, YA, 0.05, ZA, 0.1], [0.24, YA, 0.05, ZA, 0.1], [-0.3, YWL, 0.035, ZWL, 0.07], [0.2, YWL, 0.035, ZWL, 0.07]]) {
       const t = -ZW - 0.01 - (zc + w / 2 + 0.012);
@@ -945,11 +961,11 @@ export function F11(api) {
     const B = bag();
     splitBloc(B, [x, YA, ZA], { rp: 0.031, w: 0.1, hh: 0.05, len: 0.075 });
     if (x > 0) {
-      // Manchon noir après le filtre à air, coude caoutchouc et collier.
+      // Manchon noir après le filtre à air, coude caoutchouc (vers le bas, comme au dessin) et colliers.
       B.add('black', xf(toAxis(cyl(0.03, 0.12, { seg: 24 }), 'x'), [0.23, YA, ZA]));
-      B.soft('~hose', pipe([[0.285, YA, ZA], [0.37, YA, ZA], [0.37, YA + 0.11, ZA]], 0.036, 0.06, 18));
+      B.soft('~hose', pipe([[0.285, YA, ZA], [0.37, YA, ZA], [0.37, YA - 0.11, ZA]], 0.036, 0.06, 18));
       B.add('steel', xf(toAxis(ring(0.04, 0.036, 0.012, 24), 'x'), [0.3, YA, ZA]));
-      B.add('steel', xf(ring(0.04, 0.036, 0.012, 24), [0.37, YA + 0.1, ZA]));
+      B.add('steel', xf(ring(0.04, 0.036, 0.012, 24), [0.37, YA - 0.1, ZA]));
     }
     P('2', B.group(), [ex, 0.2, EA]);
   }
@@ -1065,25 +1081,32 @@ export function F11(api) {
 
   // Face inclinée : 32 collecteur de retour, 33 valve ASCO d'eau, 34 refroidisseur d'huile.
   {
-    // 32 — Collecteur de retour (bloc noir) sur deux pattes, raccords et boyaux du moteur.
+    // 32 — Collecteur de retour (bloc noir) en porte-à-faux sous l'extrémité +Z de la
+    // tablette, boulonné entre deux oreilles ; boyaux du moteur de la pompe à eau.
     const B = bag();
-    const loc = (o) => (Array.isArray(o) ? o.map(loc) : xf(o, onS(0.15, 0.3), ROT_S));
-    B.add('black', loc(xf(box(0.07, 0.065, 0.3, 0.006), [0.042, 0, 0])));
-    for (const z of [-0.11, 0.11]) B.add('black', loc(xf(box(0.008, 0.08, 0.03, 0.002), [0.004, 0, z])));
-    for (const z of [-0.09, 0, 0.09]) B.add('steel', loc(xf(toAxis(hex(0.024, 0.012), 'x'), [0.082, -0.008, z])));
-    for (const z of [-0.06, 0.03]) B.add('steel', loc(xf(hex(0.026, 0.014), [0.042, 0.039, z])));
-    // Boyaux du moteur hydraulique de la pompe à eau (orifices A / B).
-    const top = (z) => { const p = new THREE.Vector3(0.042, 0.046, z).applyEuler(new THREE.Euler(...ROT_S)); return p.add(V3(onS(0.15, 0.3))); };
-    const up = V3([0, 1, 0]).applyEuler(new THREE.Euler(...ROT_S));
+    const { x1, y0, y1, z0, z1 } = M32, yc = (y0 + y1) / 2, zc = (z0 + z1) / 2;
+    const prof = roundPoly([[sx(y0) + 0.001, y0], [x1, y0], [x1, y1], [sx(y1) + 0.001, y1]], 0.006, 2);
+    B.add('black', xf(shapeGeo(prof, z1 - z0, { bevel: 0.002 }), [0, 0, zc]));
+    // Bouchons six-pans (dessus, bout, flanc +Z) et adaptateurs des boyaux (flanc -Z).
+    for (const x of [0.33, 0.42]) B.add('steel', xf(hex(0.02, 0.01), [x, y1 + 0.005, zc]));
+    for (const z of [zc - 0.017, zc + 0.017]) B.add('steel', xf(toAxis(hex(0.018, 0.01), 'x'), [x1 + 0.005, yc, z]));
+    B.add('steel', xf(toAxis(hex(0.022, 0.01), 'z'), [0.47, yc, z1 + 0.005]));
+    const ports = [0.44, 0.5].map((x) => {
+      B.add('steel', xf(toAxis(hex(0.024, 0.012), '-z'), [x, yc, z0 - 0.006]));
+      return [x, yc, z0 - 0.012];
+    });
+    // Boulons au travers des oreilles.
+    B.add('steel', bolt([0.285, yc, z0 - 0.006], [0, 0, -1], 0.008), bolt([0.285, yc, z1 + 0.006], [0, 0, 1], 0.008));
+    // Boyaux du moteur hydraulique (orifices A / B) : sous la tablette, puis devant son chant.
     const m1 = [0.335 + 0.077, 0.712, 0.15 - 0.322], m2 = [0.335 + 0.077, 0.712, 0.15 - 0.356];
-    hose(B, m1, [1, 0, 0], top(-0.06), up, [[0.52, 0.66, -0.18], [0.52, 0.42, -0.06], [0.42, 0.3, 0.24]], 0.0105);
-    hose(B, m2, [1, 0, 0], top(0.03), up, [[0.54, 0.64, -0.21], [0.55, 0.4, -0.04], [0.45, 0.29, 0.33]], 0.0105);
-    P('32', B.group(), [0.35, 0.13, 0.06]);
+    hose(B, ports[0], [0, 0, -1], m1, [1, 0, 0], [[0.45, 0.525, 0.08], [0.5, 0.565, -0.14]], 0.0105);
+    hose(B, ports[1], [0, 0, -1], m2, [1, 0, 0], [[0.51, 0.525, 0.07], [0.53, 0.565, -0.17]], 0.0105);
+    P('32', B.group(), [0.5, -0.12, 0.14]);
   }
   {
-    // 33 — Valve ASCO d'eau (verte) sur agrafes, boyaux : ligne d'eau → valve → pompe.
+    // 33 — Valve ASCO d'eau (verte) entre deux agrafes, boyaux : ligne d'eau → valve → pompe.
     const B = bag();
-    const S = (o) => (Array.isArray(o) ? o.map(S) : xf(o, onS(0.31, 0.0, 0.0), ROT_S));
+    const S = (o) => (Array.isArray(o) ? o.map(S) : xf(o, onS(VA.y, VA.z), ROT_S));
     B.add('green', S(xf(box(0.04, 0.045, 0.06, 0.006), [0.028, 0, 0])));
     B.add('green', S(xf(toAxis(revolve([[0, 0], [0.019, 0], [0.019, 0.04], [0.016, 0.046, true], [0, 0.048]], 20), 'x'), [0.048, 0, 0])));
     B.add('steel', S(xf(toAxis(hex(0.012, 0.008), 'x'), [0.1, 0, 0])));
@@ -1091,16 +1114,19 @@ export function F11(api) {
       B.add('steel', S(xf(toAxis(hex(0.024, 0.012), s > 0 ? 'z' : '-z'), [0.028, 0, s * 0.036])));
       B.add('steel', S(xf(toAxis(cyl(0.008, 0.014, { seg: 12 }), s > 0 ? 'z' : '-z'), [0.028, 0, s * 0.049])));
     }
-    const pt = (z) => V3([0.028, 0, z]).applyEuler(new THREE.Euler(...ROT_S)).add(V3(onS(0.31, 0)));
-    hose(B, [0.37, YWL, ZWL], [1, 0, 0], pt(-0.056), [0, 0, -1], [[0.47, 0.17, -0.62], [0.47, 0.26, -0.35], [0.4, 0.31, -0.14]], 0.012);
-    hose(B, pt(0.056), [0, 0, 1], [0.55, 0.535, 0.15], [0, -1, 0], [[0.39, 0.33, 0.13], [0.5, 0.4, 0.15]], 0.011);
+    for (const s of [-1, 1]) B.add('steel', S(capScrew([0.02, s * 0.0285, 0], [0, s, 0], 0.005)));
+    const pt = (z) => V3([0.028, 0, z]).applyEuler(new THREE.Euler(...ROT_S)).add(V3(onS(VA.y, VA.z)));
+    // Entrée par devant le refroidisseur ; sortie en boucle vers la valve 12 sous la culasse.
+    hose(B, [0.37, YWL, ZWL], [1, 0, 0], pt(-0.056), [0, 0, -1], [[0.56, 0.16, -0.45], [0.58, 0.2, -0.12], [0.52, 0.25, 0.04], [0.42, 0.29, 0.07]], 0.012);
+    hose(B, pt(0.056), [0, 0, 1], [0.55, 0.535, 0.15], [0, -1, 0], [[0.44, 0.37, 0.42], [0.54, 0.43, 0.29]], 0.011);
     P('33', B.group(), [0.33, 0.12, 0]);
   }
   {
-    // 34 — Refroidisseur d'huile (calandre noire) parallèle à la face, pattes et coudes.
+    // 34 — Refroidisseur d'huile (calandre noire) le long de la pente, sous la culasse,
+    // pattes boulonnées sur les pattes percées du réservoir, coudes gris.
     const B = bag();
-    const S = (o) => (Array.isArray(o) ? o.map(S) : xf(o, onS(0.12, -0.42, 0.0), ROT_S));
-    const off = 0.068, L = 0.44;
+    const S = (o) => (Array.isArray(o) ? o.map(S) : xf(o, onSL(CL.y, CL.z, CL.off), ROT_S));
+    const off = 0.068, L = CL.L;
     B.add('black', S(xf(cyl(0.037, L - 0.06, { seg: 28 }), [off, L / 2, 0])));
     for (const s of [0, 1]) {
       const y = s ? L - 0.02 : 0.02;
@@ -1115,12 +1141,12 @@ export function F11(api) {
       B.add('lightGrey', S(xf(toAxis(pipe([[0, 0, 0], [0, 0, -0.025], [0.03, 0, -0.025]], 0.011, 0.012, 12), 'y'), [off, s ? L - 0.07 : 0.07, -0.05])));
     }
     // Pattes : plaque large en haut, semelle en bas (sur entretoises boulonnées).
-    for (const [y, w] of [[L - 0.08, 0.13], [0.09, 0.09]]) {
+    for (const [y, w] of CL_TABS) {
       B.add('black', S(xf(box(0.006, 0.04, w, 0.002), [0.006, y, 0])));
       B.add('black', S(xf(box(0.034, 0.012, 0.03, 0.002), [0.024, y, 0])));
       for (const z of [-w / 2 + 0.014, w / 2 - 0.014]) B.add('steel', S(bolt([0.009, y, z], [1, 0, 0], 0.007)));
     }
-    P('34', B.group(), [0.38, 0.14, -0.05]);
+    P('34', B.group(), [0.39, 0.145, 0]);
   }
 
   // Dessus : 15 projecteurs DEL sur étriers (vers l'avant).
@@ -1129,11 +1155,18 @@ export function F11(api) {
     B.add('black', xf(extX(strip([[-0.054, -0.05], [-0.054, 0], [0.054, 0], [0.054, -0.05]], 0.004, 0.005), 0.025).rotateZ(Math.PI), [0.0, y - 0.044, z]));
     B.add('steel', bolt([0.0, y - 0.044, z], [0, 1, 0], 0.008));
     for (const s of [-1, 1]) B.add('black', xf(toAxis(revolve([[0, 0], [0.011, 0], [0.011, 0.008], [0.008, 0.012], [0, 0.012]], 14), s > 0 ? 'z' : '-z'), [0.0, y, z + s * 0.058]));
-    B.add('black', xf(toAxis(revolve([[0, -0.03], [0.02, -0.03, true], [0.036, -0.022, true], [0.044, -0.008], [0.045, 0.014], [0.048, 0.018], [0.048, 0.026], [0.04, 0.028], [0, 0.028]], 28), 'x'), [0.0, y, z]));
-    B.add('lamp', xf(toAxis(revolve([[0, 0], [0.039, 0], [0.039, 0.002], [0.03, 0.005, true], [0, 0.006]], 28), 'x'), [0.028, y, z]));
+    // Boîtier noir à logement avant, réflecteur chromé à sept DEL, lentille claire, lunette vissée.
+    B.add('black', xf(toAxis(revolve([[0, -0.03], [0.02, -0.03, true], [0.036, -0.022, true], [0.044, -0.008], [0.045, 0.014],
+      [0.048, 0.018], [0.048, 0.029], [0.04, 0.029], [0.04, 0.018], [0, 0.018]], 28), 'x'), [0.0, y, z]));
+    B.add('chrome', xf(toAxis(revolve([[0, 0], [0.039, 0], [0.039, 0.008], [0.03, 0.005, true], [0.015, 0.0015, true], [0, 0.001]], 28), 'x'), [0.018, y, z]));
+    [[0, 0], ...Array.from({ length: 6 }, (_, i) => [Math.cos((i * Math.PI) / 3) * 0.022, Math.sin((i * Math.PI) / 3) * 0.022])].forEach(([dz, dy], i) => {
+      B.add('lamp', xf(toAxis(revolve([[0, 0], [0.0045, 0], [0.0045, 0.0012], [0.003, 0.0028, true], [0, 0.0032]], 10), 'x'), [i ? 0.0205 : 0.0185, y + dy, z + dz]));
+    });
+    B.add('glass', xf(toAxis(cyl(0.0398, 0.002, { seg: 28 }), 'x'), [0.0285, y, z]));
+    B.add('black', xf(toAxis(ring(0.048, 0.036, 0.004, 28), 'x'), [0.031, y, z]));
     for (let i = 0; i < 6; i++) {
-      const a = (i / 6) * Math.PI * 2;
-      B.add('steel', xf(toAxis(cyl(0.0025, 0.003, { seg: 6 }), 'x'), [0.028, y + Math.sin(a) * 0.043, z + Math.cos(a) * 0.043]));
+      const a = (i / 6) * Math.PI * 2 + Math.PI / 6;
+      B.add('steel', xf(toAxis(revolve([[0, 0], [0.0028, 0], [0.0024, 0.0012, true], [0, 0.0016]], 8), 'x'), [0.033, y + Math.sin(a) * 0.0425, z + Math.cos(a) * 0.0425]));
     }
     B.add('black', gland([-0.03, y, z], [-1, 0, 0], 0.012));
     cable(B, [[-0.036, y, z], [-0.06, y - 0.01, z], [-0.075, H + 0.02, z + 0.03], [-0.12, H + 0.006, z + 0.06]], 0.004);

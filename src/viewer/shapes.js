@@ -658,15 +658,29 @@ export function nameplate(w, h, { material = 'zinc', ink = 'black' } = {}) {
   const t = 0.0015;
   const g = new THREE.Group();
   g.add(solid(material, place(boxGeo(w, h, t, Math.min(w, h) * 0.06), [0, 0, t / 2])));
+  // Texte suggéré : lignes de « mots » de longueurs variées (titre plus
+  // haut), cadre imprimé en retrait du bord.
   const lines = [];
+  const z = t + 0.0004;
   const n = Math.max(2, Math.min(6, Math.floor(h / 0.012)));
+  const th = Math.min(h * 0.05, 0.0028);
+  let s = 11;
   for (let i = 0; i < n; i++) {
-    const y = h * 0.32 - (i * h * 0.64) / Math.max(1, n - 1);
-    const lw = w * (i === 0 ? 0.62 : 0.5 + ((i * 37) % 30) / 100);
-    lines.push(place(new THREE.BoxGeometry(lw, Math.min(h * 0.07, 0.004), 0.0003), [-w * 0.42 + lw / 2, y, t + 0.00015]));
+    const y = h * 0.24 - (i * h * 0.48) / Math.max(1, n - 1);
+    const x1 = -w * 0.36 + w * (i === 0 ? 0.5 : 0.4 + ((i * 37) % 32) / 100);
+    const hh = i === 0 ? th * 1.4 : th;
+    for (let x = -w * 0.36; x < x1 - hh;) {
+      s = (s * 16807) % 2147483647;
+      const ww = Math.min(w * (0.04 + ((s % 1000) / 1000) * 0.12), x1 - x);
+      lines.push(place(new THREE.PlaneGeometry(ww, hh), [x + ww / 2, y, z]));
+      x += ww + hh * 1.3;
+    }
   }
-  g.add(solid(ink, lines));
   const rv = Math.min(w, h) * 0.05;
+  const fw = w - rv * 8, fh = h - rv * 8, ft = Math.max(0.0006, th * 0.25);
+  for (const sy of [-1, 1]) lines.push(place(new THREE.PlaneGeometry(fw, ft), [0, sy * fh / 2, z]));
+  for (const sx of [-1, 1]) lines.push(place(new THREE.PlaneGeometry(ft, fh), [sx * fw / 2, 0, z]));
+  g.add(solid(ink, lines));
   const rivets = [];
   for (const sx of [-1, 1]) for (const sy of [-1, 1]) {
     rivets.push(place(new THREE.SphereGeometry(rv, 10, 5, 0, Math.PI * 2, 0, Math.PI / 2).rotateX(Math.PI / 2), [sx * (w / 2 - rv * 2.2), sy * (h / 2 - rv * 2.2), t]));
@@ -823,7 +837,7 @@ function nippleProfile(rb, y0, y1, neck = 0.18) {
   const yCone = y1 - L * 0.22;
   return [
     [0, y0], [rb * 0.82, y0], [rb * 0.82, yThread],
-    ...threadProfile(rb, yThread, yCone, { pitch: rb * 0.3, maxTurns: 4, chamferBottom: false }),
+    ...threadProfile(rb, yThread, yCone, { pitch: rb * 0.3, maxTurns: 6, chamferBottom: false }),
     [rb * 0.66, y1], [rb * 0.42, y1], [rb * 0.42, y1 - L * 0.04], [0, y1 - L * 0.04],
   ];
 }
@@ -839,7 +853,7 @@ export function fitting(d, len, material = 'steel', { axis = 'y', tee = false, e
     revolveGeo(nippleProfile(d * 0.42, L * 0.12, elbow ? L * 0.7 : L * 0.795), 10),
     // Queue inférieure : filetage conique (NPT / BSPT).
     revolveGeo([[0, -L * 0.65],
-      ...threadProfile(d * 0.36, -L * 0.65, -L * 0.18, { r1: d * 0.4, pitch: d * 0.12, maxTurns: 4 }),
+      ...threadProfile(d * 0.36, -L * 0.65, -L * 0.18, { r1: d * 0.4, pitch: d * 0.12, maxTurns: 7 }),
       [d * 0.32, -L * 0.18], [d * 0.32, -L * 0.12], [0, -L * 0.12]], 10),
   ];
   if (tee) {
@@ -976,8 +990,11 @@ export function valveBank(n, { sw = 0.05, h = 0.16, d = 0.12, levers = true, mat
     // Orifices de travail A / B (bouchons six-pans) sur le dessus.
     for (const z of [-d * 0.22, d * 0.22]) steel.push(place(hexGeo(plug, plug * 0.4), [x, h / 2 + plug * 0.2, z]));
     if (levers) {
-      steel.push(place(cylGeo(0.006, h * 0.9, { seg: 12 }), [0, 0, 0], [0.25, 0, 0]).translate(x, h * 0.95, -d * 0.2));
-      knobs.push(place(revolveGeo([[0, -0.02], [0.009, -0.02], [0.014, -0.008], [0.015, 0.006], [0.011, 0.018], [0, 0.021]], 16), [x, h * 1.4, -d * 0.31]));
+      // Levier incliné vers l'arrière, pommeau enfilé sur son extrémité.
+      const a = -0.25, ly = Math.cos(a), lz = Math.sin(a);
+      const yTop = h * 0.925 + h * 0.425 * ly, zTop = -d * 0.2 + h * 0.425 * lz;
+      steel.push(place(cylGeo(0.006, h * 0.85, { seg: 12 }), [x, h * 0.925, -d * 0.2], [a, 0, 0]));
+      knobs.push(place(revolveGeo([[0, -0.02], [0.009, -0.02], [0.014, -0.008], [0.015, 0.006], [0.011, 0.018], [0, 0.021]], 16), [x, yTop + 0.012 * ly, zTop + 0.012 * lz], [a, 0, 0]));
     }
   }
   // Tirants et écrous sur les flasques d'extrémité, orifices P / T.

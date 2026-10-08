@@ -8,7 +8,10 @@ import { mat } from '../../viewer/materials.js';
 // face de la tête de rotation vers +Y. L'axe des tiges de forage est à y = ROD_Y.
 // Côté -Z : vérin du stinger et câble d'arrêt d'urgence (côté opérateur).
 
-export const MAST = { length: 2.9, rodY: 0.59, carriageX: 2.0, extFeedX: 0.6 };
+// Chariot (tête de rotation) vers mi-hauteur du mât, comme sur F01, F03 et F04.
+export const MAST = { length: 2.9, rodY: 0.59, carriageX: 1.45, extFeedX: 0.6 };
+// Patte du vérin d'extension sur la plaque F17 : décalée vers le sommet du mât (dessins F14 / F17)
+const EXT_TAB_X = 0.17;
 
 // ------------------------------------------------------------------ outils
 
@@ -322,7 +325,6 @@ function nipple(S, pos, axis = 'y') {
   ];
 }
 
-/** Vis à tête hexagonale (tête vers +axe, posée sur le plan des points), rondelle sous tête si washer. */
 /** Ressort hélicoïdal d'axe X de x0 à x1 (centre y, z), rayon R, fil w, n spires. */
 function coil(x0, x1, y, z, R, w, n, material) {
   const k = Math.round(n * 12);
@@ -688,7 +690,8 @@ export function F16(api) {
     P('19', bolts(S, pts, 0.019, 0.07, 'steel', { axis: s > 0 ? 'z' : '-z', head: 'square' }), [0, 0, s * 0.3]);
     P('22', nuts(S, pts.map(([x, y]) => [x, y, s * 0.283]), 0.029, 0.017, 'steel', 'z'), [0, 0, s * 0.16]);
   }
-  return { view: { dir: [0.9, 0.9, 1.0] } };
+  // Vue du dessin F16 : languette et support de boyaux à gauche
+  return { view: { dir: [0.9, 0.9, -1.0] } };
 }
 
 // ------------------------------- F17 table inférieure (avance d'extension)
@@ -699,9 +702,12 @@ export function F17(api) {
   const P = (ref, obj, e) => api.part(ref, obj, e);
   const bx = [-0.25, -0.15, -0.05, 0.05, 0.15, 0.25];
 
-  // 1 — Plaque : patte d'ancrage du vérin d'extension (+Z), couronnes de trous
-  const outline = [[-0.35, -0.3], [0.35, -0.3], [0.35, 0.3], [0.1, 0.3], [0.06, 0.34], ...arc(0, 0.36, 0.06, -0.32, Math.PI + 0.32, 12), [-0.06, 0.34], [-0.1, 0.3], [-0.35, 0.3]];
-  const holes = [[0, 0, 0.05], [0, 0.36, 0.016]];
+  // 1 — Plaque : patte d'ancrage du vérin d'extension (-Z, côté stinger comme
+  // sur les dessins F14 / F15), couronnes de trous
+  const tx = EXT_TAB_X;
+  const outline = [[-0.35, -0.3], [0.35, -0.3], [0.35, 0.3], [tx + 0.1, 0.3], [tx + 0.06, 0.34], ...arc(tx, 0.36, 0.06, -0.32, Math.PI + 0.32, 12), [tx - 0.06, 0.34], [tx - 0.1, 0.3], [-0.35, 0.3]]
+    .map(([x, z]) => [x, -z]);
+  const holes = [[0, 0, 0.05], [tx, -0.36, 0.016]];
   for (let i = 0; i < 8; i++) { const a = (i / 8) * Math.PI * 2 + Math.PI / 8; holes.push([Math.cos(a) * 0.088, Math.sin(a) * 0.088, 0.009]); }
   for (let i = 0; i < 12; i++) { const a = (i / 12) * Math.PI * 2; holes.push([Math.cos(a) * 0.14, Math.sin(a) * 0.14, 0.011]); }
   for (const s of [1, -1]) for (const x of bx) holes.push([x, s * 0.265, 0.007]);
@@ -808,9 +814,9 @@ export function F15(api) {
     fr.push(prismZ([[x - 0.025, -0.06], [x + 0.025, -0.06], [x + 0.025, 0.01], [x - 0.025, 0.01]], z0, z1, 'redDark', { holes: [[x, -0.04, 0.006], [x, -0.01, 0.006]] }));
   }
   fr.push(prismX([[-0.195, -0.105], [0.195, -0.105], [0.195, 0.06], [-0.195, 0.06]], 0.3, 0.32, red, { holes: [[0, 0, 0.031]] }));
-  // Patte du vérin d'extension (sous le bloc, côté +Z)
-  fr.push(at(box(0.1, 0.0455, 0.045, red), [0.02, -0.14975, 0.1925]));
-  fr.push(prismY([[-0.03, 0.17], [0.07, 0.17], ...arc(0.02, 0.36, 0.05, 0, Math.PI, 10), [-0.03, 0.17]].map(([x, z]) => [x, z]), -0.1975, -0.1725, red, { holes: [[0.02, 0.36, 0.016]] }));
+  // Patte du vérin d'extension (sous le bloc, côté -Z comme sur le dessin F15)
+  fr.push(at(box(0.1, 0.0455, 0.045, red), [0.02, -0.14975, -0.1925]));
+  fr.push(prismY([[-0.03, 0.17], [0.07, 0.17], ...arc(0.02, 0.36, 0.05, 0, Math.PI, 10), [-0.03, 0.17]].map(([x, z]) => [x, -z]), -0.1975, -0.1725, red, { holes: [[0.02, -0.36, 0.016]] }));
   // Supports du stinger (côté -Z) : oreilles à demi-lunette + âme + gousset,
   // patte percée des étriers en U (37)
   for (const x of [1.05, 2.45]) {
@@ -849,14 +855,14 @@ export function F15(api) {
     wl.push([[x + 0.025, -0.075, -0.203], [x + 0.025, 0.075, -0.203]]);
   }
   // Patte du vérin d'extension sous le bloc
-  wl.push([[-0.03, -0.1725, 0.215], [0.07, -0.1725, 0.215]]);
+  wl.push([[-0.03, -0.1725, -0.215], [0.07, -0.1725, -0.215]]);
   fr.push(beads(S, wl, 0.009));
   P('M', fuse(S, fr), [0, 0, 0]);
 
-  // 24 — Barres de guidage (sur les flancs)
+  // 24 — Barres de guidage (sur les flancs), acier nu poli par le chariot
   for (const s of [1, -1]) {
     P('24', fuse(S,
-      box(2.6, 0.05, 0.05, 'grey', { r: 0.005, pos: [1.5, 0.115, s * 0.2] }),
+      box(2.6, 0.05, 0.05, 'steel', { r: 0.005, pos: [1.5, 0.115, s * 0.2] }),
       cyl(0.0065, 0.002, 'charcoal', { seg: 16, pos: [2.765, 0.1395, s * 0.2] }),
     ), [0, 0.3, s * 0.12]);
   }
@@ -875,14 +881,15 @@ export function F15(api) {
     out.push(beads(S, [[...inner, inner[0]].map(([z, y]) => [xr, y, z])], 0.007));
     return out;
   };
+  // Vis dans les chants des flancs du mât (z = ±0.17), hors des raidisseurs
   P('25', fuse(S, tray(L, 1, -0.127, 0.11, true),
-    bolts(S, [[-0.1, -0.097], [0.1, -0.097], [-0.1, 0.08], [0.1, 0.08]].map(([z, y]) => [L + 0.012, y, z]), 0.012, 0.03, 'steel', { axis: 'x', washer: true })), [0.35, 0, 0]);
+    bolts(S, [[-0.17, -0.045], [0.17, -0.045], [-0.17, 0.03], [0.17, 0.03]].map(([z, y]) => [L + 0.012, y, z]), 0.012, 0.03, 'steel', { axis: 'x', washer: true })), [0.6, 0.12, 0]);
   // 29 — Couvercle inférieur (bout du bloc de pied)
   P('29', fuse(S, tray(-0.38, -1, -0.127, 0.06, false),
-    bolts(S, [[-0.1, -0.097], [0.1, -0.097], [-0.1, 0.03], [0.1, 0.03]].map(([z, y]) => [-0.392, y, z]), 0.012, 0.03, 'steel', { axis: '-x', washer: true })), [-0.35, 0, 0]);
+    bolts(S, [[-0.1, -0.097], [0.1, -0.097], [-0.1, 0.03], [0.1, 0.03]].map(([z, y]) => [-0.392, y, z]), 0.012, 0.03, 'steel', { axis: '-x', washer: true })), [-0.8, -0.2, 0]);
 
-  // Tables au pied du mât : 26 table droite (+Z), 12 table gauche (-Z),
-  // logement des mâchoires ouvert vers le haut. Montrées ouvertes sur leurs
+  // Tables au pied du mât : 12 table gauche (+Z), 26 table droite (-Z, côté
+  // stinger, comme sur le dessin F15), logement des mâchoires ouvert vers le haut. Montrées ouvertes sur leurs
   // charnières (axes 21), comme sur les dessins F04 et F14.
   const OPEN = 0.7;
   const hinge = (s) => new THREE.Vector3(0, 0.13, s * 0.2);
@@ -899,7 +906,9 @@ export function F15(api) {
     return g;
   };
   const onTable = (s, local) => add([-0.05, 0.05, s * 0.55], rot(s, local));
-  const tableProf = [[0, 0.3], [0, 0.46], [0.13, 0.46], [0.13, 0.72], [0.27, 0.72], [0.3, 0.69], [0.3, 0.3], [0.25, 0.18], [0.15, 0.18], [0.1, 0.24], [0.04, 0.3]];
+  // Flasques pleines à échancrure demi-ronde autour de la tige (dessin F15)
+  const tableProf = [[0, 0.3], [0, rodY - 0.088], ...arc(0, rodY, 0.088, -Math.PI / 2, Math.PI / 2, 14).slice(1, -1), [0, rodY + 0.088], [0, 0.72],
+    [0.27, 0.72], [0.3, 0.69], [0.3, 0.3], [0.25, 0.18], [0.15, 0.18], [0.1, 0.24], [0.04, 0.3]];
   // Corps en retrait des flasques (les 3 flasques ressortent comme sur le dessin)
   const inset = [[0, 0.31], [0, 0.46], [0.13, 0.46], [0.13, 0.7], [0.258, 0.7], [0.278, 0.68], [0.278, 0.3], [0.236, 0.2], [0.162, 0.2], [0.11, 0.255], [0.045, 0.31]];
   const table = (s) => {
@@ -928,10 +937,10 @@ export function F15(api) {
     }
     return fuse(S, t);
   };
-  P('26', tilt(1, table(1)), onTable(1, [0, 0, 0]));
-  P('12', tilt(-1, table(-1)), onTable(-1, [0, 0, 0]));
+  P('12', tilt(1, table(1)), onTable(1, [0, 0, 0]));
+  P('26', tilt(-1, table(-1)), onTable(-1, [0, 0, 0]));
 
-  // Mâchoires (slip plates 1/2, gris) et centreurs (3/4, gris clair) : blocs à
+  // Mâchoires (slip plates 1/2, acier coulé gris foncé) et centreurs (3/4, gris) : blocs à
   // demi-alésage logés dans les tables, bossage d'attache du vérin sur le dessus.
   // Mâchoires : alésage strié (dents en acier nu) ; centreurs : alésage lisse.
   const insert = (s, x0, x1, rs, material, teeth = false) => {
@@ -948,10 +957,10 @@ export function F15(api) {
       cyl(0.02, 0.035, material, { pos: [(x0 + x1) / 2, 0.7375, s * 0.1] }),
     ));
   };
-  P('1', insert(1, -0.35, -0.25, 0.052, 'grey', true), onTable(1, [0, 0.3, 0.02]));
-  P('2', insert(-1, -0.35, -0.25, 0.075, 'grey', true), onTable(-1, [0, 0.3, -0.02]));
-  P('3', insert(1, -0.11, -0.03, 0.05, 'lightGrey'), onTable(1, [0, 0.3, 0.02]));
-  P('4', insert(-1, -0.11, -0.03, 0.072, 'lightGrey'), onTable(-1, [0, 0.3, -0.02]));
+  P('1', insert(1, -0.35, -0.25, 0.052, 'castIron', true), onTable(1, [0, 0.3, 0.02]));
+  P('2', insert(-1, -0.35, -0.25, 0.075, 'castIron', true), onTable(-1, [0, 0.3, -0.02]));
+  P('3', insert(1, -0.11, -0.03, 0.05, 'grey'), onTable(1, [0, 0.3, 0.02]));
+  P('4', insert(-1, -0.11, -0.03, 0.072, 'grey'), onTable(-1, [0, 0.3, -0.02]));
 
   // Vérins de mâchoires (6) et de centreurs (8) couchés sur les tables,
   // axes 5 / 10 (courts) et 7 (longs), bagues 9 et 11.
@@ -1112,7 +1121,8 @@ export function F15(api) {
       nuts(S, legs.map(([a, b]) => [a, b, -0.197]), 0.017, 0.008, 'steel', 'z'),
     ), [0, 0, -0.7]);
   }
-  return { view: { dir: [0.35, 0.75, -1.0] } };
+  // Vue du dessin F15 : pied et tables à droite, stinger devant à gauche
+  return { view: { dir: [-0.55, 0.75, -1.0] } };
 }
 
 function group(...children) {
@@ -1176,15 +1186,17 @@ export function F14(api) {
 
   P('5', at(api.sub('F17'), [extFeedX, -0.15, 0]), [0, -0.55, 0]);
 
-  // 6 — Vérin d'avance d'extension (côté +Z, sous la table inférieure) : œil
+  // 6 — Vérin d'avance d'extension (côté -Z, sous la table inférieure) : œil
   // sous la patte de la plaque F17, chape sur la patte du bloc de pied.
-  const ext = along(ram(S, extFeedX - 0.02, 0.08, { material: 'red', pin: 'y', ext: 0.35, back: 'eye', front: 'clevis', neck: 0.1 }), '-x');
+  const tabX = extFeedX + EXT_TAB_X;
+  const ext = along(ram(S, tabX - 0.02, 0.08, { material: 'red', pin: 'y', ext: 0.35, back: 'eye', front: 'clevis', neck: 0.1 }), '-x');
   const e6 = fuse(S,
-    at(ext, [extFeedX, -0.185, 0.36]),
-    S.bolt(0.016, 0.075, 'steel', { pos: [extFeedX, -0.135, 0.36] }),
-    at(cyl(0.012, 0.085, 'steel'), [0.02, -0.185, 0.36]),
+    at(ext, [tabX, -0.185, -0.36]),
+    S.bolt(0.016, 0.075, 'steel', { pos: [tabX, -0.135, -0.36] }),
+    at(cyl(0.012, 0.085, 'steel'), [0.02, -0.185, -0.36]),
   );
   e6.userData.hasInterior = true;
-  P('6', e6, [-0.25, -0.5, 0.45]);
-  return { view: { dir: [0.45, 0.7, 1.0] } };
+  P('6', e6, [-0.25, -0.5, -0.45]);
+  // Vue du dessin F14 (éclaté) : pied devant à gauche, tête de rotation en haut
+  return { view: { dir: [-0.5, 0.75, 1.0] } };
 }

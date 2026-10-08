@@ -143,10 +143,11 @@ export function F13(api) {
   const BY = 0.18, BZ = 0.628; // bloc transmetteurs (derrière le bas de la plaque)
   {
     const B = bag();
-    const holes = [[0, 0.78, 0.016], ...GY.map((y) => [0, y, 0.033])].map(([x, y, r]) => [x, y - 0.45, r]);
-    B.add('grey', xf(shapeGeo(roundPoly([[-0.055, -0.34], [0.055, -0.34], [0.055, 0.36], [-0.055, 0.36]], 0.008, 2), 0.008, { holes: holes.map(([x, y, r]) => [x, y, r]) }), [GX, 0.45, GZ + 0.004]));
-    for (const y of [0.765, 0.135]) for (const s of [-1, 1]) B.add('steel', bolt([GX + s * 0.042, y, GZ + 0.008], [0, 0, 1], 0.007));
-    B.add('black', xf(toAxis(revolve([[0, 0], [0.02, 0], [0.02, 0.006], [0.014, 0.012, true], [0, 0.014]], 18), 'z'), [GX, 0.78, GZ + 0.008]));
+    // Sept trous égaux comme au dessin : six manomètres et, en haut, un bouchon obturateur.
+    const holes = [0.78, ...GY].map((y) => [0, y - 0.45, 0.033]);
+    B.add('grey', xf(shapeGeo(roundPoly([[-0.055, -0.34], [0.055, -0.34], [0.055, 0.385], [-0.055, 0.385]], 0.008, 2), 0.008, { holes }), [GX, 0.45, GZ + 0.004]));
+    for (const y of [0.818, 0.135]) for (const s of [-1, 1]) B.add('steel', bolt([GX + s * 0.042, y, GZ + 0.008], [0, 0, 1], 0.007));
+    B.add('plastic', xf(toAxis(revolve([[0, -0.012], [0.031, -0.012], [0.031, 0], [0.037, 0], [0.037, 0.005], [0.033, 0.009, true], [0.022, 0.016, true], [0, 0.019]], 24), 'z'), [GX, 0.78, GZ + 0.008]));
     // Capillaires (boyaux fins) des manomètres jusqu'au bloc transmetteur.
     GY.forEach((y, i) => {
       const px = 0.675 + i * 0.026;
