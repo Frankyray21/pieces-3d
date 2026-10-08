@@ -16465,7 +16465,16 @@
      "17",
      "3760016262",
      1,
-     "Cable swivel assembly"
+     "Cable swivel assembly",
+     {
+      "group": [
+       "18",
+       "19",
+       "20",
+       "21",
+       "22"
+      ]
+     }
     ],
     [
      "18",

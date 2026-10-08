@@ -5,10 +5,11 @@ import { loadIndex, loadEquipment, search, sourceLabel, sheetLabel, sizeGroups, 
 import cubexModels from './models/cubex-mri-5200/index.js';
 import du311Models from './models/du311/index.js';
 import du311StdModels from './models/du311-std/index.js';
+import epirocModels from './models/epiroc-ith/index.js';
 import './ui/resize.js';
 
 // Modèles 3D disponibles par équipement (builders procéduraux).
-const MODELS = { 'cubex-mri-5200': cubexModels, du311: du311Models, 'du311-std': du311StdModels };
+const MODELS = { 'cubex-mri-5200': cubexModels, du311: du311Models, 'du311-std': du311StdModels, 'epiroc-ith': epirocModels };
 
 // Version complète du site (toutes les pages du manuel) : la publication
 // allégée en Artifact y renvoie pour les pages qu'elle n'inclut pas.

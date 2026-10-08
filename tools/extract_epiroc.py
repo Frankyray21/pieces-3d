@@ -454,7 +454,8 @@ PAGES = {
     "P089": A("HU Arrow 3S overshot and accessories", f"Overshot HU Arrow 3S — {U}", kits=[("P089", 1)]),
     "P090": A("HU OWL L-Latch head assembly", f"Tête HU OWL L-Latch — {U}", cap="32-35"),
     # ---------------------------------------------------------------- PU souterrain
-    "P091": A("PU Arrow 3S overshot and accessories", f"Overshot PU Arrow 3S — {U}"),
+    "P091": A("PU Arrow 3S overshot and accessories", f"Overshot PU Arrow 3S — {U}",
+              groups={"17": ["18", "19", "20", "21", "22"]}),
     "P092": A("PU DiscovOre head assembly", f"Tête PU DiscovOre — {U}"),
     "P093": D("PU DiscovOre accessories", "Trousses PU DiscovOre", tables=[("P093", i) for i in range(3)]),
     # ---------------------------------------------------------------- accessoires DiscovOre
