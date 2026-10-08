@@ -1,7 +1,7 @@
 import './styles.css';
 import { Viewer } from './viewer/Viewer.js';
 import { buildProcedural } from './viewer/assembly.js';
-import { loadIndex, loadEquipment, search, sourceLabel } from './data/equipment.js';
+import { loadIndex, loadEquipment, search, sourceLabel, sheetLabel, sizeGroups, isPnText } from './data/equipment.js';
 import cubexModels from './models/cubex-mri-5200/index.js';
 import du311Models from './models/du311/index.js';
 import du311StdModels from './models/du311-std/index.js';
@@ -78,6 +78,10 @@ async function route() {
     }
     S.view = null;
     S.selected = null;
+    const doc = S.eq.docWord === 'catalogue' ? 'catalogue' : 'manuel';
+    $('#btn-page').textContent = `Page du ${doc}`;
+    $('#btn-page').title = `Voir la page du ${doc}`;
+    $('#btn-labels').title = `Afficher les repères du ${doc}`;
   }
   const eq = S.eq;
   // Page d'accueil (adresse sans « # ») : la liste des équipements.
@@ -116,14 +120,68 @@ function rowAt(path) {
   return row;
 }
 
-/** Chemin des objets 3D (les pièces gauches symétriques pointent vers la pièce droite). */
+/**
+ * Chemin des objets 3D. Les pièces gauches symétriques pointent vers la pièce
+ * droite ; une ligne répétée (« same ») vers la première ; un ensemble (« A »,
+ * groupe explicite) ou une plage de repères (« 1-5 », « B,2-14 ») vers toutes
+ * ses pièces, sous la forme « 1|2|3|4|5 » que la visionneuse sait résoudre.
+ */
 function path3d(path) {
   const out = [];
+  let asm = S.view?.type === 'assembly' ? S.eq.assemblies.get(S.view.id) : null;
   for (let i = 0; i < path.length; i++) {
     const row = rowAt(path.slice(0, i + 1));
-    out.push(row?.mirrorOf || path[i]);
+    out.push(target3d(row, asm) || path[i]);
+    asm = row?.link ? S.eq.assemblies.get(row.link) : null;
   }
   return out;
+}
+
+function target3d(row, asm) {
+  if (!row) return null;
+  if (row.group) return row.group.join('|');
+  const t = row.mirrorOf || row.same || row.ref;
+  const refs = expandRef(t, asm);
+  return refs ? refs.join('|') : t;
+}
+
+const RANGE = /^(?:[A-Z]|\d+[A-Z]?)(?:[-,]\d+[A-Z]?)+$/;
+/** Repères d'une plage « 12-22 », « B,2-14 » ou « 1-3-6 » présents dans la liste. */
+function expandRef(ref, asm) {
+  if (!asm || !RANGE.test(ref)) return null;
+  const known = new Set(asm.parts.map((p) => p.ref));
+  const out = [];
+  for (const tok of ref.split(',')) {
+    const n = tok.split('-');
+    if (n.length === 2 && /^\d+$/.test(n[0]) && /^\d+$/.test(n[1])) {
+      for (let k = +n[0]; k <= +n[1]; k++) out.push(String(k));
+      for (const r of known) {
+        const m = /^(\d+)[A-Z]$/.exec(r);
+        if (m && +m[1] >= +n[0] && +m[1] <= +n[1]) out.push(r);
+      }
+    } else out.push(...n);
+  }
+  const res = out.filter((r) => known.has(r) && r !== ref);
+  return res.length ? res : null;
+}
+
+/** Repère affiché (une ligne répétée garde le repère du catalogue). */
+const refLabel = (r) => r.label ?? r.ref;
+
+/** Badge d'une page : « P024 » (manuel) ou « 24 » (catalogue). */
+function badge(s) {
+  return S.eq.docWord === 'catalogue' ? String(parseInt(String(s).replace(/^\D+/, ''), 10)) : s;
+}
+
+/** Numéros d'une ligne : un par taille (regroupés), ou texte du catalogue. */
+function pnHtml(r, big = false) {
+  const val = (v) => (isPnText(v) ? `<span class="${big ? 'pnbig' : ''}">${esc(v)}</span>` : `<span class="pnt">${esc(v === '-' ? '—' : v)}</span>`);
+  if (r.sizes) {
+    return sizeGroups(r).map(([v, ss]) => `<span class="szl"><span class="sz">${esc(ss.join(' · '))}</span>${val(v)}</span>`).join('');
+  }
+  if (r.pn) return big ? `<span class="pnbig">${esc(r.pn)}</span>` : esc(r.pn);
+  if (r.pnText) return `<span class="pnt">${esc(r.pnText)}</span>`;
+  return null;
 }
 
 function isGroupPath(path) {
@@ -267,9 +325,9 @@ function showSheets(sheets) {
   dv.hidden = false;
   dv.innerHTML = sheets.map((s) => `
     <figure>
-      <img src="${esc(eq.pageUrl(s))}" alt="Page ${s} du manuel : ${esc(eq.sheetTitles[s] || '')}" data-sheet="${s}" loading="lazy">
-      <figcaption><span class="mono">${eq.document.reference.split(',')[0]}-${s}</span> · ${esc(eq.sheetTitles[s] || '')} — cliquez pour agrandir</figcaption>
-    </figure>`).join('') || '<p class="sub">Aucun dessin pour cette liste au manuel.</p>';
+      <img src="${esc(eq.pageUrl(s))}" alt="Page ${s} du ${eq.docWord} : ${esc(eq.sheetTitles[s] || '')}" data-sheet="${s}" loading="lazy">
+      <figcaption><span class="mono">${eq.docWord === 'catalogue' ? sheetLabel(eq, s) : `${eq.document.reference.split(',')[0]}-${s}`}</span> · ${esc(eq.sheetTitles[s] || '')} — cliquez pour agrandir</figcaption>
+    </figure>`).join('') || `<p class="sub">Aucun dessin pour cette liste au ${eq.docWord}.</p>`;
   dv.querySelectorAll('img').forEach((img) => {
     img.addEventListener('click', () => openPage(img.dataset.sheet));
     img.addEventListener('load', () => img.closest('figure').classList.toggle('portrait', img.naturalHeight > img.naturalWidth));
@@ -313,19 +371,24 @@ function renderRail() {
     const open = !big || id === eq.root || path.has(id);
     const kids = a.children.length && open ? `<ul class="tree">${a.children.map(node).join('')}</ul>` : '';
     return `<li><button type="button" class="node ${id === cur ? 'cur' : ''}" data-go="${id}">
-      <span class="sheet ${partial && models[id] ? 'm3d' : ''}">${id}</span><span class="t">${a.children.length && !open ? '▸ ' : ''}${esc(a.titleFr)}</span>
+      <span class="sheet ${partial && models[id] ? 'm3d' : ''}">${badge(a.sheet)}</span><span class="t">${a.children.length && !open ? '▸ ' : ''}${esc(a.titleFr)}</span>
       <span class="n">${err ? `<span class="alert" title="Numéros à vérifier">!</span> ` : ''}${a.parts.length}</span></button>${kids}</li>`;
   };
   const docs = [...eq.documents.values()].map((d) => `<li><button type="button" class="node ${d.id === cur ? 'cur' : ''}" data-go="${d.id}">
-    <span class="sheet">${d.sheets[d.sheets.length - 1]}</span><span class="t">${esc(d.titleFr)}</span><span class="n">${d.parts.length}</span></button></li>`).join('');
+    <span class="sheet">${badge(d.sheets[d.sheets.length - 1])}</span><span class="t">${esc(d.titleFr)}</span><span class="n">${d.parts.length}</span></button></li>`).join('');
   const errors = eq.issues.filter((r) => r.flags.some((f) => f.level === 'error')).length;
+  // Légende des assemblages en 3D : liens directs s'ils sont peu nombreux.
+  const tops = [...eq.assemblies.values()].filter((a) => models[a.id] && !models[a.parent]);
+  const open3d = tops.length <= 8
+    ? ` Ouvrir : ${tops.map((a) => `<button type="button" class="lnk" data-go="${a.id}">${badge(a.sheet)} ${esc(a.titleFr)}</button>`).join('')}`
+    : ' Leur numéro de page est encadré dans la liste.';
   $('#rail').innerHTML = `
-    <div class="equip"><strong>${esc(eq.name)}</strong><span>${esc(eq.category)} · n° de série ${esc(eq.serial)}</span></div>
-    <div><h2>Assemblages${n3d && !partial ? ' 3D' : ''}</h2>${partial ? `<p class="legend"><span class="sheet m3d">3D</span><span>${n3d} assemblages en 3D, les autres avec les dessins du manuel. Ouvrir : ${[...eq.assemblies.values()].filter((a) => models[a.id] && !models[a.parent]).map((a) => `<button type="button" class="lnk" data-go="${a.id}">${a.id} ${esc(a.titleFr)}</button>`).join('')}</span></p>` : ''}<ul class="tree">${node(eq.root)}</ul></div>
-    <div><h2>Schémas et listes</h2><ul class="tree">${docs}</ul></div>
-    <div><h2>Manuel</h2><ul class="tree">
+    <div class="equip"><strong>${esc(eq.name)}</strong><span>${esc(eq.category)} · ${eq.serial ? `n° de série ${esc(eq.serial)}` : esc(eq.document.title)}</span></div>
+    <div><h2>Assemblages${n3d && !partial ? ' 3D' : ''}</h2>${partial ? `<p class="legend"><span class="sheet m3d">3D</span><span>${n3d} assemblages en 3D, les autres avec les dessins du ${eq.docWord}.${open3d}</span></p>` : ''}<ul class="tree">${node(eq.root)}</ul></div>
+    <div><h2>${esc(eq.labels?.documents || 'Schémas et listes')}</h2><ul class="tree">${docs}</ul></div>
+    <div><h2>${eq.docWord === 'catalogue' ? 'Catalogue' : 'Manuel'}</h2><ul class="tree">
       <li><button type="button" class="node ${cur === 'controle' ? 'cur' : ''}" data-go="controle"><span class="sheet">QC</span><span class="t">Contrôle des listes</span><span class="n">${errors ? `<span class="alert">${errors}</span> / ` : ''}${eq.issues.length}</span></button></li>
-      <li><button type="button" class="node" data-page="${eq.sheetId(1)}"><span class="sheet">PDF</span><span class="t">Pages du manuel (${eq.document.sheets})</span><span class="n"></span></button></li>
+      <li><button type="button" class="node" data-page="${eq.sheetId(1)}"><span class="sheet">PDF</span><span class="t">Pages du ${eq.docWord} (${eq.document.sheets})</span><span class="n"></span></button></li>
     </ul></div>
     <details class="more"><summary>Fiche technique</summary>
       <dl class="specs">${eq.specs.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}
@@ -342,7 +405,7 @@ function renderCrumbs() {
   }
   const items = [`<button type="button" data-go="${eq.root}">${esc(eq.name)}</button>`];
   if (isAsmView()) {
-    chain.forEach((id, i) => items.push(`<button type="button" class="${i === chain.length - 1 ? 'cur' : ''}" data-go="${id}">${id} · ${esc(eq.assemblies.get(id).titleFr)}</button>`));
+    chain.forEach((id, i) => items.push(`<button type="button" class="${i === chain.length - 1 ? 'cur' : ''}" data-go="${id}">${badge(eq.assemblies.get(id).sheet)} · ${esc(eq.assemblies.get(id).titleFr)}</button>`));
   } else if (S.view.type === 'document') {
     const d = eq.documents.get(S.view.id);
     items.push(`<button type="button" class="cur" data-go="${d.id}">${esc(d.titleFr)}</button>`);
@@ -356,17 +419,17 @@ function renderTitleblock(asm) {
   const eq = S.eq;
   const ref = eq.document.reference.split(',')[0];
   $('#titleblock').innerHTML = `
-    <button type="button" class="tb-page" data-page="${asm.sheet}" title="Ouvrir la page ${asm.sheet} du manuel">
+    <button type="button" class="tb-page" data-page="${asm.sheet}" title="Ouvrir la page ${asm.sheet} du ${eq.docWord}">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2.5h8.5L19 7v14.5H6z"/><path d="M14.5 2.5V7H19"/><path d="M9 11h7M9 14h7M9 17h4.5"/></svg>
-      <strong>${asm.sheet}</strong><small>Manuel</small>
+      <strong>${badge(asm.sheet)}</strong><small>${eq.docWord === 'catalogue' ? 'Catalogue' : 'Manuel'}</small>
     </button>
     <div class="tb-grid">
     <div><span class="k">Projet</span><span class="v">${esc(eq.name)}</span></div>
     <div><span class="k">Client</span><span class="v">${esc(eq.manufacturer)}</span></div>
     <div class="wide"><span class="k">Titre</span><span class="v">${esc(asm.title)}</span></div>
-    <div><span class="k">Feuille</span><span class="v">${asm.sheet} · ${asm.parts.length} lignes</span></div>
+    <div><span class="k">${eq.docWord === 'catalogue' ? 'Page' : 'Feuille'}</span><span class="v">${badge(asm.sheet)} · ${asm.parts.length} lignes</span></div>
     <div><span class="k">Préparé</span><span class="v">${esc(eq.document.date)}</span></div>
-    <div class="wide"><span class="v dwg">${asm.pn ? `${esc(asm.pn)} rév. ${esc(asm.rev || '0')}` : `${esc(ref)}-${asm.sheet}-03`}</span></div>
+    <div class="wide"><span class="v dwg">${asm.pn ? `${esc(asm.pn)}${asm.rev ? ` rév. ${esc(asm.rev)}` : ''}` : `${esc(ref)}-${asm.sheet}${eq.docWord === 'catalogue' ? '' : '-03'}`}</span></div>
     </div>`;
 }
 
@@ -379,12 +442,12 @@ function renderPanel() {
     const groups = eq.issues.slice().sort((a, b) => sevRank(b) - sevRank(a));
     panel.innerHTML = `
       <div class="phead"><h1>Contrôle des listes</h1>
-        <p class="sub">${eq.issues.length} lignes du manuel méritent une vérification : même numéro avec des descriptions différentes, numéros presque identiques (une frappe d'écart), lignes ou numéros absents. Cliquez une ligne pour l'ouvrir.</p></div>
+        <p class="sub">${eq.issues.length} lignes du ${eq.docWord} méritent une vérification : même numéro avec des descriptions différentes, numéros presque identiques (une frappe d'écart), lignes ou numéros absents. Cliquez une ligne pour l'ouvrir.</p></div>
       <div class="tablewrap"><ul class="issues">${groups.map((r) => {
         const f = r.flags.find((x) => x.level === 'error') || r.flags.find((x) => x.level === 'warn');
         return `<li><button type="button" data-row="${esc(r.key)}">
-          <span class="top"><span class="ico ${f.level}">${f.level === 'error' ? '✕' : '!'}</span><span class="mono">${esc(r.pn || '—')}</span><span>${esc(r.desc)}</span></span>
-          <span class="why">${esc(sourceLabel(eq, r.source))} · réf. ${esc(r.ref)} — ${esc(f.text)}</span></button></li>`;
+          <span class="top"><span class="ico ${f.level}">${f.level === 'error' ? '✕' : '!'}</span><span class="mono">${esc(r.pns.join(' / ') || '—')}</span><span>${esc(r.desc)}</span></span>
+          <span class="why">${esc(sourceLabel(eq, r.source))} · réf. ${esc(refLabel(r))} — ${esc(f.text)}</span></button></li>`;
       }).join('')}</ul></div>`;
     panel.querySelectorAll('[data-row]').forEach((b) => b.addEventListener('click', () => jumpToRow(b.dataset.row)));
     return;
@@ -392,8 +455,11 @@ function renderPanel() {
   const isAsm = isAsmView();
   const src = isAsm ? eq.assemblies.get(S.view.id) : eq.documents.get(S.view.id);
   const list = isAsm ? [src.sheet] : src.sheets;
-  const sheets = list.length > 3 ? `${list[0]} à ${list[list.length - 1]}` : list.join(' / ');
-  const sub = [`Feuille ${sheets}`, src.pn && `N° ${src.pn}`, src.title !== src.titleFr && src.title].filter(Boolean);
+  const cat = eq.docWord === 'catalogue';
+  const shown = (isAsm ? [src.sheet, ...(src.sheets || [])] : list).filter((x, i, a) => a.indexOf(x) === i).map(badge);
+  const sheets = shown.length > 3 ? `${shown[0]} à ${shown[shown.length - 1]}` : shown.join(' / ');
+  const sub = [`${cat ? (shown.length > 1 ? 'Pages' : 'Page') : 'Feuille'} ${sheets}`, src.pn && `N° ${src.pn}`,
+    src.sizes && `Tailles : ${src.sizes.join(', ')}`, src.title !== src.titleFr && src.title].filter(Boolean);
   panel.innerHTML = `
     <div class="phead">
       <h1>${esc(src.titleFr)}</h1>
@@ -419,7 +485,7 @@ function sevRank(r) {
 function visibleRows() {
   const q = S.filter.trim().toUpperCase();
   const out = [];
-  const match = (r) => !q || `${r.ref} ${r.pn} ${r.desc} ${r.supplier || ''}`.toUpperCase().includes(q);
+  const match = (r) => !q || `${refLabel(r)} ${r.pns.join(' ')} ${r.pnText || ''} ${r.desc} ${r.supplier || ''}`.toUpperCase().includes(q);
   if (S.view.type === 'document') {
     S.eq.documents.get(S.view.id).parts.forEach((r) => { if (match(r)) out.push({ r, path: [r.ref], depth: 0 }); });
     return out;
@@ -446,8 +512,8 @@ function renderRows() {
     const f = r.flags.find((x) => x.level === 'error') || r.flags.find((x) => x.level === 'warn');
     const ico = f ? `<span class="ico ${f.level}" title="${esc(f.text)}">${f.level === 'error' ? '✕' : '!'}</span>` : '';
     const sub = r.ref.includes('.');
-    const refTxt = sub ? '↳' : esc(r.ref);
-    const pn = r.pn ? esc(r.pn) : r.nss ? '<span title="Non vendu séparément">NSS</span>' : r.supplier ? `<span title="N° fournisseur">${esc(r.supplier)}</span>` : '<span class="ico warn">—</span>';
+    const refTxt = sub ? '↳' : esc(refLabel(r));
+    const pn = pnHtml(r) ?? (r.nss ? '<span title="Non vendu séparément">NSS</span>' : r.supplier ? `<span title="N° fournisseur">${esc(r.supplier)}</span>` : r.pseudo ? '' : '<span class="ico warn">—</span>');
     const key = keyOf(path);
     const tog = group
       ? `<button type="button" class="tog" data-tog="${esc(key)}" aria-expanded="${open}" title="${open ? 'Rassembler ce groupe' : 'Éclater ce groupe sur place'}" aria-label="${open ? 'Rassembler' : 'Éclater'} le groupe ${esc(r.desc)}">${open ? '▾' : '▸'}</button>`
@@ -456,7 +522,7 @@ function renderRows() {
       <td class="c-ref" style="--d:${depth}">${tog}<span class="refb ${r.link ? 'link' : ''}">${refTxt}</span></td>
       <td class="c-pn">${pn}${ico}</td>
       <td class="c-qty">${r.qty ?? '—'}</td>
-      <td class="c-desc">${esc(r.desc)}${r.link ? ` <button type="button" class="linkchip" data-go="${r.link}" title="Ouvrir la page ${r.link}">${r.link} ›</button>` : ''}</td>
+      <td class="c-desc">${esc(r.desc)}${r.link ? ` <button type="button" class="linkchip" data-go="${r.link}" title="Ouvrir la page ${r.link}">${badge(S.eq.assemblies.get(r.link)?.sheet || S.eq.documents.get(r.link)?.sheets[0] || r.link)} ›</button>` : ''}</td>
     </tr>`;
   }).join('') || '<tr><td colspan="4" style="padding:18px 14px;color:var(--muted)">Aucune ligne ne correspond au filtre.</td></tr>';
   const byKey = new Map(rows.map((x) => [keyOf(x.path), x]));
@@ -509,10 +575,10 @@ function renderDetail() {
   if (!row) { box.hidden = true; box.innerHTML = ''; return; }
   const eq = S.eq;
   box.hidden = false;
-  const long = row.ref.length > 3;
-  const flags = row.flags.map((f) => `<div class="flag ${f.level}">${esc(f.text)}${f.refs?.length ? `<span class="lnk">${f.refs.map((o) => `<button type="button" class="chip" data-row="${esc(o.key)}">${o.source.sheet} réf. ${esc(o.ref)} · ${esc(o.desc)}</button>`).join('')}</span>` : ''}</div>`).join('');
+  const long = refLabel(row).length > 3;
+  const flags = row.flags.map((f) => `<div class="flag ${f.level}">${esc(f.text)}${f.refs?.length ? `<span class="lnk">${f.refs.map((o) => `<button type="button" class="chip" data-row="${esc(o.key)}">${badge(o.source.sheet)} réf. ${esc(refLabel(o))} · ${esc(o.desc)}</button>`).join('')}</span>` : ''}</div>`).join('');
   const others = (row.usedIn || []).filter((o) => !row.flags.some((f) => f.refs?.includes(o)));
-  const used = others.length ? `<div class="meta">Aussi listé : <span class="lnk">${others.map((o) => `<button type="button" class="chip" data-row="${esc(o.key)}">${o.source.sheet} réf. ${esc(o.ref)}</button>`).join(' ')}</span></div>` : '';
+  const used = others.length ? `<div class="meta">Aussi listé : <span class="lnk">${others.slice(0, 24).map((o) => `<button type="button" class="chip" data-row="${esc(o.key)}">${badge(o.source.sheet)} réf. ${esc(refLabel(o))}</button>`).join(' ')}${others.length > 24 ? ` … (${others.length})` : ''}</span></div>` : '';
   const mirror = row.mirrorOf ? `<div class="flag info">Pièce symétrique (côté gauche) : la 3D met en évidence la pièce droite, réf. ${esc(row.mirrorOf)}.</div>` : '';
   const ids = [row.supplier && `Fournisseur ${esc(row.supplier)}`, row.sandvik && row.sandvik !== 'N/A' && `Sandvik ${esc(row.sandvik)}`].filter(Boolean).join(' · ');
   // Fil du groupe : où se trouve la pièce dans l'arbre des sous-assemblages.
@@ -527,20 +593,20 @@ function renderDetail() {
   const cutActive = S.section.on && S.section.scope === 'selection';
   box.innerHTML = `
     <div class="row1">
-      <span class="ref ${long ? 'long' : ''}">${long ? '▸' : esc(row.ref)}</span>
+      <span class="ref ${long ? 'long' : ''}">${esc(refLabel(row))}</span>
       <div style="min-width:0"><h3>${esc(row.desc)}</h3>
-        <div class="meta">${row.qty != null ? `Qté au manuel : ${row.qty}` : 'Qté non indiquée'} · feuille ${row.source.sheet}${ids ? ` · ${ids}` : ''}</div></div>
+        <div class="meta">${row.qty != null ? `Qté au ${eq.docWord} : ${row.qty}` : 'Qté non indiquée'} · ${eq.docWord === 'catalogue' ? sheetLabel(eq, row.source.sheet) : `feuille ${row.source.sheet}`}${ids ? ` · ${ids}` : ''}</div></div>
       <button type="button" class="close" id="d-close" aria-label="Fermer la fiche">×</button>
     </div>
     ${trail}
-    <div class="pnline">${row.pn ? `<span class="pnbig">${esc(row.pn)}</span>` : `<span class="meta">${row.supplier ? `N° fournisseur : <span class="mono">${esc(row.supplier)}</span>` : 'Aucun numéro de pièce'}</span>`}</div>
+    <div class="pnline ${row.sizes ? 'sizes' : ''}">${pnHtml(row, true) ?? `<span class="meta">${row.supplier ? `N° fournisseur : <span class="mono">${esc(row.supplier)}</span>` : 'Aucun numéro de pièce'}</span>`}</div>
     ${mirror}${flags}${used}
     <div class="actions">
       ${group ? `<button type="button" class="btn primary" id="d-tog">${open ? 'Rassembler ce groupe' : 'Éclater ce groupe'}</button>` : ''}
       ${cutHere ? `<button type="button" class="btn" id="d-cut">${cutActive ? 'Quitter la coupe' : 'Voir en coupe'}</button>` : ''}
       ${is3d() ? '<button type="button" class="btn" id="d-focus">Centrer</button>' : ''}
-      ${row.link ? `<button type="button" class="btn" data-go="${row.link}">Ouvrir ${row.link} ›</button>` : ''}
-      ${row.see ? row.see.map((s) => `<button type="button" class="btn" data-page="${s}">Voir ${s}</button>`).join('') : ''}
+      ${row.link ? `<button type="button" class="btn" data-go="${row.link}">Ouvrir ${eq.docWord === 'catalogue' ? sheetLabel(eq, eq.assemblies.get(row.link)?.sheet || eq.documents.get(row.link)?.sheets[0] || row.link) : row.link} ›</button>` : ''}
+      ${row.see ? row.see.map((s) => `<button type="button" class="btn" data-page="${s}">Voir ${eq.docWord === 'catalogue' ? sheetLabel(eq, s) : s}</button>`).join('') : ''}
     </div>`;
   $('#d-close').addEventListener('click', () => select(null));
   $('#d-tog')?.addEventListener('click', () => toggleGroup(path));
@@ -608,9 +674,9 @@ function bindSearch() {
     idx = -1;
     box.hidden = false;
     box.innerHTML = hits.length ? hits.map((r, i) => `<button type="button" class="res" data-i="${i}">
-      <span class="pn">${esc(r.pn || r.supplier || '—')}</span><span>${esc(r.desc)}</span>
-      <span class="where">${esc(sourceLabel(S.eq, r.source))} · réf. ${esc(r.ref)}${r.qty != null ? ` · qté ${r.qty}` : ''}</span></button>`).join('')
-      : `<div class="empty">Aucune pièce trouvée pour « ${esc(q)} ». Essayez un numéro partiel ou un mot de la description (en anglais, comme au manuel).</div>`;
+      <span class="pn">${esc(r.pns.join(' / ') || r.supplier || r.pnText || '—')}</span><span>${esc(r.desc)}</span>
+      <span class="where">${esc(sourceLabel(S.eq, r.source))} · réf. ${esc(refLabel(r))}${r.qty != null ? ` · qté ${r.qty}` : ''}</span></button>`).join('')
+      : `<div class="empty">Aucune pièce trouvée pour « ${esc(q)} ». Essayez un numéro partiel ou un mot de la description (en anglais, comme au ${S.eq.docWord}).</div>`;
     box.querySelectorAll('[data-i]').forEach((b) => b.addEventListener('mousedown', (e) => { e.preventDefault(); pick(+b.dataset.i); }));
   };
   const pick = (i) => {
@@ -657,7 +723,7 @@ function openPage(sheet) {
       ${owner ? `<button type="button" class="btn" id="p-open">${owner3d ? 'Ouvrir en 3D' : 'Ouvrir la liste'}</button>` : ''}
       <button type="button" class="btn" id="p-close">Fermer</button>
     </div>
-    <div class="canvas"><img src="${esc(eq.pageUrl(s))}" alt="Page ${s} du manuel" id="p-img"></div>`;
+    <div class="canvas"><img src="${esc(eq.pageUrl(s))}" alt="Page ${s} du ${eq.docWord}" id="p-img"></div>`;
   const img = $('#p-img');
   // Page absente (publication allégée : pages de liste laissées de côté).
   img.addEventListener('error', () => {
@@ -693,7 +759,7 @@ function renderCatalogue() {
         <img src="${esc(e.thumbnail)}" alt="${esc(e.name)}">
         <span class="cb"><strong>${esc(e.name)}</strong><span>${esc(e.manufacturer)} · ${esc(e.category)}</span><span>${esc(e.status)}</span></span></button>`).join('')}
       <div class="card add"><strong>Ajouter un équipement</strong>
-        <ol><li>Déposer le PDF du manuel de pièces.</li><li>Extraire les listes (outil <span class="mono">tools/extract_parts.py</span>, ou <span class="mono">tools/extract_sandvik.py</span> pour un manuel Sandvik) et relire.</li><li>Modéliser chaque assemblage (formes paramétriques) ou importer un modèle CAO (.glb).</li></ol>
+        <ol><li>Déposer le PDF du manuel de pièces.</li><li>Extraire les listes (outil <span class="mono">tools/extract_parts.py</span>, <span class="mono">tools/extract_sandvik.py</span> pour un manuel Sandvik, <span class="mono">tools/extract_epiroc.py</span> pour le catalogue Epiroc) et relire.</li><li>Modéliser chaque assemblage (formes paramétriques) ou importer un modèle CAO (.glb).</li></ol>
       </div>
     </div></div>`;
 }

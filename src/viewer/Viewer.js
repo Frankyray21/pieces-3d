@@ -503,8 +503,10 @@ export class Viewer {
     if (!this.model || !path?.length) return [];
     let nodes = [this.model.root];
     for (const ref of path) {
+      // « 1|2|3 » : ensemble de pièces (tube intérieur complet, plage de repères).
+      const refs = String(ref).split('|');
       const next = [];
-      for (const n of nodes) for (const p of n.userData.parts || []) if (p.userData.partRef === String(ref)) next.push(p);
+      for (const n of nodes) for (const p of n.userData.parts || []) if (refs.includes(p.userData.partRef)) next.push(p);
       if (!next.length) return [];
       nodes = next;
     }

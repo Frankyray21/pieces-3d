@@ -276,6 +276,15 @@ table.parts { width: 100%; border-collapse: collapse; font-size: 13px; }
 .parts tr.sel .c-ref .refb { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
 .parts .c-pn { font-family: var(--f-mono); white-space: nowrap; font-size: 12.5px; }
 .parts .c-qty { text-align: right; font-variant-numeric: tabular-nums; width: 3em; }
+/* Numéros par taille (N, N2, N3…) : une ligne par numéro, ses tailles en étiquette. */
+.szl { display: flex; align-items: baseline; gap: 6px; line-height: 1.5; }
+.parts .szl { white-space: normal; }
+.sz { font: 600 10.5px/1.35 var(--f-body); color: var(--muted); letter-spacing: 0.02em; max-width: 13em; }
+.parts .sz { flex: none; min-width: 2.6em; }
+.pnt { font-family: var(--f-body); color: var(--muted); font-size: 12px; white-space: normal; }
+.detail .pnline.sizes { display: grid; gap: 6px; }
+.detail .pnline.sizes .sz { min-width: 4em; font-size: 12px; }
+.detail .pnline.sizes .pnbig { font-size: 17px; }
 .parts .c-desc { min-width: 0; }
 .parts .sub-row td { color: var(--muted); }
 .ico { font-weight: 700; margin-left: 4px; }

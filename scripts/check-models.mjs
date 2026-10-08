@@ -17,6 +17,7 @@ import { buildProcedural } from '../src/viewer/assembly.js';
 const args = process.argv.slice(2);
 const at = args.indexOf('--eq');
 const eq = at >= 0 ? args.splice(at, 2)[1] : 'cubex-mri-5200';
+// Repères en double dans une liste : la 3D de la première ligne suffit (voir src/data/equipment.js).
 const { default: builders } = await import(`../src/models/${eq}/index.js`);
 const data = JSON.parse(readFileSync(new URL(`../public/equipment/${eq}/data.json`, import.meta.url), 'utf8'));
 const only = args;
@@ -50,9 +51,30 @@ for (const [id, asm] of Object.entries(data.assemblies)) {
   if (!model) { console.log(`✕ ${id} : aucun builder`); failed = true; continue; }
   const missing = [];
   const rows = asm.parts.map(([ref, , , desc, extra = {}]) => ({ ref: String(ref), desc, ...extra }));
+  const known = new Set(rows.map((r) => r.ref));
+  // Ensemble (groupe explicite ou plage « 1-5 », « B,2-14 ») : au moins une de ses pièces en 3D.
+  const members = (r) => {
+    if (r.group) return r.group;
+    if (!/^(?:[A-Z]|\d+[A-Z]?)(?:[-,]\d+[A-Z]?)+$/.test(r.ref)) return null;
+    const out = [];
+    for (const tok of r.ref.split(',')) {
+      const n = tok.split('-');
+      if (n.length === 2 && /^\d+$/.test(n[0]) && /^\d+$/.test(n[1])) {
+        for (let k = +n[0]; k <= +n[1]; k++) out.push(String(k));
+        for (const x of known) { const m = /^(\d+)[A-Z]$/.exec(x); if (m && +m[1] >= +n[0] && +m[1] <= +n[1]) out.push(x); }
+      } else out.push(...n);
+    }
+    return out.filter((x) => known.has(x) && x !== r.ref);
+  };
   for (const r of rows) {
-    const target = r.mirrorOf || r.ref;
-    if (!model.refs.has(target) && !/\bKIT\b/i.test(r.desc) && !documents.has(r.link)) missing.push(r.ref);
+    // Lignes sans objet propre : sans 3D (clé, option non dessinée), entrée de table
+    // des matières, trousse, renvoi à un document ; une ligne répétée désigne la première.
+    if (r.no3d || r.index || /\bKIT\b/i.test(r.desc) || documents.has(r.link)) continue;
+    const target = r.mirrorOf || r.same || r.ref;
+    if (model.refs.has(target)) continue;
+    const m = members(r);
+    if (m?.length && m.some((x) => model.refs.has(x))) continue;
+    if (!missing.includes(r.ref)) missing.push(r.ref);
   }
   const extra = [...model.refs.keys()].filter((k) => !rows.some((r) => r.ref === k));
   const nan = [];

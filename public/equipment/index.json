@@ -23,6 +23,14 @@
       "category": "Foreuse sur roues",
       "thumbnail": "equipment/du311-std/thumbnail.webp",
       "status": "Variante du DU311-TVK (s/n 10703) — dessins et listes pour les 189 assemblages, 29 schémas et listes électriques ; 3D : tête de rotation ME12 (P050)"
+    },
+    {
+      "id": "epiroc-ith",
+      "name": "Epiroc — outils de carottage ITH",
+      "manufacturer": "Epiroc",
+      "category": "Outils de carottage au câble",
+      "thumbnail": "equipment/epiroc-ith/thumbnail.webp",
+      "status": "Catalogue « Core Drilling Tools — In-The-Hole » : têtes, overshots, carottiers, émerillons et presse-étoupes de surface et souterrains"
     }
   ]
 }
