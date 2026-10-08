@@ -3,14 +3,22 @@
 // ligne de la liste de pièces a un objet 3D (ou une pièce symétrique), et
 // mesure la taille du modèle (maillages, triangles).
 //
-// Usage : node scripts/check-models.mjs [F05 F08 ...]
+// Les trousses (« SEAL KIT », « REPLACEMENT KIT »…) peuvent rester sans objet 3D.
+// Pour un équipement modélisé en partie, seuls les assemblages qui ont un
+// builder sont contrôlés.
+//
+// Usage : node scripts/check-models.mjs [--eq du311] [F05 F08 ...]
 import { readFileSync } from 'node:fs';
 import * as THREE from 'three';
 import { buildProcedural } from '../src/viewer/assembly.js';
-import builders from '../src/models/cubex-mri-5200/index.js';
 
-const data = JSON.parse(readFileSync(new URL('../public/equipment/cubex-mri-5200/data.json', import.meta.url), 'utf8'));
-const only = process.argv.slice(2);
+const args = process.argv.slice(2);
+const at = args.indexOf('--eq');
+const eq = at >= 0 ? args.splice(at, 2)[1] : 'cubex-mri-5200';
+const { default: builders } = await import(`../src/models/${eq}/index.js`);
+const data = JSON.parse(readFileSync(new URL(`../public/equipment/${eq}/data.json`, import.meta.url), 'utf8'));
+const only = args;
+const partial = Object.keys(data.assemblies).some((id) => !builders[id]);
 let failed = false;
 
 function stats(root) {
@@ -27,6 +35,7 @@ function stats(root) {
 
 for (const [id, asm] of Object.entries(data.assemblies)) {
   if (only.length && !only.includes(id)) continue;
+  if (partial && !builders[id]) continue;
   let model;
   try {
     model = buildProcedural(builders, id);
@@ -37,10 +46,10 @@ for (const [id, asm] of Object.entries(data.assemblies)) {
   }
   if (!model) { console.log(`✕ ${id} : aucun builder`); failed = true; continue; }
   const missing = [];
-  const rows = asm.parts.map(([ref, , , , extra = {}]) => ({ ref: String(ref), ...extra }));
+  const rows = asm.parts.map(([ref, , , desc, extra = {}]) => ({ ref: String(ref), desc, ...extra }));
   for (const r of rows) {
     const target = r.mirrorOf || r.ref;
-    if (!model.refs.has(target)) missing.push(r.ref);
+    if (!model.refs.has(target) && !/\bKIT\b/i.test(r.desc)) missing.push(r.ref);
   }
   const extra = [...model.refs.keys()].filter((k) => !rows.some((r) => r.ref === k));
   const nan = [];

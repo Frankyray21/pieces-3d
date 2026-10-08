@@ -4,8 +4,28 @@ Plateforme qui transforme les manuels de pièces (PDF) en modèles 3D
 interactifs avec vue éclatée, pour visualiser l'équipement et identifier les
 pièces (numéro, quantité, page du manuel).
 
-Premier équipement : **Cubex / MRI 5200** (foreuse sur chenilles, manuel
-P15125-MRI rév. 03, 28 pages).
+Équipements :
+
+- **Cubex / MRI 5200** (foreuse sur chenilles, manuel P15125-MRI rév. 03,
+  28 pages) : assemblages en 3D.
+- **Sandvik DU311-TVK** n° de série 10680 (manuel de pièces du 2020-07-02,
+  510 pages) : 172 assemblages et 15 schémas. En 3D : la machine complète
+  (P010 : châssis, glissière, plaque de liaison du mât et avance dressée à
+  l'avant), le châssis complet
+  (P186 : porteur sur chenilles, stabilisateurs, groupe de pompage, diesel,
+  surpresseur et réservoir d'air, enrouleur, armoires et bancs de vannes en
+  formes simplifiées, dimensions estimées), l'avance V30 complète
+  (P032 : vérins stinger, déflecteur, centreur, plaque à coins, bras de tige,
+  vannes et boyaux d'air en formes simplifiées), le mât 10 pi (P130,
+  avec vérin d'avance P132, plaque porte-tête P134, barres de guidage P136)
+  et la tête de rotation RH6230 (P138, avec émerillon d'air P140 et boîte
+  d'engrenages P142). Les autres assemblages s'affichent avec les dessins du
+  manuel. Le PDF d'origine (69 Mo) est conservé dans la
+  release GitHub `manuel-du311`, pas dans le dépôt.
+
+La page d'accueil (adresse sans « # », ou le logo en haut à gauche) liste
+les équipements et permet de passer de l'un à l'autre. Les adresses du premier équipement restent `#F05` ; celles des autres
+sont préfixées : `#du311.P032`.
 
 ## Ce que fait l'application
 
@@ -35,8 +55,8 @@ P15125-MRI rév. 03, 28 pages).
 - Chaque page du manuel original reste consultable (bouton « Page du manuel »).
 
 Site en ligne : https://frankyray21.github.io/pieces-3d/ (republié
-automatiquement à chaque push sur la branche par défaut, voir
-`.github/workflows/pages.yml`).
+automatiquement à chaque push sur la branche `main`, voir
+`.github/workflows/pages.yml`). DU311 : https://frankyray21.github.io/pieces-3d/#du311.P010
 
 ## Démarrer
 
@@ -52,7 +72,7 @@ npm run build:artifact # page autonome dans dist-artifact/ (publication claude.a
 ```
 public/equipment/index.json                 catalogue des équipements
 public/equipment/<id>/data.json             listes de pièces, hiérarchie, notes
-public/equipment/<id>/pages/Fxx.jpg         pages du manuel
+public/equipment/<id>/pages/               pages du manuel (Fxx.jpg, Pxxx.webp)
 src/viewer/                                 moteur 3D (Three.js)
   Viewer.js      scène, caméra, éclaté, sélection, repères
   assembly.js    construction d'un modèle (procédural ou glTF/GLB)
@@ -61,6 +81,7 @@ src/models/<id>/                            un « builder » 3D par feuille du m
 src/data/equipment.js                       chargement + contrôle qualité
 src/main.js, src/ui/                        interface
 tools/extract_parts.py                      extraction des listes depuis le PDF
+tools/extract_sandvik.py                    extraction complète d'un manuel Sandvik
 ```
 
 ## Ajouter un équipement
@@ -73,10 +94,17 @@ tools/extract_parts.py                      extraction des listes depuis le PDF
    et le relire (les tableaux insérés comme images se transcrivent à la main).
 3. Écrire `public/equipment/<id>/data.json` (format : voir le Cubex) et ajouter
    l'équipement dans `public/equipment/index.json`.
+   Pour un manuel Sandvik (« Parts Manual »), `tools/extract_sandvik.py`
+   produit directement `data.json` (table des matières, listes, liens entre
+   assemblages, schémas) ; pages rendues en WebP gris pour alléger le site :
+   `pdftoppm -scale-to 2200 -gray -png` puis conversion WebP qualité 70.
+   Un PDF de plus de 25 Mo se dépose dans une release GitHub plutôt que dans
+   le dépôt.
 4. Modéliser chaque assemblage dans `src/models/<id>/` avec `api.part(réf,
    objet, [dx, dy, dz])`, ou fournir un fichier `.glb` exporté de la CAO dont
    les nœuds sont nommés `ref-<numéro>` (l'éclaté est alors calculé
-   automatiquement).
+   automatiquement). Un assemblage sans modèle s'affiche avec ses dessins du
+   manuel.
 
 ## Limites actuelles
 
