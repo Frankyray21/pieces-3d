@@ -31,14 +31,16 @@ const defs = {
 
 const cache = new Map();
 
-// Grain de surface (rendu photo) : légère variation de rugosité et de teinte
-// calculée dans le shader à partir de la position sur la pièce, sans texture.
-// [variation de rugosité, variation de teinte, fréquence (1/m)]
+// Grain de surface (rendu photo) : légère variation de rugosité et de teinte,
+// et micro-relief (peau d'orange de la peinture, grain de fonderie) qui casse
+// les reflets ; calculés dans le shader à partir de la position sur la pièce,
+// sans texture. Le vernis (clearcoat) reste lisse par-dessus.
+// [variation de rugosité, variation de teinte, fréquence (1/m), pente du relief]
 const GRAIN = {
-  paint: [0.22, 0.03, 45],
-  cast: [0.35, 0.06, 70],
-  rubber: [0.3, 0.05, 90],
-  metal: [0.25, 0.015, 120],
+  paint: [0.22, 0.03, 45, 0.018],
+  cast: [0.35, 0.05, 70, 0.03],
+  rubber: [0.3, 0.05, 90, 0.04],
+  metal: [0.25, 0.015, 120, 0.008],
 };
 const GRAIN_OF = {
   red: 'paint', redDark: 'paint', black: 'paint', yellow: 'paint', safety: 'paint', blue: 'paint',
@@ -47,7 +49,7 @@ const GRAIN_OF = {
 };
 const NOISE = `
 varying vec3 vGrainPos;
-uniform vec3 uGrain;
+uniform vec4 uGrain;
 float grainHash(vec3 p) { p = fract(p * 0.3183099 + 0.1); p *= 17.0; return fract(p.x * p.y * p.z * (p.x + p.y + p.z)); }
 float grainNoise(vec3 x) {
   vec3 i = floor(x), f = fract(x);
@@ -57,18 +59,35 @@ float grainNoise(vec3 x) {
 }
 float grainFbm(vec3 p) { return 0.6 * grainNoise(p) + 0.4 * grainNoise(p * 2.7 + 11.0); }`;
 
-function addGrain(m, [rough, tint, freq]) {
+// Micro-relief : la normale est inclinée selon le gradient écran d'une hauteur
+// de bruit (pente donnée), estompé quand le motif devient plus fin qu'un pixel.
+const BUMP = `
+  {
+    vec3 gp = vGrainPos * uGrain.z * 2.2;
+    float fade = 1.0 - smoothstep(0.35, 0.9, length(fwidth(gp)));
+    if (fade > 0.0) {
+      float h = grainFbm(gp) * uGrain.w / (uGrain.z * 2.2) * fade;
+      vec3 dpx = dFdx(-vViewPosition), dpy = dFdy(-vViewPosition);
+      vec3 r1 = cross(dpy, normal), r2 = cross(normal, dpx);
+      float det = dot(dpx, r1);
+      vec3 grad = sign(det) * (dFdx(h) * r1 + dFdy(h) * r2);
+      normal = normalize(abs(det) * normal - grad);
+    }
+  }`;
+
+function addGrain(m, [rough, tint, freq, bump]) {
   m.onBeforeCompile = (shader) => {
-    shader.uniforms.uGrain = { value: new THREE.Vector3(rough, tint, freq) };
+    shader.uniforms.uGrain = { value: new THREE.Vector4(rough, tint, freq, bump) };
     shader.vertexShader = shader.vertexShader
       .replace('#include <common>', '#include <common>\nvarying vec3 vGrainPos;')
       .replace('#include <begin_vertex>', '#include <begin_vertex>\nvGrainPos = position;');
     shader.fragmentShader = shader.fragmentShader
       .replace('#include <common>', `#include <common>\n${NOISE}`)
       .replace('#include <color_fragment>', '#include <color_fragment>\n  diffuseColor.rgb *= 1.0 + uGrain.y * (grainFbm(vGrainPos * uGrain.z * 0.35 + 7.0) - 0.5) * 2.0;')
-      .replace('#include <roughnessmap_fragment>', '#include <roughnessmap_fragment>\n  roughnessFactor = clamp(roughnessFactor * (1.0 + uGrain.x * (grainFbm(vGrainPos * uGrain.z) - 0.5) * 2.0), 0.03, 1.0);');
+      .replace('#include <roughnessmap_fragment>', '#include <roughnessmap_fragment>\n  roughnessFactor = clamp(roughnessFactor * (1.0 + uGrain.x * (grainFbm(vGrainPos * uGrain.z) - 0.5) * 2.0), 0.03, 1.0);')
+      .replace('#include <normal_fragment_maps>', `#include <normal_fragment_maps>\n${BUMP}`);
   };
-  m.customProgramCacheKey = () => `grain-${rough}-${tint}-${freq}`;
+  m.customProgramCacheKey = () => `grain-${rough}-${tint}-${freq}-${bump}`;
 }
 
 export function mat(name) {

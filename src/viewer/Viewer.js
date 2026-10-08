@@ -1031,16 +1031,20 @@ export class Viewer {
   _applyTheme() {
     const css = getComputedStyle(this.container);
     const v = (css.getPropertyValue('--stage-b') || css.getPropertyValue('--bg')).trim();
-    let dark = false;
+    let lum = 1;
     if (v) {
       try {
         const c = new THREE.Color().setStyle(v);
-        dark = 0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b < 0.12;
+        lum = 0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b;
       } catch { /* couleur non lisible : thème clair */ }
     }
-    this.theme = dark
+    const dark = lum < 0.35;
+    // Fond sombre ou gris moyen (studio) : grille en traits clairs ; fond clair : traits gris.
+    this.theme = lum < 0.06
       ? { dark, grid: 0x9fb0c2, gridOpacity: 0.22, shadow: 0.42, groundAO: 0.85, edge: 0x0b0c0e }
-      : { dark, grid: 0x7f8b98, gridOpacity: 0.42, shadow: 0.2, groundAO: 0.6, edge: 0x16181b };
+      : dark
+        ? { dark, grid: 0xdfe5eb, gridOpacity: 0.3, shadow: 0.3, groundAO: 0.7, edge: 0x111316 }
+        : { dark, grid: 0x7f8b98, gridOpacity: 0.42, shadow: 0.2, groundAO: 0.6, edge: 0x16181b };
     this.grid.material.uniforms.uColor.value.setHex(this.theme.grid);
     this.grid.material.uniforms.uOpacity.value = this.theme.gridOpacity;
     this.ground.material.opacity = this.theme.shadow;

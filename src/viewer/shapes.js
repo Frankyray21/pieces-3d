@@ -21,7 +21,57 @@ function orient(obj, axis) {
   return obj;
 }
 
+/**
+ * Normales lissées entre faces voisines faisant un angle inférieur à crease
+ * (radians) : les parois courbes d'une extrusion (lobes, trous, arrondis)
+ * deviennent lisses au lieu de facettées ; arêtes et chanfreins restent vifs.
+ * Moyenne pondérée par l'aire des faces ; sommets soudés à 0,05 mm près.
+ */
+export function creaseNormals(geometry, crease = 0.5) {
+  const geo = geometry.index ? geometry.toNonIndexed() : geometry;
+  const pos = geo.attributes.position.array;
+  const nv = pos.length / 3, nf = nv / 3, q = 2e4;
+  const key = new Float64Array(nv);
+  for (let i = 0; i < nv; i++) {
+    key[i] = (Math.round(pos[i * 3] * q) * 2097152 + Math.round(pos[i * 3 + 1] * q)) * 2097152 + Math.round(pos[i * 3 + 2] * q);
+  }
+  const fw = new Float32Array(nf * 3); // normale × aire
+  const fn = new Float32Array(nf * 3); // normale unitaire
+  const at = new Map();
+  for (let f = 0; f < nf; f++) {
+    const a = f * 9;
+    const ux = pos[a + 3] - pos[a], uy = pos[a + 4] - pos[a + 1], uz = pos[a + 5] - pos[a + 2];
+    const vx = pos[a + 6] - pos[a], vy = pos[a + 7] - pos[a + 1], vz = pos[a + 8] - pos[a + 2];
+    const x = uy * vz - uz * vy, y = uz * vx - ux * vz, z = ux * vy - uy * vx;
+    const l = Math.hypot(x, y, z) || 1;
+    fw.set([x, y, z], f * 3);
+    fn.set([x / l, y / l, z / l], f * 3);
+    for (let k = 0; k < 3; k++) {
+      const id = key[f * 3 + k];
+      const list = at.get(id);
+      if (list) list.push(f); else at.set(id, [f]);
+    }
+  }
+  const cos = Math.cos(crease);
+  const out = new Float32Array(nv * 3);
+  for (let i = 0; i < nv; i++) {
+    const f = (i / 3) | 0;
+    let x = 0, y = 0, z = 0;
+    for (const g of at.get(key[i])) {
+      if (fn[f * 3] * fn[g * 3] + fn[f * 3 + 1] * fn[g * 3 + 1] + fn[f * 3 + 2] * fn[g * 3 + 2] < cos) continue;
+      x += fw[g * 3]; y += fw[g * 3 + 1]; z += fw[g * 3 + 2];
+    }
+    const l = Math.hypot(x, y, z);
+    if (l > 0) out.set([x / l, y / l, z / l], i * 3);
+    else out.set([fn[f * 3], fn[f * 3 + 1], fn[f * 3 + 2]], i * 3);
+  }
+  geo.setAttribute('normal', new THREE.BufferAttribute(out, 3));
+  return geo;
+}
+
 function mesh(geometry, material) {
+  // Extrusions : three.js calcule des normales par face (parois courbes facettées).
+  if (geometry.type === 'ExtrudeGeometry') geometry = creaseNormals(geometry);
   const m = new THREE.Mesh(geometry, mat(material));
   m.castShadow = true;
   m.receiveShadow = true;

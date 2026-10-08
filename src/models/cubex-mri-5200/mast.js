@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { mat } from '../../viewer/materials.js';
+import { creaseNormals } from '../../viewer/shapes.js';
 
 // Mât et tables (F14), mât (F15), table supérieure / chariot (F16),
 // table inférieure / avance d'extension (F17), tête de rotation (F18).
@@ -12,6 +13,7 @@ export const MAST = { length: 2.9, rodY: 0.59, carriageX: 2.0, extFeedX: 0.6 };
 // ------------------------------------------------------------------ outils
 
 function mk(geo, material) {
+  if (geo.type === 'ExtrudeGeometry') geo = creaseNormals(geo);
   const m = new THREE.Mesh(geo, mat(material));
   m.castShadow = true;
   m.receiveShadow = true;
