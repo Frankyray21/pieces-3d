@@ -172,7 +172,7 @@ function coupling(api, K, style, tang) {
 }
 
 function couplings(api, list) {
-  const K = kit(api, 0.073, { gap: 1.2 });
+  const K = kit(api, 0.073, { gap: 2.6 });
   list.forEach(([ref, style, tang], i) => {
     const g = coupling(api, K, style, tang);
     g.rotation.z = PI / 2; // debout, filet en haut, comme sur la photo
@@ -198,8 +198,20 @@ export const P096 = (api) => couplings(api, [['1', 'carbide', false], ['2', 'dia
 // inférieur à x = 0.
 
 export function P055(api) {
-  const K = kit(api, 0.05, { gap: 0.6, rows: { A: 0, B: -2.4, C: 2.4 } });
-  const { S, L, X, lat, th, win, hole, tube, along, port } = K;
+  const K = kit(api, 0.05, { gap: 0.6, rows: { A: 0, B: -3.6, C: 3.6 } });
+  const { S, X, lat, th, win, hole, tube, along, port } = K;
+  // Vue éclatée en trois rangées, comme les trois colonnes du catalogue :
+  // émerillon et corps supérieur (C), coulisse (A), écrou et corps inférieur
+  // (B), ramenées au-dessus les unes des autres (décalages en D).
+  const SH = { C: -20.4, B: 15.8 };
+  const rowOf = { 2: 'C', 9: 'B' };
+  const L = {
+    add: (ref, obj, o = {}) => {
+      const e = o.extra || [0, 0, 0];
+      return K.L.add(ref, obj, { ...o, extra: [e[0] + (SH[o.row ?? rowOf[o.follow]] || 0), e[1], e[2]] });
+    },
+    done: () => K.L.done(),
+  };
   const R = 25, RB = 12; // corps (overshot N) et alésage
   const AS = [UP, UP + (2 * PI) / 3, UP + (4 * PI) / 3]; // rouleaux à 120°
   const E = 8.5; // excentration de l'axe des rouleaux
@@ -220,11 +232,11 @@ export function P055(api) {
     lat([[0, 0], [13.5, 0], [15, 1.5], ...th(15, 1.5, 38, 3.2, { chamferBottom: false }), [15, 40], [23, 40], [R, 42], [R, 60], [0, 60]], 'black'),
     tube(R, RB, 60, 400, rollerWins(x9), 'black'),
     lat([[9.5, 400], [R, 400], [R, 428], [R - 1.5, 430], [9.5, 430]], 'black'),
-  ), { row: 'A' });
+  ), { row: 'B' });
   rollers(x9, '9');
   L.add('8', S.nut(28.6 * MM, 16.7 * MM, 'steel', { axis: 'x', pos: X(439) }), { row: 'B' });
   // Tige de coulisse : filet en bas, tête retenue par la lèvre du tube (outil suspendu, coulisse ouverte).
-  L.add('7', lat([[0, 405], [8, 405], [9.5, 406.5], ...th(9.5, 406.5, 468, 2.6, { chamferBottom: false }), [9.5, 470], [9, 472], [9, 998], [14, 1002], [14, 1022], [12.5, 1025], [0, 1025]], 'steel'), { row: 'B' });
+  L.add('7', lat([[0, 405], [8, 405], [9.5, 406.5], ...th(9.5, 406.5, 468, 2.6, { chamferBottom: false }), [9.5, 470], [9, 472], [9, 998], [14, 1002], [14, 1022], [12.5, 1025], [0, 1025]], 'steel'), { row: 'A' });
   // Tube de coulisse : lèvre en bas, taraudage du corps supérieur en haut.
   L.add('6', S.group(
     lat([[10, 980], [R - 1.5, 980], [R, 981.5], [R, 1620], [21, 1620], [20.5, 1617], [20.5, 1590], [15.5, 1588], [15.5, 1000], [10, 1000]], 'charcoal'),
@@ -236,20 +248,20 @@ export function P055(api) {
     lat([[0, 1588], [18.5, 1588], [20, 1589.5], ...th(20, 1589.5, 1618, 3.2, { chamferBottom: false }), [20, 1620], [23.5, 1620], [R, 1621.5], [R, 1650], [0, 1650]], 'charcoal'),
     tube(R, RB, 1650, 2210, rollerWins(x2), 'charcoal'),
     lat([[16, 2210], [R, 2210], [R, 2268], [R - 1.5, 2270], [16, 2270]], 'charcoal'),
-  ), { row: 'A' });
+  ), { row: 'C' });
   rollers(x2, '2');
   L.add('3', S.at(S.fitting(8 * MM, 18 * MM, 'brass'), X(2180, R + 3)), { follow: '2', extra: [0, 1.4, 0] });
 
   // Émerillon de câble Excore II : collet vissé, écrous et butée à billes, boulon à œil, manchons de sertissage.
   const c0 = 2240;
-  L.add('1', lat([[9, c0], [14, c0], [15.5, c0 + 1.5], ...th(15.5, c0 + 1.5, c0 + 29, 3, { chamferBottom: false }), [15.5, c0 + 30], [21.5, c0 + 30], [23, c0 + 31.5], [23, c0 + 98], [21, c0 + 100], [9, c0 + 100], [9, c0 + 70], [19, c0 + 66], [19, c0 + 12], [9, c0 + 8]], 'darkSteel'), { row: 'A' });
-  for (const k of [0, 1]) L.add('1', S.nut(24 * MM, 8 * MM, 'steel', { axis: 'x', pos: X(c0 + 40 + k * 8.5) }), { row: 'B' });
-  L.add('1', S.bearing(18 * MM, 8.2 * MM, 9 * MM, 'steel', { thrust: true, axis: 'x', pos: X(c0 + 59) }), { row: 'B' });
+  L.add('1', lat([[9, c0], [14, c0], [15.5, c0 + 1.5], ...th(15.5, c0 + 1.5, c0 + 29, 3, { chamferBottom: false }), [15.5, c0 + 30], [21.5, c0 + 30], [23, c0 + 31.5], [23, c0 + 98], [21, c0 + 100], [9, c0 + 100], [9, c0 + 70], [19, c0 + 66], [19, c0 + 12], [9, c0 + 8]], 'darkSteel'), { row: 'C' });
+  for (const k of [0, 1]) L.add('1', S.nut(24 * MM, 8 * MM, 'steel', { axis: 'x', pos: X(c0 + 40 + k * 8.5) }), { row: 'C', gap: 0.3 });
+  L.add('1', S.bearing(18 * MM, 8.2 * MM, 9 * MM, 'steel', { thrust: true, axis: 'x', pos: X(c0 + 59) }), { row: 'C', gap: 0.3 });
   L.add('1', S.group(
     lat([[0, c0 + 28], [7, c0 + 28], [8, c0 + 29], ...th(8, c0 + 29, c0 + 54, 2.5, { chamferBottom: false }), [8, c0 + 141], [0, c0 + 141]], 'steel'),
     S.torus(14 * MM, 5 * MM, 'steel', { axis: 'z', pos: X(c0 + 158) }),
-  ), { row: 'A' });
-  for (const k of [0, 1]) L.add('1', lat([[3.5, c0 + 195 + k * 30], [7, c0 + 195 + k * 30], [7, c0 + 215 + k * 30], [3.5, c0 + 215 + k * 30]], 'steel', 24), { row: 'A' });
+  ), { row: 'C' });
+  for (const k of [0, 1]) L.add('1', lat([[3.5, c0 + 195 + k * 30], [7, c0 + 195 + k * 30], [7, c0 + 215 + k * 30], [3.5, c0 + 215 + k * 30]], 'steel', 24), { row: 'C' });
   L.done();
   return { view: SIDE };
 }
