@@ -10,4 +10,5 @@ import { P002 } from './showcase.js';
 // s'affichent avec leurs dessins.
 const pages = (mod) => Object.fromEntries(Object.entries(mod).filter(([k]) => /^P\d{3}/.test(k)));
 
-export default { ...pages(heads), ...pages(overshots), ...pages(swivels), ...pages(tools), ...pages(barrels), P002 };
+// Pages à suffixe (P094-NH, P094-LI : trois outils sur la même page) : objet extra.
+export default { ...pages(heads), ...pages(overshots), ...pages(swivels), ...pages(tools), ...tools.extra, ...pages(barrels), P002 };
