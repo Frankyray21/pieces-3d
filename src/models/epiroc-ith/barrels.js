@@ -33,7 +33,11 @@ export function barrel(api, cfg) {
   const lat = (pts, mat) => S.lathe(pts, mat, { axis: 'x', seg: 48 });
   const th = (r, a, b, pitch, o = {}) => S.thread(r, a, b, { pitch, maxTurns: 10, ...o });
   const add = (role, obj, o) => { if (has(role)) L.add(ref(role), obj, o); return obj; };
-  // Sous-assemblage placé pour que son origine soit en x (et y, z).
+  // Sous-assemblage placé pour que son origine soit en x (et y, z). Un outil
+  // pas encore modélisé est remplacé par un cylindre de même encombrement.
+  const subOr = (id, len, r) => {
+    try { return api.sub(id); } catch { return S.group(S.cyl(r, len, 'lightGrey', { axis: 'x', pos: [len / 2, 0, 0] })); }
+  };
   const sub = (id, x, y = 0) => { const g = api.sub(id); g.position.set(x, y, 0); return g; };
 
   // ---------------------------------------------------------------- tube intérieur et tête
@@ -107,7 +111,7 @@ export function barrel(api, cfg) {
     top = a1;
   }
   if (has('ws')) {
-    const ws = api.sub(cfg.swivel);
+    const ws = subOr(cfg.swivel, 0.25, rodO * 1.3);
     const b = new api.THREE.Box3().setFromObject(ws);
     ws.position.x = top - b.min.x - 0.03;
     add('ws', ws, { row: 'A' });
@@ -128,9 +132,9 @@ export function barrel(api, cfg) {
     below('hpAdapter', lat([[rodI * 0.5, 0], [rodO * 0.92, 0], [rodO * 0.96, 0.004], [rodO * 0.96, 0.08], [rodO * 0.7, 0.085], ...th(rodO * 0.66, 0.085, 0.12, 0.004, { chamferBottom: false }), [rodI * 0.5, 0.12]], 'darkSteel'), 0.12);
     below('hoist', hp, 0.45);
   }
-  if (has('sb')) { const g = api.sub('P100'); const b = new api.THREE.Box3().setFromObject(g); g.position.x = -b.min.x; below('sb', S.group(g), b.max.x - b.min.x); }
+  if (has('sb')) { const g = subOr('P100', 0.3, rodO * 0.8); const b = new api.THREE.Box3().setFromObject(g); g.position.x = -b.min.x; below('sb', S.group(g), b.max.x - b.min.x); }
   if (has('dk')) below('dk', lat([[rodI * 0.45, 0], [rodO * 0.8, 0], [rodO * 0.8, 0.05], [rodO * 0.7, 0.055], ...th(rodO * 0.66, 0.055, 0.1, 0.004, { chamferBottom: false }), [rodI * 0.45, 0.1]], 'grey'), 0.1);
-  if (has('loadingTool')) { const g = api.sub(cfg.loadingTool); const b = new api.THREE.Box3().setFromObject(g); g.position.x = -b.min.x; below('loadingTool', S.group(g), b.max.x - b.min.x); }
+  if (has('loadingTool')) { const g = subOr(cfg.loadingTool, 0.2, rodO * 0.7); const b = new api.THREE.Box3().setFromObject(g); g.position.x = -b.min.x; below('loadingTool', S.group(g), b.max.x - b.min.x); }
 
   L.done();
   return { view: { dir: [0.12, 0.38, 1], section: { axis: 'z', pos: 0.5 } } };

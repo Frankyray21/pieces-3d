@@ -23,11 +23,14 @@ export const tocRef = (id) => {
 export function P002(api) {
   const { THREE } = api;
   const gapX = 0.14, gapY = 0.09;
+  // Un outil pas encore modélisé est simplement omis du présentoir.
+  const tryBuild = (id) => { try { return api.sub(id); } catch { return null; } };
   const rows = ROWS.map((ids) => ids.map((id) => {
-    const g = api.sub(id);
+    const g = tryBuild(id);
+    if (!g) return null;
     g.updateMatrixWorld(true);
     return { id, g, box: new THREE.Box3().setFromObject(g) };
-  }));
+  }).filter(Boolean)).filter((r) => r.length);
   const width = Math.max(...rows.map((r) => r.reduce((w, it) => w + (it.box.max.x - it.box.min.x), 0) + gapX * (r.length - 1)));
   let y = 0;
   rows.forEach((row, i) => {
