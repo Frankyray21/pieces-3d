@@ -4,8 +4,10 @@
 // Chaque tige suit un corps du rig : le carrousel (dans son alvéole), les bras de
 // serrage (tenue par les mâchoires), la broche de la tête de rotation (vissée) ou
 // l'avance (tenue par la plaque à coins ou le centreur). Le cycle est une suite
-// d'étapes (mouvements à vitesse limitée, vissage, forage, prise et dépose) ;
-// il pilote directement les corps du rig, dans un ordre sûr par construction.
+// d'étapes (mouvements, vissage, forage, prise et dépose), dans un ordre sûr par
+// construction. Les mouvements passent par le circuit hydraulique (plant.js) :
+// vitesses selon les débits, pressions selon les charges (poids du train porté
+// par la tête, poussée sur l'outil, couple de vissage et de forage).
 //
 // Hauteurs dans le repère de l'avance (pied du mât à y = 0) :
 //   - tige au carrousel : pointe du filet sur la rampe, épaulement à SHOULDER ;
@@ -29,7 +31,13 @@ const SAVER = FEED.tdY - 0.37;
 const feedAt = (h) => h - SAVER; // course qui met l'épaulement du raccord d'usure à la hauteur h
 export const ROP = 0.6 / 60; // pénétration (m/s), ordre de grandeur d'un marteau fond-de-trou
 const RPM = { drill: 50, thread: 30 };
-const SPEED = { feed: 0.25, lower: 0.1, thread: 0.03, clamp: 40 * Math.PI / 180, carousel: 90 * Math.PI / 180, slip: 0.1 };
+const THREAD = 0.03; // m/s : avance de la tête pendant le vissage
+// Ordres de grandeur (estimés) : masse d'une tige de 6 pi, du marteau et de son
+// taillant ; poussée sur l'outil ; couples de forage, de serrage et de desserrage.
+export const PIPE_MASS = 30;
+export const HAMMER_MASS = 48;
+export const BIT_LOAD = 8000; // N
+const TORQUE = { drill: 600, perMetre: 60, run: 300, makeUp: 2000, breakOut: 2500 }; // N·m
 const STEP = (2 * Math.PI) / N;
 // Trou : la scène n'a pas de sol opaque, la paroi se voit à travers le sol (terre
 // translucide) ; déblais autour de l'orifice.
@@ -63,9 +71,10 @@ function hammerMesh(S) {
   );
 }
 
-export function createDrilling({ rig, root, scene, S, setAir }) {
+export function createDrilling({ rig, root, scene, S, setAir, plant }) {
   const pipes = [];
   const _m = new THREE.Matrix4();
+  let carried = null; // masses portées (cache, refait quand une tige change de support)
   // Change le support d'une tige : position réelle d'abord (d'après l'ancien support, aux
   // valeurs courantes), puis lien au nouveau corps.
   const holder = (p, body) => {
@@ -73,7 +82,18 @@ export function createDrilling({ rig, root, scene, S, setAir }) {
     if (p.rel) p.mesh.matrix.multiplyMatrices(rig.bodyMatrix(p.body, _m), p.rel);
     p.body = body;
     p.rel = rig.bodyMatrix(body, _m).clone().invert().multiply(p.mesh.matrix);
+    carried = null;
   };
+  /** Masses des tiges et du marteau, centre dans le repère de repos de leur support. */
+  const masses = () => {
+    carried ||= pipes.map((p) => ({
+      body: p.body,
+      m: p.kind === 'hammer' ? HAMMER_MASS : PIPE_MASS,
+      c: new THREE.Vector3(0, (p.kind === 'hammer' ? HAMMER.L : PIPE.L) / 2, 0).applyMatrix4(p.rel),
+    }));
+    return carried;
+  };
+  plant.setCarried(masses);
   const placeAt = (p, body, feedLocal) => {
     // tige verticale dans le repère de l'avance, base (épaulement ou bas du taillant) à feedLocal
     rig.computeJ();
@@ -108,7 +128,7 @@ export function createDrilling({ rig, root, scene, S, setAir }) {
     steps: [], log: [], running: false, paused: false,
     started: false, // marteau enfoncé : des tiges sont engagées dans le trou
     string: [], // train de tiges, du marteau vers le haut
-    rpm: 0, depth: 0, hole: null, holes: [], t0: HAMMER_STOW, target: 0, time: 0,
+    rpm: 0, depth: 0, hole: null, holes: [], t0: HAMMER_STOW, time: 0, wait: '',
   };
 
   /** Hauteur (repère de l'avance) où l'axe de forage coupe le sol, pour la pose courante. */
@@ -187,42 +207,77 @@ export function createDrilling({ rig, root, scene, S, setAir }) {
 
   // ---------------------------------------------------------------- étapes
   const v = (b) => rig.get(b);
-  const approach = (body, target, speed, dt) => {
-    const cur = v(body), d = target - cur;
-    if (Math.abs(d) < 1e-6) return true;
-    rig.set(body, cur + Math.sign(d) * Math.min(Math.abs(d), speed * dt));
-    return Math.abs(target - v(body)) < 1e-6;
+  const RAD = (2 * Math.PI) / 60; // tr/min → rad/s
+  const near = (b, t) => Math.abs(v(b) - t) < 1e-6;
+  // Résout le circuit pour les demandes de l'étape et déplace les corps ; la broche
+  // tourne à la vitesse obtenue. Retourne les résultats par fonction.
+  const drive = (demands, dt) => {
+    const res = plant.solve(demands);
+    state.wait = [...res.values()].some((r) => r.why === 'off') ? 'off' : '';
+    for (const d of demands.filter(Boolean)) {
+      const r = res.get(d.fn);
+      const f = plant.hyd.functions.get(d.fn);
+      if (d.fn === 'spin') rig.set('spin', v('spin') + r.qdot * dt);
+      else rig.set(f.body, plant.step(f.body, r.qdot, dt, d.target));
+    }
+    state.rpm = res.has('spin') ? res.get('spin').qdot / RAD : 0;
+    return res;
   };
-  const move = (label, moves) => ({ label, tick: (dt) => moves.map(([b, t, s]) => approach(b, typeof t === 'function' ? t() : t, s, dt)).every(Boolean) });
-  const act = (label, fn) => ({ label, tick: () => { fn(); return true; } });
-  // Vissage (dir = 1) ou dévissage (dir = -1) : broche à vitesse de vissage, course jusqu'à la cible.
-  const screw = (label, target, dir) => ({
+  // Mouvements vers des consignes ([fonction, consigne, ouverture maximale]).
+  const move = (label, moves) => ({
     label,
-    tick: (dt) => { state.rpm = dir * RPM.thread; const done = approach('feed', target, SPEED.thread, dt); if (done) state.rpm = 0; return done; },
+    tick: (dt) => {
+      drive(moves.map(([fn, t, full]) => plant.toward(fn, t, full)), dt);
+      return moves.every(([fn, t]) => near(plant.hyd.functions.get(fn).body, t));
+    },
   });
+  const act = (label, fn) => ({ label, tick: () => { fn(); return true; } });
+  // Vissage (dir = 1) ou dévissage (dir = -1) : la tête suit le filet, couple qui monte
+  // jusqu'au serrage (ou part du desserrage puis retombe).
+  const screw = (label, target, dir) => {
+    let from = 0;
+    return {
+      label,
+      enter: () => { from = v('feed'); },
+      tick: (dt) => {
+        const k = 1 - Math.min(1, Math.abs(target - v('feed')) / Math.max(1e-6, Math.abs(target - from)));
+        const T = TORQUE.run + (dir > 0 ? TORQUE.makeUp * k ** 4 : TORQUE.breakOut * (1 - k) ** 6);
+        drive([
+          near('feed', target) ? null : { fn: 'feed', v: Math.sign(target - v('feed')) * THREAD, target },
+          { fn: 'spin', v: dir * RPM.thread * RAD, ext: T },
+        ], dt);
+        return near('feed', target);
+      },
+    };
+  };
+  // Forage : rotation, air, poussée sur l'outil ; la tête descend à la vitesse de pénétration.
   const drill = (label, target) => ({
     label,
     tick: (dt) => {
       setAir(true);
-      state.rpm = RPM.drill;
-      const done = approach('feed', target, ROP, dt);
-      if (done) state.rpm = 0;
-      return done;
+      drive([
+        near('feed', target) ? null : { fn: 'feed', v: -ROP, ext: BIT_LOAD, target },
+        { fn: 'spin', v: RPM.drill * RAD, ext: TORQUE.drill + TORQUE.perMetre * state.depth },
+      ], dt);
+      return near('feed', target);
     },
   });
-  const index = (label, k) => ({
-    label,
-    enter: () => {
-      const cur = v('carousel');
-      let d = carouselAngle(k) - cur;
-      d = Math.atan2(Math.sin(d), Math.cos(d));
-      state.target = cur + d;
-    },
-    tick: (dt) => approach('carousel', state.target, SPEED.carousel, dt),
-  });
-  const arms = (label, to) => move(label, [['clamp', to, SPEED.clamp]]);
-  const topDrive = (label, to) => move(label, [['feed', to, SPEED.feed]]);
-  const slip = (label, open) => move(label, [['slip', open ? rig.bodies.get('slip').max : 0, SPEED.slip]]);
+  const index = (label, k) => {
+    let to = 0;
+    return {
+      label,
+      enter: () => {
+        const cur = v('carousel');
+        let d = carouselAngle(k) - cur;
+        d = Math.atan2(Math.sin(d), Math.cos(d));
+        to = cur + d;
+      },
+      tick: (dt) => move(label, [['carousel', to]]).tick(dt),
+    };
+  };
+  const arms = (label, to) => move(label, [['clamp', to]]);
+  const topDrive = (label, to) => move(label, [['feed', to]]);
+  const slip = (label, open) => move(label, [['slip', open ? rig.bodies.get('slip').max : 0]]);
   const attachAll = (list, body) => list.forEach((p) => holder(p, body));
   const atTransfer = () => {
     const k = Math.round(-v('carousel') / STEP);
@@ -249,7 +304,7 @@ export function createDrilling({ rig, root, scene, S, setAir }) {
       topDrive('Descente de la tête sur le marteau', feedAt(top + PIPE.pin)),
       screw('Vissage de la tête sur le marteau', feedAt(top), 1),
       act('Marteau lié à la broche', () => { attachAll([hammer], 'spin'); state.string = [hammer]; state.started = true; }),
-      move('Descente du taillant au sol', [['feed', feedAt(state.t0 + HAMMER.L), SPEED.lower]]),
+      move('Descente du taillant au sol', [['feed', feedAt(state.t0 + HAMMER.L), 0.2]]),
       act('Taillant au sol : début du trou', openHole),
       drill('Forage : enfoncement du marteau', feedAt(JOINT)),
       slip('Fermeture de la plaque à coins sur le marteau', false),
@@ -383,7 +438,7 @@ export function createDrilling({ rig, root, scene, S, setAir }) {
         budget -= slice;
         state.time += slice;
         moved = true;
-        if (state.rpm) rig.set('spin', v('spin') + (state.rpm * 2 * Math.PI / 60) * slice);
+        state.rpm = 0;
         if (s.tick(slice)) {
           state.log.push(s.label);
           if (state.log.length > 40) state.log.shift();
@@ -421,7 +476,7 @@ export function createDrilling({ rig, root, scene, S, setAir }) {
 
   reset();
   return {
-    state, pipes, pockets, hammer, start, update, place, reset, engaged, feedFloor, groundOnAxis,
+    state, pipes, pockets, hammer, start, update, place, reset, engaged, feedFloor, groundOnAxis, masses,
     pause: (on) => { state.paused = on; },
     current: () => state.steps[0]?.label || '',
     inCarousel: () => pockets.filter(Boolean).length,

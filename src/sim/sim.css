@@ -60,6 +60,42 @@ body { font: 14px/1.4 var(--f-body); color: var(--ink); background: var(--surfac
 .btn:disabled, .jog:disabled { opacity: 0.45; cursor: not-allowed; }
 .log { margin: 8px 0 0; padding-left: 18px; font-size: 12px; color: var(--muted); }
 .log li:first-child { color: var(--ink); }
+/* circuit hydraulique */
+.drv { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 6px; font-size: 13px; }
+.drv output, .pumps output { font-family: var(--f-mono); font-size: 12px; color: var(--muted); }
+.pumps { list-style: none; margin: 2px 0 6px; padding: 0 0 0 12px; font-size: 12px; }
+.pumps li { display: flex; flex-wrap: wrap; justify-content: space-between; column-gap: 8px; }
+.pumps output { margin-left: auto; white-space: nowrap; }
+.dials { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin: 8px 0; }
+.gauge-dial { margin: 0; text-align: center; }
+.gauge-dial svg { width: 100%; height: auto; display: block; }
+.gauge-dial .arc { fill: none; stroke: var(--line); stroke-width: 3; }
+.gauge-dial .red { fill: none; stroke: #c4323a; stroke-width: 3; }
+.gauge-dial .ticks line { stroke: var(--muted); stroke-width: 0.8; }
+.gauge-dial .ticks text { font: 7px var(--f-mono); fill: var(--muted); text-anchor: middle; }
+.gauge-dial .unit { font: 6px var(--f-mono); fill: var(--muted); text-anchor: middle; }
+.gauge-dial .needle { stroke: var(--accent); stroke-width: 1.8; stroke-linecap: round; }
+.gauge-dial .hub { fill: var(--ink); }
+.gauge-dial figcaption { display: flex; flex-direction: column; font-size: 11px; line-height: 1.25; margin-top: -6px; }
+.gauge-dial figcaption output { font-family: var(--f-mono); color: var(--muted); font-size: 10px; }
+.hydt { width: 100%; border-collapse: collapse; font-size: 12px; }
+.hydt thead th { text-align: left; color: var(--muted); font-weight: 500; padding-bottom: 2px; }
+.hydt thead th:nth-child(n+3), .hydt td.q, .hydt td.p { text-align: right; }
+.hydt tr.bank th { text-align: left; padding: 8px 0 2px; font: 600 13px var(--f-display); letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink); }
+.hydt tr.bank small { font: 400 11px var(--f-body); text-transform: none; letter-spacing: 0; color: var(--muted); }
+.hydt td { padding: 2px 4px 2px 0; vertical-align: middle; }
+.hydt td:first-child span { display: block; }
+.hydt td small { display: block; color: var(--muted); font-size: 10.5px; }
+.hydt td.q, .hydt td.p { font-family: var(--f-mono); width: 32px; }
+.hydt th:last-child, .hydt td.p { padding-right: 0; }
+.hydt tr.na td { color: var(--muted); font-size: 11px; }
+.hydt tr.na td:last-child { font-style: italic; }
+.hydt tr.on td:first-child span { color: var(--accent); font-weight: 600; }
+.hydt tr.stall td.p { color: #c4323a; font-weight: 600; }
+.hydt tr.off td:first-child span { color: var(--muted); text-decoration: line-through; }
+.lever { position: relative; display: block; width: 50px; height: 8px; border-radius: 4px; background: var(--surface-2); border: 1px solid var(--line); overflow: hidden; }
+.lever::after { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: var(--line); }
+.lever i { position: absolute; top: 0; bottom: 0; background: var(--accent); }
 .gauge { display: block; height: 8px; border-radius: 4px; background: var(--surface-2); border: 1px solid var(--line); overflow: hidden; min-width: 90px; }
 .gauge i { display: block; height: 100%; background: var(--accent); }
 @media (max-width: 860px) {

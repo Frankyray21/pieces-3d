@@ -129,19 +129,40 @@ coins), remonter le train (chaque tige dévissée retourne dans une alvéole vid
 puis le marteau dans le centreur). Le trou se creuse dans le sol (vertical ou
 incliné selon l'avance) ; profondeur, temps simulé et étapes s'affichent ;
 accélération ×1 à ×60. Pendant le cycle, les commandes manuelles sont
-verrouillées. Vitesses : ordres de grandeur (pénétration 0,6 m/min), pas des
-valeurs du constructeur.
+verrouillées.
+
+Le **circuit hydraulique** donne les vitesses et les pressions. D'après le
+manuel de pièces : groupe électrique 60 HP avec pompes 100 cm³ et 74 cm³
+(P334), moteur diesel avec pompes 90 cm³ et 32 cm³ (P246), distributeurs
+Danfoss PVG 32 de forage, d'avance, de mise en place et du carrousel (débit de
+chaque tiroir : 130, 100, 40, 25, 10 ou 5 L/min), vérins dont le manuel donne
+l'alésage (avance Ø 3 1/8 po, extension Ø 4 po, translation latérale Ø 3,25
+po, stinger Ø 3,5 po, bras Ø 3 po, direction Ø 3 po). Chaque commande ouvre le
+tiroir de sa section ; vitesse = débit ÷ section du vérin (ou cylindrée du
+moteur) ; pression = charge ÷ section, la charge venant du poids des corps
+(travail virtuel sur la géométrie), des tiges portées, de la poussée sur
+l'outil et du couple de rotation ; les pompes à détection de charge partagent
+leur débit et la puissance du moteur électrique. Un actionneur dont la charge
+dépasse la pression maximale cale (stinger en appui au sol). Le panneau montre
+les groupes de pompage (marche/arrêt), six manomètres gradués en psi comme au
+pupitre et chaque section de distributeur (ouverture, débit, pression).
+Estimations signalées : affectation des sections, masses, rapports de
+réduction, quelques tiges de vérins ; vitesses de forage (pénétration
+0,6 m/min, poussée 8 kN) : ordres de grandeur, pas des valeurs du
+constructeur.
 
 ```bash
 npm run dev                    # puis http://localhost:5173/sim.html
-node scripts/check-sim.mjs     # courses des vérins, débattements, contact au sol, cycle de forage
+node scripts/check-sim.mjs     # vérins, débattements, contact au sol, hydraulique, cycle de forage
 ```
 
 La page `sim.html` n'est servie que par le serveur de développement : `npm run
 build` ne compile que `index.html`, la simulation n'est donc pas publiée sur le
 site. Fichiers : `src/sim/kinematics.js` (corps, liaisons, vérins, flexibles),
 `src/sim/du311-std.js` (axes, débattements, vitesses, verrouillages, positions),
-`src/sim/drilling.js` (tiges, marteau, étapes du cycle, trou), `src/sim/main.js`
+`src/sim/drilling.js` (tiges, marteau, étapes du cycle, trou),
+`src/sim/hydraulics.js` (pompes, distributeurs, actionneurs, charges),
+`src/sim/plant.js` (liaison du circuit au rig et aux commandes), `src/sim/main.js`
 (page). Les pièces mobiles sont étiquetées dans les builders
 du DU311 (`body()`, `ram()`, `flex()` de `src/models/du311-std/layout.js`), sans
 effet sur le rendu du site.

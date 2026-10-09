@@ -5,9 +5,12 @@
 //     (longueur fermée ≥ course + longueurs mortes) ;
 //   - qu'aucune position extrême ne donne de coordonnées invalides ;
 //   - la géométrie du carrousel (bras de serrage, alvéole de transfert) ;
+//   - le circuit hydraulique : vitesse de chaque fonction à pleine ouverture, pressions
+//     sur tous les débattements (aucun actionneur ne cale sous son propre poids),
+//     partage du débit d'une pompe ;
 //   - le cycle de forage (marteau, ajout et retrait des tiges), vertical puis incliné :
 //     profondeur, tiges sur l'axe, vissages bout à bout, retour de chaque tige dans
-//     son alvéole.
+//     son alvéole, pressions de poussée, de retenue et de rotation.
 //
 // Usage : node scripts/check-sim.mjs
 import * as THREE from 'three';
@@ -16,7 +19,9 @@ import * as shapes from '../src/viewer/shapes.js';
 import builders from '../src/models/du311-std/index.js';
 import { Rig } from '../src/sim/kinematics.js';
 import { BODIES, RULES, CONTROLS, CLAMP_STROKE, HAMMER_STOW, carouselAngle, groundClearance } from '../src/sim/du311-std.js';
+import { LPM } from '../src/sim/hydraulics.js';
 import { createDrilling, PIPE, HAMMER } from '../src/sim/drilling.js';
+import { createPlant } from '../src/sim/plant.js';
 import { FEED } from '../src/models/du311-std/feed.js';
 import { feedToMachine as fm } from '../src/models/du311-std/machine.js';
 
@@ -27,6 +32,7 @@ const deg = (x) => `${((x * 180) / Math.PI).toFixed(1)}°`;
 
 const model = buildProcedural(builders, 'P010');
 const rig = new Rig(model.root, { bodies: BODIES, rules: RULES }, shapes);
+const plant = createPlant(rig); // au repos : centres des masses
 
 // 1 — corps sans pièce
 const used = new Set();
@@ -106,14 +112,68 @@ for (const [name, p] of Object.entries(poses)) {
 // 4 — carrousel
 console.log(`✓ bras de serrage : ${deg(Math.abs(CLAMP_STROKE))} de l'axe de forage à l'alvéole de transfert ; alvéole 1 à ${deg(carouselAngle(0))} de rotation du carrousel`);
 
-// 5 — cycle de forage
+// 5 — circuit hydraulique
 const rest = () => { for (const b of rig.bodies.values()) rig.set(b.name, b.min !== undefined && !(0 >= b.min && 0 <= b.max) ? b.min : 0); };
 rest();
+const hyd = plant.hyd;
+const ANG = new Set(['tilt', 'roll', 'front', 'clamp', 'carousel', 'spin']);
+const speed = (f, q) => (ANG.has(f.body) ? `${deg(Math.abs(q))}/s` : `${mm(Math.abs(q))}/s`);
+for (const f of hyd.functions.values()) {
+  const out = [1, -1].map((dir) => {
+    const r = plant.solve([{ fn: f.id, s: dir }]).get(f.id);
+    if (r.stall || !r.qdot) fail(`${f.id} : ne bouge pas au repos (${r.why || 'débit nul'})`);
+    return `${dir > 0 ? '+' : '−'} ${speed(f, r.qdot)} à ${r.p.toFixed(0)} bar`;
+  });
+  console.log(`✓ ${f.label.padEnd(30)} ${String(f.spool).padStart(3)} L/min : ${out.join(' ; ')}`);
+}
+// pressions sur les débattements : fonctions chargées par le poids, mât basculé et tourné
+const worst = new Map();
+const DEGR = Math.PI / 180;
+for (let t = -15; t <= 85; t += 5) {
+  for (let r = -180; r <= 180; r += 15) {
+    rest();
+    rig.set('tilt', t * DEGR); rig.set('roll', r * DEGR); rig.set('ext', 0.3);
+    for (const fn of ['tilt', 'roll', 'ext', 'feed', 'stingUp', 'stingDn']) {
+      for (const dir of [1, -1]) {
+        const res = plant.solve([{ fn, s: dir }]).get(fn);
+        const w = worst.get(fn) || { p: 0, hold: 0, at: '' };
+        if (res.stall) fail(`${fn} cale (sens ${dir > 0 ? '+' : '−'}) : basculement ${t}°, rotation ${r}°`);
+        if (res.p > w.p) Object.assign(w, { p: res.p, at: `basculement ${t}°, rotation ${r}°` });
+        w.hold = Math.max(w.hold, res.hold);
+        worst.set(fn, w);
+      }
+    }
+  }
+}
+const pMax = hyd.pumps.get('P2').pMax;
+for (const [fn, w] of worst) console.log(`✓ ${hyd.functions.get(fn).label} : au plus ${w.p.toFixed(0)} bar (${w.at}), retenue au plus ${w.hold.toFixed(0)} bar — pompe limitée à ${pMax} bar`);
+// partage de débit : rotation et avance à pleine ouverture sur la pompe 100 cm³
+rest();
+{
+  const res = plant.solve([{ fn: 'spin', s: 1 }, { fn: 'feed', s: -1 }]);
+  const P1 = hyd.pumps.get('P1');
+  const cap = (P1.cc * hyd.drivers.get('elec').rpm) / 1000;
+  const sum = res.get('spin').Q + res.get('feed').Q;
+  if (Math.abs(sum - cap) > 0.5) fail(`partage de débit : ${sum.toFixed(1)} L/min pour une pompe de ${cap.toFixed(1)} L/min`);
+  console.log(`✓ partage de débit : rotation ${res.get('spin').Q.toFixed(0)} + avance ${res.get('feed').Q.toFixed(0)} L/min = ${sum.toFixed(0)} L/min (pompe 100 cm³ : ${cap.toFixed(0)} L/min ; demandé ${(130 + 100)} L/min)`);
+  if (Math.abs(P1.Q / LPM - sum) > 0.5) fail('débit de la pompe différent de la somme des sections');
+}
+
+// 6 — cycle de forage
+rest();
 let air = false;
-const drill = createDrilling({ rig, root: model.root, scene: new THREE.Scene(), S: shapes, setAir: (on) => { air = on; } });
+const drill = createDrilling({ rig, root: model.root, scene: new THREE.Scene(), S: shapes, setAir: (on) => { air = on; }, plant });
+const peak = { pd: 0, hb: 0, rot: 0 };
 const run = (maxT = 4000) => {
   let t = 0;
-  while (drill.state.running && t < maxT) { drill.update(0.5); t += 0.5; }
+  while (drill.state.running && t < maxT) {
+    drill.update(0.5);
+    t += 0.5;
+    const f = hyd.state.get('feed'), r = hyd.state.get('spin');
+    if (f?.dir) { peak.pd = Math.max(peak.pd, f.dir < 0 ? f.p : f.hold); peak.hb = Math.max(peak.hb, f.dir > 0 ? f.p : f.hold); }
+    if (r?.dir) peak.rot = Math.max(peak.rot, r.p);
+    for (const [fn, x] of hyd.state) if (x.stall) fail(`cycle : ${fn} cale à l'étape « ${drill.current()} »`);
+  }
   rig.apply();
   drill.place();
   if (drill.state.running) fail(`cycle bloqué à l'étape « ${drill.current()} »`);
@@ -183,5 +243,10 @@ for (let i = 0; i < 40; i++) {
 rig.apply();
 if (groundClearance(rig) < -0.002) fail(`forage incliné : point de contact à ${mm(groundClearance(rig))} sous le sol`);
 cycle(`forage incliné à 10° (extension ${mm(rig.get('ext'))})`, 2);
+// tout le carrousel : poids du train de 17 tiges sur la tête (retenue)
+drill.reset();
+rest();
+cycle('carrousel complet', 17);
+console.log(`✓ pressions du cycle : poussée au plus ${peak.pd.toFixed(0)} bar, retenue au plus ${peak.hb.toFixed(0)} bar, rotation au plus ${peak.rot.toFixed(0)} bar`);
 
 process.exit(failed ? 1 : 0);
