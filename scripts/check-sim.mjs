@@ -4,7 +4,10 @@
 //   - que chaque vérin loge sa course entre ses axes sur tous les débattements
 //     (longueur fermée ≥ course + longueurs mortes) ;
 //   - qu'aucune position extrême ne donne de coordonnées invalides ;
-//   - la géométrie du carrousel (bras de serrage, alvéole de transfert).
+//   - la géométrie du carrousel (bras de serrage, alvéole de transfert) ;
+//   - le cycle de forage (marteau, ajout et retrait des tiges), vertical puis incliné :
+//     profondeur, tiges sur l'axe, vissages bout à bout, retour de chaque tige dans
+//     son alvéole.
 //
 // Usage : node scripts/check-sim.mjs
 import * as THREE from 'three';
@@ -12,7 +15,10 @@ import { buildProcedural } from '../src/viewer/assembly.js';
 import * as shapes from '../src/viewer/shapes.js';
 import builders from '../src/models/du311-std/index.js';
 import { Rig } from '../src/sim/kinematics.js';
-import { BODIES, RULES, CONTROLS, CLAMP_STROKE, carouselAngle, groundClearance } from '../src/sim/du311-std.js';
+import { BODIES, RULES, CONTROLS, CLAMP_STROKE, HAMMER_STOW, carouselAngle, groundClearance } from '../src/sim/du311-std.js';
+import { createDrilling, PIPE, HAMMER } from '../src/sim/drilling.js';
+import { FEED } from '../src/models/du311-std/feed.js';
+import { feedToMachine as fm } from '../src/models/du311-std/machine.js';
 
 let failed = false;
 const fail = (msg) => { console.log(`✕ ${msg}`); failed = true; };
@@ -99,5 +105,83 @@ for (const [name, p] of Object.entries(poses)) {
 
 // 4 — carrousel
 console.log(`✓ bras de serrage : ${deg(Math.abs(CLAMP_STROKE))} de l'axe de forage à l'alvéole de transfert ; alvéole 1 à ${deg(carouselAngle(0))} de rotation du carrousel`);
+
+// 5 — cycle de forage
+const rest = () => { for (const b of rig.bodies.values()) rig.set(b.name, b.min !== undefined && !(0 >= b.min && 0 <= b.max) ? b.min : 0); };
+rest();
+let air = false;
+const drill = createDrilling({ rig, root: model.root, scene: new THREE.Scene(), S: shapes, setAir: (on) => { air = on; } });
+const run = (maxT = 4000) => {
+  let t = 0;
+  while (drill.state.running && t < maxT) { drill.update(0.5); t += 0.5; }
+  rig.apply();
+  drill.place();
+  if (drill.state.running) fail(`cycle bloqué à l'étape « ${drill.current()} »`);
+  return t;
+};
+// position d'une tige dans le repère de l'avance (x vers le carrousel, y le long du mât, z vers la face)
+const O = fm([0, 0, 0]);
+const toFeed = (p) => {
+  rig.computeJ();
+  const t = new THREE.Vector3().setFromMatrixPosition(rig.bodyMatrix('ext', new THREE.Matrix4()).invert().multiply(p.mesh.matrix));
+  return [O[2] - t.z, t.y - O[1], t.x - O[0]];
+};
+const STEP = (2 * Math.PI) / 17;
+function geometry(label) {
+  const beta = rig.get('carousel');
+  let pocket = 0, axis = 0, stack = 0;
+  drill.pockets.forEach((p, k) => {
+    if (!p) return;
+    const a = FEED.pocketA0 + k * STEP + beta;
+    const [x, y, z] = toFeed(p);
+    pocket = Math.max(pocket, Math.hypot(x - (FEED.car.x + FEED.car.rp * Math.cos(a)), z - (FEED.car.z - FEED.car.rp * Math.sin(a))), Math.abs(y - drill.geometry.SHOULDER));
+  });
+  const s = drill.state.string;
+  s.forEach((p, i) => {
+    const [x, y, z] = toFeed(p);
+    axis = Math.max(axis, Math.hypot(x, z - FEED.AX));
+    if (i) stack = Math.max(stack, Math.abs(y - toFeed(s[i - 1])[1] - (s[i - 1].kind === 'hammer' ? HAMMER.L : PIPE.L)));
+  });
+  const worst = Math.max(pocket, axis, stack);
+  if (worst > 0.001) fail(`${label} : tiges décalées (alvéoles ${mm(pocket)}, axe ${mm(axis)}, vissages ${mm(stack)})`);
+}
+function cycle(label, n) {
+  const t0 = drill.groundOnAxis();
+  const err = drill.start('collar');
+  if (err) { fail(`${label} : ${err}`); return; }
+  let t = run();
+  const collar = t0 - (drill.geometry.JOINT - HAMMER.L);
+  if (Math.abs(drill.state.depth - collar) > 0.002) fail(`${label} : marteau enfoncé de ${mm(drill.state.depth)} (attendu ${mm(collar)})`);
+  geometry(`${label}, marteau enfoncé`);
+  drill.start('add', n);
+  t += run();
+  const depth = collar + n * PIPE.L;
+  if (drill.inHole() !== n || Math.abs(drill.state.depth - depth) > 0.002) fail(`${label} : ${drill.inHole()} tiges, ${mm(drill.state.depth)} (attendu ${n} tiges, ${mm(depth)})`);
+  geometry(`${label}, ${n} tiges`);
+  const deep = drill.state.depth;
+  drill.start('pull');
+  t += run();
+  geometry(`${label}, train remonté`);
+  const [hx, hy, hz] = toFeed(drill.hammer);
+  const parked = Math.max(Math.hypot(hx, hz - FEED.AX), Math.abs(hy - HAMMER_STOW));
+  if (drill.inCarousel() !== 17 || drill.state.string.length || drill.state.started || air) fail(`${label} : ${drill.inCarousel()} tiges au carrousel, train de ${drill.state.string.length}, air ${air ? 'en marche' : 'coupé'} après la remontée`);
+  if (parked > 0.001) fail(`${label} : marteau rangé à ${mm(parked)} de sa place dans le centreur`);
+  for (const b of ['feed', 'clamp', 'slip']) if (Math.abs(rig.get(b)) > 1e-6) fail(`${label} : ${b} = ${rig.get(b).toFixed(3)} en fin de cycle`);
+  if (!failed) console.log(`✓ ${label} : marteau + ${n} tiges, trou de ${deep.toFixed(3)} m en ${Math.floor(t / 60)} min ${Math.round(t % 60)} s simulées ; tiges sur l'axe, vissées bout à bout et rangées dans leur alvéole`);
+}
+cycle('forage vertical', 3);
+// forage incliné : cadre basculé de 10°, avance descendue jusqu'à 0,15 m du sol (dichotomie sur l'extension)
+drill.reset();
+rest();
+rig.set('tilt', -10 * Math.PI / 180);
+let lo = rig.bodies.get('ext').min, hi = rig.bodies.get('ext').max;
+for (let i = 0; i < 40; i++) {
+  const m = (lo + hi) / 2;
+  rig.set('ext', m);
+  if (drill.groundOnAxis() > HAMMER_STOW - 0.15) lo = m; else hi = m;
+}
+rig.apply();
+if (groundClearance(rig) < -0.002) fail(`forage incliné : point de contact à ${mm(groundClearance(rig))} sous le sol`);
+cycle(`forage incliné à 10° (extension ${mm(rig.get('ext'))})`, 2);
 
 process.exit(failed ? 1 : 0);

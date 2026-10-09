@@ -40,7 +40,7 @@ export const BODIES = [
   { name: 'roll', parent: 'shift', type: 'rev', axis: [1, 0, 0], origin: [SLIDE.rot.x, SLIDE.rot.y, 0], min: -180 * DEG, max: 180 * DEG },
   // avance : extension sur le MCP, course de la tête, rotation de la broche
   { name: 'ext', parent: 'roll', type: 'pri', axis: [0, 1, 0], min: -0.15, max: 0.55 },
-  { name: 'feed', parent: 'ext', type: 'pri', axis: [0, 1, 0], min: -1.75, max: 0 },
+  { name: 'feed', parent: 'ext', type: 'pri', axis: [0, 1, 0], min: -2.05, max: 0 },
   { name: 'spin', parent: 'feed', type: 'rev', axis: [0, 1, 0], origin: fm([0, 0, FEED.AX]) },
   // carrousel, bras de serrage, stinger, plaque à coins
   { name: 'carousel', parent: 'ext', type: 'rev', axis: [0, 1, 0], origin: fm([C.x, 0, C.z]) },
@@ -115,12 +115,17 @@ export const CLAMP_STROKE = CLAMP_IN;
 
 // ---------------------------------------------------------------- contact au sol
 
+/** Bas du taillant du marteau fond-de-trou rangé dans le centreur (repère de l'avance). */
+export const HAMMER_STOW = -0.2;
+
 // Points qui ne doivent pas passer sous le sol (repère machine au repos) : patins
-// des stinger bas, bas du centreur, pied du mât, bas du carrousel. Une commande
-// qui en ferait descendre un sous le sol s'arrête au contact.
+// des stinger bas, bas du centreur, taillant du marteau rangé, pied du mât, bas du
+// carrousel. Une commande qui en ferait descendre un sous le sol s'arrête au contact
+// (pendant le forage, le marteau est dans le trou mais les commandes sont verrouillées).
 export const GROUND = [
   ...FEED.stingers.map(([x, z]) => ({ body: 'stingDn', p: fm([x, FEED.stingerFoot, z]) })),
   { body: 'ext', p: fm([0, -0.11, FEED.AX]) },
+  { body: 'ext', p: fm([0, HAMMER_STOW, FEED.AX]) },
   ...[[-0.25, -0.2], [0.25, -0.2], [-0.25, 0.25], [0.25, 0.25]].map(([x, z]) => ({ body: 'ext', p: fm([x, 0, z]) })),
   { body: 'ext', p: fm([C.x, C.y0 - 0.05, C.z]) },
 ];

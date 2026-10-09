@@ -163,19 +163,20 @@ export function P020(api) {
   ), [-0.3, 0.2, 0]);
 
   // 3 — boyau d'air 1,5 po x 170 po : du réservoir tampon de la glissière au pied de l'avance
-  const dthFoot = F([-0.42, 0.31, -0.14]);
+  const dthFoot = F([FEED.dth[6][0], FEED.dth[6][1] - 0.05, FEED.dth[6][2]]);
   P('3', flex(api.S, [[2.6, 1.34, 0.39], [2.62, 1.45, 0.7], [3.1, 1.0, 1.0], [3.55, 0.6, 0.95], [dthFoot[0], dthFoot[1] - 0.06, dthFoot[2]]],
     ['front', 'front', 'front', ['front', 'ext', 0.6], 'ext'], 0.026, 'black', { seg: 48 }), [0.3, -0.2, 0.4]);
   // 8 — gaine de protection sur le boyau DTH, près de l'émerillon
-  const tdTop = F([0, FEED.tdY + 0.48, FEED.AX]);
-  const sockEnd = F([-0.15, FEED.tdY + 0.75, FEED.AX]);
+  const tdTop = F(FEED.dth[0]);
+  const sockEnd = F(FEED.dth[1]);
   P('8', body('feed', tube([[tdTop[0], tdTop[1] + 0.06, tdTop[2]], sockEnd], 0.042, 'charcoal', { sharp: true, seg: 2 })), [0.3, 0.3, 0]);
   // 5 / 6 — sangles 8 po et 20 po, 7 — colliers de boyaux (sur les boyaux de l'avance)
   const ringAt = (p, r, mat, b) => body(b, at(torus(r, 0.006, mat), F(p)));
-  P('5', group(ringAt([-0.62, 2.2, 0.15], 0.035, 'black', ['ext', 'feed', 0.6]), ringAt([-0.55, 1.4, 0.08], 0.035, 'black', ['ext', 'feed', 0.3])), [0.2, 0, 0.3]);
-  P('6', group(ringAt([-0.78, 2.6, 0.35], 0.045, 'black', ['ext', 'feed', 0.5]), ringAt([-0.72, 1.4, 0.2], 0.045, 'black', ['ext', 'feed', 0.25])), [0.2, 0, 0.45]);
+  const L = FEED.loop, LB = FEED.loopBodies, H = FEED.dth, HB = FEED.dthBodies;
+  P('5', group(ringAt(L[2], 0.035, 'black', LB[2]), ringAt(L[3], 0.035, 'black', LB[3])), [0.2, 0, 0.3]);
+  P('6', group(ringAt(H[3], 0.045, 'black', HB[3]), ringAt(H[4], 0.045, 'black', HB[4])), [0.2, 0, 0.45]);
   P('7', group(
-    ...[[-0.5, 0.55, -0.05], [-0.42, 0.36, -0.14]].map((p) => ringAt(p, 0.038, 'steel', 'ext')),
+    ...[H[5], H[6]].map((p) => ringAt(p, 0.038, 'steel', 'ext')),
     body('front', at(torus(0.034, 0.006, 'steel', { axis: 'x' }), [1.2, 0.88, M.frameZ + 0.05])),
   ), [0.2, 0, 0.55]);
   return { view: { dir: [1.1, 0.6, 1.2] } };

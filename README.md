@@ -120,16 +120,29 @@ mouvements dangereux (translation stabilisateurs sortis, descente de la tête
 avec les bras sur l'axe, indexage bras engagés…) et le contact au sol arrête
 stinger et avance.
 
+Le **cycle de forage** enchaîne les mouvements de l'avance, du carrousel et des
+bras de serrage avec 17 tiges Ø 3½ po × 6 pi et un marteau fond-de-trou :
+enfoncer le marteau (vissage dans le centreur, descente au sol, forage jusqu'à
+la plaque à coins), forer N tiges (indexage, prise au carrousel, présentation
+sur l'axe, vissage à la tête puis sur le train, forage, reprise par la plaque à
+coins), remonter le train (chaque tige dévissée retourne dans une alvéole vide,
+puis le marteau dans le centreur). Le trou se creuse dans le sol (vertical ou
+incliné selon l'avance) ; profondeur, temps simulé et étapes s'affichent ;
+accélération ×1 à ×60. Pendant le cycle, les commandes manuelles sont
+verrouillées. Vitesses : ordres de grandeur (pénétration 0,6 m/min), pas des
+valeurs du constructeur.
+
 ```bash
 npm run dev                    # puis http://localhost:5173/sim.html
-node scripts/check-sim.mjs     # courses des vérins, débattements, contact au sol
+node scripts/check-sim.mjs     # courses des vérins, débattements, contact au sol, cycle de forage
 ```
 
 La page `sim.html` n'est servie que par le serveur de développement : `npm run
 build` ne compile que `index.html`, la simulation n'est donc pas publiée sur le
 site. Fichiers : `src/sim/kinematics.js` (corps, liaisons, vérins, flexibles),
 `src/sim/du311-std.js` (axes, débattements, vitesses, verrouillages, positions),
-`src/sim/main.js` (page). Les pièces mobiles sont étiquetées dans les builders
+`src/sim/drilling.js` (tiges, marteau, étapes du cycle, trou), `src/sim/main.js`
+(page). Les pièces mobiles sont étiquetées dans les builders
 du DU311 (`body()`, `ram()`, `flex()` de `src/models/du311-std/layout.js`), sans
 effet sur le rendu du site.
 

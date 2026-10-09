@@ -13,11 +13,12 @@ import { body, ram, flex } from './layout.js';
 export const FEED = {
   L: 3.0, W: 0.4, D: 0.32, // mât
   AX: 0.505, // axe de forage
-  tdY: 2.35, // tête de rotation (sur les trous les plus bas de la plaque)
-  car: { x: 0.62, z: 0.12, r: 0.34, rp: 0.27, y0: 0.45, y1: 2.62 },
+  // tête de rotation au point haut : sa broche passe au-dessus d'une tige du carrousel
+  tdY: 2.7,
+  car: { x: 0.62, z: 0.12, r: 0.34, rp: 0.27, y0: 0.3, y1: 2.62 },
   frame: { xc: 0.35, z0: -0.16, z1: -0.3, y0: 0.35, y1: 2.65, bar: 0.265 },
-  // arbre des bras de serrage (x, z), haut de l'arbre, hauteurs des deux bras
-  clamp: { x: 0.38, z: 0.55, top: 1.92, arms: [0.85, 1.75] },
+  // arbre des bras de serrage (x, z), hors du passage de la tête ; hauteurs des deux bras
+  clamp: { x: 0.45, z: 0.55, arms: [0.85, 1.75] },
   // vérins stinger (x, z) et dessous de leurs patins bas
   stingers: [[-0.32, -0.02], [1.02, -0.17]],
   stingerFoot: -0.255,
@@ -36,6 +37,16 @@ export const FEED = {
   FEED.transfer = cands.reduce((m, c) => (c[0] < m[0] ? c : m));
   // angle des alvéoles dans le plan des plaques (sens des rotations autour de +Y)
   FEED.pocketA0 = Math.atan2(-(FEED.transfer[1] - C.z), FEED.transfer[0] - C.x);
+}
+
+// Boyaux de la tête (repère de l'avance) et corps suivis par chaque point de passage :
+// boucle des flexibles hydrauliques et boyau d'air DTH, de la tête au flanc ou au pied du mât.
+{
+  const { tdY, AX, W } = FEED;
+  FEED.loop = [[-0.2, tdY + 0.25, AX - 0.05], [-0.5, tdY + 0.55, 0.3], [-0.62, 2.2, 0.15], [-0.55, 1.4, 0.08], [-W / 2 - 0.03, 1.15, 0.08]];
+  FEED.loopBodies = ['feed', 'feed', ['ext', 'feed', 0.6], ['ext', 'feed', 0.3], 'ext'];
+  FEED.dth = [[0, tdY + 0.48, AX], [-0.15, tdY + 0.75, AX], [-0.55, tdY + 0.65, 0.45], [-0.78, tdY + 0.05, 0.35], [-0.72, 1.4, 0.2], [-0.5, 0.55, -0.05], [-0.42, 0.36, -0.14]];
+  FEED.dthBodies = ['feed', 'feed', ['ext', 'feed', 0.8], ['ext', 'feed', 0.5], ['ext', 'feed', 0.25], 'ext', 'ext'];
 }
 
 export function P028(api) {
@@ -78,7 +89,7 @@ export function P028(api) {
   P('9', group(
     at(cyl(0.065, 1.9, 'black', { seg: 32 }), [0, 1.05, 0.06]),
     at(cyl(0.075, 0.06, 'darkSteel', { seg: 32 }), [0, 2.0, 0.06]),
-    body('feed', at(cyl(0.04, 0.42, 'chrome'), [0, 2.2, 0.06])),
+    body('feed', at(cyl(0.04, tdY - 2.14, 'chrome'), [0, (1.99 + tdY - 0.15) / 2, 0.06])),
     at(cyl(0.075, 0.06, 'darkSteel', { seg: 32 }), [0, 0.12, 0.06]),
   ), [0, 0, 0.35]);
 
@@ -162,7 +173,7 @@ export function P028(api) {
 
   // 22 — carrousel 17 tiges : arbre central, plaques à alvéoles haute et basse, mécanisme
   // d'indexage, cadre arrière, arbre des bras de serrage et ses deux bras
-  const PIV = [FEED.clamp.x, FEED.clamp.z], PIV_TOP = FEED.clamp.top;
+  const PIV = [FEED.clamp.x, FEED.clamp.z];
   const armDir = [-PIV[0], AX - PIV[1]];
   const armLen = Math.hypot(...armDir);
   // Plat horizontal entre deux points (x, z) à la hauteur y.
@@ -194,11 +205,10 @@ export function P028(api) {
     // cadre rectangulaire du carrousel (montants arrière, paliers de l'arbre)
     ...[-0.28, 0.28].map((dx) => at(box(0.05, C.y1 - C.y0 + 0.1, 0.05, 'lightGrey'), [C.x + dx, (C.y0 + C.y1) / 2, F.z0 - 0.03])),
     ...[C.y0 - 0.02, C.y1 + 0.02].map((y) => at(box(0.12, 0.06, C.z - F.z0 + 0.06, 'lightGrey'), [C.x, y, (C.z + F.z0) / 2])),
-    // arbre des bras de serrage (entre l'axe de forage et le carrousel, sous la tête)
-    // et bras en position « à l'axe de forage »
-    at(cyl(0.035, PIV_TOP - C.y0 + 0.02, 'steel'), [PIV[0], (C.y0 + PIV_TOP) / 2, PIV[1]]),
-    link([C.x, C.z], PIV, C.y0 + 0.02, 0.1, 0.05),
-    link([hw, 0.1], PIV, PIV_TOP - 0.03, 0.1, 0.05),
+    // arbre des bras de serrage (entre l'axe de forage et le carrousel), tenu en haut et en bas
+    // par le carrousel, et bras en position « à l'axe de forage »
+    at(cyl(0.035, C.y1 - C.y0, 'steel'), [PIV[0], (C.y0 + C.y1) / 2, PIV[1]]),
+    ...[C.y0 + 0.02, C.y1 - 0.02].map((y) => link([C.x, C.z], PIV, y, 0.1, 0.05)),
     ...FEED.clamp.arms.map(arm),
   ), [0.75, 0, 0]);
   // 11 — rampe des tiges (plaque d'appui sous les alvéoles, rebord vers l'axe de forage)
@@ -241,10 +251,7 @@ export function P028(api) {
   )), [-0.3, 0.3, 0]);
   // 21 — boucle de boyaux de la tête (4 flexibles et échelles porte-boyaux) : bout haut sur
   // la tête (corps « feed »), bout bas sur le flanc du mât, boucle entre les deux
-  const loop = ['feed', 'feed', ['ext', 'feed', 0.6], ['ext', 'feed', 0.3], 'ext'];
-  const hoses = [-0.03, -0.01, 0.01, 0.03].map((d) => flex(api.S, [
-    [-0.2, tdY + 0.25, AX - 0.05 + d], [-0.5, tdY + 0.55, 0.3 + d], [-0.62, 2.2, 0.15 + d], [-0.55, 1.4, 0.08 + d], [-hw - 0.03, 1.15, 0.08 + d],
-  ], loop, 0.012, 'black', { seg: 48 }));
+  const hoses = [-0.03, -0.01, 0.01, 0.03].map((d) => flex(api.S, FEED.loop.map(([x, y, z]) => [x, y, z + d]), FEED.loopBodies, 0.012, 'black', { seg: 48 }));
   P('21', group(
     ...hoses,
     body(['ext', 'feed', 0.75], at(box(0.04, 0.025, 0.14, 'darkSteel'), [-0.6, 2.5, 0.2])),
@@ -252,8 +259,7 @@ export function P028(api) {
   ), [-0.5, 0, 0.2]);
   // 23 — boyau d'air DTH 1,5 po : de l'émerillon, grande boucle côté gauche jusqu'au pied
   P('23', group(
-    flex(api.S, [[0, tdY + 0.48, AX], [-0.15, tdY + 0.75, AX], [-0.55, 3.15, 0.45], [-0.78, 2.6, 0.35], [-0.72, 1.4, 0.2], [-0.5, 0.55, -0.05], [-0.42, 0.36, -0.14]],
-      ['feed', 'feed', ['ext', 'feed', 0.8], ['ext', 'feed', 0.5], ['ext', 'feed', 0.25], 'ext', 'ext'], 0.03, 'black', { seg: 72 }),
+    flex(api.S, FEED.dth, FEED.dthBodies, 0.03, 'black', { seg: 72 }),
     at(fitting(0.05, 0.07, 'steel'), [-0.42, 0.31, -0.14]),
   ), [-0.7, 0, 0.3]);
   return { view: { dir: [1.0, 0.45, 1.3] } };
