@@ -279,6 +279,7 @@ table.parts { width: 100%; border-collapse: collapse; font-size: 13px; }
 .parts tr.sel .c-ref .refb { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
 .parts .c-pn { font-family: var(--f-mono); white-space: nowrap; font-size: 12.5px; }
 .parts .c-qty { text-align: right; font-variant-numeric: tabular-nums; width: 3em; }
+.q3d { display: block; font-size: 10px; line-height: 1.2; color: var(--muted); white-space: nowrap; }
 /* Numéros par taille (N, N2, N3…) : une ligne par numéro, ses tailles en étiquette. */
 .szl { display: flex; align-items: baseline; gap: 6px; line-height: 1.5; }
 .parts .szl { white-space: normal; }

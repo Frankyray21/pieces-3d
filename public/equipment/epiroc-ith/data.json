@@ -14482,7 +14482,8 @@
      1,
      "B N H lifting dog spring",
      {
-      "note": "Ligne en double au catalogue (repère déjà utilisé plus haut, pièce de taille B)."
+      "note": "Ligne en double au catalogue (repère déjà utilisé plus haut, pièce de taille B).",
+      "same": "16"
      }
     ],
     [
@@ -14491,7 +14492,8 @@
      2,
      "B A3S lifting dog",
      {
-      "note": "Ligne en double au catalogue (repère déjà utilisé plus haut, pièce de taille B)."
+      "note": "Ligne en double au catalogue (repère déjà utilisé plus haut, pièce de taille B).",
+      "same": "17"
      }
     ]
    ]
@@ -15707,7 +15709,11 @@
      "13",
      "3760015884",
      2,
-     "Upper latch body"
+     "Upper latch body",
+     {
+      "qty3d": 1,
+      "note": "La liste indique 2, le dessin du catalogue en montre 1."
+     }
     ],
     [
      "14",
@@ -15767,7 +15773,11 @@
      "23",
      "9469705243",
      2,
-     "Spindle"
+     "Spindle",
+     {
+      "qty3d": 1,
+      "note": "La liste indique 2, le dessin du catalogue en montre 1."
+     }
     ],
     [
      "24",
@@ -15779,7 +15789,11 @@
      "25",
      "3760006252",
      1,
-     "Valve adjusting washer"
+     "Valve adjusting washer",
+     {
+      "qty3d": 2,
+      "note": "La liste indique 1, le dessin du catalogue en montre 2."
+     }
     ],
     [
      "26",
@@ -16961,31 +16975,51 @@
      "2",
      "3760008362",
      2,
-     "Water swivel body"
+     "Water swivel body",
+     {
+      "qty3d": 1,
+      "note": "La liste indique 2, le dessin du catalogue en montre 1."
+     }
     ],
     [
      "3",
      "3760008360",
      1,
-     "Gland washer"
+     "Gland washer",
+     {
+      "qty3d": 2,
+      "note": "La liste indique 1, le dessin du catalogue en montre 2."
+     }
     ],
     [
      "4",
      "3760008359",
      1,
-     "Packing (set of 3)"
+     "Packing (set of 3)",
+     {
+      "qty3d": 3,
+      "note": "Jeu de 3 garnitures, dessinées séparément."
+     }
     ],
     [
      "5",
      "3760008246",
      2,
-     "External snap ring"
+     "External snap ring",
+     {
+      "qty3d": 1,
+      "note": "La liste indique 2, le dessin du catalogue en montre 1."
+     }
     ],
     [
      "6",
      "3760008526",
      1,
-     "Bearing"
+     "Bearing",
+     {
+      "qty3d": 2,
+      "note": "La liste indique 1, le dessin du catalogue en montre 2."
+     }
     ],
     [
      "7",
@@ -17769,7 +17803,11 @@
      "13",
      "3502110200",
      1,
-     "Ball bearing"
+     "Ball bearing",
+     {
+      "qty3d": 2,
+      "note": "Le dessin en montre deux (un sous la rondelle 12, un sur l'arbre 18) ; la trousse de pièces de rechange en compte aussi deux."
+     }
     ],
     [
      "14",

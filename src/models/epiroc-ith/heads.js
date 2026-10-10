@@ -35,7 +35,12 @@ export function head(api, cfg) {
   const owl = type === 'owl' || type === 'lLatch';
   const fam = type === 'discovore' ? 'discovore' : owl ? 'owl' : 'excore';
   const M = { ...MAT[fam], ...(cfg.mat || {}) };
-  const L = layout(api, D);
+  // Vue éclatée comme les dessins du catalogue : le corps sur l'axe (A), la pile
+  // de l'axe sur sa rangée (S) dans l'ordre de montage (écrou bas, roulement,
+  // ressort, boîtier, butée, clapets, axe, écrou), les petites pièces dessous
+  // (B), la trousse du boîtier de rappel au-dessus (C).
+  const L = layout(api, D, { rows: { A: 0, S: -2.3, B: -3.8, C: 2.1 }, minPitch: 0.75, anchor: true });
+  const S_ = (order) => ({ row: 'S', order });
   const anchor = { latch: 0, top: 0 };
   const has = (role) => R[role] != null;
   const ref = (role, i = 0) => (Array.isArray(R[role]) ? R[role][Math.min(i, R[role].length - 1)] : R[role]);
@@ -81,40 +86,41 @@ export function head(api, cfg) {
   const hTop = 3.45;
   if (has('housing')) {
     const pts = [[0.33, 1.9], [0.37, 1.9], ...th(0.4, 1.9, capTop - 0.02), [0.4, capTop], [0.5, capTop + 0.04], [0.5, hTop - 0.05], [0.45, hTop], [0.19, hTop], [0.19, hTop - 0.2], [0.33, hTop - 0.26]];
-    add('housing', lat(pts, M.body), { row: 'A' });
+    add('housing', lat(pts, M.body), S_(6));
   }
   const twoThrust = Array.isArray(R.thrust) && R.thrust.length > 1;
   if (has('thrust')) {
-    L.add(ref('thrust', 0), S.bearing(0.3 * D, 0.155 * D, 0.15 * D, 'steel', { thrust: true, axis: 'x', pos: X(hTop - 0.3) }), { row: 'B' });
-    if (twoThrust || cfg.thrustAbove) L.add(ref('thrust', 1), S.bearing(0.3 * D, 0.155 * D, 0.13 * D, 'steel', { thrust: true, axis: 'x', pos: X(hTop + 0.07) }), { row: 'B' });
+    L.add(ref('thrust', 0), S.bearing(0.3 * D, 0.155 * D, 0.15 * D, 'steel', { thrust: true, axis: 'x', pos: X(hTop - 0.3) }), S_(7));
+    if (twoThrust || cfg.thrustAbove) L.add(ref('thrust', 1), S.bearing(0.3 * D, 0.155 * D, 0.13 * D, 'steel', { thrust: true, axis: 'x', pos: X(hTop + 0.07) }), S_(7.1));
   }
-  if (has('hanger')) add('hanger', S.bearing(0.31 * D, 0.155 * D, 0.2 * D, 'steel', { axis: 'x', pos: X(hTop - 0.52) }), { row: 'B' });
-  if (has('ballBearing')) add('ballBearing', S.bearing(0.3 * D, 0.155 * D, 0.16 * D, 'steel', { axis: 'x', pos: X(1.72) }), { row: 'B' });
-  if (has('cushion')) add('cushion', S.spring(0.21 * D, 0.038 * D, 1.0 * D, 6.5, M.spring || 'green', { axis: 'x', pos: X(hTop - 0.62 - 0.5) }), { row: 'B' });
-  if (has('bearingWasher')) add('bearingWasher', S.washer(0.25 * D, 0.155 * D, 0.05 * D, 'steel', { axis: 'x', pos: X(1.58) }), { row: 'B' });
-  if (has('narrowWasher')) add('narrowWasher', S.washer(0.22 * D, 0.155 * D, 0.04 * D, 'steel', { axis: 'x', pos: X(1.53) }), { row: 'B' });
-  if (has('bottomNut')) add('bottomNut', S.nut(0.36 * D, 0.2 * D, cfg.bottomNutMat || 'steel', { axis: 'x', pos: X(1.4) }), { row: 'B' });
+  if (has('hanger')) add('hanger', S.bearing(0.31 * D, 0.155 * D, 0.2 * D, 'steel', { axis: 'x', pos: X(hTop - 0.52) }), S_(5));
+  if (has('ballBearing')) add('ballBearing', S.bearing(0.3 * D, 0.155 * D, 0.16 * D, 'steel', { axis: 'x', pos: X(1.72) }), S_(2));
+  if (has('cushion')) add('cushion', S.spring(0.21 * D, 0.038 * D, 1.0 * D, 6.5, M.spring || 'green', { axis: 'x', pos: X(hTop - 0.62 - 0.5) }), S_(4));
+  if (has('bearingWasher')) add('bearingWasher', S.washer(0.25 * D, 0.155 * D, 0.05 * D, 'steel', { axis: 'x', pos: X(1.58) }), S_(3));
+  if (has('narrowWasher')) add('narrowWasher', S.washer(0.22 * D, 0.155 * D, 0.04 * D, 'steel', { axis: 'x', pos: X(1.53) }), S_(3.2));
+  if (has('bottomNut')) add('bottomNut', S.nut(0.36 * D, 0.2 * D, cfg.bottomNutMat || 'steel', { axis: 'x', pos: X(1.4) }), S_(1));
 
   // Pile de clapets d'arrêt (shut-off valves) et rondelles de réglage sur l'axe.
   let vs = hTop + (twoThrust || cfg.thrustAbove ? 0.17 : 0.03);
   const stack = cfg.stack || ['valveWashers', 'valves', 'valveWashers', 'valves'];
   const seen = {};
   const stackStart = vs;
-  for (const role of stack) {
-    if (!has(role)) continue;
+  stack.forEach((role, k) => {
+    if (!has(role)) return;
     const i = (seen[role] = (seen[role] ?? -1) + 1);
+    const o = { ...S_(8 + k * 0.01), gap: 0.2 };
     if (role === 'valves') {
       const t = 0.2;
-      L.add(ref(role, i), lat([[0.17, vs], [0.38, vs], [0.47, vs + 0.04], [0.47, vs + 0.13], [0.42, vs + t], [0.17, vs + t]], M.valve), { row: 'A', gap: 0.2 });
+      L.add(ref(role, i), lat([[0.17, vs], [0.38, vs], [0.47, vs + 0.04], [0.47, vs + 0.13], [0.42, vs + t], [0.17, vs + t]], M.valve), o);
       vs += t;
     } else if (role === 'taperWashers') {
-      L.add(ref(role, i), lat([[0.17, vs], [0.3, vs], [0.38, vs + 0.08], [0.17, vs + 0.08]], 'steel'), { row: 'A', gap: 0.2 });
+      L.add(ref(role, i), lat([[0.17, vs], [0.3, vs], [0.38, vs + 0.08], [0.17, vs + 0.08]], 'steel'), o);
       vs += 0.08;
     } else {
-      L.add(ref(role, i), S.washer(0.36 * D, 0.17 * D, 0.06 * D, 'steel', { axis: 'x', pos: X(vs + 0.03) }), { row: 'A', gap: 0.2 });
+      L.add(ref(role, i), S.washer(0.36 * D, 0.17 * D, 0.06 * D, 'steel', { axis: 'x', pos: X(vs + 0.03) }), o);
       vs += 0.06;
     }
-  }
+  });
   if (!has('valves')) vs = stackStart + 0.5;
 
   // Axe (spindle) : bas fileté (écrou), haut fileté vissé dans le corps
@@ -124,17 +130,17 @@ export function head(api, cfg) {
     const pts = type === 'discovore'
       ? [[0, 1.25], [0.13, 1.25], ...th(0.155, 1.25, 1.6, 0.05), [0.155, stackStart], [0.24, stackStart], [0.24, vs], [0.42, vs], [0.42, spTop], [0.3, spTop], [0.3, spTop - 0.4], [0, spTop - 0.4]]
       : [[0, 1.25], [0.13, 1.25], ...th(0.155, 1.25, 1.6, 0.05), [0.155, stackStart - 0.02], [0.24, stackStart - 0.02], [0.24, stackStart], [0.155, stackStart], [0.155, vs], ...th(0.16, vs, spTop + 0.4, 0.06, { chamferBottom: false }), [0.12, spTop + 0.42], [0, spTop + 0.42]];
-    add('spindle', lat(pts, 'steel'), { row: 'B' });
+    add('spindle', lat(pts, 'steel'), S_(9));
   }
   // Écrou de blocage en haut de l'axe (laiton chez Excore / OWL).
   let lb0 = spTop;
   if (type === 'discovore') {
-    if (has('topNut')) add('topNut', lat([[0.3, spTop], [0.43, spTop], [0.45, spTop + 0.03], [0.45, spTop + 0.27], [0.42, spTop + 0.3], [0.3, spTop + 0.3]], 'steel'), { row: 'A' });
+    if (has('topNut')) add('topNut', lat([[0.3, spTop], [0.43, spTop], [0.45, spTop + 0.03], [0.45, spTop + 0.27], [0.42, spTop + 0.3], [0.3, spTop + 0.3]], 'steel'), S_(10));
     lb0 = spTop + 0.3;
   } else {
     const nh = 0.24;
-    if (has('nordLock')) { add('nordLock', S.washer(0.3 * D, 0.16 * D, 0.04 * D, 'steel', { axis: 'x', pos: X(vs + 0.02) }), { row: 'A', gap: 0.15 }); }
-    if (has('topNut')) add('topNut', S.nut(0.52 * D, nh * D, cfg.topNutMat || 'brass', { axis: 'x', pos: X(vs + 0.04 + nh / 2 + 0.02) }), { row: 'A' });
+    if (has('nordLock')) { add('nordLock', S.washer(0.3 * D, 0.16 * D, 0.04 * D, 'steel', { axis: 'x', pos: X(vs + 0.02) }), S_(9.5)); }
+    if (has('topNut')) add('topNut', S.nut(0.52 * D, nh * D, cfg.topNutMat || 'brass', { axis: 'x', pos: X(vs + 0.04 + nh / 2 + 0.02) }), S_(10));
     lb0 = vs + 0.32;
   }
 
@@ -239,9 +245,9 @@ export function head(api, cfg) {
       );
       add('retCase', g, { row: 'A' });
     }
-    if (has('assemblyRod')) add('assemblyRod', lat([[0, lw1 - 0.1], [0.1, lw1 - 0.1], [0.1, rc1 - 0.68], [0, rc1 - 0.68]], 'steel'), { row: 'B' });
+    if (has('assemblyRod')) add('assemblyRod', lat([[0, lw1 - 0.1], [0.1, lw1 - 0.1], [0.1, rc1 - 0.68], [0, rc1 - 0.68]], 'steel'), { row: 'C' });
     if (has('assemblyPin')) add('assemblyPin', pinZ(0.05, 0.95, lw1 - 0.02), { follow: ref('latchBody'), extra: [0, 0, 1.6] });
-    if (has('caseSpring')) add('caseSpring', S.spring(0.17 * D, 0.03 * D, 1.0 * D, 7, 'steel', { axis: 'x', pos: X(rc1 - 1.2) }), { row: 'B' });
+    if (has('caseSpring')) add('caseSpring', S.spring(0.17 * D, 0.03 * D, 1.0 * D, 7, 'steel', { axis: 'x', pos: X(rc1 - 1.2) }), { row: 'C' });
     if (has('bolt')) add('bolt', S.bolt(0.12 * D, 0.9 * D, cfg.boltMat || 'safety', { axis: 'x', pos: X(rc1 + 0.06) }), { row: 'C' });
     if (has('bolt2')) add('bolt2', S.bolt(0.12 * D, 0.7 * D, 'safety', { axis: '-x', pos: X(lw1 - 0.15) }), { row: 'C' });
     if (has('wedgeWasher')) add('wedgeWasher', S.washer(0.12 * D, 0.065 * D, 0.04 * D, 'steel', { axis: 'x', pos: X(rc1 + 0.02) }), { row: 'C' });
@@ -267,7 +273,10 @@ export function head(api, cfg) {
     const u0 = up0, u1 = up0 + 3.25;
     const lw0 = u0 + 1.45, lw1 = u0 + 2.95; // fenêtres des cliquets
     const pivot = type === 'lLatch' ? lw1 - 0.15 : lw0 + 0.12;
-    const yo = type === 'owl' ? 0 : 0.17;
+    // Excore : deux goupilles de pivot décalées ; OWL et L-Latch : une seule
+    // goupille traverse les deux cliquets, posés côte à côte (décalés en z).
+    const yo = type === 'excore' ? 0.17 : 0;
+    const zo = type === 'lLatch' ? 0.13 : 0;
     if (has('upperBody')) {
       const wins = [win(UP, 0.62, lw0, lw1), win(DOWN, 0.62, lw0, lw1)];
       if (yo) wins.push(...pinHoles(pivot, yo, 0.055, 0.475), ...pinHoles(pivot, -yo, 0.055, 0.475));
@@ -287,6 +296,7 @@ export function head(api, cfg) {
           : [[-0.12, -0.1], [0.1, -0.14], [1.2, 0.04], [1.36, 0.26], [1.36, 0.6], [1.18, 0.62], [1.04, 0.36], [0.25, 0.16], [-0.12, 0.12]];
         const pts = base.map(([u, v]) => [(pivot + u) * D, s * (yo + v) * D]);
         const latch = S.extrude(s > 0 ? pts : pts.reverse(), 0.26 * D, owl ? 'black' : 'steel');
+        latch.position.z += s * zo * D;
         L.add(ref('latches'), latch, { follow: ref('upperBody'), extra: [0, s * 1.35, 0] });
       }
     }
@@ -324,7 +334,8 @@ export function head(api, cfg) {
       add('retCase', tube(0.52, 0.48, rc0, rc1, wins, M.body), { row: 'A' });
     }
     if (has('casePin')) add('casePin', pinZ(0.075, 1.15, rc1 - 0.3), { follow: ref('retCase'), extra: [0, 0, 1.6] });
-    if (has('casePins')) for (const s of [1, -1]) L.add(ref('casePins'), pinZ(0.045, 0.6, rc0 + 0.95, s * 0.22), { follow: ref('retCase'), extra: [0, s * 0.5, 1.4] });
+    // Goupilles du boîtier : deux (B) ou une seule (N, H) selon la liste.
+    if (has('casePins')) for (const s of (cfg.casePins === 1 ? [0] : [1, -1])) L.add(ref('casePins'), pinZ(0.045, 0.6, rc0 + 0.95, s * 0.22), { follow: ref('retCase'), extra: [0, s * 0.5, 1.4] });
     // Base de lance et lance.
     const b0 = rc1 - 0.55, b1 = rc1 + 0.62;
     anchor.latch = (lw0 + lw1) / 2;
@@ -366,7 +377,7 @@ export const P065 = H('B', 'discovore', {
 }, { ug: true });
 const DO_NU = { retCase: '1', bolt: '2', wedgeWasher: '3', caseSpring: '4', assemblyRod: '5', latchSpring: '6', latches: '7', latchBody: '8', propUpper: '9', propLower: '10', midBody: '11', shoulder: '12', ball: '13', bushing: '14', lowerBody: '15', topNut: '16', spindle: '17', valves: '18', valveWashers: '19', thrust: '20', housing: '21', hanger: '22', cushion: '23', bearingWasher: '24', ballBearing: '25', bottomNut: '26', cap: '27' };
 export const P074 = H('N', 'discovore', DO_NU, { ug: true });
-export const P083 = H('H', 'discovore', DO_NU, { ug: true });
+export const P083 = H('H', 'discovore', { ...DO_NU, thrust: ['20', '20'] }, { ug: true });
 export const P092 = H('P', 'discovore', {
   retCase: '1', bolt: '2', wedgeWasher: '3', caseSpring: '4', assemblyRod: '5', latchSpring: '6', latches: '7', latchBody: '8', midSleeve: '9', propUpper: '10', propLower: '11', midBody: '12', shoulder: '13', ball: ['14', '14'], bushing: '15', lowerBody: '16', topNut: '17', spindle: '18', taperWashers: '19', valves: '20', valveWashers: '21', thrust: ['22', '22'], housing: '23', hanger: '24', cushion: '25', cap: '26', bearingWasher: '27', ballBearing: '28', bottomNut: '29', capGrease: '30', capValve: '31', checkBody: '32', safetyPin: '33', tagHolder: '34', tag: '35', tag2: '36',
 }, { ug: true, bigBall: true, stack: ['valveWashers', 'taperWashers', 'valves', 'taperWashers', 'valves'] });
@@ -376,18 +387,18 @@ export const P010 = H('B', 'excore', {
   spearhead: '1', spearPin: '2', detentSpring: '3', detent: '4', spearBase: '5', retCase: '6', casePin: '7', casePins: '8', hhcs: '9', guide: '10', pistonSpring: '11', piston: '12', upperBody: '13', latches: '14', latchPins: '15', bushing: '16', shoulder: '17', ball: '18', lowerBody: '19', topNut: '20', spindle: '21', valves: '22', valveWashers: '23', thrust: ['26', '24'], housing: '25', cushion: '27', bottomNut: '28', cap: '29', capGrease: '30',
 });
 const EX_N = { spearhead: '1', spearPin: '2', detentSpring: '3', detent: '4', spearBase: '5', retCase: '6', casePin: '7', casePins: '8', spearPin2: '9', hhcs: '10', guide: '11', pistonSpring: '12', piston: '13', upperBody: '14', latches: '15', latchPins: '16', bushing: '17', shoulder: '18', ball: '19', lowerBody: '20', topNut: '21', spindle: '22', valves: '23', valveWashers: '24', thrust: '25', housing: '26', hanger: '27', cushion: '28', bottomNut: '29', cap: '30', capGrease: '31' };
-export const P022 = H('N', 'excore', EX_N);
-export const P039 = H('H', 'excore', { ...EX_N, hanger: undefined, thrust: ['27', '25'] });
+export const P022 = H('N', 'excore', EX_N, { casePins: 1 });
+export const P039 = H('H', 'excore', { ...EX_N, hanger: undefined, thrust: ['27', '25'] }, { casePins: 1 });
 // Excore souterrain : joints de pompage sur le raccord du corps de verrou.
 export const P068 = H('B', 'excore', {
   spearhead: '1', spearPin: '2', detentSpring: '3', detent: '4', spearBase: '5', retCase: '6', casePin: '7', casePins: '8', hhcs: '9', guide: '10', pistonSpring: '11', piston: '12', upperBody: '13', latches: '14', latchPins: '15', lipSeals: '16', coupler: '17', bushing: '18', shoulder: '19', ball: '20', lowerBody: '21', topNut: '22', spindle: '23', valves: '24', valveWashers: '25', thrust: ['26', '26'], housing: '27', cushion: '28', bottomNut: '29', cap: '30', capGrease: '31',
 }, { ug: true });
 export const P077 = H('N', 'excore', {
-  spearhead: '1', spearPin: '2', detentSpring: '3', detent: '4', spearBase: '5', retCase: '6', casePin: '7', casePins: '8', spearPin2: '9', guide: '10', pistonSpring: '11', piston: '12', upperBody: '13', latches: '14', latchPins: '15', lipSeals: '16', coupler: '17', bushing: '18', shoulder: '19', ball: '20', lowerBody: '21', topNut: '22', spindle: '23', valves: '24', valveWashers: '25', thrust: '26', housing: '27', hanger: '28', cushion: '29', bottomNut: '30', cap: '31', capGrease: '32',
-}, { ug: true });
+  spearhead: '1', spearPin: '2', detentSpring: '3', detent: '4', spearBase: '5', retCase: '6', casePin: '7', casePins: '8', hhcs: '9', guide: '10', pistonSpring: '11', piston: '12', upperBody: '13', latches: '14', latchPins: '15', lipSeals: '16', coupler: '17', bushing: '18', shoulder: '19', ball: '20', lowerBody: '21', topNut: '22', spindle: '23', valves: '24', valveWashers: '25', thrust: '26', housing: '27', hanger: '28', cushion: '29', bottomNut: '30', cap: '31', capGrease: '32',
+}, { ug: true, casePins: 1 });
 export const P086 = H('H', 'excore', {
   spearhead: '1', spearPin: '2', detentSpring: '3', detent: '4', spearBase: '5', retCase: '6', casePin: '7', casePins: '8', hhcs: '9', guide: '10', pistonSpring: '11', piston: '12', upperBody: '13', latches: '14', latchPins: '15', lipSeals: '16', coupler: '17', bushing: '18', shoulder: '19', ball: '20', lowerBody: '21', topNut: '22', spindle: '23', valves: '24', valveWashers: '25', thrust: ['26', '26'], housing: '27', hanger: '28', cushion: '29', bottomNut: '30', cap: '31', capGrease: '32',
-}, { ug: true });
+}, { ug: true, casePins: 1 });
 
 // OWL L-Latch.
 const LL_B = { spearhead: '1', detentSpring: '2', detent: '3', spearPin: '4', spearBase: '5', retCase: '6', casePins: '7', hexBolt: '8', latchWasher: '9', latchSpring: '10', links: '11', latches: '12', upperBody: '13', latchPins: '14', shoulder: '15', bushing: '16', ball: '17', lowerBody: '18', topNut: '19', spindle: '20', valves: '21', valveWashers: '22', thrust: '23', housing: '24', cushion: '25', bottomNut: '26', cap: '27', capGrease: '28', capBall: '29', checkBody: '30' };
@@ -400,7 +411,8 @@ export const P053 = H('P', 'lLatch', {
 }, { thrustAbove: true, stack: ['valveWashers', 'valves', 'taperWashers', 'valveWashers', 'valves'] });
 const LL_UG = { spearhead: '1', detentSpring: '2', detent: '3', spearPin: '4', spearBase: '5', casePins: '6', retCase: '7', hexBolt: '8', casePin: '9', latchWasher: '10', latchSpring: '11', latchPins: '12', links: '13', latches: '14', upperBody: '15', pistonValve: '16', indBushing: '17', adaptor: '18', lipSeals: '19', sealSeat: '20', shoulder: '21', lowerBody: '22', topNut: '23', spindle: '24', valves: '25', valveWashers: '26', thrust: ['27', '27'], housing: '28', cushion: '29', bottomNut: '30', cap: '31', capGrease: '32', capBall: '33', checkBody: '34' };
 export const P072 = H('B', 'lLatch', LL_UG, { ug: true });
-export const P081 = H('N', 'lLatch', { ...LL_UG, thrust: undefined, hanger: '27' }, { ug: true });
+// P081 : roulement de suspension 27 deux fois, au-dessus et au-dessous du boîtier 28.
+export const P081 = H('N', 'lLatch', { ...LL_UG, thrust: '27', hanger: '27' }, { ug: true });
 export const P090 = H('H', 'lLatch', { ...LL_UG, hanger: '29', cushion: '30', bottomNut: '31', cap: '32', capGrease: '33', capBall: '34', checkBody: '35' }, { ug: true });
 
 // OWL standard.

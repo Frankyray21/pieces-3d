@@ -1102,6 +1102,7 @@ def build(path):
             "note": "Table des matières du catalogue : chaque ligne ouvre la page de l'assemblage ou de la liste. "
                     "La 3D présente un exemplaire de chaque famille (taille N ou NU) ; les autres tailles ont leur propre 3D.",
             "parts": toc}
+    apply_drawn(assemblies)
     assemblies = {"P002": root, **assemblies}
     titles["P002"] = TITLES["P002"]
     sheet_titles = {sid(n): titles.get(sid(n), "") for n in range(1, 109)}
@@ -1129,6 +1130,42 @@ def build(path):
         "assemblies": assemblies,
         "documents": documents,
     }
+
+
+# ------------------------------------------------------------------ liste ↔ dessin
+
+# Écarts entre la liste et le dessin du catalogue, par page : (repère, n-ième
+# ligne de ce repère, ajouts). La 3D suit le dessin : qty3d donne le nombre de
+# pièces dessinées, la note signale l'écart ; same rattache une ligne en double
+# à la pièce qu'elle désigne.
+DRAWN = {
+    "P079": [("17", 2, {"same": "16"}), ("18", 2, {"same": "17"})],
+    "P086": [("13", 1, {"qty3d": 1}), ("23", 1, {"qty3d": 1}), ("25", 1, {"qty3d": 2})],
+    "P097": [("2", 1, {"qty3d": 1}), ("3", 1, {"qty3d": 2}), ("4", 1, {"qty3d": 3, "note": "Jeu de 3 garnitures, dessinées séparément."}),
+             ("5", 1, {"qty3d": 1}), ("6", 1, {"qty3d": 2})],
+    "P105": [("13", 1, {"qty3d": 2, "note": "Le dessin en montre deux (un sous la rondelle 12, un sur l'arbre 18) ; "
+                                           "la trousse de pièces de rechange en compte aussi deux."})],
+}
+
+
+def apply_drawn(assemblies):
+    for key, fixes in DRAWN.items():
+        parts = assemblies[key]["parts"]
+        for ref, nth, add in fixes:
+            hits = [r for r in parts if str(r[0]) == ref]
+            if len(hits) < nth:
+                raise SystemExit(f"{key} : ligne {ref} n° {nth} introuvable")
+            row = hits[nth - 1]
+            if len(row) < 5:
+                row.append({})
+            ex = row[4]
+            ex.update({k: v for k, v in add.items() if k != "note"})
+            note = add.get("note")
+            if "qty3d" in add and not note:
+                n, q = add["qty3d"], row[2]
+                note = f"La liste indique {q}, le dessin du catalogue en montre {n}."
+            if note:
+                ex["note"] = f"{ex['note']} {note}" if ex.get("note") else note
 
 
 # ------------------------------------------------------------------ pages en images

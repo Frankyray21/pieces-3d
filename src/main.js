@@ -526,7 +526,7 @@ function renderRows() {
     return `<tr data-key="${esc(key)}" data-key3d="${esc(keyOf(path3d(path)))}" class="${sub ? 'sub-row' : ''} ${depth ? 'nested' : ''} ${key === selKey ? 'sel' : ''}">
       <td class="c-ref" style="--d:${depth}">${tog}<span class="refb ${r.link ? 'link' : ''}">${refTxt}</span></td>
       <td class="c-pn">${pn}${ico}</td>
-      <td class="c-qty">${r.qty ?? '—'}</td>
+      <td class="c-qty">${r.qty ?? '—'}${r.qty3d != null && r.qty3d !== r.qty ? `<span class="q3d" title="Le dessin du ${S.eq.docWord} en montre ${r.qty3d}">${r.qty3d} en 3D</span>` : ''}</td>
       <td class="c-desc">${esc(r.desc)}${r.link ? ` <button type="button" class="linkchip" data-go="${r.link}" title="Ouvrir la page ${r.link}">${badge(S.eq.assemblies.get(r.link)?.sheet || S.eq.documents.get(r.link)?.sheets[0] || r.link)} ›</button>` : ''}</td>
     </tr>`;
   }).join('') || '<tr><td colspan="4" style="padding:18px 14px;color:var(--muted)">Aucune ligne ne correspond au filtre.</td></tr>';
@@ -600,7 +600,7 @@ function renderDetail() {
     <div class="row1">
       <span class="ref ${long ? 'long' : ''}">${esc(refLabel(row))}</span>
       <div style="min-width:0"><h3>${esc(row.desc)}</h3>
-        <div class="meta">${row.qty != null ? `Qté au ${eq.docWord} : ${row.qty}` : 'Qté non indiquée'} · ${eq.docWord === 'catalogue' ? sheetLabel(eq, row.source.sheet) : `feuille ${row.source.sheet}`}${ids ? ` · ${ids}` : ''}</div></div>
+        <div class="meta">${row.qty != null ? `Qté au ${eq.docWord} : ${row.qty}${row.qty3d != null && row.qty3d !== row.qty ? ` (${row.qty3d} dessiné${row.qty3d > 1 ? 's' : ''})` : ''}` : 'Qté non indiquée'} · ${eq.docWord === 'catalogue' ? sheetLabel(eq, row.source.sheet) : `feuille ${row.source.sheet}`}${ids ? ` · ${ids}` : ''}</div></div>
       <button type="button" class="close" id="d-close" aria-label="Fermer la fiche">×</button>
     </div>
     ${trail}

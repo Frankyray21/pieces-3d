@@ -61,7 +61,14 @@ for (const [id, asm] of Object.entries(data.assemblies)) {
   }
   if (!model) { console.log(`✕ ${id} : aucun builder`); failed = true; continue; }
   const missing = [];
-  const rows = asm.parts.map(([ref, , qty, desc, extra = {}]) => ({ ref: String(ref), qty, desc, ...extra }));
+  // Repère répété dans la liste : la ligne désigne la pièce de la première (comme src/data/equipment.js).
+  const seenRef = new Set();
+  const rows = asm.parts.map(([ref, , qty, desc, extra = {}]) => {
+    const r = { ref: String(ref), qty, desc, ...extra };
+    if (seenRef.has(r.ref)) r.same = r.same || r.ref;
+    seenRef.add(r.ref);
+    return r;
+  });
   const known = new Set(rows.map((r) => r.ref));
   // Ensemble (groupe explicite ou plage « 1-5 », « B,2-14 ») : au moins une de ses pièces en 3D.
   const members = (r) => {
