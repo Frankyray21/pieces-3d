@@ -6,11 +6,12 @@ import { P416 } from './reardeck.js';
 import { P164, P156 } from './slide.js';
 import { P028 } from './feed.js';
 import { P010, P012, P020 } from './machine.js';
+import { P022 } from './decals.js';
 
 // Sandvik DU311 s/n 10703. Machine complète (P010) modélisée : porteur sur
 // roues (P208), pont arrière (P416), glissière (P164), MCP (P156), avance 6 pi
 // à carrousel (P028) avec la tête de rotation (P050), extinction d'incendie
-// (P012) et finition (P020) ; repère commun dans layout.js.
+// (P012), finition (P020) et autocollants ISO (P022) ; repère commun dans layout.js.
 // Les assemblages identiques au DU311-TVK (même numéro, même liste) reprennent
 // ses modèles 3D ; les autres s'affichent avec les dessins du manuel.
 //   P052 = TK P140 : émerillon à air CM16303
@@ -43,4 +44,5 @@ export default {
   P010,
   P012,
   P020,
+  P022,
 };

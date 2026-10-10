@@ -8,6 +8,7 @@
 import { M, WHEEL, wheel, body, flex } from './layout.js';
 import { SLIDE, MCP } from './slide.js';
 import { FEED } from './feed.js';
+import { decal as isoDecal } from './decals.js';
 
 // Position de l'avance : barres de guidage du cadre du carrousel dans les
 // patins du MCP, cadre centré sur l'actionneur rotatif, pied du mât à 0,3 m.
@@ -136,22 +137,15 @@ export function P012(api) {
 export function P020(api) {
   const { box, cyl, tube, torus, at, group } = api.S;
   const P = (ref, obj, e) => api.part(ref, obj, e);
-  const E = M.engine, C = M.cab;
+  const C = M.cab;
   const F = feedToMachine;
-  const decal = (w, h, mat, pos, axis = 'z') => at(axis === 'z' ? box(w, h, 0.003, mat) : box(0.003, h, w, mat), pos);
 
-  // 1 — danger poussière, 2 — danger émissions diesel (85 x 140 mm, côté droit du capot moteur)
-  P('1', decal(0.085, 0.14, 'safety', [-1.45, 1.6, 0.982]), [0, 0, 0.3]);
-  P('2', decal(0.085, 0.14, 'safety', [-1.6, 1.6, 0.982]), [0, 0, 0.3]);
-  // 9 — trousse d'autocollants ISO : logos et « DU311 » sur les capots, pictogrammes
-  P('9', group(
-    decal(0.5, 0.1, 'white', [(E.x0 + E.x1) / 2, 1.82, 0.982]),
-    decal(0.5, 0.1, 'white', [(E.x0 + E.x1) / 2, 1.82, -0.982]),
-    decal(0.32, 0.08, 'black', [-3.2 - 0.8, 1.85, 0.962]),
-    decal(0.32, 0.08, 'black', [-3.2 - 0.8, 1.85, -0.962]),
-    ...[[-2.4, 1.5], [-2.0, 1.5]].map(([x, y]) => decal(0.08, 0.08, 'safety', [x, y, -0.982])),
-    body('front', decal(0.08, 0.08, 'safety', [M.nose - 0.25, 0.75, M.frameZ + 0.017])),
-  ), [0, 0, 0.4]);
+  // 1 — danger poussière, 2 — danger émissions diesel (85 x 140 mm, bilingues, côté droit
+  // du capot moteur) : bandeau rouge « DANGER », pictogramme, texte
+  P('1', at(isoDecal(api.S, 'D', 'air', 0.085, 0.14), [-1.45, 1.6, 0.9805]), [0, 0, 0.3]);
+  P('2', at(isoDecal(api.S, 'D', 'flame', 0.085, 0.14), [-1.6, 1.6, 0.9805]), [0, 0, 0.3]);
+  // 9 — trousse d'autocollants ISO (P022) : pictogrammes posés sur la machine
+  P('9', api.sub('P022'), [0, 0, 0]);
   // 10 — autocollant des commandes de conduite (pupitre de la cabine)
   P('10', at(box(0.12, 0.003, 0.18, 'white'), [-0.3, M.frameTop + 0.752, 0.45]), [0, 0.3, 0]);
   // 4 — boutons en plastique (verrous des portes du capot moteur)

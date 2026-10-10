@@ -4,6 +4,7 @@
 // stabilisateurs arrière) et équipements du pont avant, en formes simplifiées
 // placées d'après les vues des pages 208, 210 et 212. Repère : voir layout.js.
 import { WHEEL, AXLE, M, wheel, body, ram, flex } from './layout.js';
+import { workLight, beacon, roundLamp, mirror, grabRail, tape } from './lights.js';
 
 export function P208(api) {
   const { box, cyl, ring, tube, gauge, fitting, filterCanister, valveBank, enclosure, extrude, hydCylinder, at, group } = api.S;
@@ -58,6 +59,9 @@ export function P208(api) {
       at(cyl(0.05, 0.05, 'black'), [0.4, FT + 0.575, 0.25]),
       at(cyl(0.025, 0.08, 'darkSteel'), [0.52, FT + 0.59, -0.3]),
       at(box(0.01, 0.16, 0.04, 'glass'), [0.645, FT + 0.3, 0.3]),
+      // phares de translation sur le rebord avant des garde-boue, bandes réfléchissantes sur les jupes
+      ...[1, -1].map((s) => at(roundLamp(api.S), [2.295, 1.13, s * 0.88])),
+      ...[1, -1].map((s) => at(tape(api.S, 1.1, 0.04), [1.65, 1.15, s * 1.0405], [0, s > 0 ? 0 : Math.PI, 0])),
     )),
     // châssis arrière
     ...[1, -1].map((s) => sidePlate(rearSide, [[-2.15, 0.7, 0.08], [-1.0, 0.7, 0.08]], s * FZ)),
@@ -80,6 +84,13 @@ export function P208(api) {
     at(box(0.08, 0.5, 0.45, 'black', { r: 0.02 }), [-0.93, FT + 0.75, 0.45]),
     at(box(0.22, 0.3, 0.6, 'charcoal', { r: 0.02 }), [-0.3, FT + 0.6, 0.45]),
     at(api.S.torus(0.14, 0.012, 'black'), [-0.36, FT + 0.8, 0.45], [0, 0, 0.5]),
+    // projecteurs à DEL et gyrophare sur le toit, rétroviseurs, main courante d'accès
+    ...[C.z0 + 0.12, C.z1 - 0.12].map((z) => at(workLight(api.S), [C.x1 - 0.02, C.top + 0.09, z])),
+    at(workLight(api.S), [C.x0 - 0.03, C.top + 0.11, (C.z0 + C.z1) / 2], [0, Math.PI, 0]),
+    at(beacon(api.S), [-0.75, C.top + 0.033, (C.z0 + C.z1) / 2]),
+    at(mirror(api.S, 1), [C.x1 - 0.025, 1.95, C.z1]),
+    at(mirror(api.S, -1), [C.x1 - 0.025, 1.95, C.z0]),
+    grabRail(api.S, [C.x0 + 0.03, FT + 0.15, C.z1 + 0.06], [C.x0 + 0.03, FT + 0.9, C.z1 + 0.06], [0, 0, -0.06]),
     // capot du moteur diesel : soubassement entre les roues, caisson, préfiltre, persiennes
     at(box(E.x1 - E.x0, 0.25, 1.24, 'lightGrey'), [(E.x0 + E.x1) / 2, FT + 0.1, 0]),
     at(box(E.x1 - E.x0, E.top - 1.2, 1.96, 'lightGrey', { r: 0.04 }), [(E.x0 + E.x1) / 2, (E.top + 1.2) / 2, 0]),

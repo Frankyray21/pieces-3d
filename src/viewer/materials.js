@@ -27,6 +27,8 @@ const defs = {
   copper: { color: 0xc17a42, metalness: 1.0, roughness: 0.32 },
   glass: { color: 0xdbeeff, metalness: 0.0, roughness: 0.04, transparent: true, opacity: 0.28, depthWrite: false, clearcoat: 1 },
   lamp: { color: 0xfff6d0, emissive: 0xffe9a0, emissiveIntensity: 0.7, roughness: 0.3 },
+  lampAmber: { color: 0xffa21a, emissive: 0xff8400, emissiveIntensity: 0.55, roughness: 0.22, transparent: true, opacity: 0.88 },
+  lampRed: { color: 0xc8141c, emissive: 0x9a0008, emissiveIntensity: 0.5, roughness: 0.22 },
 };
 
 const cache = new Map();

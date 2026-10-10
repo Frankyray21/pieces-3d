@@ -5,6 +5,7 @@
 // Formes simplifiées d'après les vues des pages 416 et 420 ; repère machine
 // (voir layout.js), le pont prolonge le capot moteur vers l'arrière.
 import { M, body } from './layout.js';
+import { workLight, tailLamp, chevrons } from './lights.js';
 
 const X0 = M.rear, X1 = M.engine.x0; // -4.4 → -2.75
 const HOOD = { x0: X0 + 0.02, x1: -3.6, top: 1.95 };
@@ -37,6 +38,13 @@ export function P416(api) {
       ...[-0.45, -0.8].map((z) => at(box(0.04, 0.55, 0.04, 'lightGrey'), [X0 - 0.08, 0.6, z])),
       ...[0.4, 0.62].map((y) => at(box(0.12, 0.03, 0.4, 'safety'), [X0 - 0.1, y, -0.625])),
     ),
+    // zébras sur la face du pare-chocs, feux arrière (stop et recul) et projecteurs de travail arrière
+    at(chevrons(api.S, 2 * FZ + 0.14, 0.06), [X0 - 0.1005, FT - 0.08, 0], [0, -Math.PI / 2, 0]),
+    ...[1, -1].flatMap((s) => [
+      at(tailLamp(api.S), [HOOD.x0 - 0.02, FT + 0.1, s * 0.8], [0, Math.PI, 0]),
+      at(tailLamp(api.S, 'lamp'), [HOOD.x0 - 0.02, FT + 0.1, s * 0.62], [0, Math.PI, 0]),
+      at(workLight(api.S), [HOOD.x0 - 0.04, HOOD.top - 0.08, s * 0.78], [0, Math.PI, 0]),
+    ]),
   ), [0, -0.35, 0]);
   P('7', group(
     at(box(hl, 0.03, 1.92, 'lightGrey', { r: 0.012 }), [hx, HOOD.top - 0.015, 0]),

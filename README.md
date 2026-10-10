@@ -36,9 +36,13 @@ pièces (numéro, quantité, page du manuel).
   rotatif, réservoir d'air), le MCP (P156 : plaque de liaison et vérin
   d'extension), l'avance 6 pi à carrousel de 17 tiges (P028 : mât, plaque
   porte-tête, vérins stinger, centreur, cadre du carrousel, bras de
-  serrage, boyaux), l'extinction d'incendie (P012) et la finition (P020), en
-  formes simplifiées aux dimensions estimées sur les vues du manuel (repère
-  commun dans `src/models/du311-std/layout.js`). La tête de rotation RH6230
+  serrage, boyaux), l'extinction d'incendie (P012), la finition (P020) et la
+  trousse d'autocollants ISO (P022 : 37 pictogrammes d'avertissement,
+  d'obligation, d'interdiction et d'information dessinés en géométrie et posés
+  près de l'organe concerné), en formes simplifiées aux dimensions estimées
+  sur les vues du manuel (repère commun dans `src/models/du311-std/layout.js`),
+  avec projecteurs à DEL, gyrophare, feux, rétroviseurs, main courante, zébras
+  et bandes réfléchissantes (`lights.js`), toujours sans ombres. La tête de rotation RH6230
   ME12-SS #24 (P050, même construction que celle du TVK avec moteurs ME12),
   son émerillon d'air (P052) et sa boîte d'engrenages (P054) sont repris du
   TVK (même numéro, même liste ; voir `src/models/reuse.js`). Le PDF
