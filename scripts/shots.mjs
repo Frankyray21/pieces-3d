@@ -40,6 +40,8 @@ page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
 const settle = (ms) => page.waitForTimeout(ms);
 const ready = () => page.waitForFunction(() => document.querySelector('#loading')?.hidden !== false, null, { timeout: 120000 });
 const pressed = (sel) => page.$eval(sel, (b) => b.getAttribute('aria-pressed') === 'true');
+// Page d'accueil (view.home) : ni éclatement ni coupe, leurs boutons sont masqués.
+const shown = (sel) => page.isVisible(sel);
 
 await page.goto(`${base}/#${eq}.${ids[0]}`, { waitUntil: 'networkidle' });
 const shots = [];
@@ -51,7 +53,8 @@ for (const id of ids) {
   // Bulles de repères toujours affichées, coupe éteinte, assemblé.
   if (!(await pressed('#btn-labels'))) await page.click('#btn-labels');
   if (await pressed('#btn-section')) await page.click('#btn-section');
-  await page.click('#btn-assemble');
+  const home = !(await shown('#btn-explode'));
+  if (!home) await page.click('#btn-assemble');
   await settle(1200);
   const grab = async (v) => {
     const file = join(out, `${id}-${v}.png`);
@@ -59,8 +62,9 @@ for (const id of ids) {
     shots.push({ id, v, file });
   };
   if (views.includes('a')) await grab('a');
-  if (views.includes('e')) { await page.click('#btn-explode'); await settle(1800); await grab('e'); await page.click('#btn-assemble'); await settle(1200); }
-  if (views.includes('s')) { await page.click('#btn-section'); await settle(1200); await grab('s'); await page.click('#btn-section'); }
+  if (home) console.log(`– ${id} : page d'accueil, vue assemblée seulement`);
+  else if (views.includes('e')) { await page.click('#btn-explode'); await settle(1800); await grab('e'); await page.click('#btn-assemble'); await settle(1200); }
+  if (!home && views.includes('s')) { await page.click('#btn-section'); await settle(1200); await grab('s'); await page.click('#btn-section'); }
   console.log(`✓ ${id}`);
 }
 

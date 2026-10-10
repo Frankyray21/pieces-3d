@@ -15,6 +15,11 @@ const MODELS = { 'cubex-mri-5200': cubexModels, du311: du311Models, 'du311-std':
 // allégée en Artifact y renvoie pour les pages qu'elle n'inclut pas.
 const SITE = 'https://frankyray21.github.io/pieces-3d/';
 
+// Page d'accueil 3D : consigne affichée sous la scène.
+const HOME_HINT = "Clic : ouvrir la page de l'outil · glisser : tourner · clic droit : déplacer";
+// Disposition en hauteur d'une page d'accueil quand la scène est plus haute que large d'au moins ce rapport.
+const PORTRAIT_RATIO = 1.2;
+
 const $ = (sel) => document.querySelector(sel);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const narrow = () => window.matchMedia('(max-width: 900px)').matches;
@@ -99,6 +104,12 @@ function go(token) {
   const h = `#${hashFor(token)}`;
   if (location.hash === h) route();
   else location.hash = h;
+}
+
+/** Suit un lien vers une page (sur téléphone, on passe à la vue 3D ou au dessin). */
+function follow(token) {
+  if ((S.eq?.assemblies.has(token) || S.eq?.documents.has(token)) && narrow()) setPane('stage');
+  go(token);
 }
 
 // ------------------------------------------------------------------ chemins dans l'arbre des pièces
@@ -190,7 +201,7 @@ function pnHtml(r, big = false) {
 }
 
 function isGroupPath(path) {
-  if (!is3d()) return false;
+  if (!is3d() || S.view.home) return false;
   const row = rowAt(path);
   return !!row?.link && viewer.isGroup(path3d(path));
 }
@@ -203,6 +214,8 @@ function ensureViewer() {
     onHover: (path) => markRow(path, 'hov'),
     onSelect: (path, { double }) => {
       if (!path) { select(null); return; }
+      // Page d'accueil : chaque outil ouvre sa page (pas de vue éclatée).
+      if (S.view.home) { openLinked(path); return; }
       if (double && isGroupPath(path)) { toggleGroup(path); return; }
       select(path, { from3d: true });
     },
@@ -218,13 +231,39 @@ function is3d() {
   return !!viewer && isAsmView() && S.view.is3d;
 }
 
-async function openAssembly(id, { select: selPath = null } = {}) {
+/** Page d'accueil (view.home) : l'objet cliqué ouvre la page liée de sa ligne. */
+function openLinked(path) {
+  const row = rowAt(path.slice(0, 1));
+  if (row?.link) follow(row.link);
+  else select(path.slice(0, 1), { from3d: true });
+}
+
+/** Scène plus haute que large (téléphone tenu droit) : disposition en hauteur des pages qui s'y prêtent. */
+function portraitStage() {
+  const st = $('#stage');
+  const w = st.clientWidth || window.innerWidth, h = st.clientHeight || window.innerHeight;
+  return h > w * PORTRAIT_RATIO;
+}
+
+let baseHint = null;
+
+/** Page d'accueil dans une petite scène (téléphone) : le cartouche cacherait des outils, il est masqué. */
+function fitHomeChrome() {
+  if (!is3d()) return;
+  const st = $('#stage');
+  $('#titleblock').hidden = !!S.view.home && (st.clientWidth < 640 || st.clientHeight < 520);
+}
+
+async function openAssembly(id, { select: selPath = null, rebuild = false } = {}) {
   const eq = S.eq;
   const asm = eq.assemblies.get(id);
-  const same = isAsmView() && S.view.id === id;
+  const prev = S.view;
+  const same = !rebuild && isAsmView() && prev.id === id;
   const builders = MODELS[eq.id] || {};
-  const has3d = !!builders[id];
-  S.view = { type: 'assembly', id, is3d: has3d };
+  const builder = builders[id];
+  const has3d = !!builder;
+  // home : connu une fois le modèle construit (view.home) ; portrait : null si le builder ne s'adapte pas.
+  S.view = { type: 'assembly', id, is3d: has3d, home: same && !!prev.home, portrait: same ? prev.portrait : (builder?.responsive ? portraitStage() : null) };
   S.filter = '';
   $('#docview').hidden = has3d;
   $('#viewport').hidden = !has3d;
@@ -242,20 +281,26 @@ async function openAssembly(id, { select: selPath = null } = {}) {
     const v = ensureViewer();
     $('#loading').hidden = false;
     await new Promise((r) => requestAnimationFrame(() => setTimeout(r, 0)));
-    const model = buildProcedural(builders, id);
+    const model = buildProcedural(builders, id, S.view.portrait != null ? { portrait: S.view.portrait } : {});
     $('#loading').hidden = true;
     if (model) {
+      S.view.home = !!model.view.home;
       v.setModel(model);
-      v.setIsolate(S.isolate);
+      v.setIsolate(S.isolate && !S.view.home);
       S.section.axis = model.view.section?.axis || 'z';
       S.section.pos = model.view.section?.pos ?? 0.5;
-      if (S.explode > 0) {
+      if (S.explode > 0 && !S.view.home) {
         v.setExplode(S.explode);
         v.frame();
       }
     }
     renderSectionBar();
   }
+  // Page d'accueil : barre d'outils sans éclatement, consigne adaptée.
+  $('#tools').classList.toggle('home', !!S.view.home);
+  fitHomeChrome();
+  baseHint ??= $('#hint').textContent;
+  $('#hint').textContent = S.view.home ? HOME_HINT : baseHint;
   renderRail();
   renderCrumbs();
   renderTitleblock(asm);
@@ -536,6 +581,8 @@ function renderRows() {
     const item = byKey.get(tr.dataset.key);
     tr.addEventListener('click', (e) => {
       if (e.target.closest('[data-tog], [data-go]')) return;
+      // Page d'accueil (table des matières) : la ligne ouvre sa page.
+      if (S.view.home && item.r.link) { follow(item.r.link); return; }
       select(item.path, { focus: true });
     });
     tr.addEventListener('dblclick', (e) => {
@@ -783,9 +830,7 @@ function bindChrome() {
     const g = e.target.closest('[data-go]');
     if (g) {
       e.preventDefault();
-      const t = g.dataset.go;
-      if ((S.eq?.assemblies.has(t) || S.eq?.documents.has(t)) && narrow()) setPane('stage');
-      go(t);
+      follow(g.dataset.go);
       return;
     }
     const h = e.target.closest('[data-hash]');
@@ -830,6 +875,16 @@ function bindChrome() {
     if (S.isolate && !S.selected) toast('Sélectionnez une pièce : les autres seront estompées.');
   });
   $('#btn-frame').addEventListener('click', () => viewer?.frame());
+  // Page d'accueil adaptée à l'écran : autre disposition quand la scène passe
+  // de large à haute (rotation du téléphone, fenêtre redimensionnée).
+  let relayout;
+  window.addEventListener('resize', () => {
+    clearTimeout(relayout);
+    relayout = setTimeout(() => {
+      if (is3d() && S.view.portrait != null && S.view.portrait !== portraitStage()) openAssembly(S.view.id, { rebuild: true });
+      else fitHomeChrome();
+    }, 250);
+  });
   $('#btn-page').addEventListener('click', () => { if (isAsmView()) openPage(S.view.id); });
 
   // Vue en coupe

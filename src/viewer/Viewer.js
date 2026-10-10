@@ -773,20 +773,24 @@ export class Viewer {
         const el = document.createElement('button');
         el.type = 'button';
         const long = ref.length > 6;
-        el.className = `balloon lvl-${Math.min(depth, 3)}${ref.length > 2 && !long ? ' wide' : ''}`;
-        el.textContent = long ? '▸' : ref;
-        el.title = long ? `Groupe ${ref}` : `Repère ${ref}`;
+        // Légende en clair (page d'accueil) : nom de l'objet, posée sous lui.
+        const cap = obj.userData.caption;
+        el.className = cap ? 'balloon caption' : `balloon lvl-${Math.min(depth, 3)}${ref.length > 2 && !long ? ' wide' : ''}`;
+        el.textContent = cap || (long ? '▸' : ref);
+        el.title = cap || (long ? `Groupe ${ref}` : `Repère ${ref}`);
         el.addEventListener('pointerdown', (e) => e.stopPropagation());
         el.addEventListener('click', (e) => { e.stopPropagation(); this.onSelect(path, { double: false }); });
         el.addEventListener('dblclick', (e) => { e.stopPropagation(); this.onSelect(path, { double: true }); });
         el.addEventListener('mouseenter', () => { this.setHover(path); this.onHover(path); });
         el.addEventListener('mouseleave', () => { this.setHover(null); this.onHover(null); });
         const label = new CSS2DObject(el);
-        const c = new THREE.Box3().setFromObject(obj).getCenter(new THREE.Vector3());
+        const box = new THREE.Box3().setFromObject(obj);
+        const c = box.getCenter(new THREE.Vector3());
+        if (cap) c.y = box.min.y;
         obj.worldToLocal(c);
         label.position.copy(c);
         obj.add(label);
-        this.labels.push({ key, owner: node, label, culled: false });
+        this.labels.push({ key, owner: node, label, culled: false, caption: !!cap });
       }
     };
     make(this.model.root, [], 0);
@@ -796,9 +800,10 @@ export class Viewer {
 
   /**
    * Bulles masquées (à l'arrêt de la caméra) : pièce cachée derrière une autre
-   * (axe dans son boîtier en vue assemblée), ou second exemplaire d'un repère
-   * trop proche du premier à l'écran. Rien n'est masqué en coupe ; la bulle de
-   * la pièce sélectionnée reste toujours affichée.
+   * (axe dans son boîtier en vue assemblée), second exemplaire d'un repère
+   * trop proche du premier à l'écran, ou légende qui en chevauche une autre.
+   * Rien n'est masqué en coupe ; la bulle de la pièce sélectionnée reste
+   * toujours affichée.
    */
   _cullLabels() {
     this._cullDirty = false;
@@ -812,6 +817,7 @@ export class Viewer {
     const p = new THREE.Vector3(), dir = new THREE.Vector3();
     const { clientWidth: w, clientHeight: h } = this.renderer.domElement;
     const shown = new Map(); // repère → positions à l'écran des bulles déjà gardées
+    const captions = []; // rectangles à l'écran des légendes déjà gardées
     const t0 = performance.now();
     let changed = false;
     for (const l of this.labels) {
@@ -837,6 +843,20 @@ export class Viewer {
           const near = (shown.get(l.key) || []).some(([a, b]) => Math.hypot(a - x, b - y) < 30);
           if (near) culled = true;
           else shown.set(l.key, [...(shown.get(l.key) || []), [x, y]]);
+        }
+        if (!culled && l.caption) {
+          // Légende qui chevaucherait une légende déjà gardée (petite scène) :
+          // masquée, l'objet reste cliquable. Taille gardée en mémoire, car une
+          // légende masquée n'a plus de dimensions.
+          const el = l.label.element;
+          if (el.offsetWidth) l.size = [el.offsetWidth, el.offsetHeight];
+          if (l.size) {
+            const s = p.clone().project(this.camera);
+            const x = (s.x + 1) * w / 2, y = (1 - s.y) * h / 2;
+            const r = [x - l.size[0] / 2, y - l.size[1] / 2, x + l.size[0] / 2, y + l.size[1] / 2];
+            if (captions.some((o) => r[0] < o[2] && o[0] < r[2] && r[1] < o[3] && o[1] < r[3])) culled = true;
+            else captions.push(r);
+          }
         }
       }
       if (culled !== l.culled) { l.culled = culled; changed = true; }
@@ -1120,6 +1140,9 @@ export class Viewer {
     const h = this.container.clientHeight || 1;
     this.renderer.setSize(w, h);
     this.labelRenderer.setSize(w, h);
+    // Très petite scène (téléphone à l'horizontale entre les deux panneaux) : légendes compactes.
+    this.labelRenderer.domElement.classList.toggle('compact', w < 360 || h < 400);
+    this._cullDirty = true;
     this.camera.aspect = w / h;
     this.camera.updateProjectionMatrix();
     this.invalidate();

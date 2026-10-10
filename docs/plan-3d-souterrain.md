@@ -10,8 +10,9 @@ Fait (branche `claude/trusting-newton-c9h4qp`) :
 - **Étape 3 — têtes DiscovOre** (#11 à #14) : cliquets coudés, ressort, corps de verrou allongé, écrou-barillet et boulon sous l'épaulement, second jeu (BU, NU, HU), joints de propulsion, chapeau taraudé à fentes inclinées.
 - **Étape 4 — overshots** (#17, #18, #38, en partie #39) : tête Excore II octogonale, clapet Excore II (siège long, gros écrou, chapeau percé), nez conique Arrow 3S, cliquets à trou de pivot.
 - **Étape 5 — rendu et accueil** (#21 à #24, #52, en partie #30) : acier bruni et bronze à canon, coupe éclaircie à hachures alternées, présentoir et table des matières souterrains en tête, vignette, 48TT (boîtier d'extracteur visible, longueurs réduites), ressorts allégés.
+- **Page d'accueil** (en partie #28) : P002 est une page d'accueil (`view.home`) : légendes en clair sous chaque outil (`api.part(…, { caption })`), un clic ou un toucher ouvre la page de l'outil, pas d'éclatement ni de coupe ; disposition en hauteur sur téléphone (`P002.responsive`, option `{ portrait }`), cartouche masqué et légendes compactes ou masquées quand la scène est petite.
 
-Reste à faire : lot 2 sauf les points ci-dessus (pieds pointillés, rangée A sur plusieurs lignes, cadrage, légendes du présentoir, filets fins, pièces partagées en mm, lances et cliquets L-Latch, clapet et émerillon de câble Arrow, tailles H/PU des overshots, presse-étoupes, émerillons Pro et AWJ, P105, P096, P094) et le lot 3.
+Reste à faire : lot 2 sauf les points ci-dessus (pieds pointillés, rangée A sur plusieurs lignes, cadrage, échelle du présentoir, filets fins, pièces partagées en mm, lances et cliquets L-Latch, clapet et émerillon de câble Arrow, tailles H/PU des overshots, presse-étoupes, émerillons Pro et AWJ, P105, P096, P094) et le lot 3.
 
 ## 0. Périmètre
 

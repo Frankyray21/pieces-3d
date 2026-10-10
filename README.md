@@ -57,7 +57,10 @@ pièces (numéro, quantité, page du manuel).
   souterrains (pages 64 à 105) ont été repris d'après les dessins (voir
   `docs/plan-3d-souterrain.md`) et viennent en tête de la table des
   matières ; la page d'accueil de l'équipement (P002) présente un exemplaire
-  de chaque famille souterraine (taille NU). Les éclatés suivent l'ordre des
+  de chaque famille souterraine (taille NU), nommé sous l'outil : un clic (ou
+  un toucher) sur un outil ou sur une ligne de la table ouvre sa page ; cette
+  page n'a pas de vue éclatée, et sur un écran en hauteur (téléphone) les
+  outils sont rangés un par rangée pour rester grands. Les éclatés suivent l'ordre des
   dessins (corps sur l'axe, pile de l'axe des têtes sur sa rangée, petites
   pièces au droit de leur place) ; une bulle par exemplaire, masquée quand la
   pièce est cachée en vue assemblée. Quand le dessin montre un autre nombre
