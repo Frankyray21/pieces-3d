@@ -209,6 +209,7 @@ function ensureViewer() {
   });
   viewer.setLabels(S.labels);
   viewer.setEdges(S.edges);
+  if (import.meta.env.DEV) window.viewer = viewer; // inspection (scripts de captures)
   return viewer;
 }
 

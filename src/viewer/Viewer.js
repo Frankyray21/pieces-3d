@@ -709,6 +709,7 @@ export class Viewer {
   setSection(opts) {
     Object.assign(this.section, opts);
     this._cullDirty = true;
+    if (this.section.on) this.labels.forEach((l) => { l.culled = false; });
     this.planeHelper.visible = this.section.on;
     if (this.section.on) this._updatePlane();
     this._refreshStates();
@@ -1147,8 +1148,14 @@ export class Viewer {
     this.camera.updateMatrixWorld();
     const camChanged = camMoved || !this._lastCam.equals(this.camera.matrixWorld) || !this._lastProj.equals(this.camera.projectionMatrix);
     const moving = camChanged || exploding || this.tweens.length > 0;
-    if (moving) this._cullDirty = true;
-    else if (this._cullDirty && this.model) this._cullLabels();
+    if (moving) {
+      this._cullDirty = true;
+      // Les pièces bougent : le masquage calculé à l'arrêt ne vaut plus.
+      if ((exploding || this.section.on) && this.labels.some((l) => l.culled)) {
+        this.labels.forEach((l) => { l.culled = false; });
+        this._refreshLabels();
+      }
+    } else if (this._cullDirty && this.model) this._cullLabels();
     const still = !moving && this._lowFrame;
     if (!moving && !still && !this._dirty) { this._perf.last = 0; return; }
     const useAO = this.quality.ao && (!moving || this.quality.motionAO);

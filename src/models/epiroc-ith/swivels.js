@@ -388,8 +388,12 @@ export function proSwivel(api, { big = false } = {}) {
  * de 5 mm passe dans les guides et les trois joints que la pression pousse
  * contre la vis de tête.
  */
-export function stuffingBox(api) {
-  const { S, L, X, view, lat, th, rope, ring, oring, fit, circlip } = kit(api, 70, { gap: 0.3, rows: { A: 0, B: -1.2, C: 1.3 } });
+export function stuffingBox(api, { part } = {}) {
+  const { S, L: L0, X, view, lat, th, rope, ring, oring, fit, circlip } = kit(api, 70, { gap: 0.3, rows: { A: 0, B: -1.2, C: 1.3 } });
+  // part : 'body' (presse-étoupe SB, repères 1 à 9) ou 'kit' (trousse de
+  // dimension DK, 10 à 14), pour les carottiers qui les listent à part.
+  const DK = ['10', '11', '12', '13', '14'];
+  const L = { add: (ref, obj, o) => (!part || (part === 'kit') === DK.includes(ref) ? L0.add(ref, obj, o) : obj), done: () => L0.done() };
   const small = { row: 'B', gap: 0.22 };
   L.add('11', lat([[17.5, 0], [31.5, 0], ...rope(35, 1, 44, 11, 3.5), [34, 44.5], [34, 62.3], [33.3, 63], [14.2, 63], [14.2, 59], [15.6, 59], [15.6, 56], [14.2, 56], [14.2, 6], [17.5, 6]], 'grey'), { row: 'A' });
   L.add('10', S.at(S.fitting(6 * MM, 12 * MM, 'steel'), X(53, 33.6)), { follow: '11', extra: [0, 0.55, 0] });
