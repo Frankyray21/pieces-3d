@@ -1,10 +1,18 @@
 import tk from '../du311/index.js';
 import { topdriveAssembly } from '../du311/topdrive.js';
 import { reuse } from '../reuse.js';
+import { P208 } from './carrier.js';
+import { P416 } from './reardeck.js';
+import { P164, P156 } from './slide.js';
+import { P028 } from './feed.js';
+import { P010, P012, P020 } from './machine.js';
 
-// Sandvik DU311 s/n 10703. Les assemblages identiques au DU311-TVK (même
-// numéro, même liste) reprennent ses modèles 3D ; les autres s'affichent avec
-// les dessins du manuel.
+// Sandvik DU311 s/n 10703. Machine complète (P010) modélisée : porteur sur
+// roues (P208), pont arrière (P416), glissière (P164), MCP (P156), avance 6 pi
+// à carrousel (P028) avec la tête de rotation (P050), extinction d'incendie
+// (P012) et finition (P020) ; repère commun dans layout.js.
+// Les assemblages identiques au DU311-TVK (même numéro, même liste) reprennent
+// ses modèles 3D ; les autres s'affichent avec les dessins du manuel.
 //   P052 = TK P140 : émerillon à air CM16303
 //   P054 = TK P142 : boîte d'engrenages RH6230-A CX024304
 
@@ -27,4 +35,12 @@ function P050(api) {
 export default {
   ...reuse(tk, { P052: 'P140', P054: 'P142' }),
   P050,
+  P208,
+  P416,
+  P164,
+  P156,
+  P028,
+  P010,
+  P012,
+  P020,
 };
