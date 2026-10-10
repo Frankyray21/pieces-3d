@@ -59,33 +59,41 @@ export function head(api, cfg) {
   const add = (role, obj, o) => { if (has(role)) L.add(ref(role, o?.i ?? 0), obj, o); return obj; };
 
   // ---------------------------------------------------------------- bas commun
-  // Chapeau de tube intérieur : filet mâle en bas (tube intérieur), alésage
-  // taraudé en haut (boîtier de roulement). DiscovOre : fentes de lavage.
-  const capTop = 2.35;
+  // Chapeau de tube intérieur : taraudé en bas (il se visse sur le filet mâle
+  // du tube intérieur), alésage taraudé en haut (boîtier de roulement).
+  // DiscovOre : fentes de lavage inclinées.
+  const capTop = 3.0;
+  const k0 = capTop - 2.35; // décalage des pièces logées dans le chapeau
+  const itR = SIZES[size].inner[0] / 2 / D; // rayon du tube intérieur (en D)
+  const cR = Math.max(0.5, itR + 0.012), bR = itR * 0.95; // chapeau, filet femelle du bas
+  const capBox = th(bR, 0, 0.6, 0.07, { chamferBottom: false }).map(([r, y]) => [2 * bR - r, y]).reverse();
   if (has('cap')) {
-    const pts = [[0.24, 0], [0.4, 0], ...th(0.44, 0, 0.42), [0.44, 0.45], [0.5, 0.5], [0.5, capTop - 0.06], [0.47, capTop], [0.41, capTop], [0.41, 1.88], [0.37, 1.84], [0.37, 0.72], [0.24, 0.66]];
+    const pts = [[bR, 0], [cR - 0.03, 0], [cR, 0.03], [cR, capTop - 0.06], [cR - 0.03, capTop], [0.41, capTop], [0.41, 1.88 + k0], [0.37, 1.84 + k0], [0.37, 0.66], [bR - 0.02, 0.6], ...capBox];
     if (type === 'discovore') {
-      // Chapeau DiscovOre : fentes de lavage dans le corps (repère 23/25 des dessins).
-      const wins = [0, 1, 2, 3, 4, 5].map((k) => win((k * PI) / 3 + 0.3, 0.16, 0.85, 1.85));
+      // Quatre fentes inclinées (repère 25/27 des dessins), en gradins.
+      const cs0 = 1.0, cs1 = capTop - 0.65, n = 6;
+      const wins = [];
+      for (let k = 0; k < 4; k++) for (let j = 0; j < n; j++) wins.push(win((k * PI) / 2 + 0.3 + j * 0.06, 0.13, cs0 + (j * (cs1 - cs0)) / n, cs0 + ((j + 1) * (cs1 - cs0)) / n + 0.02));
       const g = S.group(
-        lat([[0.24, 0], [0.4, 0], ...th(0.44, 0, 0.42), [0.44, 0.45], [0.5, 0.5], [0.5, 0.62], [0.24, 0.62]], M.body),
-        tube(0.5, 0.37, 0.6, 1.97, wins, M.body),
-        lat([[0.41, 1.95], [0.5, 1.95], [0.5, capTop - 0.06], [0.47, capTop], [0.41, capTop]], M.body),
+        lat([[bR, 0], [cR - 0.03, 0], [cR, 0.03], [cR, 0.75], [0.37, 0.75], [0.37, 0.66], [bR - 0.02, 0.6], ...capBox], M.body),
+        tube(cR, 0.37, 0.73, capTop - 0.5, wins, M.body),
+        lat([[0.41, capTop - 0.52], [cR, capTop - 0.52], [cR, capTop - 0.06], [cR - 0.03, capTop], [0.41, capTop]], M.body),
       );
       add('cap', g, { row: 'A' });
     } else add('cap', lat(pts, M.body), { row: 'A' });
   }
-  if (has('capGrease')) add('capGrease', S.at(S.fitting(0.13 * D, 0.26 * D, 'brass'), X(1.25, 0.5)), { follow: ref('cap'), extra: [0, 0.9, 0] });
+  if (has('capGrease')) add('capGrease', S.at(S.fitting(0.13 * D, 0.26 * D, 'brass'), X(1.25 + k0, cR)), { follow: ref('cap'), extra: [0, 0.9, 0] });
   if (has('checkBody')) add('checkBody', lat([[0.12, -0.08], [0.36, -0.08], [0.36, 0.05], [0.3, 0.12], ...th(0.33, 0.12, 0.55), [0.12, 0.55]], M.body), { row: 'B' });
   if (has('capBall')) add('capBall', S.ball(0.011, 'chrome', { pos: X(0.75) }), { row: 'B' });
   if (has('capAdapter')) add('capAdapter', lat([[0.14, -0.55], [0.47, -0.55], [0.5, -0.5], [0.5, -0.12], ...th(0.44, -0.12, 0.25), [0.3, 0.25], [0.3, -0.2], [0.14, -0.25]], M.body), { row: 'A' });
   if (has('capValve')) add('capValve', lat([[0, -0.4], [0.16, -0.4], [0.2, -0.3], [0.2, -0.1], [0, -0.05]], 'steel'), { row: 'B' });
-  if (has('threadProtector')) add('threadProtector', lat([[0.45, -0.05], [0.52, -0.05], [0.52, 0.42], [0.45, 0.42]], 'rubber'), { row: 'B' });
+  // Protecteur de filet : bouchon à collerette enfoncé dans le filet femelle du chapeau.
+  if (has('threadProtector')) add('threadProtector', lat([[bR - 0.12, -0.06], [cR, -0.06], [cR, 0], [bR - 0.01, 0], [bR - 0.01, 0.5], [bR - 0.12, 0.5]], 'rubber'), { row: 'B' });
 
   // Boîtier de roulement : filet mâle vissé dans le chapeau, flasque percée en haut.
-  const hTop = 3.45;
+  const hTop = 3.45 + k0;
   if (has('housing')) {
-    const pts = [[0.33, 1.9], [0.37, 1.9], ...th(0.4, 1.9, capTop - 0.02), [0.4, capTop], [0.5, capTop + 0.04], [0.5, hTop - 0.05], [0.45, hTop], [0.19, hTop], [0.19, hTop - 0.2], [0.33, hTop - 0.26]];
+    const pts = [[0.33, 1.9 + k0], [0.37, 1.9 + k0], ...th(0.4, 1.9 + k0, capTop - 0.02), [0.4, capTop], [0.5, capTop + 0.04], [0.5, hTop - 0.05], [0.45, hTop], [0.19, hTop], [0.19, hTop - 0.2], [0.33, hTop - 0.26]];
     add('housing', lat(pts, M.body), S_(6));
   }
   const twoThrust = Array.isArray(R.thrust) && R.thrust.length > 1;
@@ -94,11 +102,11 @@ export function head(api, cfg) {
     if (twoThrust || cfg.thrustAbove) L.add(ref('thrust', 1), S.bearing(0.3 * D, 0.155 * D, 0.13 * D, 'steel', { thrust: true, axis: 'x', pos: X(hTop + 0.07) }), S_(7.1));
   }
   if (has('hanger')) add('hanger', S.bearing(0.31 * D, 0.155 * D, 0.2 * D, 'steel', { axis: 'x', pos: X(hTop - 0.52) }), S_(5));
-  if (has('ballBearing')) add('ballBearing', S.bearing(0.3 * D, 0.155 * D, 0.16 * D, 'steel', { axis: 'x', pos: X(1.72) }), S_(2));
+  if (has('ballBearing')) add('ballBearing', S.bearing(0.3 * D, 0.155 * D, 0.16 * D, 'steel', { axis: 'x', pos: X(1.72 + k0) }), S_(2));
   if (has('cushion')) add('cushion', S.spring(0.21 * D, 0.038 * D, 1.0 * D, 6.5, M.spring || 'green', { axis: 'x', pos: X(hTop - 0.62 - 0.5) }), S_(4));
-  if (has('bearingWasher')) add('bearingWasher', S.washer(0.25 * D, 0.155 * D, 0.05 * D, 'steel', { axis: 'x', pos: X(1.58) }), S_(3));
-  if (has('narrowWasher')) add('narrowWasher', S.washer(0.22 * D, 0.155 * D, 0.04 * D, 'steel', { axis: 'x', pos: X(1.53) }), S_(3.2));
-  if (has('bottomNut')) add('bottomNut', S.nut(0.36 * D, 0.2 * D, cfg.bottomNutMat || 'steel', { axis: 'x', pos: X(1.4) }), S_(1));
+  if (has('bearingWasher')) add('bearingWasher', S.washer(0.25 * D, 0.155 * D, 0.05 * D, 'steel', { axis: 'x', pos: X(1.58 + k0) }), S_(3));
+  if (has('narrowWasher')) add('narrowWasher', S.washer(0.22 * D, 0.155 * D, 0.04 * D, 'steel', { axis: 'x', pos: X(1.53 + k0) }), S_(3.2));
+  if (has('bottomNut')) add('bottomNut', S.nut(0.36 * D, 0.2 * D, cfg.bottomNutMat || 'steel', { axis: 'x', pos: X(1.4 + k0) }), S_(1));
 
   // Pile de clapets d'arrêt (shut-off valves) et rondelles de réglage sur l'axe.
   let vs = hTop + (twoThrust || cfg.thrustAbove ? 0.17 : 0.03);
@@ -128,8 +136,8 @@ export function head(api, cfg) {
   const spTop = vs + (type === 'discovore' ? 0.62 : 0.65);
   if (has('spindle')) {
     const pts = type === 'discovore'
-      ? [[0, 1.25], [0.13, 1.25], ...th(0.155, 1.25, 1.6, 0.05), [0.155, stackStart], [0.24, stackStart], [0.24, vs], [0.42, vs], [0.42, spTop], [0.3, spTop], [0.3, spTop - 0.4], [0, spTop - 0.4]]
-      : [[0, 1.25], [0.13, 1.25], ...th(0.155, 1.25, 1.6, 0.05), [0.155, stackStart - 0.02], [0.24, stackStart - 0.02], [0.24, stackStart], [0.155, stackStart], [0.155, vs], ...th(0.16, vs, spTop + 0.4, 0.06, { chamferBottom: false }), [0.12, spTop + 0.42], [0, spTop + 0.42]];
+      ? [[0, 1.25 + k0], [0.13, 1.25 + k0], ...th(0.155, 1.25 + k0, 1.6 + k0, 0.05), [0.155, stackStart], [0.24, stackStart], [0.24, vs], [0.42, vs], [0.42, spTop], [0.3, spTop], [0.3, spTop - 0.4], [0, spTop - 0.4]]
+      : [[0, 1.25 + k0], [0.13, 1.25 + k0], ...th(0.155, 1.25 + k0, 1.6 + k0, 0.05), [0.155, stackStart - 0.02], [0.24, stackStart - 0.02], [0.24, stackStart], [0.155, stackStart], [0.155, vs], ...th(0.16, vs, spTop + 0.4, 0.06, { chamferBottom: false }), [0.12, spTop + 0.42], [0, spTop + 0.42]];
     add('spindle', lat(pts, 'steel'), S_(9));
   }
   // Écrou de blocage en haut de l'axe (laiton chez Excore / OWL).
@@ -182,12 +190,18 @@ export function head(api, cfg) {
       add(role, lat([[0.3, c0 - 0.4], [0.33, c0 - 0.4], ...th(0.35, c0 - 0.4, c0), [0.4, c0], [0.4, c1 - 0.2], [0.47, c1 - 0.16], [0.47, c1], [0.3, c1]], type === 'discovore' ? M.body : owl ? 'lightGrey' : M.body), { row: 'A' });
     }
     if (has('sealSeat')) add('sealSeat', S.washer(0.47 * D, 0.4 * D, 0.08 * D, 'steel', { axis: 'x', pos: X(c0 + 0.04) }), { row: 'A', gap: 0.2 });
-    const seals = type === 'discovore' ? ['propUpper', 'propLower'] : ['lipSeals', 'lipSeals'];
+    // Joints de propulsion DiscovOre : joint bas bombé, joint haut en coupelle
+    // à lèvre (dessus) ; joints à lèvre Excore / L-Latch identiques.
+    const seals = type === 'discovore' ? ['propLower', 'propUpper'] : ['lipSeals', 'lipSeals'];
     seals.forEach((role2, k) => {
       if (!has(role2)) return;
-      const s0 = c0 + 0.12 + k * 0.52;
-      const cup = lat([[0.4, s0], [sh + 0.02, s0], [sh + 0.04, s0 + 0.06], [sh - 0.02, s0 + 0.42], [0.4, s0 + 0.42]], M.seal);
-      L.add(role2 === 'lipSeals' ? ref(role2, 0) : ref(role2), cup, { row: 'A', gap: 0.2 });
+      const s0 = c0 + 0.15 + k * 0.5, e = s0 + 0.44;
+      const pts = role2 === 'propLower'
+        ? [[0.4, s0], [sh - 0.06, s0], [sh + 0.01, s0 + 0.1], [sh + 0.04, s0 + 0.22], [sh + 0.01, s0 + 0.34], [sh - 0.06, e], [0.4, e]]
+        : role2 === 'propUpper'
+          ? [[0.4, s0], [sh - 0.05, s0], [sh - 0.03, s0 + 0.28], [sh + 0.05, e - 0.02], [sh + 0.02, e], [0.46, e], [0.44, s0 + 0.32], [0.4, s0 + 0.32]]
+          : [[0.4, s0], [sh + 0.02, s0], [sh + 0.04, s0 + 0.06], [sh - 0.02, s0 + 0.42], [0.4, s0 + 0.42]];
+      L.add(role2 === 'lipSeals' ? ref(role2, 0) : ref(role2), lat(pts, M.seal), { row: 'A', gap: 0.2 });
     });
     if (has('midSleeve')) add('midSleeve', lat([[0.4, c1 - 0.5], [0.46, c1 - 0.5], [0.46, c1 - 0.2], [0.4, c1 - 0.2]], 'steel'), { row: 'A' });
     up0 = c1;
@@ -212,45 +226,62 @@ export function head(api, cfg) {
       add('midBody', lat([[0.3, m0 - 0.4], [0.33, m0 - 0.4], ...th(0.35, m0 - 0.4, m0), [0.47, m0], [0.47, m0 + 0.95], [0.4, m0 + 1.0], [0.3, m0 + 1.0]], M.body), { row: 'A' });
       m0 += 1.0;
     }
-    const lt0 = m0, lt1 = m0 + 2.0;
-    const lw0 = lt0 + 0.75, lw1 = lt0 + 1.45;
+    // Corps de verrou : filet mâle et collet hexagonal en bas, deux longues
+    // lumières (cliquets) et quatre lumières étroites, trou de l'écrou-barillet
+    // en haut (et en bas quand la tête a un second jeu de fixation).
+    const lt0 = m0, lt1 = m0 + 3.2;
+    const lw0 = lt0 + 0.6, lw1 = lt0 + 2.5;
+    const nutTop = lt1 - 0.25, nutLow = lt0 + 0.55;
+    const second = !!cfg.secondSet;
     if (has('latchBody')) {
-      const wins = [win(UP, 0.75, lw0, lw1), win(DOWN, 0.75, lw0, lw1), ...hole(0, lt0 + 0.3, 0.07, 0.46)];
+      const wins = [win(UP, 0.75, lw0, lw1), win(DOWN, 0.75, lw0, lw1), ...[UP - 0.62, UP + 0.62, DOWN - 0.62, DOWN + 0.62].map((a) => win(a, 0.16, lt0 + 0.9, lt0 + 2.2)), ...hole(0, nutTop, 0.15, 0.46)];
+      if (second) wins.push(...hole(0, nutLow, 0.15, 0.46));
       const g = S.group(
-        tube(0.46, 0.3, lt0 + 0.12, lt1, wins, M.body),
-        lat([[0.3, lt0 - 0.4], [0.33, lt0 - 0.4], ...th(0.35, lt0 - 0.4, lt0), [0.42, lt0], [0.46, lt0 + 0.04], [0.46, lt0 + 0.12], [0.3, lt0 + 0.12]], M.body),
+        tube(0.46, 0.3, lt0 + 0.35, lt1, wins, M.body),
+        lat([[0.3, lt0 - 0.4], [0.33, lt0 - 0.4], ...th(0.35, lt0 - 0.4, lt0), [0.3, lt0], [0.3, lt0 + 0.35]], M.body),
+        S.nut(0.98 * D, 0.35 * D, M.body, { axis: 'x', pos: X(lt0 + 0.175) }),
       );
       add('latchBody', g, { row: 'A' });
     }
-    // Cliquets (blocs coulissants sortant par les fenêtres).
+    // Cliquets : plaques coudées (« dog-leg ») de toute la longueur des lumières,
+    // bec en haut ; ressort entre les deux, qui les pousse vers l'extérieur.
     if (has('latches')) {
       for (const s of [1, -1]) {
-        const pts = [[lw0 + 0.05, 0.08], [lw1 - 0.05, 0.08], [lw1 - 0.05, 0.4], [lw1 - 0.15, 0.6], [lw0 + 0.2, 0.6], [lw0 + 0.05, 0.45]].map(([x, y]) => [x * D, s * y * D]);
-        const latch = S.extrude(s > 0 ? pts : pts.reverse(), 0.3 * D, 'steel');
-        L.add(ref('latches'), latch, { follow: ref('latchBody'), extra: [0, s * 1.3, 0] });
+        const pts = [[0.05, 0.08], [1.85, 0.08], [1.85, 0.45], [1.72, 0.62], [1.1, 0.5], [0.6, 0.5], [0.22, 0.36], [0.05, 0.3]].map(([u, v]) => [(lw0 + u) * D, s * v * D]);
+        L.add(ref('latches'), S.extrude(s > 0 ? pts : pts.reverse(), 0.25 * D, M.body), { follow: ref('latchBody'), extra: [0, s * 1.0, 0] });
       }
     }
-    if (has('latchSpring')) add('latchSpring', S.spring(0.05 * D, 0.012 * D, 0.16 * D, 6, 'steel', { axis: 'y', pos: X((lw0 + lw1) / 2) }), { follow: ref('latchBody'), extra: [0, 0, 1.4] });
-    // Boîtier de rappel : tube à fenêtres et trous, coiffe à gorge en haut.
+    if (has('latchSpring')) add('latchSpring', S.spring(0.07 * D, 0.015 * D, 0.55 * D, 8, 'steel', { axis: 'y', pos: X(lw0 + 0.9) }), { follow: ref('latchBody'), extra: [0, 0, 1.3] });
+    // Boîtier de rappel : lumières ouvertes en bas (cliquets), trous par paires,
+    // haut ouvert à gorge (saisie par l'overshot) et épaulement intérieur où
+    // s'appuie la tête du boulon d'assemblage.
     const rc0 = lw0 - 0.1, rc1 = lt1 + 1.9;
     anchor.latch = (lw0 + lw1) / 2;
-    anchor.top = rc1 + (has('bolt') ? 0.15 : 0);
+    anchor.top = rc1;
     if (has('retCase')) {
       const wins = [win(UP, 0.8, rc0 - 0.01, lw1 + 0.15), win(DOWN, 0.8, rc0 - 0.01, lw1 + 0.15)];
-      for (const x of [rc0 + 1.8, rc0 + 2.35]) wins.push(...hole(0, x, 0.05, 0.5, false), ...hole(PI * 0.75, x + 0.2, 0.05, 0.5, false));
+      for (const x of [rc0 + 2.3, rc0 + 2.85, rc0 + 3.4]) wins.push(...hole(0, x, 0.05, 0.5, false), ...hole(PI * 0.75, x + 0.2, 0.05, 0.5, false));
       wins.push(...hole(0, rc1 - 0.34, 0.06, 0.5));
       const g = S.group(
         tube(0.5, 0.465, rc0, rc1 - 0.62, wins, M.body),
-        lat([[0.13, rc1 - 0.62], [0.5, rc1 - 0.62], [0.5, rc1 - 0.5], [0.42, rc1 - 0.42], [0.42, rc1 - 0.24], [0.5, rc1 - 0.16], [0.5, rc1 - 0.04], [0.46, rc1], [0.13, rc1]], M.body),
+        lat([[0.22, rc1 - 0.62], [0.5, rc1 - 0.62], [0.5, rc1 - 0.5], [0.42, rc1 - 0.42], [0.42, rc1 - 0.24], [0.5, rc1 - 0.16], [0.5, rc1 - 0.04], [0.46, rc1], [0.34, rc1], [0.34, rc1 - 0.5], [0.22, rc1 - 0.5]], M.body),
       );
       add('retCase', g, { row: 'A' });
     }
-    if (has('assemblyRod')) add('assemblyRod', lat([[0, lw1 - 0.1], [0.1, lw1 - 0.1], [0.1, rc1 - 0.68], [0, rc1 - 0.68]], 'steel'), { row: 'C' });
-    if (has('assemblyPin')) add('assemblyPin', pinZ(0.05, 0.95, lw1 - 0.02), { follow: ref('latchBody'), extra: [0, 0, 1.6] });
-    if (has('caseSpring')) add('caseSpring', S.spring(0.17 * D, 0.03 * D, 1.0 * D, 7, 'steel', { axis: 'x', pos: X(rc1 - 1.2) }), { row: 'C' });
-    if (has('bolt')) add('bolt', S.bolt(0.12 * D, 0.9 * D, cfg.boltMat || 'safety', { axis: 'x', pos: X(rc1 + 0.06) }), { row: 'C' });
-    if (has('bolt2')) add('bolt2', S.bolt(0.12 * D, 0.7 * D, 'safety', { axis: '-x', pos: X(lw1 - 0.15) }), { row: 'C' });
-    if (has('wedgeWasher')) add('wedgeWasher', S.washer(0.12 * D, 0.065 * D, 0.04 * D, 'steel', { axis: 'x', pos: X(rc1 + 0.02) }), { row: 'C' });
+    // Fixation : boulon d'assemblage (tête sur l'épaulement du boîtier) vissé
+    // dans un écrou-barillet transversal en haut du corps de verrou, ressort du
+    // boîtier autour du boulon ; second jeu tête en bas (corps intermédiaire).
+    const C = { row: 'C' };
+    const nutRole = has('assemblyRod') ? 'assemblyRod' : 'assemblyPin';
+    if (has('bolt')) L.add(ref('bolt'), S.bolt(0.12 * D, (rc1 - 0.46 - nutTop + 0.1) * D, cfg.boltMat || 'safety', { axis: 'x', pos: X(rc1 - 0.46) }), C);
+    if (has('wedgeWasher')) L.add(ref('wedgeWasher'), S.washer(0.12 * D, 0.065 * D, 0.04 * D, 'steel', { axis: 'x', pos: X(rc1 - 0.48) }), C);
+    if (has('caseSpring')) add('caseSpring', S.spring(0.17 * D, 0.03 * D, (rc1 - 0.66 - lt1) * D, 7, 'steel', { axis: 'x', pos: X((lt1 + rc1 - 0.62) / 2) }), C);
+    if (has(nutRole)) L.add(ref(nutRole), pinZ(0.14, 0.92, nutTop), C);
+    if (second) {
+      if (has('bolt')) L.add(ref(has('bolt2') ? 'bolt2' : 'bolt'), S.bolt(0.12 * D, (nutLow + 0.1 - (lt0 - 0.38)) * D, cfg.boltMat || 'safety', { axis: '-x', pos: X(lt0 - 0.38) }), C);
+      if (has('wedgeWasher')) L.add(ref('wedgeWasher'), S.washer(0.12 * D, 0.065 * D, 0.04 * D, 'steel', { axis: 'x', pos: X(lt0 - 0.36) }), C);
+      if (has(nutRole)) L.add(ref(nutRole), pinZ(0.14, 0.92, nutLow), C);
+    }
     if (has('safetyPin')) {
       const pin = S.group(
         pinZ(0.045, 1.25, rc1 - 0.34),
@@ -374,10 +405,11 @@ export const P050 = H('P', 'discovore', {
 // DiscovOre souterrain : joints de propulsion sur le corps intermédiaire.
 export const P065 = H('B', 'discovore', {
   retCase: '1', bolt: '2', wedgeWasher: '3', caseSpring: '4', assemblyPin: '5', latchSpring: '6', latches: '7', latchBody: '8', bolt2: '9', propUpper: '10', propLower: '11', midBody: '12', shoulder: '13', ball: '14', bushing: '15', lowerBody: '16', topNut: '17', spindle: '18', valves: '19', valveWashers: '20', thrust: ['21', '21'], housing: '22', cushion: '23', ballBearing: '24', bottomNut: '25', cap: '26', safetyPin: '27', threadProtector: '28',
-}, { ug: true });
+}, { ug: true, secondSet: true });
 const DO_NU = { retCase: '1', bolt: '2', wedgeWasher: '3', caseSpring: '4', assemblyRod: '5', latchSpring: '6', latches: '7', latchBody: '8', propUpper: '9', propLower: '10', midBody: '11', shoulder: '12', ball: '13', bushing: '14', lowerBody: '15', topNut: '16', spindle: '17', valves: '18', valveWashers: '19', thrust: '20', housing: '21', hanger: '22', cushion: '23', bearingWasher: '24', ballBearing: '25', bottomNut: '26', cap: '27' };
-export const P074 = H('N', 'discovore', DO_NU, { ug: true });
-export const P083 = H('H', 'discovore', { ...DO_NU, thrust: ['20', '20'] }, { ug: true });
+// Deux jeux boulon / rondelle / tige d'assemblage (repères 2, 3, 5 en quantité 2).
+export const P074 = H('N', 'discovore', DO_NU, { ug: true, secondSet: true });
+export const P083 = H('H', 'discovore', { ...DO_NU, thrust: ['20', '20'] }, { ug: true, secondSet: true });
 export const P092 = H('P', 'discovore', {
   retCase: '1', bolt: '2', wedgeWasher: '3', caseSpring: '4', assemblyRod: '5', latchSpring: '6', latches: '7', latchBody: '8', midSleeve: '9', propUpper: '10', propLower: '11', midBody: '12', shoulder: '13', ball: ['14', '14'], bushing: '15', lowerBody: '16', topNut: '17', spindle: '18', taperWashers: '19', valves: '20', valveWashers: '21', thrust: ['22', '22'], housing: '23', hanger: '24', cushion: '25', cap: '26', bearingWasher: '27', ballBearing: '28', bottomNut: '29', capGrease: '30', capValve: '31', checkBody: '32', safetyPin: '33', tagHolder: '34', tag: '35', tag2: '36',
 }, { ug: true, bigBall: true, stack: ['valveWashers', 'taperWashers', 'valves', 'taperWashers', 'valves'] });
@@ -424,6 +456,3 @@ export const P029 = H('N', 'owl', { ...OW_N, spearBase: '4', spearPin: '5', retC
 export const P044 = H('H', 'owl', { ...OW_N, thrust: ['20', '20'] });
 export const P046 = H('H', 'owl', { ...OW_N, thrust: ['20', '20'] });
 
-// Têtes reprises par les carottiers en sous-assemblage : bouts de la tête
-// (pour emboîter la tête dans le carottier) en D de la taille.
-export const HEAD_LENGTH = { discovore: 12.6, excore: 12.4, lLatch: 12.4, owl: 12.4 };

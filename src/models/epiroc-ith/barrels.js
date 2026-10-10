@@ -70,7 +70,7 @@ export function barrel(api, cfg) {
   const head = api.sub(cfg.head);
   const A = head.userData.view.anchors;
   const hd = SIZES[cfg.size].D;
-  const h0 = it1 - 0.42 * hd; // le chapeau se visse sur le tube intérieur
+  const h0 = it1; // le chapeau (taraudé) se visse sur le filet mâle du haut du tube intérieur
   head.position.x = h0;
   const shX = h0 + A.shoulder;
   const latchX = h0 + A.latch;
@@ -92,7 +92,7 @@ export function barrel(api, cfg) {
     const g = S.group(
       lat([[itI, case1 - pinIL], ...th(pinI, case1 - pinIL, case1, 0.004, { chamferBottom: true }), [itO, case1 + 0.003], [itO, case1 + 0.01], [itI, case1 + 0.01]], 'lightGrey'),
       broken(itO, itI, case1 + 0.01, it1 - 0.01, xm, 'lightGrey'),
-      lat([[itI, it1 - 0.01], [itO, it1 - 0.01], [itO, it1 - 0.003], [itO * 0.97, it1], [itI, it1]], 'lightGrey'),
+      lat([[itI, it1 - 0.01], [itO, it1 - 0.01], [itO, it1], [pinI, it1], ...th(pinI, it1, it1 + 0.58 * hd, 0.004, { chamferBottom: false }), [itI, it1 + 0.58 * hd]], 'lightGrey'),
     );
     add('inner', g, { row: 'B' });
   }
