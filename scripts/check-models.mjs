@@ -9,7 +9,11 @@
 // Pour un équipement modélisé en partie, seuls les assemblages qui ont un
 // builder sont contrôlés.
 //
-// Usage : node scripts/check-models.mjs [--eq du311] [F05 F08 ...]
+// Quantités : avec --qty, chaque ligne doit avoir autant d'objets 3D que sa
+// quantité (ou que extra.qty3d, quand le dessin du catalogue en montre un autre
+// nombre). Avec --max-tris N, un modèle de plus de N triangles est en échec.
+//
+// Usage : node scripts/check-models.mjs [--eq du311] [--qty] [--max-tris 150000] [--from P064] [F05 F08 ...]
 import { readFileSync } from 'node:fs';
 import * as THREE from 'three';
 import { buildProcedural } from '../src/viewer/assembly.js';
@@ -17,6 +21,12 @@ import { buildProcedural } from '../src/viewer/assembly.js';
 const args = process.argv.slice(2);
 const at = args.indexOf('--eq');
 const eq = at >= 0 ? args.splice(at, 2)[1] : 'cubex-mri-5200';
+const flag = (name) => { const i = args.indexOf(name); if (i >= 0) args.splice(i, 1); return i >= 0; };
+const value = (name) => { const i = args.indexOf(name); return i >= 0 ? args.splice(i, 2)[1] : null; };
+const checkQty = flag('--qty');
+const maxTris = Number(value('--max-tris')) || Infinity;
+// --from P064 : seulement les assemblages à partir de cette page (ordre des numéros).
+const from = value('--from');
 // Repères en double dans une liste : la 3D de la première ligne suffit (voir src/data/equipment.js).
 const { default: builders } = await import(`../src/models/${eq}/index.js`);
 const data = JSON.parse(readFileSync(new URL(`../public/equipment/${eq}/data.json`, import.meta.url), 'utf8'));
@@ -39,6 +49,7 @@ function stats(root) {
 
 for (const [id, asm] of Object.entries(data.assemblies)) {
   if (only.length && !only.includes(id)) continue;
+  if (from && id.localeCompare(from, 'en', { numeric: true }) < 0) continue;
   if (partial && !builders[id]) continue;
   let model;
   try {
@@ -50,7 +61,7 @@ for (const [id, asm] of Object.entries(data.assemblies)) {
   }
   if (!model) { console.log(`✕ ${id} : aucun builder`); failed = true; continue; }
   const missing = [];
-  const rows = asm.parts.map(([ref, , , desc, extra = {}]) => ({ ref: String(ref), desc, ...extra }));
+  const rows = asm.parts.map(([ref, , qty, desc, extra = {}]) => ({ ref: String(ref), qty, desc, ...extra }));
   const known = new Set(rows.map((r) => r.ref));
   // Ensemble (groupe explicite ou plage « 1-5 », « B,2-14 ») : au moins une de ses pièces en 3D.
   const members = (r) => {
@@ -76,6 +87,17 @@ for (const [id, asm] of Object.entries(data.assemblies)) {
     if (m?.length && m.some((x) => model.refs.has(x))) continue;
     if (!missing.includes(r.ref)) missing.push(r.ref);
   }
+  // Quantités : objets 3D du repère comparés à la quantité de la liste (lignes simples).
+  const qtyOff = [];
+  if (checkQty) {
+    for (const r of rows) {
+      if (r.no3d || r.index || r.same || r.mirrorOf || r.group || /\bKIT\b/i.test(r.desc) || documents.has(r.link)) continue;
+      const want = r.qty3d ?? (/^\d+$/.test(String(r.qty ?? '').trim()) ? +r.qty : null);
+      const got = model.refs.get(r.ref)?.length;
+      if (want == null || !got || got === want) continue;
+      qtyOff.push(`${r.ref} (${want} listé${want > 1 ? 's' : ''}, ${got} en 3D)`);
+    }
+  }
   const extra = [...model.refs.keys()].filter((k) => !rows.some((r) => r.ref === k));
   const nan = [];
   model.root.updateMatrixWorld(true);
@@ -85,10 +107,12 @@ for (const [id, asm] of Object.entries(data.assemblies)) {
   });
   const s = stats(model.root);
   const size = new THREE.Box3().setFromObject(model.root).getSize(new THREE.Vector3());
-  const ok = !missing.length && !extra.length && !nan.length;
+  const heavy = s.tris > maxTris;
+  const ok = !missing.length && !extra.length && !nan.length && !qtyOff.length && !heavy;
   if (!ok) failed = true;
   console.log(`${ok ? '✓' : '✕'} ${id} : ${model.parts.length} objets, ${s.meshes} maillages, ${s.tris.toLocaleString('fr-CA')} triangles, ` +
     `taille ${size.x.toFixed(2)} × ${size.y.toFixed(2)} × ${size.z.toFixed(2)} m` +
-    `${missing.length ? ` — SANS 3D : ${missing.join(', ')}` : ''}${extra.length ? ` — repères inconnus : ${extra.join(', ')}` : ''}${nan.length ? ` — boîtes invalides : ${nan.join(', ')}` : ''}`);
+    `${missing.length ? ` — SANS 3D : ${missing.join(', ')}` : ''}${extra.length ? ` — repères inconnus : ${extra.join(', ')}` : ''}${nan.length ? ` — boîtes invalides : ${nan.join(', ')}` : ''}` +
+    `${qtyOff.length ? ` — quantités : ${qtyOff.join(', ')}` : ''}${heavy ? ` — plus de ${maxTris.toLocaleString('fr-CA')} triangles` : ''}`);
 }
 process.exit(failed ? 1 : 0);
