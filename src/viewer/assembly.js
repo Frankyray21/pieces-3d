@@ -32,6 +32,8 @@ export function buildProcedural(builders, id, opts = {}) {
     sub(childId, childOpts = {}) {
       const child = buildProcedural(builders, childId, childOpts);
       if (!child) throw new Error(`Sous-assemblage introuvable : ${childId}`);
+      // Repères de position éventuels du sous-assemblage (view.anchors) pour l'aligner.
+      child.root.userData.view = child.view;
       return child.root;
     },
   };

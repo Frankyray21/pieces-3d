@@ -522,15 +522,15 @@ export function bolt(d, len, material = 'steel', { axis = 'y', head = 'hex', pos
 }
 
 /** Ressort hélicoïdal le long de l'axe. */
-export function spring(r, wire, len, turns, material = 'black', { axis = 'y', pos } = {}) {
+export function spring(r, wire, len, turns, material = 'black', { axis = 'y', pos, perTurn = 24, radial = 8 } = {}) {
   const pts = [];
-  const n = Math.max(24, Math.round(turns * 24));
+  const n = Math.max(24, Math.round(turns * perTurn));
   for (let i = 0; i <= n; i++) {
     const t = i / n;
     const a = t * turns * Math.PI * 2;
     pts.push(new THREE.Vector3(Math.cos(a) * r, t * len - len / 2, Math.sin(a) * r));
   }
-  const geo = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), n * 2, wire, 8, false);
+  const geo = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), n * 2, wire, radial, false);
   geo.userData.edgeAngle = 60; // pas de contours le long du fil
   const m = mesh(geo, material);
   orient(m, axis);
@@ -675,12 +675,14 @@ export function fitting(d, len, material = 'steel', { axis = 'y', tee = false, e
   return axis === 'y' ? g : axisWrapY(g, axis);
 }
 
-function axisWrapY(g, axis) {
+function axisWrapY(g, axis, pos) {
   const outer = new THREE.Group();
   outer.add(g);
   if (axis === 'x') g.rotation.z = -Math.PI / 2;
   else if (axis === 'z') g.rotation.x = Math.PI / 2;
   else if (axis === '-y') g.rotation.x = Math.PI;
+  else if (axis === '-x') g.rotation.z = Math.PI / 2;
+  if (pos) outer.position.copy(V(pos));
   return outer;
 }
 
@@ -843,6 +845,173 @@ export function enclosure(w, h, d, material = 'grey') {
   }
   g.add(solid('black', blk));
   return g;
+}
+
+// ------------------------------------------------------------------ pièces tournées
+
+/**
+ * Pièce tournée : révolution autour de l'axe d'un profil [[r, y], ...] (rayon,
+ * position le long de l'axe), parcouru dans le sens trigonométrique : de l'axe
+ * vers l'extérieur en bas, puis vers le haut ; une pièce creuse revient par
+ * son alésage. Les segments du profil gardent des arêtes franches.
+ */
+export function lathe(profile, material = 'steel', { axis = 'y', seg = 32, pos } = {}) {
+  const m = mesh(revolveGeo(profile, seg, seg <= 8), material);
+  orient(m, axis);
+  const g = group(m);
+  if (pos) g.position.copy(V(pos));
+  if (profile.some(([r], i) => i > 0 && i < profile.length - 1 && r > 0) && profile[0][0] > 0) g.userData.hasInterior = true;
+  return g;
+}
+
+/** Filet suggéré (bandes de reflets) pour un profil de lathe(), de y0 à y1 au rayon r. */
+export function thread(r, y0, y1, opts = {}) {
+  return threadProfile(r, y0, y1, opts);
+}
+
+/**
+ * Tube percé le long de Y entre ya et yb : fenêtres rectangulaires dans le
+ * développé du tube, windows = [{ a, w, y0, y1 }] (angle central, largeur
+ * angulaire en radians). Parois intérieure et extérieure, chants des fenêtres
+ * et faces des bords : l'intérieur et les fenêtres restent lisibles en coupe.
+ */
+function slottedGeo(rOut, rIn, ya, yb, windows, seg) {
+  const TAU = Math.PI * 2;
+  const wins = [];
+  for (const w of windows) {
+    const y0 = Math.max(ya, w.y0), y1 = Math.min(yb, w.y1);
+    if (y1 <= y0 || w.w <= 0) continue;
+    const t0 = (((w.a - w.w / 2) % TAU) + TAU) % TAU;
+    const t1 = t0 + Math.min(w.w, TAU - 1e-4);
+    if (t1 > TAU) wins.push([t0, TAU, y0, y1], [0, t1 - TAU, y0, y1]);
+    else wins.push([t0, t1, y0, y1]);
+  }
+  const q = (v) => Math.round(v * 1e7) / 1e7;
+  const grid = [...new Set([...Array.from({ length: seg }, (_, k) => q((k * TAU) / seg)), ...wins.flatMap((w) => [q(w[0] % TAU), q(w[1] % TAU)])])].sort((a, b) => a - b);
+  const ys = [...new Set([ya, yb, ...wins.flatMap((w) => [w[2], w[3]])].map(q))].sort((a, b) => a - b);
+  const nc = grid.length;
+  const cellA = (i) => [grid[i], i + 1 < nc ? grid[i + 1] : grid[0] + TAU];
+  // solid[b][i] : la case angulaire i de la bande b est pleine.
+  const solid = [];
+  for (let b = 0; b < ys.length - 1; b++) {
+    const ym = (ys[b] + ys[b + 1]) / 2;
+    const act = wins.filter((w) => w[2] <= ym && w[3] >= ym);
+    solid.push(Array.from({ length: nc }, (_, i) => {
+      const [a0, a1] = cellA(i);
+      const am = ((a0 + a1) / 2) % TAU;
+      return !act.some((w) => am > w[0] && am < w[1]);
+    }));
+  }
+  const pos = [], nor = [];
+  const P = (r, t, y) => [r * Math.sin(t), y, r * Math.cos(t)];
+  const tri = (a, b, c, na, nb, nc2, n) => {
+    // Sens des triangles d'après la normale de la face.
+    const ux = b[0] - a[0], uy = b[1] - a[1], uz = b[2] - a[2];
+    const vx = c[0] - a[0], vy = c[1] - a[1], vz = c[2] - a[2];
+    const cx = uy * vz - uz * vy, cy = uz * vx - ux * vz, cz = ux * vy - uy * vx;
+    if (cx * n[0] + cy * n[1] + cz * n[2] < 0) { [b, c] = [c, b]; [nb, nc2] = [nc2, nb]; }
+    pos.push(...a, ...b, ...c);
+    nor.push(...na, ...nb, ...nc2);
+  };
+  const quad = (p0, p1, p2, p3, n0, n1, n2, n3, nf) => { tri(p0, p1, p2, n0, n1, n2, nf); tri(p0, p2, p3, n0, n2, n3, nf); };
+  const rad = (t, s) => [s * Math.sin(t), 0, s * Math.cos(t)];
+  for (let b = 0; b < ys.length - 1; b++) {
+    const yl = ys[b], yh = ys[b + 1];
+    for (let i = 0; i < nc; i++) {
+      if (!solid[b][i]) continue;
+      const [t0, t1] = cellA(i);
+      const tm = (t0 + t1) / 2;
+      quad(P(rOut, t0, yl), P(rOut, t1, yl), P(rOut, t1, yh), P(rOut, t0, yh), rad(t0, 1), rad(t1, 1), rad(t1, 1), rad(t0, 1), rad(tm, 1));
+      quad(P(rIn, t0, yl), P(rIn, t1, yl), P(rIn, t1, yh), P(rIn, t0, yh), rad(t0, -1), rad(t1, -1), rad(t1, -1), rad(t0, -1), rad(tm, -1));
+      // Chants des fenêtres (côté t0 et côté t1).
+      const prev = (i - 1 + nc) % nc, next = (i + 1) % nc;
+      for (const [edge, other, sgn] of [[t0, prev, -1], [t1, next, 1]]) {
+        if (solid[b][other]) continue;
+        const n = [sgn * Math.cos(edge), 0, -sgn * Math.sin(edge)];
+        quad(P(rIn, edge, yl), P(rOut, edge, yl), P(rOut, edge, yh), P(rIn, edge, yh), n, n, n, n, n);
+      }
+    }
+  }
+  // Faces horizontales : bords du tube et fonds / plafonds des fenêtres.
+  for (let k = 0; k < ys.length; k++) {
+    const y = ys[k];
+    for (let i = 0; i < nc; i++) {
+      const below = k > 0 && solid[k - 1][i];
+      const above = k < ys.length - 1 && solid[k][i];
+      if (below === above) continue;
+      const [t0, t1] = cellA(i);
+      const n = below ? [0, 1, 0] : [0, -1, 0];
+      quad(P(rIn, t0, y), P(rOut, t0, y), P(rOut, t1, y), P(rIn, t1, y), n, n, n, n, n);
+    }
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  geo.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3));
+  geo.setAttribute('uv', new THREE.Float32BufferAttribute(new Float32Array((pos.length / 3) * 2), 2));
+  return geo;
+}
+
+/** Tube percé (corps à fenêtres, trous de goupille). Voir slottedGeo ; axe Y par défaut. */
+export function slotted(rOut, rIn, ya, yb, windows, material = 'steel', { axis = 'y', seg = 48, pos } = {}) {
+  const m = mesh(slottedGeo(rOut, rIn, ya, yb, windows, seg), material);
+  orient(m, axis);
+  const g = group(m);
+  g.userData.hasInterior = true;
+  if (pos) g.position.copy(V(pos));
+  return g;
+}
+
+/**
+ * Trou rond de rayon rh au travers d'une paroi de rayon r, à l'angle a et à la
+ * hauteur y : fenêtres empilées pour slotted(). through : traverse aussi la
+ * paroi opposée (goupille).
+ */
+export function roundHole(a, y, rh, r, { through = false, steps = 6 } = {}) {
+  const out = [];
+  for (const aa of through ? [a, a + Math.PI] : [a]) {
+    for (let i = 0; i < steps; i++) {
+      const y0 = y - rh + (i * 2 * rh) / steps, y1 = y0 + (2 * rh) / steps;
+      const dy = (y0 + y1) / 2 - y;
+      const half = Math.sqrt(Math.max(rh * rh - dy * dy, 0));
+      out.push({ a: aa, w: (2 * half) / r, y0, y1 });
+    }
+  }
+  return out;
+}
+
+/** Bille (clapet, butée) de rayon r. */
+export function ball(r, material = 'chrome', { pos } = {}) {
+  const m = mesh(new THREE.SphereGeometry(r, 22, 14), material);
+  const g = group(m);
+  if (pos) g.position.copy(V(pos));
+  return g;
+}
+
+/**
+ * Roulement le long de l'axe : radial étanche (deux bagues et flasques noirs)
+ * ou à billes de butée (deux rondelles et billes visibles), largeur w.
+ */
+export function bearing(rOut, rIn, w, material = 'steel', { axis = 'y', pos, thrust = false } = {}) {
+  const g = new THREE.Group();
+  const h = w / 2;
+  if (thrust) {
+    const t = w * 0.3;
+    const rm = (rOut + rIn) / 2, rb = Math.min(w * 0.24, (rOut - rIn) * 0.32);
+    const n = Math.max(8, Math.round((Math.PI * 2 * rm) / (rb * 2.6)));
+    const balls = [];
+    for (let i = 0; i < n; i++) {
+      const a = (i / n) * Math.PI * 2;
+      balls.push(place(new THREE.SphereGeometry(rb, 10, 8), [Math.cos(a) * rm, 0, Math.sin(a) * rm]));
+    }
+    g.add(solid(material, place(ringGeo(rOut, rIn, t, 40), [0, h - t / 2, 0]), place(ringGeo(rOut, rIn, t, 40), [0, -h + t / 2, 0])));
+    g.add(solid('chrome', balls));
+    g.add(solid('brass', ringGeo(rm + rb * 0.6, rm - rb * 0.6, w * 0.22, 40)));
+  } else {
+    const t = (rOut - rIn) * 0.28;
+    g.add(solid(material, ringGeo(rOut, rOut - t, w, 40), ringGeo(rIn + t, rIn, w, 40)));
+    g.add(solid('black', ringGeo(rOut - t, rIn + t, w * 0.86, 40)));
+  }
+  return axisWrapY(g, axis === 'y' ? 'y' : axis, pos);
 }
 
 /** Fusionne les géométries d'un groupe en un seul mesh (objets répétés nombreux). */

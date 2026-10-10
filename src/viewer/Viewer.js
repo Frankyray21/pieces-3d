@@ -503,8 +503,10 @@ export class Viewer {
     if (!this.model || !path?.length) return [];
     let nodes = [this.model.root];
     for (const ref of path) {
+      // « 1|2|3 » : ensemble de pièces (tube intérieur complet, plage de repères).
+      const refs = String(ref).split('|');
       const next = [];
-      for (const n of nodes) for (const p of n.userData.parts || []) if (p.userData.partRef === String(ref)) next.push(p);
+      for (const n of nodes) for (const p of n.userData.parts || []) if (refs.includes(p.userData.partRef)) next.push(p);
       if (!next.length) return [];
       nodes = next;
     }
@@ -706,6 +708,8 @@ export class Viewer {
    */
   setSection(opts) {
     Object.assign(this.section, opts);
+    this._cullDirty = true;
+    if (this.section.on) this.labels.forEach((l) => { l.culled = false; });
     this.planeHelper.visible = this.section.on;
     if (this.section.on) this._updatePlane();
     this._refreshStates();
@@ -754,19 +758,24 @@ export class Viewer {
     this.labels = [];
     this.model.root.updateMatrixWorld(true);
     const make = (node, prefix, depth) => {
+      // Une bulle par exemplaire (deux cliquets, deux soupapes…), comme sur les
+      // dessins ; au-delà de quatre exemplaires, une seule bulle.
+      const count = new Map();
+      for (const obj of node.userData.parts) count.set(obj.userData.partRef, (count.get(obj.userData.partRef) || 0) + 1);
       const seen = new Set();
       for (const obj of node.userData.parts) {
         const ref = obj.userData.partRef;
         const path = [...prefix, ref];
         if (obj.userData.isAssembly) make(obj, path, depth + 1);
-        if (seen.has(ref) || obj.userData.noLabel) continue;
+        if ((seen.has(ref) && count.get(ref) > 4) || obj.userData.noLabel) continue;
         seen.add(ref);
         const key = path.join('>');
         const el = document.createElement('button');
         el.type = 'button';
-        el.className = `balloon lvl-${Math.min(depth, 3)}`;
-        el.textContent = ref.length > 3 ? '▸' : ref;
-        el.title = ref.length > 3 ? `Groupe ${ref}` : `Repère ${ref}`;
+        const long = ref.length > 6;
+        el.className = `balloon lvl-${Math.min(depth, 3)}${ref.length > 2 && !long ? ' wide' : ''}`;
+        el.textContent = long ? '▸' : ref;
+        el.title = long ? `Groupe ${ref}` : `Repère ${ref}`;
         el.addEventListener('pointerdown', (e) => e.stopPropagation());
         el.addEventListener('click', (e) => { e.stopPropagation(); this.onSelect(path, { double: false }); });
         el.addEventListener('dblclick', (e) => { e.stopPropagation(); this.onSelect(path, { double: true }); });
@@ -777,18 +786,69 @@ export class Viewer {
         obj.worldToLocal(c);
         label.position.copy(c);
         obj.add(label);
-        this.labels.push({ key, owner: node, label });
+        this.labels.push({ key, owner: node, label, culled: false });
       }
     };
     make(this.model.root, [], 0);
+    this._cullDirty = true;
     this._refreshLabels();
+  }
+
+  /**
+   * Bulles masquées (à l'arrêt de la caméra) : pièce cachée derrière une autre
+   * (axe dans son boîtier en vue assemblée), ou second exemplaire d'un repère
+   * trop proche du premier à l'écran. Rien n'est masqué en coupe ; la bulle de
+   * la pièce sélectionnée reste toujours affichée.
+   */
+  _cullLabels() {
+    this._cullDirty = false;
+    const root = this.model?.root;
+    if (!root || !this.labelsVisible) return;
+    root.updateMatrixWorld(true);
+    const meshes = [];
+    root.traverse((o) => { if (o.isMesh && !o.userData.isEdges) meshes.push(o); });
+    const cam = this.camera.position;
+    const rc = this._cullRay || (this._cullRay = new THREE.Raycaster());
+    const p = new THREE.Vector3(), dir = new THREE.Vector3();
+    const { clientWidth: w, clientHeight: h } = this.renderer.domElement;
+    const shown = new Map(); // repère → positions à l'écran des bulles déjà gardées
+    const t0 = performance.now();
+    let changed = false;
+    for (const l of this.labels) {
+      let culled = false;
+      const live = l.owner === root || l.owner.userData.explodeT > 0.05;
+      if (live && l.key !== this.selectedKey) {
+        l.label.getWorldPosition(p);
+        if (!this.section.on && performance.now() - t0 < 150) {
+          dir.subVectors(p, cam);
+          const dist = dir.length();
+          rc.set(cam, dir.normalize());
+          rc.far = dist;
+          const hit = rc.intersectObjects(meshes, false)[0];
+          if (hit && hit.distance < dist * 0.999) {
+            let o = hit.object;
+            while (o && o !== l.label.parent) o = o.parent;
+            culled = !o;
+          }
+        }
+        if (!culled) {
+          const s = p.clone().project(this.camera);
+          const x = (s.x + 1) * w / 2, y = (1 - s.y) * h / 2;
+          const near = (shown.get(l.key) || []).some(([a, b]) => Math.hypot(a - x, b - y) < 30);
+          if (near) culled = true;
+          else shown.set(l.key, [...(shown.get(l.key) || []), [x, y]]);
+        }
+      }
+      if (culled !== l.culled) { l.culled = culled; changed = true; }
+    }
+    if (changed) this._refreshLabels();
   }
 
   _refreshLabels() {
     const root = this.model?.root;
     const dimOthers = (this.isolate || this.section.scope === 'selection') && this.selectedKey;
-    for (const { key, owner, label } of this.labels) {
-      label.visible = this.labelsVisible && (owner === root || owner.userData.explodeT > 0.05);
+    for (const { key, owner, label, culled } of this.labels) {
+      label.visible = this.labelsVisible && (owner === root || owner.userData.explodeT > 0.05) && (!culled || key === this.selectedKey);
       const el = label.element;
       el.classList.toggle('is-selected', key === this.selectedKey);
       el.classList.toggle('is-hover', key === this.hoverKey);
@@ -807,6 +867,7 @@ export class Viewer {
 
   setLabels(on) {
     this.labelsVisible = !!on;
+    this._cullDirty = true;
     this._refreshLabels();
     this.labelRenderer.domElement.style.display = on ? '' : 'none';
   }
@@ -1087,6 +1148,14 @@ export class Viewer {
     this.camera.updateMatrixWorld();
     const camChanged = camMoved || !this._lastCam.equals(this.camera.matrixWorld) || !this._lastProj.equals(this.camera.projectionMatrix);
     const moving = camChanged || exploding || this.tweens.length > 0;
+    if (moving) {
+      this._cullDirty = true;
+      // Les pièces bougent : le masquage calculé à l'arrêt ne vaut plus.
+      if ((exploding || this.section.on) && this.labels.some((l) => l.culled)) {
+        this.labels.forEach((l) => { l.culled = false; });
+        this._refreshLabels();
+      }
+    } else if (this._cullDirty && this.model) this._cullLabels();
     const still = !moving && this._lowFrame;
     if (!moving && !still && !this._dirty) { this._perf.last = 0; return; }
     const useAO = this.quality.ao && (!moving || this.quality.motionAO);
