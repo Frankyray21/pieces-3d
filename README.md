@@ -40,11 +40,16 @@ pièces (numéro, quantité, page du manuel).
   carottiers complets (tête et overshot en sous-assemblages, tube intérieur
   logé dans le tube extérieur, visible en coupe), les émerillons d'eau, les
   presse-étoupes et les outils (avance-tubage, coupe-tiges, raccords de
-  verrouillage, outils de chargement, carottier 48TT). La page d'accueil de
-  l'équipement (table des matières, P002) présente un exemplaire de chaque
-  famille de têtes, d'overshots et d'outils (les carottiers complets, longs de
-  3 à 4 m, s'ouvrent depuis la liste). Pages du catalogue en WebP couleur
-  (P001 à P108).
+  verrouillage, outils de chargement, carottier 48TT). Les outils
+  souterrains (pages 64 à 105) ont été repris d'après les dessins (voir
+  `docs/plan-3d-souterrain.md`) et viennent en tête de la table des
+  matières ; la page d'accueil de l'équipement (P002) présente un exemplaire
+  de chaque famille souterraine (taille NU). Les éclatés suivent l'ordre des
+  dessins (corps sur l'axe, pile de l'axe des têtes sur sa rangée, petites
+  pièces au droit de leur place) ; une bulle par exemplaire, masquée quand la
+  pièce est cachée en vue assemblée. Quand le dessin montre un autre nombre
+  de pièces que la liste, la 3D suit le dessin et la ligne l'indique
+  (« 2 en 3D »). Pages du catalogue en WebP couleur (P001 à P108).
 
 La page d'accueil (adresse sans « # », ou le logo en haut à gauche) liste
 les équipements et permet de passer de l'un à l'autre. Les adresses du premier équipement restent `#F05` ; celles des autres
@@ -89,7 +94,14 @@ npm install
 npm run dev            # http://localhost:5173
 npm run build          # site statique dans dist/
 npm run build:artifact # page autonome dans dist-artifact/ (publication claude.ai)
+npm run check:3d       # contrôle des modèles Epiroc (repères, quantités, triangles)
 ```
+
+Captures de non-régression (Playwright installé à part, serveur lancé) :
+`PW=$(npm root -g)/playwright node scripts/shots.mjs --eq epiroc-ith --out
+scratch/shots/ref P074 P080`, puis la même commande avec `--out
+scratch/shots/new --ref scratch/shots/ref` après une modification : chaque
+vue (assemblée, éclatée, coupe) est comparée à sa référence.
 
 ## Structure
 
@@ -149,7 +161,8 @@ page.
 ## Limites actuelles
 
 - Catalogue Epiroc : les tubes et les tiges des carottiers sont raccourcis
-  (1 m et 0,6 m) comme sur les dessins coupés du catalogue. Le contrôle des
+  (0,45 m et 0,3 m) et coupés par un trait crénelé, comme les vues rompues
+  du catalogue. Le contrôle des
   listes relève des anomalies du catalogue, par exemple le numéro 3760012099
   (bille de 22 mm) donné à la soupape d'arrêt BTWU (p. 66), 9469705243 pour
   l'axe et le ressort de la tête H Excore (p. 39), 3760017262 pour l'outil de

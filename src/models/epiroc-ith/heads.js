@@ -16,7 +16,7 @@ const UP = 3 * PI / 2; // angle de paroi tourné vers +Y (voir shapes.slotted, a
 const DOWN = PI / 2;
 
 const MAT = {
-  discovore: { body: 'charcoal', valve: 'yellow', seal: 'blue' },
+  discovore: { body: 'blackOxide', valve: 'yellow', seal: 'blue' },
   excore: { body: 'darkSteel', valve: 'rubber', seal: 'yellow' },
   owl: { body: 'black', valve: 'safety', seal: 'red' },
 };
@@ -56,6 +56,8 @@ export function head(api, cfg) {
   };
   const tube = (rO, rI, x0, x1, wins, mat) => S.slotted(rO * D, rI * D, x0 * D, x1 * D, wins, mat, { axis: 'x', seg: 56 });
   const pinZ = (r, len, x, y = 0, mat = 'steel') => S.cyl(r * D, len * D, mat, { axis: 'z', pos: X(x, y) });
+  // Ressorts plus légers (fil fin : 10 segments par spire, 6 autour du fil suffisent).
+  const spr = (r, wire, len, turns, mat, o = {}) => S.spring(r, wire, len, turns, mat, { perTurn: 10, radial: 6, ...o });
   const add = (role, obj, o) => { if (has(role)) L.add(ref(role, o?.i ?? 0), obj, o); return obj; };
 
   // ---------------------------------------------------------------- bas commun
@@ -103,7 +105,7 @@ export function head(api, cfg) {
   }
   if (has('hanger')) add('hanger', S.bearing(0.31 * D, 0.155 * D, 0.2 * D, 'steel', { axis: 'x', pos: X(hTop - 0.52) }), S_(5));
   if (has('ballBearing')) add('ballBearing', S.bearing(0.3 * D, 0.155 * D, 0.16 * D, 'steel', { axis: 'x', pos: X(1.72 + k0) }), S_(2));
-  if (has('cushion')) add('cushion', S.spring(0.21 * D, 0.038 * D, 1.0 * D, 6.5, M.spring || 'green', { axis: 'x', pos: X(hTop - 0.62 - 0.5) }), S_(4));
+  if (has('cushion')) add('cushion', spr(0.21 * D, 0.038 * D, 1.0 * D, 6.5, M.spring || 'green', { axis: 'x', pos: X(hTop - 0.62 - 0.5) }), S_(4));
   if (has('bearingWasher')) add('bearingWasher', S.washer(0.25 * D, 0.155 * D, 0.05 * D, 'steel', { axis: 'x', pos: X(1.58 + k0) }), S_(3));
   if (has('narrowWasher')) add('narrowWasher', S.washer(0.22 * D, 0.155 * D, 0.04 * D, 'steel', { axis: 'x', pos: X(1.53 + k0) }), S_(3.2));
   if (has('bottomNut')) add('bottomNut', S.nut(0.36 * D, 0.2 * D, cfg.bottomNutMat || 'steel', { axis: 'x', pos: X(1.4 + k0) }), S_(1));
@@ -175,7 +177,7 @@ export function head(api, cfg) {
     if (cfg.bigBall && Array.isArray(R.ball)) L.add(ref('ball', 1), S.ball(br, 'chrome', { pos: X(1.0) }), { row: 'B' });
   }
   if (has('bushing')) add('bushing', lat([[0.13, lb1 - 0.2], [0.27, lb1 - 0.2], [0.27, lb1 + 0.12], [0.13, lb1 + 0.12]], 'lightGrey'), { row: 'B' });
-  if (has('indicatorSpring')) add('indicatorSpring', S.spring(0.1 * D, 0.025 * D, 0.3 * D, 5, 'green', { axis: 'x', pos: X(lb1 + 0.3) }), { row: 'B' });
+  if (has('indicatorSpring')) add('indicatorSpring', spr(0.1 * D, 0.025 * D, 0.3 * D, 5, 'green', { axis: 'x', pos: X(lb1 + 0.3) }), { row: 'B' });
   if (has('shoulder')) {
     add('shoulder', lat([[0.425, lb1 - 0.02], [sh - 0.06, lb1 - 0.02], [sh, lb1 + 0.06], [sh, lb1 + 0.4], [sh - 0.03, lb1 + 0.43], [0.425, lb1 + 0.43]], 'steel'), { row: 'A' });
   }
@@ -251,7 +253,7 @@ export function head(api, cfg) {
         L.add(ref('latches'), S.extrude(s > 0 ? pts : pts.reverse(), 0.25 * D, M.body), { follow: ref('latchBody'), extra: [0, s * 1.0, 0] });
       }
     }
-    if (has('latchSpring')) add('latchSpring', S.spring(0.07 * D, 0.015 * D, 0.55 * D, 8, 'steel', { axis: 'y', pos: X(lw0 + 0.9) }), { follow: ref('latchBody'), extra: [0, 0, 1.3] });
+    if (has('latchSpring')) add('latchSpring', spr(0.07 * D, 0.015 * D, 0.55 * D, 8, 'steel', { axis: 'y', pos: X(lw0 + 0.9) }), { follow: ref('latchBody'), extra: [0, 0, 1.3] });
     // Boîtier de rappel : lumières ouvertes en bas (cliquets), trous par paires,
     // haut ouvert à gorge (saisie par l'overshot) et épaulement intérieur où
     // s'appuie la tête du boulon d'assemblage.
@@ -275,7 +277,7 @@ export function head(api, cfg) {
     const nutRole = has('assemblyRod') ? 'assemblyRod' : 'assemblyPin';
     if (has('bolt')) L.add(ref('bolt'), S.bolt(0.12 * D, (rc1 - 0.46 - nutTop + 0.1) * D, cfg.boltMat || 'safety', { axis: 'x', pos: X(rc1 - 0.46) }), C);
     if (has('wedgeWasher')) L.add(ref('wedgeWasher'), S.washer(0.12 * D, 0.065 * D, 0.04 * D, 'steel', { axis: 'x', pos: X(rc1 - 0.48) }), C);
-    if (has('caseSpring')) add('caseSpring', S.spring(0.17 * D, 0.03 * D, (rc1 - 0.66 - lt1) * D, 7, 'steel', { axis: 'x', pos: X((lt1 + rc1 - 0.62) / 2) }), C);
+    if (has('caseSpring')) add('caseSpring', spr(0.17 * D, 0.03 * D, (rc1 - 0.66 - lt1) * D, 7, 'steel', { axis: 'x', pos: X((lt1 + rc1 - 0.62) / 2) }), C);
     if (has(nutRole)) L.add(ref(nutRole), pinZ(0.14, 0.92, nutTop), C);
     if (second) {
       if (has('bolt')) L.add(ref(has('bolt2') ? 'bolt2' : 'bolt'), S.bolt(0.12 * D, (nutLow + 0.1 - (lt0 - 0.38)) * D, cfg.boltMat || 'safety', { axis: '-x', pos: X(lt0 - 0.38) }), C);
@@ -337,14 +339,14 @@ export function head(api, cfg) {
     // Excore : piston de verrouillage, ressort, guide et vis.
     if (type === 'excore') {
       if (has('piston')) add('piston', lat([[0, lw0 - 0.1], [0.27, lw0 - 0.1], [0.27, lw1 - 0.4], [0.12, lw1 - 0.1], [0, lw1 - 0.1]], 'steel'), { row: 'B' });
-      if (has('pistonSpring')) add('pistonSpring', S.spring(0.21 * D, 0.04 * D, (lw0 - 0.1 - (u0 + 0.6)) * D, 6, 'green', { axis: 'x', pos: X((lw0 - 0.1 + u0 + 0.6) / 2) }), { row: 'B' });
+      if (has('pistonSpring')) add('pistonSpring', spr(0.21 * D, 0.04 * D, (lw0 - 0.1 - (u0 + 0.6)) * D, 6, 'green', { axis: 'x', pos: X((lw0 - 0.1 + u0 + 0.6) / 2) }), { row: 'B' });
       if (has('guide')) add('guide', lat([[0.07, u0 + 0.45], [0.25, u0 + 0.45], [0.25, u0 + 0.6], [0.14, u0 + 0.6], [0.14, u0 + 1.1], [0.07, u0 + 1.1]], 'steel'), { row: 'B' });
       if (has('hhcs')) add('hhcs', S.bolt(0.13 * D, 0.55 * D, 'steel', { axis: '-x', pos: X(u0 + 0.38) }), { row: 'B' });
     }
     // OWL L-Latch : vis, rondelle d'appui, ressort de compression, biellettes.
     if (type === 'lLatch') {
       if (has('hexBolt')) add('hexBolt', S.bolt(0.13 * D, 0.45 * D, 'steel', { axis: '-x', pos: X(u0 + 0.35) }), { row: 'B' });
-      if (has('latchSpring')) add('latchSpring', S.spring(0.22 * D, 0.04 * D, 0.85 * D, 6, 'steel', { axis: 'x', pos: X(u0 + 1.0) }), { row: 'B' });
+      if (has('latchSpring')) add('latchSpring', spr(0.22 * D, 0.04 * D, 0.85 * D, 6, 'steel', { axis: 'x', pos: X(u0 + 1.0) }), { row: 'B' });
       if (has('latchWasher')) add('latchWasher', S.washer(0.3 * D, 0.08 * D, 0.06 * D, 'steel', { axis: 'x', pos: X(u0 + 1.46) }), { row: 'B' });
       if (has('pistonValve')) add('pistonValve', S.group(lat([[0, u0 + 0.1], [0.08, u0 + 0.1], [0.08, u0 + 0.9], [0, u0 + 0.9]], 'black'), S.ball(0.11 * D, 'black', { pos: X(u0 + 0.12) })), { row: 'B' });
       if (has('links')) {
@@ -356,7 +358,7 @@ export function head(api, cfg) {
     }
     // OWL standard : ressort de torsion entre les deux cliquets.
     if (type === 'owl' && has('torsionSpring')) {
-      add('torsionSpring', S.spring(0.09 * D, 0.02 * D, 0.32 * D, 4, 'steel', { axis: 'z', pos: X(pivot + 0.3) }), { follow: ref('upperBody'), extra: [0.3, 0, 1.5] });
+      add('torsionSpring', spr(0.09 * D, 0.02 * D, 0.32 * D, 4, 'steel', { axis: 'z', pos: X(pivot + 0.3) }), { follow: ref('upperBody'), extra: [0.3, 0, 1.5] });
     }
     // Boîtier de rappel (latch retracting case) et goupilles.
     const rc0 = u1 - 1.05, rc1 = u1 + 0.75;
@@ -375,7 +377,7 @@ export function head(api, cfg) {
       add('spearBase', lat([[0, b0], [0.47, b0], [0.47, rc1], [0.5, rc1 + 0.02], [0.5, rc1 + 0.14], [0.32, rc1 + 0.4], [0.3, b1], [0.13, b1], [0.13, b1 - 0.36], [0, b1 - 0.36]], M.body), { row: 'A' });
     }
     if (has('detent')) add('detent', lat([[0, b1 - 0.52], [0.07, b1 - 0.52], [0.07, b1 - 0.42], [0, b1 - 0.36]], 'steel'), { row: 'B' });
-    if (has('detentSpring')) add('detentSpring', S.spring(0.055 * D, 0.012 * D, 0.2 * D, 6, 'steel', { axis: 'x', pos: X(b1 - 0.64) }), { row: 'B' });
+    if (has('detentSpring')) add('detentSpring', spr(0.055 * D, 0.012 * D, 0.2 * D, 6, 'steel', { axis: 'x', pos: X(b1 - 0.64) }), { row: 'B' });
     if (has('spearhead')) {
       const t = b1 + 0.95;
       add('spearhead', lat([[0, b1 - 0.34], [0.12, b1 - 0.34], [0.12, b1], [0.29, b1 + 0.02], [0.29, b1 + 0.12], [0.19, b1 + 0.18], [0.19, b1 + 0.4], [0.37, b1 + 0.48], [0.37, b1 + 0.54], [0.08, t - 0.04], [0, t]], cfg.spearMat || M.body), { row: 'A' });

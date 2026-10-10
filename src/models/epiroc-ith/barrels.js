@@ -130,20 +130,20 @@ export function barrel(api, cfg) {
   if (has('outer')) {
     const xm = (Math.max(case1, rs1) + Math.min(it1, ot1 - PIN)) / 2;
     add('outer', S.group(
-      lat([[otI, rs1 - PIN], ...th(pinO, rs1 - PIN, rs1, 0.004), [otO, rs1], [otO, rs1 + 0.01], [otI, rs1 + 0.01]], 'darkSteel'),
-      broken(otO, otI, rs1 + 0.01, lr0 - 0.01, xm, 'darkSteel'),
-      lat([[otI, lr0 - 0.01], [otO, lr0 - 0.01], [otO, ot1 - 0.003], [otO * 0.97, ot1], ...boxTh(pinO, lr0, ot1, 0.004), [otI, lr0]], 'darkSteel'),
+      lat([[otI, rs1 - PIN], ...th(pinO, rs1 - PIN, rs1, 0.004), [otO, rs1], [otO, rs1 + 0.01], [otI, rs1 + 0.01]], 'gunmetal'),
+      broken(otO, otI, rs1 + 0.01, lr0 - 0.01, xm, 'gunmetal'),
+      lat([[otI, lr0 - 0.01], [otO, lr0 - 0.01], [otO, ot1 - 0.003], [otO * 0.97, ot1], ...boxTh(pinO, lr0, ot1, 0.004), [otI, lr0]], 'gunmetal'),
     ), { row: 'A' });
   }
   add('landingRing', lat([[sh * 0.9, lr0], [pinO * 0.98, lr0], [pinO * 0.98, lr1], [sh * 0.9, lr1]], 'steel'), { row: 'A' });
   // Raccord d'adaptation (mâle dans le tube extérieur), puis raccord de
   // verrouillage autour des cliquets de la tête.
   const lc0 = Math.max(ot1 + 0.1, latchX - 0.09);
-  add('adapterCoupling', lat([[rodI, lr1], ...th(pinO, lr1, ot1, 0.004), [otO, ot1], [otO, lc0 - 0.003], [otO * 0.97, lc0], ...boxTh(pinR, lc0 - PIN, lc0, 0.004), [rodI, lc0 - PIN]], 'darkSteel'), { row: 'A' });
+  add('adapterCoupling', lat([[rodI, lr1], ...th(pinO, lr1, ot1, 0.004), [otO, ot1], [otO, lc0 - 0.003], [otO * 0.97, lc0], ...boxTh(pinR, lc0 - PIN, lc0, 0.004), [rodI, lc0 - PIN]], 'gunmetal'), { row: 'A' });
   const lc1 = Math.max(lc0 + 0.2, latchX + 0.1);
   if (has('coupling')) {
     // Souterrain : raccord plein, sans fenêtres ni ergot ; surface : fenêtres de lavage.
-    const g = S.group(lat([[rodI * 0.98, lc0 - PIN], ...th(pinR, lc0 - PIN, lc0, 0.004), [rodO * 1.02, lc0], [rodO * 1.02, lc1 - 0.003], [rodO, lc1], ...boxTh(pinR, lc1 - PIN, lc1, 0.004), [rodI * 0.98, lc1 - PIN]], cfg.couplingMat || 'black'));
+    const g = S.group(lat([[rodI * 0.98, lc0 - PIN], ...th(pinR, lc0 - PIN, lc0, 0.004), [rodO * 1.02, lc0], [rodO * 1.02, lc1 - 0.003], [rodO, lc1], ...boxTh(pinR, lc1 - PIN, lc1, 0.004), [rodI * 0.98, lc1 - PIN]], cfg.couplingMat || 'blackOxide'));
     if (!cfg.ug) g.add(S.slotted(rodO * 1.03, rodO * 1.0, lc0 + 0.03, lc1 - 0.06, [0, 1, 2, 3].map((k) => ({ a: (k * PI) / 2 + PI / 4, w: 0.35, y0: lc0 + 0.06, y1: lc1 - 0.09 })), 'steel', { axis: 'x', seg: 48 }));
     add('coupling', g, { row: 'A' });
   }
@@ -151,9 +151,9 @@ export function barrel(api, cfg) {
   const rd0 = lc1, rd1 = Math.max(rd0 + ROD, headTop + 0.12);
   if (has('rod')) {
     add('rod', S.group(
-      lat([[rodI, rd0 - PIN], ...th(pinR, rd0 - PIN, rd0, 0.004), [rodO, rd0], [rodO, rd0 + 0.01], [rodI, rd0 + 0.01]], 'charcoal'),
-      broken(rodO, rodI, rd0 + 0.01, rd1 - PIN - 0.005, (rd0 + rd1 - PIN) / 2, 'charcoal'),
-      lat([[rodI, rd1 - PIN - 0.005], [rodO, rd1 - PIN - 0.005], [rodO, rd1 - 0.003], [rodO * 0.97, rd1], ...boxTh(pinR, rd1 - PIN, rd1, 0.004), [rodI, rd1 - PIN]], 'charcoal'),
+      lat([[rodI, rd0 - PIN], ...th(pinR, rd0 - PIN, rd0, 0.004), [rodO, rd0], [rodO, rd0 + 0.01], [rodI, rd0 + 0.01]], 'blackOxide'),
+      broken(rodO, rodI, rd0 + 0.01, rd1 - PIN - 0.005, (rd0 + rd1 - PIN) / 2, 'blackOxide'),
+      lat([[rodI, rd1 - PIN - 0.005], [rodO, rd1 - PIN - 0.005], [rodO, rd1 - 0.003], [rodO * 0.97, rd1], ...boxTh(pinR, rd1 - PIN, rd1, 0.004), [rodI, rd1 - PIN]], 'blackOxide'),
     ), { row: 'A' });
   }
   // Adaptateur d'émerillon (mâle-mâle) et émerillon.

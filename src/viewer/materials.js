@@ -17,6 +17,9 @@ const defs = {
   steel: { color: 0xb4b9c0, metalness: 0.9, roughness: 0.34 },
   chrome: { color: 0xeef1f4, metalness: 1.0, roughness: 0.08 },
   darkSteel: { color: 0x5a5f66, metalness: 0.8, roughness: 0.4 },
+  // Acier bruni / phosphaté des outils de forage : très sombre mais métallique.
+  blackOxide: { color: 0x1e2023, metalness: 0.75, roughness: 0.32 },
+  gunmetal: { color: 0x2c2f33, metalness: 0.8, roughness: 0.38 },
   brass: { color: 0xd2a447, metalness: 1.0, roughness: 0.3 },
   grey: { ...PAINT, color: 0xa3a8ae, metalness: 0.15, roughness: 0.5, clearcoat: 0.3 },
   lightGrey: { ...PAINT, color: 0xd0d3d7, roughness: 0.55, clearcoat: 0.25 },
@@ -41,11 +44,13 @@ const GRAIN = {
   cast: [0.35, 0.05, 70, 0.03],
   rubber: [0.3, 0.05, 90, 0.04],
   metal: [0.25, 0.015, 120, 0.008],
+  metalFine: [0.12, 0.015, 600, 0.006],
 };
 const GRAIN_OF = {
   red: 'paint', redDark: 'paint', black: 'paint', yellow: 'paint', safety: 'paint', blue: 'paint',
   grey: 'paint', lightGrey: 'paint', orange: 'paint', green: 'paint', white: 'paint',
   charcoal: 'cast', darkSteel: 'cast', rubber: 'rubber', steel: 'metal', brass: 'metal', copper: 'metal',
+  blackOxide: 'metalFine', gunmetal: 'metalFine',
 };
 const NOISE = `
 varying vec3 vGrainPos;
@@ -115,13 +120,15 @@ const variants = new Map();
 export const sectionPlane = new THREE.Plane(new THREE.Vector3(0, 0, -1), 0);
 
 // En coupe, les faces arrière visibles à travers le plan sont peintes d'une
-// couleur pleine hachurée, comme une coupe sur un dessin technique. La couleur
-// est calculée en linéaire puis passe par le même rendu de tons que le reste.
-const CAP = `#include <dithering_fragment>
+// couleur pleine hachurée, comme une coupe sur un dessin technique : teinte de
+// la pièce éclaircie (les aciers sombres restent lisibles), hachures à 45° dont
+// le sens alterne d'un matériau à l'autre pour séparer les pièces voisines. La
+// couleur est calculée en linéaire puis passe par le même rendu de tons.
+const capShader = (dir) => `#include <dithering_fragment>
   if (!gl_FrontFacing) {
-    float hatch = step(0.72, fract((gl_FragCoord.x + gl_FragCoord.y) * 0.085));
-    vec3 cap = diffuseColor.rgb * 0.55 + 0.02;
-    vec4 capColor = vec4(mix(cap, cap * 0.35, hatch), 1.0);
+    float hatch = step(0.72, fract((gl_FragCoord.x ${dir > 0 ? '+' : '-'} gl_FragCoord.y) * 0.12));
+    vec3 cap = mix(diffuseColor.rgb, vec3(1.0), 0.45);
+    vec4 capColor = vec4(mix(cap, cap * 0.4, hatch), 1.0);
     #if defined( TONE_MAPPING )
       capColor.rgb = toneMapping(capColor.rgb);
     #endif
@@ -149,10 +156,14 @@ function variant(base, kind, cut) {
     v.clipShadows = true;
     v.side = THREE.DoubleSide;
     if (kind !== 'ghost') {
-      v.onBeforeCompile = (shader) => {
-        shader.fragmentShader = shader.fragmentShader.replace('#include <dithering_fragment>', CAP);
+      const dir = base.id % 2 ? 1 : -1;
+      const grain = v.onBeforeCompile;
+      v.onBeforeCompile = (shader, r) => {
+        if (grain) grain(shader, r);
+        shader.fragmentShader = shader.fragmentShader.replace('#include <dithering_fragment>', capShader(dir));
       };
-      v.customProgramCacheKey = () => 'section-cap';
+      const key = base.customProgramCacheKey?.() || '';
+      v.customProgramCacheKey = () => `${key}-section-cap-${dir}`;
     }
   }
   variants.set(key, v);

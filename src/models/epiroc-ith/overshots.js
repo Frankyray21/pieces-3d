@@ -36,7 +36,8 @@ export function overshot(api, cfg) {
   const tube = (rO, rI, x0, x1, wins, mat) => S.slotted(rO * d, rI * d, x0 * d, x1 * d, wins, mat, { axis: 'x', seg: 56 });
   const pinZ = (r, len, x, y = 0, mat = 'steel') => S.cyl(r * d, len * d, mat, { axis: 'z', pos: X(x, y) });
   const add = (role, obj, o = {}) => { if (has(role)) L.add(ref(role, o.i ?? 0), obj, o); return obj; };
-  const body = type === 'arrow' ? 'black' : 'darkSteel';
+  // Acier bruni (Arrow 3S) ou bronze à canon (Excore II), comme les photos.
+  const body = type === 'arrow' ? 'blackOxide' : 'gunmetal';
   const lh = cfg.long ?? 1; // facteur de longueur de la barre de charge
 
   // ---------------------------------------------------------------- bouche et cliquets
@@ -159,12 +160,12 @@ export function overshot(api, cfg) {
   // Souterrain : clapet et joints de pompage, poussés vers le fond par l'eau.
   function ugUpper() {
     if (type === 'excore') {
-      if (has('threadedAdapter')) add('threadedAdapter', lat([[0.2, x - 0.48], ...th(0.38, x - 0.48, x - 0.02, 0.07), [0.47, x], [0.47, x + 0.6], [0.4, x + 0.66], ...th(0.38, x + 0.66, x + 1.0, 0.07, { chamferBottom: false }), [0.2, x + 1.0]], 'black'), { row: 'A' });
+      if (has('threadedAdapter')) add('threadedAdapter', lat([[0.2, x - 0.48], ...th(0.38, x - 0.48, x - 0.02, 0.07), [0.47, x], [0.47, x + 0.6], [0.4, x + 0.66], ...th(0.38, x + 0.66, x + 1.0, 0.07, { chamferBottom: false }), [0.2, x + 1.0]], 'blackOxide'), { row: 'A' });
       x += 0.66;
     } else if (has('springPin2')) add('springPin2', pinZ(0.045, 1.0, x - 0.2), C);
     // Corps intermédiaire (BU-D mid body, P070) : vissé sur le corps, il porte les joints.
     if (has('midBody')) {
-      add('midBody', lat([[0.2, x - 0.46], [0.42, x - 0.46], [0.44, x - 0.4], [0.47, x], [0.5, x + 0.05], [0.5, x + 0.4], [0.44, x + 0.46], ...th(0.4, x + 0.46, x + 1.3, 0.08, { chamferBottom: false }), [0.2, x + 1.3]], 'black'), { row: 'A' });
+      add('midBody', lat([[0.2, x - 0.46], [0.42, x - 0.46], [0.44, x - 0.4], [0.47, x], [0.5, x + 0.05], [0.5, x + 0.4], [0.44, x + 0.46], ...th(0.4, x + 0.46, x + 1.3, 0.08, { chamferBottom: false }), [0.2, x + 1.3]], 'blackOxide'), { row: 'A' });
       x += 0.9;
     }
     if (type === 'excore') { excoreValve(); return; }
@@ -172,7 +173,7 @@ export function overshot(api, cfg) {
     const v0 = x, v1 = x + 3.0;
     const vRole = 'valveBody';
     if (has(vRole)) {
-      add(vRole, lat([[0.2, v0 - 0.3], [0.34, v0 - 0.3], [0.38, v0 - 0.26], [0.38, v0], [0.44, v0], [0.44, v1 - 0.5], [0.5, v1 - 0.44], [0.5, v1], [0.3, v1], [0.3, v0 + 0.3], [0.2, v0 + 0.2]], 'black'), { row: 'A' });
+      add(vRole, lat([[0.2, v0 - 0.3], [0.34, v0 - 0.3], [0.38, v0 - 0.26], [0.38, v0], [0.44, v0], [0.44, v1 - 0.5], [0.5, v1 - 0.44], [0.5, v1], [0.3, v1], [0.3, v0 + 0.3], [0.2, v0 + 0.2]], 'blackOxide'), { row: 'A' });
     }
     if (has('valveSleeve')) add('valveSleeve', tube(0.52, 0.44, v1 - 0.95, v1 - 0.5, [], 'steel'), { row: 'A' });
     if (has('sealSeat')) add('sealSeat', S.washer(0.5 * d, 0.44 * d, 0.1 * d, 'steel', { axis: 'x', pos: X(v0 + 0.15) }), { row: 'A', gap: 0.3 });
@@ -200,9 +201,9 @@ export function overshot(api, cfg) {
     const v0 = x, lb1 = v0 + 1.7;
     if (has('lowerBody')) {
       add('lowerBody', S.group(
-        lat([[0.38, v0], [0.47, v0], [0.47, v0 + 0.42], [0.28, v0 + 0.42], [0.28, v0 + 0.36], [0.38, v0 + 0.34]], 'black'),
-        tube(0.47, 0.28, v0 + 0.4, lb1 - 0.45, [win(0, 0.7, v0 + 0.6, v0 + 1.05), win(PI, 0.7, v0 + 0.6, v0 + 1.05)], 'black'),
-        lat([[0.28, lb1 - 0.47], [0.47, lb1 - 0.47], [0.47, lb1], [0.37, lb1], ...boxTh(0.37, lb1 - 0.4, lb1, 0.07), [0.28, lb1 - 0.4]], 'black'),
+        lat([[0.38, v0], [0.47, v0], [0.47, v0 + 0.42], [0.28, v0 + 0.42], [0.28, v0 + 0.36], [0.38, v0 + 0.34]], 'blackOxide'),
+        tube(0.47, 0.28, v0 + 0.4, lb1 - 0.45, [win(0, 0.7, v0 + 0.6, v0 + 1.05), win(PI, 0.7, v0 + 0.6, v0 + 1.05)], 'blackOxide'),
+        lat([[0.28, lb1 - 0.47], [0.47, lb1 - 0.47], [0.47, lb1], [0.37, lb1], ...boxTh(0.37, lb1 - 0.4, lb1, 0.07), [0.28, lb1 - 0.4]], 'blackOxide'),
       ), { row: 'A' });
     }
     if (has('ball')) add('ball', S.ball(0.011, 'chrome', { pos: X(v0 + 0.75) }), { row: 'B' });
@@ -219,7 +220,7 @@ export function overshot(api, cfg) {
     if (has('valveWasher')) add('valveWasher', S.washer(0.46 * d, 0.3 * d, 0.06 * d, 'steel', { axis: 'x', pos: X(st1 - 0.05) }), { row: 'A', gap: 0.3 });
     if (has('lockNut')) add('lockNut', S.nut(0.95 * d, 0.45 * d, 'steel', { axis: 'x', pos: X(st1 + 0.24) }), { row: 'A' });
     const c0 = st1 + 0.5, c1 = c0 + 0.75;
-    if (has('valveCap')) add('valveCap', tube(0.48, 0.18, c0, c1, [...hole(0, c0 + 0.38, 0.09, 0.48), ...hole(PI / 2, c0 + 0.38, 0.09, 0.48)], 'black'), { row: 'A' });
+    if (has('valveCap')) add('valveCap', tube(0.48, 0.18, c0, c1, [...hole(0, c0 + 0.38, 0.09, 0.48), ...hole(PI / 2, c0 + 0.38, 0.09, 0.48)], 'blackOxide'), { row: 'A' });
     x = c1;
   }
 
@@ -227,7 +228,7 @@ export function overshot(api, cfg) {
   function swivel(x0) {
     let s0 = x0;
     if (has('swivelBody')) {
-      add('swivelBody', lat([[0.16, s0 - 0.35], [0.3, s0 - 0.35], [0.36, s0 - 0.3], [0.36, s0], [0.47, s0 + 0.05], [0.47, s0 + 1.7], [0.4, s0 + 1.75], [0.16, s0 + 1.75]], 'black'), { row: 'A' });
+      add('swivelBody', lat([[0.16, s0 - 0.35], [0.3, s0 - 0.35], [0.36, s0 - 0.3], [0.36, s0], [0.47, s0 + 0.05], [0.47, s0 + 1.7], [0.4, s0 + 1.75], [0.16, s0 + 1.75]], 'blackOxide'), { row: 'A' });
       if (has('shearPin')) add('shearPin', pinZ(0.04, 1.05, s0 - 0.15), C);
       s0 += 1.75;
     } else if (has('shearPin')) add('shearPin', pinZ(0.04, 1.05, s0 - 0.15), { row: 'C' });

@@ -165,8 +165,548 @@
     "P002",
     "P003"
    ],
-   "note": "Table des matières du catalogue : chaque ligne ouvre la page de l'assemblage ou de la liste. La 3D présente un exemplaire de chaque famille (taille N ou NU) ; les autres tailles ont leur propre 3D.",
+   "note": "Table des matières du catalogue : chaque ligne ouvre la page de l'assemblage ou de la liste. La 3D présente un exemplaire de chaque famille d'outils souterrains (taille NU) ; chaque page a sa propre 3D.",
    "parts": [
+    [
+     "64",
+     "",
+     null,
+     "Carottier BU, BTWU DiscovOre — souterrain",
+     {
+      "link": "P064",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — BU, BTWU"
+     }
+    ],
+    [
+     "65",
+     "",
+     null,
+     "Tête BU, BTWU DiscovOre — souterrain",
+     {
+      "link": "P065",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — BU, BTWU"
+     }
+    ],
+    [
+     "66",
+     "",
+     null,
+     "Trousses et consommables BU, BTWU DiscovOre",
+     {
+      "link": "P066",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — BU, BTWU"
+     }
+    ],
+    [
+     "67",
+     "",
+     null,
+     "Carottier BU Excore — souterrain",
+     {
+      "link": "P067",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — BU, BTWU"
+     }
+    ],
+    [
+     "68",
+     "",
+     null,
+     "Tête BU Excore — souterrain",
+     {
+      "link": "P068",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — BU, BTWU"
+     }
+    ],
+    [
+     "69",
+     "",
+     null,
+     "Overshot BU Excore II — souterrain",
+     {
+      "link": "P069",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — BU, BTWU"
+     }
+    ],
+    [
+     "70",
+     "",
+     null,
+     "Overshot BU, BTWU Arrow 3S — souterrain",
+     {
+      "link": "P070",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — BU, BTWU"
+     }
+    ],
+    [
+     "71",
+     "",
+     null,
+     "Overshot de sécurité BU EX II — souterrain",
+     {
+      "link": "P071",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — BU, BTWU"
+     }
+    ],
+    [
+     "72",
+     "",
+     null,
+     "Tête BU OWL L-Latch — souterrain",
+     {
+      "link": "P072",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — BU, BTWU"
+     }
+    ],
+    [
+     "73",
+     "",
+     null,
+     "Carottier NU, N2U DiscovOre — souterrain",
+     {
+      "link": "P073",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — NU, N2U"
+     }
+    ],
+    [
+     "74",
+     "",
+     null,
+     "Tête NU, N2U DiscovOre — souterrain",
+     {
+      "link": "P074",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — NU, N2U"
+     }
+    ],
+    [
+     "75",
+     "",
+     null,
+     "Trousses et consommables NU, N2U DiscovOre",
+     {
+      "link": "P075",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — NU, N2U"
+     }
+    ],
+    [
+     "76",
+     "",
+     null,
+     "Carottier NU, N2U Excore — souterrain",
+     {
+      "link": "P076",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — NU, N2U"
+     }
+    ],
+    [
+     "77",
+     "",
+     null,
+     "Tête NU, N2U Excore — souterrain",
+     {
+      "link": "P077",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — NU, N2U"
+     }
+    ],
+    [
+     "78",
+     "",
+     null,
+     "Consommables N, NU, N2, N2U",
+     {
+      "link": "P078",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — NU, N2U"
+     }
+    ],
+    [
+     "79",
+     "",
+     null,
+     "Overshot NU Arrow 3S — souterrain",
+     {
+      "link": "P079",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — NU, N2U"
+     }
+    ],
+    [
+     "80",
+     "",
+     null,
+     "Overshot NU Excore II — souterrain",
+     {
+      "link": "P080",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — NU, N2U"
+     }
+    ],
+    [
+     "81",
+     "",
+     null,
+     "Tête NU, N2U OWL L-Latch — souterrain",
+     {
+      "link": "P081",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — NU, N2U"
+     }
+    ],
+    [
+     "82",
+     "",
+     null,
+     "Carottier HU DiscovOre — souterrain",
+     {
+      "link": "P082",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — HU"
+     }
+    ],
+    [
+     "83",
+     "",
+     null,
+     "Tête HU DiscovOre — souterrain",
+     {
+      "link": "P083",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — HU"
+     }
+    ],
+    [
+     "84",
+     "",
+     null,
+     "Trousses et consommables HU DiscovOre",
+     {
+      "link": "P084",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — HU"
+     }
+    ],
+    [
+     "85",
+     "",
+     null,
+     "Carottier HU Excore — souterrain",
+     {
+      "link": "P085",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — HU"
+     }
+    ],
+    [
+     "86",
+     "",
+     null,
+     "Tête HU Excore — souterrain",
+     {
+      "link": "P086",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — HU"
+     }
+    ],
+    [
+     "87",
+     "",
+     null,
+     "Pièces de rechange HU Excore",
+     {
+      "link": "P087",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — HU"
+     }
+    ],
+    [
+     "88",
+     "",
+     null,
+     "Overshot HU Excore II — souterrain",
+     {
+      "link": "P088",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — HU"
+     }
+    ],
+    [
+     "89",
+     "",
+     null,
+     "Overshot HU Arrow 3S — souterrain",
+     {
+      "link": "P089",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — HU"
+     }
+    ],
+    [
+     "90",
+     "",
+     null,
+     "Tête HU OWL L-Latch — souterrain",
+     {
+      "link": "P090",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — HU"
+     }
+    ],
+    [
+     "91",
+     "",
+     null,
+     "Overshot PU Arrow 3S — souterrain",
+     {
+      "link": "P091",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — PU"
+     }
+    ],
+    [
+     "92",
+     "",
+     null,
+     "Tête PU DiscovOre — souterrain",
+     {
+      "link": "P092",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — PU"
+     }
+    ],
+    [
+     "93",
+     "",
+     null,
+     "Trousses PU DiscovOre",
+     {
+      "link": "P093",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — PU"
+     }
+    ],
+    [
+     "94",
+     "",
+     null,
+     "Outil de chargement B (DiscovOre souterrain)",
+     {
+      "link": "P094",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — outils"
+     }
+    ],
+    [
+     "94n",
+     "",
+     null,
+     "Outil de chargement NH (DiscovOre souterrain)",
+     {
+      "link": "P094-NH",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — outils"
+     }
+    ],
+    [
+     "94i",
+     "",
+     null,
+     "Extracteur de bague indicatrice d'atterrissage",
+     {
+      "link": "P094-LI",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — outils"
+     }
+    ],
+    [
+     "94s",
+     "",
+     null,
+     "Lances de remplacement pour instruments de mesure",
+     {
+      "link": "P094K",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — outils"
+     }
+    ],
+    [
+     "95",
+     "",
+     null,
+     "Trousses de conversion des têtes DiscovOre (surface ↔ souterrain)",
+     {
+      "link": "P095",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — outils"
+     }
+    ],
+    [
+     "96",
+     "",
+     null,
+     "Raccords de verrouillage — souterrain",
+     {
+      "link": "P096",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — outils"
+     }
+    ],
+    [
+     "97",
+     "",
+     null,
+     "Émerillon d'eau AWJ téflon et céramique",
+     {
+      "link": "P097",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — outils"
+     }
+    ],
+    [
+     "98",
+     "",
+     null,
+     "Émerillon d'eau Pro 18+",
+     {
+      "link": "P098",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — outils"
+     }
+    ],
+    [
+     "99",
+     "",
+     null,
+     "Émerillon d'eau Pro 25+",
+     {
+      "link": "P099",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — outils"
+     }
+    ],
+    [
+     "100",
+     "",
+     null,
+     "Presse-étoupe standard",
+     {
+      "link": "P100",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — outils"
+     }
+    ],
+    [
+     "101",
+     "",
+     null,
+     "Trousse de réparation du presse-étoupe",
+     {
+      "link": "P101",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — outils"
+     }
+    ],
+    [
+     "102",
+     "",
+     null,
+     "Presse-étoupe rotatif à pompage (RPT)",
+     {
+      "link": "P102",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — outils"
+     }
+    ],
+    [
+     "103",
+     "",
+     null,
+     "Trousse de remise à neuf du presse-étoupe RPT",
+     {
+      "link": "P103",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — outils"
+     }
+    ],
+    [
+     "104",
+     "",
+     null,
+     "Carottier conventionnel 48TT",
+     {
+      "link": "P104",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — outils"
+     }
+    ],
+    [
+     "105",
+     "",
+     null,
+     "Tête du carottier conventionnel 48TT",
+     {
+      "link": "P105",
+      "pseudo": true,
+      "index": true,
+      "note": "Souterrain — outils"
+     }
+    ],
     [
      "6",
      "",
@@ -801,546 +1341,6 @@
       "pseudo": true,
       "index": true,
       "note": "Surface — outils"
-     }
-    ],
-    [
-     "64",
-     "",
-     null,
-     "Carottier BU, BTWU DiscovOre — souterrain",
-     {
-      "link": "P064",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — BU, BTWU"
-     }
-    ],
-    [
-     "65",
-     "",
-     null,
-     "Tête BU, BTWU DiscovOre — souterrain",
-     {
-      "link": "P065",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — BU, BTWU"
-     }
-    ],
-    [
-     "66",
-     "",
-     null,
-     "Trousses et consommables BU, BTWU DiscovOre",
-     {
-      "link": "P066",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — BU, BTWU"
-     }
-    ],
-    [
-     "67",
-     "",
-     null,
-     "Carottier BU Excore — souterrain",
-     {
-      "link": "P067",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — BU, BTWU"
-     }
-    ],
-    [
-     "68",
-     "",
-     null,
-     "Tête BU Excore — souterrain",
-     {
-      "link": "P068",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — BU, BTWU"
-     }
-    ],
-    [
-     "69",
-     "",
-     null,
-     "Overshot BU Excore II — souterrain",
-     {
-      "link": "P069",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — BU, BTWU"
-     }
-    ],
-    [
-     "70",
-     "",
-     null,
-     "Overshot BU, BTWU Arrow 3S — souterrain",
-     {
-      "link": "P070",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — BU, BTWU"
-     }
-    ],
-    [
-     "71",
-     "",
-     null,
-     "Overshot de sécurité BU EX II — souterrain",
-     {
-      "link": "P071",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — BU, BTWU"
-     }
-    ],
-    [
-     "72",
-     "",
-     null,
-     "Tête BU OWL L-Latch — souterrain",
-     {
-      "link": "P072",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — BU, BTWU"
-     }
-    ],
-    [
-     "73",
-     "",
-     null,
-     "Carottier NU, N2U DiscovOre — souterrain",
-     {
-      "link": "P073",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — NU, N2U"
-     }
-    ],
-    [
-     "74",
-     "",
-     null,
-     "Tête NU, N2U DiscovOre — souterrain",
-     {
-      "link": "P074",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — NU, N2U"
-     }
-    ],
-    [
-     "75",
-     "",
-     null,
-     "Trousses et consommables NU, N2U DiscovOre",
-     {
-      "link": "P075",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — NU, N2U"
-     }
-    ],
-    [
-     "76",
-     "",
-     null,
-     "Carottier NU, N2U Excore — souterrain",
-     {
-      "link": "P076",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — NU, N2U"
-     }
-    ],
-    [
-     "77",
-     "",
-     null,
-     "Tête NU, N2U Excore — souterrain",
-     {
-      "link": "P077",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — NU, N2U"
-     }
-    ],
-    [
-     "78",
-     "",
-     null,
-     "Consommables N, NU, N2, N2U",
-     {
-      "link": "P078",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — NU, N2U"
-     }
-    ],
-    [
-     "79",
-     "",
-     null,
-     "Overshot NU Arrow 3S — souterrain",
-     {
-      "link": "P079",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — NU, N2U"
-     }
-    ],
-    [
-     "80",
-     "",
-     null,
-     "Overshot NU Excore II — souterrain",
-     {
-      "link": "P080",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — NU, N2U"
-     }
-    ],
-    [
-     "81",
-     "",
-     null,
-     "Tête NU, N2U OWL L-Latch — souterrain",
-     {
-      "link": "P081",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — NU, N2U"
-     }
-    ],
-    [
-     "82",
-     "",
-     null,
-     "Carottier HU DiscovOre — souterrain",
-     {
-      "link": "P082",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — HU"
-     }
-    ],
-    [
-     "83",
-     "",
-     null,
-     "Tête HU DiscovOre — souterrain",
-     {
-      "link": "P083",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — HU"
-     }
-    ],
-    [
-     "84",
-     "",
-     null,
-     "Trousses et consommables HU DiscovOre",
-     {
-      "link": "P084",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — HU"
-     }
-    ],
-    [
-     "85",
-     "",
-     null,
-     "Carottier HU Excore — souterrain",
-     {
-      "link": "P085",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — HU"
-     }
-    ],
-    [
-     "86",
-     "",
-     null,
-     "Tête HU Excore — souterrain",
-     {
-      "link": "P086",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — HU"
-     }
-    ],
-    [
-     "87",
-     "",
-     null,
-     "Pièces de rechange HU Excore",
-     {
-      "link": "P087",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — HU"
-     }
-    ],
-    [
-     "88",
-     "",
-     null,
-     "Overshot HU Excore II — souterrain",
-     {
-      "link": "P088",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — HU"
-     }
-    ],
-    [
-     "89",
-     "",
-     null,
-     "Overshot HU Arrow 3S — souterrain",
-     {
-      "link": "P089",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — HU"
-     }
-    ],
-    [
-     "90",
-     "",
-     null,
-     "Tête HU OWL L-Latch — souterrain",
-     {
-      "link": "P090",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — HU"
-     }
-    ],
-    [
-     "91",
-     "",
-     null,
-     "Overshot PU Arrow 3S — souterrain",
-     {
-      "link": "P091",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — PU"
-     }
-    ],
-    [
-     "92",
-     "",
-     null,
-     "Tête PU DiscovOre — souterrain",
-     {
-      "link": "P092",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — PU"
-     }
-    ],
-    [
-     "93",
-     "",
-     null,
-     "Trousses PU DiscovOre",
-     {
-      "link": "P093",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — PU"
-     }
-    ],
-    [
-     "94",
-     "",
-     null,
-     "Outil de chargement B (DiscovOre souterrain)",
-     {
-      "link": "P094",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — outils"
-     }
-    ],
-    [
-     "94n",
-     "",
-     null,
-     "Outil de chargement NH (DiscovOre souterrain)",
-     {
-      "link": "P094-NH",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — outils"
-     }
-    ],
-    [
-     "94i",
-     "",
-     null,
-     "Extracteur de bague indicatrice d'atterrissage",
-     {
-      "link": "P094-LI",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — outils"
-     }
-    ],
-    [
-     "94s",
-     "",
-     null,
-     "Lances de remplacement pour instruments de mesure",
-     {
-      "link": "P094K",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — outils"
-     }
-    ],
-    [
-     "95",
-     "",
-     null,
-     "Trousses de conversion des têtes DiscovOre (surface ↔ souterrain)",
-     {
-      "link": "P095",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — outils"
-     }
-    ],
-    [
-     "96",
-     "",
-     null,
-     "Raccords de verrouillage — souterrain",
-     {
-      "link": "P096",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — outils"
-     }
-    ],
-    [
-     "97",
-     "",
-     null,
-     "Émerillon d'eau AWJ téflon et céramique",
-     {
-      "link": "P097",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — outils"
-     }
-    ],
-    [
-     "98",
-     "",
-     null,
-     "Émerillon d'eau Pro 18+",
-     {
-      "link": "P098",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — outils"
-     }
-    ],
-    [
-     "99",
-     "",
-     null,
-     "Émerillon d'eau Pro 25+",
-     {
-      "link": "P099",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — outils"
-     }
-    ],
-    [
-     "100",
-     "",
-     null,
-     "Presse-étoupe standard",
-     {
-      "link": "P100",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — outils"
-     }
-    ],
-    [
-     "101",
-     "",
-     null,
-     "Trousse de réparation du presse-étoupe",
-     {
-      "link": "P101",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — outils"
-     }
-    ],
-    [
-     "102",
-     "",
-     null,
-     "Presse-étoupe rotatif à pompage (RPT)",
-     {
-      "link": "P102",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — outils"
-     }
-    ],
-    [
-     "103",
-     "",
-     null,
-     "Trousse de remise à neuf du presse-étoupe RPT",
-     {
-      "link": "P103",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — outils"
-     }
-    ],
-    [
-     "104",
-     "",
-     null,
-     "Carottier conventionnel 48TT",
-     {
-      "link": "P104",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — outils"
-     }
-    ],
-    [
-     "105",
-     "",
-     null,
-     "Tête du carottier conventionnel 48TT",
-     {
-      "link": "P105",
-      "pseudo": true,
-      "index": true,
-      "note": "Souterrain — outils"
      }
     ],
     [

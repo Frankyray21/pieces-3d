@@ -557,10 +557,14 @@ export function P105(api) {
 export function P104(api) {
   const K = kit(api, 0.046, { gap: 0.8, rows: { A: 0, B: -2.6, C: 2.4 } });
   const { S, L, X, lat, th, tube } = K;
-  const IT = 1000; // tube intérieur raccourci
-  const it0 = 35, it1 = it0 + IT;
-  L.add('7', lat([[16.8, 0], [18.5, 0], [20, 1.5], [20, 48.5], [19.6, 50], [19.25, 50], [19.25, 32], [18.6, 30], [17.7, 8], [16.8, 4]], 'darkSteel'), { row: 'B' });
-  L.add('6', tube(18.4, 17.7, 10, 28, [{ a: 0, w: 0.15, y0: 0, y1: 1 }], 'charcoal', 32), { row: 'B' });
+  const IT = 500; // tube intérieur raccourci (0,5 m)
+  // Boîtier d'extracteur et extracteur au bas du tube intérieur, sous le tube
+  // extérieur (dans l'alésoir et la couronne, non listés), comme sur le dessin.
+  const dz = -40;
+  const it0 = 35 + dz, it1 = it0 + IT;
+  const low = (o) => { o.position.x += dz * MM; return o; };
+  L.add('7', low(lat([[16.8, 0], [18.5, 0], [20, 1.5], [20, 48.5], [19.6, 50], [19.25, 50], [19.25, 32], [18.6, 30], [17.7, 8], [16.8, 4]], 'darkSteel')), { row: 'B' });
+  L.add('6', low(tube(18.4, 17.7, 10, 28, [{ a: 0, w: 0.15, y0: 0, y1: 1 }], 'charcoal', 32)), { row: 'B' });
   L.add('4', lat([[18, it0], [18.6, it0], [19, it0 + 0.5], [19, it1], [18, it1]], 'white', 48), { row: 'B' });
   // Tête : l'adaptateur se visse dans le haut du tube intérieur.
   const h0 = it1 - 14;
@@ -576,8 +580,8 @@ export function P104(api) {
     lat([[15, s0], [17, s0], [18.5, s0 + 1.5], ...th(18.5, s0 + 1.5, s0 + 38, 3, { chamferBottom: false }), [18.5, s0 + 40], [22.5, s0 + 40], [24, s0 + 42], [24, s0 + 54], [21, s0 + 56], [21, s1 - 26], [24, s1 - 24], [24, s1 - 2], [22.5, s1], [19.6, s1], [19.6, s1 - 40], [15, s1 - 43]], 'lightGrey', 48),
     band(api, 21, s0 + 56, s1 - 26, 80, 1, (a) => (frac((a / TAU) * 10) < 0.3 ? 0 : 3), 'lightGrey'),
   ), { row: 'A' });
-  // Tige AWJ (raccourcie à 0,6 m).
-  const r0 = s1 - 40, r1 = r0 + 600;
+  // Tige AWJ (raccourcie à 0,3 m).
+  const r0 = s1 - 40, r1 = r0 + 300;
   L.add('3', lat([[16, r0], [17.8, r0], [19.3, r0 + 1.5], ...th(19.3, r0 + 1.5, r0 + 38, 3, { chamferBottom: false }), [19.3, r0 + 40], [21, r0 + 42], [22.25, r0 + 44], [22.25, r1], [19.6, r1], [19.6, r1 - 40], [17.45, r1 - 42], [17.45, r0 + 44], [16, r0 + 40]], 'grey', 48), { row: 'A' });
   // Adaptateur de broche, puis émerillon d'eau AWJ (six-pans, corps, embout de tuyau).
   const a0 = r1 - 40, a1 = r1 + 44;

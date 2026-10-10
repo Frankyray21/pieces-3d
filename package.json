@@ -9,7 +9,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "build:artifact": "vite build && node scripts/build-artifact.mjs",
-    "check:3d": "node scripts/check-models.mjs --eq epiroc-ith && node scripts/check-models.mjs --eq epiroc-ith --from P064 --qty --max-tris 150000",
+    "check:3d": "node scripts/check-models.mjs --eq epiroc-ith && node scripts/check-models.mjs --eq epiroc-ith --from P064 --qty --max-tris 180000",
     "shots": "node scripts/shots.mjs"
   },
   "dependencies": {

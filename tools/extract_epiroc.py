@@ -492,7 +492,15 @@ TITLES = {
 }
 
 # Table des matières (pages 2 et 3) : [section, page, titre].
+# Sections de la table des matières : outils souterrains en tête (l'équipement
+# utilisé), puis surface et tiges.
 TOC = [
+    ("Souterrain — BU, BTWU", ["P064", "P065", "P066", "P067", "P068", "P069", "P070", "P071", "P072"]),
+    ("Souterrain — NU, N2U", ["P073", "P074", "P075", "P076", "P077", "P078", "P079", "P080", "P081"]),
+    ("Souterrain — HU", ["P082", "P083", "P084", "P085", "P086", "P087", "P088", "P089", "P090"]),
+    ("Souterrain — PU", ["P091", "P092", "P093"]),
+    ("Souterrain — outils", ["P094", "P094-NH", "P094-LI", "P094K", "P095", "P096", "P097", "P098", "P099", "P100", "P101",
+                             "P102", "P103", "P104", "P105"]),
     ("Surface — B", ["P006", "P007", "P008", "P009", "P010", "P011", "P012", "P013", "P014", "P015", "P016", "P017"]),
     ("Surface — N, N2, N3", ["P018", "P019", "P020", "P021", "P022", "P023", "P024", "P025", "P026", "P027", "P028", "P029",
                              "P030", "P031", "P032", "P033"]),
@@ -500,12 +508,6 @@ TOC = [
                          "P047", "P048"]),
     ("Surface — P, P3", ["P049", "P050", "P051", "P052", "P053"]),
     ("Surface — outils", ["P054", "P055", "P056", "P058", "P060", "P061"]),
-    ("Souterrain — BU, BTWU", ["P064", "P065", "P066", "P067", "P068", "P069", "P070", "P071", "P072"]),
-    ("Souterrain — NU, N2U", ["P073", "P074", "P075", "P076", "P077", "P078", "P079", "P080", "P081"]),
-    ("Souterrain — HU", ["P082", "P083", "P084", "P085", "P086", "P087", "P088", "P089", "P090"]),
-    ("Souterrain — PU", ["P091", "P092", "P093"]),
-    ("Souterrain — outils", ["P094", "P094-NH", "P094-LI", "P094K", "P095", "P096", "P097", "P098", "P099", "P100", "P101",
-                             "P102", "P103", "P104", "P105"]),
     ("Tiges de forage", ["P106", "P107"]),
 ]
 
@@ -1100,7 +1102,7 @@ def build(path):
     root = {"title": "Core Drilling Tools — In-The-Hole (table of contents)", "titleFr": "Gamme d'outils de carottage ITH",
             "sheets": ["P002", "P003"],
             "note": "Table des matières du catalogue : chaque ligne ouvre la page de l'assemblage ou de la liste. "
-                    "La 3D présente un exemplaire de chaque famille (taille N ou NU) ; les autres tailles ont leur propre 3D.",
+                    "La 3D présente un exemplaire de chaque famille d'outils souterrains (taille NU) ; chaque page a sa propre 3D.",
             "parts": toc}
     apply_drawn(assemblies)
     assemblies = {"P002": root, **assemblies}

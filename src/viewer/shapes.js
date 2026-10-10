@@ -522,15 +522,15 @@ export function bolt(d, len, material = 'steel', { axis = 'y', head = 'hex', pos
 }
 
 /** Ressort hélicoïdal le long de l'axe. */
-export function spring(r, wire, len, turns, material = 'black', { axis = 'y', pos } = {}) {
+export function spring(r, wire, len, turns, material = 'black', { axis = 'y', pos, perTurn = 24, radial = 8 } = {}) {
   const pts = [];
-  const n = Math.max(24, Math.round(turns * 24));
+  const n = Math.max(24, Math.round(turns * perTurn));
   for (let i = 0; i <= n; i++) {
     const t = i / n;
     const a = t * turns * Math.PI * 2;
     pts.push(new THREE.Vector3(Math.cos(a) * r, t * len - len / 2, Math.sin(a) * r));
   }
-  const geo = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), n * 2, wire, 8, false);
+  const geo = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), n * 2, wire, radial, false);
   geo.userData.edgeAngle = 60; // pas de contours le long du fil
   const m = mesh(geo, material);
   orient(m, axis);
