@@ -29,6 +29,8 @@ export function overshot(api, cfg) {
   const X = (x, y = 0, z = 0) => [x * d, y * d, z * d];
   const lat = (pts, mat) => S.lathe(prof(d, pts), mat, { axis: 'x', seg: 40 });
   const th = (r, a, b, pitch = 0.09, o = {}) => S.thread(r, a, b, { pitch, maxTurns: 8, ...o });
+  // Filet femelle de a (fond) à b (entrée), parcouru de haut en bas (paroi intérieure d'un profil).
+  const boxTh = (r, a, b, pitch = 0.09) => th(r, a, b, pitch, { chamferBottom: false }).map(([rr, y]) => [2 * r - rr, y]).reverse();
   const win = (a, w, x0, x1) => ({ a, w, y0: x0 * d, y1: x1 * d });
   const hole = (a, x, r, wall, through = true) => S.roundHole(a, x * d, r * d, wall * d, { through });
   const tube = (rO, rI, x0, x1, wins, mat) => S.slotted(rO * d, rI * d, x0 * d, x1 * d, wins, mat, { axis: 'x', seg: 56 });
@@ -42,26 +44,41 @@ export function overshot(api, cfg) {
   const b1 = 4.6; // haut du corps
   const dogTop = 3.35; // axe des cliquets
   const bodyRole = type === 'arrow' ? 'body' : 'head';
-  if (has(bodyRole)) {
+  if (has(bodyRole) && type === 'arrow') {
+    // Corps Arrow 3S : nez conique pointu en bas (il entre dans le boîtier de
+    // rappel de la tête), fenêtres des cliquets, collet et filet mâle en haut.
     const wins = [win(UP, 0.8, 0.45, 3.65), win(DOWN, 0.8, 0.45, 3.65), ...hole(0, dogTop, 0.06, 0.5)];
-    if (type === 'excore') wins.push(...hole(0, 4.05, 0.05, 0.5));
     const g = S.group(
-      lat([[0.33, 0], [0.47, 0], [0.5, 0.06], [0.5, 0.22], [0.36, 0.22]], body),
+      lat([[0, -0.95], [0.05, -0.93], [0.4, -0.12], [0.5, 0.05], [0.5, 0.22], [0.36, 0.22], [0.36, 0.05], [0, 0.05]], body),
       tube(0.5, 0.36, 0.2, b1 - 0.6, wins, body),
       lat([[0.2, b1 - 0.62], [0.5, b1 - 0.62], [0.5, b1 - 0.52], [0.44, b1 - 0.46], ...th(0.42, b1 - 0.46, b1, 0.08, { chamferBottom: false }), [0.2, b1]], body),
     );
+    add(bodyRole, g, { row: 'A' });
+  } else if (has(bodyRole)) {
+    // Tête Excore II : section octogonale à pans plats, fente des cliquets,
+    // grand trou de l'axe de pivot et lumières sur les pans ; haut rond taraudé
+    // (adaptateur fileté ou coulisse).
+    const rot = PI / 8; // pans face à l'axe des cliquets (le groupe est tourné de rot)
+    const wins = [win(UP - rot, 0.62, 0.3, 3.75), win(DOWN - rot, 0.62, 0.3, 3.75), ...hole(-rot, dogTop, 0.12, 0.52), win(-rot, 0.42, 1.3, 2.2), win(PI - rot, 0.42, 1.3, 2.2), ...hole(-rot, 0.75, 0.09, 0.52)];
+    const g = S.group(
+      S.slotted(0.52 * d, 0.36 * d, 0, (b1 - 0.9) * d, wins, body, { axis: 'x', seg: 8 }),
+      lat([[0.3, b1 - 0.92], [0.5, b1 - 0.92], [0.5, b1 - 0.04], [0.47, b1], [0.39, b1], ...boxTh(0.39, b1 - 0.5, b1, 0.08), [0.3, b1 - 0.5]], body),
+    );
+    g.rotation.x = rot;
     add(bodyRole, g, { row: 'A' });
   }
   // Cliquets de levage : pivot en haut, bec en bas qui passe sous la lance.
   if (has('dogs')) {
     for (const s of [1, -1]) {
-      const pts = [[0.14, 0.02], [0.14, 0.24], [-1.6, 0.34], [-2.7, 0.32], [-2.9, 0.18], [-2.95, -0.1], [-2.72, -0.16], [-2.55, 0.04], [-1.6, 0.1], [0, -0.1]];
-      const g = S.extrude(pts.map(([u, v]) => [(dogTop + u) * d, s * (0.12 + v) * d]), 0.24 * d, type === 'arrow' ? 'steel' : 'lightGrey');
+      // Queue au-dessus du pivot (le ressort la pousse), bras long, crochet en bas.
+      const pts = [[0.4, 0.0], [0.4, 0.26], [0.25, 0.32], [-1.6, 0.34], [-2.7, 0.32], [-2.9, 0.18], [-2.95, -0.1], [-2.72, -0.16], [-2.55, 0.04], [-1.6, 0.1], [-0.25, -0.06], [0.2, -0.06]];
+      const xy = pts.map(([u, v]) => [(dogTop + u) * d, s * (0.12 + v) * d]);
+      const g = S.extrude(s > 0 ? xy : xy.reverse(), 0.24 * d, type === 'arrow' ? 'steel' : 'lightGrey', { holes: [[dogTop * d, s * 0.24 * d, 0.075 * d]] });
       L.add(ref('dogs'), g, { follow: ref(bodyRole), extra: [0, s * 1.4, 0] });
     }
   }
   if (has('dogPins')) for (const s of [1, -1]) L.add(ref('dogPins'), pinZ(0.055, 1.05, dogTop, s * 0.14), C);
-  if (has('pivotPin')) add('pivotPin', S.group(pinZ(0.07, 1.1, dogTop), S.cyl(0.11 * d, 0.06 * d, 'steel', { axis: 'z', pos: X(dogTop, 0, 0.58) })), C);
+  if (has('pivotPin')) add('pivotPin', S.bolt(0.15 * d, 1.05 * d, 'steel', { head: 'button', axis: 'z', pos: X(dogTop, 0, 0.5) }), C);
   // Arrêtoirs de l'axe de pivot : un (B) ou un de chaque côté (N, H).
   if (has('pivotRetainer')) for (const s of (cfg.retainers === 2 ? [-1, 1] : [-1])) L.add(ref('pivotRetainer'), S.washer(0.12 * d, 0.07 * d, 0.03 * d, 'steel', { axis: 'z', pos: X(dogTop, 0, s * 0.56) }), C);
   if (has('retainingRing')) add('retainingRing', S.torus(0.09 * d, 0.015 * d, 'steel', { axis: 'z', pos: X(dogTop, 0, -0.6) }), C);
@@ -142,7 +159,7 @@ export function overshot(api, cfg) {
   // Souterrain : clapet et joints de pompage, poussés vers le fond par l'eau.
   function ugUpper() {
     if (type === 'excore') {
-      if (has('threadedAdapter')) add('threadedAdapter', lat([[0.2, x - 0.45], [0.38, x - 0.45], [0.42, x - 0.4], [0.47, x], [0.47, x + 0.6], [0.4, x + 0.66], ...th(0.38, x + 0.66, x + 1.0, 0.07, { chamferBottom: false }), [0.2, x + 1.0]], 'black'), { row: 'A' });
+      if (has('threadedAdapter')) add('threadedAdapter', lat([[0.2, x - 0.48], ...th(0.38, x - 0.48, x - 0.02, 0.07), [0.47, x], [0.47, x + 0.6], [0.4, x + 0.66], ...th(0.38, x + 0.66, x + 1.0, 0.07, { chamferBottom: false }), [0.2, x + 1.0]], 'black'), { row: 'A' });
       x += 0.66;
     } else if (has('springPin2')) add('springPin2', pinZ(0.045, 1.0, x - 0.2), C);
     // Corps intermédiaire (BU-D mid body, P070) : vissé sur le corps, il porte les joints.
@@ -150,9 +167,10 @@ export function overshot(api, cfg) {
       add('midBody', lat([[0.2, x - 0.46], [0.42, x - 0.46], [0.44, x - 0.4], [0.47, x], [0.5, x + 0.05], [0.5, x + 0.4], [0.44, x + 0.46], ...th(0.4, x + 0.46, x + 1.3, 0.08, { chamferBottom: false }), [0.2, x + 1.3]], 'black'), { row: 'A' });
       x += 0.9;
     }
+    if (type === 'excore') { excoreValve(); return; }
     // Corps de clapet : siège, bille et bague indicatrice, joints de pompage.
     const v0 = x, v1 = x + 3.0;
-    const vRole = type === 'excore' ? 'lowerBody' : 'valveBody';
+    const vRole = 'valveBody';
     if (has(vRole)) {
       add(vRole, lat([[0.2, v0 - 0.3], [0.34, v0 - 0.3], [0.38, v0 - 0.26], [0.38, v0], [0.44, v0], [0.44, v1 - 0.5], [0.5, v1 - 0.44], [0.5, v1], [0.3, v1], [0.3, v0 + 0.3], [0.2, v0 + 0.2]], 'black'), { row: 'A' });
     }
@@ -173,13 +191,36 @@ export function overshot(api, cfg) {
     if (has('ball')) add('ball', S.ball(0.011, 'chrome', { pos: X(v0 + 0.55) }), { row: 'B' });
     if (has('bushing')) add('bushing', lat([[0.12, v0 + 0.75], [0.28, v0 + 0.75], [0.28, v0 + 1.05], [0.12, v0 + 1.05]], 'lightGrey'), { row: 'B' });
     x = v1;
-    if (type === 'excore') {
-      if (has('valveCap')) add('valveCap', lat([[0.18, x - 0.35], [0.3, x - 0.35], [0.3, x], [0.48, x], [0.48, x + 0.7], [0.18, x + 0.7]], 'black'), { row: 'A' });
-      x += 0.7;
-      // Écrou de blocage dessiné sous le chapeau de clapet.
-      if (has('lockNut')) add('lockNut', S.nut(0.7 * d, 0.24 * d, 'steel', { axis: 'x', pos: X(x + 0.12) }), { row: 'A', order: (x - 1.06) * d });
-      x += 0.24;
+  }
+
+  // Clapet Excore II (dessins) : corps de verrou bas à lumières (bille et bague
+  // indicatrice dedans), siège de joints long vissé dessus et portant les deux
+  // joints à lèvre, rondelle de réglage, gros écrou de blocage, chapeau percé.
+  function excoreValve() {
+    const v0 = x, lb1 = v0 + 1.7;
+    if (has('lowerBody')) {
+      add('lowerBody', S.group(
+        lat([[0.38, v0], [0.47, v0], [0.47, v0 + 0.42], [0.28, v0 + 0.42], [0.28, v0 + 0.36], [0.38, v0 + 0.34]], 'black'),
+        tube(0.47, 0.28, v0 + 0.4, lb1 - 0.45, [win(0, 0.7, v0 + 0.6, v0 + 1.05), win(PI, 0.7, v0 + 0.6, v0 + 1.05)], 'black'),
+        lat([[0.28, lb1 - 0.47], [0.47, lb1 - 0.47], [0.47, lb1], [0.37, lb1], ...boxTh(0.37, lb1 - 0.4, lb1, 0.07), [0.28, lb1 - 0.4]], 'black'),
+      ), { row: 'A' });
     }
+    if (has('ball')) add('ball', S.ball(0.011, 'chrome', { pos: X(v0 + 0.75) }), { row: 'B' });
+    if (has('bushing')) add('bushing', lat([[0.12, v0 + 0.95], [0.27, v0 + 0.95], [0.27, v0 + 1.25], [0.12, v0 + 1.25]], 'lightGrey'), { row: 'B' });
+    const st1 = lb1 + 2.0;
+    if (has('sealSeat')) {
+      add('sealSeat', lat([[0.14, lb1 - 0.4], ...th(0.37, lb1 - 0.4, lb1, 0.07), [0.5, lb1], [0.5, lb1 + 0.15], [0.36, lb1 + 0.17], [0.36, st1], [0.3, st1], ...th(0.3, st1, st1 + 0.5, 0.07, { chamferBottom: false }), [0.14, st1 + 0.5]], 'steel'), { row: 'A' });
+    }
+    [0, 1].forEach((k) => {
+      if (!has('lipSeals')) return;
+      const s0 = lb1 + 0.22 + k * 0.82;
+      L.add(ref('lipSeals'), lat([[0.36, s0], [0.55, s0], [0.6, s0 + 0.1], [0.55, s0 + 0.74], [0.36, s0 + 0.74]], 'yellow'), { row: 'A', gap: 0.3 });
+    });
+    if (has('valveWasher')) add('valveWasher', S.washer(0.46 * d, 0.3 * d, 0.06 * d, 'steel', { axis: 'x', pos: X(st1 - 0.05) }), { row: 'A', gap: 0.3 });
+    if (has('lockNut')) add('lockNut', S.nut(0.95 * d, 0.45 * d, 'steel', { axis: 'x', pos: X(st1 + 0.24) }), { row: 'A' });
+    const c0 = st1 + 0.5, c1 = c0 + 0.75;
+    if (has('valveCap')) add('valveCap', tube(0.48, 0.18, c0, c1, [...hole(0, c0 + 0.38, 0.09, 0.48), ...hole(PI / 2, c0 + 0.38, 0.09, 0.48)], 'black'), { row: 'A' });
+    x = c1;
   }
 
   // Émerillon de câble : corps (souterrain), collet, butée, écrous, boulon à œil, manchons de sertissage.
