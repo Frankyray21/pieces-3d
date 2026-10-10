@@ -1,5 +1,18 @@
 # Plan d'amélioration de la 3D Epiroc — outils souterrains
 
+## État d'avancement
+
+Fait (branche `claude/trusting-newton-c9h4qp`) :
+
+- **Étape 0 — garde-fous** (#1) : `npm run check:3d` (repères, quantités avec `qty3d`, plafond de 180 000 triangles par page souterraine) ; `scripts/shots.mjs` (vues assemblée, éclatée, coupe, comparées à une référence). Pas encore fait : le contrôle rôle → description.
+- **Étape 1 — données et éclatés** (#2 à #5, #15, #16, #19, #20, #36, #43, #58) : pas minimal, clé d'ordre et rangées placées au droit de leur pièce dans `layout()` ; pile de l'axe des têtes sur sa rangée dans l'ordre des dessins ; une bulle par exemplaire, bulles des pièces cachées masquées en vue assemblée ; repères et quantités corrigés (P077, P081, P083, P070, P069, P080, P088, P071, goupilles L-Latch et Excore) ; écarts liste ↔ dessin annotés (P086, P097, P105, P079).
+- **Étape 2 — carottiers** (#6 à #10, #45) : vue rompue (0,45 m / 0,3 m, trait crénelé), éléments vissés mâle en bas / femelle en haut, bagues logées, raccord de verrouillage souterrain plein, SB et DK tirés de la page 100, rangées écartées pour « Tout éclater », extracteur conique court.
+- **Étape 3 — têtes DiscovOre** (#11 à #14) : cliquets coudés, ressort, corps de verrou allongé, écrou-barillet et boulon sous l'épaulement, second jeu (BU, NU, HU), joints de propulsion, chapeau taraudé à fentes inclinées.
+- **Étape 4 — overshots** (#17, #18, #38, en partie #39) : tête Excore II octogonale, clapet Excore II (siège long, gros écrou, chapeau percé), nez conique Arrow 3S, cliquets à trou de pivot.
+- **Étape 5 — rendu et accueil** (#21 à #24, #52, en partie #30) : acier bruni et bronze à canon, coupe éclaircie à hachures alternées, présentoir et table des matières souterrains en tête, vignette, 48TT (boîtier d'extracteur visible, longueurs réduites), ressorts allégés.
+
+Reste à faire : lot 2 sauf les points ci-dessus (pieds pointillés, rangée A sur plusieurs lignes, cadrage, légendes du présentoir, filets fins, pièces partagées en mm, lances et cliquets L-Latch, clapet et émerillon de câble Arrow, tailles H/PU des overshots, presse-étoupes, émerillons Pro et AWJ, P105, P096, P094) et le lot 3.
+
 ## 0. Périmètre
 
 Seules les 35 pages de la section « Underground » du catalogue (p. 64 à 105) sont concernées : têtes DiscovOre BU/NU/HU/PU (P065, P074, P083, P092), Excore UG (P068, P077, P086) et OWL L-Latch UG (P072, P081, P090) ; overshots Arrow 3S UG (P070, P079, P089, P091) et Excore II UG (P069, P071, P080, P088) ; carottiers UG (P064, P067, P073, P076, P082, P085) ; outils de chargement (P094, P094-NH, P094-LI) ; raccords de verrouillage UG (P096) ; émerillons AWJ, Pro 18+ et Pro 25+ (P097, P098, P099) ; presse-étoupes standard et RPT (P100, P102) ; 48TT (P104, P105).
