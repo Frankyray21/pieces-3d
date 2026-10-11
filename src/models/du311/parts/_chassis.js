@@ -10,7 +10,7 @@
 // électrovannes PVE vers +X), +Z = face des orifices A / B et P / T.
 // Corps de section 116 (X) × 48 (Y, épaisseur d'empilage PVG 32) × 100 (Z) mm,
 // d'après les proportions des vues isométriques (épaisseur 48 mm du catalogue).
-// Orifices : A / B 3/4-16 UNF (SAE -8), P / T 1 1/16-12 UN (SAE -12), lamages.
+// Orifices : A / B 7/8-14 UNF (SAE -10), P / T 1 1/16-12 UN (SAE -12), lamages.
 
 export const IN = 0.0254;
 export const MM = 0.001;
@@ -105,11 +105,11 @@ export const PVG = {
 function pvgSection(api, { tram = false } = {}) {
   const { S } = api;
   const { w, d, sec } = PVG;
-  const ra = 0.0095;
+  const ra = 0.0111; // 7/8-14 UNF (SAE -10, adaptateurs de P214)
   const g = portedBlock(api, w, sec, d, 'castIron', [[-0.024, 0, ra, 0.022], [0.024, 0, ra, 0.022]]);
   // Bossages des clapets antichoc / anticavitation (PVLP) sur la face avant, de part et d'autre.
   const plugs = [];
-  for (const sx of [-1, 1]) plugs.push(S.at(orbPlug(api, 0.019), [sx * 0.049, 0, d / 2], [Math.PI / 2, 0, 0]));
+  for (const sx of [-1, 1]) plugs.push(S.at(orbPlug(api, 0.016), [sx * 0.049, 0, d / 2], [Math.PI / 2, 0, 0]));
   if (tram) plugs.push(S.at(orbPlug(api, 0.014), [0, sec * 0.3, d / 2], [Math.PI / 2, 0, 0]));
   // Bouchons LS A / B sur la face arrière.
   for (const sx of [-1, 1]) plugs.push(S.at(socketPlug(api, 0.006), [sx * 0.03, 0, -d / 2], [-Math.PI / 2, 0, 0]));
@@ -249,4 +249,137 @@ export function pvgValve(api, spec) {
   P(spec.inlet, S.at(pvgInlet(api), [0, H - inlet / 2, 0]), [0, ey(n), 0]);
   if (spec.kit) PVG.rods.forEach(([x, z]) => P(spec.kit, pvgRod(api, x, z, 0, H), [0, -0.6 * H - 0.06, 0]));
   return { H, ys };
+}
+
+// ------------------------------------------------------------ raccords hydrauliques
+// Tailles SAE (« dash » = seizièmes de pouce) : t = Ø du filet JIC / ORB (po),
+// hex = six-pans d'un adaptateur (po), od = Ø ext. du tube (po).
+export const SAE = {
+  2: { t: 5 / 16, hex: 7 / 16, od: 1 / 8 },
+  4: { t: 7 / 16, hex: 9 / 16, od: 1 / 4 },
+  5: { t: 1 / 2, hex: 5 / 8, od: 5 / 16 },
+  6: { t: 9 / 16, hex: 11 / 16, od: 3 / 8 },
+  8: { t: 3 / 4, hex: 7 / 8, od: 1 / 2 },
+  10: { t: 7 / 8, hex: 1, od: 5 / 8 },
+  12: { t: 1 + 1 / 16, hex: 1.25, od: 3 / 4 },
+  16: { t: 1 + 5 / 16, hex: 1.5, od: 1 },
+  20: { t: 1 + 5 / 8, hex: 1.875, od: 1.25 },
+  24: { t: 1 + 7 / 8, hex: 2.125, od: 1.5 },
+  32: { t: 2.5, hex: 2.75, od: 2 },
+};
+const sae = (dash) => SAE[dash] || SAE[8];
+
+/** Profil d'un embout mâle JIC 37° de y0 à y0 + len (rayon de filet rt) : filet puis cône. */
+function jicMaleProfile(api, rt, y0, len) {
+  const { S } = api;
+  const yc = y0 + len - rt * 0.55;
+  return [
+    ...S.thread(rt, y0, yc, { pitch: rt * 0.22, maxTurns: 6, chamferBottom: false }),
+    [rt * 0.92, yc + rt * 0.05], [rt * 0.62, y0 + len], [rt * 0.42, y0 + len], [rt * 0.42, y0 + len - 0.002], [0, y0 + len - 0.002],
+  ];
+}
+
+/**
+ * Adaptateur droit MORB → MJIC (ou MORB → MORB) le long de +Y, origine sur la
+ * face de l'orifice : queue ORB vissée sous y = 0 (cachée), joint torique,
+ * six-pans, embout JIC mâle. Retourne l'objet et la position du bout (tip).
+ */
+export function orbAdapter(api, orb, jic = orb, material = 'zinc') {
+  const { S } = api;
+  const a = sae(orb), b = sae(jic);
+  const rt = (b.t * IN) / 2, ro = (a.t * IN) / 2;
+  const af = Math.max(a.hex, b.hex) * IN;
+  const hh = af * 0.42;
+  const len = rt * 2.6 + 0.004;
+  const g = S.group(
+    S.merged([
+      S.lathe([[0, -ro * 1.5], [ro * 0.95, -ro * 1.5], [ro, -ro * 1.3], [ro, 0], [0, 0]], material, { seg: 14 }),
+      S.nut(af, hh, material, { pos: [0, hh / 2 + 0.0008, 0] }),
+      S.cyl(af * 0.48, 0.0008, material, { seg: 18, pos: [0, 0.0004, 0] }),
+      S.lathe([[0, hh], [rt * 0.85, hh], [rt * 0.85, hh + 0.003], ...jicMaleProfile(api, rt, hh + 0.003, len)], material, { seg: 16 }),
+    ], material),
+    S.torus(ro * 1.05, ro * 0.08, 'rubber', { pos: [0, 0.0006, 0] }),
+  );
+  return { obj: g, tip: hh + 0.003 + len };
+}
+
+/** Écrou tournant JIC femelle (six-pans) le long de +Y, de y = 0 à y = h. */
+function swivelNutGeo(api, dash, material) {
+  const { S } = api;
+  const b = sae(dash);
+  const af = (b.hex + 0.0625) * IN, h = b.t * IN * 0.75;
+  return { obj: S.nut(af, h, material, { pos: [0, h / 2, 0] }), h, af };
+}
+
+/**
+ * Coude 90° à écrou tournant (SFJIC → MJIC) : l'écrou coiffe un embout mâle
+ * dont le bout est à l'origine (écrou de y = -0.6 h à 0.4 h), le corps monte
+ * selon +Y puis la sortie mâle part selon +Z. long : coude de tube cintré à
+ * grandes branches (FA01019). Retourne { obj, out: [0, y, z] du bout mâle }.
+ */
+export function swivelElbow(api, dash, { long = false, material = 'zinc' } = {}) {
+  const { S } = api;
+  const b = sae(dash);
+  const rt = (b.t * IN) / 2;
+  const nut = swivelNutGeo(api, dash, material);
+  const y0 = -nut.h * 0.6;
+  nut.obj.position.y += y0;
+  const parts = [nut.obj];
+  let outY, outZ;
+  if (long) {
+    // Tube cintré : branche montante, rayon de cintrage 1,5 D, branche horizontale.
+    const r = (b.od * IN) / 2, R = r * 3.2, L1 = rt * 5, L2 = rt * 4;
+    const yb = y0 + nut.h;
+    const pts = [[0, yb, 0], [0, yb + L1, 0]];
+    for (let i = 1; i <= 8; i++) {
+      const a = (i / 8) * (Math.PI / 2);
+      pts.push([0, yb + L1 + Math.sin(a) * R, R - Math.cos(a) * R]);
+    }
+    pts.push([0, yb + L1 + R, R + L2]);
+    parts.push(S.tube(pts, r, material, { sharp: true, ends: 'none', radial: 14 }));
+    outY = yb + L1 + R;
+    outZ = R + L2;
+    parts.push(S.cyl(rt * 1.1, rt * 0.8, material, { axis: 'z', seg: 16, pos: [0, outY, outZ + rt * 0.4] }));
+    parts.push(S.at(S.lathe(jicMaleProfile(api, rt, 0, rt * 2.4), material, { seg: 16 }), [0, outY, outZ + rt * 0.8], [Math.PI / 2, 0, 0]));
+    outZ += rt * 0.8 + rt * 2.4;
+  } else {
+    // Corps forgé : bloc à angle arrondi, sortie six-pans + embout mâle.
+    const s = b.hex * IN * 0.92;
+    const yb = y0 + nut.h + s * 0.45;
+    parts.push(S.cyl(rt * 0.95, nut.h * 0.6, material, { seg: 16, pos: [0, y0 + nut.h + nut.h * 0.3 - 0.001, 0] }));
+    parts.push(S.box(s, s, s, material, { r: s * 0.3, pos: [0, yb, 0] }));
+    parts.push(S.at(S.nut(s, s * 0.35, material), [0, yb, s * 0.5 + s * 0.175], [Math.PI / 2, 0, 0]));
+    parts.push(S.at(S.lathe(jicMaleProfile(api, rt, 0, rt * 2.4), material, { seg: 16 }), [0, yb, s * 0.5 + s * 0.35], [Math.PI / 2, 0, 0]));
+    outY = yb;
+    outZ = s * 0.85 + rt * 2.4;
+  }
+  return { obj: S.merged(parts, material), out: [0, outY, outZ] };
+}
+
+/** Té (mâle JIC sur les trois branches) : passage selon Y, branche selon +Z, centre à l'origine. */
+export function jicTee(api, dash, material = 'zinc') {
+  const { S } = api;
+  const b = sae(dash);
+  const rt = (b.t * IN) / 2, s = b.hex * IN;
+  const parts = [S.box(s, s * 1.1, s, material, { r: s * 0.12 })];
+  for (const [rot, pos] of [[[0, 0, 0], [0, s * 0.55, 0]], [[Math.PI, 0, 0], [0, -s * 0.55, 0]], [[Math.PI / 2, 0, 0], [0, 0, s * 0.5]]]) {
+    parts.push(S.at(S.lathe(jicMaleProfile(api, rt, 0, rt * 2.4), material, { seg: 16 }), pos, rot));
+  }
+  return { obj: S.merged(parts, material), reach: s * 0.5 + rt * 2.4 };
+}
+
+/**
+ * Oriente un objet construit le long de +Y (et +Z secondaire) : axe principal
+ * selon dir, axe secondaire selon side (perpendiculaire), origine en pos.
+ */
+export function orient(api, obj, pos, dir, side = null) {
+  const { THREE } = api;
+  const Y = new THREE.Vector3(...dir).normalize();
+  let Z = side ? new THREE.Vector3(...side) : (Math.abs(Y.y) < 0.9 ? new THREE.Vector3(0, 1, 0) : new THREE.Vector3(0, 0, 1));
+  Z = Z.sub(Y.clone().multiplyScalar(Z.dot(Y))).normalize();
+  const X = new THREE.Vector3().crossVectors(Y, Z);
+  const g = api.S.group(obj);
+  g.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(X, Y, Z));
+  g.position.set(...pos);
+  return g;
 }
