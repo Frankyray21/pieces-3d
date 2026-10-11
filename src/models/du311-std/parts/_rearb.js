@@ -28,7 +28,7 @@ export const RB = {
   boost: { pos: [-3.95, 1.36, -0.335], rot: [0, Math.PI / 2, 0] },
   // P482 — filtre / séparateur d'admission : ligne 3 po selon Z, à l'arrière
   // (local +X → machine +Z, local +Z → machine −X).
-  afw: { pos: [-4.19, 1.66, 0.27], rot: [0, -Math.PI / 2, 0] },
+  afw: { pos: [-4.19, 1.7, 0.2], rot: [0, -Math.PI / 2, 0] },
   // P466 — refroidisseur final contre la paroi avant du capot, piquages
   // tournés vers l'arrière (local +Z → −X, local +X → +Z).
   ac: { pos: [-3.72, 1.19, 0.47], rot: [0, -Math.PI / 2, 0] },

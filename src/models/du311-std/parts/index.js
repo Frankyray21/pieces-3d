@@ -5,6 +5,8 @@ import P460 from './P460.js';
 import P466 from './P466.js';
 import P468 from './P468.js';
 import P476 from './P476.js';
+import P482 from './P482.js';
+import P486 from './P486.js';
 
 export default {
   'P432': P432,
@@ -12,4 +14,6 @@ export default {
   'P466': P466,
   'P468': P468,
   'P476': P476,
+  'P482': P482,
+  'P486': P486,
 };
