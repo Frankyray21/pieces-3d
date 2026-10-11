@@ -73,13 +73,22 @@ export default function P338(api) {
   const ringZ = (ro, ri, z0, z1, mat, seg = 32) => Lz([[ri, z0], [ro, z0], [ro, z1], [ri, z1], [ri, z0]], mat, seg);
   // Disque plein.
   const diskZ = (r, z0, z1, mat, seg = 24) => Lz([[0, z0], [r, z0], [r, z1], [0, z1]], mat, seg);
+  // Prisme plein à 6 pans selon Z (petites pièces internes : 24 triangles).
+  const hexZ = (r, z0, z1, mat) => merged([new THREE.Mesh(new THREE.CylinderGeometry(r, r, z1 - z0, 6, 1).rotateX(Math.PI / 2).translate(0, 0, (z0 + z1) / 2))], mat);
   // Joint torique léger (section en losange).
   const oring = (R, r, z, seg = 28) => Lz([[R - r, z], [R, z - r], [R + r, z], [R, z + r], [R - r, z]], 'rubber', seg);
   // Engrenage extrudé selon Z (z0 → z1), alésage optionnel.
-  const gearZ = (rr, rt, n, z0, z1, mat, hole = 0) => {
-    const g = S.gear(rr, rt, n, z1 - z0, mat, { axis: 'z', hole });
-    g.position.z = (z0 + z1) / 2;
-    return g;
+  // Engrenage léger : prisme en étoile (dents triangulaires) extrudé selon Z,
+  // sans alésage (pièce interne), 8n − 4 triangles.
+  const gearZ = (rr, rt, n, z0, z1, mat) => {
+    const sh = new THREE.Shape();
+    for (let i = 0; i < 2 * n; i++) {
+      const a = (i / (2 * n)) * TAU, r = i % 2 ? rt : rr;
+      if (i === 0) sh.moveTo(r * Math.cos(a), r * Math.sin(a)); else sh.lineTo(r * Math.cos(a), r * Math.sin(a));
+    }
+    const geo = new THREE.ExtrudeGeometry(sh, { depth: z1 - z0, bevelEnabled: false });
+    geo.translate(0, 0, z0);
+    return merged([new THREE.Mesh(geo)], mat);
   };
   // Vis à tête (axe +Z : tête en haut, tige vers −Z), tête cylindrique (CHC)
   // ou six pans ; maillage partagé par clonage.
@@ -103,71 +112,71 @@ export default function P338(api) {
   // trous, fusée vers +Z qui porte les roulements du moyeu.
   {
     const body = Lz([
-      [0, -0.19], [0.06, -0.19], [0.075, -0.185], [0.09, -0.185], [0.095, -0.17], [0.095, -0.15],
+      [0, -0.19], [0.085, -0.19], [0.095, -0.175], [0.095, -0.15],
       [0.105, -0.145], [0.105, -0.03], [0.13, -0.025], [0.13, -0.004],
-      [0.19, -0.004], [0.19, 0.028], [0.106, 0.028], [0.105, 0.135], [0.06, 0.14], [0, 0.14],
-    ], 'black', 20);
+      [0.19, -0.004], [0.19, 0.028], [0.105, 0.028], [0.105, 0.14], [0, 0.14],
+    ], 'black', 12);
     // Trous de fixation : pastilles sombres sur les deux faces de la bride.
     const holes = [];
     for (let i = 0; i < GBX338.nBolts; i++) {
       const a = (i + 0.5) / GBX338.nBolts * TAU;
-      holes.push(at(new THREE.Mesh(new THREE.CircleGeometry(0.009, 4)), [...polar(GBX338.boltR, a, 0.0285)]));
+      holes.push(at(new THREE.Mesh(new THREE.CircleGeometry(0.009, 3)), [...polar(GBX338.boltR, a, 0.0285)]));
     }
     const holeM = merged(holes, 'gunmetal');
     // Bloc de distribution (orifices A/B en haut, drain et pilotes à l'arrière).
     const block = box(0.12, 0.06, 0.11, 'black', { pos: [0, 0.136, -0.085] });
     const flanges = merged([
       ...['A', 'B'].map((k) => at(box(0.05, 0.004, 0.06), PORTS338[k].pos.map((v, i) => (i === 1 ? v - 0.002 : v)))),
-      ...['drain', 'X1', 'X2'].map((k) => at(new THREE.Mesh(new THREE.CylinderGeometry(k === 'drain' ? 0.012 : 0.009, k === 'drain' ? 0.012 : 0.009, 0.004, 8).rotateX(Math.PI / 2)), PORTS338[k].pos.map((v, i) => (i === 2 ? v + 0.002 : v)))),
+      ...['drain', 'X1', 'X2'].map((k) => at(new THREE.Mesh(new THREE.CylinderGeometry(k === 'drain' ? 0.012 : 0.009, k === 'drain' ? 0.012 : 0.009, 0.004, 6).rotateX(Math.PI / 2)), PORTS338[k].pos.map((v, i) => (i === 2 ? v + 0.002 : v)))),
     ], 'zinc');
     P('51', group(body, holeM, block, flanges), E(0));
   }
 
   // 5 — joint de bride, 34 — bride porte-joint et 24 vis M6 × 30 (49)
-  P('5', ringZ(0.168, 0.126, 0.028, 0.0295, 'cream', 20), E(0));
-  P('34', ringZ(0.17, 0.126, 0.0295, 0.041, 'black', 20), E(0));
+  P('5', ringZ(0.168, 0.126, 0.028, 0.0295, 'cream', 10), E(0));
+  P('34', ringZ(0.17, 0.126, 0.0295, 0.041, 'black', 10), E(0));
   {
     const s = screwT(0.006, 0.03);
     for (let i = 0; i < 24; i++) P('49', at(s.clone(), polar(0.155, (i / 24) * TAU, 0.041)), E(0));
   }
   // 28 — bague V (sur la bride 34), 27 — joint duocone (deux bagues métal + toriques)
-  P('28', Lz([[0.158, 0.041], [0.168, 0.041], [0.168, 0.047], [0.16, 0.05], [0.158, 0.047], [0.158, 0.041]], 'rubber', 18), E(0));
-  P('27', Lz([[0.13, 0.042], [0.152, 0.042], [0.152, 0.048], [0.149, 0.049], [0.152, 0.05], [0.152, 0.056], [0.13, 0.056], [0.13, 0.042]], 'darkSteel', 18), E(0));
+  P('28', Lz([[0.158, 0.041], [0.168, 0.041], [0.168, 0.047], [0.16, 0.05], [0.158, 0.047], [0.158, 0.041]], 'rubber', 10), E(0));
+  P('27', Lz([[0.13, 0.042], [0.152, 0.042], [0.149, 0.049], [0.152, 0.056], [0.13, 0.056], [0.13, 0.042]], 'darkSteel', 12), E(0));
 
   // ------------------------------------------------------------ 2 — moyeu
   // Bride de barbotin (Z 0.052 → 0.075, Ø 0.356), portée Ø 0.29, corps Ø 0.32, gorge du joint torique
   // du couvercle ; alésage étagé (roulements, couronne dentée).
   {
     const hub = Lz([
-      [0.153, 0.045], [0.165, 0.045], [0.165, 0.052], [0.178, 0.052], [0.178, 0.075], [0.145, 0.075], [0.145, 0.105], [0.16, 0.11], [0.16, 0.245],
-      [0.152, 0.255], [0.118, 0.255], [0.118, 0.13], [0.131, 0.125], [0.131, 0.058], [0.153, 0.058], [0.153, 0.045],
-    ], 'black', 24);
+      [0.153, 0.045], [0.165, 0.045], [0.165, 0.052], [0.178, 0.052], [0.178, 0.075], [0.145, 0.075], [0.145, 0.105], [0.16, 0.11], [0.16, 0.25],
+      [0.15, 0.255], [0.118, 0.255], [0.118, 0.125], [0.131, 0.125], [0.131, 0.045], [0.153, 0.045],
+    ], 'black', 14);
     const holes = [];
     for (let i = 0; i < GBX338.nSprocketBolts; i++) {
-      holes.push(at(new THREE.Mesh(new THREE.CircleGeometry(0.0085, 4)), [...polar(GBX338.sprocketBoltR, (i / 18) * TAU, 0.0755)]));
+      holes.push(at(new THREE.Mesh(new THREE.CircleGeometry(0.0085, 3)), [...polar(GBX338.sprocketBoltR, (i / 18) * TAU, 0.0755)]));
     }
     P('2', group(hub, merged(holes, 'gunmetal')), E(0));
   }
   // 31 — roulements principaux, 3 — entretoise, 15 — entretoise, 24 — joint torique
   // Roulement : bagues extérieure et intérieure d'un seul profil, cage en
   // retrait entre les deux (gorge visible sur les faces).
-  const bearing = (ro, ri, z0, z1, seg = 20) => {
+  const bearing = (ro, ri, z0, z1, seg = 10) => {
     const t = (ro - ri) * 0.3, c = Math.min(0.002, (z1 - z0) * 0.15);
-    return Lz([[ri, z0], [ri + t, z0], [ri + t, z0 + c], [ro - t, z0 + c], [ro - t, z0], [ro, z0], [ro, z1],
+    return Lz([[ri, z0], [ri + t, z0 + c], [ro - t, z0 + c], [ro, z0], [ro, z1],
       [ri, z1], [ri, z0]], 'steel', seg);
   };
   P('31', bearing(0.131, 0.106, 0.058, 0.086), E(0));
-  P('3', ringZ(0.128, 0.108, 0.086, 0.09, 'steel', 20), E(0));
+  P('3', ringZ(0.128, 0.108, 0.086, 0.09, 'steel', 10), E(0));
   P('31', bearing(0.131, 0.106, 0.09, 0.118), E(0));
-  P('15', ringZ(0.12, 0.09, 0.118, 0.124, 'steel', 20), E(0));
-  P('24', oring(0.1, 0.0025, 0.127, 12), E(0));
+  P('15', ringZ(0.12, 0.09, 0.118, 0.124, 'steel', 10), E(0));
+  P('24', oring(0.1, 0.0025, 0.127, 8), E(0));
 
   // ------------------------------------------------------ étage de sortie
   // 4 — porte-satellites fixe (vissé sur la fusée), 3 axes 6, 3 vis M16 (48).
   const ZC = 0.07; // rayon des axes de satellites
-  P('4', Lz([[0.03, 0.14], [0.098, 0.14], [0.098, 0.152], [0.03, 0.152], [0.03, 0.14]], 'castIron', 20), E(0));
+  P('4', Lz([[0.03, 0.14], [0.098, 0.14], [0.098, 0.152], [0.03, 0.152], [0.03, 0.14]], 'castIron', 10), E(0));
   {
-    const pin = Lz([[0, 0.152], [0.012, 0.152], [0.012, 0.192], [0, 0.192]], 'steel', 8);
+    const pin = hexZ(0.012, 0.152, 0.192, 'steel');
     const s = screwT(0.016, 0.08);
     for (let k = 0; k < 3; k++) {
       const a = (k / 3) * TAU;
@@ -179,10 +188,10 @@ export default function P338(api) {
   // d'autre, rondelles à rouleaux 11 et bagues 17 sur les axes.
   {
     const roller = merged([new THREE.Mesh(new THREE.CylinderGeometry(0.0022, 0.0022, 0.016, 3, 1, true).rotateX(Math.PI / 2))], 'chrome');
-    const planet = gearZ(0.036, 0.042, 9, 0.156, 0.19, 'steel', 0.0164);
-    const wsh = ringZ(0.024, 0.0125, 0, 0.002, 'steel', 8);
-    const rwsh = ringZ(0.02, 0.0125, 0, 0.003, 'brass', 8);
-    const bush = ringZ(0.016, 0.0122, 0, 0.004, 'brass', 8);
+    const planet = gearZ(0.036, 0.042, 10, 0.156, 0.19, 'steel');
+    const wsh = hexZ(0.024, 0, 0.002, 'steel');
+    const rwsh = hexZ(0.02, 0, 0.003, 'brass');
+    const bush = hexZ(0.016, 0, 0.004, 'brass');
     for (let k = 0; k < 3; k++) {
       const a = (k / 3) * TAU;
       const [cx, cy] = polar(ZC, a, 0);
@@ -204,11 +213,11 @@ export default function P338(api) {
   // ------------------------------------------- débrayage (pignons de libération)
   // 37 — pignon de débrayage (planétaire de sortie), 39 — bague coulissante,
   // 33 — ressort, 21 — jonc, 20 — joint torique.
-  P('37', group(gearZ(0.021, 0.026, 9, 0.156, 0.19, 'steel', 0.008)), E(0));
-  P('39', ringZ(0.02, 0.013, 0.142, 0.154, 'steel', 16), E(0));
-  P('33', S.spring(0.011, 0.002, 0.03, 3, 'black', { axis: 'z', pos: [0, 0, 0.11], perTurn: 6, radial: 3 }), E(0));
-  P('21', ringZ(0.026, 0.022, 0.191, 0.193, 'blackOxide', 16), E(0));
-  P('20', oring(0.02, 0.0018, 0.195, 12), E(0));
+  P('37', group(gearZ(0.021, 0.026, 9, 0.156, 0.19, 'steel')), E(0));
+  P('39', ringZ(0.02, 0.013, 0.142, 0.154, 'steel', 10), E(0));
+  P('33', Lz([[0.009, 0.11], [0.0125, 0.114], [0.009, 0.118], [0.0125, 0.122], [0.009, 0.126], [0.0125, 0.13], [0.009, 0.134], [0.0125, 0.138]], 'black', 8), E(0));
+  P('21', ringZ(0.026, 0.022, 0.191, 0.193, 'blackOxide', 10), E(0));
+  P('20', oring(0.02, 0.0018, 0.195, 8), E(0));
 
   // ------------------------------------------------ étage intermédiaire
   // 8 — porte-satellites (plateau à trois tourillons), 13 — satellites sur
@@ -216,13 +225,13 @@ export default function P338(api) {
   const Z2 = 0.063;
   {
     const plate = group(
-      Lz([[0.012, 0.194], [0.09, 0.194], [0.09, 0.203], [0.012, 0.203], [0.012, 0.194]], 'castIron', 20),
-      ...[0, 1, 2].map((k) => at(diskZ(0.011, 0.203, 0.231, 'steel', 8), polar(Z2, (k / 3) * TAU + Math.PI / 3, 0))),
+      Lz([[0.012, 0.194], [0.09, 0.194], [0.09, 0.203], [0.012, 0.203], [0.012, 0.194]], 'castIron', 12),
+      ...[0, 1, 2].map((k) => at(diskZ(0.011, 0.203, 0.231, 'steel', 6), polar(Z2, (k / 3) * TAU + Math.PI / 3, 0))),
     );
     P('8', plate, E(0));
-    const planet = gearZ(0.03, 0.035, 8, 0.205, 0.229, 'steel');
-    const brg = ringZ(0.017, 0.011, 0.207, 0.227, 'steel', 8);
-    const snap = ringZ(0.014, 0.011, 0.231, 0.2325, 'blackOxide', 8);
+    const planet = gearZ(0.03, 0.035, 9, 0.205, 0.229, 'steel');
+    const brg = hexZ(0.017, 0.207, 0.227, 'steel');
+    const snap = ringZ(0.014, 0.011, 0.231, 0.2325, 'blackOxide', 6);
     for (let k = 0; k < 3; k++) {
       const a = (k / 3) * TAU + Math.PI / 3;
       const [cx, cy] = polar(Z2, a, 0);
@@ -232,7 +241,7 @@ export default function P338(api) {
       P('19', at(snap.clone(), [cx, cy, 0]), [out[0] * 0.4, out[1] * 0.4, 0]);
     }
   }
-  P('7', gearZ(0.022, 0.027, 9, 0.205, 0.229, 'steel', 0.007), E(0));
+  P('7', gearZ(0.022, 0.027, 9, 0.205, 0.229, 'steel'), E(0));
 
   // ------------------------------------------------------ étage d'entrée
   // 9 — porte-satellites (dentures cannelées du planétaire 7), 14 — satellites
@@ -241,13 +250,13 @@ export default function P338(api) {
   const Z1 = 0.06;
   {
     const plate = group(
-      Lz([[0.01, 0.233], [0.088, 0.233], [0.088, 0.241], [0.01, 0.241], [0.01, 0.233]], 'castIron', 20),
-      ...[0, 1, 2].map((k) => at(diskZ(0.009, 0.241, 0.262, 'steel', 8), polar(Z1, (k / 3) * TAU, 0))),
+      Lz([[0.01, 0.233], [0.088, 0.233], [0.088, 0.241], [0.01, 0.241], [0.01, 0.233]], 'castIron', 12),
+      ...[0, 1, 2].map((k) => at(diskZ(0.009, 0.241, 0.262, 'steel', 6), polar(Z1, (k / 3) * TAU, 0))),
     );
     P('9', plate, E(0));
-    const planet = gearZ(0.028, 0.033, 8, 0.243, 0.26, 'steel');
-    const brg = ringZ(0.015, 0.009, 0.244, 0.259, 'steel', 8);
-    const snap = ringZ(0.012, 0.009, 0.2615, 0.263, 'blackOxide', 8);
+    const planet = gearZ(0.028, 0.033, 9, 0.243, 0.26, 'steel');
+    const brg = hexZ(0.015, 0.244, 0.259, 'steel');
+    const snap = ringZ(0.012, 0.009, 0.2615, 0.263, 'blackOxide', 6);
     for (let k = 0; k < 3; k++) {
       const a = (k / 3) * TAU;
       const [cx, cy] = polar(Z1, a, 0);
@@ -259,21 +268,21 @@ export default function P338(api) {
   }
   // Arbre d'entrée : cannelures côté moteur, denture de planétaire d'entrée.
   P('36', group(
-    Lz([[0, 0.0], [0.0095, 0.0], [0.0095, 0.2], [0.008, 0.205], [0.008, 0.262], [0, 0.262]], 'steel', 8),
+    Lz([[0, 0.0], [0.0095, 0.0], [0.0095, 0.2], [0.008, 0.205], [0.008, 0.262], [0, 0.262]], 'steel', 6),
     gearZ(0.017, 0.021, 8, 0.243, 0.26, 'steel'),
   ), E(0));
-  P('32', ringZ(0.0235, 0.0125, 0.2265, 0.2325, 'steel', 14), E(0));
-  P('41', ringZ(0.022, 0.0105, 0.263, 0.2655, 'steel', 16), E(0));
-  P('38', gearZ(0.013, 0.016, 8, 0.2655, 0.275, 'steel', 0.0085), E(0));
-  P('22', ringZ(0.012, 0.0085, 0.2755, 0.2768, 'blackOxide', 12), E(0));
+  P('32', ringZ(0.0235, 0.0125, 0.2265, 0.2325, 'steel', 10), E(0));
+  P('41', ringZ(0.022, 0.0105, 0.263, 0.2655, 'steel', 10), E(0));
+  P('38', gearZ(0.013, 0.016, 8, 0.2655, 0.275, 'steel'), E(0));
+  P('22', ringZ(0.012, 0.0085, 0.2755, 0.2768, 'blackOxide', 10), E(0));
 
   // ---------------------------------------------------------- couvercle
   // 1 — couvercle (bossage central, alésage fermé par 35), 25 — joint torique,
   // 47 — 10 vis M8 × 25, 46 — 2 bouchons M14 × 1,5, 44 — 2 bouchons D8 × 20.
-  P('25', oring(0.137, 0.0025, 0.2565, 12), E(0));
+  P('25', oring(0.137, 0.0025, 0.2565, 8), E(0));
   P('1', Lz([
-    [0.05, 0.258], [0.148, 0.258], [0.155, 0.264], [0.155, 0.28], [0.148, 0.285], [0.07, 0.288], [0.066, 0.295], [0.045, 0.295], [0.045, 0.258],
-  ], 'black', 24), E(0));
+    [0.045, 0.258], [0.155, 0.258], [0.155, 0.28], [0.148, 0.285], [0.07, 0.288], [0.066, 0.295], [0.045, 0.295], [0.045, 0.258],
+  ], 'black', 14), E(0));
   {
     const s = screwT(0.008, 0.025);
     for (let i = 0; i < 10; i++) P('47', at(s.clone(), polar(0.138, ((i + 0.5) / 10) * TAU, 0.281)), E(0));
@@ -295,15 +304,15 @@ export default function P338(api) {
     P('42', at(rivet.clone(), [-0.098, -0.018, 0]), E(0));
   }
   // 23 — joint torique, 35 — couvercle central, 50 — 3 vis M6 × 20.
-  P('23', oring(0.04, 0.002, 0.296, 12), E(0));
-  P('35', Lz([[0.016, 0.295], [0.056, 0.295], [0.056, 0.302], [0.052, 0.305], [0.016, 0.305], [0.016, 0.295]], 'castIron', 20), E(0));
+  P('23', oring(0.04, 0.002, 0.296, 8), E(0));
+  P('35', Lz([[0.016, 0.295], [0.056, 0.295], [0.056, 0.302], [0.052, 0.305], [0.016, 0.305], [0.016, 0.295]], 'castIron', 10), E(0));
   {
     const s = screwT(0.006, 0.02);
     for (let i = 0; i < 3; i++) P('50', at(s.clone(), polar(0.046, (i / 3) * TAU + 0.5, 0.305)), E(0));
   }
   // 26 — joint torique, 40 — bride (porte-bouchon), 45 — bouchon D10 × 30.
-  P('26', oring(0.012, 0.0015, 0.3055, 10), E(0));
-  P('40', Lz([[0.006, 0.305], [0.022, 0.305], [0.022, 0.311], [0.006, 0.311], [0.006, 0.305]], 'steel', 14), E(0));
+  P('26', oring(0.012, 0.0015, 0.3055, 8), E(0));
+  P('40', Lz([[0.006, 0.305], [0.022, 0.305], [0.022, 0.311], [0.006, 0.311], [0.006, 0.305]], 'steel', 8), E(0));
   P('45', Lz([[0, 0.29], [0.005, 0.29], [0.005, 0.312], [0.008, 0.312], [0.008, 0.318], [0, 0.318]], 'zinc', 6), E(0));
 
   // Ordre du dessin (pages 338 / 340), du moteur au couvercle : le moyeu 2

@@ -459,3 +459,28 @@ export const gbxDirToTrack = ([x, y, z]) => [-x, y, -z];
 /** Point de P336 → repère machine, chenille 'R' (droite) ou 'L' (gauche, miroir). */
 export const trackToMachine = ([x, y, z], side = 'R') => (side === 'R' ? [x, y, z - TRACK.gauge / 2] : [x, y, TRACK.gauge / 2 - z]);
 export const trackDirToMachine = ([x, y, z], side = 'R') => (side === 'R' ? [x, y, z] : [x, y, -z]);
+
+// ============================================================================
+// Câbles à longueur imposée (P382, P384 : lignes en pouces de la liste, où la
+// quantité est la longueur) : tracé Catmull-Rom (comme S.tube, tension 0.5)
+// dont un ou plusieurs points « de mou » glissent selon dir jusqu'à ce que la
+// longueur du tracé égale la longueur voulue (bissection sur 0…max m).
+// ============================================================================
+
+/**
+ * cableFit(THREE, pts, len, { move: [indices], dir: [x, y, z], max, tension })
+ * → { pts, len } : points ajustés et longueur obtenue (m). Si même au
+ * déplacement max la longueur reste trop courte, renvoie le tracé à max.
+ */
+export function cableFit(THREE, pts, len, { move = [], dir = [0, 0, 0], max = 0.5, tension = 0.5 } = {}) {
+  const shift = (s) => pts.map((q, k) => (move.includes(k) ? q.map((v, j) => v + dir[j] * s) : q));
+  const lenOf = (p) => new THREE.CatmullRomCurve3(p.map((a) => new THREE.Vector3(...a)), false, 'catmullrom', tension).getLength();
+  let lo = 0, hi = max;
+  if (lenOf(shift(hi)) < len) return { pts: shift(hi), len: lenOf(shift(hi)) };
+  for (let i = 0; i < 40; i++) {
+    const m = (lo + hi) / 2;
+    if (lenOf(shift(m)) < len) lo = m; else hi = m;
+  }
+  const p = shift((lo + hi) / 2);
+  return { pts: p, len: lenOf(p) };
+}
