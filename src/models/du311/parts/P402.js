@@ -67,7 +67,7 @@ export default function P402(api) {
   P('7', merged([handle, headBoss], 'darkSteel'), [0.08, 0.05, 0]);
 
   // 8 — bague du pivot Ø 1 1/4 × 1 po, longueur 1 1/2
-  P('8', Ly([[0.51, -0.75], [0.62, -0.75], [0.62, 0.75], [0.51, 0.75], [0.51, -0.75]], 'brass', 24), [0, 0.12, 0]);
+  P('8', Ly([[0.51, -0.75], [0.62, -0.75], [0.62, 0.75], [0.51, 0.75], [0.51, -0.75]], 'brass', 24), [0, -0.12, 0]);
 
   // ================================================ 11 — mâchoire
   // Joue : bossage du pivot, dos bombé, bossage de l'axe d'ancrage, face de
@@ -92,7 +92,7 @@ export default function P402(api) {
   P('12', group(
     at(bolt(u(1.0), u(3.0), 'zinc'), v3(0, -1.25, 0), [Math.PI, 0, 0]),
     at(nut(u(1.5), u(0.85), 'zinc'), v3(0, 1.25 + 0.43, 0)),
-  ), [0, 0.15, 0]);
+  ), [0, 0.19, 0]);
 
   // 4 — axe d'ancrage de la chaîne Ø 1 po, collerette dessous, écrou dessus
   P('4', group(
@@ -125,8 +125,8 @@ export default function P402(api) {
   // ================================================ 2 — ressort de rappel, 1 — guide
   // Logés dans le dos de la mâchoire, appuyés sur la tête du manche (axe selon X).
   const sx = -1.55, sz = 1.05;
-  P('1', at(Ly([[0, -1.4], [0.15, -1.4], [0.15, 0.3], [0.28, 0.3], [0.28, 0.5], [0, 0.5]], 'zinc', 14), v3(sx, 0, sz), [0, 0, Math.PI / 2]), [0, 0.1, 0.06]);
-  P('2', at(spring(u(0.24), u(0.05), u(1.3), 9, 'blackOxide', { perTurn: 10, radial: 5 }), v3(sx, 0, sz), [0, 0, Math.PI / 2]), [0, 0.06, 0.08]);
+  P('1', at(Ly([[0, -1.4], [0.15, -1.4], [0.15, 0.3], [0.28, 0.3], [0.28, 0.5], [0, 0.5]], 'zinc', 14), v3(sx, 0, sz), [0, 0, Math.PI / 2]), [-0.03, 0.17, 0.13]);
+  P('2', at(spring(u(0.24), u(0.05), u(1.3), 9, 'blackOxide', { perTurn: 10, radial: 5 }), v3(sx, 0, sz), [0, 0, Math.PI / 2]), [0.03, 0.08, 0.10]);
 
   // ================================================ 9 — suspente, 10 — axe, 3 — boulon
   // Barre plate 1/2 × 1 1/4 po, petit œil articulé sur l'axe 10 près de la tête

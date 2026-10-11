@@ -8,13 +8,14 @@
 // l'avant (côté mât), Y vers le haut, +Z côté enrouleur, pont à y = 0.76 ;
 // P400 se place dans P010 sans déplacement (api.sub('P400') à l'origine).
 // Implantation : coffre à outils à l'emplacement de machine.js (avant droit,
-// x 1.35 à 2.01, z 0.64 à 1.08, porte-à-faux devant la chenille) : bac de
+// x 1.35 à 2.01, z 0.71 à 1.15, porte-à-faux devant la chenille, à l'écart
+// du boîtier du vérin de calage avant droit, z ≤ 0.70) : bac de
 // la trousse P408 au fond (y 0.55), bacs des trousses P406 et P410 posés
 // dessus, clé de débrayage (retournée, mâchoire vers l'extérieur +Z) et
 // chaîne posées sur les bacs, épissure et chaîne de 2 maillons à côté de la
 // chaîne ; seau de graisse sur le pont arrière gauche (x -0.85, z -0.42) ;
 // système d'extinction réparti sur la machine (voir P412).
-// Encombrement ≈ celui de P412 : 4.27 (X) × 1.14 (Y, de 0.55 à 1.69) × 1.77 (Z) m.
+// Encombrement ≈ 4.49 (X, de -2.35 à 2.14) × 1.26 (Y, de 0.43 à 1.69) × 1.89 (Z) m.
 // Chaque trousse est livrée dans son bac (tôle rouge), modélisé avec elle.
 
 import { leafPlates, chainPin, splice } from './P404.js';
@@ -59,7 +60,7 @@ export default function P400(api) {
   }
 
   // ================================================ trousses dans leurs bacs (coffre avant droit)
-  const T8 = [1.68, 0.55, 0.86], T6 = [1.47, 0.612, 0.80], T10 = [1.86, 0.612, 0.86];
+  const T8 = [1.68, 0.55, 0.93], T6 = [1.47, 0.612, 0.87], T10 = [1.86, 0.612, 0.93];
   // 7 — tête de rotation (bac du fond, 0.66 × 0.44)
   P('7', group(tray(0.66, 0.44, 0.06, T8), at(api.sub('P408'), [T8[0], T8[1] + 0.002, T8[2]])), [0, 0, 0.5]);
   // 6 — vérin de débrayage (bac 0.45 × 0.24, posé sur le bac du fond)
@@ -68,15 +69,16 @@ export default function P400(api) {
   P('8', group(tray(0.32, 0.27, 0.055, T10), at(api.sub('P410'), [T10[0], T10[1] + 0.002, T10[2]])), [0.2, 0.3, 0.4]);
 
   // ================================================ 2 — clé de débrayage, 3 — chaîne
-  // Clé retournée (rotation de 180° autour de X), pivot à x = 1.12, manche vers +X
-  // posé sur les rebords des bacs, mâchoire vers l'extérieur (+Z).
+  // Clé retournée (rotation de 180° autour de X), pivot à x = 1.27 (mâchoire à
+  // l'aplomb du bac arrière), manche vers +X posé sur les rebords des bacs,
+  // mâchoire vers l'extérieur (+Z).
   const TOP = T6[1] + 0.055; // rebord des bacs supérieurs
-  P('2', at(api.sub('P402'), [1.12, TOP + 0.020, 0.97], [Math.PI, 0, 0]), [0, 0.45, 0.25]);
-  P('3', at(api.sub('P404'), [1.30, TOP + 0.021, 0.73]), [0, 0.55, 0.1]);
+  P('2', at(api.sub('P402'), [1.27, TOP + 0.020, 1.04], [Math.PI, 0, 0]), [0, 0.45, 0.25]);
+  P('3', at(api.sub('P404'), [1.30, TOP + 0.021, 0.80]), [0, 0.55, 0.1]);
 
   // ================================================ 4 — épissure, 5 — chaîne de 2 maillons (rechange)
-  P('4', at(group(splice(S, 0)), [1.93, TOP + 0.021, 0.73]), [0.1, 0.5, 0.05]);
-  P('5', at(group(leafPlates(S, 2, 0), merged([0, 1, 2].map((k) => chainPin(S, k * 1.25)), 'steel')), [1.62, TOP + 0.02, 0.68]), [0.05, 0.5, -0.05]);
+  P('4', at(group(splice(S, 0)), [1.93, TOP + 0.021, 0.80]), [0.1, 0.5, 0.05]);
+  P('5', at(group(leafPlates(S, 2, 0), merged([0, 1, 2].map((k) => chainPin(S, k * 1.25)), 'steel')), [1.62, TOP + 0.02, 0.75]), [0.05, 0.5, -0.05]);
 
   // ================================================ 9 — système d'extinction (repère machine)
   P('9', api.sub('P412'), [0, 0, 0]);
