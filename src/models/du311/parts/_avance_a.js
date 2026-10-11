@@ -574,42 +574,57 @@ export function loadCheckValve() {
 }
 
 /**
- * Clapet d'équilibrage CX000252 (cartouche en corps alu, Sun / Sandvik) :
- * corps 55 (X) × 60 (Y) × 45 (Z) mm, centre du corps à l'origine. Face +Z
- * gravée 1-2-3 ; orifices SAE-6 : 1 dessous (−Y), 2 sur la face −X, 3 sur la
- * face +X ; cartouche vissée par le dessus : six pans 1 1/8, vis de réglage
- * et contre-écrou ; trou de fixation Ø 9/32 traversant selon Z au-dessus des
- * orifices latéraux. userData.ports : '1', '2', '3' ; userData.hole.
+ * Clapet d'équilibrage CX000252 (cartouche vissée dans un corps alu) : corps
+ * 55 (X) × 64 (Y) × 31.75 (Z, 1 1/4 po) mm, centre du corps à l'origine. Face
+ * +Z gravée « 2 » (près de −X), « 1 » (dessous) et « 3 » ; orifices SAE-6 :
+ * 1 dessous (−Y), 2 sur la face −X, 3 sur la face +X ; cartouche par le
+ * dessus : six pans 1 1/8 po et chapeau cylindrique Ø 1 po ; deux trous Ø 9/32
+ * selon Z près du bas (vis d'assemblage des corps empilés). userData.ports :
+ * '1', '2', '3' ; userData.holes : axes des trous (z = 0).
  */
-export const CBV = { x: 0.055, y: 0.06, z: 0.045 };
+export const CBV = { x: 0.055, y: 0.064, z: 1.25 * IN };
 export function counterbalanceValve() {
   const { x: X, y: Y, z: Z } = CBV;
   const mat = 'castAlu';
-  const hole = [0, 0.016];
-  const blk = S.extrude([[-X / 2, -Y / 2], [X / 2, -Y / 2], [X / 2, Y / 2], [-X / 2, Y / 2]], Z, mat, { holes: [[hole[0], hole[1], (9 / 64) * IN]] });
+  const holes = [[-0.019, -0.022], [0.019, -0.022]];
+  const blk = S.extrude([[-X / 2, -Y / 2], [X / 2, -Y / 2], [X / 2, Y / 2], [-X / 2, Y / 2]], Z, mat, { holes: holes.map(([x, y]) => [x, y, (9 / 64) * IN]) });
   const ports = {
-    1: { p: new THREE.Vector3(0, -Y / 2, 0), d: new THREE.Vector3(0, -1, 0) },
-    2: { p: new THREE.Vector3(-X / 2, -0.012, 0), d: new THREE.Vector3(-1, 0, 0) },
-    3: { p: new THREE.Vector3(X / 2, -0.012, 0), d: new THREE.Vector3(1, 0, 0) },
+    1: { p: new THREE.Vector3(0, -Y / 2, 0.002), d: new THREE.Vector3(0, -1, 0) },
+    2: { p: new THREE.Vector3(-X / 2, 0.004, 0), d: new THREE.Vector3(-1, 0, 0) },
+    3: { p: new THREE.Vector3(X / 2, 0.004, 0), d: new THREE.Vector3(1, 0, 0) },
   };
   const spots = Object.values(ports).map(({ p, d }) => place(S.ring(0.4 * IN, 0.28 * IN, 0.0008, mat, { seg: 20 }), p.clone().addScaledVector(d, 0.0004), d));
-  // Chiffres 1 2 3 en relief sur la face avant (traits).
+  // Chiffres gravés (traits en léger relief) sur la face +Z.
   const ink = [];
-  const digit = (x, strokes) => strokes.forEach(([dx, dy, w, h]) => ink.push(S.box(w, h, 0.0005, 'darkSteel', { pos: [x + dx, -0.012 + dy, Z / 2 + 0.0002] })));
-  digit(-0.016, [[0, 0, 0.0012, 0.008]]);
-  digit(0, [[0, 0.0035, 0.005, 0.0011], [0.0019, 0.0018, 0.0011, 0.0035], [0, 0, 0.005, 0.0011], [-0.0019, -0.0018, 0.0011, 0.0035], [0, -0.0035, 0.005, 0.0011]]);
-  digit(0.016, [[0, 0.0035, 0.005, 0.0011], [0.0019, 0, 0.0011, 0.008], [0, 0, 0.004, 0.0011], [0, -0.0035, 0.005, 0.0011]]);
-  // Cartouche : six pans, fût, contre-écrou, vis de réglage avec capuchon.
+  const digit = (x, y, strokes) => strokes.forEach(([dx, dy, w, h]) => ink.push(S.box(w, h, 0.0005, 'darkSteel', { pos: [x + dx, y + dy, Z / 2 + 0.0002] })));
+  digit(0, -0.019, [[0, 0, 0.0011, 0.008]]);
+  digit(-0.02, 0.0, [[0, 0.0035, 0.005, 0.0011], [0.0019, 0.0018, 0.0011, 0.0035], [0, 0, 0.005, 0.0011], [-0.0019, -0.0018, 0.0011, 0.0035], [0, -0.0035, 0.005, 0.0011]]);
+  digit(0.02, 0.0, [[0, 0.0035, 0.005, 0.0011], [0.0019, 0, 0.0011, 0.008], [0, 0, 0.004, 0.0011], [0, -0.0035, 0.005, 0.0011]]);
   const cart = S.group(
-    S.nut(1.125 * IN, 0.012, 'steel', { pos: [0, 0.006, 0] }),
-    S.lathe([[0, 0.012], [0.011, 0.012], [0.011, 0.03], [0.009, 0.032], [0, 0.032]], 'steel', { seg: 20 }),
-    S.nut(0.75 * IN, 0.006, 'steel', { pos: [0, 0.035, 0] }),
-    S.lathe([[0, 0.032], [0.004, 0.032], ...S.thread(0.0045, 0.038, 0.05, { pitch: 0.0015, maxTurns: 6, chamferBottom: false }), [0.0035, 0.051], [0, 0.051]], 'steel', { seg: 14 }),
+    S.nut(1.125 * IN, 0.016, 'steel', { pos: [0, 0.008, 0] }),
+    S.lathe([[0, 0.016], [0.0125, 0.016], [0.0128, 0.018], [0.0128, 0.074], [0.0115, 0.076], [0, 0.076]], 'steel', { seg: 28 }),
   );
   const g = S.group(S.merged([blk, ...spots], mat), S.merged(ink, 'darkSteel'), at(cart, [0, Y / 2, 0]));
   g.userData.ports = ports;
-  g.userData.hole = new THREE.Vector3(hole[0], hole[1], 0);
+  g.userData.holes = holes.map(([x, y]) => new THREE.Vector3(x, y, 0));
   return g;
 }
 
 function at(obj, pos) { obj.position.set(...pos); return obj; }
+
+/**
+ * Deux clapets CX000252 empilés selon −Z (corps L de z = 0 à −CBV.z, corps U
+ * derrière), centres à la hauteur y0, faces gravées vers −Z, orifices 2 vers
+ * +X, 3 vers −X, 1 dessous. Retourne [{ obj, ports: { 1, 2, 3 : { p, d } },
+ * holes: [Vector3] }] dans le repère du parent.
+ */
+export function cbvStack(y0 = 0) {
+  return [0, 1].map((k) => {
+    const v = counterbalanceValve();
+    const g = place(v, [0, y0, -CBV.z * (k + 0.5)], [0, 1, 0], [-1, 0, 0]);
+    const tr = (pt) => ({ p: pt.p.clone().applyQuaternion(g.quaternion).add(g.position), d: pt.d.clone().applyQuaternion(g.quaternion) });
+    const ports = {};
+    for (const n of ['1', '2', '3']) ports[n] = tr(v.userData.ports[n]);
+    return { obj: g, ports, holes: v.userData.holes.map((h) => h.clone().applyQuaternion(g.quaternion).add(g.position)) };
+  });
+}
