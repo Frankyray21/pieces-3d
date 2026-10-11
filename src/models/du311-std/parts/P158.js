@@ -17,7 +17,7 @@
 // Simulation : tige, rotule, piston, écrou et vis marqués côté tige (rodSide).
 
 import { rodSide } from '../layout.js';
-import { IN, u, L, cbValve, zerk, along, jicElbow, hexPrism } from './_slide.js';
+import { u, L, cbValve, zerk, along, jicElbow, hexPrism } from './_slide.js';
 
 const X = {
   eye: 0, capA: 1.6, capB: 5.6, tubeEnd: 63.0, glandIn: 61.2, glandTop: 64.6,
@@ -29,7 +29,7 @@ export const CYL158 = { retracted: u(X.rodEye), stroke: u(X.stroke), pin: u(2.0)
 
 export default function P158(api, opts = {}) {
   const { THREE, S } = api;
-  const { lathe, extrude, merged, weld, weldRing, group, at, box, tube, nut } = S;
+  const { lathe, extrude, merged, weldRing, group, at, box, tube, nut } = S;
   const P = (ref, obj, e) => api.part(ref, obj, e);
   const ext = Math.max(0, Math.min(opts.ext ?? 0, u(X.stroke)));
   const Lx = (pts, mat, seg = 40) => lathe(pts.map(([r, x]) => [u(r), u(x)]), mat, { seg, axis: 'x' });

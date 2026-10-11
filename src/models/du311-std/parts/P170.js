@@ -59,7 +59,7 @@ export default function P170(api) {
   const put = (obj, p, dir) => along(THREE, obj, dir, p);
 
   // Tube rectangulaire creux (paroi t) le long de Z, de z0 à z1, centré en (x, y).
-  const rectTube = (w, h, t, z0, z1, x, y, mat) => {
+  const rectTube = (w, h, t, z0, z1, x, y) => {
     const sh = new THREE.Shape([[-w / 2, -h / 2], [w / 2, -h / 2], [w / 2, h / 2], [-w / 2, h / 2]].map(([a, b]) => new THREE.Vector2(a, b)));
     sh.holes.push(new THREE.Path([[-w / 2 + t, -h / 2 + t], [-w / 2 + t, h / 2 - t], [w / 2 - t, h / 2 - t], [w / 2 - t, -h / 2 + t]].map(([a, b]) => new THREE.Vector2(a, b))));
     const geo = new THREE.ExtrudeGeometry(sh, { depth: z1 - z0, bevelEnabled: false, curveSegments: 4 });

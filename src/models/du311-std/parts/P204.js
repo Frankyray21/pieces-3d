@@ -39,7 +39,7 @@ export default function P204(api) {
   const { box, cyl, merged, group, at } = S;
   const P = (ref, obj, e) => api.part(ref, obj, e);
   const [BX, BY, BZ] = MAN204.size;
-  const hx = BX / 2, hy = BY / 2, hz = BZ / 2;
+  const hy = BY / 2, hz = BZ / 2;
 
   const onFace = (obj, f, a, b) => onFace204(THREE, obj, f, a, b);
   const out = (f, k = 0.12) => FACE204[f].n.map((v) => v * k);

@@ -21,6 +21,7 @@ export { cbValve, zerk } from '../../du311/parts/P176.js';
 export { SLIDE, MCP, M };
 
 const IN_ = 0.0254;
+const u_ = (v) => v * IN_;
 
 // Centre du carter de l'actionneur rotatif (repère machine) : la bride de
 // sortie (face d'appui du MCP) est à 0.297 m du centre, sur SLIDE.face.
@@ -227,7 +228,6 @@ export function hexPlug(S, THREE, dash = 8, { mat = 'steel' } = {}) {
 }
 
 // Aides internes (po → m).
-const u_ = (v) => v * IN_;
 function lin(S, pts, mat, seg = 24) {
   return S.lathe(pts.map(([r, y]) => [u_(r), u_(y)]), mat, { seg });
 }

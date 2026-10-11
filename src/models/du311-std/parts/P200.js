@@ -26,14 +26,14 @@ export default function P200(api) {
   const x1 = x0 + D;
 
   // 1 — bloc et ses deux cartouches (six-pans 7/8, corps et bouchon de réglage) sur la face avant
-  const cart = (z) => group(
+  const cart = () => group(
     merged([hexPrism(S, THREE, 0.875, 0.32, 0, 0, 'zinc'), L(S, [[0, 0.32], [0.3, 0.32], [0.3, 0.55], [0.26, 0.6], [0, 0.6]], 'zinc', 16)], 'zinc'),
   );
   P('1', F(group(
     bx(S, x0, x1, yc - Hh / 2, yc + Hh / 2, zc - W / 2, zc + W / 2, 'steel', 0.002),
     // marquage en creux suggéré (cadre des étiquettes « VALVE 1 / VALVE 2 »)
     merged([-0.019, 0.019].map((z) => at(box(0.0004, 0.012, 0.03, 'darkSteel'), [x1 + 0.0002, yc + 0.018, zc + z])), 'darkSteel'),
-    ...[-0.019, 0.019].map((z) => put(cart(z), [x1, yc - 0.008, zc + z], [1, 0, 0])),
+    ...[-0.019, 0.019].map((z) => put(cart(), [x1, yc - 0.008, zc + z], [1, 0, 0])),
   )), [0.12, 0, 0]);
   // 4 + 5 — vis de fixation (têtes sur la face avant)
   for (const dy of [-0.02, 0.022]) {

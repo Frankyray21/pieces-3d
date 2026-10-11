@@ -23,7 +23,6 @@
 
 import { IN, u, L, hexPrism, frame, along, hhcs, nordLock, splitWasher, nptElbow, jicElbow, nptPlug } from './_slide.js';
 
-const RP = 1.1875 * IN; // tube 2 po (Ø ext. 2 3/8)
 // Positions le long de la ligne (m) : début, fin.
 const Z = {
   v1: [0, 0.16], n1: 0.172, c1: [0.185, 0.315], n5a: [0.315, 0.404], t1: [0.404, 0.514], n5b: [0.514, 0.603],
@@ -37,7 +36,7 @@ export const P192G = {
 
 export default function P192(api) {
   const { THREE, S } = api;
-  const { box, cyl, lathe, merged, group, at, ballValve } = S;
+  const { box, cyl, merged, group, at, ballValve } = S;
   const P = (ref, obj, e) => api.part(ref, obj, e);
   const put = (obj, p, dir) => along(THREE, obj, dir, p);
   const zc = (r) => (r[0] + r[1]) / 2;
