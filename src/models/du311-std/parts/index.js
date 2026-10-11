@@ -7,6 +7,9 @@ import P048 from './P048.js';
 import P076 from './P076.js';
 import P088 from './P088.js';
 import P090 from './P090.js';
+import P092 from './P092.js';
+import P094 from './P094.js';
+import P098 from './P098.js';
 
 export default {
   'P032': P032,
@@ -16,4 +19,7 @@ export default {
   'P076': P076,
   'P088': P088,
   'P090': P090,
+  'P092': P092,
+  'P094': P094,
+  'P098': P098,
 };
