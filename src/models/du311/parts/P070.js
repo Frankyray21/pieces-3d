@@ -27,7 +27,9 @@
 // au pied du châssis ; Y vers le haut ; +X de l'axe de rotation vers l'arbre
 // du bras et les pinces (position dessinée de la vue de face de P072, bras
 // déployé) ; châssis côté -X, face d'appui sur l'avance à x = -4.75 po
-// (-0.121 m) ; Z en travers, fourches ouvertes vers +Z. Arbre du bras à
+// (-0.121 m), milieu de l'âme à z = +8.6 po (0.218 m) : les actionneurs sont
+// à côté du châssis, sur des consoles soudées à son aile, et l'arbre passe
+// devant l'âme en fin de course (180°) ; Z en travers, fourches ouvertes vers +Z. Arbre du bras à
 // x = 9 po ; centre de la tige serrée à x = 30 po (0.762 m), z = 0 ; pinces à
 // y = 13.8 et 48.1 po (config. 5 pi de P072). Encombrement ≈ 1.02 (X, de
 // -0.13 à 0.89) × 1.79 (Y, de -0.12 à 1.67) × 0.40 (Z) m (le jeu « A » rangé
@@ -50,6 +52,7 @@ const ACT = { up: 62.0, low: 4.6 }; // faces des brides de sortie (haut : vers +
 const CRANK_T = 1.0;
 const CLAMPS = [48.1, 13.8]; // milieux des pinces (haute, basse)
 const FR = { x0: -4.75, x1: -4.25, z: 4.5, h: 65.0, flange: 2.5 }; // âme : faces arrière / avant
+const FZ = 8.6; // milieu du châssis en Z : les actionneurs sont à côté de l'âme (vue de côté de P072)
 const SHAFT = { R: 1.75, y0: -1.5, y1: ACT.up + CRANK_T };
 
 export default function P070(api) {
@@ -142,33 +145,38 @@ export default function P070(api) {
   // Âme 9 × 1/2 po (face arrière sur l'avance), ailes de 2 1/2 po, trois
   // fenêtres, consoles d'actionneur (1 po), pattes des vis de calage.
   const brk = [[ACT.up - 8.8, ACT.up - 0.6], [ACT.low + 0.6, ACT.low + 8.8]];
-  const boltRows = [64.2, 50.5, 15.0, 0.8];
-  const boltZ = [-2.8, 2.8];
+  const boltRows = [64.0, 54.6, 9.0, 1.1];
+  const boltZ = [-3.4, 3.4];
   const webHoles = [
-    rrect(-2.4, 18.5, 2.4, 26.5, 1.0), rrect(-2.4, 28.5, 2.4, 36.5, 1.0),
+    rrect(-2.1, 19.8, 2.1, 28.0, 1.0), rrect(-2.1, 35.9, 2.1, 44.2, 1.0), rrect(-2.1, 45.5, 2.1, 53.7, 1.0),
     ...boltRows.flatMap((y) => boltZ.map((z) => [z, y, 0.34])),
   ];
   const frameParts = [
     slabYZ([[-FR.z, 0], [FR.z, 0], [FR.z, FR.h], [-FR.z, FR.h]], webHoles, FR.x0, FR.x1),
     ...[-1, 1].map((s) => slabYZ([[s > 0 ? FR.z - 0.5 : -FR.z, 0], [s > 0 ? FR.z : -FR.z + 0.5, 0], [s > 0 ? FR.z : -FR.z + 0.5, FR.h], [s > 0 ? FR.z - 0.5 : -FR.z, FR.h]], [], FR.x1, FR.x1 + FR.flange)),
-    ...brk.map(([y0, y1]) => slabYZ([[-3.95, y0], [3.95, y0], [3.95, y1], [-3.95, y1]], [], FR.x1, -3.25)),
     // pattes des vis de calage (haut et bas, au milieu de l'âme)
     ...[[FR.h - 1.0, FR.h], [0, 1.0]].map(([y0, y1]) => slabYZ([[-1.0, y0], [1.0, y0], [1.0, y1], [-1.0, y1]], [], FR.x1, -2.75)),
   ];
-  const frameBeads = brk.flatMap(([y0, y1]) => [weld([V(FR.x1 + 0.05, y0 - 0.05, -3.9), V(FR.x1 + 0.05, y0 - 0.05, 3.9)], u(0.25), 'grey'), weld([V(FR.x1 + 0.05, y1 + 0.05, -3.9), V(FR.x1 + 0.05, y1 + 0.05, 3.9)], u(0.25), 'grey')]);
-  P('6', group(merged(frameParts, 'grey'), ...frameBeads), [-0.25, 0, 0]);
+  const frameG = group(merged(frameParts, 'grey'));
+  frameG.position.z = u(FZ);
+  // Consoles d'actionneur : plaques de 1 po soudées sur l'aile côté
+  // actionneurs (z = FZ - 4.5), en saillie jusque sous les pieds des actionneurs.
+  const zc = FZ - FR.z + 0.5;
+  const consoles = merged(brk.map(([y0, y1]) => slabYZ([[-3.95, y0], [zc, y0], [zc, y1], [-3.95, y1]], [], FR.x1, -3.25)), 'grey');
+  const frameBeads = brk.flatMap(([y0, y1]) => [weld([V(FR.x1 + 0.05, y0 - 0.05, -3.9), V(FR.x1 + 0.05, y0 - 0.05, zc)], u(0.25), 'grey'), weld([V(FR.x1 + 0.05, y1 + 0.05, -3.9), V(FR.x1 + 0.05, y1 + 0.05, zc)], u(0.25), 'grey')]);
+  P('6', group(frameG, consoles, ...frameBeads), [-0.25, 0, 0]);
 
   // 21 / 28 — vis de fixation du châssis sur l'avance (têtes devant l'âme)
   for (const y of boltRows) {
     for (const z of boltZ) {
-      P('28', along(THREE, lockW(0.625), [1, 0, 0], V(FR.x1, y, z)), [-0.25 + 0.08, 0, 0]);
-      P('21', along(THREE, bolt(0.625, 5.0), [1, 0, 0], V(FR.x1 + 0.16, y, z)), [-0.25 + 0.2, 0, 0]);
+      P('28', along(THREE, lockW(0.625), [1, 0, 0], V(FR.x1, y, FZ + z)), [-0.25 + 0.08, 0, 0]);
+      P('21', along(THREE, bolt(0.625, 5.0), [1, 0, 0], V(FR.x1 + 0.16, y, FZ + z)), [-0.25 + 0.2, 0, 0]);
     }
   }
   // 22 / 29 — vis de calage (contre-écrou contre la patte), pointe vers l'avance
   for (const y of [FR.h - 0.5, 0.5]) {
-    P('29', along(THREE, hexNut(S, THREE, 0.75, { jam: true }), [1, 0, 0], V(-2.75, y, 0)), [-0.25 + 0.12, 0, 0]);
-    P('22', along(THREE, bolt(0.75, 2.5), [1, 0, 0], V(-2.75 + 0.45, y, 0)), [-0.25 + 0.24, 0, 0]);
+    P('29', along(THREE, hexNut(S, THREE, 0.75, { jam: true }), [1, 0, 0], V(-2.75, y, FZ)), [-0.25 + 0.12, 0, 0]);
+    P('22', along(THREE, bolt(0.75, 2.5), [1, 0, 0], V(-2.75 + 0.45, y, FZ)), [-0.25 + 0.24, 0, 0]);
   }
 
   // ================================================ 1 — actionneurs (P080)
@@ -217,7 +225,8 @@ export default function P070(api) {
     const a = ((i * 45 + 22.5) * Math.PI) / 180;
     return [1.55 * Math.cos(a), 1.55 * Math.sin(a)];
   });
-  const crankHoles = [[0, 0, 0.4], ...flangeHoles.map(([x, z]) => [x, z, 0.21])];
+  // + trous de la plaque de retenue 5 (vis 22 et ergot), au droit de l'oreille de l'arbre
+  const crankHoles = [[0, 0, 0.4], ...flangeHoles.map(([x, z]) => [x, z, 0.21]), [C + 2.2, 2.2, 0.41], [C + 2.2, -2.2, 0.32]];
   const cranks = [[ACT.up, ACT.up + CRANK_T, 1], [ACT.low - CRANK_T, ACT.low, -1]];
   for (const [y0, y1, s] of cranks) {
     P('8', merged([prism(crankOutline, crankHoles, y0, y1)], 'grey'), [0, s * 0.3, 0]);
@@ -247,12 +256,15 @@ export default function P070(api) {
   const SE = [0.42, 0, 0];
   const collarsY = [59.6, 51.4, 44.3, 17.1, 10.0, 5.8];
   const tabs = CLAMPS.map((y) => S.box(u(1.6), u(2.0), u(1.0), 'grey', { pos: [u(C) + CLAMP074.tabX + u(0.05), u(y), 0] }));
-  const clipTabs = [38.0, 28.0].map((y) => S.box(u(0.9), u(1.2), u(0.6), 'grey', { pos: [u(C), u(y), u(SHAFT.R + 0.25)] }));
+  const clipTabs = [42.0, 28.0].map((y) => S.box(u(0.9), u(1.2), u(0.6), 'grey', { pos: [u(C), u(y), u(SHAFT.R + 0.25)] }));
   P('7', group(
     merged([
       L(S, [[1.25, SHAFT.y0], [SHAFT.R - 0.06, SHAFT.y0], [SHAFT.R, SHAFT.y0 + 0.06], [SHAFT.R, SHAFT.y1 - 0.06], [SHAFT.R - 0.06, SHAFT.y1], [1.25, SHAFT.y1], [1.25, SHAFT.y0]], 'grey', 32, { pos: V(C, 0, 0) }),
       ...collarsY.map((y) => L(S, [[SHAFT.R, y], [2.33, y], [2.375, y + 0.04], [2.375, y + 0.46], [2.33, y + 0.5], [SHAFT.R, y + 0.5]], 'grey', 32, { pos: V(C, 0, 0) })),
       ...tabs, ...clipTabs,
+      // Oreilles d'appui des manivelles (1 po) : sous la manivelle haute, sur
+      // la manivelle basse ; taraudage 3/4 de la vis 22 et trou de l'ergot de 5.
+      ...[[ACT.up - 1.0, ACT.up], [ACT.low, ACT.low + 1.0]].map(([y0, y1]) => prism(rrect(C - 2.4, -2.6, C + 2.6, 2.6, 0.4), [[C, 0, SHAFT.R + 0.01], [C + 2.2, 2.2, 0.33], [C + 2.2, -2.2, 0.32]], y0, y1)),
     ], 'grey'),
   ), SE);
 
@@ -328,7 +340,7 @@ export default function P070(api) {
     return g;
   };
   const ZT = SHAFT.R + 0.55; // face de la patte
-  [[2, 38.0, 0.625, false], [3, 28.0, 0.75, true]].forEach(([ref, y, rin, rubber]) => {
+  [[2, 42.0, 0.625, false], [3, 28.0, 0.75, true]].forEach(([ref, y, rin, rubber]) => {
     P(String(ref), at(clip(rin, rubber), V(C, y, ZT)), [SE[0], 0, 0.12]);
     P('26', along(THREE, nord(0.375), [0, 0, 1], V(C, y, ZT + 0.16)), [SE[0], 0, 0.18]);
     P('19', along(THREE, bolt(0.375, 0.75), [0, 0, 1], V(C, y, ZT + 0.25)), [SE[0], 0, 0.24]);
@@ -338,7 +350,7 @@ export default function P070(api) {
   // Bloc 1.5 × 3 × 1 1/4 po sur l'âme du châssis (z = +2.6), 2 vis 5/16 × 2 1/4
   // (18) + Nord-Lock (25) selon X ; raccords : dessus 15 + coude 12 et coude
   // NPT 14 ; dessous 15 + té 13 et 15 + coude 12.
-  const VB = { x0: FR.x1, x1: FR.x1 + 1.25, y0: 40.0, y1: 43.0, z: 2.6 };
+  const VB = { x0: FR.x1, x1: FR.x1 + 1.25, y0: 45.8, y1: 48.8, z: FZ - 2.6 };
   const VE = [0.2, 0, 0];
   const vblock = S.box(u(1.25), u(3.0), u(1.5), 'zinc', { r: u(0.05), pos: [u((VB.x0 + VB.x1) / 2), u((VB.y0 + VB.y1) / 2), u(VB.z)] });
   const vports = [[VB.y1, 1], [VB.y0, -1]].flatMap(([y, s]) => [-0.4, 0.4].map((dz) => L(S, [[0, 0], [0.24, 0], [0.24, 0.01], [0, 0.01]], 'darkSteel', 12, { axis: s > 0 ? 'y' : '-y', pos: V((VB.x0 + VB.x1) / 2, y, VB.z + dz) })));
