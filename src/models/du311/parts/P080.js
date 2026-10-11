@@ -64,7 +64,7 @@ export default function P080(api) {
   // Tube Ø 5 creux (denture intérieure suggérée par des bandes), lèvres
   // d'extrémité, deux pieds transversaux soudés-usinés, bossage du clapet,
   // bossages des orifices.
-  const hous = slotted(u(R), u(2.1), u(Y.housBot), u(Y.housTop), [], 'black', { seg: 48 });
+  const hous = slotted(u(R), u(2.1), u(Y.housBot), u(Y.housTop), [], 'black', { seg: 40 });
   const lips = [
     L(S, [[2.1, Y.housTop - 0.05], [R - 0.06, Y.housTop - 0.05], [R, Y.housTop - 0.11], [R, Y.housTop - 0.2], [2.1, Y.housTop - 0.2]].reverse(), 'black', 48),
   ];
@@ -99,15 +99,15 @@ export default function P080(api) {
     const a = (i / 8) * Math.PI * 2 + Math.PI / 8;
     return [u(1.55 * Math.cos(a)), u(1.55 * Math.sin(a)), u(0.19)];
   });
-  const flange = extrude(circle(2.2, 48), u(0.6), 'steel', { holes: [[0, 0, u(0.4)], ...flangeHoles] });
+  const flange = extrude(circle(2.2, 36), u(0.6), 'steel', { holes: [[0, 0, u(0.4)], ...flangeHoles] });
   flange.rotation.x = Math.PI / 2;
   flange.position.y = u(-0.3);
   const shaftBody = L(S, [
     [0, -8.5], [0.9, -8.5], [1.0, -8.4], [1.0, -6.2], [1.3, -6.1], [1.3, -1.9], [1.75, -1.8], [1.75, -0.65], [1.9, -0.6], [0, -0.6],
-  ], 'steel', 36);
+  ], 'steel', 24);
   const splines = [];
-  for (let i = 0; i < 12; i++) {
-    const a = (i / 12) * Math.PI * 2;
+  for (let i = 0; i < 10; i++) {
+    const a = (i / 10) * Math.PI * 2;
     const b = S.box(u(0.16), u(4.2), u(0.14), 'steel');
     b.position.set(u(1.33 * Math.cos(a)), u(-4.0), u(1.33 * Math.sin(a)));
     b.rotation.set(0, -a, 0.35);
@@ -142,7 +142,7 @@ export default function P080(api) {
   // (bout de l'arbre visible au centre), 4 + 2 trous (vis 10, goupilles 9).
   P('4', merged([
     L(S, [[1.05, Y.capBot], [R - 0.08, Y.capBot], [R - 0.02, Y.capBot + 0.06], [R - 0.02, Y.housBot], [2.08, Y.housBot],
-      ...S.thread(2.08, Y.housBot, -7.9, { pitch: 0.1, maxTurns: 6, chamferBottom: false }), [1.05, -7.9], [1.05, Y.capBot]], 'black', 48),
+      ...S.thread(2.08, Y.housBot, -7.9, { pitch: 0.1, maxTurns: 4, chamferBottom: false }), [1.05, -7.9], [1.05, Y.capBot]], 'black', 36),
   ], 'black'), [0, -0.36, 0]);
   P('13*', oring(S, 2.06, 0.05, -8.3), [0.14, -0.3, 0]);
   P('15*', ring(2.12, 1.98, -8.42, -8.36, 'cream'), [0.14, -0.38, 0]);

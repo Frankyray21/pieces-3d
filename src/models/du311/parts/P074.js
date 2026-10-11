@@ -32,7 +32,7 @@
 // portée de 21 po (centre de tige) et largeurs relevées sur la vue de face de
 // P072 (≈ 26 px/po) ; disposition (vérin en diagonale depuis le bossage
 // latéral du moyeu jusqu'à la chape de mâchoire) d'après l'éclaté de P074.
-import { L, u, along, hhcs, sqss, hexNut, flatWasher, pin } from './_avance_b.js';
+import { L, u, along, sqss, hexNut, flatWasher, pin } from './_avance_b.js';
 import { CYL078, oring } from './P078.js';
 import { JAW082 } from './P082.js';
 
@@ -65,6 +65,13 @@ export default function P074(api, opts = {}) {
   const P = (ref, obj, e) => api.part(ref, obj, e);
   // Vis CHC légère (d × len po) : tête Ø 1.5 d à six-pans creux, dessous à y = 0.
   const capScrew = (d, len) => L(S, [[0, -len], [d * 0.42, -len], [d / 2, -len + d * 0.1], [d / 2, 0], [d * 0.75, 0], [d * 0.75, d * 0.92], [d * 0.7, d], [d * 0.3, d], [d * 0.3, d * 0.5], [0, d * 0.5]], 'blackOxide', 12);
+  // Vis H légère d × len (po) : six-pans 1.5 d, dessous de tête à y = 0, tête vers +Y.
+  const hexBolt = (d, len) => {
+    const r = d / 2, af = d * 1.5, R = af / 2 / Math.cos(Math.PI / 6), c = af * 0.06, h = d * 0.62;
+    const head = L(S, [[0, 0.02], [R - c * 1.6, 0.02], [R, 0.02 + c], [R, 0.02 + h - c], [R - c * 1.6, 0.02 + h], [0, 0.02 + h]], 'zinc', 6);
+    head.children[0].rotation.y = Math.PI / 6;
+    return merged([head, L(S, [[0, -len], [r * 0.8, -len], [r, -len + r * 0.25], [r * 0.94, -len + r * 1.2], [r, -len + r * 2.2], [r, 0.02], [af * 0.47, 0.02], [af * 0.47, 0.03], [0, 0.03]], 'zinc', 12)], 'zinc');
+  };
   const V = (x, y, z) => [u(x), u(y), -u(z)]; // cotes logiques (po) → repère (z miroir)
 
   // Prisme d'un contour [[a, b], …] (po) percé de trous (contours ou
@@ -151,7 +158,7 @@ export default function P074(api, opts = {}) {
   for (const y of [2.125, -2.125]) {
     for (const z of [2.3, -2.3]) {
       P('15', along(THREE, flatWasher(S, THREE, 0.75, { t: W15, od: 1.47 }), [-1, 0, 0], V(-3.25, y, z)), [-0.16, 0, 0]);
-      P('12', along(THREE, hhcs(S, THREE, 0.75, 4.0), [-1, 0, 0], V(-3.25 - W15, y, z)), [-0.26, 0, 0]);
+      P('12', along(THREE, hexBolt(0.75, 4.0), [-1, 0, 0], V(-3.25 - W15, y, z)), [-0.26, 0, 0]);
     }
   }
 
