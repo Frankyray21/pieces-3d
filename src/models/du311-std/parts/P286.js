@@ -85,7 +85,7 @@ export default function P286(api) {
   // Chapes de l'axe de basculement (deux pattes sous le plancher) et chape du vérin.
   const hg = CAB.hinge;
   for (const x of [-0.22, 0.22]) {
-    plates.push(prism(S, THREE, [[hg.z - 0.05, 0], [hg.z + 0.05, 0], [hg.z + 0.05, hg.y], [hg.z + 0.035, hg.y - 0.03], [hg.z - 0.035, hg.y - 0.03], [hg.z - 0.05, hg.y]], 0.019, M, 'zy', x, { holes: [[hg.z, hg.y, 0.02]] }));
+    plates.push(prism(S, THREE, [[hg.z - 0.05, 0], [hg.z + 0.05, 0], [hg.z + 0.05, hg.y], [hg.z + 0.035, hg.y - 0.034], [hg.z - 0.035, hg.y - 0.034], [hg.z - 0.05, hg.y]], 0.019, M, 'zy', x, { holes: [[hg.z, hg.y, 0.02]] }));
   }
   const cy = CAB.cyl;
   for (const dx of [-0.026, 0.026]) {

@@ -116,13 +116,13 @@ export default function P290(api) {
   // Tôle pliée de 1/4 po : semelle sous la suspension (côté gauche, −Z),
   // montant incliné vers l'extérieur puis plateau horizontal à l'avant de
   // l'accoudoir ; manipulateur à soufflet et poignée (sans repère).
-  const zJ = -0.36;
+  const zJ = -0.3;
   const plateProfile = [[-0.06, ys + 0.004], [-0.06, ys + 0.012], [0.0, ys + 0.012], [0.0, ys - 0.004]];
   void plateProfile;
   const mount = group(
     merged([
       box(0.12, u(0.25), 0.16, 'black', { r: 0.002, pos: [0.02, ys + 0.012, -0.24] }),
-      at(box(0.06, 0.26, u(0.25), 'black', { r: 0.002 }), [0.05, ys + 0.13, -0.33], [0.45, 0, 0]),
+      at(box(0.06, 0.26, u(0.25), 'black', { r: 0.002 }), [0.05, ys + 0.13, -0.28], [0.3, 0, 0]),
       box(0.13, u(0.25), 0.1, 'black', { r: 0.004, pos: [0.06, yc + 0.24, zJ] }),
       box(0.13, 0.04, u(0.25), 'black', { pos: [0.06, yc + 0.22, zJ - 0.05] }),
     ], 'black'),

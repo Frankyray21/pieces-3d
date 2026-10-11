@@ -30,7 +30,7 @@ export const CAB = {
   hc: 0.58, // dessus du pupitre avant
   t: 0.25 * IN, // tôle du caisson
   land: { z1: -0.53, y: 0.3 }, // palier d'accès : de z = −hz à z1, plancher à y
-  hinge: { x: [-0.3, 0.3], y: -0.035, z: 0.355 }, // axe de basculement (selon X) sous le caisson
+  hinge: { x: [-0.3, 0.3], y: -0.024, z: 0.39 }, // axe de basculement (selon X) sous le caisson
   // Ouvertures fermées par les panneaux de P278 : paroi arrière (27, plan z-y),
   // pupitre avant (21, plan z-y), plancher (28, plan x-z), dessous du pupitre (25).
   open: {
@@ -62,7 +62,7 @@ export const canopyTopLocal = () => CANOPY.top - CAB.o[1] - CANOPY.at[1];
 // Siège (P290) : repère du siège (X vers l'avant de l'opérateur, Y haut, Z à
 // sa droite, origine sur le plancher entre les deux embases) ; dans le repère
 // de P286, tourné de +90° autour de Y (opérateur tourné vers −Z).
-export const SEAT = { at: [-0.05, CAB.t + 0.004, 0.36], rotY: Math.PI / 2 };
+export const SEAT = { at: [0.03, CAB.t + 0.004, 0.36], rotY: Math.PI / 2 };
 
 // Collecteur 10 gal (P284) sous le palier d'accès, repère machine : origine au
 // centre du dessous, grand axe selon X (couvercle vers +X), orifices vers +Z.
@@ -163,6 +163,16 @@ export function cabHw(api) {
       return S.merged(zinc, 'zinc');
     },
 
+    /** Orifice i (bout de nez) d'un raccord posé par pose(), dans le repère du parent : { p, d }. */
+    port(posed, i = 0) {
+      posed.updateMatrix();
+      let pt = null;
+      posed.traverse((c) => { if (!pt && c.userData.ports && c.userData.ports[i]) pt = c.userData.ports[i]; });
+      const v = (a) => (Array.isArray(a) ? new THREE.Vector3(...a) : a.clone());
+      return { p: v(pt.p).applyMatrix4(posed.matrix).toArray(), d: v(pt.d).transformDirection(posed.matrix).toArray() };
+    },
+    /** Longueur (m) de l'adaptateur métrique metric(dmm, jd), de la face d'appui au bout du nez. */
+    metricTip: (dmm, jd) => 0.0012 + Math.max(JIC[jd].hex * IN, (dmm / 2000) * 2.4) * 0.42 + JIC[jd].t * IN * 0.95,
     /** Adaptateur métrique (filetage M d mm, joint plat) → mâle JIC jd (CP0053xx), le long de +Y. */
     metric(dmm, jd) {
       const J = JIC[jd];
