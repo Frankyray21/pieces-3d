@@ -52,7 +52,7 @@ export function hhcs(S, THREE, d, len, { mat = 'zinc', washer = 0, washerOD } = 
   g.push(hexPrism(S, THREE, a, hh, y0 + 0.02 * d, 0, mat));
   g.push(L(S, [[0, y0], [a * 0.48, y0], [a * 0.48, y0 + 0.03 * d], [0, y0 + 0.03 * d]], mat, 20));
   const th = Math.min(len, Math.max(d * 2 + 0.25, len * 0.5));
-  g.push(L(S, [[0, -len], [r * 0.8, -len], ...S.thread(r, -len + r * 0.2, -len + th, { pitch: d * 0.15, maxTurns: 10 }), [r, y0], [0, y0]], mat, 14));
+  g.push(L(S, [[0, -len], [r * 0.8, -len], ...S.thread(r, -len + r * 0.2, -len + th, { pitch: d * 0.15, maxTurns: 6 }), [r, y0], [0, y0]], mat, 14));
   if (washer) g.push(L(S, [[r * 1.08, 0], [(washerOD ?? d * 2.1) / 2, 0], [(washerOD ?? d * 2.1) / 2, washer], [r * 1.08, washer], [r * 1.08, 0]], mat, 24));
   return S.merged(g, mat);
 }
@@ -63,7 +63,7 @@ export function shcs(S, THREE, d, len, { mat = 'blackOxide' } = {}) {
   const head = L(S, [[0, H * 0.55], [hx, H * 0.55], [hx, H], [R - d * 0.06, H], [R, H - d * 0.06], [R, d * 0.04], [R - d * 0.04, 0], [0, 0]].reverse(), mat, 24);
   const sock = L(S, [[0, H * 0.55], [hx, H * 0.55], [hx, H], [0, H]].reverse(), mat, 6);
   const th = Math.min(len, Math.max(d * 2 + 0.25, len * 0.5));
-  const shank = L(S, [[0, -len], [r * 0.8, -len], ...S.thread(r, -len + r * 0.2, -len + th, { pitch: d * 0.15, maxTurns: 10 }), [r, 0], [0, 0]], mat, 14);
+  const shank = L(S, [[0, -len], [r * 0.8, -len], ...S.thread(r, -len + r * 0.2, -len + th, { pitch: d * 0.15, maxTurns: 6 }), [r, 0], [0, 0]], mat, 14);
   return S.merged([head, sock, shank], mat);
 }
 
@@ -110,6 +110,16 @@ export function nylocNut(S, THREE, d, { mat = 'zinc' } = {}) {
   return g;
 }
 
+/** Joint torique léger (lathe de 20 segments) : rayon moyen r, section cs (po), plan XZ à y (po). */
+export function oring(S, r, cs, y = 0, mat = 'rubber') {
+  const pts = [];
+  for (let i = 0; i <= 6; i++) {
+    const a = -Math.PI / 2 + (i * Math.PI * 2) / 6;
+    pts.push([r + cs * Math.cos(a), y + cs * Math.sin(a)]);
+  }
+  return L(S, pts, mat, 20);
+}
+
 /** Rondelle plate SAE (d po) : de y = 0 à t, axe Y. */
 export function flatWasher(S, THREE, d, { mat = 'zinc', od, t } = {}) {
   const ro = (od ?? (d <= 0.5 ? d * 2.1 : d * 1.95)) / 2, th = t ?? Math.max(0.065, d * 0.13);
@@ -125,9 +135,9 @@ export function splitWasher(S, THREE, d, { mat = 'zinc' } = {}) {
 /** Rondelles autobloquantes à coins (Nord-Lock, paire, d po) : deux disques à rampes radiales, de y = 0 à 2t. */
 export function nordLock(S, THREE, d, { mat = 'zinc' } = {}) {
   const ro = d * 0.9, ri = d * 0.53, t = Math.max(0.05, d * 0.11);
-  const g = [L(S, [[ri, 0], [ro, 0], [ro, t], [ri, t], [ri, 0]], mat, 32), L(S, [[ri, t + 0.004], [ro, t + 0.004], [ro, 2 * t], [ri, 2 * t], [ri, t + 0.004]], mat, 32)];
+  const g = [L(S, [[ri, 0], [ro, 0], [ro, t], [ri, t], [ri, 0]], mat, 24), L(S, [[ri, t + 0.004], [ro, t + 0.004], [ro, 2 * t], [ri, 2 * t], [ri, t + 0.004]], mat, 24)];
   // Rampes : petites dents radiales sur les faces extérieures.
-  const n = 12;
+  const n = 8;
   for (let i = 0; i < n; i++) {
     const a = (i / n) * Math.PI * 2;
     for (const [y, s] of [[0, -1], [2 * t, 1]]) {
@@ -159,7 +169,7 @@ export function jicAdapter(S, THREE, dash = 6, { npt = false, mat = 'zinc', jicD
   else g.push(L(S, [[0, -ro * 1.6], ...S.thread(ro, -ro * 1.6, -0.12, { pitch: 0.055, maxTurns: 6 }), [ro * 0.9, -0.12], [ro * 0.9, 0], [0, 0]], mat, 16));
   const obj = new THREE.Group();
   obj.add(S.merged(g, mat));
-  if (!npt) obj.add(S.torus(u(ro * 0.98), u(0.035), 'rubber', { pos: [0, -u(0.07), 0] }));
+  if (!npt) obj.add(oring(S, ro * 0.98, 0.035, -0.07));
   return obj;
 }
 
@@ -210,7 +220,7 @@ export function orbPlug(S, THREE, dash = 4, { mat = 'zinc' } = {}) {
     L(S, [[0, h * 0.3], [hx, h * 0.3], [hx, h], [0, h]].reverse(), mat, 6),
     L(S, [[0, -r * 1.4], ...S.thread(r, -r * 1.4, -0.1, { pitch: 0.05, maxTurns: 5 }), [r * 0.9, 0], [0, 0]], mat, 14),
   ], mat));
-  g.add(S.torus(u(r * 1.0), u(0.035), 'rubber', { pos: [0, -u(0.05), 0] }));
+  g.add(oring(S, r, 0.035, -0.05));
   return g;
 }
 
