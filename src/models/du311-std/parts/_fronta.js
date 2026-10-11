@@ -214,3 +214,70 @@ export function stadium(cx, cz, lx, wz, n = 10) {
   }
   return pts;
 }
+
+// ------------------------------------------------------------ électrovannes : faisceau de la bobine
+/**
+ * Repères 2 à 7 communs aux électrovannes P346 et P360 (même liste que P228
+ * du TVK) : joint 1/2 NPT (3) sur le moyeu de sortie de câble de la bobine,
+ * raccord de gaine 1/2 po (2), gaine annelée 3/8 po (4, douze tronçons d'un
+ * pouce, liste en pouces) qui part selon dir puis s'incurve vers le bas (rayon
+ * bend), gaine thermorétractable 3/4 po (7, deux tronçons d'un pouce) sur la
+ * jonction avec le connecteur femelle à deux voies (5) et ses broches (6).
+ * hub : { pos, dir } (face du moyeu, axe sortant, repère de la vanne), dir
+ * horizontal. Les pièces sont enregistrées par api.part dans ce repère.
+ */
+export function solenoidHarness(api, hub, { bend = 0.07, explode = [0, -0.05, 0] } = {}) {
+  const { THREE, S } = api;
+  const P = (ref, obj, k) => api.part(ref, obj, explode.map((v) => v * k));
+  const d = new THREE.Vector3(...hub.dir).normalize();
+  const down = new THREE.Vector3(0, -1, 0);
+  const at = (o, p, dir) => pose(THREE, o, p.toArray ? p.toArray() : p, dir.toArray ? dir.toArray() : dir);
+  let p = new THREE.Vector3(...hub.pos);
+  // 3 — joint 1/2 NPT ; 2 — raccord de gaine (six-pans 1 po, corps conique, écrou moleté à pans).
+  P('3', at(S.washer(0.0135, 0.0105, 0.0015, 'rubber', { pos: [0, 0.00075, 0] }), p, d), 0.6);
+  p = p.clone().addScaledVector(d, 0.0015);
+  P('2', at(S.merged([
+    S.nut(0.0254, 0.008, 'plastic', { pos: [0, 0.004, 0] }),
+    S.lathe([[0.0075, 0.008], [0.0125, 0.008], [0.0125, 0.016], [0.0115, 0.026], [0.0075, 0.026], [0.0075, 0.008]], 'plastic', { seg: 24 }),
+    S.lathe([[0.0075, 0.016], [0.013, 0.016], [0.013, 0.03], [0.0075, 0.03], [0.0075, 0.016]], 'plastic', { seg: 8 }),
+  ], 'plastic'), p, d), 1);
+  p = p.clone().addScaledVector(d, 0.026);
+  // 4 — gaine annelée : 12 tronçons d'un pouce le long d'un quart de cercle puis vers le bas.
+  const segGeo = () => {
+    const prof = [[0.0055, 0]];
+    for (let i = 0; i < 8; i++) {
+      const y = (i * IN) / 8;
+      prof.push([0.0085, y + 0.0003], [0.0085, y + 0.0016], [0.0072, y + 0.0022], [0.0072, y + IN / 8 - 0.0002]);
+    }
+    prof.push([0.0055, IN], [0.0055, 0]);
+    return S.lathe(prof, 'plastic', { seg: 16 });
+  };
+  const arcLen = (bend * Math.PI) / 2;
+  const pointAt = (s) => {
+    if (s <= arcLen) {
+      const a = s / bend;
+      return { p: p.clone().addScaledVector(d, Math.sin(a) * bend).addScaledVector(down, (1 - Math.cos(a)) * bend), t: d.clone().multiplyScalar(Math.cos(a)).addScaledVector(down, Math.sin(a)) };
+    }
+    return { p: p.clone().addScaledVector(d, bend).addScaledVector(down, bend + (s - arcLen)), t: down.clone() };
+  };
+  for (let k = 0; k < 12; k++) {
+    const a = pointAt(k * IN), b = pointAt((k + 1) * IN);
+    P('4', at(segGeo(), a.p, b.p.clone().sub(a.p)), 1.5);
+  }
+  const end = pointAt(12 * IN);
+  // 5 — connecteur femelle (corps, verrou) ; 6 — broches ; 7 — thermorétractable sur la jonction.
+  const yk = end.p.clone().addScaledVector(end.t, -0.008);
+  const con = S.group(
+    S.lathe([[0.0062, 0], [0.0085, 0], [0.0085, 0.012], [0.0105, 0.014], [0.0105, 0.04], [0.0088, 0.04], [0.0088, 0.036], [0.0062, 0.036], [0.0062, 0]], 'grey', { seg: 24 }),
+    S.box(0.006, 0.016, 0.004, 'grey', { r: 0.001, pos: [0.011, 0.026, 0] }),
+  );
+  P('5', at(con, yk, end.t), 2.2);
+  for (const sx of [-1, 1]) {
+    const pin = S.lathe([[0, 0], [0.0008, 0], [0.0008, 0.011], [0.0005, 0.012], [0, 0.012]], 'brass', { seg: 10, pos: [sx * 0.0028, 0.027, 0] });
+    P('6', at(pin, yk, end.t), 2.8);
+  }
+  for (let k = 0; k < 2; k++) {
+    const q = pointAt(12 * IN - 0.012 + k * IN);
+    P('7', at(S.lathe([[0.0086, 0], [0.0098, 0], [0.0098, IN], [0.0086, IN], [0.0086, 0]], 'black', { seg: 20 }), q.p, q.t), 2);
+  }
+}
