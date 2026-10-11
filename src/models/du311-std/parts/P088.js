@@ -21,14 +21,13 @@ import { body } from '../layout.js';
 import { u, along, hhcs, nordLock } from '../../du311/parts/_avance_b.js';
 import { basis, slabY, nlT } from './_feedcent.js';
 
-const RP = 1.75; // tige Ø 3 1/2
 const TH = { x0: 2.02, x1: 4.0, w: 3.0, h: 3.0 }; // pouce : sommet du V, dos, largeur, hauteur (po)
 const FI = { r: 1.78, x1: -3.7, w: 3.0, h: 3.0, heel: 0.6 }; // doigt : face R, dos, largeur, hauteur, talon
 const WEB = 0.75; // âme du bras (po)
 
 export default function P088(api) {
   const { THREE, S } = api;
-  const { merged, group, at } = S;
+  const { merged, at } = S;
   const v = (x, y, z) => [u(x), u(y), u(z)];
   const K = FEED.clamp, AX = FEED.AX;
   // Repère d'un jeu : origine sur l'axe de la tige, X vers l'arbre des bras.
