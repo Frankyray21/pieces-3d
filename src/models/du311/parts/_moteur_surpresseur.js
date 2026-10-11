@@ -407,21 +407,22 @@ export const ACC = (() => {
       return S.lathe([...prof, [ri, 0]], mat, { seg: n >= 24 ? 28 : 18 });
     },
     // Coude femelle 90° / 45° (fonte malléable ou acier forgé) : centre à
-    // l'origine, entrée vers -Y, sortie vers +X (90°) ou à 45° vers +X-Y…
+    // l'origine, entrée vers -Y, sortie vers +X (90°) ou vers +X+Y (45° :
+    // déviation de 45° par rapport au passage droit).
     // userData.a = distance centre → face (m), userData.end = [x, y] de la face
     // de sortie, userData.dir = direction de sortie.
     pipeElbow: (S, n, { angle = 90, mat = 'darkSteel', forged = false } = {}) => {
       const r = I(npt(n)[0]) / 2, R = r * (forged ? 1.42 : 1.28);
       const A = angle === 45 ? r * 1.55 + I(0.15) : r * 1.85 + I(0.12);
       const ang = (angle * Math.PI) / 180;
-      // Bras : de la face (bourrelet) vers le centre.
-      const arm = () => S.lathe([[r * 0.98, 0], [R * 1.06, 0], [R * 1.06, A * 0.16], [R, A * 0.24], [R, A], [0, A]], mat, { seg: 24 });
+      // Bras : du centre (y = 0) à la face (y = A), bourrelet à la face, taraudage visible.
+      const arm = () => S.lathe([[0, 0], [R, 0], [R, A * 0.76], [R * 1.06, A * 0.84], [R * 1.06, A], [r * 0.98, A], [r * 0.98, A * 0.55], [0, A * 0.55]], mat, { seg: 24 });
       const a1 = S.at(arm(), [0, 0, 0], [Math.PI, 0, 0]); // vers -Y
       const a2 = S.group(arm());
-      a2.rotation.z = Math.PI - ang; // 90° : vers +X
+      a2.rotation.z = -ang; // 90° : vers +X ; 45° : vers +X+Y (déviation de 45°)
       const bead = S.at(S.lathe([[0, -R], [R * 0.72, -R * 0.72], [R, 0], [R * 0.72, R * 0.72], [0, R]], mat, { seg: 24 }), [0, 0, 0]);
       const o = g(S, one(S, [a1, a2, bead], mat));
-      const dir = [Math.sin(ang), -Math.cos(ang)];
+      const dir = [Math.sin(ang), Math.cos(ang)];
       o.userData.a = A;
       o.userData.dir = dir;
       o.userData.end = [dir[0] * A, dir[1] * A];
@@ -430,7 +431,7 @@ export const ACC = (() => {
     // Té (branches : -Y, +Y, +X) ou croix (+ -X) femelle : centre à l'origine.
     pipeTee: (S, n, { cross = false, mat = 'darkSteel' } = {}) => {
       const r = I(npt(n)[0]) / 2, R = r * 1.28, A = r * 1.85 + I(0.12);
-      const arm = (rot) => S.at(S.lathe([[r * 0.98, 0], [R * 1.06, 0], [R * 1.06, A * 0.16], [R, A * 0.24], [R, A], [0, A]], mat, { seg: 24 }), [0, 0, 0], rot);
+      const arm = (rot) => S.at(S.lathe([[0, 0], [R, 0], [R, A * 0.76], [R * 1.06, A * 0.84], [R * 1.06, A], [r * 0.98, A], [r * 0.98, A * 0.55], [0, A * 0.55]], mat, { seg: 24 }), [0, 0, 0], rot);
       const list = [arm(null), arm([Math.PI, 0, 0]), arm([0, 0, -Math.PI / 2]), S.ball ? S.ball(R * 1.02, mat) : null];
       if (cross) list.push(arm([0, 0, Math.PI / 2]));
       const o = g(S, one(S, list.filter(Boolean), mat));
