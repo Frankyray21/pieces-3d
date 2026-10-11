@@ -34,7 +34,7 @@ export default function P344(api) {
   // sortie JIC -12 dans le plan XY vers +X).
   const elbow45 = () => {
     const J = JIC[12], r = 0.0125;
-    const head = lathe([[0, 0], [0.0175, 0], [0.0175, 0.008], [r, 0.010], [0, 0.010]], 'zinc', { seg: 10 });
+    const head = lathe([[0, 0], [0.0175, 0], [0.0175, 0.008], [r, 0.010], [0, 0.010]], 'zinc', { seg: 8 });
     const yc = 0.028;
     const a = Math.PI / 4;
     const branch = group(rf.sleeve(r, 0, 0.012), rf.jicNose(J.t, 0.012));
@@ -50,15 +50,15 @@ export default function P344(api) {
       m.position.set(0, 0.008 + 0.0105, s * 0.0083);
       return m;
     });
-    const oring = lathe([[0.0155, -0.0012], [0.0185, -0.0012], [0.0185, 0.0012], [0.0155, 0.0012], [0.0155, -0.0012]], 'rubber', { seg: 10 });
+    const oring = lathe([[0.0155, -0.0012], [0.0185, -0.0012], [0.0185, 0.0012], [0.0155, 0.0012], [0.0155, -0.0012]], 'rubber', { seg: 8 });
     return group(merged(halves, 'zinc'), oring);
   };
-  // Vis H M10 × 45 légère : tête six pans fermée dessus, tige à 4 pans.
+  // Vis H M10 × 45 légère : tête six pans fermée dessus, tige à 3 pans.
   const bolt = (() => {
     const hr = 0.0085, hh = 0.0065;
     const head = new THREE.CylinderGeometry(hr, hr, hh, 6, 1, true).translate(0, hh / 2, 0);
     const top = new THREE.CircleGeometry(hr, 6).rotateX(-Math.PI / 2).translate(0, hh, 0);
-    const shank = new THREE.CylinderGeometry(0.005, 0.005, 0.045, 4, 1, true).translate(0, -0.0225, 0);
+    const shank = new THREE.CylinderGeometry(0.005, 0.005, 0.045, 3, 1, true).translate(0, -0.0225, 0);
     return merged([head, top, shank].map((g) => new THREE.Mesh(g)), 'zinc');
   })();
 

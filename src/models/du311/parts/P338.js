@@ -40,7 +40,8 @@
 // Cotes non données par le manuel : estimées d'après les proportions du
 // dessin (réducteur de 12 kN·m environ, comme la série X12) et le barbotin de
 // P336 ; pièces internes simplifiées (dentures suggérées), segments réduits
-// (budget ≤ 12 000 triangles, car P328 porte deux chenilles).
+// (budget ≤ 7 000 triangles, car P328 porte deux chenilles : petites pièces
+// internes en prismes à 6 pans, engrenages en étoiles extrudées).
 
 export const GBX338 = {
   mountR: 0.19, // rayon de la bride fixe

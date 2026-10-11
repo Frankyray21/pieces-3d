@@ -267,7 +267,7 @@ export default function P336(api) {
   // sur la portée du moyeu, plaqué sur la bride du moyeu (z = +0.015).
   {
     // Une seule extrusion : couronne de 21 dents trapézoïdales (3 sommets par
-    // dent) et alésage à 14 pans.
+    // dent) et alésage à 10 pans.
     const sh = new THREE.Shape();
     for (let i = 0; i < 21; i++) {
       const a = (i / 21) * TAU, st = TAU / 21;
@@ -275,7 +275,7 @@ export default function P336(api) {
       pts.forEach(([r, b], k) => (i === 0 && k === 0 ? sh.moveTo(r * Math.cos(b), r * Math.sin(b)) : sh.lineTo(r * Math.cos(b), r * Math.sin(b))));
     }
     sh.holes.push(new THREE.Path().absarc(0, 0, GBX338.hubR + 0.002, 0, TAU, true));
-    const sg = new THREE.ExtrudeGeometry(sh, { depth: 0.03, bevelEnabled: false, curveSegments: 14 });
+    const sg = new THREE.ExtrudeGeometry(sh, { depth: 0.03, bevelEnabled: false, curveSegments: 10 });
     sg.translate(0, 0, -0.015);
     const g = merged([new THREE.Mesh(sg)], 'darkSteel');
     const holes = [];
@@ -302,7 +302,7 @@ export default function P336(api) {
   {
     const wheel = Lz([[0.03, -0.075], [0.06, -0.075], [0.06, -0.07], [0.19, -0.07], [0.19, -0.06], [0.182, -0.06],
       [0.182, -0.03], [0.205, -0.024], [0.205, 0.024], [0.182, 0.03], [0.182, 0.06], [0.19, 0.06], [0.19, 0.07],
-      [0.06, 0.07], [0.06, 0.075], [0.03, 0.075], [0.03, -0.075]], 'black', 14);
+      [0.06, 0.07], [0.06, 0.075], [0.03, 0.075], [0.03, -0.075]], 'black', 12);
     const axle = Lz([[0, -0.086], [0.03, -0.086], [0.03, 0.086], [0, 0.086]], 'steel', 10);
     const yoke = merged([
       ...[-1, 1].map((s) => bx(0.25, 0.07, 0.008, [-0.115, 0, s * 0.082])),
@@ -319,7 +319,7 @@ export default function P336(api) {
     const flange = bx(0.015, 0.12, 0.12, [-0.0575, 0, 0]);
     const rod = lathe([[0, 0.3], [0.025, 0.3], [0.025, 0.535], [0, 0.535]], 'chrome', { axis: 'x', seg: 8 });
     const cups = merged([bx(0.01, 0.13, 0.13, [0.33, 0, 0]), bx(0.01, 0.13, 0.13, [0.525, 0, 0])], 'black');
-    const spring = S.spring(0.058, 0.011, 0.19, 5, 'yellow', { axis: 'x', pos: [0.335, 0, 0], perTurn: 6, radial: 3 });
+    const spring = S.spring(0.058, 0.011, 0.19, 4, 'yellow', { axis: 'x', pos: [0.335, 0, 0], perTurn: 6, radial: 3 });
     P('21', at(group(body, merged([flange], 'black'), rod, cups, spring), [0, YA, 0]), CYL);
     const g = group(
       lathe([[0, 0], [0.008, 0], [0.008, 0.012], [0.004, 0.014], [0.004, 0.024], [0.006, 0.026], [0, 0.03]], 'brass', { seg: 6 }),
@@ -337,13 +337,14 @@ export default function P336(api) {
   // central entre les rails, boudins extérieurs ; paliers à semelle boulonnés
   // (4 vis 26 et rondelles 27 par galet, têtes côté semelle).
   {
-    const roller = Lz([[0.025, -0.1], [0.025, -0.072], [0.068, -0.072], [0.068, -0.06], [0.055, -0.06],
+    // Bout d'axe noyé dans les paliers (blocs) : profil de la jante seule.
+    const roller = Lz([[0.025, -0.072], [0.068, -0.072], [0.068, -0.06], [0.055, -0.06],
       [0.055, -0.03], [0.066, -0.026], [0.066, 0.026], [0.055, 0.03], [0.055, 0.06], [0.068, 0.06], [0.068, 0.072],
-      [0.025, 0.072], [0.025, 0.1]], 'black', 8);
+      [0.025, 0.072]], 'black', 8);
     // Paliers (vers +Y local : semelle à 0.05 + e au-dessus de l'axe ; e =
     // rehausse des paliers du galet porteur, qui passe au-dessus du châssis).
     const unitT = (e) => group(roller.clone(), merged([-1, 1].flatMap((s) => [
-      bx(0.07, 0.04 + e, 0.025, [0, 0.018 + e / 2, s * 0.086]),
+      bx(0.07, 0.065 + e, 0.028, [0, 0.0055 + e / 2, s * 0.086]),
       bx(0.13, 0.012, 0.045, [0, 0.044 + e, s * 0.086]),
     ]), 'black'));
     const bolt = screwT(0.012, 0.035), w = washerT(0.012);
