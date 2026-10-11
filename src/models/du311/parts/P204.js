@@ -117,7 +117,7 @@ export default function P204(api) {
   // Nervure, face +X : sélecteur load sense (vis 13).
   mount3(frame([XF + T / 2, 0.06, 0.12], [1, 0, 0]), '13', null, [0, 0, 0.05]);
   // Dos de la plaque : inversion de forage (vis 14).
-  mount3(frame([-0.19, 0.1, -T], [0, 0, -1]), '14', null, [0, 0, 0]);
+  mount3(frame([-0.19, 0.1, -T], [0, 0, -1]), '14', null, [0, 0, -0.06]);
 
   // Devant, à gauche : distributeur 2 (vis 14), orifices bas (12) et latéraux (10).
   {

@@ -108,7 +108,7 @@ export default function P220(api) {
     const y = gy[i];
     P(ref, S.at(gauge(sc), [0, y, 0]), [0, 0, 0.12]);
     // Coude au dos de la queue (vissé selon -Z), sortie JIC vers le bas.
-    P('9', orient(api, elbow9(), [0, y, -tail + 0.4 * IN * 0.7], [0, 0, -1], [0, -1, 0]), [0, 0, -0.1]);
+    P('9', orient(api, elbow9(), [0, y, -tail + 0.4 * IN * 0.7], [0, 0, -1], [0, -1, 0]), [0, 0, -0.25]);
   });
 
   // ---------------------------------------------------------------- 2 — limiteur de pression du couple
@@ -129,13 +129,13 @@ export default function P220(api) {
     // 10 / 12 / 14 : vis à tête devant la bride, rondelle fendue et écrou derrière le panneau.
     relB.forEach(([x, y]) => {
       P('10', S.bolt(0.25 * IN, 0.75 * IN, 'zinc', { axis: 'z', pos: [x, y, 0.18 * IN] }), [0, 0, 0.24]);
-      P('12', S.washer(0.24 * IN, 0.13 * IN, 0.062 * IN, 'zinc', { axis: 'z', pos: [x, y, -T - 0.0008] }), [0, 0, -0.06]);
-      P('14', S.nut(0.4375 * IN, 0.226 * IN, 'zinc', { axis: 'z', pos: [x, y, -T - 0.0016 - 0.00287] }), [0, 0, -0.09]);
+      P('12', S.washer(0.24 * IN, 0.13 * IN, 0.062 * IN, 'zinc', { axis: 'z', pos: [x, y, -T - 0.0008] }), [0, 0, -0.16]);
+      P('14', S.nut(0.4375 * IN, 0.226 * IN, 'zinc', { axis: 'z', pos: [x, y, -T - 0.0016 - 0.00287] }), [0, 0, -0.2]);
     });
     // 8 — adaptateur droit au dos du corps ; 7 — coude 45° dessous, vers l'arrière et le bas.
     const zb = -T - L;
     const a8 = nptFitting(api, { npt: 4, jic: 6 });
-    P('8', orient(api, a8.obj, [0, ry, zb], [0, 0, -1]), [0, 0, -0.1]);
+    P('8', orient(api, a8.obj, [0, ry, zb], [0, 0, -1]), [0, 0, -0.25]);
     const e7 = nptFitting(api, { npt: 4, jic: 6, angle: 45 });
     P('7', orient(api, e7.obj, [0, ry - r, -T - L * 0.6], [0, -1, 0], [0, 0, -1]), [0, -0.03, -0.08]);
   }

@@ -7,10 +7,10 @@
 // Chaque voie : orifice ORB -04 en façade, coude ORB -04 → JIC -06 (9) tourné
 // vers le bas, capteur suspendu dessous ; voies 2 et 6 : té tournant (6) entre
 // coude et capteur (branche vers -X sur la voie 2, vers +Z sur la voie 6) ;
-// voie 3 (rotation) : capteur sous l'orifice inférieur par l'adaptateur ORB
-// -04 → JIC -04 (10) et l'adaptateur tournant NPT -04 (8). Sélecteur de
-// circuit (1) en façade, au-dessus de la voie 3, coudes NPT 1/4 → JIC -06 (7)
-// à ses deux bouts tournés vers le bas. Douze bouchons ORB -04 (11) : dix sur
+// voie 3 (rotation) : capteur vissé directement sous la barre. Sélecteur de
+// circuit (1) en façade de la voie 3, tenu par l'adaptateur ORB -04 → JIC -04
+// (10) et l'adaptateur tournant NPT -04 (8), coudes NPT 1/4 → JIC -06 (7) à
+// ses deux bouts tournés vers le bas. Douze bouchons ORB -04 (11) : dix sur
 // le dessus, un en façade et un dessous au bout -X. Deux vis H 1/4-20 × 2 po
 // (12) et rondelles (13) traversent la barre de l'avant vers la tôle support.
 // Repère : origine au centre de la face arrière de la barre (face d'appui),
@@ -64,19 +64,14 @@ export default function P394(api) {
   XS.forEach((x, i) => {
     const ch = i + 1;
     if (ch === 3) {
-      // Voie 3 : orifice inférieur, 10 puis 8, capteur.
-      const a = orbAdapter(api, 4, 4);
-      P('10', orient(api, a.obj, [x, YC - H / 2, D / 2], [0, -1, 0]), [0, -0.04, 0]);
-      const y8 = YC - H / 2 - a.tip + 0.004;
-      const f8 = nptFitting(api, { npt: 4, jic: 4, end: 'swivel' });
-      // 8 : écrou tournant en haut (sur 10), queue NPT vers le bas dans le capteur.
-      P('8', orient(api, f8.obj, [x, y8 - f8.out[1], D / 2], [0, 1, 0]), [0, -0.07, 0]);
-      P(RANGE[i], S.at(transducer(), [x, y8 - f8.out[1], D / 2]), [0, -0.11, 0]);
+      // Voie 3 : capteur vissé directement dans l'orifice inférieur ; l'orifice
+      // de façade porte le sélecteur (10, 8, plus bas).
+      P(RANGE[i], S.at(transducer(), [x, YC - H / 2, D / 2]), [0, -0.08, 0]);
       return;
     }
     // Coude 9 : queue dans l'orifice de façade, sortie JIC -06 vers le bas.
     const out = put('9', nptFitting(api, { npt: 4, jic: 6, angle: 90 }), [x, YC, ZF], [0, 0, 1], [0, -1, 0], [0, 0, 0.05]);
-    let yt = out[1] - 0.012; // haut du capteur : six-pans vissé sur tout le filet de l'embout
+    let yt = out[1] + 0.01; // haut du capteur : six-pans vissé sur l'embout du coude
     if (ch === 2 || ch === 6) {
       // 6 — té tournant : écrou en haut, passage vers le bas, branche latérale.
       const sn = (0.6875 + 0.0625) * IN;
@@ -87,23 +82,33 @@ export default function P394(api) {
         S.at(S.lathe([[0, 0], [0.0071, 0], ...S.thread(0.0071, 0.002, 0.012, { pitch: 0.0014, maxTurns: 5, chamferBottom: false }), [0.005, 0.016], [0, 0.016]], 'zinc', { seg: 14 }), [0, -0.021, 0.008], [Math.PI / 2, 0, 0]),
       ], 'zinc');
       const g = S.group(tee);
-      g.position.set(x, out[1] - 0.008, out[2]);
+      g.position.set(x, out[1] + 0.008, out[2]);
       if (ch === 2) g.rotation.y = -Math.PI / 2; // branche vers -X
       P('6', g, [0, -0.05, 0.03]);
-      yt = out[1] - 0.008 - 0.047 + 0.004;
+      yt = out[1] + 0.008 - 0.047 + 0.01;
     }
     P(RANGE[i], S.at(transducer(), [x, yt, out[2]]), [0, -0.1, 0.03]);
   });
 
-  // 1 — sélecteur de circuit (valve navette) en façade au-dessus de la voie 3, 7 — coudes.
+  // 1 — sélecteur de circuit (valve navette) en façade de la voie 3, tenu par
+  // l'adaptateur ORB -04 → JIC -04 (10) vissé dans la barre et l'adaptateur
+  // tournant (8, écrou sur 10, queue NPT 1/4 dans le sélecteur) ; 7 — coudes
+  // NPT 1/4 → JIC -06 à ses deux bouts, tournés vers le bas.
   {
-    const xc = XS[2], yc = YC + 0.006, zc = ZF + 0.03;
+    const xc = XS[2], yc = YC;
+    const a10 = orbAdapter(api, 4, 4);
+    P('10', orient(api, a10.obj, [xc, yc, ZF], [0, 0, 1]), [0, 0, 0.04]);
+    const tip = ZF + a10.tip;
+    const f8 = nptFitting(api, { npt: 4, jic: 4, end: 'swivel' });
+    const z8 = tip - 0.006 + f8.out[1]; // six-pans de 8 (queue NPT vers +Z)
+    P('8', orient(api, f8.obj, [xc, yc, z8], [0, 0, -1]), [0, 0, 0.07]);
+    const zc = z8 + 0.002 + 0.011;
     const body = S.merged([
       S.box(0.05, 0.024, 0.022, 'brass', { r: 0.002, pos: [xc, yc, zc] }),
       ...[-1, 1].map((s) => S.at(S.nut(0.019, 0.008, 'brass'), [xc + s * 0.029, yc, zc], [0, 0, Math.PI / 2])),
     ], 'brass');
-    P('1', body, [0, 0.03, 0.06]);
-    for (const s of [-1, 1]) put('7', nptFitting(api, { npt: 4, jic: 6, angle: 90 }), [xc + s * 0.033, yc, zc], [s, 0, 0], [0, -1, 0], [s * 0.04, 0.03, 0.06]);
+    P('1', body, [0, 0.0, 0.11]);
+    for (const s of [-1, 1]) put('7', nptFitting(api, { npt: 4, jic: 6, angle: 90 }), [xc + s * 0.033, yc, zc], [s, 0, 0], [0, -1, 0], [s * 0.04, 0, 0.11]);
   }
   // 12, 13 — vis H 1/4 × 2 po et rondelles, de l'avant vers la tôle support.
   for (const x of [-0.131, 0.132]) {

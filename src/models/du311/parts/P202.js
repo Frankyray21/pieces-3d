@@ -150,15 +150,15 @@ export default function P202(api) {
     let x = XF; // face extérieure du flanc ; la vis entre par -X
     P('4', orient(shoulderBolt(), [x, y, z], ax), [-0.16, 0, 0]);
     x += T;
-    P('7', orient(S.washer((1.47 * IN) / 2, (0.81 * IN) / 2, w7, 'zinc'), [x + w7 / 2, y, z], ax), [0.05, 0, 0]);
+    P('7', orient(S.washer((1.47 * IN) / 2, (0.81 * IN) / 2, w7, 'zinc'), [x + w7 / 2, y, z], ax), [0.18, 0, 0]);
     x += w7;
-    P('1', orient(spool(), [x + gl / 2, y, z], ax), [0.1, 0, 0]);
+    P('1', orient(spool(), [x + gl / 2, y, z], ax), [0.27, 0, 0]);
     x += gl;
-    P('7', orient(S.washer((1.47 * IN) / 2, (0.81 * IN) / 2, w7, 'zinc'), [x + w7 / 2, y, z], ax), [0.16, 0, 0]);
+    P('7', orient(S.washer((1.47 * IN) / 2, (0.81 * IN) / 2, w7, 'zinc'), [x + w7 / 2, y, z], ax), [0.36, 0, 0]);
     x += w7;
-    P('8', orient(S.washer((1.31 * IN) / 2, (0.69 * IN) / 2, w8, 'zinc'), [x + w8 / 2, y, z], ax), [0.2, 0, 0]);
+    P('8', orient(S.washer((1.31 * IN) / 2, (0.69 * IN) / 2, w8, 'zinc'), [x + w8 / 2, y, z], ax), [0.41, 0, 0]);
     x += w8;
-    P('11', orient(S.nut(0.9375 * IN, 0.547 * IN, 'zinc'), [x + 0.547 * IN / 2, y, z], ax), [0.24, 0, 0]);
+    P('11', orient(S.nut(0.9375 * IN, 0.547 * IN, 'zinc'), [x + 0.547 * IN / 2, y, z], ax), [0.46, 0, 0]);
   });
 
   return { view: { dir: [-0.9, 0.6, 1.1] } };

@@ -154,14 +154,16 @@ export default function P238(api) {
   // ---------------------------------------------------------------- 6 — lance (P240) rangée dans le support
   // P240 : origine à la sortie du pistolet, +X vers la buse ; poignée de x = 0.025 à 0.28.
   const W = [X0 - 0.02, HYw, HZ];
-  P('6', S.at(api.sub('P240'), W), [-0.25, 0, 0.12]);
+  const E6 = [-0.25, 0, 0.12]; // éclaté de la lance, repris par ses raccords
+  const withLance = (e) => e.map((v, i) => v + E6[i]);
+  P('6', S.at(api.sub('P240'), W), E6);
 
   // ---------------------------------------------------------------- 9, 2, 1, 4, 3 — raccords rapides sous le pistolet
   // Entrée du pistolet (P240) : point (-0.2058, -0.129), axe (-0.479, -0.878).
   const d = [-0.479, -0.878, 0];
   const s0 = [W[0] - 0.2058, W[1] - 0.129, W[2]];
   const n9 = nptFitting(api, { npt: 6, end: 'npt', material: 'brass' });
-  P('9', orient(api, n9.obj, s0, d), d.map((v) => v * 0.05));
+  P('9', orient(api, n9.obj, s0, d), withLance(d.map((v) => v * 0.05)));
   const o9 = orientPoint(api, n9.out, s0, d);
   // 2 — coupleur femelle : corps six-pans taraudé, douille de verrouillage moletée.
   const qdF = S.group(S.merged([
@@ -169,7 +171,7 @@ export default function P238(api) {
     S.lathe([[0.006, 0.012], [0.0105, 0.012], [0.0105, 0.016], [0.0125, 0.017], [0.0125, 0.034], [0.0105, 0.036], [0.006, 0.036], [0.006, 0.012]], 'brass', { seg: 12 }),
   ], 'brass'));
   const p2 = o9.map((v, i) => v - d[i] * 0.008);
-  P('2', orient(api, qdF, p2, d), d.map((v) => v * 0.09));
+  P('2', orient(api, qdF, p2, d), withLance(d.map((v) => v * 0.09)));
   const p1 = p2.map((v, i) => v + d[i] * 0.026);
   // 1 — embout mâle : nez inséré dans le coupleur, six-pans, queue NPT femelle (flexible).
   const qdM = S.merged([
@@ -177,7 +179,7 @@ export default function P238(api) {
     S.nut(0.016, 0.01, 'steel', { pos: [0, 0.021, 0] }),
     S.lathe([[0, 0.026], [0.0068, 0.026], [0.0068, 0.04], [0, 0.04]], 'steel', { seg: 14 }),
   ], 'steel');
-  P('1', orient(api, S.group(qdM), p1, d), d.map((v) => v * 0.13));
+  P('1', orient(api, S.group(qdM), p1, d), withLance(d.map((v) => v * 0.13)));
   // 4 — bouchon antipoussière du coupleur (attache annulaire sur 2, languette, bouchon pendant).
   const tether = (ring, len, cap) => {
     const g = S.group(
@@ -189,10 +191,10 @@ export default function P238(api) {
     return g;
   };
   const plug4 = S.lathe([[0, 0], [0.0055, 0], [0.0055, 0.012], [0.009, 0.012], [0.009, 0.016], [0, 0.016]], 'rubber', { seg: 16 });
-  P('4', orient(api, tether(0.0135, 0.04, plug4), p2.map((v, i) => v + d[i] * 0.018), d, [0, 0, 1]), [0.02, -0.02, 0.06]);
+  P('4', orient(api, tether(0.0135, 0.04, plug4), p2.map((v, i) => v + d[i] * 0.018), d, [0, 0, 1]), withLance([0.02, -0.02, 0.06]));
   // 3 — capuchon de l'embout mâle.
   const cap3 = S.lathe([[0.0062, 0], [0.0085, 0], [0.0085, 0.018], [0, 0.018], [0, 0.016], [0.0062, 0.016], [0.0062, 0]], 'rubber', { seg: 16 });
-  P('3', orient(api, tether(0.0095, 0.04, cap3), p1.map((v, i) => v + d[i] * 0.021), d, [0, 0, -1]), [0.02, -0.04, -0.06]);
+  P('3', orient(api, tether(0.0095, 0.04, cap3), p1.map((v, i) => v + d[i] * 0.021), d, [0, 0, -1]), withLance([0.02, -0.04, -0.06]));
 
   return { view: { dir: [0.9, 0.55, 1.1] } };
 }
