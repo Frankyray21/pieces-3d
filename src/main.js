@@ -11,6 +11,26 @@ import './ui/resize.js';
 // Modèles 3D disponibles par équipement (builders procéduraux).
 const MODELS = { 'cubex-mri-5200': cubexModels, du311: du311Models, 'du311-std': du311StdModels, 'epiroc-ith': epirocModels };
 
+// Développement (npm run dev) : un fichier src/models/<eq>/parts/Pxxx.js pas
+// encore inscrit dans parts/index.js (brouillon) s'affiche quand même, pour
+// l'assemblage ouvert et ses sous-assemblages. Absent du site publié.
+const DRAFTS = import.meta.env.DEV ? import.meta.glob('./models/*/parts/P*.js') : {};
+
+async function loadDrafts(eq, id) {
+  const ids = new Set();
+  const walk = (k) => {
+    if (ids.has(k) || !eq.assemblies.has(k)) return;
+    ids.add(k);
+    eq.assemblies.get(k).parts.forEach((r) => r.link && walk(r.link));
+  };
+  walk(id);
+  const models = (MODELS[eq.id] = { ...(MODELS[eq.id] || {}) });
+  await Promise.all([...ids].map(async (k) => {
+    const load = DRAFTS[`./models/${eq.id}/parts/${k}.js`];
+    if (load) models[k] = (await load()).default;
+  }));
+}
+
 // Version complète du site (toutes les pages du manuel) : la publication
 // allégée en Artifact y renvoie pour les pages qu'elle n'inclut pas.
 const SITE = 'https://frankyray21.github.io/pieces-3d/';
@@ -312,6 +332,7 @@ async function openAssembly(id, { select: selPath = null } = {}) {
   const asm = eq.assemblies.get(id);
   const prev = S.view;
   const same = isAsmView() && prev.id === id;
+  if (import.meta.env.DEV) await loadDrafts(eq, id);
   const builders = MODELS[eq.id] || {};
   const builder = builders[id];
   const has3d = !!builder;

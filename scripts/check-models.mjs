@@ -14,7 +14,7 @@
 // nombre). Avec --max-tris N, un modèle de plus de N triangles est en échec.
 //
 // Usage : node scripts/check-models.mjs [--eq du311] [--qty] [--max-tris 150000] [--from P064] [F05 F08 ...]
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import * as THREE from 'three';
 import { buildProcedural } from '../src/viewer/assembly.js';
 
@@ -31,9 +31,34 @@ const from = value('--from');
 const { default: builders } = await import(`../src/models/${eq}/index.js`);
 const data = JSON.parse(readFileSync(new URL(`../public/equipment/${eq}/data.json`, import.meta.url), 'utf8'));
 const only = args;
-const partial = Object.keys(data.assemblies).some((id) => !builders[id]);
+let partial = false;
 const documents = new Set((data.documents || []).map((d) => d.id));
 let failed = false;
+
+// Brouillons : un fichier src/models/<eq>/parts/Pxxx.js présent sur le disque
+// (même pas encore inscrit dans parts/index.js) remplace le builder du même
+// numéro, pour les assemblages contrôlés et tous leurs sous-assemblages.
+const partsDir = new URL(`../src/models/${eq}/parts/`, import.meta.url);
+if (existsSync(partsDir)) {
+  const want = new Set();
+  const walk = (id) => {
+    if (want.has(id) || !data.assemblies[id]) return;
+    want.add(id);
+    for (const r of data.assemblies[id].parts) if (r[4]?.link) walk(r[4].link);
+  };
+  (only.length ? only : Object.keys(data.assemblies)).forEach(walk);
+  for (const f of readdirSync(partsDir)) {
+    const id = f.slice(0, -3);
+    if (!/^P\d{3}[A-Z0-9-]*\.js$/.test(f) || !want.has(id)) continue;
+    try {
+      builders[id] = (await import(new URL(f, partsDir))).default;
+    } catch (err) {
+      console.log(`✕ ${id} : parts/${f} ne se charge pas — ${err.message}`);
+      failed = true;
+    }
+  }
+}
+partial = Object.keys(data.assemblies).some((id) => !builders[id]);
 
 function stats(root) {
   let meshes = 0, tris = 0;
