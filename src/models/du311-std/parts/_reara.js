@@ -48,8 +48,8 @@ export const CAN = (() => {
     rightTop: 0.2, // retour supérieur et aile arrière de la porte droite (P428)
     leftWing: 0.5, // aile arrière de la porte gauche (P424)
     leftTop: 0.05, // retour supérieur de la porte gauche
-    post: 0.898, // axe des montants avant (10, 11) : face intérieure contre le châssis
-    beam: { x: [-2.8458, -2.795], y: [1.863, 1.939] }, // traverse avant (P422 rep. 9)
+    post: 0.9015, // axe des montants avant (10, 11) : face intérieure sur trois cales contre le châssis
+    beam: { x: [-2.8458, -2.795], y: [1.863, 1.939], z: 0.905 }, // traverse avant (P422 rep. 9)
     fan: { x: -3.39, y: 1.34, r: 0.33 }, // ouverture ronde de la porte gauche (axe du volant ventilé)
   };
 })();
@@ -231,10 +231,14 @@ export function xform(geo, m) {
   return g;
 }
 
-/** Maillage d'un matériau à partir de géométries brutes (normales lissées sous l'angle crease). */
-export function meshOf(api, geos, mat, crease = 0.5) {
+/**
+ * Maillage d'un matériau à partir de géométries brutes (normales lissées sous
+ * l'angle crease) ou d'objets déjà placés (maillages, groupes : transformations
+ * appliquées, normales conservées).
+ */
+export function meshOf(api, items, mat, crease = 0.5) {
   const { THREE, S } = api;
-  return S.merged(geos.map((g) => new THREE.Mesh(S.creaseNormals(g.index ? g.toNonIndexed() : g, crease))), mat);
+  return S.merged(items.map((g) => (g.isBufferGeometry ? new THREE.Mesh(S.creaseNormals(g.index ? g.toNonIndexed() : g, crease)) : g)), mat);
 }
 
 /**
