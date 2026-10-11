@@ -180,7 +180,7 @@ export default function P046(api) {
   const zs = zc - 0.035;
   const sw = group(
     S.nut(3.0 * IN, 0.03, 'steel', { pos: [0, -0.015, 0] }),
-    lathe([[0, -0.03], [1.62 * IN, -0.03], [1.62 * IN, -0.085], [1.45 * IN, -0.092], [0, -0.092]], 'castIron', { seg: 32 }),
+    lathe([[0, -0.092], [1.45 * IN, -0.092], [1.62 * IN, -0.085], [1.62 * IN, -0.03], [0, -0.03]], 'castIron', { seg: 32 }),
     S.torus(1.62 * IN, 0.0015, 'darkSteel', { pos: [0, -0.058, 0] }),
   );
   P('1', group(
