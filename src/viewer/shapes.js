@@ -6,7 +6,12 @@ import { mat } from './materials.js';
 // Chaque fonction retourne un Mesh ou un Group prêt à positionner.
 // Les pièces d'un même matériau d'une forme composée sont fusionnées en un
 // seul maillage (moins d'appels de dessin) ; arêtes adoucies ou chanfreinées
-// pour accrocher la lumière, comme une pièce usinée.
+// pour accrocher la lumière, comme une pièce usinée (tôles et profils
+// extrudés : arêtes cassées d'environ 1 mm, encombrement inchangé).
+// Détails réalistes : hose() flexible à embouts sertis, cable() à
+// presse-étoupes, weld() / weldRing() cordons de soudure, boltSet() /
+// boltCircle() boulons à rondelles, stud() goujon + écrou, nameplate()
+// plaque signalétique neutre. Aucune ombre : pas de castShadow / receiveShadow.
 
 const V = (a) => (a instanceof THREE.Vector3 ? a : new THREE.Vector3(...a));
 const TAN30 = Math.tan(Math.PI / 6);
@@ -72,10 +77,7 @@ export function creaseNormals(geometry, crease = 0.5) {
 function mesh(geometry, material) {
   // Extrusions : three.js calcule des normales par face (parois courbes facettées).
   if (geometry.type === 'ExtrudeGeometry') geometry = creaseNormals(geometry);
-  const m = new THREE.Mesh(geometry, mat(material));
-  m.castShadow = true;
-  m.receiveShadow = true;
-  return m;
+  return new THREE.Mesh(geometry, mat(material));
 }
 
 // ------------------------------------------------------------ géométries de base
@@ -374,8 +376,44 @@ export function shell(rOut, rIn, len, material = 'steel', { axis = 'y', r2Out, r
   return g;
 }
 
-/** Tube suivant une suite de points (boyau, tuyau, cadre tubulaire). */
-export function tube(points, r, material = 'black', { seg = 48, closed = false, tension = 0.5, sharp = false } = {}) {
+/**
+ * Embout serti de flexible le long de +Y, de l'extrémité (y=0) vers le
+ * flexible : écrou tournant six-pans, collet, douille sertie (empreintes des
+ * mors) qui recouvre le bout du flexible et se raccorde à lui par un cône.
+ */
+function ferruleGeo(r) {
+  const R = r * 1.38;
+  const nutH = r * 1.1, neck = r * 0.35, sleeve = r * 3.4;
+  const y0 = nutH + neck, y1 = y0 + sleeve;
+  const prof = [[0, nutH], [r * 0.9, nutH], [r * 0.9, y0 - r * 0.08], [R - r * 0.12, y0], [R, y0 + r * 0.1]];
+  // Trois sillons de sertissage.
+  for (let k = 0; k < 3; k++) {
+    const yc = y0 + sleeve * (0.3 + k * 0.22);
+    prof.push([R, yc - r * 0.22], [R - r * 0.07, yc - r * 0.1], [R - r * 0.07, yc + r * 0.1], [R, yc + r * 0.22]);
+  }
+  prof.push([R, y1 - r * 0.3], [r * 1.02, y1], [0, y1]);
+  return mergeGeo([
+    revolveGeo(prof, 16),
+    place(hexGeo(r * 2.5, nutH), [0, nutH / 2, 0]),
+  ]);
+}
+
+/** Presse-étoupe de câble le long de +Y : écrou six-pans puis dôme serrant le câble. */
+function glandGeo(r) {
+  const h = r * 1.6;
+  return mergeGeo([
+    place(hexGeo(r * 3.6, h * 0.45), [0, h * 0.225, 0]),
+    revolveGeo([[0, h * 0.45], [r * 1.6, h * 0.45], [r * 1.55, h * 0.9], [r * 1.25, h * 1.3], [r * 1.05, h * 1.6], [0, h * 1.6]], 16),
+  ]);
+}
+
+/**
+ * Tube suivant une suite de points (boyau, tuyau, cadre tubulaire).
+ * ends : 'ferrule' (embouts sertis aux deux bouts), 'gland' (presse-étoupes)
+ * ou 'none' ; par défaut des embouts sertis pour les matériaux 'hose' / 'rubber'.
+ * Les embouts forment un maillage enfant (endMaterial) qui suit le tube.
+ */
+export function tube(points, r, material = 'black', { seg = 48, closed = false, tension = 0.5, sharp = false, ends, endMaterial = 'steel', radial = 12 } = {}) {
   const pts = points.map(V);
   let curve;
   if (sharp) {
@@ -384,8 +422,88 @@ export function tube(points, r, material = 'black', { seg = 48, closed = false, 
   } else {
     curve = new THREE.CatmullRomCurve3(pts, closed, 'catmullrom', tension);
   }
-  const geo = new THREE.TubeGeometry(curve, seg, r, 12, closed);
+  const m = mesh(new THREE.TubeGeometry(curve, seg, r, radial, closed), material);
+  const kind = ends ?? ((material === 'hose' || material === 'rubber') && !sharp && !closed && r >= 0.003 ? 'ferrule' : 'none');
+  if (kind !== 'none' && !closed && pts.length > 1) addEnds(m, curve, r, kind, endMaterial);
+  return m;
+}
+
+/** Embouts (sertis ou presse-étoupes) aux deux bouts d'une courbe, en maillage enfant. */
+function addEnds(m, curve, r, kind, endMaterial) {
+  const Y = new THREE.Vector3(0, 1, 0);
+  const parts = [];
+  for (const [t, sgn] of [[0, 1], [1, -1]]) {
+    const g = kind === 'gland' ? glandGeo(r) : ferruleGeo(r);
+    g.applyQuaternion(new THREE.Quaternion().setFromUnitVectors(Y, curve.getTangentAt(t).multiplyScalar(sgn).normalize()));
+    g.translate(...curve.getPointAt(t).toArray());
+    parts.push(g);
+  }
+  const e = mesh(mergeGeo(parts), kind === 'gland' && endMaterial === 'steel' ? 'black' : endMaterial);
+  e.userData.isTubeEnds = true;
+  m.add(e);
+  return m;
+}
+
+/** Flexible hydraulique : courbe centripète (sans boucle) entre ses raccords, embouts sertis. */
+export function hose(points, r, { material = 'hose', endMaterial = 'steel' } = {}) {
+  const curve = new THREE.CatmullRomCurve3(points.map(V), false, 'centripetal');
+  const n = Math.max(12, Math.min(120, Math.round(curve.getLength() / (r * 1.6))));
+  const geo = new THREE.TubeGeometry(curve, n, r, 14, false);
+  geo.userData.edgeAngle = 70;
+  return addEnds(mesh(geo, material), curve, r, 'ferrule', endMaterial);
+}
+
+/** Câble électrique souple avec presse-étoupe à chaque bout. */
+export function cable(points, r, { material = 'black', seg = 32 } = {}) {
+  return tube(points, r, material, { seg, ends: 'gland', endMaterial: 'black', radial: 8, tension: 0.4 });
+}
+
+/**
+ * Cordon de soudure le long d'une ligne brisée [[x,y,z], ...] (angle entre
+ * deux tôles) : bourrelet à écailles régulières, cratères aux extrémités.
+ * size = largeur du cordon. Peint comme la pièce par défaut.
+ */
+export function weld(points, size = 0.006, material = 'red', { closed = false } = {}) {
+  const pts = points.map(V);
+  const path = new THREE.CurvePath();
+  const n = pts.length;
+  for (let i = 0; i < (closed ? n : n - 1); i++) path.add(new THREE.LineCurve3(pts[i], pts[(i + 1) % n]));
+  const L = path.getLength();
+  const r = size / 2;
+  const seg = Math.max(4, Math.min(400, Math.round(L / (r * 1.25))));
+  const radial = 6;
+  const geo = new THREE.TubeGeometry(path, seg, r, radial, closed);
+  // Écailles : rayon modulé d'un anneau à l'autre ; extrémités effilées.
+  const p = geo.attributes.position;
+  const c = new THREE.Vector3(), v = new THREE.Vector3();
+  for (let i = 0; i <= seg; i++) {
+    path.getPointAt(Math.min(i / seg, 1), c);
+    let k = 0.9 + 0.14 * Math.abs(Math.sin(i * 1.15));
+    if (!closed) k *= Math.min(1, 0.35 + Math.min(i, seg - i) * 0.33);
+    for (let j = 0; j <= radial; j++) {
+      const idx = i * (radial + 1) + j;
+      v.fromBufferAttribute(p, idx).sub(c).multiplyScalar(k).add(c);
+      p.setXYZ(idx, v.x, v.y, v.z);
+    }
+  }
+  geo.computeVertexNormals();
+  geo.userData.edgeAngle = 75; // pas de contours sur les écailles
   return mesh(geo, material);
+}
+
+/** Cordon de soudure circulaire (tube sur une tôle, bossage) de rayon R, plan perpendiculaire à l'axe. */
+export function weldRing(R, size = 0.006, material = 'red', { axis = 'y', pos } = {}) {
+  const n = Math.max(12, Math.min(64, Math.round((R * 2 * Math.PI) / (size * 1.2))));
+  const pts = [];
+  for (let i = 0; i < n; i++) {
+    const a = (i / n) * Math.PI * 2;
+    pts.push([Math.cos(a) * R, 0, Math.sin(a) * R]);
+  }
+  const m = weld(pts, size, material, { closed: true });
+  orient(m, axis);
+  const g = group(m);
+  if (pos) g.position.copy(V(pos));
+  return g;
 }
 
 /** Barre droite entre deux points (cylindre orienté). */
@@ -406,11 +524,28 @@ export function extrude(points, depth, material = 'red', { holes = [], bevel = 0
     p.absarc(x, y, r, 0, Math.PI * 2, true);
     shape.holes.push(p);
   });
-  const geo = new THREE.ExtrudeGeometry(shape, {
-    depth, bevelEnabled: bevel > 0, bevelSize: bevel, bevelThickness: bevel, bevelSegments: 2, curveSegments: 20,
-  });
-  if (center) geo.translate(0, 0, -depth / 2);
+  let geo;
+  const mb = microBevel(depth);
+  if (bevel > 0 || !mb) {
+    geo = new THREE.ExtrudeGeometry(shape, {
+      depth, bevelEnabled: bevel > 0, bevelSize: bevel, bevelThickness: bevel, bevelSegments: 2, curveSegments: 20,
+    });
+    if (center) geo.translate(0, 0, -depth / 2);
+  } else {
+    // Arêtes cassées (≈1 mm) sans changer l'encombrement : un filet de lumière
+    // le long des bords, comme une tôle découpée et ébavurée.
+    geo = new THREE.ExtrudeGeometry(shape, {
+      depth: depth - 2 * mb, bevelEnabled: true, bevelSize: mb, bevelThickness: mb, bevelOffset: -mb, bevelSegments: 1, curveSegments: 20,
+    });
+    geo.translate(0, 0, center ? -(depth - 2 * mb) / 2 : mb);
+  }
   return mesh(geo, material);
+}
+
+/** Chanfrein d'arête des tôles et profils extrudés selon l'épaisseur (0 : aucun). */
+function microBevel(t) {
+  const b = Math.min(t * 0.16, 0.0016);
+  return b >= 0.0005 ? b : 0;
 }
 
 /** Plaque rectangulaire (dans le plan XZ) percée de trous ronds [x, z, r] et de découpes [x, z, w, d]. */
@@ -430,8 +565,11 @@ export function plate(w, d, t, material = 'red', { holes = [], cutouts = [], r =
     p.closePath();
     shape.holes.push(p);
   });
-  const geo = new THREE.ExtrudeGeometry(shape, { depth: t, bevelEnabled: false, curveSegments: 16 });
-  geo.translate(0, 0, -t / 2);
+  const mb = microBevel(t);
+  const geo = mb
+    ? new THREE.ExtrudeGeometry(shape, { depth: t - 2 * mb, bevelEnabled: true, bevelSize: mb, bevelThickness: mb, bevelOffset: -mb, bevelSegments: 1, curveSegments: 16 })
+    : new THREE.ExtrudeGeometry(shape, { depth: t, bevelEnabled: false, curveSegments: 16 });
+  geo.translate(0, 0, -(t - 2 * mb) / 2);
   geo.rotateX(-Math.PI / 2);
   return mesh(geo, material);
 }
@@ -491,8 +629,117 @@ export function nut(size, h, material = 'steel', { axis = 'y', pos } = {}) {
   return g;
 }
 
-/** Boulon à tête hexagonale le long de -axe (tête en haut à l'origine). */
-export function bolt(d, len, material = 'steel', { axis = 'y', head = 'hex', pos } = {}) {
+/**
+ * Boulon à tête hexagonale le long de -axe (tête en haut à l'origine).
+ * washer : rondelle plate sous la tête (la tête est alors relevée de son épaisseur).
+ */
+export function bolt(d, len, material = 'steel', { axis = 'y', head = 'hex', pos, washer = false } = {}) {
+  const inner = group(mesh(boltGeo(d, len, head, washer), material));
+  orient(inner, axis);
+  const g = group(inner);
+  if (pos) g.position.copy(V(pos));
+  return g;
+}
+
+/** Épaisseur de la rondelle d'un boulon de diamètre d. */
+const washerT = (d) => Math.max(d * 0.16, 0.0012);
+
+/** Géométrie d'un boulon (tête à l'origine, tige vers -Y), rondelle optionnelle. */
+function boltGeo(d, len, head = 'hex', washer = false) {
+  const geo = boltCore(d, len, head);
+  if (!washer) return geo;
+  const t = washerT(d);
+  geo.translate(0, t, 0);
+  return mergeGeo([geo, place(ringGeo(d * 1.05, d * 0.54, t, 16), [0, t / 2, 0])]);
+}
+
+/**
+ * Jeu de boulons (têtes hexagonales + rondelles) aux positions données, en un
+ * seul maillage. Têtes vers +axe, posées sur le plan des positions.
+ */
+export function boltSet(points, d, len, material = 'steel', { axis = 'y', head = 'hex', washer = true } = {}) {
+  const src = boltGeo(d, len, head, washer);
+  alongAxis(src, axis);
+  return mesh(mergeGeo(points.map((p) => src.clone().translate(...V(p).toArray()))), material);
+}
+
+/**
+ * Couronne de n boulons (rayon R) dans le plan perpendiculaire à l'axe, têtes
+ * vers +axe, en un seul maillage. phase : angle du premier boulon (rad).
+ */
+export function boltCircle(n, R, d, len, material = 'steel', { axis = 'y', pos, phase = 0, head = 'hex', washer = true } = {}) {
+  const pts = [];
+  for (let i = 0; i < n; i++) {
+    const a = phase + (i / n) * Math.PI * 2;
+    pts.push([Math.cos(a) * R, 0, Math.sin(a) * R]);
+  }
+  const m = boltSet(pts, d, len, material, { head, washer });
+  orient(m, axis);
+  const g = group(m);
+  if (pos) g.position.copy(V(pos));
+  return g;
+}
+
+/**
+ * Goujon fileté sortant de la surface selon +axe (pied à l'origine), avec
+ * rondelle et écrou chanfreiné ; le filet dépasse de l'écrou.
+ */
+export function stud(d, len, material = 'steel', { axis = 'y', pos, nut: withNut = true, washer = true } = {}) {
+  const r = d / 2;
+  const t = washer ? washerT(d) : 0;
+  const nh = d * 0.8;
+  // Filet du pied vers le bout, chanfrein au bout libre (profil retourné).
+  const thread = threadProfile(r, 0, len, { pitch: d * 0.2, maxTurns: 12 }).map(([x, y]) => [x, len - y]).reverse();
+  const geos = [revolveGeo([[0, 0], ...thread, [0, len]], 10)];
+  if (washer) geos.push(place(ringGeo(d * 1.05, d * 0.54, t, 16), [0, t / 2, 0]));
+  if (withNut) geos.push(place(hexGeo(d * 1.6, nh, { hole: d * 0.4 }), [0, t + nh / 2, 0]));
+  const m = mesh(mergeGeo(geos), material);
+  orient(m, axis);
+  const g = group(m);
+  if (pos) g.position.copy(V(pos));
+  return g;
+}
+
+/**
+ * Plaque signalétique générique (sans marque) : alu brossé, rebord, lignes
+ * de texte suggérées et quatre rivets. Face selon +Z, centrée, épaisseur 1,5 mm.
+ */
+export function nameplate(w, h, { material = 'zinc', ink = 'black' } = {}) {
+  const t = 0.0015;
+  const g = new THREE.Group();
+  g.add(solid(material, place(boxGeo(w, h, t, Math.min(w, h) * 0.06), [0, 0, t / 2])));
+  // Texte suggéré : lignes de « mots » de longueurs variées (titre plus
+  // haut), cadre imprimé en retrait du bord.
+  const lines = [];
+  const z = t + 0.0004;
+  const n = Math.max(2, Math.min(6, Math.floor(h / 0.012)));
+  const th = Math.min(h * 0.05, 0.0028);
+  let s = 11;
+  for (let i = 0; i < n; i++) {
+    const y = h * 0.24 - (i * h * 0.48) / Math.max(1, n - 1);
+    const x1 = -w * 0.36 + w * (i === 0 ? 0.5 : 0.4 + ((i * 37) % 32) / 100);
+    const hh = i === 0 ? th * 1.4 : th;
+    for (let x = -w * 0.36; x < x1 - hh;) {
+      s = (s * 16807) % 2147483647;
+      const ww = Math.min(w * (0.04 + ((s % 1000) / 1000) * 0.12), x1 - x);
+      lines.push(place(new THREE.PlaneGeometry(ww, hh), [x + ww / 2, y, z]));
+      x += ww + hh * 1.3;
+    }
+  }
+  const rv = Math.min(w, h) * 0.05;
+  const fw = w - rv * 8, fh = h - rv * 8, ft = Math.max(0.0006, th * 0.25);
+  for (const sy of [-1, 1]) lines.push(place(new THREE.PlaneGeometry(fw, ft), [0, sy * fh / 2, z]));
+  for (const sx of [-1, 1]) lines.push(place(new THREE.PlaneGeometry(ft, fh), [sx * fw / 2, 0, z]));
+  g.add(solid(ink, lines));
+  const rivets = [];
+  for (const sx of [-1, 1]) for (const sy of [-1, 1]) {
+    rivets.push(place(new THREE.SphereGeometry(rv, 10, 5, 0, Math.PI * 2, 0, Math.PI / 2).rotateX(Math.PI / 2), [sx * (w / 2 - rv * 2.2), sy * (h / 2 - rv * 2.2), t]));
+  }
+  g.add(solid('steel', rivets));
+  return g;
+}
+
+function boltCore(d, len, head) {
   const hh = d * 0.65;
   let headGeo;
   if (head === 'square') {
@@ -514,23 +761,19 @@ export function bolt(d, len, material = 'steel', { axis = 'y', head = 'hex', pos
   const prof = d >= 0.012 && len > d * 1.5
     ? [[0, -len], ...threadProfile(r, -len, -len + threadLen, { pitch: d * 0.2, maxTurns: 7 }), [r, 0], [0, 0]]
     : cylProfile(r, r, len).map(([x, y]) => [x, y - len / 2]);
-  const inner = group(solid(material, headGeo, revolveGeo(prof, 10)));
-  orient(inner, axis);
-  const g = group(inner);
-  if (pos) g.position.copy(V(pos));
-  return g;
+  return len > 0 ? mergeGeo([headGeo, revolveGeo(prof, 10)]) : mergeGeo([headGeo]);
 }
 
 /** Ressort hélicoïdal le long de l'axe. */
-export function spring(r, wire, len, turns, material = 'black', { axis = 'y', pos } = {}) {
+export function spring(r, wire, len, turns, material = 'black', { axis = 'y', pos, perTurn = 24, radial = 8 } = {}) {
   const pts = [];
-  const n = Math.max(24, Math.round(turns * 24));
+  const n = Math.max(24, Math.round(turns * perTurn));
   for (let i = 0; i <= n; i++) {
     const t = i / n;
     const a = t * turns * Math.PI * 2;
     pts.push(new THREE.Vector3(Math.cos(a) * r, t * len - len / 2, Math.sin(a) * r));
   }
-  const geo = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), n * 2, wire, 8, false);
+  const geo = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), n * 2, wire, radial, false);
   geo.userData.edgeAngle = 60; // pas de contours le long du fil
   const m = mesh(geo, material);
   orient(m, axis);
@@ -604,8 +847,8 @@ export function hydCylinder(len, bore, { material = 'red', rodR, ext = 0.45, eye
   return g;
 }
 
-/** Vanne à bille : corps + leviers. Axe de passage selon l'axe donné. */
-export function ballValve(size, material = 'brass', { axis = 'x', handle = 'red' } = {}) {
+/** Vanne à bille : corps + levier (jaune comme sur les dessins). Axe de passage selon l'axe donné. */
+export function ballValve(size, material = 'brass', { axis = 'x', handle = 'safety' } = {}) {
   const s = size, r = s / 2;
   const X = (geo) => alongAxis(geo, 'x');
   const g = new THREE.Group();
@@ -647,7 +890,7 @@ function nippleProfile(rb, y0, y1, neck = 0.18) {
   const yCone = y1 - L * 0.22;
   return [
     [0, y0], [rb * 0.82, y0], [rb * 0.82, yThread],
-    ...threadProfile(rb, yThread, yCone, { pitch: rb * 0.3, maxTurns: 4, chamferBottom: false }),
+    ...threadProfile(rb, yThread, yCone, { pitch: rb * 0.3, maxTurns: 6, chamferBottom: false }),
     [rb * 0.66, y1], [rb * 0.42, y1], [rb * 0.42, y1 - L * 0.04], [0, y1 - L * 0.04],
   ];
 }
@@ -663,7 +906,7 @@ export function fitting(d, len, material = 'steel', { axis = 'y', tee = false, e
     revolveGeo(nippleProfile(d * 0.42, L * 0.12, elbow ? L * 0.7 : L * 0.795), 10),
     // Queue inférieure : filetage conique (NPT / BSPT).
     revolveGeo([[0, -L * 0.65],
-      ...threadProfile(d * 0.36, -L * 0.65, -L * 0.18, { r1: d * 0.4, pitch: d * 0.12, maxTurns: 4 }),
+      ...threadProfile(d * 0.36, -L * 0.65, -L * 0.18, { r1: d * 0.4, pitch: d * 0.12, maxTurns: 7 }),
       [d * 0.32, -L * 0.18], [d * 0.32, -L * 0.12], [0, -L * 0.12]], 10),
   ];
   if (tee) {
@@ -678,12 +921,14 @@ export function fitting(d, len, material = 'steel', { axis = 'y', tee = false, e
   return axis === 'y' ? g : axisWrapY(g, axis);
 }
 
-function axisWrapY(g, axis) {
+function axisWrapY(g, axis, pos) {
   const outer = new THREE.Group();
   outer.add(g);
   if (axis === 'x') g.rotation.z = -Math.PI / 2;
   else if (axis === 'z') g.rotation.x = Math.PI / 2;
   else if (axis === '-y') g.rotation.x = Math.PI;
+  else if (axis === '-x') g.rotation.z = Math.PI / 2;
+  if (pos) outer.position.copy(V(pos));
   return outer;
 }
 
@@ -800,8 +1045,11 @@ export function valveBank(n, { sw = 0.05, h = 0.16, d = 0.12, levers = true, mat
     // Orifices de travail A / B (bouchons six-pans) sur le dessus.
     for (const z of [-d * 0.22, d * 0.22]) steel.push(place(hexGeo(plug, plug * 0.4), [x, h / 2 + plug * 0.2, z]));
     if (levers) {
-      steel.push(place(cylGeo(0.006, h * 0.9, { seg: 12 }), [0, 0, 0], [0.25, 0, 0]).translate(x, h * 0.95, -d * 0.2));
-      knobs.push(place(revolveGeo([[0, -0.02], [0.009, -0.02], [0.014, -0.008], [0.015, 0.006], [0.011, 0.018], [0, 0.021]], 16), [x, h * 1.4, -d * 0.31]));
+      // Levier incliné vers l'arrière, pommeau enfilé sur son extrémité.
+      const a = -0.25, ly = Math.cos(a), lz = Math.sin(a);
+      const yTop = h * 0.925 + h * 0.425 * ly, zTop = -d * 0.2 + h * 0.425 * lz;
+      steel.push(place(cylGeo(0.006, h * 0.85, { seg: 12 }), [x, h * 0.925, -d * 0.2], [a, 0, 0]));
+      knobs.push(place(revolveGeo([[0, -0.02], [0.009, -0.02], [0.014, -0.008], [0.015, 0.006], [0.011, 0.018], [0, 0.021]], 16), [x, yTop + 0.012 * ly, zTop + 0.012 * lz], [a, 0, 0]));
     }
   }
   // Tirants et écrous sur les flasques d'extrémité, orifices P / T.
@@ -846,6 +1094,173 @@ export function enclosure(w, h, d, material = 'grey') {
   }
   g.add(solid('black', blk));
   return g;
+}
+
+// ------------------------------------------------------------------ pièces tournées
+
+/**
+ * Pièce tournée : révolution autour de l'axe d'un profil [[r, y], ...] (rayon,
+ * position le long de l'axe), parcouru dans le sens trigonométrique : de l'axe
+ * vers l'extérieur en bas, puis vers le haut ; une pièce creuse revient par
+ * son alésage. Les segments du profil gardent des arêtes franches.
+ */
+export function lathe(profile, material = 'steel', { axis = 'y', seg = 32, pos } = {}) {
+  const m = mesh(revolveGeo(profile, seg, seg <= 8), material);
+  orient(m, axis);
+  const g = group(m);
+  if (pos) g.position.copy(V(pos));
+  if (profile.some(([r], i) => i > 0 && i < profile.length - 1 && r > 0) && profile[0][0] > 0) g.userData.hasInterior = true;
+  return g;
+}
+
+/** Filet suggéré (bandes de reflets) pour un profil de lathe(), de y0 à y1 au rayon r. */
+export function thread(r, y0, y1, opts = {}) {
+  return threadProfile(r, y0, y1, opts);
+}
+
+/**
+ * Tube percé le long de Y entre ya et yb : fenêtres rectangulaires dans le
+ * développé du tube, windows = [{ a, w, y0, y1 }] (angle central, largeur
+ * angulaire en radians). Parois intérieure et extérieure, chants des fenêtres
+ * et faces des bords : l'intérieur et les fenêtres restent lisibles en coupe.
+ */
+function slottedGeo(rOut, rIn, ya, yb, windows, seg) {
+  const TAU = Math.PI * 2;
+  const wins = [];
+  for (const w of windows) {
+    const y0 = Math.max(ya, w.y0), y1 = Math.min(yb, w.y1);
+    if (y1 <= y0 || w.w <= 0) continue;
+    const t0 = (((w.a - w.w / 2) % TAU) + TAU) % TAU;
+    const t1 = t0 + Math.min(w.w, TAU - 1e-4);
+    if (t1 > TAU) wins.push([t0, TAU, y0, y1], [0, t1 - TAU, y0, y1]);
+    else wins.push([t0, t1, y0, y1]);
+  }
+  const q = (v) => Math.round(v * 1e7) / 1e7;
+  const grid = [...new Set([...Array.from({ length: seg }, (_, k) => q((k * TAU) / seg)), ...wins.flatMap((w) => [q(w[0] % TAU), q(w[1] % TAU)])])].sort((a, b) => a - b);
+  const ys = [...new Set([ya, yb, ...wins.flatMap((w) => [w[2], w[3]])].map(q))].sort((a, b) => a - b);
+  const nc = grid.length;
+  const cellA = (i) => [grid[i], i + 1 < nc ? grid[i + 1] : grid[0] + TAU];
+  // solid[b][i] : la case angulaire i de la bande b est pleine.
+  const solid = [];
+  for (let b = 0; b < ys.length - 1; b++) {
+    const ym = (ys[b] + ys[b + 1]) / 2;
+    const act = wins.filter((w) => w[2] <= ym && w[3] >= ym);
+    solid.push(Array.from({ length: nc }, (_, i) => {
+      const [a0, a1] = cellA(i);
+      const am = ((a0 + a1) / 2) % TAU;
+      return !act.some((w) => am > w[0] && am < w[1]);
+    }));
+  }
+  const pos = [], nor = [];
+  const P = (r, t, y) => [r * Math.sin(t), y, r * Math.cos(t)];
+  const tri = (a, b, c, na, nb, nc2, n) => {
+    // Sens des triangles d'après la normale de la face.
+    const ux = b[0] - a[0], uy = b[1] - a[1], uz = b[2] - a[2];
+    const vx = c[0] - a[0], vy = c[1] - a[1], vz = c[2] - a[2];
+    const cx = uy * vz - uz * vy, cy = uz * vx - ux * vz, cz = ux * vy - uy * vx;
+    if (cx * n[0] + cy * n[1] + cz * n[2] < 0) { [b, c] = [c, b]; [nb, nc2] = [nc2, nb]; }
+    pos.push(...a, ...b, ...c);
+    nor.push(...na, ...nb, ...nc2);
+  };
+  const quad = (p0, p1, p2, p3, n0, n1, n2, n3, nf) => { tri(p0, p1, p2, n0, n1, n2, nf); tri(p0, p2, p3, n0, n2, n3, nf); };
+  const rad = (t, s) => [s * Math.sin(t), 0, s * Math.cos(t)];
+  for (let b = 0; b < ys.length - 1; b++) {
+    const yl = ys[b], yh = ys[b + 1];
+    for (let i = 0; i < nc; i++) {
+      if (!solid[b][i]) continue;
+      const [t0, t1] = cellA(i);
+      const tm = (t0 + t1) / 2;
+      quad(P(rOut, t0, yl), P(rOut, t1, yl), P(rOut, t1, yh), P(rOut, t0, yh), rad(t0, 1), rad(t1, 1), rad(t1, 1), rad(t0, 1), rad(tm, 1));
+      quad(P(rIn, t0, yl), P(rIn, t1, yl), P(rIn, t1, yh), P(rIn, t0, yh), rad(t0, -1), rad(t1, -1), rad(t1, -1), rad(t0, -1), rad(tm, -1));
+      // Chants des fenêtres (côté t0 et côté t1).
+      const prev = (i - 1 + nc) % nc, next = (i + 1) % nc;
+      for (const [edge, other, sgn] of [[t0, prev, -1], [t1, next, 1]]) {
+        if (solid[b][other]) continue;
+        const n = [sgn * Math.cos(edge), 0, -sgn * Math.sin(edge)];
+        quad(P(rIn, edge, yl), P(rOut, edge, yl), P(rOut, edge, yh), P(rIn, edge, yh), n, n, n, n, n);
+      }
+    }
+  }
+  // Faces horizontales : bords du tube et fonds / plafonds des fenêtres.
+  for (let k = 0; k < ys.length; k++) {
+    const y = ys[k];
+    for (let i = 0; i < nc; i++) {
+      const below = k > 0 && solid[k - 1][i];
+      const above = k < ys.length - 1 && solid[k][i];
+      if (below === above) continue;
+      const [t0, t1] = cellA(i);
+      const n = below ? [0, 1, 0] : [0, -1, 0];
+      quad(P(rIn, t0, y), P(rOut, t0, y), P(rOut, t1, y), P(rIn, t1, y), n, n, n, n, n);
+    }
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  geo.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3));
+  geo.setAttribute('uv', new THREE.Float32BufferAttribute(new Float32Array((pos.length / 3) * 2), 2));
+  return geo;
+}
+
+/** Tube percé (corps à fenêtres, trous de goupille). Voir slottedGeo ; axe Y par défaut. */
+export function slotted(rOut, rIn, ya, yb, windows, material = 'steel', { axis = 'y', seg = 48, pos } = {}) {
+  const m = mesh(slottedGeo(rOut, rIn, ya, yb, windows, seg), material);
+  orient(m, axis);
+  const g = group(m);
+  g.userData.hasInterior = true;
+  if (pos) g.position.copy(V(pos));
+  return g;
+}
+
+/**
+ * Trou rond de rayon rh au travers d'une paroi de rayon r, à l'angle a et à la
+ * hauteur y : fenêtres empilées pour slotted(). through : traverse aussi la
+ * paroi opposée (goupille).
+ */
+export function roundHole(a, y, rh, r, { through = false, steps = 6 } = {}) {
+  const out = [];
+  for (const aa of through ? [a, a + Math.PI] : [a]) {
+    for (let i = 0; i < steps; i++) {
+      const y0 = y - rh + (i * 2 * rh) / steps, y1 = y0 + (2 * rh) / steps;
+      const dy = (y0 + y1) / 2 - y;
+      const half = Math.sqrt(Math.max(rh * rh - dy * dy, 0));
+      out.push({ a: aa, w: (2 * half) / r, y0, y1 });
+    }
+  }
+  return out;
+}
+
+/** Bille (clapet, butée) de rayon r. */
+export function ball(r, material = 'chrome', { pos } = {}) {
+  const m = mesh(new THREE.SphereGeometry(r, 22, 14), material);
+  const g = group(m);
+  if (pos) g.position.copy(V(pos));
+  return g;
+}
+
+/**
+ * Roulement le long de l'axe : radial étanche (deux bagues et flasques noirs)
+ * ou à billes de butée (deux rondelles et billes visibles), largeur w.
+ */
+export function bearing(rOut, rIn, w, material = 'steel', { axis = 'y', pos, thrust = false } = {}) {
+  const g = new THREE.Group();
+  const h = w / 2;
+  if (thrust) {
+    const t = w * 0.3;
+    const rm = (rOut + rIn) / 2, rb = Math.min(w * 0.24, (rOut - rIn) * 0.32);
+    const n = Math.max(8, Math.round((Math.PI * 2 * rm) / (rb * 2.6)));
+    const balls = [];
+    for (let i = 0; i < n; i++) {
+      const a = (i / n) * Math.PI * 2;
+      balls.push(place(new THREE.SphereGeometry(rb, 10, 8), [Math.cos(a) * rm, 0, Math.sin(a) * rm]));
+    }
+    g.add(solid(material, place(ringGeo(rOut, rIn, t, 40), [0, h - t / 2, 0]), place(ringGeo(rOut, rIn, t, 40), [0, -h + t / 2, 0])));
+    g.add(solid('chrome', balls));
+    g.add(solid('brass', ringGeo(rm + rb * 0.6, rm - rb * 0.6, w * 0.22, 40)));
+  } else {
+    const t = (rOut - rIn) * 0.28;
+    g.add(solid(material, ringGeo(rOut, rOut - t, w, 40), ringGeo(rIn + t, rIn, w, 40)));
+    g.add(solid('black', ringGeo(rOut - t, rIn + t, w * 0.86, 40)));
+  }
+  return axisWrapY(g, axis === 'y' ? 'y' : axis, pos);
 }
 
 /** Fusionne les géométries d'un groupe en un seul mesh (objets répétés nombreux). */

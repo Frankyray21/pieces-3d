@@ -15,9 +15,11 @@ export async function loadEquipment(id) {
   return normalize(await res.json());
 }
 
+const isPnText = (v) => /^\d[\d -]{5,12}\d$/.test(String(v || ''));
+
 function row(raw, source) {
   const [ref, pn, qty, desc, extra = {}] = raw;
-  return {
+  const r = {
     ref: String(ref),
     pn: pn || '',
     qty: qty ?? null,
@@ -26,13 +28,47 @@ function row(raw, source) {
     source,
     key: `${source.id}:${ref}`,
   };
+  // Tous les numéros de la ligne (un par taille quand ils diffèrent : N, N2, N3…).
+  r.pns = [...new Set([r.pn, ...Object.values(r.sizes || {}).filter(isPnText)].filter(Boolean))];
+  return r;
 }
+
+/**
+ * Repères répétés dans une même liste (« 4 » pour les tubes de 1,5 m et de
+ * 3 m, options d'une même pièce) : chaque ligne reste sélectionnable sous un
+ * repère interne « 4#2 », affiché « 4 », et désigne la même pièce en 3D.
+ */
+function dedupe(parts) {
+  const seen = new Map();
+  return parts.map((raw) => {
+    const ref = String(raw[0]);
+    const n = (seen.get(ref) || 0) + 1;
+    seen.set(ref, n);
+    if (n === 1) return raw;
+    const extra = raw[4] || {};
+    return [`${ref}#${n}`, raw[1], raw[2], raw[3], { ...extra, label: ref, same: extra.same || ref }];
+  });
+}
+
+/** Tailles d'une ligne regroupées par numéro : [[n°, [N, N3]], [n°, [N2]]]. */
+export function sizeGroups(r) {
+  const m = new Map();
+  for (const [s, v] of Object.entries(r.sizes || {})) {
+    if (!m.has(v)) m.set(v, []);
+    m.get(v).push(s);
+  }
+  return [...m];
+}
+
+export { isPnText };
 
 function normalize(data) {
   const base = `${BASE}${data.id}/`;
   const eq = {
     ...data,
     pageUrl: (sheet) => base + data.document.pagePattern.replace('{sheet}', sheet),
+    // « catalogue » (pages numérotées) ou « manuel » (feuilles F01, P024…).
+    docWord: data.document.kind === 'catalogue' ? 'catalogue' : 'manuel',
     sheetId: sheetNaming(Object.keys(data.sheetTitles)[0] || 'F01'),
     sheetOwner: new Map(),
     assemblies: new Map(),
@@ -41,7 +77,9 @@ function normalize(data) {
   };
   for (const [id, a] of Object.entries(data.assemblies)) {
     const source = { type: 'assembly', id, sheet: id };
-    const asm = { ...a, id, sheet: id, parts: a.parts.map((r) => row(r, source)), parent: null, children: [] };
+    const sheet = a.sheet || id;
+    source.sheet = sheet;
+    const asm = { ...a, id, sheet, parts: dedupe(a.parts).map((r) => row(r, source)), parent: null, children: [] };
     eq.assemblies.set(id, asm);
   }
   for (const asm of eq.assemblies.values()) {
@@ -61,7 +99,7 @@ function normalize(data) {
   for (const d of data.documents) d.sheets.forEach((s) => own(s, d.id));
   for (const d of data.documents) {
     const source = { type: 'document', id: d.id, sheet: d.sheets[d.sheets.length - 1] };
-    const doc = { ...d, parts: d.parts.map((r) => row(r, source)) };
+    const doc = { ...d, parts: dedupe(d.parts).map((r) => row(r, source)) };
     eq.documents.set(d.id, doc);
     eq.rows.push(...doc.parts);
   }
@@ -81,7 +119,11 @@ export function normPn(pn) {
 
 const GENERIC = new Set(['VALVE', 'ASS', 'ASS.', 'ASSEMBLY', 'AND', 'FOR', 'WITH', 'THE', 'A-B', 'PART', 'KIT', 'SOLD', 'ONLY', 'IN']);
 const NEAR_GENERIC = new Set(['VALVE', 'AND', 'FOR', 'WITH', 'THE', '-']);
-const SYN = { ESTOP: 'EMERGENCY', CENTRALISER: 'CENTRALIZER', LUBRIFICATOR: 'LUBRICATOR', TAB: 'TABLE', ROCKDRILL: 'ROCK', HOLBACK: 'HOLD', HOLDBACK: 'HOLD' };
+const SYN = {
+  ESTOP: 'EMERGENCY', CENTRALISER: 'CENTRALIZER', LUBRIFICATOR: 'LUBRICATOR', TAB: 'TABLE', ROCKDRILL: 'ROCK', HOLBACK: 'HOLD', HOLDBACK: 'HOLD',
+  // Abréviations de visserie (catalogue Epiroc : « HHCS », « Capscrew », « Locknut »).
+  HHCS: 'BOLT', SHCS: 'BOLT', CAPSCREW: 'BOLT', SCREW: 'BOLT', LOCKNUT: 'NUT', NYLOC: 'NUT',
+};
 
 function words(desc) {
   return String(desc).toUpperCase()
@@ -149,6 +191,13 @@ function lev1(a, b) {
 // Numérotation interne à préfixe de lettres (Sandvik : CX011242, SH00010-1.250) :
 // un seul chiffre d'écart désigne une variante ou une autre taille, pas une frappe.
 function sequential(a, b) {
+  // Numéros à 9 chiffres ou plus (Epiroc 3760017222, 3760017223…) : des pièces
+  // voisines portent des numéros consécutifs ; seul un écart dans les trois
+  // derniers chiffres est ainsi normal (un écart plus haut reste suspect).
+  if (a.length === b.length && /^\d{9,}$/.test(a) && /^\d{9,}$/.test(b)) {
+    for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return i >= a.length - 3;
+    return false;
+  }
   if (a.length !== b.length || !/^[A-Z]{2}/.test(a) || !/^[A-Z]{2}/.test(b)) return false;
   for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return /\d/.test(a[i]) && /\d/.test(b[i]);
   return false;
@@ -159,19 +208,23 @@ function analyze(eq) {
   for (const r of eq.rows) {
     r.flags = [];
     if (r.flag === 'missing-row') r.flags.push({ level: 'warn', text: 'Ligne absente de la liste du manuel.' });
-    if (r.flag === 'no-pn' || (!r.pn && !r.pseudo && !r.supplier && !r.nss)) r.flags.push({ level: 'warn', text: 'Aucun numéro de pièce au manuel.' });
-    const n = normPn(r.pn);
-    if (!n) continue;
-    if (!byPn.has(n)) byPn.set(n, []);
-    byPn.get(n).push(r);
+    if (r.flag === 'no-pn' || (!r.pns.length && !r.pseudo && !r.supplier && !r.nss && !r.pnText)) r.flags.push({ level: 'warn', text: `Aucun numéro de pièce au ${eq.docWord}.` });
+    for (const pn of r.pns) {
+      const n = normPn(pn);
+      if (!n) continue;
+      if (!byPn.has(n)) byPn.set(n, []);
+      if (!byPn.get(n).includes(r)) byPn.get(n).push(r);
+    }
   }
   eq.byPn = byPn;
   const linked = (a, b) => a.link === b.source.id || b.link === a.source.id;
+  for (const r of eq.rows) r.usedIn = [];
   for (const [, rows] of byPn) {
     for (const r of rows) {
-      r.usedIn = rows.filter((o) => o !== r);
-      const conflicts = r.usedIn.filter((o) => !linked(r, o) && !similar(r.desc, o.desc));
-      if (conflicts.length) {
+      const others = rows.filter((o) => o !== r);
+      r.usedIn.push(...others.filter((o) => !r.usedIn.includes(o)));
+      const conflicts = others.filter((o) => !linked(r, o) && !similar(r.desc, o.desc));
+      if (conflicts.length && !r.flags.some((f) => f.level === 'error')) {
         r.flags.push({ level: 'error', text: 'Ce numéro figure ailleurs avec une description différente — vérifier avant de commander.', refs: conflicts });
       }
     }
@@ -187,8 +240,8 @@ function analyze(eq) {
       if ([...sheetsOf(pns[j])].some((x) => si.has(x))) continue;
       for (const a of byPn.get(pns[i])) for (const b of byPn.get(pns[j])) {
         if (!sameItem(a.desc, b.desc)) continue;
-        a.flags.push({ level: 'warn', text: `Numéro très proche ailleurs (${b.pn}) pour la même pièce — possible erreur de saisie.`, refs: [b] });
-        b.flags.push({ level: 'warn', text: `Numéro très proche ailleurs (${a.pn}) pour la même pièce — possible erreur de saisie.`, refs: [a] });
+        a.flags.push({ level: 'warn', text: `Numéro très proche ailleurs (${pns[j]}) pour la même pièce — possible erreur de saisie.`, refs: [b] });
+        b.flags.push({ level: 'warn', text: `Numéro très proche ailleurs (${pns[i]}) pour la même pièce — possible erreur de saisie.`, refs: [a] });
       }
     }
   }
@@ -197,9 +250,14 @@ function analyze(eq) {
 }
 
 export function sourceLabel(eq, src) {
-  if (src.type === 'assembly') return `${src.id} · ${eq.assemblies.get(src.id).titleFr}`;
+  if (src.type === 'assembly') return `${sheetLabel(eq, src.sheet)} · ${eq.assemblies.get(src.id).titleFr}`;
   const d = eq.documents.get(src.id);
-  return `${d.sheets.join('/')} · ${d.titleFr}`;
+  return `${d.sheets.map((s) => sheetLabel(eq, s)).join('/')} · ${d.titleFr}`;
+}
+
+/** Nom d'une page : « P024 » (manuel) ou « p. 24 » (catalogue à pages numérotées). */
+export function sheetLabel(eq, s) {
+  return eq.docWord === 'catalogue' ? `p. ${parseInt(String(s).replace(/^\D+/, ''), 10)}` : s;
 }
 
 /** Recherche plein texte (numéro, description, fournisseur). */
@@ -210,11 +268,11 @@ export function search(eq, q) {
   const words = q.split(/\s+/);
   return eq.rows
     .map((r) => {
-      const pn = normPn(r.pn);
+      const pns = r.pns.map(normPn);
       const sup = normPn(r.supplier);
       let score = 0;
-      if (pn && pn === qn) score = 100;
-      else if (pn && pn.includes(qn)) score = 60;
+      if (pns.includes(qn)) score = 100;
+      else if (pns.some((pn) => pn.includes(qn))) score = 60;
       else if (sup && sup.includes(qn)) score = 50;
       else if (words.every((w) => r.desc.toUpperCase().includes(w))) score = 30;
       return { r, score };
