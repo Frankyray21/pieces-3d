@@ -4,7 +4,9 @@
 // ventilée à ailettes, boîte à bornes sur le côté +Z, anneau de levage — posé
 // sur son socle à glissières (4) par quatre vis H 5/8-11 × 1 1/2 po (8) à
 // rondelles (10) ; poulie 12,5 po 4 gorges 5V (1) sur moyeu amovible QD « E »
-// alésé 2 3/8 po (2), trois vis H 1/2-13 × 2 3/4 po (7) à rondelles (9) ;
+// alésé 2 3/8 po (2), monté inversé (collerette côté moteur, comme sur le
+// dessin), trois vis H 1/2-13 × 2 3/4 po (7) à rondelles (9) par la face
+// extérieure de la poulie ;
 // clavette 5/8 po carrée × 3 1/2 po (6) ; courroie à bande 4 × 5VP de 112 po
 // (3) vers la poulie du compresseur (P274, non dessinée ici).
 // Cotes NEMA 365T : hauteur d'axe 9 po, bout d'arbre Ø 2 3/8 × 5 7/8 po,
@@ -89,8 +91,8 @@ export default function P390(api) {
   }
   // 8, 10 — vis des pattes et rondelles.
   for (const x of [-0.155, 0.155]) for (const z of [-0.184, 0.184]) {
-    P('10', S.at(S.washer(0.66 * IN, 0.34 * IN, 0.12 * IN, 'zinc'), [x, HB + 0.03 + 0.0015, z]), [0, 0.06, Math.sign(z) * 0.2]);
-    P('8', S.bolt(0.625 * IN, 1.5 * IN, 'zinc', { pos: [x, HB + 0.03 + 0.003, z] }), [0, 0.12, Math.sign(z) * 0.2]);
+    P('10', S.at(S.washer(0.66 * IN, 0.34 * IN, 0.12 * IN, 'zinc'), [x, HB + 0.03 + 0.0015, z]), [0, 0.16, 0]);
+    P('8', S.bolt(0.625 * IN, 1.5 * IN, 'zinc', { pos: [x, HB + 0.03 + 0.003, z] }), [0, 0.2, 0]);
   }
 
   // ---------------------------------------------------------------- poulie, moyeu, clavette
@@ -110,22 +112,22 @@ export default function P390(api) {
     const sheave = S.lathe(prof, 'castIron', { axis: 'x', seg: 64, pos: [X0, YA, 0] });
     P('1', sheave, [0.24, 0, 0]);
   }
-  // 2 — moyeu QD « E » : collerette Ø 6 po côté extérieur, fût conique dans la poulie.
+  // 2 — moyeu QD « E » : collerette Ø 6 po côté moteur, fût conique dans la poulie.
   {
     const bush = S.group(
       S.lathe([[1.1875 * IN, -0.6 * IN], [3.0 * IN, -0.6 * IN], [3.0 * IN, 0], [2.4 * IN, 0], [2.1 * IN, WS - 0.3 * IN], [1.1875 * IN, WS - 0.3 * IN]], 'darkSteel', { axis: 'x', seg: 40 }),
     );
-    bush.position.set(X0 + WS + 0.6 * IN, YA, 0);
-    bush.rotation.y = Math.PI; // collerette vers +X
-    P('2', bush, [0.36, 0, 0]);
+    // Montage inversé (dessin) : collerette côté moteur, fût dans la poulie.
+    bush.position.set(X0, YA, 0);
+    P('2', bush, [0.12, 0.2, 0]);
   }
   // 7, 9 — trois vis 1/2 × 2 3/4 po et rondelles sur Ø 5 po, depuis la collerette.
   for (let i = 0; i < 3; i++) {
     const a = (i / 3) * Math.PI * 2 + Math.PI / 6;
     const y = YA + Math.sin(a) * 2.5 * IN, z = Math.cos(a) * 2.5 * IN;
-    const xf = X0 + WS + 0.6 * IN;
-    P('9', S.at(S.washer(0.53 * IN, 0.27 * IN, 0.1 * IN, 'zinc', { axis: 'x' }), [xf + 0.00127, y, z]), [0.46, 0, 0]);
-    P('7', S.bolt(0.5 * IN, 2.75 * IN, 'zinc', { axis: 'x', pos: [xf + 0.0026, y, z] }), [0.54, 0, 0]);
+    const xf = X0 + WS; // vis introduites par la face extérieure de la poulie
+    P('9', S.at(S.washer(0.53 * IN, 0.27 * IN, 0.1 * IN, 'zinc', { axis: 'x' }), [xf + 0.00127, y, z]), [0.36, 0, 0]);
+    P('7', S.bolt(0.5 * IN, 2.75 * IN, 'zinc', { axis: 'x', pos: [xf + 0.0026, y, z] }), [0.44, 0, 0]);
   }
   // 3 — courroie à bande 4 × 5VP, 112 po : boucle autour de la poulie (rayon
   // primitif 6.05 po) et de la poulie du compresseur (Ø 24 po supposé).
@@ -144,7 +146,8 @@ export default function P390(api) {
     arc(c2, R2, phi + Math.PI - beta, phi + 2 * Math.PI + beta, 60);
     const curve = new THREE.CatmullRomCurve3(pts, true, 'centripetal');
     const w = NG * GW, th = 0.55 * IN;
-    const shape = new THREE.Shape([new THREE.Vector2(-th * 0.15, -w / 2), new THREE.Vector2(th * 0.85, -w / 2), new THREE.Vector2(th * 0.85, w / 2), new THREE.Vector2(-th * 0.15, w / 2)]);
+    // Section : largeur selon x de la forme (axe de l'arbre), épaisseur selon y (rayon).
+    const shape = new THREE.Shape([new THREE.Vector2(-w / 2, -th * 0.15), new THREE.Vector2(w / 2, -th * 0.15), new THREE.Vector2(w / 2, th * 0.85), new THREE.Vector2(-w / 2, th * 0.85)]);
     const geo = new THREE.ExtrudeGeometry(shape, { steps: 220, extrudePath: curve, bevelEnabled: false });
     const belt = S.merged([new THREE.Mesh(geo)], 'rubber');
     belt.position.x = X0 + 0.375 * IN + w / 2;
