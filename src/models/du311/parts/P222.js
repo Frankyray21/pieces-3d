@@ -57,7 +57,7 @@ export default function P222(api) {
     const foot = S.plate(PW, 0.09, T, 'grey', { holes: [-0.28, -0.1, 0.1, 0.28].map((x) => [x, 0, (0.41 * IN) / 2]) });
     foot.position.set(0, -PH / 2 + T / 2, -T - 0.045);
     const bend = S.cyl(T, PW, 'grey', { axis: 'x', seg: 12, pos: [0, -PH / 2 + T, -T] });
-    P('1', S.merged([front, foot, bend], 'grey'), [0, 0, 0.25]);
+    P('1', S.merged([front, foot, bend], 'grey'), [0, 0, 0]); // platine fixe : l'empilement arrière recule, les raccords avancent
   }
 
   // ---------------------------------------------------------------- 7, 3 — isolants ; 4 — échangeur ; 2 — bride
@@ -68,7 +68,7 @@ export default function P222(api) {
       S.box(0.015, BH - 0.05, G, 'rubber', { pos: [-BL / 2 + 0.0175, 0, -T - G / 2] }),
       S.box(0.015, BH - 0.05, G, 'rubber', { pos: [BL / 2 - 0.0175, 0, -T - G / 2] }),
     ];
-    P('7', S.merged(strips, 'rubber'), [0, 0, 0.12]);
+    P('7', S.merged(strips, 'rubber'), [0, 0, -0.04]);
     P('3', S.box(BL - 0.04, BH - 0.02, G, 'rubber', { r: 0.002, pos: [0, 0, zF - BD - G / 2] }), [0, 0, -0.2]);
     // Échangeur : plaques de couverture épaisses, paquet de plaques embouties (arêtes alternées), piquages.
     const plates = [];
@@ -256,8 +256,9 @@ export default function P222(api) {
     const [x, y] = ports.C;
     P('17', turnZ([[r2 * 0.98, 0], [r2 * 1.32, 0], [r2 * 1.32, 0.062], [r2 * 0.98, 0.062], [r2 * 0.98, 0]], 'steel', [x, y, z0]), [0, 0, 0.1]);
     const h0 = [x, y, z0 + 0.05];
-    const hp = [h0, add(h0, [0, 0, 0.12]), add(h0, [0, 0.08, 0.24]), add(h0, [0, 0.26, 0.3]), add(h0, [0, 0.5, 0.31])];
-    P('6', S.hose(hp, 0.03), [0.1, 0.15, 0.16]);
+    // Part vers l'avant puis descend (vue d'ensemble de la page 222).
+    const hp = [h0, add(h0, [0, 0, 0.12]), add(h0, [0, -0.08, 0.24]), add(h0, [0, -0.26, 0.3]), add(h0, [0, -0.5, 0.31])];
+    P('6', S.hose(hp, 0.03), [0.1, -0.15, 0.16]);
   }
 
   // D — manchon réducteur (20) et coude 45° -16 (10).
