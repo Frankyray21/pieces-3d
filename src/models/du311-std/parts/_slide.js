@@ -18,7 +18,7 @@ import { M } from '../layout.js';
 export { IN, u, L, along, hexPrism, hhcs, shcs, sqss, setScrew, hexNut, flatWasher, splitWasher, nordLock, jicAdapter, jicElbow, orbPlug, sphericalBearing, greaseNipple, bushing, pin, oring } from '../../du311/parts/_avance_b.js';
 export { hexScrew, socketScrew, washerD, pose } from '../../du311/parts/P172.js';
 export { cbValve, zerk } from '../../du311/parts/P176.js';
-export { SLIDE, MCP };
+export { SLIDE, MCP, M };
 
 const IN_ = 0.0254;
 

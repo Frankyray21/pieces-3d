@@ -5,6 +5,14 @@ import P170 from './P170.js';
 import P174 from './P174.js';
 import P178 from './P178.js';
 import P180 from './P180.js';
+import P186 from './P186.js';
+import P188 from './P188.js';
+import P190 from './P190.js';
+import P192 from './P192.js';
+import P196 from './P196.js';
+import P200 from './P200.js';
+import P202 from './P202.js';
+import P204 from './P204.js';
 
 export default {
   'P168': P168,
@@ -12,4 +20,12 @@ export default {
   'P174': P174,
   'P178': P178,
   'P180': P180,
+  'P186': P186,
+  'P188': P188,
+  'P190': P190,
+  'P192': P192,
+  'P196': P196,
+  'P200': P200,
+  'P202': P202,
+  'P204': P204,
 };
