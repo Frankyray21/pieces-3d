@@ -46,7 +46,7 @@ import { KIT084 } from './P084.js';
 const CENT = { x: 0.42, y: 0.5, z: [0.43, 0.47] };
 const MANI = { x: -0.46, y: 0.3, z: [0.25, 0.29, 0.33, 0.37] };
 // Couloir arrière et passage avant (|x|), hauteurs de retour vers l'avant.
-const XB = 0.35, XG = 0.29, YF0 = 0.955, DYF = 0.024;
+const XB = 0.35, XG = 0.29, YF0 = 1.155, DYF = 0.024;
 
 export const KIT090 = {
   centralizer: CENT, manifold: MANI,
@@ -60,48 +60,55 @@ export default function P090(api) {
   const U = KIT084.unions;
   const un = U.z.map((z, i) => seatOf(union(6), [U.x + (i % 2) * 0.008, U.y - i * 0.012, z], Y, null, 1));
 
-  // Rang j (0 = traversée du haut, 1.45) : couloir arrière z, hauteur de retour.
+  // Rang j (0 = traversée du haut, 1.45) : couloir arrière z (rang avant pour
+  // la traversée la plus basse), hauteur de retour vers l'avant yF (la plus
+  // haute pour le rang avant : aucun croisement dans le couloir). Passages
+  // entre le support −X (y 1.0) et les mamelons de 1.20.
   const ys = TRAV.ys.slice(0, 6);
-  const lane = (s, j, y0 = YF0) => {
-    const z = -0.02 - 0.021 * (5 - j), yF = y0 - DYF * (5 - j);
-    const run = ys[j] - 0.05 - (yF + 0.07) > 0.04 ? [[s * XB, yF + 0.07, z]] : [];
-    return { yF, head: [[s * XB, ys[j] - 0.05, z], ...run, [s * XG, yF, 0.1]] };
+  const lane = (s, j) => {
+    const z = -0.02 - 0.021 * (5 - j), yF = YF0 - DYF * (5 - j);
+    const y1 = ys[j] - 0.045;
+    const run = y1 - (yF + 0.05) > 0.04 ? [[s * XB, yF + 0.05, z]] : [];
+    return { yF, head: [[s * XB, y1, z], ...run, [s * XG, yF, 0.1]] };
   };
+  const at = (head, ...k) => k.map((i) => head.length + i);
 
   // ------------------------------------------------ flanc +X
-  // 1 à 4 : traversées 1.20 (j 5) … 1.35 (j 2) → unions 0 … 3.
+  // 1 à 4 : traversées 1.20 (j 5) … 1.35 (j 2) → unions 0 … 3 ; boucle sous
+  // les unions, devant le vérin et derrière le cadre de P070.
   [['1', 60.5, 5, 0], ['2', 61, 4, 1], ['3', 61.5, 3, 2], ['4', 62, 2, 3]].forEach(([ref, L, j, i]) => {
-    const { yF, head } = lane(1, j, 1.06);
+    const { yF, head } = lane(1, j);
     const zo = 0.175 + 0.02 * i, xu = un[i].p.x;
     H(ref, L, TRAV.outer(1, ys[j]), un[i], {
-      vias: [...head, [0.33, yF, zo], [0.44, yF - 0.04, zo], [xu - 0.02, yF - 0.06, (zo + U.z[i]) / 2], [xu, yF + 0.04, U.z[i]]],
-      move: [head.length + 1, head.length + 2, head.length + 3], dir: [0, -1, 0], w: [0.7, 1, 0.8],
+      vias: [...head, [0.34, yF - 0.01, zo], [0.45, 1.0, zo], [xu - 0.02, 0.96, (zo + U.z[i]) / 2], [xu, 1.06, U.z[i]]],
+      move: at(head, 1, 2, 3), dir: [0, -1, 0], w: [0.7, 1, 0.8],
     }, [0.25 + 0.02 * i, 0, 0.12]);
   });
-  // 5 : traversées 1.45 / 1.40 → raccords-unions du vérin +X du centreur.
+  // 5 : traversées 1.45 / 1.40 → raccords-unions du vérin +X du centreur,
+  // descente devant le vérin.
   [0, 1].forEach((j) => {
     const { yF, head } = lane(1, j), zc = CENT.z[j];
     H('5', 69, TRAV.outer(1, ys[j]), up(CENT.x, CENT.y, zc), {
-      vias: [...head, [0.31, yF - 0.02, 0.2 + 0.02 * j], [0.36, 0.73, 0.25 + 0.02 * j], [CENT.x, 0.7, zc]],
-      move: [4], dir: [1, 0, -0.3],
+      vias: [...head, [0.31, yF - 0.03, 0.2 + 0.02 * j], [0.31, 0.8, 0.21 + 0.02 * j], [0.36, 0.72, 0.27 + 0.02 * j], [CENT.x, 0.68, zc]],
+      move: at(head, 1, 2), dir: [[0, -1, 0.15], [1, -0.4, -0.2]], w: [0.4, 1],
     }, [0.2, -0.05, 0.25]);
   });
 
   // ------------------------------------------------ flanc −X
   // 5 : traversées 1.20 / 1.25 (rangs avant) → raccords-unions du vérin −X du centreur.
   [5, 4].forEach((j, k) => {
-    const { yF, head } = lane(-1, j, 0.9), zc = CENT.z[k];
+    const { yF, head } = lane(-1, j), zc = CENT.z[k];
     H('5', 69, TRAV.outer(-1, ys[j]), up(-CENT.x, CENT.y, zc), {
-      vias: [...head, [-0.31, yF - 0.02, 0.2 + 0.02 * k], [-0.37, 0.72, 0.27], [-0.37, 0.6, 0.36], [-CENT.x, 0.66, zc]],
-      move: [4, 5], dir: [-0.3, -1, 0], w: [0.6, 1],
+      vias: [...head, [-0.32, yF - 0.03, 0.25 + 0.02 * k], [-0.38, 0.85, 0.28 + 0.02 * k], [-0.38, 0.7, 0.34], [-CENT.x, 0.66, zc]],
+      move: at(head, 1, 2), dir: [-0.4, -1, 0], w: [0.6, 1],
     }, [-0.2, -0.05, 0.25]);
   });
   // 6 à 9 : traversées 1.30 (j 3) … 1.45 (j 0) → rangée de P064 près du bloc P126.
   [['6', 76, 3, 0], ['7', 78, 2, 1], ['8', 80, 1, 2], ['9', 82, 0, 3]].forEach(([ref, L, j, i]) => {
-    const { yF, head } = lane(-1, j, 0.9), zm = MANI.z[i];
+    const { yF, head } = lane(-1, j), zm = MANI.z[i];
     H(ref, L, TRAV.outer(-1, ys[j]), up(MANI.x, MANI.y, zm), {
       vias: [...head, [-0.3, yF - 0.03, 0.19], [-0.31, 0.62, 0.19 + 0.01 * i], [-0.4, 0.5, zm], [MANI.x, 0.42, zm]],
-      move: [4, 5], dir: [-1, -0.4, 0], w: [0.7, 1],
+      move: at(head, 1, 2), dir: [-1, -0.4, 0], w: [0.7, 1],
     }, [-0.25 - 0.02 * i, -0.05, 0.12]);
   });
 
