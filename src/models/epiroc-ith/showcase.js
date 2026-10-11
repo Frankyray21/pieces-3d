@@ -20,7 +20,7 @@ const ROWS_PORTRAIT = [
   ['P097', 'P098', 'P099'], ['P100', 'P102'], ['P094', 'P094-NH'], ['P094-LI', 'P096'],
 ];
 
-// Légendes courtes (les outils exposés sont tous de taille NU).
+// Légendes courtes (têtes et overshots de taille NU ; outils de chargement B et NH).
 const NAMES = {
   P079: 'Overshot Arrow 3S',
   P080: 'Overshot Excore II',
@@ -49,7 +49,7 @@ export function P002(api, { portrait = false } = {}) {
   const { THREE } = api;
   const gapX = 0.14;
   // Écart entre rangées : place pour la légende sous chaque outil.
-  const gapY = portrait ? 0.12 : 0.1;
+  const gapY = portrait ? 0.13 : 0.1;
   // Un outil pas encore modélisé est simplement omis du présentoir.
   const tryBuild = (id) => { try { return api.sub(id); } catch { return null; } };
   const rows = (portrait ? ROWS_PORTRAIT : ROWS).map((ids) => ids.map((id) => {
@@ -59,15 +59,20 @@ export function P002(api, { portrait = false } = {}) {
     return { id, g, box: new THREE.Box3().setFromObject(g) };
   }).filter(Boolean)).filter((r) => r.length);
   let y = 0;
+  // Écran en hauteur : écart minimal entre les centres de deux outils voisins,
+  // leurs légendes (sur une ligne) sont plus larges que les petits outils.
+  const pitch = portrait ? 0.66 : 0;
   rows.forEach((row) => {
     const h = Math.max(...row.map((it) => it.box.max.y - it.box.min.y));
-    const rowW = row.reduce((w, it) => w + (it.box.max.x - it.box.min.x), 0) + gapX * (row.length - 1);
-    let x = -rowW / 2; // rangées centrées
+    const w = row.map((it) => it.box.max.x - it.box.min.x);
+    // Centres des outils le long de la rangée, puis rangée centrée.
+    const cx = [w[0] / 2];
+    for (let i = 1; i < row.length; i++) cx.push(cx[i - 1] + Math.max((w[i - 1] + w[i]) / 2 + gapX, pitch));
+    const shift = (cx[0] - w[0] / 2 + cx[row.length - 1] + w[row.length - 1] / 2) / 2;
     y -= h / 2;
-    row.forEach((it) => {
+    row.forEach((it, i) => {
       const c = it.box.getCenter(new THREE.Vector3());
-      it.g.position.set(x - it.box.min.x, y - c.y, -c.z);
-      x += it.box.max.x - it.box.min.x + gapX;
+      it.g.position.set(cx[i] - shift - c.x, y - c.y, -c.z);
       api.part(tocRef(it.id), it.g, null, { caption: NAMES[it.id] });
     });
     y -= h / 2 + gapY;

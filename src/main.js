@@ -17,8 +17,11 @@ const SITE = 'https://frankyray21.github.io/pieces-3d/';
 
 // Page d'accueil 3D : consigne affichée sous la scène.
 const HOME_HINT = "Clic : ouvrir la page de l'outil · glisser : tourner · clic droit : déplacer";
-// Disposition en hauteur d'une page d'accueil quand la scène est plus haute que large d'au moins ce rapport.
+// Disposition en hauteur d'une page d'accueil quand la scène est plus haute que large d'au moins ce rapport
+// (à l'ouverture) ; ensuite, hystérésis : on la quitte sous 1, on y revient au-delà de 1,4 (clavier, barre d'adresse).
 const PORTRAIT_RATIO = 1.2;
+const PORTRAIT_LEAVE = 1;
+const PORTRAIT_ENTER = 1.4;
 
 const $ = (sel) => document.querySelector(sel);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -238,27 +241,68 @@ function openLinked(path) {
   else select(path.slice(0, 1), { from3d: true });
 }
 
-/** Scène plus haute que large (téléphone tenu droit) : disposition en hauteur des pages qui s'y prêtent. */
-function portraitStage() {
+/**
+ * Scène plus haute que large (téléphone tenu droit) : disposition en hauteur
+ * des pages qui s'y prêtent. current : disposition actuelle (hystérésis).
+ */
+function portraitStage(current = null) {
   const st = $('#stage');
   const w = st.clientWidth || window.innerWidth, h = st.clientHeight || window.innerHeight;
-  return h > w * PORTRAIT_RATIO;
+  return h > w * (current == null ? PORTRAIT_RATIO : current ? PORTRAIT_LEAVE : PORTRAIT_ENTER);
 }
 
 let baseHint = null;
 
 /** Page d'accueil dans une petite scène (téléphone) : le cartouche cacherait des outils, il est masqué. */
 function fitHomeChrome() {
-  if (!is3d()) return;
   const st = $('#stage');
+  // Scène masquée (onglet Pièces ou Assemblages sur téléphone) : rien à mesurer.
+  if (!is3d() || !st.clientWidth || !st.clientHeight) return;
   $('#titleblock').hidden = !!S.view.home && (st.clientWidth < 640 || st.clientHeight < 520);
 }
 
-async function openAssembly(id, { select: selPath = null, rebuild = false } = {}) {
+/** Saisie en cours (le clavier du téléphone réduit la scène) : pas de nouvelle disposition. */
+function typing() {
+  const a = document.activeElement;
+  return !!a && (a.tagName === 'TEXTAREA' || (a.tagName === 'INPUT' && a.type !== 'range'));
+}
+
+/**
+ * Scène redimensionnée (rotation du téléphone, panneaux, onglets) : autre
+ * disposition de la page d'accueil si la scène passe de large à haute, et
+ * cartouche ajusté. Seul le modèle est refait : liste, filtre et sélection restent.
+ */
+function fitHome() {
+  const st = $('#stage');
+  if (!is3d() || !st.clientWidth || !st.clientHeight) return;
+  if (S.view.portrait != null && !typing()) {
+    const portrait = portraitStage(S.view.portrait);
+    if (portrait !== S.view.portrait) {
+      S.view.portrait = portrait;
+      const model = buildProcedural(MODELS[S.eq.id] || {}, S.view.id, { portrait });
+      if (model) {
+        viewer.setModel(model);
+        if (S.selected) viewer.setSelected(path3d(S.selected));
+      }
+    }
+  }
+  fitHomeChrome();
+}
+
+/**
+ * Marges de cadrage de la page d'accueil : sous la barre d'outils, place pour
+ * les légendes du bas et pour celles qui dépassent des outils en bout de rangée.
+ */
+function homeInsets() {
+  const st = $('#stage').getBoundingClientRect(), tools = $('#tools').getBoundingClientRect();
+  return { top: Math.max(0, tools.bottom - st.top) + 6, bottom: 34, side: S.view?.portrait ? 40 : 0 };
+}
+
+async function openAssembly(id, { select: selPath = null } = {}) {
   const eq = S.eq;
   const asm = eq.assemblies.get(id);
   const prev = S.view;
-  const same = !rebuild && isAsmView() && prev.id === id;
+  const same = isAsmView() && prev.id === id;
   const builders = MODELS[eq.id] || {};
   const builder = builders[id];
   const has3d = !!builder;
@@ -285,6 +329,7 @@ async function openAssembly(id, { select: selPath = null, rebuild = false } = {}
     $('#loading').hidden = true;
     if (model) {
       S.view.home = !!model.view.home;
+      v.insets = S.view.home ? homeInsets : null;
       v.setModel(model);
       v.setIsolate(S.isolate && !S.view.home);
       S.section.axis = model.view.section?.axis || 'z';
@@ -642,7 +687,7 @@ function renderDetail() {
   const group = isGroupPath(path);
   const open = group && S.expanded.has(keyOf(path));
   const p3 = is3d() ? path3d(path) : null;
-  const cutHere = p3 && viewer?.hasInterior(p3);
+  const cutHere = p3 && !S.view.home && viewer?.hasInterior(p3);
   const cutActive = S.section.on && S.section.scope === 'selection';
   box.innerHTML = `
     <div class="row1">
@@ -695,6 +740,7 @@ function jumpToRow(key) {
 
 function setSection(patch) {
   S.section = { ...S.section, ...patch };
+  if (S.view?.home) S.section.on = false; // page d'accueil : pas de coupe
   if (S.section.scope === 'selection' && !S.selected) S.section.scope = 'all';
   viewer?.setSection(S.section);
   renderSectionBar();
@@ -822,7 +868,7 @@ function renderCatalogue() {
 function setPane(p) {
   $('#workspace').dataset.pane = p;
   document.querySelectorAll('#mtabs button').forEach((b) => b.classList.toggle('on', b.dataset.pane === p));
-  if (p === 'stage') viewer?.resize();
+  if (p === 'stage') { viewer?.resize(); fitHome(); }
 }
 
 function bindChrome() {
@@ -875,16 +921,12 @@ function bindChrome() {
     if (S.isolate && !S.selected) toast('Sélectionnez une pièce : les autres seront estompées.');
   });
   $('#btn-frame').addEventListener('click', () => viewer?.frame());
-  // Page d'accueil adaptée à l'écran : autre disposition quand la scène passe
-  // de large à haute (rotation du téléphone, fenêtre redimensionnée).
+  // Page d'accueil adaptée à la scène (rotation, panneaux redimensionnés, onglets).
   let relayout;
-  window.addEventListener('resize', () => {
+  new ResizeObserver(() => {
     clearTimeout(relayout);
-    relayout = setTimeout(() => {
-      if (is3d() && S.view.portrait != null && S.view.portrait !== portraitStage()) openAssembly(S.view.id, { rebuild: true });
-      else fitHomeChrome();
-    }, 250);
-  });
+    relayout = setTimeout(fitHome, 250);
+  }).observe($('#stage'));
   $('#btn-page').addEventListener('click', () => { if (isAsmView()) openPage(S.view.id); });
 
   // Vue en coupe
