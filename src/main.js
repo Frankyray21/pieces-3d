@@ -15,6 +15,14 @@ const MODELS = { 'cubex-mri-5200': cubexModels, du311: du311Models, 'du311-std':
 // allégée en Artifact y renvoie pour les pages qu'elle n'inclut pas.
 const SITE = 'https://frankyray21.github.io/pieces-3d/';
 
+// Page d'accueil 3D : consigne affichée sous la scène.
+const HOME_HINT = "Clic : ouvrir la page de l'outil · glisser : tourner · clic droit : déplacer";
+// Disposition en hauteur d'une page d'accueil quand la scène est plus haute que large d'au moins ce rapport
+// (à l'ouverture) ; ensuite, hystérésis : on la quitte sous 1, on y revient au-delà de 1,4 (clavier, barre d'adresse).
+const PORTRAIT_RATIO = 1.2;
+const PORTRAIT_LEAVE = 1;
+const PORTRAIT_ENTER = 1.4;
+
 const $ = (sel) => document.querySelector(sel);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const narrow = () => window.matchMedia('(max-width: 900px)').matches;
@@ -99,6 +107,12 @@ function go(token) {
   const h = `#${hashFor(token)}`;
   if (location.hash === h) route();
   else location.hash = h;
+}
+
+/** Suit un lien vers une page (sur téléphone, on passe à la vue 3D ou au dessin). */
+function follow(token) {
+  if ((S.eq?.assemblies.has(token) || S.eq?.documents.has(token)) && narrow()) setPane('stage');
+  go(token);
 }
 
 // ------------------------------------------------------------------ chemins dans l'arbre des pièces
@@ -190,7 +204,7 @@ function pnHtml(r, big = false) {
 }
 
 function isGroupPath(path) {
-  if (!is3d()) return false;
+  if (!is3d() || S.view.home) return false;
   const row = rowAt(path);
   return !!row?.link && viewer.isGroup(path3d(path));
 }
@@ -203,6 +217,8 @@ function ensureViewer() {
     onHover: (path) => markRow(path, 'hov'),
     onSelect: (path, { double }) => {
       if (!path) { select(null); return; }
+      // Page d'accueil : chaque outil ouvre sa page (pas de vue éclatée).
+      if (S.view.home) { openLinked(path); return; }
       if (double && isGroupPath(path)) { toggleGroup(path); return; }
       select(path, { from3d: true });
     },
@@ -218,13 +234,80 @@ function is3d() {
   return !!viewer && isAsmView() && S.view.is3d;
 }
 
+/** Page d'accueil (view.home) : l'objet cliqué ouvre la page liée de sa ligne. */
+function openLinked(path) {
+  const row = rowAt(path.slice(0, 1));
+  if (row?.link) follow(row.link);
+  else select(path.slice(0, 1), { from3d: true });
+}
+
+/**
+ * Scène plus haute que large (téléphone tenu droit) : disposition en hauteur
+ * des pages qui s'y prêtent. current : disposition actuelle (hystérésis).
+ */
+function portraitStage(current = null) {
+  const st = $('#stage');
+  const w = st.clientWidth || window.innerWidth, h = st.clientHeight || window.innerHeight;
+  return h > w * (current == null ? PORTRAIT_RATIO : current ? PORTRAIT_LEAVE : PORTRAIT_ENTER);
+}
+
+let baseHint = null;
+
+/** Page d'accueil dans une petite scène (téléphone) : le cartouche cacherait des outils, il est masqué. */
+function fitHomeChrome() {
+  const st = $('#stage');
+  // Scène masquée (onglet Pièces ou Assemblages sur téléphone) : rien à mesurer.
+  if (!is3d() || !st.clientWidth || !st.clientHeight) return;
+  $('#titleblock').hidden = !!S.view.home && (st.clientWidth < 640 || st.clientHeight < 520);
+}
+
+/** Saisie en cours (le clavier du téléphone réduit la scène) : pas de nouvelle disposition. */
+function typing() {
+  const a = document.activeElement;
+  return !!a && (a.tagName === 'TEXTAREA' || (a.tagName === 'INPUT' && a.type !== 'range'));
+}
+
+/**
+ * Scène redimensionnée (rotation du téléphone, panneaux, onglets) : autre
+ * disposition de la page d'accueil si la scène passe de large à haute, et
+ * cartouche ajusté. Seul le modèle est refait : liste, filtre et sélection restent.
+ */
+function fitHome() {
+  const st = $('#stage');
+  if (!is3d() || !st.clientWidth || !st.clientHeight) return;
+  if (S.view.portrait != null && !typing()) {
+    const portrait = portraitStage(S.view.portrait);
+    if (portrait !== S.view.portrait) {
+      S.view.portrait = portrait;
+      const model = buildProcedural(MODELS[S.eq.id] || {}, S.view.id, { portrait });
+      if (model) {
+        viewer.setModel(model);
+        if (S.selected) viewer.setSelected(path3d(S.selected));
+      }
+    }
+  }
+  fitHomeChrome();
+}
+
+/**
+ * Marges de cadrage de la page d'accueil : sous la barre d'outils, place pour
+ * les légendes du bas et pour celles qui dépassent des outils en bout de rangée.
+ */
+function homeInsets() {
+  const st = $('#stage').getBoundingClientRect(), tools = $('#tools').getBoundingClientRect();
+  return { top: Math.max(0, tools.bottom - st.top) + 6, bottom: 34, side: S.view?.portrait ? 40 : 0 };
+}
+
 async function openAssembly(id, { select: selPath = null } = {}) {
   const eq = S.eq;
   const asm = eq.assemblies.get(id);
-  const same = isAsmView() && S.view.id === id;
+  const prev = S.view;
+  const same = isAsmView() && prev.id === id;
   const builders = MODELS[eq.id] || {};
-  const has3d = !!builders[id];
-  S.view = { type: 'assembly', id, is3d: has3d };
+  const builder = builders[id];
+  const has3d = !!builder;
+  // home : connu une fois le modèle construit (view.home) ; portrait : null si le builder ne s'adapte pas.
+  S.view = { type: 'assembly', id, is3d: has3d, home: same && !!prev.home, portrait: same ? prev.portrait : (builder?.responsive ? portraitStage() : null) };
   S.filter = '';
   $('#docview').hidden = has3d;
   $('#viewport').hidden = !has3d;
@@ -242,20 +325,27 @@ async function openAssembly(id, { select: selPath = null } = {}) {
     const v = ensureViewer();
     $('#loading').hidden = false;
     await new Promise((r) => requestAnimationFrame(() => setTimeout(r, 0)));
-    const model = buildProcedural(builders, id);
+    const model = buildProcedural(builders, id, S.view.portrait != null ? { portrait: S.view.portrait } : {});
     $('#loading').hidden = true;
     if (model) {
+      S.view.home = !!model.view.home;
+      v.insets = S.view.home ? homeInsets : null;
       v.setModel(model);
-      v.setIsolate(S.isolate);
+      v.setIsolate(S.isolate && !S.view.home);
       S.section.axis = model.view.section?.axis || 'z';
       S.section.pos = model.view.section?.pos ?? 0.5;
-      if (S.explode > 0) {
+      if (S.explode > 0 && !S.view.home) {
         v.setExplode(S.explode);
         v.frame();
       }
     }
     renderSectionBar();
   }
+  // Page d'accueil : barre d'outils sans éclatement, consigne adaptée.
+  $('#tools').classList.toggle('home', !!S.view.home);
+  fitHomeChrome();
+  baseHint ??= $('#hint').textContent;
+  $('#hint').textContent = S.view.home ? HOME_HINT : baseHint;
   renderRail();
   renderCrumbs();
   renderTitleblock(asm);
@@ -536,6 +626,8 @@ function renderRows() {
     const item = byKey.get(tr.dataset.key);
     tr.addEventListener('click', (e) => {
       if (e.target.closest('[data-tog], [data-go]')) return;
+      // Page d'accueil (table des matières) : la ligne ouvre sa page.
+      if (S.view.home && item.r.link) { follow(item.r.link); return; }
       select(item.path, { focus: true });
     });
     tr.addEventListener('dblclick', (e) => {
@@ -595,7 +687,7 @@ function renderDetail() {
   const group = isGroupPath(path);
   const open = group && S.expanded.has(keyOf(path));
   const p3 = is3d() ? path3d(path) : null;
-  const cutHere = p3 && viewer?.hasInterior(p3);
+  const cutHere = p3 && !S.view.home && viewer?.hasInterior(p3);
   const cutActive = S.section.on && S.section.scope === 'selection';
   box.innerHTML = `
     <div class="row1">
@@ -648,6 +740,7 @@ function jumpToRow(key) {
 
 function setSection(patch) {
   S.section = { ...S.section, ...patch };
+  if (S.view?.home) S.section.on = false; // page d'accueil : pas de coupe
   if (S.section.scope === 'selection' && !S.selected) S.section.scope = 'all';
   viewer?.setSection(S.section);
   renderSectionBar();
@@ -775,7 +868,7 @@ function renderCatalogue() {
 function setPane(p) {
   $('#workspace').dataset.pane = p;
   document.querySelectorAll('#mtabs button').forEach((b) => b.classList.toggle('on', b.dataset.pane === p));
-  if (p === 'stage') viewer?.resize();
+  if (p === 'stage') { viewer?.resize(); fitHome(); }
 }
 
 function bindChrome() {
@@ -783,9 +876,7 @@ function bindChrome() {
     const g = e.target.closest('[data-go]');
     if (g) {
       e.preventDefault();
-      const t = g.dataset.go;
-      if ((S.eq?.assemblies.has(t) || S.eq?.documents.has(t)) && narrow()) setPane('stage');
-      go(t);
+      follow(g.dataset.go);
       return;
     }
     const h = e.target.closest('[data-hash]');
@@ -830,6 +921,12 @@ function bindChrome() {
     if (S.isolate && !S.selected) toast('Sélectionnez une pièce : les autres seront estompées.');
   });
   $('#btn-frame').addEventListener('click', () => viewer?.frame());
+  // Page d'accueil adaptée à la scène (rotation, panneaux redimensionnés, onglets).
+  let relayout;
+  new ResizeObserver(() => {
+    clearTimeout(relayout);
+    relayout = setTimeout(fitHome, 250);
+  }).observe($('#stage'));
   $('#btn-page').addEventListener('click', () => { if (isAsmView()) openPage(S.view.id); });
 
   // Vue en coupe

@@ -8,6 +8,11 @@ import { featureEdges } from './shapes.js';
 import { disposeObject } from './assembly.js';
 
 const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+// Matrices égales à l'arrondi près : les contrôles d'orbite déplacent parfois la
+// caméra d'un dernier chiffre à chaque image (aller-retour en coordonnées
+// sphériques) ; une égalité stricte la croirait toujours en mouvement (rendu
+// continu, repères jamais recalculés à l'arrêt).
+const sameMatrix = (a, b) => a.elements.every((x, i) => Math.abs(x - b.elements[i]) < 1e-9);
 const AXES = { x: new THREE.Vector3(1, 0, 0), y: new THREE.Vector3(0, 1, 0), z: new THREE.Vector3(0, 0, 1) };
 // Un sous-groupe éclaté prend plus de place : on l'écarte d'autant de son parent.
 const SPREAD = 0.9;
@@ -543,8 +548,16 @@ export class Viewer {
     const up = Math.abs(viewDir.y) > 0.98 ? new THREE.Vector3(0, 0, -1) : new THREE.Vector3(0, 1, 0);
     const right = new THREE.Vector3().crossVectors(up, viewDir).normalize();
     const camUp = new THREE.Vector3().crossVectors(viewDir, right).normalize();
-    const tanV = Math.tan(THREE.MathUtils.degToRad(this.camera.fov) / 2);
-    const tanH = tanV * this.camera.aspect;
+    // Marges (px) laissées libres en haut, en bas et sur chaque côté de la scène
+    // (insets : objet ou fonction, ex. barre d'outils posée sur la scène,
+    // légendes plus larges que les objets) : le modèle est cadré dans le reste.
+    const hPx = this.container.clientHeight, wPx = this.container.clientWidth;
+    this._frameBlind = !hPx; // scène masquée : cadrage à refaire quand elle réapparaît
+    const ins = (typeof this.insets === 'function' ? this.insets() : this.insets) || {};
+    const top = hPx ? ins.top || 0 : 0, bottom = hPx ? ins.bottom || 0 : 0, side = wPx ? ins.side || 0 : 0;
+    const tanFull = Math.tan(THREE.MathUtils.degToRad(this.camera.fov) / 2);
+    const tanV = tanFull * Math.max(0.3, 1 - (top + bottom) / (hPx || 1));
+    const tanH = tanFull * this.camera.aspect * Math.max(0.3, 1 - (2 * side) / (wPx || 1));
     const proj = points.map((p) => { const v = p.clone().sub(c0); return [v.dot(right), v.dot(camUp), v.dot(viewDir)]; });
     let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
     proj.forEach(([x, y]) => { x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); });
@@ -552,7 +565,9 @@ export class Viewer {
     let dist = 0.1;
     proj.forEach(([x, y, z]) => { dist = Math.max(dist, z + Math.abs(x - cx) / tanH, z + Math.abs(y - cy) / tanV); });
     dist *= box ? 1.35 : 1.06;
-    const center = c0.addScaledVector(right, cx).addScaledVector(camUp, cy);
+    // Centre de la bande libre : le modèle descend de (haut − bas) / 2 px.
+    const shift = hPx ? ((top - bottom) / hPx) * dist * tanFull : 0;
+    const center = c0.addScaledVector(right, cx).addScaledVector(camUp, cy + shift);
     this._moveCamera(center.clone().addScaledVector(viewDir, dist), center, instant);
   }
 
@@ -647,8 +662,24 @@ export class Viewer {
 
   _bindPointer() {
     const el = this.renderer.domElement;
-    let down = null;
-    el.addEventListener('pointerdown', (e) => { down = { x: e.clientX, y: e.clientY }; });
+    // Doigts posés, par pointeur : un geste à deux doigts (pincer pour zoomer)
+    // ne sélectionne rien, même si un doigt est resté sur une pièce.
+    const downs = new Map();
+    let multi = false;
+    const lift = (e) => {
+      const d = downs.get(e.pointerId);
+      downs.delete(e.pointerId);
+      const was = multi;
+      if (!downs.size) multi = false;
+      return was ? null : d;
+    };
+    el.addEventListener('pointerdown', (e) => {
+      // Premier doigt d'un geste : aucun autre pointeur n'est posé (oubli d'un relâcher).
+      if (e.isPrimary) { downs.clear(); multi = false; }
+      downs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (downs.size > 1) multi = true;
+    });
+    el.addEventListener('pointercancel', lift);
     el.addEventListener('pointermove', (e) => {
       if (e.buttons) return;
       const path = this._pick(e);
@@ -661,6 +692,7 @@ export class Viewer {
     });
     el.addEventListener('pointerleave', () => { this.setHover(null); this.onHover(null); });
     el.addEventListener('pointerup', (e) => {
+      const down = lift(e);
       if (!down || Math.hypot(e.clientX - down.x, e.clientY - down.y) > 5) return;
       this.onSelect(this._pick(e), { double: false });
     });
@@ -773,20 +805,30 @@ export class Viewer {
         const el = document.createElement('button');
         el.type = 'button';
         const long = ref.length > 6;
-        el.className = `balloon lvl-${Math.min(depth, 3)}${ref.length > 2 && !long ? ' wide' : ''}`;
-        el.textContent = long ? '▸' : ref;
-        el.title = long ? `Groupe ${ref}` : `Repère ${ref}`;
+        // Légende en clair (page d'accueil) : nom de l'objet, posée sous lui.
+        const cap = obj.userData.caption;
+        el.className = cap ? 'balloon caption' : `balloon lvl-${Math.min(depth, 3)}${ref.length > 2 && !long ? ' wide' : ''}`;
+        el.textContent = cap || (long ? '▸' : ref);
+        el.title = cap || (long ? `Groupe ${ref}` : `Repère ${ref}`);
         el.addEventListener('pointerdown', (e) => e.stopPropagation());
         el.addEventListener('click', (e) => { e.stopPropagation(); this.onSelect(path, { double: false }); });
         el.addEventListener('dblclick', (e) => { e.stopPropagation(); this.onSelect(path, { double: true }); });
         el.addEventListener('mouseenter', () => { this.setHover(path); this.onHover(path); });
         el.addEventListener('mouseleave', () => { this.setHover(null); this.onHover(null); });
         const label = new CSS2DObject(el);
-        const c = new THREE.Box3().setFromObject(obj).getCenter(new THREE.Vector3());
+        if (cap) {
+          label.center.set(0.5, 0); // bord haut de la légende sur le point d'ancrage
+          // Taille changée (police du site chargée après coup, légendes compactes) : chevauchements à revoir.
+          this._captionSizes ??= new ResizeObserver(() => { this._cullDirty = true; });
+          this._captionSizes.observe(el);
+        }
+        const box = new THREE.Box3().setFromObject(obj);
+        const c = box.getCenter(new THREE.Vector3());
+        if (cap) c.y = box.min.y;
         obj.worldToLocal(c);
         label.position.copy(c);
         obj.add(label);
-        this.labels.push({ key, owner: node, label, culled: false });
+        this.labels.push({ key, owner: node, label, culled: false, caption: !!cap });
       }
     };
     make(this.model.root, [], 0);
@@ -796,15 +838,19 @@ export class Viewer {
 
   /**
    * Bulles masquées (à l'arrêt de la caméra) : pièce cachée derrière une autre
-   * (axe dans son boîtier en vue assemblée), ou second exemplaire d'un repère
-   * trop proche du premier à l'écran. Rien n'est masqué en coupe ; la bulle de
-   * la pièce sélectionnée reste toujours affichée.
+   * (axe dans son boîtier en vue assemblée), second exemplaire d'un repère
+   * trop proche du premier à l'écran, ou légende qui en chevauche une autre.
+   * Rien n'est masqué en coupe ; la bulle de la pièce sélectionnée reste
+   * toujours affichée.
    */
   _cullLabels() {
     this._cullDirty = false;
     const root = this.model?.root;
     if (!root || !this.labelsVisible) return;
     root.updateMatrixWorld(true);
+    // Bulles placées et affichées avant d'en mesurer la taille (légendes jamais
+    // encore affichées, par exemple repères activés après l'ouverture).
+    this.labelRenderer.render(this.scene, this.camera);
     const meshes = [];
     root.traverse((o) => { if (o.isMesh && !o.userData.isEdges) meshes.push(o); });
     const cam = this.camera.position;
@@ -812,6 +858,7 @@ export class Viewer {
     const p = new THREE.Vector3(), dir = new THREE.Vector3();
     const { clientWidth: w, clientHeight: h } = this.renderer.domElement;
     const shown = new Map(); // repère → positions à l'écran des bulles déjà gardées
+    const captions = []; // rectangles à l'écran des légendes déjà gardées
     const t0 = performance.now();
     let changed = false;
     for (const l of this.labels) {
@@ -838,6 +885,20 @@ export class Viewer {
           if (near) culled = true;
           else shown.set(l.key, [...(shown.get(l.key) || []), [x, y]]);
         }
+        if (!culled && l.caption) {
+          // Légende qui chevaucherait une légende déjà gardée (petite scène) :
+          // masquée, l'objet reste cliquable. Taille gardée en mémoire, car une
+          // légende masquée n'a plus de dimensions.
+          const el = l.label.element;
+          if (el.offsetWidth) l.size = [el.offsetWidth, el.offsetHeight];
+          if (l.size) {
+            const s = p.clone().project(this.camera);
+            const x = (s.x + 1) * w / 2, y = (1 - s.y) * h / 2;
+            const r = [x - l.size[0] / 2, y, x + l.size[0] / 2, y + l.size[1]];
+            if (captions.some((o) => r[0] < o[2] && o[0] < r[2] && r[1] < o[3] && o[1] < r[3])) culled = true;
+            else captions.push(r);
+          }
+        }
       }
       if (culled !== l.culled) { l.culled = culled; changed = true; }
     }
@@ -858,6 +919,7 @@ export class Viewer {
   }
 
   _clearLabels() {
+    this._captionSizes?.disconnect();
     for (const { label } of this.labels) {
       label.element.remove();
       label.parent?.remove(label);
@@ -1120,8 +1182,13 @@ export class Viewer {
     const h = this.container.clientHeight || 1;
     this.renderer.setSize(w, h);
     this.labelRenderer.setSize(w, h);
+    // Très petite scène (téléphone à l'horizontale entre les deux panneaux) : légendes compactes.
+    this.labelRenderer.domElement.classList.toggle('compact', w < 360 || h < 400);
+    this._cullDirty = true;
     this.camera.aspect = w / h;
     this.camera.updateProjectionMatrix();
+    // Modèle cadré pendant que la scène était masquée (onglet Pièces sur téléphone) : recadrer.
+    if (this._frameBlind && this.container.clientHeight) this.frame({ instant: true });
     this.invalidate();
   }
 
@@ -1146,7 +1213,7 @@ export class Viewer {
     const camMoved = this.controls.update();
     if (this._edgeQueue.length) this._edgeStep(8);
     this.camera.updateMatrixWorld();
-    const camChanged = camMoved || !this._lastCam.equals(this.camera.matrixWorld) || !this._lastProj.equals(this.camera.projectionMatrix);
+    const camChanged = camMoved || !sameMatrix(this._lastCam, this.camera.matrixWorld) || !sameMatrix(this._lastProj, this.camera.projectionMatrix);
     const moving = camChanged || exploding || this.tweens.length > 0;
     if (moving) {
       this._cullDirty = true;

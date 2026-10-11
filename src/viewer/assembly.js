@@ -8,9 +8,13 @@ import * as shapes from './shapes.js';
  * api.S (bibliothèque de formes) puis les enregistre avec
  *   api.part(ref, objet, [dx, dy, dz])
  * où ref est le numéro de la liste de pièces et [dx, dy, dz] le déplacement
- * de l'objet en vue éclatée (mètres). api.sub('F05', options) insère un
- * sous-assemblage complet (assemblé) que l'on enregistre ensuite comme une
- * seule pièce du niveau courant.
+ * de l'objet en vue éclatée (mètres) ; options : { noLabel, caption }.
+ * api.sub('F05', options) insère un sous-assemblage complet (assemblé) que
+ * l'on enregistre ensuite comme une seule pièce du niveau courant.
+ *
+ * Un builder qui renvoie view.home est une page d'accueil : pas d'éclatement,
+ * chaque pièce ouvre la page liée de sa ligne. builder.responsive : le builder
+ * accepte l'option { portrait } (disposition pour un écran en hauteur).
  */
 export function buildProcedural(builders, id, opts = {}) {
   const builder = builders[id];
@@ -25,6 +29,8 @@ export function buildProcedural(builders, id, opts = {}) {
       obj.userData.partRef = String(ref);
       obj.userData.explode = explode ? new THREE.Vector3(...explode) : null;
       obj.userData.noLabel = !!opts.noLabel;
+      // Légende en clair sous l'objet (nom de l'outil sur une page d'accueil) au lieu de la bulle de repère.
+      if (opts.caption) obj.userData.caption = String(opts.caption);
       root.add(obj);
       parts.push(obj);
       return obj;

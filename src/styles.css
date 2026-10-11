@@ -139,7 +139,7 @@ details.more summary { cursor: pointer; margin: 0 6px; color: var(--muted); font
 
 /* ---------------------------------------------------------------- scène */
 .stage { position: relative; background: radial-gradient(120% 90% at 50% 20%, var(--stage-a), var(--stage-b)); overflow: hidden; }
-.viewport { position: absolute; inset: 0; }
+.viewport { position: absolute; inset: 0; z-index: 0; } /* les bulles restent sous la barre d'outils */
 .viewport canvas { display: block; touch-action: none; }
 .label-layer { position: absolute; inset: 0; pointer-events: none; }
 .balloon {
@@ -156,6 +156,14 @@ details.more summary { cursor: pointer; margin: 0 6px; color: var(--muted); font
 /* Repère de plus de deux caractères (« 16A », « Rshell ») : pastille allongée. */
 .balloon.wide { width: auto; min-width: 22px; padding: 0 5px; border-radius: 11px; }
 .balloon.wide.lvl-1, .balloon.wide.lvl-2, .balloon.wide.lvl-3 { padding: 0 4px; border-radius: 10px; }
+/* Légende d'outil (page d'accueil) : nom en clair, juste sous l'outil ; un clic ouvre sa page. */
+.balloon.caption {
+  width: auto; height: auto; max-width: 10em; margin-top: 6px; padding: 3px 8px; border-radius: 6px; border-width: 1px;
+  font: 600 11.5px/1.2 var(--f-body); text-align: center; white-space: normal; cursor: pointer;
+}
+.label-layer.compact .balloon.caption { max-width: none; white-space: nowrap; margin-top: 4px; padding: 1px 4px; border-radius: 4px; font-size: 9.5px; }
+/* Page d'accueil : pas d'éclatement, de coupe ni d'isolement (chaque outil ouvre sa page). */
+.tools.home .explode, .tools.home #btn-section, .tools.home #btn-isolate { display: none; }
 .tools {
   position: absolute; left: 12px; right: 12px; top: 12px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; pointer-events: none;
 }
@@ -370,6 +378,8 @@ table.parts { width: 100%; border-collapse: collapse; font-size: 13px; }
   .titleblock .dwg { font-size: 12px; }
   .explode input { width: 100px; }
   .tgroup .tbtn { padding: 0 8px; }
+  /* Téléphone : légendes sur une ligne, pour tenir entre deux rangées d'outils. */
+  .balloon.caption { max-width: none; white-space: nowrap; padding: 2px 5px; font-size: 10px; }
   /* Barre d'outils plus large que l'écran : défilement horizontal. */
   .tgroup { max-width: 100%; overflow-x: auto; scrollbar-width: none; }
   .tgroup::-webkit-scrollbar { display: none; }
