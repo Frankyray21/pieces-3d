@@ -48,8 +48,8 @@ export default function P218(api) {
   for (const y of [0.035, -0.035]) {
     const head = 1.5 * IN + 0.004; // au-delà du tube support de 1 1/2 po
     P('11', orient(api, S.bolt(0.375 * IN, 2.75 * IN, 'zinc'), [head, y, 0], [1, 0, 0]), [0.12, 0, 0]);
-    P('12', S.washer(0.34 * IN, 0.2 * IN, 0.094 * IN, 'zinc', { axis: 'x', pos: [-T - 0.0012, y, 0] }), [0.0, 0, 0]);
-    P('13', S.nut(0.5625 * IN, 0.328 * IN, 'zinc', { axis: 'x', pos: [-T - 0.0024 - 0.00417, y, 0] }), [-0.03, 0, 0]);
+    P('12', S.washer(0.34 * IN, 0.2 * IN, 0.094 * IN, 'zinc', { axis: 'x', pos: [-T - 0.0012, y, 0] }), [-0.04, 0, Math.sign(y) * 0.05]);
+    P('13', S.nut(0.5625 * IN, 0.328 * IN, 'zinc', { axis: 'x', pos: [-T - 0.0024 - 0.00417, y, 0] }), [-0.08, 0, Math.sign(y) * 0.05]);
   }
 
   // ---------------------------------------------------------------- pièces NPT
