@@ -5,7 +5,7 @@ import { P208 } from './carrier.js';
 import { P416 } from './reardeck.js';
 import { P164, P156 } from './slide.js';
 import { P028 } from './feed.js';
-import { P010, P012, P020 } from './machine.js';
+import { P010, P020 } from './machine.js';
 import { P022 } from './decals.js';
 import parts from './parts/index.js';
 
@@ -58,7 +58,6 @@ export default {
   P156,
   P028,
   P010,
-  P012,
   P020,
   P022,
   ...parts,

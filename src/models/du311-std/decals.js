@@ -230,10 +230,14 @@ export function P022(api) {
   ]);
   // 22 — protection auditive : capot du surpresseur
   sticker('22', 'M', 'ear', SQ, [[[-4.29, 1.27, hood], '+z']]);
-  // 23 — ne pas laver à haute pression : panneau de manomètres, boîte de raccordement arrière
-  sticker('23', 'P', 'water', SQ, [[[0.97, 1.27, 0.94], '+z', 'front'], [[-2.92, 0.74, FZ + 0.036], '+z']]);
+  // 23 — ne pas laver à haute pression : panneau de manomètres, boîte de raccordement arrière,
+  // module du moteur (flanc gauche), boîte électrique du surpresseur
+  sticker('23', 'P', 'water', SQ, [
+    [[0.97, 1.27, 0.94], '+z', 'front'], [[-2.92, 0.74, FZ + 0.036], '+z'],
+    [[-2.2, 1.35, -eng], '-z'], [[-4.29, 1.02, hood], '+z'],
+  ]);
   // 24 — arrêt d'urgence : disque jaune autour du bouton de l'avance et dans la cabine
-  sticker('24', 'E', 'stop', [0.13, 0.13], [[mast(0.85, 0.1), '+z', 'ext']]);
+  sticker('24', 'E', 'stop', [0.13, 0.13], [[mast(0.85, 0.1), '+z', 'ext'], [[C.x1, FT + 0.32, 0.9], '+x']]);
   // 25 — zone d'écrasement : articulation, deux côtés (châssis avant)
   sticker('25', 'W', 'crush', ISO, [[[0.55, 0.88, side], '+z', 'front'], [[0.55, 0.88, -side], '-z', 'front']]);
   // 26 — autocollant ISO (sans libellé au manuel) : paroi avant de la cabine

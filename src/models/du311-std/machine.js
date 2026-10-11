@@ -68,73 +68,12 @@ export function P010(api) {
   return { view: { dir: [1.05, 0.55, 1.3] } };
 }
 
-// P012 — Extinction d'incendie automatique (repère machine, d'après la page 12) :
-// 1 trousse automatique (détecteurs linéaires le long du groupe de pompage, du capot
-// moteur et du pont arrière), 2 trousse manuelle (réservoir d'agent chimique à
-// l'arrière du pont, cartouche de gaz propulseur, six buses et leurs flexibles,
-// module de commande, afficheur et trois déclencheurs manuels).
-export function P012(api) {
-  const { box, cyl, tube, torus, at, group } = api.S;
-  const P = (ref, obj, e) => api.part(ref, obj, e);
-  const FT = M.frameTop;
-
-  // 1 — détecteurs linéaires (20 pi et 5 pi), câble de circuit, passe-fils
-  const run1 = [[0.3, FT + 0.02, 0.4], [1.4, FT + 0.02, 0.4], [1.4, FT + 0.02, -0.4], [0.3, FT + 0.02, -0.4]];
-  const run2 = [[-4.3, 1.02, 0.78], [-2.8, 1.02, 0.78], [-2.8, 1.02, -0.78], [-4.3, 1.02, -0.78]];
-  P('1', group(
-    body('front', tube(run1, 0.006, 'red', { sharp: true, seg: 6 })),
-    tube(run2, 0.006, 'red', { sharp: true, seg: 6 }),
-    tube([[-2.7, M.engine.top - 0.02, 0.9], [-1.15, M.engine.top - 0.02, 0.9], [-1.15, M.engine.top - 0.02, -0.9], [-2.7, M.engine.top - 0.02, -0.9]], 0.006, 'red', { sharp: true, seg: 6 }),
-    ...run1.map((p) => body('front', at(torus(0.012, 0.004, 'black', { axis: 'x' }), p))),
-    ...run2.map((p) => at(torus(0.012, 0.004, 'black', { axis: 'x' }), p)),
-  ), [0, 0.5, 0]);
-
-  // 2 — trousse manuelle
-  const tank = [-4.18, 1.0, 0.68];
-  const nozzles = [
-    [-3.75, 1.88, 0.55], [-3.75, 1.88, -0.55], // pont arrière, vers le groupe de puissance
-    [-2.6, 1.88, 0.6], [-2.6, 1.88, -0.6], // haut arrière du compartiment moteur
-    [-0.6, FT - 0.04, -0.2], // sous la cabine, vers l'hydraulique
-    [0.95, FT + 0.02, -0.25], // sous le repos du mât, vers le groupe de pompage
-  ];
-  const tee = [-3.4, 1.05, 0.5];
-  P('2', group(
-    // réservoir d'agent et support, cartouche de gaz propulseur et son support
-    at(cyl(0.12, 0.5, 'red', { seg: 32 }), [tank[0], tank[1] + 0.25, tank[2]]),
-    at(cyl(0.12, 0.06, 'red', { r2: 0.06 }), [tank[0], tank[1] + 0.53, tank[2]]),
-    at(cyl(0.035, 0.06, 'darkSteel'), [tank[0], tank[1] + 0.59, tank[2]]),
-    ...[0.1, 0.4].map((y) => at(torus(0.125, 0.008, 'darkSteel'), [tank[0], tank[1] + y, tank[2]])),
-    at(cyl(0.035, 0.3, 'red'), [tank[0] + 0.2, tank[1] + 0.35, tank[2] + 0.1]),
-    at(box(0.05, 0.2, 0.08, 'darkSteel'), [tank[0] + 0.2, tank[1] + 0.35, tank[2] + 0.05]),
-    // té de distribution et flexibles vers les buses
-    at(box(0.06, 0.06, 0.06, 'brass'), tee),
-    tube([[tank[0], tank[1] + 0.03, tank[2]], [-3.8, 1.04, 0.6], tee], 0.012, 'black', { seg: 12 }),
-    // (la buse avant est sur le châssis avant : son flexible passe l'articulation)
-    ...nozzles.map((n) => {
-      const pts = [tee, [tee[0], 0.92, 0.3], [n[0], 0.92, 0.3 * Math.sign(n[2])], [n[0], n[1] - 0.04, n[2]]];
-      return n[0] > 0 ? flex(api.S, pts, ['chassis', 'chassis', 'front', 'front'], 0.008, 'black', { sharp: true, seg: 8 }) : tube(pts, 0.008, 'black', { sharp: true, seg: 8 });
-    }),
-    // buses V-1/2 et supports
-    ...nozzles.flatMap((n) => [
-      at(box(0.05, 0.012, 0.05, 'darkSteel'), [n[0], n[1] + 0.03, n[2]]),
-      at(cyl(0.012, 0.05, 'brass', { r2: 0.016 }), [n[0], n[1], n[2]]),
-    ].map((o) => (n[0] > 0 ? body('front', o) : o))),
-    // module de commande (ICM) et afficheur dans la cabine, déclencheurs manuels
-    at(box(0.16, 0.12, 0.08, 'red', { r: 0.01 }), [-0.95, FT + 0.6, -0.3]),
-    at(box(0.1, 0.07, 0.04, 'black', { r: 0.006 }), [-0.3, FT + 0.85, 0.75]),
-    ...[[-4.3, 1.2, -0.99], [-0.32, FT + 0.82, 0.18], [0.82, 1.3, -0.95]].flatMap((p) => [
-      at(box(0.06, 0.1, 0.05, 'red', { r: 0.006 }), p),
-      at(cyl(0.018, 0.025, 'darkSteel', { axis: 'z' }), [p[0], p[1] + 0.02, p[2] + Math.sign(p[2] || 1) * 0.035]),
-    ].map((o) => (p[0] > 0 ? body('front', o) : o))),
-  ), [0, 0.7, 0.3]);
-  return { view: { dir: [0.9, 1.1, 1.0] } };
-}
-
 // P020 — Finition (repère machine) : autocollants de danger et trousse d'autocollants ISO,
 // boyau d'air 1,5 po x 170 po vers le pied de l'avance, boutons, sangles, colliers et
 // gaine de boyaux sur les boyaux de l'avance, autocollant des commandes de conduite,
 // tube porte-documents.
 export function P020(api) {
+  const { THREE } = api;
   const { box, cyl, tube, torus, at, group } = api.S;
   const P = (ref, obj, e) => api.part(ref, obj, e);
   const C = M.cab;
@@ -149,7 +88,12 @@ export function P020(api) {
   // 10 — autocollant des commandes de conduite (pupitre de la cabine)
   P('10', at(box(0.12, 0.003, 0.18, 'white'), [-0.3, M.frameTop + 0.752, 0.45]), [0, 0.3, 0]);
   // 4 — boutons en plastique (verrous des portes du capot moteur)
-  P('4', group(...[-2.6, -2.2, -1.8, -1.4].map((x) => at(cyl(0.02, 0.025, 'black', { axis: 'z' }), [x, 1.3, -0.992]))), [0, 0, -0.35]);
+  for (const x of [-2.6, -2.2, -1.8, -1.4]) {
+    P('4', group(
+      at(cyl(0.02, 0.012, 'black', { axis: 'z', seg: 12 }), [x, 1.3, -0.998]),
+      at(cyl(0.012, 0.014, 'black', { axis: 'z', seg: 12 }), [x, 1.3, -0.985]),
+    ), [0, 0, -0.35]);
+  }
   // 11 — tube porte-documents (taille « D ») sur la paroi arrière de la cabine
   P('11', group(
     at(cyl(0.035, 0.32, 'black'), [C.x0 + 0.04, M.frameTop + 0.65, 0.8]),
@@ -164,14 +108,60 @@ export function P020(api) {
   const tdTop = F(FEED.dth[0]);
   const sockEnd = F(FEED.dth[1]);
   P('8', body('feed', tube([[tdTop[0], tdTop[1] + 0.06, tdTop[2]], sockEnd], 0.042, 'charcoal', { sharp: true, seg: 2 })), [0.3, 0.3, 0]);
-  // 5 / 6 — sangles 8 po et 20 po, 7 — colliers de boyaux (sur les boyaux de l'avance)
-  const ringAt = (p, r, mat, b) => body(b, at(torus(r, 0.006, mat), F(p)));
+  // 5 / 6 — sangles 8 po (18) et 20 po (18), 7 — colliers de boyaux (25), répartis le long
+  // des boyaux : corps mobile interpolé entre « ext » et « feed » comme le boyau qu'ils serrent
+  const wOf = (b) => (b === 'feed' ? 1 : b === 'ext' ? 0 : b[2]);
+  const bOf = (w) => (w > 0.995 ? 'feed' : w < 0.005 ? 'ext' : ['ext', 'feed', w]);
+  const spread = (pts, bodies, n, t0 = 0, t1 = 1) => {
+    const seg = pts.slice(1).map((p, i) => Math.hypot(...p.map((v, k) => v - pts[i][k])));
+    const total = seg.reduce((a, l) => a + l, 0);
+    return Array.from({ length: n }, (_, j) => {
+      let d = (t0 + ((t1 - t0) * (j + 0.5)) / n) * total, i = 0;
+      while (i < seg.length - 1 && d > seg[i]) d -= seg[i++];
+      const t = d / seg[i], a = pts[i], b = pts[i + 1];
+      const w = wOf(bodies[i]) + (wOf(bodies[i + 1]) - wOf(bodies[i])) * t;
+      return { p: a.map((v, k) => v + (b[k] - v) * t), d: b.map((v, k) => v - a[k]), b: bOf(w) };
+    });
+  };
+  // sangle auto-agrippante : boucle à plat autour du faisceau, patte et boucle de serrage
+  const strap = ({ p, d, b }, r, w) => {
+    const g = group(
+      torus(r, 0.0035, 'black', { axis: 'y' }),
+      at(box(0.022, 0.006, w, 'black'), [r + 0.008, 0, 0]),
+      at(box(0.012, 0.008, w * 0.8, 'charcoal'), [r + 0.002, 0, 0]),
+    );
+    g.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), new THREE.Vector3(...F(d).map((v, k) => v - F([0, 0, 0])[k])).normalize());
+    g.position.set(...F(p));
+    return body(b, g);
+  };
   const L = FEED.loop, LB = FEED.loopBodies, H = FEED.dth, HB = FEED.dthBodies;
-  P('5', group(ringAt(L[2], 0.035, 'black', LB[2]), ringAt(L[3], 0.035, 'black', LB[3])), [0.2, 0, 0.3]);
-  P('6', group(ringAt(H[3], 0.045, 'black', HB[3]), ringAt(H[4], 0.045, 'black', HB[4])), [0.2, 0, 0.45]);
-  P('7', group(
-    ...[H[5], H[6]].map((p) => ringAt(p, 0.038, 'steel', 'ext')),
-    body('front', at(torus(0.034, 0.006, 'steel', { axis: 'x' }), [1.2, 0.88, M.frameZ + 0.05])),
-  ), [0.2, 0, 0.55]);
+  // 5 — 8 po : faisceau des quatre boyaux de la boucle de l'avance
+  spread(L, LB, 18, 0.03, 0.97).forEach((c) => P('5', strap(c, 0.042, 0.02), [0.2, 0, 0.3]));
+  // 6 — 20 po : boyau DTH (doublée autour du boyau et de son fourreau)
+  spread(H, HB, 18, 0.04, 0.96).forEach((c) => P('6', strap(c, 0.05, 0.025), [0.2, 0, 0.45]));
+  // 7 — colliers de boyaux : bas du boyau DTH (8, sur le mât), flexibles hydrauliques le long
+  // des flancs du châssis avant (2 × 7, collier en « P » vissé), boyau d'air 1,5 po (3)
+  const pclip = (r, mat = 'steel') => group(
+    torus(r, 0.005, mat, { axis: 'x' }),
+    at(box(0.004, 0.012, 0.035, mat), [0, -r - 0.004, r * 0.5]),
+    at(cyl(0.005, 0.008, 'zinc', { axis: 'y', seg: 8 }), [0, -r - 0.012, r * 0.5 + 0.008]),
+  );
+  spread(H.slice(4), HB.slice(4), 8).forEach(({ p, d }) => {
+    const g = pclip(0.036);
+    g.quaternion.setFromUnitVectors(new THREE.Vector3(1, 0, 0), new THREE.Vector3(...F(d).map((v, k) => v - F([0, 0, 0])[k])).normalize());
+    g.position.set(...F(p));
+    P('7', body('ext', g), [0.2, 0, 0.55]);
+  });
+  for (const zs of [1, -1]) {
+    for (let k = 0; k < 7; k++) {
+      const g = pclip(0.03);
+      g.position.set(0.3 + k * 0.28, 0.9, zs * (M.frameZ + 0.035));
+      if (zs < 0) g.rotateX(Math.PI);
+      P('7', body('front', g), [0, 0, zs * 0.3]);
+    }
+  }
+  for (const p of [[2.6, 1.34, 0.39], [2.61, 1.39, 0.55], [2.62, 1.45, 0.7]]) {
+    P('7', body('front', at(pclip(0.03), p)), [0.2, 0.2, 0.3]);
+  }
   return { view: { dir: [1.1, 0.6, 1.2] } };
 }
