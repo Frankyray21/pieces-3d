@@ -5,8 +5,8 @@
 // flancs), deux bras en caisson qui rejoignent les colonnes de pivot, et à
 // chaque colonne un moyeu haut (dans le caisson) et un moyeu bas suspendu
 // sous le caisson, portant deux chapes plates côté extérieur (œil de fond du
-// vérin de pivotement P094, axe P098 repère 7). Sur le dessus, à droite,
-// les deux glissières des mâchoires ; à l'avant, au droit de la fente, le
+// vérin de pivotement P094, axe P098 repère 7). Sur le dessus, de chaque côté,
+// les glissières des fourreaux de mâchoires (P104) ; à l'avant, au droit de la fente, le
 // moyeu du verrou (vérin P114 dessous). Garnitures :
 // - 1 : huit bagues bronze-aluminium 2 × 2 1/4 × 2 po, deux par moyeu ;
 // - 3 : quatre entretoises entre les deux bagues de chaque moyeu (coupe D-D) ;
@@ -123,13 +123,17 @@ export default function P102(api) {
   // Moyeu du verrou entre les deux plaques (bagues 2).
   // Moyeu en saillie de 0.1 po sur chaque plaque (lamage des bagues visible).
   const lockBoss = shell(u(LOCK.ro), u(LOCK.ri), u(UP[1] - UP[0] + 0.2), 'grey', { seg: 32, pos: v(LOCK.x, (UP[0] + UP[1]) / 2, LOCK.z) });
-  // Glissières des mâchoires sur la moitié droite : deux blocs chanfreinés.
+  // Glissières des fourreaux de mâchoires (P104), sur les deux moitiés :
+  // bandes de 1/2 × 1 po le long de X, de part et d'autre du fourreau
+  // (largeur 10.35 po centrée sur l'axe de forage), du passage de tige au flanc.
   const rails = [];
-  for (const [z0, z1] of [[15.1, 17.9], [22.9, 25.8]]) {
-    const prof = [[4.2, UP[1]], [13.8, UP[1]], [13.8, UP[1] + 1.4], [4.8, UP[1] + 1.4], [3.1, UP[1] + 0.6], [3.1, UP[1]]];
-    const m = extrude(prof.map(([x, y]) => [u(x), u(y)]), u(z1 - z0), 'grey');
-    m.position.z = u((z0 + z1) / 2);
-    rails.push(m);
+  for (const s of [-1, 1]) {
+    for (const zc of [DZ - 5.175 - 0.3, DZ + 5.175 + 0.3]) {
+      const prof = [[s * 4.6, UP[1]], [s * 13.0, UP[1]], [s * 13.0, UP[1] + 1.0], [s * 4.9, UP[1] + 1.0], [s * 4.6, UP[1] + 0.7]];
+      const m = extrude((s > 0 ? prof : prof.slice().reverse()).map(([x, y]) => [u(x), u(y)]), u(0.5), 'grey');
+      m.position.z = u(zc);
+      rails.push(m);
+    }
   }
   // Repères en saillie : arêtes de soudure des plaques du caisson.
   for (const y of [UP[0] + T + 0.06, UP[1] - T - 0.06]) {

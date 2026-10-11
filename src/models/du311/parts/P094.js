@@ -70,7 +70,7 @@ export const CYL094 = {
 
 export default function P094(api) {
   const { THREE, S } = api;
-  const { extrude, slotted, roundHole, weldRing, merged, group, at, torus } = S;
+  const { extrude, slotted, roundHole, weldRing, merged, group, at } = S;
   const P = (ref, obj, e) => api.part(ref, obj, e);
   const circ = (cx, cy, r, a0, a1, n) => Array.from({ length: n + 1 }, (_, i) => {
     const a = a0 + ((a1 - a0) * i) / n;
@@ -87,15 +87,23 @@ export default function P094(api) {
     [EYE.R, 1.1], [EYE.R - 0.26, Y.capBot], [-EYE.R + 0.26, Y.capBot], [-EYE.R, 1.1],
   ], EYE.t, 'grey', [[0, 0, EYE.hole]]);
   // Fond : disque Ø 3 1/2 × 1/2 po, gorge en V de la soudure du tube.
-  const cap = L(S, [[0, Y.capBot], [1.71, Y.capBot], [TUBE, Y.capBot + 0.04], [TUBE, 1.58], [1.58, Y.tubeBot], [BORE - G, Y.tubeBot], [BORE - G, Y.tubeBot + 0.06], [0, Y.tubeBot + 0.06]], 'grey', 48);
-  const portHoles = [Y.portA, Y.portB].flatMap((y) => roundHole(-Math.PI / 2, u(y), u(0.19), u(TUBE), { steps: 8 }));
-  const tube = slotted(u(TUBE), u(BORE), u(Y.tubeBot), u(Y.tubeTop - 0.06), portHoles, 'grey', { seg: 48 });
-  const tubeTop = L(S, [[BORE, Y.tubeTop - 0.06], [TUBE, Y.tubeTop - 0.06], [TUBE, Y.tubeTop - 0.03], [TUBE - 0.03, Y.tubeTop], [BORE + 0.03, Y.tubeTop], [BORE, Y.tubeTop - 0.03], [BORE, Y.tubeTop - 0.06]], 'grey', 48);
+  const cap = L(S, [[0, Y.capBot], [1.71, Y.capBot], [TUBE, Y.capBot + 0.04], [TUBE, 1.58], [1.58, Y.tubeBot], [BORE - G, Y.tubeBot], [BORE - G, Y.tubeBot + 0.06], [0, Y.tubeBot + 0.06]], 'grey', 36);
+  // Tube : parois lisses (lathe) et, au droit de chaque orifice, une bague
+  // percée (slotted) limitée à la hauteur du trou (moins de bandes).
+  const HR = 0.19;
+  const tubeYs = [Y.tubeBot, Y.portA - HR, Y.portA + HR, Y.portB - HR, Y.portB + HR, Y.tubeTop - 0.06];
+  const tube = [];
+  for (let k = 0; k < tubeYs.length - 1; k++) {
+    const [y0, y1] = [tubeYs[k], tubeYs[k + 1]];
+    if (k % 2) tube.push(slotted(u(TUBE), u(BORE), u(y0), u(y1), roundHole(-Math.PI / 2, u((y0 + y1) / 2), u(HR), u(TUBE), { steps: 6 }), 'grey', { seg: 36 }));
+    else tube.push(L(S, [[BORE, y0], [TUBE, y0], [TUBE, y1], [BORE, y1], [BORE, y0]], 'grey', 36));
+  }
+  const tubeTop = L(S, [[BORE, Y.tubeTop - 0.06], [TUBE, Y.tubeTop - 0.06], [TUBE, Y.tubeTop - 0.03], [TUBE - 0.03, Y.tubeTop], [BORE + 0.03, Y.tubeTop], [BORE, Y.tubeTop - 0.03], [BORE, Y.tubeTop - 0.06]], 'grey', 36);
   const boss = (y) => L(S, [
     [0.19, 1.5], [BOSS.r, 1.5], [BOSS.r, BOSS.face - 0.04], [BOSS.r - 0.04, BOSS.face],
     [0.275, BOSS.face], [0.219, BOSS.face - 0.06], [0.219, 1.9], [0.19, 1.87], [0.19, 1.5],
-  ], 'grey', 24, { axis: '-x', pos: [0, u(y), 0] });
-  const body = merged([capLug, cap, tube, tubeTop, boss(Y.portA), boss(Y.portB)], 'grey');
+  ], 'grey', 16, { axis: '-x', pos: [0, u(y), 0] });
+  const body = merged([capLug, cap, ...tube, tubeTop, boss(Y.portA), boss(Y.portB)], 'grey');
   body.userData.hasInterior = true;
   const welds = merged([
     weldRing(u(1.68), u(0.24), 'grey', { pos: [0, u(Y.tubeBot - 0.15), 0] }),
@@ -123,10 +131,11 @@ export default function P094(api) {
     [0.85, Y.tubeTop], [0.85, 9.62], [ROD + G, 9.62], // lamage du racleur
     [ROD + G, 9.3], [0.78, 9.3], [0.78, 8.95], [ROD + G, 8.95], // gorge du joint de tige
     [ROD + G, Y.hpBot],
-  ], 'grey', 48);
+  ], 'grey', 32);
   // Racleur : talon dans le lamage, lèvre sur la tige (trousse 18, suggéré).
-  const wiper = L(S, [[ROD + G, 9.64], [0.84, 9.64], [0.84, Y.tubeTop + 0.04], [0.74, Y.tubeTop + 0.1], [ROD + 0.005, Y.tubeTop + 0.1], [ROD + 0.005, 9.64]], 'rubber', 32);
-  const oring = torus(u(1.43), u(0.07), 'rubber', { pos: [0, u(8.7), 0] });
+  const wiper = L(S, [[ROD + G, 9.64], [0.84, 9.64], [0.84, Y.tubeTop + 0.04], [0.74, Y.tubeTop + 0.1], [ROD + 0.005, Y.tubeTop + 0.1], [ROD + 0.005, 9.64]], 'rubber', 24);
+  // Joint torique (caché dans le tube) : petit anneau de révolution.
+  const oring = L(S, [[1.36, 8.7], [1.43, 8.63], [1.5, 8.7], [1.43, 8.77], [1.36, 8.7]], 'rubber', 24);
   P('1', group(head, wiper, oring), [0, 0.12, 0]);
 
   // ================================================ piston, tige, tête de tige
@@ -137,8 +146,8 @@ export default function P094(api) {
     [1.0, Y.pistonBot], [LAND - 0.04, Y.pistonBot], [LAND, Y.pistonBot + 0.04], [LAND, 2.75],
     [1.32, 2.75], [1.32, 3.18], [LAND, 3.18], [LAND, Y.pistonTop - 0.04], [LAND - 0.04, Y.pistonTop],
     [PILOT + G, Y.pistonTop], [PILOT + G, Y.cbore], [1.0, Y.cbore], [1.0, Y.pistonBot],
-  ], 'steel', 48);
-  const seal = L(S, [[1.33, 2.76], [BORE - G, 2.8], [BORE - G, 3.13], [1.33, 3.17], [1.33, 2.76]], 'blue', 48);
+  ], 'steel', 28);
+  const seal = L(S, [[1.33, 2.76], [BORE - G, 2.8], [BORE - G, 3.13], [1.33, 3.17], [1.33, 2.76]], 'blue', 28);
   P('6', group(piston, seal), [0.13, 0.03, 0]);
 
   // 10 — écrou de blocage 1"-14 UNS dans le chambrage
@@ -147,9 +156,9 @@ export default function P094(api) {
   // 11 — tige : chromée Ø 1 1/4, queue Ø 1 filetée sous le piston, bout
   // fileté 1 1/8-12 vers la tête de tige.
   const rod = group(
-    L(S, [[0, Y.pistonTop], [ROD - 0.03, Y.pistonTop], [ROD, Y.pistonTop + 0.03], [ROD, Y.shoulder - 0.04], [ROD - 0.04, Y.shoulder], [0, Y.shoulder]], 'chrome', 32),
-    L(S, [[0, Y.nutBot - 0.08], [PILOT * 0.85, Y.nutBot - 0.08], ...S.thread(PILOT, Y.nutBot - 0.02, Y.cbore + 0.05, { pitch: 1 / 14, maxTurns: 14 }), [PILOT, Y.pistonTop], [0, Y.pistonTop]], 'steel', 20),
-    L(S, [[0, Y.shoulder], ...S.thread(TH, Y.shoulder, Y.rodEnd - 0.06, { pitch: 1 / 12, maxTurns: 16, chamferBottom: false }), [TH - 0.06, Y.rodEnd], [0, Y.rodEnd]], 'steel', 20),
+    L(S, [[0, Y.pistonTop], [ROD - 0.03, Y.pistonTop], [ROD, Y.pistonTop + 0.03], [ROD, Y.shoulder - 0.04], [ROD - 0.04, Y.shoulder], [0, Y.shoulder]], 'chrome', 28),
+    L(S, [[0, Y.nutBot - 0.08], [PILOT * 0.85, Y.nutBot - 0.08], ...S.thread(PILOT, Y.nutBot - 0.02, Y.cbore + 0.05, { pitch: 1 / 14, maxTurns: 4 }), [PILOT, Y.pistonTop], [0, Y.pistonTop]], 'steel', 14),
+    L(S, [[0, Y.shoulder], ...S.thread(TH, Y.shoulder, Y.rodEnd - 0.06, { pitch: 1 / 12, maxTurns: 5, chamferBottom: false }), [TH - 0.06, Y.rodEnd], [0, Y.rodEnd]], 'steel', 16),
   );
   P('11', rod, [0.13, 0.09, 0]);
 
@@ -158,7 +167,7 @@ export default function P094(api) {
 
   // 12 — tête de tige : fût rond Ø 1 3/4 (taraudé), col, œil plat R 1.35
   // d'épaisseur 7/8 po, logement de rotule.
-  const shank = L(S, [[TH + G, Y.jamTop], [0.83, Y.jamTop], [0.87, Y.jamTop + 0.04], [0.87, Y.shankTop], [0.55, Y.shankTop + 0.25], [TH + G, Y.shankTop + 0.25], [TH + G, Y.jamTop]], 'grey', 32);
+  const shank = L(S, [[TH + G, Y.jamTop], [0.83, Y.jamTop], [0.87, Y.jamTop + 0.04], [0.87, Y.shankTop], [0.55, Y.shankTop + 0.25], [TH + G, Y.shankTop + 0.25], [TH + G, Y.jamTop]], 'grey', 28);
   const a0 = Math.asin(0.62 / EYE.rodR);
   const eyeHead = plateZ([
     [0.62, Y.shankTop - 0.1], ...circ(0, Y.eye, EYE.rodR, -Math.PI / 2 + a0, 1.5 * Math.PI - a0, 28), [-0.62, Y.shankTop - 0.1],
