@@ -11,13 +11,17 @@
 // (côté avance), Y vers le haut, +Z côté enrouleur ; pont du porteur à
 // y = 0.76, mât dressé de x = 2.62 à 3.04 (pied à y = 0.6), flancs du mât à
 // z = ±0.23. P012 insère la trousse à l'origine, P010 insère P012 à l'origine.
-// Encombrement : x −2.01 à 2.78, y 0.58 à 3.28, z −0.70 à 0.70.
+// Encombrement : x −2.01 à 2.78 (glissière : x 1.98–2.15), y 0.58 à 3.28, z −0.70 à 0.70.
 // Faute de dessin, les emplacements sont estimés d'après le danger signalé et
 // posés à plat sur les formes simplifiées de frame.js et machine.js :
 //  · mât (flancs ±Z, colonne libre x 2.64–2.84) : entraînement en rotation,
 //    pincement, éloignement du personnel, bandeau ACCRA ;
-//  · glissière (flasques z = ±0.57 de machine.js) : laser, pincement ;
-//    plaque de liaison du mât (face arrière x 2.58) : pincement ;
+//  · glissière P168 (colonnes en caisson z = ±0.62 ± 0.05, x 1.98–2.24,
+//    y 0.68–1.72) : laser sur la face extérieure (z = ±0.67) au-dessus du
+//    disque du support de laser (y 1.13–1.27) et sous le bossage de la barre
+//    haute (y 1.41) ; pincement sur la face arrière (x 1.98) des colonnes ;
+//    plaque de liaison du mât P024 (face d'appui x 2.577, contre la bride de
+//    l'actionneur) : pincement au-dessus des colonnes ;
 //  · stabilisateurs : face extérieure du boîtier haut de chaque vérin ;
 //  · réservoir hydraulique (face arrière x −2.0, face +Z, dessus), moteur
 //    (face +Z, dessus), surpresseur (face −Z, dessus, carter de courroie),
@@ -51,12 +55,13 @@ export default function P020(api) {
   for (const s of [1, -1]) {
     for (const y of [2.55, 3.2]) put('4', iso2(['warn', 'gear'], ['no', 'hand']), [MX, y, s * MZ], [0, 0, s], 0.25);
   }
-  // 17 — pincement (6) : mât ±Z, flasques de glissière ±Z, plaque de liaison du mât.
+  // 17 — pincement (6) : mât ±Z, faces arrière des colonnes de glissière
+  // (+Z au-dessus du bloc de graissage), plaque de liaison du mât.
   put('17', iso2(['warn', 'rollers'], ['no', 'hand']), [MX, 1.45, MZ], P.Z, 0.25);
   put('17', iso2(['warn', 'rollers'], ['no', 'hand']), [MX, 1.25, -MZ], P.mZ, 0.25);
-  put('17', iso2(['warn', 'rollers'], ['no', 'hand']), [2.31, 1.2, 0.57], P.Z, 0.25);
-  put('17', iso2(['warn', 'rollers'], ['no', 'hand']), [2.38, 1.2, -0.57], P.mZ, 0.25);
-  for (const s of [1, -1]) put('17', iso2(['warn', 'rollers'], ['no', 'hand']), [2.58, 1.9, s * 0.15], P.mX, 0.25);
+  put('17', iso2(['warn', 'rollers'], ['no', 'hand']), [1.98, 1.5, 0.62], P.mX, 0.25);
+  put('17', iso2(['warn', 'rollers'], ['no', 'hand']), [1.98, 1.2, -0.62], P.mX, 0.25);
+  for (const s of [1, -1]) put('17', iso2(['warn', 'rollers'], ['no', 'hand']), [2.577, 1.9, s * 0.15], P.mX, 0.25);
   // 10 — éloignement du personnel (3) : mât ±Z, arrière du réservoir hydraulique.
   put('10', iso2(['warn', 'person'], ['no', 'person']), [MX, 1.75, MZ], P.Z, 0.25);
   put('10', iso2(['warn', 'person'], ['no', 'person']), [MX, 1.95, -MZ], P.mZ, 0.25);
@@ -65,8 +70,9 @@ export default function P020(api) {
   put('20', L.label({ w: 0.3, h: 0.06, t: T, bg: 'black', ink: 'white', header: null, lines: 2, seed: 20 }), [MX, 2.15, MZ], P.Z, 0.25, { spin: Math.PI / 2 });
 
   // ---------------------------------------------------------------- glissière et stabilisateurs
-  // 16 — laser (2) : flasques de glissière, en haut.
-  for (const s of [1, -1]) put('16', iso1(['warn', 'laser'], 0.08), [2.38, 1.42, s * 0.57], [0, 0, s], 0.25);
+  // 16 — laser (2) : face extérieure des colonnes (z = ±0.67), juste
+  // au-dessus du disque du support de laser P180 (x 2.11, y 1.2, Ø 0.14).
+  for (const s of [1, -1]) put('16', iso1(['warn', 'laser'], 0.08), [2.11, 1.34, s * 0.67], [0, 0, s], 0.25);
   // 14 — vérins de stabilisateur (4) : face extérieure du boîtier haut de chaque vérin.
   for (const sx of [1, -1]) {
     for (const sz of [1, -1]) put('14', iso2(['warn', 'crush'], ['no', 'person']), [sx * 2.0, 0.66, sz * 0.7], [0, 0, sz], 0.2);
