@@ -11,24 +11,24 @@
 // rondelles Nord-Lock 23, adaptateurs 16), joint racleur et plaque racleuse
 // des mâchoires (B, P146) logés dans le demi-couvercle (2) et la demi-bague
 // (3) vissés sous le caisson (vis 19, rondelles 24), entonnoir de déviation
-// des déblais (1) à sortie latérale bouchée (bouchon 17). Aux chapes basses
+// des déblais (1) à sortie latérale ouverte ; bouchon 17 sur le caisson. Aux chapes basses
 // du châssis : axes 7 des vérins de pivotement (entretoises 6, vis 18,
-// rondelles 22, écrous 25). Coudes 14 (vérins 4 et 12) et adaptateurs 15
-// (vérins 12) sur les orifices.
+// rondelles 22, écrous 25). Raccords : sur chaque vérin 4, un coude 14 et un
+// adaptateur 15, orifices vers le bas ; sur chaque vérin 12, deux coudes 14.
 // Lignes A / B (plaques à coins et jeux de mâchoires selon le diamètre de
 // tige) : le jeu monté est celui des tiges Ø 5 po (CX031068 = P044,
 // CX034953-500 = P146) ; les autres options n'ont pas d'objet.
 // Repère : celui du châssis P102 — origine au milieu des deux axes de pivot,
 // sous les moyeux bas (appui sur le pied de mât P116), Y vers le haut, X
 // selon la ligne des pivots (axes à x = ±11 po), +Z vers l'axe de forage
-// (z = 20.4 po = 0.518 m). Mâchoires fermées : fourreaux et mâchoires calés
-// sur le dessus du caisson (y = 12.3 po), vérins de centrage sortis.
-// Encombrement ≈ 1.10 (X) × 0.82 (Y, de -0.33 sous l'entonnoir à +0.49) ×
-// 0.84 (Z) m.
+// (z = 20.4 po = 0.518 m). Mâchoires fermées : fourreaux et mâchoires
+// glissés dans le caisson par ses flancs ouverts (dessous des mâchoires à
+// y = 7.82 po), vérins de centrage sortis (axe à y = 9.3 po) ; plaque à coins
+// posée sur le caisson (y = 12 po) entre ses glissières.
 // Disposition d'après les isométries des pages 98 et 100 ; vérins 4 et 12
 // (sans page propre) d'après leurs proportions sur ces vues. Les supports 10
 // et 11 sont centrés sur l'axe des vérins de centrage : leur semelle dépasse
-// le dessus du caisson.
+// un peu sous le caisson.
 import { L, u, IN, along, shcs, fhcs, hhcs, nordLock, flatWasher, nylocNut, jicAdapter, jicElbow } from './_avance_b.js';
 import { FRAME102 } from './P102.js';
 import { TUBE106 } from './P106.js';
@@ -37,10 +37,10 @@ import { LOCK114 } from './P114.js';
 import { CYL094 } from './P094.js';
 
 const DZ = 20.4; // axe de forage (po)
-const TY = 11.8 + 0.52; // dessous des mâchoires = dessus de la tôle basse des fourreaux (po)
-const CY = 13.75; // axe des vérins de centrage (po)
+const TY = 6.8 + 0.5 + 0.52; // dessous des mâchoires = dessus de la tôle basse des fourreaux, posés dans le caisson (po)
+const CY = 9.3; // axe des vérins de centrage, au droit de la poche des mâchoires (po)
 const BX = 17.1; // axe du support (point d'articulation) : semelle contre le flanc x = ±13.1
-const SY = TY + 3.1 + 0.52 + 0.25; // dessous de la plaque à coins (sur les têtes des axes des fourreaux)
+const SY = 12.0; // dessous de la plaque à coins, posée sur le caisson entre ses glissières (po)
 
 export const CENT098 = { drillZ: u(DZ), jawY: u(TY), slipY: u(SY) };
 
@@ -104,10 +104,11 @@ export default function P098(api) {
   };
   for (const s of [1, -1]) {
     const len = BX - 4.52; // axe du support → axe du fourreau
-    const c = frame(centCyl(len), V(0, 0, -s), V(-s, 0, 0), pin(s * BX, CY, DZ));
+    const c = frame(centCyl(len), V(0, 0, s), V(-s, 0, 0), pin(s * BX, CY, DZ));
     P('4', c, [s * 0.1, 0.22, 0]);
-    // 14 — coudes -04 × -06 sur les deux orifices (vers le haut).
-    for (const y of [2.3, 6.9]) elbows.push({ pos: pin(s * (BX - y), CY + 2.0, DZ), dir: [0, 1, 0], nose: [0, 0, s], e: [s * 0.1, 0.3, 0] });
+    // Orifices vers le bas : coude 14 côté fond, adaptateur droit 15 côté tige.
+    elbows.push({ pos: pin(s * (BX - 2.3), CY - 2.0, DZ), dir: [0, -1, 0], nose: [0, 0, s], e: [s * 0.1, -0.15, 0] });
+    P('15', along(THREE, jicAdapter(S, THREE, 4, { jicDash: 4 }), [0, -1, 0], pin(s * (BX - 6.9), CY - 2.0, DZ)), [s * 0.1, -0.15, 0]);
   }
 
   // ================================================ A — plaque à coins
@@ -145,12 +146,12 @@ export default function P098(api) {
     const X = V(0, 0, 1).addScaledVector(Y, -Y.z).normalize();
     const c = frame(slipCyl(len), X, Y, lp);
     P('12', c, [-0.08, 0.3, 0]);
-    // Orifices vers +Z local (vers le haut) : coude 14 côté fond, adaptateur 15 côté tige.
+    // Orifices vers +Z local (vers le haut) : deux coudes 14.
     const Zl = new THREE.Vector3().crossVectors(X, Y);
     const port = (y) => V(...lp).addScaledVector(Y, u(y)).addScaledVector(Zl, u(1.6));
     const p1 = port(2.4), p2 = port(len * 0.58 - 0.6);
     elbows.push({ pos: p1.toArray(), dir: Zl.toArray(), nose: Y.toArray(), e: [-0.08, 0.36, 0] });
-    P('15', along(THREE, jicAdapter(S, THREE, 4, { jicDash: 4 }), Zl.toArray(), p2.toArray()), [-0.08, 0.36, 0]);
+    elbows.push({ pos: p2.toArray(), dir: Zl.toArray(), nose: Y.clone().negate().toArray(), e: [-0.08, 0.36, 0] });
     // 5 — axe de chape Ø 3/4 × 2 1/4 po (selon Z), tête Ø 1 po côté +Z ;
     // 21 — vis FHC 3/8 × 5/8 dans la joue de la fourche, tête sur la gorge.
     const lt = BRACKET112.lugT / IN + 0.08;
@@ -243,27 +244,27 @@ export default function P098(api) {
 
   // ================================================ 1 — entonnoir de déviation
   // Collerette Ø 12 1/2 percée (fixée sous la plaque racleuse), cône de tôle
-  // 3/16 po s'évasant vers le bas, sortie latérale Ø 4 po vers +X fermée par
-  // le bouchon 17 (1 1/4 NPT à six-pans creux) sur son bossage.
+  // 3/16 po s'évasant vers le bas, sortie latérale Ø 4 po ouverte vers +X
+  // (évacuation des déblais).
   {
     const y0 = yC0 - 0.4;
     const t = 0.1875;
     const parts = [
       L(S, [[4.6, y0], [6.25, y0], [6.25, y0 + 0.375], [4.6, y0 + 0.375], [4.6, y0]], 'grey', 48, { pos: [0, 0, u(DZ)] }),
       L(S, [[4.6, y0], [4.6 + t, y0], [9.0 + t, y0 - 10.5], [9.0, y0 - 10.5], [4.6, y0]], 'grey', 48, { pos: [0, 0, u(DZ)] }),
-      // Sortie latérale : manchon Ø 4 po soudé sur le cône, bossage du bouchon.
-      L(S, [[1.8, 0], [2.0, 0], [2.0, 4.2], [1.8, 4.2], [1.8, 0]], 'grey', 32, { axis: 'x', pos: [u(5.5), u(y0 - 4.5), u(DZ)] }),
-      L(S, [[0, 4.2], [2.0, 4.2], [2.0, 4.45], [0.82, 4.45], [0.82, 4.95], [0, 4.95]], 'grey', 32, { axis: 'x', pos: [u(5.5), u(y0 - 4.5), u(DZ)] }),
+      // Sortie latérale : manchon Ø 4 po soudé sur le cône, bout ouvert.
+      L(S, [[1.8, 0], [2.0, 0], [2.0, 4.6], [1.8, 4.6], [1.8, 0]], 'grey', 32, { axis: 'x', pos: [u(5.5), u(y0 - 4.5), u(DZ)] }),
     ];
     const funnel = merged(parts, 'grey');
     funnel.userData.hasInterior = true;
     P('1', at(group(funnel), [0, 0, 0]), [0, -0.35, 0]);
-    // 17 — bouchon 1 1/4 NPT à six-pans creux, affleurant le bossage.
-    const hx = 0.5 / Math.cos(Math.PI / 6) / 2 * 1.25;
+    // 17 — bouchon 3/4 NPT à six-pans creux, affleurant le dessus du caisson
+    // au droit du moyeu du verrou (graissage / purge du pêne).
+    const hx = 0.3125 / Math.cos(Math.PI / 6);
     const plug = merged([
-      L(S, [[0, -0.7], ...S.thread(0.82, -0.7, -0.05, { r1: 0.84, pitch: 0.087, maxTurns: 6 }), [0.84, 0], [hx, 0], [hx, -0.4], [0, -0.45]], 'blackOxide', 24),
+      L(S, [[0, -0.7], ...S.thread(0.51, -0.7, -0.05, { r1: 0.525, pitch: 0.07, maxTurns: 5 }), [0.525, 0], [hx, 0], [hx, -0.35], [0, -0.4]], 'blackOxide', 20),
     ], 'blackOxide');
-    P('17', along(THREE, plug, [1, 0, 0], [u(5.5 + 4.95), u(y0 - 4.5), u(DZ)]), [0.12, -0.35, 0]);
+    P('17', along(THREE, plug, [0, 1, 0], [FRAME102.lockPin[0], FRAME102.top + 0.0005, FRAME102.lockPin[1]]), [0, 0.15, 0]);
   }
 
   return { view: { dir: [1, 0.8, 1.15] } };
