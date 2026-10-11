@@ -102,7 +102,7 @@ export function zerk(S, scale = 1) {
 
 export default function P176(api) {
   const { THREE, S } = api;
-  const { lathe, thread, torus, extrude, ring, weld, weldRing, merged, at, group, nut, cyl, tube, box } = S;
+  const { lathe, thread, extrude, ring, weld, merged, at, group, nut, cyl, tube, box } = S;
   const P = (ref, obj, e) => api.part(ref, obj, e);
   // Profil de révolution en pouces [r, x] → lathe en mètres le long de +X.
   const L = (pts, mat, seg = 48, opts = {}) => lathe(pts.map(([r, y]) => [u(r), u(y)]), mat, { seg, axis: 'x', ...opts });
@@ -167,7 +167,8 @@ export default function P176(api) {
     capEye, block, barrel,
     merged([seat(1.0, 1), seat(-0.9, 1), seat(-0.9, -1), portSeat(1), portSeat(-1), bossGrp], 'grey'),
     orbCaps,
-    weldRing(u(TUBE - 0.03), u(0.24), 'grey', { axis: 'x', pos: v3(X.blockEnd + 0.06, 0, 0) }),
+    // cordon tube / bloc : bourrelet tourné (léger)
+    L([[TUBE - 0.14, X.blockEnd - 0.08], [TUBE + 0.05, X.blockEnd + 0.02], [TUBE + 0.06, X.blockEnd + 0.08], [TUBE - 0.1, X.blockEnd + 0.18]], 'grey', 28),
     weld([[X.lugEnd + 0.02, EYE.R + 0.06, -EYE.T / 2 - 0.06], [X.lugEnd + 0.02, EYE.R + 0.06, EYE.T / 2 + 0.06]].map(([x, y, z]) => v3(x, y, z)), u(0.22), 'grey'),
     weld([[X.lugEnd + 0.02, -EYE.R - 0.06, -EYE.T / 2 - 0.06], [X.lugEnd + 0.02, -EYE.R - 0.06, EYE.T / 2 + 0.06]].map(([x, y, z]) => v3(x, y, z)), u(0.22), 'grey'),
   ), [0, 0, 0]);
@@ -186,23 +187,23 @@ export default function P176(api) {
         at(nut(u(0.5625), u(0.2), 'steel'), [0, u(0.1), 0]),
         lathe([[0, -0.36], [0.2, -0.36], [0.2, 0], [0, 0]].map(([r, y]) => [u(r), u(y)]), 'steel', { seg: 14 }),
       ], 'zinc'),
-      torus(u(0.215), u(0.035), 'rubber', { pos: [0, -u(0.03), 0] }),
+      ring(u(0.25), u(0.18), u(0.07), 'rubber', { seg: 12, pos: [0, -u(0.03), 0] }),
     ), v3(xv, -0.9, -zs), [-Math.PI / 2, 0, 0]), [0, 0, -0.1]);
   }
 
   // ================================================ 8 — coude 90° ORB #6 / JIC #6
   // Vissé dans l'orifice de transfert du bloc (à 35° de +Y), sortie vers +X.
   const elbow = () => {
-    const Lc = (pts, m = 'zinc', seg = 16) => lathe(pts.map(([r, y]) => [u(r), u(y)]), m, { seg });
+    const Lc = (pts, m = 'zinc', seg = 10) => lathe(pts.map(([r, y]) => [u(r), u(y)]), m, { seg });
     return group(
       merged([
         Lc([[0, -0.45], [0.27, -0.45], [0.27, -0.05], [0, -0.05]]), // queue ORB 9/16-18
         at(nut(u(0.75), u(0.28), 'zinc'), [0, u(0.14), 0]), // contre-écrou
         Lc([[0, 0.28], [0.34, 0.28], [0.34, 0.95], [0, 0.95]]), // corps forgé
-        at(lathe([[0, 0], [0.32, 0], [0.32, 0.25], [0.27, 0.3], [0.27, 0.80], [0.20, 0.92], [0, 0.92]].map(([r, y]) => [u(r), u(y)]), 'zinc', { seg: 16, axis: 'x' }), [0, u(0.62), 0]),
+        at(lathe([[0, 0], [0.32, 0], [0.32, 0.25], [0.27, 0.3], [0.27, 0.80], [0.20, 0.92], [0, 0.92]].map(([r, y]) => [u(r), u(y)]), 'zinc', { seg: 10, axis: 'x' }), [0, u(0.62), 0]),
         at(nut(u(0.6875), u(0.22), 'zinc', { axis: 'x' }), [u(0.42), u(0.62), 0]),
       ], 'zinc'),
-      torus(u(0.29), u(0.035), 'rubber', { pos: [0, -u(0.03), 0] }),
+      ring(u(0.325), u(0.255), u(0.07), 'rubber', { seg: 12, pos: [0, -u(0.03), 0] }),
     );
   };
   const xe = X.blockEnd - 0.95; // axe de l'orifice dans le bloc
@@ -222,10 +223,10 @@ export default function P176(api) {
   const nutAt = (x) => at(nut(u(0.6875), u(0.42), 'zinc', { axis: 'x' }), rad(x, r1, PHI));
   const nutEnd = at(nut(u(0.6875), u(0.42), 'zinc', { axis: 'x' }), rad(X.portB - 1.42, TUBE + 0.3, PHI));
   P('7', group(
-    tube(path, u(0.1875), 'steel', { seg: 50, tension: 0.4, radial: 12 }),
+    tube(path, u(0.1875), 'steel', { seg: 30, tension: 0.4, radial: 8 }),
     merged([nutAt(xe + 1.12), nutEnd], 'zinc'),
     // raccord droit soudé du bossage (embout JIC vers -X)
-    at(lathe([[0, 0], [0.3, 0], [0.3, 0.3], [0.25, 0.35], [0.25, 0.7], [0, 0.7]].map(([r, y]) => [u(r), u(y)]), 'zinc', { seg: 16, axis: '-x' }), rad(X.portB - 0.5, TUBE + 0.3, PHI)),
+    at(lathe([[0, 0], [0.3, 0], [0.3, 0.3], [0.25, 0.35], [0.25, 0.7], [0, 0.7]].map(([r, y]) => [u(r), u(y)]), 'zinc', { seg: 10, axis: '-x' }), rad(X.portB - 0.5, TUBE + 0.3, PHI)),
   ), [0, 0.05, 0.05]);
 
   // ================================================ 12 — tête vissée
@@ -236,9 +237,9 @@ export default function P176(api) {
     [BORE - G, X.tubeEnd], [TUBE, X.tubeEnd], [TUBE, X.hpTop - 0.06], [TUBE - 0.06, X.hpTop],
     [1.6, X.hpTop], [1.6, X.hpTop - 0.22], [ROD + G, X.hpTop - 0.22], // lamage du racleur
     [ROD + G, X.hpBot + 0.08],
-  ], 'grey', 28);
+  ], 'grey', 20);
   // Racleur visible dans le lamage (fait partie de la tête montée)
-  const wiper = L([[ROD + G, X.hpTop - 0.22], [1.58, X.hpTop - 0.22], [1.58, X.hpTop + 0.02], [1.40, X.hpTop + 0.06], [ROD + G, X.hpTop + 0.02]], 'rubber', 24);
+  const wiper = L([[ROD + G, X.hpTop - 0.22], [1.58, X.hpTop - 0.22], [1.58, X.hpTop + 0.02], [1.40, X.hpTop + 0.06], [ROD + G, X.hpTop + 0.02]], 'rubber', 16);
   P('12', group(head, wiper), [0.22, 0, 0]);
 
   // ================================================ 6 — tige soudée
@@ -248,7 +249,7 @@ export default function P176(api) {
     L([[0, X.pistonEnd], [ROD - 0.06, X.pistonEnd], [ROD, X.pistonEnd + 0.06], [ROD, X.hpTop + 0.4], [0.72, X.neck], [0.72, X.eyeBase + 0.02], [0, X.eyeBase + 0.02]], 'chrome', 24),
     L([[0, X.blockEnd + 0.1], ...thread(PILOT, X.blockEnd + 0.1, X.pistonEnd - 0.1, { pitch: 1 / 12, maxTurns: 5 }), [PILOT, X.pistonEnd], [0, X.pistonEnd]], 'steel', 16),
     rodEye,
-    weldRing(u(0.8), u(0.2), 'grey', { axis: 'x', pos: v3(X.eyeBase - 0.05, 0, 0) }),
+    L([[0.7, X.eyeBase - 0.2], [0.86, X.eyeBase - 0.05], [0.9, X.eyeBase + 0.02], [0.7, X.eyeBase + 0.02]], 'grey', 16),
   ), [0.45, 0, 0]);
 
   // ================================================ 11 — piston, 13 — bague de blocage, 10 — vis
@@ -271,7 +272,7 @@ export default function P176(api) {
   // ================================================ 4 — rotules, 2 — circlips, 9 — graisseurs
   const ball = () => {
     // bague extérieure (largeur 1.75 po) et rotule (alésage 2 1/2 po, largeur 2.19 po)
-    const Lz = (pts, m, seg = 24) => lathe(pts.map(([r, y]) => [u(r), u(y)]), m, { seg, axis: 'z' });
+    const Lz = (pts, m, seg = 18) => lathe(pts.map(([r, y]) => [u(r), u(y)]), m, { seg, axis: 'z' });
     const R = 1.72; // rayon de la sphère
     const sph = [];
     for (let i = 0; i <= 8; i++) {
