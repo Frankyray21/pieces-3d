@@ -180,14 +180,14 @@ export default function P098(api) {
 
   // ================================================ 7 — axes des vérins de pivotement
   // Aux chapes basses de P102 (x = ±14.8 po) : axe Ø 1 po à tête, entretoises
-  // 6 de part et d'autre de l'œil de fond de P094, vis 18 en travers au bas,
+  // 6 de part et d'autre de l'œil de tige de P094, vis 18 en travers au bas,
   // rondelles 22 et écrou 25.
   {
     const { lug } = FRAME102;
     const yTop = lug.y[1] + lug.t; // dessus de la chape haute
     const yBot = lug.y[0]; // dessous de la chape basse
     const gap = lug.y[1] - (lug.y[0] + lug.t);
-    const t6 = (gap - CYL094.capEyeW) / 2 - 0.0008;
+    const t6 = (gap - CYL094.rodEyeW) / 2 - 0.0008; // œil de tige de P094 entre les chapes
     for (const s of [1, -1]) {
       const x = s * lug.x;
       const len = (yTop - yBot) / IN + 0.7;

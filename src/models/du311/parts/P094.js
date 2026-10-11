@@ -1,8 +1,11 @@
 // P094 — Vérin de pivotement du centreur CX016039 rév. 0 (page 94) :
 // « CYLINDER - Ø3" X 4 1/2" ST », alésage 3 po, course 4 1/2 po. Deux vérins
 // (repère 1 de P092) font pivoter le centreur fendu sur les axes du pied de
-// mât : œil de fond attelé aux chapes basses du châssis P102 (axe P098
-// repère 7), œil de tige sur l'axe Ø 1 po du pied de mât (P116 repère 5).
+// mât : œil de tige (contre-écrou 17) attelé aux chapes basses du châssis
+// P102 (axe P098 repère 7), œil de fond sur l'axe Ø 1 po du pied de mât (P116
+// repère 5). Option api.sub('P094', { extended: true }) : tige sortie (piston,
+// écrou, tige, contre-écrou, tête de tige et sa rotule décalés de la course),
+// position dessinée à la page 92.
 // Vérin soudé à tête intérieure, dessiné rentré, demi-coupe à gauche :
 // - tube soudé (15) : tube Ø 3 1/2 × 1/4 po, fond de 1/2 po (chanfrein de
 //   soudure), chape de fond plate (œil Ø 2 3/4 po), deux bossages d'orifice
@@ -68,10 +71,15 @@ export const CYL094 = {
   portY: [u(Y.portA), u(Y.portB)],
 };
 
-export default function P094(api) {
+export default function P094(api, opts = {}) {
   const { THREE, S } = api;
   const { extrude, slotted, roundHole, weldRing, merged, group, at } = S;
-  const P = (ref, obj, e) => api.part(ref, obj, e);
+  // Tige sortie : les pièces mobiles avancent de la course selon +Y.
+  const MOVING = new Set(['6', '10', '11', '12', '13', '14', '17']);
+  const P = (ref, obj, e) => {
+    if (opts.extended && MOVING.has(ref)) obj.position.y += u(STROKE);
+    return api.part(ref, obj, e);
+  };
   const circ = (cx, cy, r, a0, a1, n) => Array.from({ length: n + 1 }, (_, i) => {
     const a = a0 + ((a1 - a0) * i) / n;
     return [cx + r * Math.cos(a), cy + r * Math.sin(a)];

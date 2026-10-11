@@ -2,9 +2,9 @@
 // V30 SPLIT CENTRALIZER W/MOUNT », repère 22 de l'avance P032. Le centreur
 // fendu (3, P098) pivote par ses deux moyeux sur les axes Ø 2 po du pied de
 // mât (4, P116) ; deux vérins de pivotement Ø 3 × 4 1/2 po (1, P094),
-// dessinés rentrés (centreur dans l'axe de forage), relient les chapes basses
-// du châssis P102 (axes P098 repère 7) aux axes Ø 1 po du pied de mât (P116
-// repère 5), orifices tournés vers l'extérieur, un coude -04 × -06 (5) sur
+// dessinés sortis (centreur dans l'axe de forage, page 92), relient les axes
+// Ø 1 po du pied de mât (P116 repère 5, œil de fond) aux chapes basses du
+// châssis P102 (axes P098 repère 7, œil de tige), un coude -04 × -06 (5) sur
 // chaque orifice ; deux butées (2, P096) boulonnées sur la face avant du pied
 // de mât, sous les bras du châssis.
 // Repère : celui de P098, P102 et P116 — origine au milieu des deux axes de
@@ -40,26 +40,27 @@ export default function P092(api) {
   P('4', api.sub('P116'), [0, -0.25, -0.25]);
   P('3', api.sub('P098'), [0, 0.3, 0.15]);
 
-  // 1 — vérins de pivotement : œil de fond entre les chapes basses du châssis,
-  // œil de tige sur l'axe 5 du pied de mât ; œils verticaux.
+  // 1 — vérins de pivotement, sortis (centreur dans l'axe de forage, page 92) :
+  // œil de fond sur l'axe 5 du pied de mât, œil de tige entre les chapes
+  // basses du châssis ; œils verticaux.
   const { lug } = FRAME102;
   for (const s of [1, -1]) {
-    const a = V(s * lug.x, (lug.y[0] + lug.t + lug.y[1]) / 2, 0);
+    const rod = V(s * lug.x, (lug.y[0] + lug.t + lug.y[1]) / 2, 0);
     const [px, pz] = MOUNT116.cylPins.find(([x]) => Math.sign(x) === s);
-    const b = V(px, MOUNT116.cylEyeY, pz);
-    const Yl = b.clone().sub(a).normalize();
+    const cap = V(px, MOUNT116.cylEyeY, pz);
+    const Yl = rod.clone().sub(cap).normalize();
     // Z local (axes des œils) proche de la verticale ; orifices (-X local)
-    // vers l'extérieur du pied de mât.
+    // vers le haut et l'extérieur.
     const Zl = V(0, -s, 0).addScaledVector(Yl, s * Yl.y).normalize();
     const Xl = new THREE.Vector3().crossVectors(Yl, Zl);
     const g = new THREE.Group();
-    g.add(api.sub('P094'));
+    g.add(api.sub('P094', { extended: true }));
     g.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(Xl, Yl, Zl));
-    g.position.copy(a);
+    g.position.copy(cap);
     P('1', g, [s * 0.2, -0.12, 0]);
     // 5 — coudes -04 × -06 sur les deux orifices, nez vers le fond du vérin.
     for (const py of CYL094.portY) {
-      const p = a.clone().addScaledVector(Xl, CYL094.portX).addScaledVector(Yl, py);
+      const p = cap.clone().addScaledVector(Xl, CYL094.portX).addScaledVector(Yl, py);
       P('5', frame(jicElbow(S, THREE, 4), Yl.clone().negate(), Xl.clone().negate(), p.toArray()), [s * 0.28, -0.12, 0]);
     }
   }
