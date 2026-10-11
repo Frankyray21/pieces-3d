@@ -20,8 +20,8 @@
 // se fixe la plaque de liaison du mât P024), Y vers le haut, +Z côté
 // enrouleur (latéral, le long des barres). Barres à x = -0.16, y = ±0.30 ;
 // arbre de basculement à x = -0.20, y = -0.64 ; colonnes à z = ±0.62.
-// Encombrement ≈ 1.67 (X, des pieds des vérins de basculement à -1.35
-// jusqu'à la bride à 0.30) × 1.47 (Y, de -0.76 à +0.71) × 1.44 (Z) m.
+// Encombrement ≈ 1.6 (X, des pieds des vérins de basculement à -1.24
+// jusqu'à la bride à 0.30) × 1.85 (Y, de -1.12 à +0.73) × 1.42 (Z) m.
 // Vérins dessinés rentrés, glissière au milieu de sa course (±0.38 m).
 // Cotes : barres Ø 4 po et bagues Garlock 4 × 4 1/2 × 6 po (liste), bagues
 // 2 1/2 × 2 3/4 × 1 1/4, 1 1/4 × 1 1/2 × 5/8, 1 3/8 × 1 5/8 × 1 3/4 po, vis
@@ -108,7 +108,7 @@ export default function P170(api) {
   }
   // Chapes des vérins de basculement : deux joues 1 1/4 po sous la traverse
   // basse, de part et d'autre de l'œil de tige (axe à x = -0.43, y = -0.47).
-  const DUMP = { x: -0.43, y: -0.47, z: 0.22, ang: (25 * Math.PI) / 180 };
+  const DUMP = { x: -0.43, y: -0.47, z: 0.22, ang: (35 * Math.PI) / 180 };
   const cheekGap = CYL176.eyeWidth / 2 + 0.004, cheekT = 1.25 * IN;
   const lug = (x, y, r, h, a = 0) => [...arc(x, y, r, a - Math.PI / 2, a + Math.PI / 2, 10), [x + h * Math.cos(a + Math.PI) - r * Math.sin(a), y + h * Math.sin(a + Math.PI) + r * Math.cos(a)], [x + h * Math.cos(a + Math.PI) + r * Math.sin(a), y + h * Math.sin(a + Math.PI) - r * Math.cos(a)]];
   for (const s of [-1, 1]) {
@@ -120,15 +120,16 @@ export default function P170(api) {
     }
   }
   // Chapes des vérins de glissière : deux joues horizontales sur la face
-  // intérieure de la colonne (+Z en haut, -Z en bas), axe vertical.
+  // intérieure de la colonne +Z (une en haut, une en bas), axe vertical : les
+  // deux vérins, parallèles et de même sens, partent de cette colonne.
   const SL = { y: 0.44, eyeZ: 0.53 };
   const slCheek = CYL178.eyeWidth / 2 + 0.0035 + 0.003;
   for (const s of [1, -1]) {
-    const y = s * SL.y, zEye = s * SL.eyeZ;
+    const y = s * SL.y, zEye = SL.eyeZ;
     for (const k of [-1, 1]) {
       const yc = y + k * (slCheek + 0.008);
-      const pts = [[RX - 0.045, s * (CZ - 0.05)], [RX + 0.045, s * (CZ - 0.05)], [RX + 0.045, zEye], ...arc(RX, zEye, 0.045, 0, -Math.PI, 10).slice(1)].map(([x, z]) => [x, -z]);
-      const m = extrude(s > 0 ? pts : pts.slice().reverse(), 0.016, PAINT, { holes: [[RX, -zEye, 0.75 * IN]] });
+      const pts = [[RX - 0.045, CZ - 0.05], [RX + 0.045, CZ - 0.05], [RX + 0.045, zEye], ...arc(RX, zEye, 0.045, 0, -Math.PI, 10).slice(1)].map(([x, z]) => [x, -z]);
+      const m = extrude(pts, 0.016, PAINT, { holes: [[RX, -zEye, 0.75 * IN]] });
       m.rotation.x = -Math.PI / 2;
       m.position.y = yc;
       frameParts.push(m);
@@ -173,16 +174,17 @@ export default function P170(api) {
   // Taraudages du carter (repère P172 (x, y) → P170 (y, x)).
   const tapped = [[-0.07, 0.11], [0.07, 0.11], [-0.11, 0.035], [0.11, 0.035], [-0.11, -0.04], [0.11, -0.04], [-0.07, -0.115], [0.07, -0.115]].map(([x, y]) => [y, x]);
   for (const s of [-1, 1]) {
-    const ref = s < 0 ? '4' : '5';
+    // Plaque RH (5) côté -Z, à deux bras ; plaque LH (4) côté +Z, simple bielle.
+    const ref = s < 0 ? '5' : '4';
     const z0 = s * ZPL, z1 = s * (ZPL + PT);
     const zb = s * (ZPL + BOSS_L);
     const parts = [slabZ(plateOutline, Math.min(z0, z1), Math.max(z0, z1), PAINT, [[0, 0, 0.1], [RX, RY, 2.25 * IN + 0.002], [RX, -RY, 2.25 * IN + 0.002]])];
     for (const y of [-RY, RY]) parts.push(tubeZ(0.08, 2.25 * IN + 0.002, Math.min(z0, zb), Math.max(z0, zb), PAINT, RX, y));
-    // bras et chape : au-dessus (LH) ou au-dessous (RH) du bossage
-    const ya = (s < 0 ? 1 : -1) * SL.y;
-    const zTip = s * (CYL178.pinRetracted - SL.eyeZ); // œil de tige du vérin
+    // bras et chapes (plaque RH seulement) : au-dessus de la barre haute et
+    // au-dessous de la barre basse, jusqu'aux yeux de tige des deux vérins
+    const zTip = SL.eyeZ - CYL178.pinRetracted; // œil de tige des vérins
     const zArm0 = z1, zArm1 = zTip;
-    for (const k of [-1, 1]) {
+    for (const ya of s < 0 ? [SL.y, -SL.y] : []) for (const k of [-1, 1]) {
       const yc = ya + k * (slCheek + 0.008);
       const zA = Math.min(zArm0, zArm1), zB = Math.max(zArm0, zArm1);
       const pts = (s < 0
@@ -193,8 +195,8 @@ export default function P170(api) {
       m.position.y = yc;
       parts.push(m);
     }
-    // âme reliant la chape au bossage de la barre
-    parts.push(at(box(0.09, 0.1, 0.03, PAINT, { r: 0.004 }), [RX, Math.sign(ya) * 0.415, z1 + s * 0.015]));
+    // âmes reliant les chapes aux bossages des barres
+    if (s < 0) for (const ya of [SL.y, -SL.y]) parts.push(at(box(0.09, 0.1, 0.03, PAINT, { r: 0.004 }), [RX, Math.sign(ya) * 0.415, z1 + s * 0.015]));
     P(ref, group(merged(parts, PAINT)), [0, 0, s * 0.3]);
 
     // 23 + 25 — vis H 5/8 UNF × 1 1/2 et rondelles : plaque sur le carter
@@ -228,12 +230,12 @@ export default function P170(api) {
   }
 
   // ---------------------------------------------------------------- 19 — vérins de glissière (P178)
-  // Vérin haut : œil de fond sur la chape de la colonne +Z, tige vers -Z
-  // jusqu'au bras de la plaque LH ; vérin bas symétrique. Axes des yeux
+  // Deux vérins parallèles de même sens : œil de fond sur les chapes de la
+  // colonne +Z, tige vers -Z jusqu'aux bras de la plaque RH. Axes des yeux
   // verticaux, bloc des valves vers l'arrière (-X).
   for (const s of [1, -1]) {
-    const y = s * SL.y, zF = s * SL.eyeZ, zT = zF - s * CYL178.pinRetracted;
-    P('19', frame(api.sub('P178'), [RX, y, zF], [0, 0, -s], [-1, 0, 0], [0, s, 0]), [0, s * 0.35, 0]);
+    const y = s * SL.y, zF = SL.eyeZ, zT = zF - CYL178.pinRetracted;
+    P('19', frame(api.sub('P178'), [RX, y, zF], [0, 0, -1], [-1, 0, 0], [0, 1, 0]), [0, s * 0.35, 0]);
     // 1 — axe de l'œil de fond (Ø 1 1/4), tête en haut, goupille fendue dessous ;
     // 15 — bagues 1 1/4 × 1 1/2 × 5/8 dans les joues de la chape.
     // 2 — axe de l'œil de tige (Ø 1 3/8) ; 16 — bagues 1 3/8 × 1 5/8 × 1 3/4 ;
@@ -266,7 +268,7 @@ export default function P170(api) {
 
   // ---------------------------------------------------------------- 18 — vérins de basculement (P176)
   // Œil de tige dans la chape sous la traverse basse, fond vers l'arrière et
-  // le bas (25° sous l'horizontale) vers les chapes du porteur.
+  // le bas (35° sous l'horizontale ; P168 suggère plutôt 45°, ce qui mettrait les pieds au sol avec la hauteur retenue) vers les chapes du porteur.
   const dir = [Math.cos(DUMP.ang), Math.sin(DUMP.ang), 0];
   for (const s of [-1, 1]) {
     const zc = s * DUMP.z;
@@ -294,7 +296,7 @@ export default function P170(api) {
   // ---------------------------------------------------------------- 14 — paliers à semelle de l'arbre de basculement
   // Palier en fonte : semelle 0.36 × 0.05 × 0.10 à deux trous oblongs, corps
   // rond Ø 0.2, chapeau ; deux vis H 1 po × 3 3/4 (22) et rondelles Nord-Lock (26).
-  const ZB = 0.42;
+  const ZB = 0.49;
   for (const s of [-1, 1]) {
     const zc = s * ZB;
     const yb = PY - 0.13; // dessous de la semelle

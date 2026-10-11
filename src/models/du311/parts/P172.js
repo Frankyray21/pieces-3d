@@ -205,9 +205,10 @@ export default function P172(api) {
 
   // 35 + 43 — vis H 5/8 UNF × 2 1/4 et rondelles du couvercle ouvert
   const yO = yTop + 0.029;
+  const yS = yO + 0.025; // dessus de la semelle de la bague 31/32
   for (const [x, z] of capPts) {
-    P('43', at(washerD(S, 0.625 * IN, 'zinc', { od: 1.31 * IN, t: 0.095 * IN }), [x, yO, z]), [0, 0.5, 0]);
-    P('35', at(hexScrew(S, 0.625 * IN, 2.25 * IN), [x, yO + 0.095 * IN, z]), [0, 0.6, 0]);
+    P('43', at(washerD(S, 0.625 * IN, 'zinc', { od: 1.31 * IN, t: 0.095 * IN }), [x, yS, z]), [0, 0.5, 0]);
+    P('35', at(hexScrew(S, 0.625 * IN, 2.25 * IN), [x, yS + 0.095 * IN, z]), [0, 0.6, 0]);
   }
   // 34 + 40 — vis CHC 5/8 UNF × 1 3/4 et rondelles à haut collet du fond fermé (têtes en bas)
   const yC = yBot - 0.016;
@@ -223,8 +224,8 @@ export default function P172(api) {
   ], 'brass');
   P('3', put(nipple(), [-0.085, yC, 0], [0, -1, 0]), [0, -0.3, 0]);
   P('3', put(nipple(), [0.085, yC, 0], [0, -1, 0]), [0, -0.3, 0]);
-  P('3', at(nipple(), [0, yO, 0.14]), [0, 0.3, 0.05]);
-  P('3', at(nipple(), [0, yO, -0.14]), [0, 0.3, -0.05]);
+  P('3', at(nipple(), [0, yS, 0.14]), [0, 0.55, 0.05]);
+  P('3', at(nipple(), [0, yS, -0.14]), [0, 0.55, -0.05]);
   P('4', put(group(
     lathe([[0, 0], [0.011, 0], [0.011, 0.007], [0, 0.007]], 'zinc', { seg: 6 }),
     lathe([[0, 0.007], [0.012, 0.007], [0.012, 0.011], [0.009, 0.016], [0, 0.017]], 'brass', { seg: 18 }),
@@ -236,7 +237,7 @@ export default function P172(api) {
   const PITCH = (2 * Math.PI * 0.059) / 20;
   for (const s of [1, -1]) {
     const pts = [];
-    const L = 0.355, zt = 0.053, zr = 0.066, zb = 0.12;
+    const L = 0.355, zt = 0.053, zr = 0.066, zb = TZ + 0.002;
     const n = Math.floor((2 * L - 0.04) / PITCH);
     const x0 = -(n * PITCH) / 2;
     pts.push([-L, zb], [-L, zr]);
@@ -247,10 +248,25 @@ export default function P172(api) {
     pts.push([L, zr], [L, zb]);
     // Contour dans le sens trigonométrique en (x, z) ; miroir pour la crémaillère basse.
     const outline = (s > 0 ? pts.slice().reverse() : pts.map(([x, z]) => [x, -z]));
-    const rack = slabY(outline, -0.032, 0.032, 'darkSteel');
-    P('8', group(rack), [0, 0, s * 0.3]);
-    // 9 — réglette de portée bronze sur le dos de la crémaillère, sous les vis de réglage
-    P('9', at(box(0.2, 0.06, 0.012, 'brass', { r: 0.002 }), [0, 0, s * 0.127]), [0, 0, s * 0.42]);
+    // Section en D (coupe B-B) : plat denté face au pignon sur toute la
+    // largeur du pignon (y ±0.045), dos en demi-cylindre R 52 coaxial au tube.
+    const teeth = slabY(outline, -0.045, 0.045, 'darkSteel');
+    const back = new THREE.CylinderGeometry(0.052, 0.052, 2 * L, 28, 1, false, s > 0 ? -Math.PI / 2 : Math.PI / 2, Math.PI);
+    back.rotateZ(-Math.PI / 2);
+    back.translate(0, 0, s * TZ);
+    P('8', merged([teeth, new THREE.Mesh(back)], 'darkSteel'), [0, 0, s * 0.3]);
+    // 9 — réglette de portée bronze : patin cintré (R 54 → 60, ±60°) qui
+    // épouse le dos de la crémaillère, sous les vis de réglage.
+    const pad = new THREE.Shape();
+    pad.absarc(0, 0, 0.06, Math.PI / 2 - 1.05, Math.PI / 2 + 1.05, false);
+    pad.absarc(0, 0, 0.054, Math.PI / 2 + 1.05, Math.PI / 2 - 1.05, true);
+    const padGeo = new THREE.ExtrudeGeometry(pad, { depth: 0.15, bevelEnabled: false, curveSegments: 16 });
+    padGeo.translate(0, 0, -0.075);
+    // (a, b, c) → (x = c, y = a, z = s·b) : arc vers ±Z, longueur selon X
+    padGeo.applyMatrix4(new THREE.Matrix4().set(0, 0, 1, 0, 1, 0, 0, 0, 0, s, 0, 0, 0, 0, 0, 1));
+    if (s < 0) padGeo.applyMatrix4(new THREE.Matrix4().makeScale(-1, 1, 1));
+    padGeo.translate(0, 0, s * TZ);
+    P('9', merged([new THREE.Mesh(creaseNormals(padGeo))], 'brass'), [0, 0, s * 0.42]);
     for (const e of [-1, 1]) {
       // 10 — piston au bout de la crémaillère : deux gorges de bague d'usure, gorge de joint au centre
       const xc = e * 0.391;
@@ -343,7 +359,7 @@ export default function P172(api) {
 
   // ---------------------------------------------------------------- 31, 32 — bague de serrage fendue
   // Moitiés en D (fente dans le plan x = 0, 1 mm de jour) : col Ø 240 de
-  // y = 0.1725 à 0.225, collerette Ø 320 de 0.225 à 0.262 ; serrées par deux
+  // y = 0.1975 à 0.21 sur une semelle fendue, collerette Ø 320 de 0.21 à 0.247 ; serrées par deux
   // vis CHC 3/4 × 2 1/4 (38) tangentes, têtes noyées dans la moitié alésée.
   const halfRing = (ro, ri, side) => {
     const pts = [];
@@ -358,30 +374,46 @@ export default function P172(api) {
     }
     return side > 0 ? pts : pts.reverse();
   };
+  // Semelle fendue 0.31 × 0.31 × 0.025 posée sur le couvercle 17 (vis 35).
+  const sole = (side) => {
+    const pts = [[0.0005, -0.155], [0.155, -0.155], [0.155, 0.155], [0.0005, 0.155]];
+    for (let i = 0; i <= 14; i++) {
+      const a = Math.PI / 2 - (Math.PI * i) / 14;
+      pts.push([0.0005 + Math.cos(a) * 0.0475, Math.sin(a) * 0.0475]);
+    }
+    const p = pts.map(([x, z]) => [side * x, z]);
+    return side > 0 ? p.reverse() : p;
+  };
   const collar = (side) => merged([
-    slabY(halfRing(0.12, 0.0475, side), yO, 0.225, PAINT),
-    slabY(halfRing(0.16, 0.0465, side), 0.225, 0.262, PAINT),
+    slabY(sole(side), yO, yS, PAINT),
+    slabY(halfRing(0.12, 0.0475, side), yS, 0.21, PAINT),
+    slabY(halfRing(0.16, 0.0465, side), 0.21, 0.247, PAINT),
   ], PAINT);
   P('31', group(collar(1)), [0.28, 0.46, 0]);
   P('32', group(collar(-1)), [-0.28, 0.46, 0]);
   for (const z of [-0.11, 0.11]) {
-    P('41', put(washerD(S, 0.75 * IN, 'darkSteel', { od: 1.25 * IN, t: 0.19 * IN }), [-0.035, 0.2435, z], [-1, 0, 0]), [-0.42, 0.46, 0]);
-    P('38', put(socketScrew(S, 0.75 * IN, 2.25 * IN), [-0.035 - 0.19 * IN, 0.2435, z], [-1, 0, 0]), [-0.52, 0.46, 0]);
+    P('41', put(washerD(S, 0.75 * IN, 'darkSteel', { od: 1.25 * IN, t: 0.19 * IN }), [-0.035, 0.2285, z], [-1, 0, 0]), [-0.42, 0.46, 0]);
+    P('38', put(socketScrew(S, 0.75 * IN, 2.25 * IN), [-0.035 - 0.19 * IN, 0.2285, z], [-1, 0, 0]), [-0.52, 0.46, 0]);
   }
   // 33 — clavette carrée 1 1/4 × 5 1/4 po entre l'arbre, la bague et la bride
   P('33', at(box(1.25 * IN, 5.25 * IN, 1.25 * IN, 'steel', { r: 0.001 }), [0, 0.297 - 2.625 * IN, 0.046 + 0.4 * IN]), [0, 0.62, 0.12]);
 
   // ---------------------------------------------------------------- 30 — bride de fixation
-  // Disque Ø 320 × 35 percé au centre ; douze vis H 3/4 × 2 1/2 (37) et
-  // rondelles (44) la serrent sur la collerette de la bague.
-  const holes = [[0, 0, 0.047]];
-  P('30', group(at(plate(0.32, 0.32, 0.035, PAINT, { holes, r: 0.16 }), [0, 0.2795, 0])), [0, 0.7, 0]);
-  const yF = 0.297;
+  // Disque Ø 320 de y = 0.274 à 0.297, moyeu conique Ø 190 qui descend
+  // dans la collerette de la bague (coupe B-B). Douze vis H 3/4 × 2 1/2 (37)
+  // et rondelles (44) passées par-dessous, têtes dans le jour sous la bride :
+  // leurs tiges dépassent de 40 mm et servent de goujons de fixation de la
+  // plaque de liaison du mât.
+  P('30', lathe([
+    [0.047, 0.247], [0.092, 0.247], [0.095, 0.25], [0.095, 0.274], [0.157, 0.274], [0.16, 0.277],
+    [0.16, 0.294], [0.157, 0.297], [0.047, 0.297], [0.047, 0.247],
+  ], PAINT, { seg: 48 }), [0, 0.7, 0]);
+  const yF = 0.274;
   for (let i = 0; i < 12; i++) {
     const a = ((i + 0.5) / 12) * Math.PI * 2;
     const x = Math.cos(a) * ACT172.boltR, z = Math.sin(a) * ACT172.boltR;
-    P('44', at(washerD(S, 0.75 * IN, 'zinc', { od: 1.47 * IN, t: 0.134 * IN }), [x, yF, z]), [0, 0.86, 0]);
-    P('37', at(hexScrew(S, 0.75 * IN, 2.5 * IN), [x, yF + 0.134 * IN, z]), [0, 0.98, 0]);
+    P('44', put(washerD(S, 0.75 * IN, 'zinc', { od: 1.47 * IN, t: 0.134 * IN }), [x, yF, z], [0, -1, 0]), [0, 0.62, 0]);
+    P('37', put(hexScrew(S, 0.75 * IN, 2.5 * IN), [x, yF - 0.134 * IN, z], [0, -1, 0]), [0, 0.56, 0]);
   }
 
   // ---------------------------------------------------------------- 18 — rondelle d'arrêt et ses vis 39 / rondelles 42
