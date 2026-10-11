@@ -1,5 +1,7 @@
 // Généré par scripts/parts-index.mjs — ne pas modifier à la main.
 // Un builder par assemblage du manuel (voir README.md dans ce dossier).
+import P418 from './P418.js';
 
-
-export default {};
+export default {
+  'P418': P418,
+};
