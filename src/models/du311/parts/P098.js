@@ -191,7 +191,12 @@ export default function P098(api) {
     for (const s of [1, -1]) {
       const x = s * lug.x;
       const len = (yTop - yBot) / IN + 0.7;
-      const p7 = L(S, [[0, -len], [0.46, -len], [0.5, -len + 0.05], [0.5, 0], [0.75, 0], [0.75, 0.25], [0.7, 0.3], [0, 0.3]], 'steel', 24);
+      // Bout percé en travers (Ø 0.28 po, selon Z) pour la vis 18.
+      const yh0 = -(yTop - yBot) / IN - 0.35;
+      const p7 = merged([
+        L(S, [[0, -len + 0.7], [0.5, -len + 0.7], [0.5, 0], [0.75, 0], [0.75, 0.25], [0.7, 0.3], [0, 0.3]], 'steel', 24),
+        S.slotted(u(0.5), u(0.02), u(-len), u(-len + 0.7), S.roundHole(0, u(yh0), u(0.14), u(0.5), { through: true, steps: 6 }), 'steel', { seg: 24 }),
+      ], 'steel');
       P('7', at(p7, [x, yTop, 0]), [0, 0.2, 0]);
       for (const y of [lug.y[0] + lug.t, lug.y[1] - t6]) P('6', at(L(S, [[0.52, 0], [0.875, 0], [0.875, t6 / IN], [0.52, t6 / IN], [0.52, 0]], 'zinc', 28), [x, y, 0]), [s * 0.08, 0, 0]);
       const yh = yBot - u(0.35);
