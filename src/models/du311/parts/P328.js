@@ -237,7 +237,12 @@ export default function P328(api) {
   P('34', group(elec, box(0.4, 0.008, 0.06, 'grey', { pos: [-1.38, 0.98, -0.47] })), [0, 0, -0.25]);
 
   // ================================================================ équipements hydrauliques et divers
-  for (const [id, pos, rot, e] of PLACE) { try { sub(id, pos, rot, e); } catch (err) { console.warn(String(err)); } } // TEMP
+  for (const [id, pos, rot, e] of PLACE) sub(id, pos, rot, e);
+  // 40 — télésurveillance : support sur le montant avant gauche de la plateforme,
+  // antenne sur le toit de la garde P372 (perçage (0.16, 0.60, −0.06) de son repère).
+  const o382 = [PLAT.x1 - 0.025, 0.95, PLAT.z + 0.025];
+  const ant = [-1.5 + 0.06, 1.06 + 0.6, 0.16].map((v, i) => v - o382[i]);
+  P('40', at(api.sub('P382', { ant }), o382), [-0.2, 0, 0.35]);
 
   void cyl; void IN;
   return { view: { dir: [0.9, 0.75, 1.15] } };
@@ -266,5 +271,4 @@ const PLACE = [
   ['P366', [-1.95, 0.22, -0.3], null, [-0.3, -0.1, 0]],
   ['P374', [-2.0, 0.62, 0.25], [0, -R, 0], [-0.3, 0, 0]],
   ['P388', [1.3, DECK + 0.364, -0.42], null, [0, 0.45, 0]],
-  ['P382', [-1.38, 0.75, -0.51], [0, Math.PI, 0], [0, 0, -0.35]],
 ];

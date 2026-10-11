@@ -46,9 +46,9 @@ export default function P382(api, opts = {}) {
   const xp = xw - T - pw / 2; // milieu de la platine
   const holesP = DCU.tabs.map(([x, y]) => [XC + x - xp, -y, 0.0036]);
   const mount = merged([
-    at(K.plate(0.04, 0.36, T, 'black', { holes: KIT382.holes.map(([x, y]) => [x, -y, 0.0048]), seg: 8 }), [0, 0, T / 2], [Math.PI / 2, 0, 0]),
-    at(K.plate(ZP + T, ph, T, 'black'), [xw - T / 2, 0, (ZP + T) / 2], [Math.PI / 2, Math.PI / 2, 0]),
-    at(K.plate(pw, ph, T, 'black', { holes: holesP, seg: 8 }), [xp, 0, ZP + T / 2], [Math.PI / 2, 0, 0]),
+    at(K.plate(0.04, 0.36, T, 'black', { holes: KIT382.holes.map(([x, y]) => [x, -y, 0.0048]), seg: 5 }), [0, 0, T / 2], [Math.PI / 2, 0, 0]),
+    at(K.plate(ZP + T, ph, T, 'black'), [xw - T / 2, 0, (ZP + T) / 2], [Math.PI / 2, 0, Math.PI / 2]),
+    at(K.plate(pw, ph, T, 'black', { holes: holesP, seg: 5 }), [xp, 0, ZP + T / 2], [Math.PI / 2, 0, 0]),
   ], 'black');
   P('3', mount, [0, 0, 0.1]);
 
@@ -73,7 +73,7 @@ export default function P382(api, opts = {}) {
   // Repère local : origine sur le dessus du toit, +Y vers le haut.
   const tr = KIT382.roofT;
   const ant = group(
-    lathe([[0, 0], [0.018, 0], [0.018, 0.006], [0.0155, 0.009], [0.0135, 0.011], [0.0135, 0.07], [0.011, 0.078], [0.006, 0.0815], [0, 0.0825]], 'black', { seg: 8 }),
+    lathe([[0, 0], [0.018, 0], [0.018, 0.006], [0.0135, 0.011], [0.0135, 0.07], [0.011, 0.078], [0.006, 0.0815], [0, 0.0825]], 'black', { seg: 8 }),
     merged([
       lathe([[0, -tr - 0.024], [0.0075, -tr - 0.024], [0.0075, -tr], [0.006, -tr], [0, -tr]], 'steel', { seg: 6 }),
       at(K.hex(0.022, 0.005), [0, -tr - 0.0025, 0]), // contre-écrou sous le toit
@@ -84,7 +84,7 @@ export default function P382(api, opts = {}) {
   // ------------------------------------- 2 — câble d'antenne N / N, 4 m
   // Fiches N mâles aux deux bouts (écrou moleté, manchon), câble Ø 10 mm.
   const plug = () => merged([
-    lathe([[0, 0], [0.0105, 0], [0.0105, 0.02], [0.0075, 0.023], [0.0068, 0.04], [0, 0.04]], 'steel', { seg: 7 }),
+    lathe([[0, 0], [0.0105, 0], [0.0105, 0.02], [0.0075, 0.023], [0.0068, 0.04], [0, 0.04]], 'steel', { seg: 6 }),
   ], 'steel');
   const jack = [XC + DCU.nJack[0], DCU.nJack[1], ZE + DCU.nJack[2]]; // bout de la traversée N du coffret
   const a0 = [jack[0], jack[1] + 0.012, jack[2]]; // fiche : de a0 vers le bas
@@ -117,7 +117,7 @@ export default function P382(api, opts = {}) {
   }
   const pts = route(n ? (lo + hi) / 2 : 0.0001, n);
   const plugs = merged([K.toward(plug(), [0, -1, 0], a0), K.toward(plug(), [0, -1, 0], top)], 'steel');
-  P('2', group(tube(pts, R, 'black', { seg: 52, radial: 4, ends: 'none' }), plugs), [0.12, 0, 0]);
+  P('2', group(tube(pts, R, 'black', { seg: 60, radial: 4, ends: 'none' }), plugs), [0.12, 0, 0]);
 
   return { view: { dir: [0.9, 0.45, 1] } };
 }

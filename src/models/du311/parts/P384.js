@@ -162,14 +162,20 @@ export default function P384(api) {
   const c22 = cableFit(THREE, [
     ...ext(-GX), [-0.075, -0.1, 0.09], [-0.08, 0.0, 0.1], [-0.06, 0.06, 0.112], [-0.052, 0.074, 0.112], [-0.052, 0.074, Z3[1] + 0.001],
   ], 15 * IN, { move: [5], dir: [-1, 0, 0], max: 0.035 });
-  P('22', tube(c22.pts, 0.0045, 'rubber', { seg: 20, radial: 5, ends: 'none' }), [0, 0, 0]);
+  // Lignes en pouces (quantité = longueur) : un tronçon de 1 po par unité,
+  // bout à bout le long du tracé (check-models compte un objet par unité).
+  const inches = (pts, n, r, mat) => {
+    const c = new THREE.CatmullRomCurve3(pts.map((q) => new THREE.Vector3(...q)));
+    return Array.from({ length: n }, (_, i) => tube([0, 0.5, 1].map((k) => c.getPointAt((i + k) / n).toArray()), r, mat, { seg: 2, radial: 5, ends: 'none' }));
+  };
+  for (const t of inches(c22.pts, 15, 0.0045, 'rubber')) P('22', t, [0, 0, 0]);
 
   const YK = [0.055, -0.035, 0.115]; // moyeu du Y CAN
   const c23 = cableFit(THREE, [
     ...ext(GX), [0.09, -0.11, 0.085], [0.108, -0.02, 0.09], [0.105, 0.115, 0.1], [0.06, 0.132, 0.11],
     [0.055, 0.07, 0.115], [YK[0], YK[1] + 0.077, YK[2]],
   ], 24 * IN, { move: [7], dir: [-1, 0, 0], max: 0.12 });
-  P('23', tube(c23.pts, 0.0042, 'black', { seg: 26, radial: 5, ends: 'none' }), [0, 0, 0]);
+  for (const t of inches(c23.pts, 24, 0.0042, 'black')) P('23', t, [0, 0, 0]);
 
   // Gaines thermo (longueur 1,5 po) sur le raccord câble / adaptateur.
   const shrink = (r0, r1, len) => lathe([[r0 - 0.0007, 0], [r0, 0], [r0, len - 0.011], [r1, len - 0.006], [r1, len], [r1 - 0.0007, len]], 'hose', { seg: 7 });
