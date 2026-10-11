@@ -98,9 +98,9 @@ export default function P058(api) {
   // ------------------------------------------------ raccords de la tête (moteurs)
   // Moteur −X : adaptateurs longs 5 (ORB-10 / JIC-12) puis tés tournants 1,
   // passage vers l'avant (arceaux des 11) ; branche du té extérieur vers −X,
-  // du té intérieur vers le bas (arrivées des 9).
+  // du té intérieur vers le bas et −X à 45° (arrivées des 9).
   const xm = (s, k) => s * 0.235 + k * 0.035;
-  const tees = [[-1, NX], [1, NY]].map(([k, br]) => {
+  const tees = [[-1, NX], [1, [-Math.SQRT1_2, -Math.SQRT1_2, 0]]].map(([k, br]) => {
     const [a] = fit('5', straight('orb', 10, 12, { long: true }), [xm(-1, k), YM, ZM], Z, null, [0, 0, 0.1]);
     const [run, b] = fit('1', tee('swivel', 12), a.p, Z, br, [0, 0, 0.2]);
     return { run, br: b };
