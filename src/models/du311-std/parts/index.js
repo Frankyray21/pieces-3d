@@ -1,5 +1,8 @@
 // Généré par scripts/parts-index.mjs — ne pas modifier à la main.
 // Un builder par assemblage du manuel (voir README.md dans ce dossier).
+import P156 from './P156.js';
+import P158 from './P158.js';
+import P160 from './P160.js';
 import P168 from './P168.js';
 import P170 from './P170.js';
 import P174 from './P174.js';
@@ -15,6 +18,9 @@ import P202 from './P202.js';
 import P204 from './P204.js';
 
 export default {
+  'P156': P156,
+  'P158': P158,
+  'P160': P160,
   'P168': P168,
   'P170': P170,
   'P174': P174,
