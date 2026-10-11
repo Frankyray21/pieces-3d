@@ -15,15 +15,15 @@
 // vilebrequin, dans le plan de la face SAE du carter de volant ; +X vers
 // l'avant (soufflante), Y vers le haut, +Z à droite en regardant vers l'avant
 // (côté injection, filtres et capot d'air), −Z côté échappement et démarreur.
-// Dessous des pattes à y = ENG.footY. Encombrement ≈ 0.93 (X, de −0.10 à
-// 0.83) × 0.80 (Y, de −0.30 à 0.50 ; boîtier de commande jusqu'à 0.59) ×
+// Dessous des pattes à y = ENG.footY. Encombrement ≈ 0.98 (X, de −0.01 à
+// 0.97, boîtier de commande compris) × 0.80 (Y, de −0.30 à 0.50 ; boîtier jusqu'à 0.71) ×
 // 0.60 (Z) m.
 // Cotes : alésage 102 mm (Deutz), entraxe des cylindres estimé 125 mm, carter
 // de volant SAE 3 (alésage 16,125 po, 12 vis sur Ø 16,875 po), volant SAE
 // 11,5 po ; le reste d'après les proportions de la vue de la page 260.
 // Boîtier de commande (6) : livré avec le moteur (« INCLUDED W/ CP004250 »,
-// page 256) ; posé ici sur une console au-dessus du carter de volant, face
-// vers +Z — son emplacement sur la machine est donné par P256 / P242.
+// page 256) ; dessiné à sa place de la page 256, posé sur le refroidisseur
+// d'huile (P256 rep. 7) devant la soufflante, façade vers +X (ENG.panel).
 import { ENG, IN, MM } from './_moteur_surpresseur.js';
 
 export default function P260(api) {
@@ -80,7 +80,7 @@ export default function P260(api) {
   grey.push(bx(BX0 + 0.03, BX1 - 0.03, ENG.panY, -0.142, -0.15, 0.15, 'grey', 0.02));
   for (let i = 0; i < 5; i++) {
     const x = BX0 + 0.035 + i * 0.11;
-    for (const s of [-1, 1]) grey.push(bx(x - 0.007, x + 0.007, -0.125, ENG.deckY - 0.02, s * 0.17 - 0.012, s * 0.17 + 0.012, 'grey', 0.004));
+    for (const s of [-1, 1]) grey.push(bx(x - 0.007, x + 0.007, -0.125, ENG.deckY - 0.02, s * 0.17 - 0.012, s * 0.17 + 0.012, 'grey'));
   }
   stl.push(at(bolt(0.02, 0.012, 'steel', { axis: '-y' }), [0.35, ENG.panY, 0.08])); // bouchon de vidange
   // Cylindres à ailettes (fonte), culasses à ailettes (alliage léger),
@@ -94,12 +94,12 @@ export default function P260(api) {
   finProf.push([0.06, ENG.headY], [0.051, ENG.headY]);
   const covers = [];
   for (const x of ENG.cylX) {
-    iron.push(lathe(finProf, 'castIron', { seg: 40, pos: [x, 0, 0] }));
+    iron.push(lathe(finProf, 'castIron', { seg: 24, pos: [x, 0, 0] }));
     // Culasse : corps, ailettes horizontales, sièges des tubulures.
     alu.push(bx(x - 0.058, x + 0.058, ENG.headY, ENG.coverY, -0.095, 0.095, 'castAlu', 0.006));
     for (let k = 0; k < 5; k++) {
       const y = ENG.headY + 0.012 + k * 0.018;
-      alu.push(bx(x - 0.061, x + 0.061, y, y + 0.006, -0.11, 0.11, 'castAlu', 0.002));
+      alu.push(bx(x - 0.061, x + 0.061, y, y + 0.006, -0.11, 0.11, 'castAlu'));
     }
     alu.push(bx(x - 0.03, x + 0.03, ENG.headY + 0.04, ENG.headY + 0.085, -0.12, -0.095, 'castAlu', 0.004)); // siège échappement
     alu.push(bx(x - 0.03, x + 0.03, ENG.headY + 0.05, ENG.headY + 0.09, 0.095, 0.12, 'castAlu', 0.004)); // siège admission
@@ -242,29 +242,38 @@ export default function P260(api) {
     for (let i = 0; i < 12; i++) { const a = (i / 12) * Math.PI * 2 + 0.26; holes.push([Math.cos(a) * 0.1667, Math.sin(a) * 0.1667, 0.0055]); }
     for (let i = 0; i < 8; i++) { const a = (i / 8) * Math.PI * 2 + 0.2; holes.push([Math.cos(a) * 0.075, Math.sin(a) * 0.075, 0.0065]); }
     holes.push([0, 0, 0.05]);
-    const pts = arc(0, 0, R, 0, Math.PI * 2, 64).slice(0, -1);
-    P('5', slabX(pts, VX - t, VX, 'steel', holes), [-0.3, 0, 0]);
+    // Contour et trous en polygones (12 côtés par trou) : plaque légère.
+    const ring = (cx, cy, r, n) => Array.from({ length: n }, (_, k) => {
+      const a = (k / n) * Math.PI * 2;
+      return new THREE.Vector2(cx + r * Math.cos(a), cy + r * Math.sin(a));
+    });
+    const shape = new THREE.Shape(ring(0, 0, R, 72));
+    for (const [hx, hy, hr] of holes) shape.holes.push(new THREE.Path(ring(hx, hy, hr, hr > 0.02 ? 36 : 12).reverse()));
+    const geo = new THREE.ExtrudeGeometry(shape, { depth: t, bevelEnabled: false, curveSegments: 1 });
+    geo.rotateY(-Math.PI / 2);
+    geo.translate(VX, 0, 0);
+    P('5', new THREE.Mesh(geo, box(0.01, 0.01, 0.01, 'steel').material), [-0.3, 0, 0]);
   }
 
   // ---------------------------------------------------------------- 6 — boîtier de commande
   // Coffret à six instruments (manomètre d'huile, thermomètre, compte-tours,
   // ampèremètre, horamètre, voyants), contacteur à clé et voyants, sur une
-  // console au-dessus du carter de volant ; façade vers +Z.
+  // le refroidisseur d'huile de P256, devant la soufflante ; façade vers +X.
   {
-    const cx = 0.0, cy = 0.45, cz = 0.22, w = 0.2, h = 0.28, d = 0.14;
-    const bodyBox = box(w, h, d, 'black', { r: 0.008, pos: [cx, cy, cz] });
-    const lid = box(w - 0.014, h - 0.014, 0.004, 'black', { r: 0.004, pos: [cx, cy, cz + d / 2 + 0.002] });
+    // Façade vers +X : x de la façade = cx + d / 2.
+    const { x: cx, y: cy, z: cz } = ENG.panel;
+    const w = 0.2, h = 0.28, d = 0.14;
+    const bodyBox = box(d, h, w, 'black', { r: 0.008, pos: [cx, cy, cz] });
+    const lid = box(0.004, h - 0.014, w - 0.014, 'black', { r: 0.004, pos: [cx + d / 2 + 0.002, cy, cz] });
     const gauges = [];
-    const gp = [[-0.05, 0.085], [0.04, 0.085], [-0.05, 0.015], [0.04, 0.015], [-0.05, -0.055]];
-    gp.forEach(([gx, gy], k) => gauges.push(at(gauge(k < 4 ? 0.032 : 0.026, { axis: 'z' }), [cx + gx, cy + gy, cz + d / 2 + 0.012])));
+    const gp = [[0.05, 0.085], [-0.04, 0.085], [0.05, 0.015], [-0.04, 0.015], [0.05, -0.055]];
+    gp.forEach(([gz, gy], k) => gauges.push(at(gauge(k < 4 ? 0.032 : 0.026, { axis: 'x' }), [cx + d / 2 + 0.012, cy + gy, cz + gz])));
     const sw = [];
-    sw.push(at(cyl(0.014, 0.012, 'chrome', { axis: 'z', seg: 20 }), [cx + 0.045, cy - 0.06, cz + d / 2 + 0.008])); // contacteur à clé
-    for (let k = 0; k < 4; k++) sw.push(at(cyl(0.005, 0.008, 'red', { axis: 'z', seg: 12 }), [cx + 0.075, cy - 0.105 + k * 0.022, cz + d / 2 + 0.006]));
-    const bracket = group(
-      bx(cx - 0.06, cx + 0.06, cy - h / 2 - 0.006, cy - h / 2, cz - 0.06, cz + 0.06, 'black'),
-      bx(cx - 0.02, cx + 0.02, 0.25, cy - h / 2, cz - 0.02, cz + 0.02, 'black'),
-    );
-    P('6', group(bodyBox, lid, ...gauges, merged(sw.filter((o, i) => i === 0), 'chrome'), merged(sw.filter((o, i) => i > 0), 'red'), bracket), [0.15, 0.25, 0.15]);
+    sw.push(at(cyl(0.014, 0.012, 'chrome', { axis: 'x', seg: 20 }), [cx + d / 2 + 0.008, cy - 0.06, cz - 0.045])); // contacteur à clé
+    for (let k = 0; k < 4; k++) sw.push(at(cyl(0.005, 0.008, 'red', { axis: 'x', seg: 12 }), [cx + d / 2 + 0.006, cy - 0.105 + k * 0.022, cz - 0.075]));
+    // Pieds du coffret, posés sur la boîte à eau supérieure du refroidisseur.
+    const feet = [-1, 1].map((s) => bx(cx - 0.05, cx + 0.05, cy - h / 2 - 0.012, cy - h / 2, cz + s * 0.07 - 0.015, cz + s * 0.07 + 0.015, 'black', 0.002));
+    P('6', group(bodyBox, lid, ...gauges, merged(sw.filter((o, i) => i === 0), 'chrome'), merged(sw.filter((o, i) => i > 0), 'red'), merged(feet, 'black')), [0.25, 0.2, 0]);
   }
 
   // ---------------------------------------------------------------- 7 — démarreur
