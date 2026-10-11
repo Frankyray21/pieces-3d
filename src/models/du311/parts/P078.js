@@ -30,7 +30,7 @@ import { L, u, along, hexNut } from './_avance_b.js';
 
 // Cotes axiales (po), vérin rentré, depuis l'œil de fond.
 const Y = {
-  lugTip: -1.1, // bout arrondi de la chape de fond
+  lugTip: -1.15, // bout arrondi de la chape de fond
   capBot: 1.35, // dessous du fond
   floor: 1.83, // face intérieure du fond (pied du tube)
   nutBot: 1.88,
@@ -83,14 +83,14 @@ export default function P078(api, opts = {}) {
   // terminé par un demi-cercle centré en (0, yc), de yb (pied) au bout —
   // extrudé sur l'épaisseur w, percé de l'alésage de la rotule. Axe de l'œil
   // selon Z local ; à tourner ensuite.
-  const eyeBlock = (yc, yb, mat, sign = 1) => {
+  const eyeBlock = (yc, yb, mat, sign = 1, R = EYE.R) => {
     const n = 20, pts = [];
-    pts.push([EYE.R, yb], [EYE.R, yc]);
+    pts.push([R, yb], [R, yc]);
     for (let i = 1; i < n; i++) {
       const a = (i / n) * Math.PI;
-      pts.push([EYE.R * Math.cos(a), yc + sign * EYE.R * Math.sin(a)]);
+      pts.push([R * Math.cos(a), yc + sign * R * Math.sin(a)]);
     }
-    pts.push([-EYE.R, yc], [-EYE.R, yb]);
+    pts.push([-R, yc], [-R, yb]);
     const p = sign > 0 ? pts : pts.reverse();
     return extrude(p.map(([a, y]) => [u(a), u(y)]), u(EYE.w), mat, { holes: [[0, u(yc), u(EYE.bore)]] });
   };
@@ -101,14 +101,15 @@ export default function P078(api, opts = {}) {
   const portHoles = PORTS.flatMap((y) => roundHole(-Math.PI / 2, u(y), u(0.2), u(TUBE), { steps: 6 }));
   const tube = slotted(u(TUBE), u(BORE), u(Y.floor), u(Y.tubeTop), portHoles, 'grey', { seg: 28 });
   const cap = L(S, [[0, Y.capBot], [TUBE - 0.08, Y.capBot], [TUBE, Y.capBot + 0.08], [TUBE, Y.floor], [BORE, Y.floor], [BORE, Y.floor + 0.02], [0, Y.floor + 0.02]], 'grey', 28);
-  // Chape de fond : œil plat, axe selon X (bloc tourné d'un quart de tour autour de Y)
-  const lug = eyeBlock(0, Y.capBot + 0.05, 'grey', -1);
+  // Chape de fond : œil plat Ø 2.3 po (vue de côté), axe selon X (bloc tourné
+  // d'un quart de tour autour de Y)
+  const lug = eyeBlock(0, Y.capBot + 0.05, 'grey', -1, 1.15);
   lug.rotation.y = Math.PI / 2;
   const boss = (y) => L(S, [
     [0.2, 1.6], [BOSS.r, 1.6], [BOSS.r, BOSS.face - 0.04], [BOSS.r - 0.04, BOSS.face],
     [0.28, BOSS.face], [0.24, BOSS.face - 0.04], [0.22, BOSS.face - 0.06], [0.22, 1.9], [0.2, 1.88], [0.2, 1.6],
   ], 'grey', 24, { axis: '-x', pos: [0, u(y), 0] });
-  const ww = u(EYE.w / 2 + 0.05), wz = u(EYE.R + 0.03);
+  const ww = u(EYE.w / 2 + 0.05), wz = u(1.18);
   P('5', group(
     merged([tube, cap, lug, ...PORTS.map(boss)], 'grey'),
     weldRing(u(TUBE - 0.02), u(0.26), 'grey', { pos: [0, u(Y.floor), 0] }),
@@ -163,14 +164,14 @@ export default function P078(api, opts = {}) {
   ), [0.14, 0.2, 0]);
 
   // ================================================ 8 — piston et ses joints
-  // Portées Ø 3 1/2, gorge du joint de piston, alésage 7/8, lamage de l'écrou
-  // en bas et chanfrein du torique (11.1) en haut.
+  // Portées Ø 3 1/2, gorge du joint de piston, alésage 7/8, lamage Ø 1.9 de
+  // l'écrou en bas et chanfrein du torique (11.1) en haut.
   const LAND = BORE - 0.02;
   P('8', group(
     L(S, [
-      [TH + 0.02, 2.66], [0.62, 2.66], [0.62, Y.pistonBot], [LAND - 0.05, Y.pistonBot], [LAND, Y.pistonBot + 0.05],
+      [TH + 0.02, 2.76], [0.95, 2.76], [0.95, Y.pistonBot], [LAND - 0.05, Y.pistonBot], [LAND, Y.pistonBot + 0.05],
       [LAND, 2.62], [BORE - 0.28, 2.62], [BORE - 0.28, 3.24], [LAND, 3.24], [LAND, Y.pistonTop - 0.05], [LAND - 0.05, Y.pistonTop],
-      [0.56, Y.pistonTop], [0.5, Y.pistonTop - 0.06], [TH + 0.02, Y.pistonTop - 0.06], [TH + 0.02, 2.66],
+      [0.56, Y.pistonTop], [0.5, Y.pistonTop - 0.06], [TH + 0.02, Y.pistonTop - 0.06], [TH + 0.02, 2.76],
     ], 'steel', 28),
     // 11.6 — joint de piston (élément noir et deux bagues d'appui)
     L(S, [[BORE - 0.27, 2.72], [BORE - 0.01, 2.72], [BORE - 0.01, 3.14], [BORE - 0.27, 3.14], [BORE - 0.27, 2.72]], 'rubber', 36),
