@@ -86,8 +86,8 @@ export default function P170(api) {
   for (const s of [-1, 1]) {
     const z0 = s * CZ - 0.05, z1 = s * CZ + 0.05;
     frameParts.push(slabZ(colOutline, z0, z1, PAINT));
-    for (const y of [-RY, RY]) frameParts.push(tubeZ(0.09, RX === 0 ? 0 : 2.02 * IN, z0 - 0.012, z1 + 0.012, PAINT, RX, y));
-    frameParts.push(tubeZ(0.1, 1.77 * IN, z0 - 0.012, z1 + 0.012, PAINT, PX, PY));
+    for (const y of [-RY, RY]) frameParts.push(tubeZ(0.09, 2.02 * IN, z0 - 0.012, z1 + 0.012, PAINT, RX, y, 24));
+    frameParts.push(tubeZ(0.1, 1.77 * IN, z0 - 0.012, z1 + 0.012, PAINT, PX, PY, 24));
   }
   // Traverses (tube rectangulaire creux, paroi 3/8 po) entre les colonnes.
   for (const y of [0.12, -0.38]) {
@@ -136,14 +136,14 @@ export default function P170(api) {
   }
   // Barres de glissement Ø 4 po chromées, arbre de basculement Ø 3 1/2.
   const ZR = CZ + 0.062;
-  for (const y of [-RY, RY]) frameSteel.push(cyl(2 * IN, 2 * ZR, 'chrome', { axis: 'z', seg: 40, pos: [RX, y, 0] }));
+  for (const y of [-RY, RY]) frameSteel.push(cyl(2 * IN, 2 * ZR, 'chrome', { axis: 'z', seg: 28, pos: [RX, y, 0] }));
   const ZP = CZ + 0.062;
-  frameSteel.push(cyl(1.75 * IN, 2 * ZP, 'steel', { axis: 'z', seg: 36, pos: [PX, PY, 0] }));
+  frameSteel.push(cyl(1.75 * IN, 2 * ZP, 'steel', { axis: 'z', seg: 24, pos: [PX, PY, 0] }));
   // Disques d'about Ø 130 × 12 et leurs trois vis H 1/2 po ; clavette de l'arbre.
   const discs = [], discBolts = [];
   for (const s of [-1, 1]) {
     for (const [x, y] of [[RX, RY], [RX, -RY], [PX, PY]]) {
-      discs.push(at(lathe([[0, 0], [0.065, 0], [0.065, 0.01], [0.062, 0.013], [0, 0.013]], PAINT, { axis: 'z', seg: 32 }), [x, y, s * ZR], s < 0 ? [0, Math.PI, 0] : null));
+      discs.push(at(lathe([[0, 0], [0.065, 0], [0.065, 0.01], [0.062, 0.013], [0, 0.013]], PAINT, { axis: 'z', seg: 20 }), [x, y, s * ZR], s < 0 ? [0, Math.PI, 0] : null));
       for (let i = 0; i < 3; i++) {
         const a = Math.PI / 2 + (i * 2 * Math.PI) / 3;
         discBolts.push(put(hexScrew(S, 0.5 * IN, 1.25 * IN), [x + Math.cos(a) * 0.032, y + Math.sin(a) * 0.032, s * (ZR + 0.013)], [0, 0, s]));
@@ -209,15 +209,15 @@ export default function P170(api) {
 
     for (const y of [-RY, RY]) {
       // 12 — bague Garlock GM6472-96 (4 × 4 1/2 × 6 po) dans le bossage
-      P('12', tubeZ(2.25 * IN, 2.02 * IN, Math.min(z0, zb) + 0.003, Math.max(z0, zb) - 0.003, 'brass', RX, y, 40), [0, 0, s * 0.45]);
+      P('12', tubeZ(2.25 * IN, 2.02 * IN, Math.min(z0, zb) + 0.003, Math.max(z0, zb) - 0.003, 'brass', RX, y, 24), [0, 0, s * 0.45]);
       // 13 — racleurs de tige aux deux bouts du bossage
       for (const [zz, dz] of [[z0, -1], [zb, 1]]) {
         const zw = zz + (dz * s > 0 ? s * 0.012 : -s * 0.002);
-        P('13', at(lathe([[2.01 * IN, -0.006], [2.4 * IN, -0.006], [2.4 * IN, 0.004], [2.1 * IN, 0.006], [2.01 * IN, 0.002], [2.01 * IN, -0.006]], 'rubber', { axis: 'z', seg: 24 }), [RX, y, zw], dz * s > 0 ? (s > 0 ? null : [0, Math.PI, 0]) : (s > 0 ? [0, Math.PI, 0] : null)), [0, 0, s * (dz * s > 0 ? 0.62 : 0.12)]);
+        P('13', at(lathe([[2.01 * IN, -0.006], [2.4 * IN, -0.006], [2.4 * IN, 0.004], [2.1 * IN, 0.006], [2.01 * IN, 0.002], [2.01 * IN, -0.006]], 'rubber', { axis: 'z', seg: 18 }), [RX, y, zw], dz * s > 0 ? (s > 0 ? null : [0, Math.PI, 0]) : (s > 0 ? [0, Math.PI, 0] : null)), [0, 0, s * (dz * s > 0 ? 0.62 : 0.12)]);
       }
       // 6 — chapeau Ø 150 × 12 sur le bout du bossage, quatre vis 21 et rondelles 24
       const zc = zb + s * 0.006;
-      P('6', tubeZ(0.075, 2.08 * IN, zc - 0.006, zc + 0.006, PAINT, RX, y, 36), [0, 0, s * 0.55]);
+      P('6', tubeZ(0.075, 2.08 * IN, zc - 0.006, zc + 0.006, PAINT, RX, y, 24), [0, 0, s * 0.55]);
       for (let i = 0; i < 4; i++) {
         const a = Math.PI / 4 + (i * Math.PI) / 2;
         const p = [RX + Math.cos(a) * 0.064, y + Math.sin(a) * 0.064, zc + s * 0.006];

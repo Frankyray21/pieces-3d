@@ -94,7 +94,7 @@ export default function P172(api) {
   const oring = (R, r, axis) => lathe(Array.from({ length: 7 }, (_, i) => {
     const a = -Math.PI / 2 + (i * Math.PI) / 3;
     return [R + r * Math.cos(a), r * Math.sin(a)];
-  }), 'rubber', { axis: axis === 'x' ? 'x' : 'y', seg: axis === 'x' ? 32 : 16 });
+  }), 'rubber', { axis: axis === 'x' ? 'x' : 'y', seg: axis === 'x' ? 24 : 12 });
 
   // Extrusion selon Y d'un contour [[x, z], …] de y0 à y1 (arêtes cassées).
   const slabY = (pts, y0, y1, mat) => {
@@ -158,8 +158,8 @@ export default function P172(api) {
       : [[0.05, l(1)], [0.066, l(1)], [0.066, l(0.9)], [0.062, l(0.9)], [0.066, l(0.15)], [0.072, l(0.12)], [0.072, l(0)], [0.05, l(0)], [0.05, l(1)]],
     'steel', { seg: 32 });
     const rollers = [];
-    for (let i = 0; i < 18; i++) {
-      const a = (i / 18) * Math.PI * 2, rr = 0.073;
+    for (let i = 0; i < 14; i++) {
+      const a = (i / 14) * Math.PI * 2, rr = 0.073;
       const m = rod([Math.cos(a) * (rr + 0.003), l(0.18), Math.sin(a) * (rr + 0.003)], [Math.cos(a) * (rr - 0.004), l(0.86), Math.sin(a) * (rr - 0.004)], 0.0072);
       rollers.push(m);
     }
@@ -258,13 +258,13 @@ export default function P172(api) {
         [0, -0.036], [0.0525, -0.036], [0.0535, -0.034], [0.0535, -0.03], [0.05, -0.03], [0.05, -0.02], [0.0535, -0.02],
         [0.0535, -0.008], [0.048, -0.008], [0.048, 0.008], [0.0535, 0.008], [0.0535, 0.02], [0.05, 0.02], [0.05, 0.03],
         [0.0535, 0.03], [0.0535, 0.034], [0.0525, 0.036], [0, 0.036],
-      ], 'steel', { axis: 'x', seg: 24 });
+      ], 'steel', { axis: 'x', seg: 18 });
       P('10', at(piston, [xc, 0, s * TZ]), [e * 0.12, 0, s * 0.3]);
       // 25 — bagues d'usure ; 22 — joint de piston
       for (const d of [-0.025, 0.025]) {
-        P('25', at(lathe([[0.0502, -0.005], [0.054, -0.005], [0.054, 0.005], [0.0502, 0.005], [0.0502, -0.005]], 'cream', { axis: 'x', seg: 24 }), [xc + d * e, 0, s * TZ]), [e * (0.2 + (d * e > 0 ? 0.06 : 0)), 0, s * 0.3]);
+        P('25', at(lathe([[0.0502, -0.005], [0.054, -0.005], [0.054, 0.005], [0.0502, 0.005], [0.0502, -0.005]], 'cream', { axis: 'x', seg: 18 }), [xc + d * e, 0, s * TZ]), [e * (0.2 + (d * e > 0 ? 0.06 : 0)), 0, s * 0.3]);
       }
-      P('22', at(lathe([[0.0482, -0.0078], [0.054, -0.0078], [0.054, 0.0078], [0.0482, 0.0078], [0.0482, -0.0078]], 'rubber', { axis: 'x', seg: 24 }), [xc, 0, s * TZ]), [e * 0.23, 0, s * 0.3]);
+      P('22', at(lathe([[0.0482, -0.0078], [0.054, -0.0078], [0.054, 0.0078], [0.0482, 0.0078], [0.0482, -0.0078]], 'rubber', { axis: 'x', seg: 18 }), [xc, 0, s * TZ]), [e * 0.23, 0, s * 0.3]);
       // 29 — goupille élastique 1/4 × 2 po qui lie le piston à la crémaillère
       P('29', at(lathe([[0.0028, -0.0254], [0.0032, -0.0246], [0.0032, 0.0246], [0.0028, 0.0254], [0.0024, 0.0254], [0.0024, -0.0254], [0.0028, -0.0254]], 'steel', { seg: 10 }), [e * 0.345, 0, s * (TZ + 0.025)]), [e * 0.05, 0.12, s * 0.3]);
     }
@@ -304,7 +304,7 @@ export default function P172(api) {
       P('12', fl(e * (XI + FT / 2 + 0.001)), [e * 0.42, 0, 0]);
       P('12', fl(e * (XO + FT / 2)), [e * 0.48, 0, 0]);
       // 15 — clavettes fendues dans les gorges du tube, contre les brides
-      const key = (x) => at(lathe([[0.0605, -0.005], [0.07, -0.005], [0.071, -0.004], [0.071, 0.004], [0.07, 0.005], [0.0605, 0.005], [0.0605, -0.005]], 'darkSteel', { axis: 'x', seg: 24 }), [x, 0, z]);
+      const key = (x) => at(lathe([[0.0605, -0.005], [0.07, -0.005], [0.071, -0.004], [0.071, 0.004], [0.07, 0.005], [0.0605, 0.005], [0.0605, -0.005]], 'darkSteel', { axis: 'x', seg: 18 }), [x, 0, z]);
       P('15', key(e * (XI + FT + 0.0065)), [e * 0.36, 0, s * 0.05]);
       P('15', key(e * (XO - 0.0055)), [e * 0.4, 0, s * 0.05]);
       // 27 — joints toriques des bouts de tube (carter, fond)
