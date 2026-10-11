@@ -47,6 +47,14 @@ console.log(`${rig.objects.length} objets étiquetés, ${rig.rams.length} vérin
 // 2 — vérins : courses
 rig.sweepRams();
 for (const r of rig.rams) {
+  if (r.detailed) {
+    // vérin détaillé : la course balayée doit tenir dans sa course réelle
+    const ok = !r.stroke || r.Lmax - r.Lmin <= r.stroke + 0.002;
+    if (!ok) failed = true;
+    console.log(`${ok ? '✓' : '✕'} vérin ${r.id.padEnd(7)} (${r.a} → ${r.b}, détaillé) : entre axes ${mm(r.Lmin)} à ${mm(r.Lmax)} (repos ${mm(r.L0)}), ` +
+      `course balayée ${mm(r.Lmax - r.Lmin)}${r.stroke ? ` sur ${mm(r.stroke)}` : ''} — liaisons ${r.joints.join(', ')}`);
+    continue;
+  }
   const g = Rig.ramGeometry(r);
   const ok = g.slack >= 0 && r.L0 >= r.Lmin - 1e-6 && r.L0 <= r.Lmax + 1e-6;
   if (!ok) failed = true;

@@ -62,6 +62,22 @@ export function ram(id, a, b, obj) {
   return obj;
 }
 
+/**
+ * Vérin détaillé (modélisé pièce par pièce, sans hydCylinder) : axes de l'œil arrière
+ * (rear, suit le corps a) et de l'œil de tige (rod, suit le corps b) dans le repère de
+ * l'objet, course (m). Les pièces côté tige sont marquées par rodSide().
+ */
+export function ramDetailed(id, a, b, obj, { rear, rod, stroke }) {
+  obj.userData.ram = { id, a, b, pins: { rear, rod }, stroke };
+  return obj;
+}
+
+/** Pièce côté tige d'un vérin détaillé : suit la sortie de tige (simulation). */
+export function rodSide(obj) {
+  obj.userData.rodSide = true;
+  return obj;
+}
+
 export function flex(S, points, bodies, r, material, opts = {}) {
   const m = S.tube(points, r, material, opts);
   m.userData.flex = { points, bodies, r, material, opts };

@@ -16,7 +16,10 @@ import * as THREE from 'three';
 // Vérins (userData.ram = { id, a, b } sur un hydCylinder placé) : l'œil arrière
 // suit le corps a, l'œil de tige le corps b. Le vérin statique est masqué et
 // remplacé par un vérin dont le fût et la tige sont dimensionnés sur les
-// longueurs extrêmes entre axes (balayage des débattements).
+// longueurs extrêmes entre axes (balayage des débattements). Vérin détaillé
+// (userData.ram.pins = { rear, rod } dans le repère de l'objet, sans
+// hydCylinder) : l'objet entier suit l'œil arrière et s'oriente vers l'œil de
+// tige ; les pièces marquées userData.rodSide coulissent de la sortie de tige.
 //
 // Flexibles (userData.flex) : chaque point de passage suit un corps, le tube est
 // reconstruit quand un point bouge.
@@ -146,6 +149,7 @@ export class Rig {
   _bindRam(obj) {
     let core = null;
     obj.traverse((c) => { if (!core && c.userData.cylinder) core = c; });
+    if (!core && obj.userData.ram.pins) return this._bindDetailedRam(obj);
     if (!core) throw new Error(`Vérin ${obj.userData.ram.id} : hydCylinder introuvable`);
     const { rear, pin, bore, rodR } = core.userData.cylinder;
     const coreRest = this.rootMatrix(core);
@@ -154,6 +158,27 @@ export class Rig {
     const q = new THREE.Quaternion();
     coreRest.decompose(_v, q, _s);
     return { ...obj.userData.ram, obj, A, B, L0: A.distanceTo(B), dir: B.clone().sub(A).normalize(), q, bore, rodR, L: A.distanceTo(B) };
+  }
+
+  _bindDetailedRam(obj) {
+    const { pins } = obj.userData.ram;
+    const rest = this.rootMatrix(obj);
+    const A = new THREE.Vector3(...pins.rear).applyMatrix4(rest);
+    const B = new THREE.Vector3(...pins.rod).applyMatrix4(rest);
+    const axis = new THREE.Vector3(...pins.rod).sub(new THREE.Vector3(...pins.rear)).normalize(); // repère de l'objet
+    const rods = [];
+    obj.traverse((c) => {
+      if (c === obj || !c.userData.rodSide) return;
+      for (let p = c.parent; p && p !== obj; p = p.parent) if (p.userData.rodSide) return; // le plus haut seulement
+      // sortie de tige exprimée dans le repère du parent de la pièce
+      const inv = this.rootMatrix(c.parent).invert().multiply(rest);
+      const d = axis.clone().transformDirection(inv);
+      rods.push({ obj: c, pos: c.position.clone(), dir: d });
+    });
+    return {
+      ...obj.userData.ram, obj, A, B, L0: A.distanceTo(B), L: A.distanceTo(B), dir: B.clone().sub(A).normalize(),
+      detailed: true, rest, rods,
+    };
   }
 
   _bindFlex(mesh) {
@@ -189,6 +214,7 @@ export class Rig {
   _applyRam(r) {
     const { A, B, L } = this.ramState(r);
     r.L = L;
+    if (r.detailed) return this._applyDetailedRam(r, A, B, L);
     if (!r.visual) return;
     const qa = new THREE.Quaternion();
     this.bodyMatrix(r.a, _m).decompose(_v, qa, _s);
@@ -200,6 +226,22 @@ export class Rig {
     _m.compose(A, q, _s.set(1, 1, 1));
     parent.multiply(_m).decompose(r.visual.position, r.visual.quaternion, r.visual.scale);
     r.rod.position.x = L;
+  }
+
+  _applyDetailedRam(r, A, B, L) {
+    // rotation de l'œil arrière (corps a), puis alignement sur l'axe courant
+    const Ja = this.bodyMatrix(r.a, _m);
+    const d0 = r.dir.clone().transformDirection(Ja);
+    const d = B.clone().sub(A).normalize();
+    const q = new THREE.Quaternion().setFromUnitVectors(d0, d);
+    const target = new THREE.Matrix4().makeTranslation(A.x, A.y, A.z)
+      .multiply(new THREE.Matrix4().makeRotationFromQuaternion(q))
+      .multiply(new THREE.Matrix4().makeTranslation(-A.x, -A.y, -A.z))
+      .multiply(Ja)
+      .multiply(r.rest);
+    const parent = this.rootMatrix(r.obj.parent, _m2).invert();
+    parent.multiply(target).decompose(r.obj.position, r.obj.quaternion, r.obj.scale);
+    for (const p of r.rods) p.obj.position.copy(p.pos).addScaledVector(p.dir, L - r.L0);
   }
 
   _applyFlex(f) {
@@ -280,6 +322,7 @@ export class Rig {
   buildRams(material = 'black') {
     const { shell, cyl, ring, at, group } = this.S;
     for (const r of this.rams) {
+      if (r.detailed) continue; // vérin détaillé : ses propres pièces
       const g = Rig.ramGeometry(r);
       const visual = group(
         at(shell(g.r, g.r * 0.8, g.barrel, material, { axis: 'x' }), [g.e0 + g.barrel / 2, 0, 0]),
