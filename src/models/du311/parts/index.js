@@ -1,5 +1,6 @@
 // Généré par scripts/parts-index.mjs — ne pas modifier à la main.
 // Un builder par assemblage du manuel (voir README.md dans ce dossier).
+import P010 from './P010.js';
 import P012 from './P012.js';
 import P014 from './P014.js';
 import P020 from './P020.js';
@@ -149,6 +150,7 @@ import P410 from './P410.js';
 import P412 from './P412.js';
 
 export default {
+  'P010': P010,
   'P012': P012,
   'P014': P014,
   'P020': P020,
