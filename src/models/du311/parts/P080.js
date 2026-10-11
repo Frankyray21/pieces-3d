@@ -3,14 +3,14 @@
 // annulaire coulissant entre deux cannelures hélicoïdales), dessiné en éclaté
 // le long de son axe :
 // - carter (1) : tube Ø 5 po à denture hélicoïdale intérieure, deux pieds
-//   transversaux percés de deux trous chacun (fixation par 4 vis 5/8 po dans
-//   P070), deux orifices bouchés (7, 8), bossage plat du clapet ;
+//   transversaux percés de deux trous chacun (fixation par 4 vis 3/4 po dans
+//   P070), deux orifices bouchés (7, 8) sur le flanc, bossage plat du clapet ;
 // - arbre (2) : bride de sortie Ø 4.4 po à 8 taraudages et alésage central,
 //   portée de palier, cannelure hélicoïdale, bout cannelé droit ;
 // - chemise de piston (3) : denture hélicoïdale extérieure (carter) et
 //   intérieure (arbre), joints en T intérieur (11*) et extérieur (12*) ;
-// - couvercle (4) vissé à l'autre bout, torique (13*) et bague anti-extrusion
-//   (15*), bloqué par deux goupilles (9) ; vis sans tête (10) : 2 dans la bride,
+// - couvercle (4) à l'autre bout, moyeu lisse dans l'alésage, vissé sur le
+//   bout d'arbre (joints statiques 13* et 15* sur l'arbre) et goupillé (9) ; vis sans tête (10) : 2 dans la bride,
 //   4 dans le couvercle ;
 // - clapet d'équilibrage (19) posé sur le carter, 3 vis (5, une ligne « SCREW »
 //   qty 1 : le jeu de 3 vis dessinées est un seul objet) et rondelle (6 : les
@@ -21,8 +21,8 @@
 // Repère : origine sur l'axe, au plan de la face d'appui de la bride de
 // sortie ; +Y sort de la bride (le corps est en -Y) ; pieds vers -Z, leur face
 // d'appui à z = -3.25 po (ACT080.footZ), trous selon Z à x = ±3.35 po et
-// y = -1.55 / -7.75 po ; clapet sur le dessus (+Z) ; orifices bouchés en +Z
-// près des deux bouts. Encombrement ≈ 0.197 (X, pieds) × 0.235 (Y, de -0.235
+// y = -1.55 / -7.75 po ; clapet sur le dessus (+Z) ; orifices bouchés sur le
+// flanc -X près des deux bouts. Encombrement ≈ 0.197 (X, pieds) × 0.235 (Y, de -0.235
 // au couvercle à 0) × 0.182 (Z, de -0.083 à +0.099 au clapet) m.
 // Cotes : non cotées au manuel ; carter Ø 5 × 9 po, pieds 7.75 po et entraxes
 // de fixation 6.7 × 6.2 po relevés sur la vue de face de P072 (échelle :
@@ -68,19 +68,21 @@ export default function P080(api) {
   const lips = [
     L(S, [[2.1, Y.housTop - 0.05], [R - 0.06, Y.housTop - 0.05], [R, Y.housTop - 0.11], [R, Y.housTop - 0.2], [2.1, Y.housTop - 0.2]].reverse(), 'black', 48),
   ];
-  // Pied : semelle 7.75 × 1.5 × 1.6 po percée de deux trous selon Z (vis
-  // 5/8 po), âme pleine qui rejoint le tube.
+  // Pied : semelle 7.75 × 1.5 × 1.05 po percée de deux trous selon Z (vis
+  // 3/4 po), sous le tube (sans entrer dans l'alésage), deux joues
+  // extérieures qui remontent le long du tube.
   const foot = (y) => {
     const sole = extrude([[-FOOT.x, -FOOT.w / 2], [FOOT.x, -FOOT.w / 2], [FOOT.x, FOOT.w / 2], [-FOOT.x, FOOT.w / 2]].map(([x, yy]) => [u(x), u(yy)]),
-      u(1.6), 'black', { holes: [-1, 1].map((s) => [u(s * FOOT.hx), 0, u(FOOT.hole)]) });
-    sole.position.set(0, u(y), u(FOOT.z + 0.8));
-    const web = S.box(u(4.2), u(FOOT.w), u(1.4), 'black', { pos: [0, u(y), u(FOOT.z + 1.6 + 0.6)] });
-    return [sole, web];
+      u(1.05), 'black', { holes: [-1, 1].map((s) => [u(s * FOOT.hx), 0, u(FOOT.hole)]) });
+    sole.position.set(0, u(y), u(FOOT.z + 0.525));
+    const cheeks = [-1, 1].map((sx) => S.box(u(0.7), u(FOOT.w), u(1.0), 'black', { pos: [u(sx * 2.45), u(y), u(-1.7)] }));
+    return [sole, ...cheeks];
   };
   // bossage plat du clapet : méplat à z = VALVE.z0 (tangent au tube)
   const pad = S.box(u(VALVE.d + 0.3), u(VALVE.w + 0.3), u(0.55), 'black', { pos: [0, u(VALVE.y), u(VALVE.z0 - 0.275)] });
   const PORTS = [-1.45, -7.75];
-  const bosses = PORTS.map((y) => L(S, [[0.25, 2.2], [0.45, 2.2], [0.45, 2.62], [0.41, 2.66], [0.25, 2.66], [0.25, 2.2]], 'black', 20, { axis: 'z', pos: [0, u(y), 0] }));
+  // Bossages des orifices sur le flanc -X, au-dessus des pieds (z = -1).
+  const bosses = PORTS.map((y) => L(S, [[0.25, 2.2], [0.45, 2.2], [0.45, 2.62], [0.41, 2.66], [0.25, 2.66], [0.25, 2.2]], 'black', 20, { axis: '-x', pos: [0, u(y), u(-1)] }));
   P('1', merged([hous, ...lips, ...foot(FOOT.ys[0]), ...foot(FOOT.ys[1]), pad, ...bosses], 'black'), [0, 0, -0.06]);
 
   // 7, 8 — bouchons d'orifice (six-pans creux, collerette)
@@ -88,8 +90,8 @@ export default function P080(api) {
     L(S, [[0.1, 0.12], [0.1, 0.25], [0.29, 0.25], [0.31, 0.23], [0.31, 0.02], [0.29, 0], [0, 0], [0, 0.12]].reverse(), 'zinc', 20),
     L(S, [[0, -0.3], ...S.thread(0.22, -0.3, -0.03, { pitch: 0.05, maxTurns: 5 }), [0.2, 0], [0, 0]], 'zinc', 12),
   ], 'zinc'));
-  P('7', along(THREE, portPlug(), [0, 0, 1], [0, u(PORTS[0]), u(2.66)]), [0, 0, 0.08]);
-  P('8', along(THREE, portPlug(), [0, 0, 1], [0, u(PORTS[1]), u(2.66)]), [0, 0, 0.08]);
+  P('7', along(THREE, portPlug(), [-1, 0, 0], [-u(2.66), u(PORTS[0]), u(-1)]), [-0.08, 0, 0]);
+  P('8', along(THREE, portPlug(), [-1, 0, 0], [-u(2.66), u(PORTS[1]), u(-1)]), [-0.08, 0, 0]);
 
   // ================================================ 2 — arbre
   // Bride de sortie (8 taraudages Ø 3/8 sur Ø 3.1, alésage central Ø 0.8),
@@ -108,9 +110,10 @@ export default function P080(api) {
   const splines = [];
   for (let i = 0; i < 10; i++) {
     const a = (i / 10) * Math.PI * 2;
-    const b = S.box(u(0.16), u(4.2), u(0.14), 'steel');
-    b.position.set(u(1.33 * Math.cos(a)), u(-4.0), u(1.33 * Math.sin(a)));
-    b.rotation.set(0, -a, 0.35);
+    // Barrette inclinée dans le plan tangent (hélice), autour de l'axe radial.
+    const b = S.box(u(0.16), u(4.0), u(0.14), 'steel');
+    b.position.set(u(1.3 * Math.cos(a)), u(-4.0), u(1.3 * Math.sin(a)));
+    b.rotation.set(0.2, -a, 0, 'YXZ');
     splines.push(b);
   }
   for (let i = 0; i < 8; i++) {
@@ -129,51 +132,56 @@ export default function P080(api) {
   for (let i = 0; i < 14; i++) {
     const a = (i / 14) * Math.PI * 2;
     const b = S.box(u(0.14), u(2.3), u(0.12), 'steel');
-    b.position.set(u(1.98 * Math.cos(a)), u(-4.05), u(1.98 * Math.sin(a)));
-    b.rotation.set(0, -a, -0.4);
+    b.position.set(u(1.95 * Math.cos(a)), u(-4.05), u(1.95 * Math.sin(a)));
+    b.rotation.set(-0.25, -a, 0, 'YXZ');
     sleeve.push(b);
   }
-  P('3', merged(sleeve, 'steel'), [0, 0, 0.3]);
-  P('12*', oring(S, 2.03, 0.06, -2.55), [0, 0.06, 0.3]);
-  P('11*', oring(S, 1.36, 0.055, -2.55), [0, 0.11, 0.3]);
+  // Éclaté : la chemise sort par le bout couvercle (-Y), ses joints devant elle.
+  P('3', merged(sleeve, 'steel'), [0, -0.30, 0]);
+  P('12*', oring(S, 2.03, 0.06, -2.55), [0, -0.27, 0]);
+  P('11*', oring(S, 1.36, 0.055, -2.55), [0, -0.24, 0]);
 
   // ================================================ 4 — couvercle
-  // Filet extérieur dans le carter, collerette au Ø du carter, alésage cannelé
-  // (bout de l'arbre visible au centre), 4 + 2 trous (vis 10, goupilles 9).
+  // Collerette au Ø du carter, moyeu lisse Ø 3.5 dans l'alésage (appui des
+  // joints côté couvercle), alésage Ø 2 sur le bout d'arbre (cannelé, visible
+  // au centre) ; 4 + 2 trous (vis 10, goupilles 9).
   P('4', merged([
-    L(S, [[1.05, Y.capBot], [R - 0.08, Y.capBot], [R - 0.02, Y.capBot + 0.06], [R - 0.02, Y.housBot], [2.08, Y.housBot],
-      ...S.thread(2.08, Y.housBot, -7.9, { pitch: 0.1, maxTurns: 4, chamferBottom: false }), [1.05, -7.9], [1.05, Y.capBot]], 'black', 36),
-  ], 'black'), [0, -0.36, 0]);
-  P('13*', oring(S, 2.06, 0.05, -8.3), [0.14, -0.3, 0]);
-  P('15*', ring(2.12, 1.98, -8.42, -8.36, 'cream'), [0.14, -0.38, 0]);
+    L(S, [[1.02, Y.capBot], [R - 0.08, Y.capBot], [R - 0.02, Y.capBot + 0.06], [R - 0.02, Y.housBot], [1.75, Y.housBot],
+      [1.75, -7.04], [1.71, -7.0], [1.02, -7.0], [1.02, Y.capBot]], 'black', 36),
+  ], 'black'), [0, -0.66, 0]);
+  // 13*, 15* : joint torique et bague anti-extrusion entre couvercle et bout d'arbre.
+  P('13*', oring(S, 1.05, 0.05, -8.3), [0, -0.72, 0]);
+  P('15*', ring(1.12, 1.0, -8.42, -8.36, 'cream'), [0, -0.76, 0]);
 
   // 9 — goupilles d'arrêt du couvercle ; 10 — vis sans tête (2 bride, 4 couvercle)
   for (const a of [0.3, 0.3 + Math.PI]) {
-    P('9', along(THREE, pin(S, THREE, 0.1875, 0.5), [0, -1, 0], [u(2.28 * Math.cos(a)), u(Y.capBot + 0.2), u(2.28 * Math.sin(a))]), [0, -0.46, 0]);
+    P('9', along(THREE, pin(S, THREE, 0.1875, 0.5), [0, -1, 0], [u(2.28 * Math.cos(a)), u(Y.capBot + 0.2), u(2.28 * Math.sin(a))]), [0, -0.82, 0]);
   }
   for (const a of [Math.PI / 4, Math.PI * 1.25]) {
     P('10', along(THREE, grub(0.25, 0.375), [0, 1, 0], [u(1.95 * Math.cos(a)), u(0.002), u(1.95 * Math.sin(a))]), [0, 0.52, 0]);
   }
   for (let i = 0; i < 4; i++) {
     const a = (i / 4) * Math.PI * 2 + Math.PI / 4;
-    P('10', along(THREE, grub(0.25, 0.375), [0, -1, 0], [u(1.75 * Math.cos(a)), u(Y.capBot - 0.002), u(1.75 * Math.sin(a))]), [0, -0.46, 0]);
+    P('10', along(THREE, grub(0.25, 0.375), [0, -1, 0], [u(1.75 * Math.cos(a)), u(Y.capBot - 0.002), u(1.75 * Math.sin(a))]), [0, -0.82, 0]);
   }
 
   // ================================================ joints et bagues des deux bouts
   // Côté bride (+Y) : 16 racleur, 18 rondelle de butée, 14 joint à lèvres,
   // 17 bague de guidage ; côté couvercle (-Y) : 17, 14, 18, 16 (ordre du dessin).
   const seals = (s, y0) => {
-    // s = +1 côté bride, -1 côté couvercle ; y0 : face d'extrémité du carter
-    P('16*', oring(S, 2.0, 0.06, y0 - s * 0.07), [0, s * (OUT + 0.33), 0]);
-    P('18*', ring(2.05, 1.78, y0 - s * 0.02, y0 - s * 0.1, 'brass'), [0, s * (OUT + 0.24), 0]);
+    // s = +1 côté bride, -1 côté couvercle ; y0 : face d'extrémité du carter.
+    // Éclaté côté couvercle : après la chemise (-0.30), avant le couvercle (-0.66).
+    const ex = (k) => (s > 0 ? [0, OUT + k, 0] : [0, -(0.35 + k * 0.6), 0]);
+    P('16*', oring(S, 2.0, 0.06, y0 - s * 0.07), ex(0.33));
+    P('18*', ring(2.05, 1.78, y0 - s * 0.02, y0 - s * 0.1, 'brass'), ex(0.24));
     // joint à lèvres : talon côté extrémité, deux lèvres vers le piston
     const ya = Math.min(y0 - s * 0.14, y0 - s * 0.32), yb = Math.max(y0 - s * 0.14, y0 - s * 0.32);
     const mid = (ya + yb) / 2;
     const prof = s > 0
       ? [[1.76, ya], [1.82, ya], [1.86, mid], [1.9, ya], [1.98, ya], [1.98, yb], [1.76, yb], [1.76, ya]]
       : [[1.76, ya], [1.98, ya], [1.98, yb], [1.9, yb], [1.86, mid], [1.82, yb], [1.76, yb], [1.76, ya]];
-    P('14*', L(S, prof, 'blue', 40), [0, s * (OUT + 0.15), 0]);
-    P('17*', ring(1.98, 1.77, y0 - s * 0.36, y0 - s * 0.9, 'cream'), [0, s * (OUT + 0.06), 0]);
+    P('14*', L(S, prof, 'blue', 40), ex(0.15));
+    P('17*', ring(1.98, 1.77, y0 - s * 0.36, y0 - s * 0.9, 'cream'), ex(0.06));
   };
   seals(1, Y.housTop);
   seals(-1, -7.9);
