@@ -31,6 +31,15 @@ export const CAB = {
   t: 0.25 * IN, // tôle du caisson
   land: { z1: -0.53, y: 0.3 }, // palier d'accès : de z = −hz à z1, plancher à y
   hinge: { x: [-0.3, 0.3], y: -0.035, z: 0.355 }, // axe de basculement (selon X) sous le caisson
+  // Ouvertures fermées par les panneaux de P278 : paroi arrière (27, plan z-y),
+  // pupitre avant (21, plan z-y), plancher (28, plan x-z), dessous du pupitre (25).
+  open: {
+    rear: { z: 0.12, y: 0.46, w: 0.8, h: 0.34 },
+    front: { z: 0.295, y: 0.3, w: 0.46, h: 0.32 },
+    floor: { x: 0.04, z: -0.18, w: 0.48, d: 0.6 },
+    under: { x: 0.465, z: 0.29, w: 0.19, d: 0.58 },
+  },
+  cyl: { x: -0.31, y: -0.14, z0: -0.55, z1: 0.1 }, // vérin de basculement : œil du fût (châssis), œil de tige (caisson)
 };
 /** Point du repère de P286 → repère machine. */
 export const cabToMachine = ([x, y, z]) => [x + CAB.o[0], y + CAB.o[1], z + CAB.o[2]];
@@ -192,10 +201,15 @@ export function panelXY(S, THREE, w, h, t, mat, { r = 0.02, holes = [], cut = []
   return S.merged([new THREE.Mesh(geo)], mat);
 }
 
-/** Prisme d'un profil plan [[a, b]] extrudé : plan 'xy' (épaisseur Z), 'zy' (épaisseur X) ou 'xz' (épaisseur Y), décalé de off selon l'axe d'épaisseur. */
-export function prism(S, THREE, pts, depth, mat, plane = 'xy', off = 0, { holes = [] } = {}) {
+/**
+ * Prisme d'un profil plan [[a, b]] extrudé : plan 'xy' (épaisseur Z), 'zy'
+ * (épaisseur X) ou 'xz' (épaisseur Y), décalé de off selon l'axe d'épaisseur ;
+ * trous ronds holes [[a, b, r]] et découpes polygonales polys [[[a, b], …]].
+ */
+export function prism(S, THREE, pts, depth, mat, plane = 'xy', off = 0, { holes = [], polys = [] } = {}) {
   const s = new THREE.Shape(pts.map(([a, b]) => new THREE.Vector2(a, b)));
   for (const [a, b, r] of holes) s.holes.push(new THREE.Path().absarc(a, b, r, 0, Math.PI * 2, true));
+  for (const poly of polys) s.holes.push(new THREE.Path(poly.map(([a, b]) => new THREE.Vector2(a, b))));
   const mb = Math.min(depth * 0.16, 0.0012);
   const geo = new THREE.ExtrudeGeometry(s, { depth: depth - 2 * mb, bevelEnabled: mb > 0.0004, bevelSize: mb, bevelThickness: mb, bevelOffset: -mb, bevelSegments: 1, curveSegments: 8 });
   geo.translate(0, 0, -(depth - 2 * mb) / 2);
@@ -203,4 +217,12 @@ export function prism(S, THREE, pts, depth, mat, plane = 'xy', off = 0, { holes 
   else if (plane === 'xz') { geo.rotateX(Math.PI / 2); geo.translate(0, off, 0); } // (a, b) = (x, z), épaisseur selon Y
   else geo.translate(0, 0, off);
   return S.merged([new THREE.Mesh(geo)], mat);
+}
+
+/** Contour rectangulaire à coins arrondis (centre a, b ; largeur w, hauteur h ; rayon r) pour polys. */
+export function rrect(a, b, w, h, r = 0.01, n = 3) {
+  const pts = [];
+  const c = [[a + w / 2 - r, b + h / 2 - r, 0], [a - w / 2 + r, b + h / 2 - r, Math.PI / 2], [a - w / 2 + r, b - h / 2 + r, Math.PI], [a + w / 2 - r, b - h / 2 + r, -Math.PI / 2]];
+  for (const [x, y, a0] of c) for (let i = 0; i <= n; i++) { const t = a0 + (i / n) * (Math.PI / 2); pts.push([x + r * Math.cos(t), y + r * Math.sin(t)]); }
+  return pts;
 }
