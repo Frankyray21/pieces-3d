@@ -172,7 +172,7 @@ export default function P164(api) {
     const skirt = L([[R.tube + G, Y.hpIn], [R.hp - 0.04, Y.hpIn], [R.hp, Y.hpIn + 0.04], [R.hp, Y.hpIn + 0.05], [R.tube + G, Y.hpIn + 0.05], [R.tube + G, Y.hpIn]], 'black', 64);
     const hp = merged([collar, turned, skirt], 'black');
     hp.userData.hasInterior = true;
-    P('7', half(hp, s), E([0, 0.22, 0], s));
+    P('7', half(hp, s), E([DX, LIFT + 0.12, 0], s));
 
     // 3 — vis de pression 1/4-28 × 5/16 à six pans creux, bout nylon, vers −Z
     const ss = group(
@@ -180,7 +180,7 @@ export default function P164(api) {
         [0.07, 0.3125], [0.07, 0.2], [0, 0.2]], 'blackOxide', 12),
       L([[0, 0], [0.07, 0], [0.08, 0.01], [0.08, 0.03], [0, 0.03]], 'white', 12),
     );
-    P('3', half(at(ss, [0, u(Y.setScrew), -u(2.24 - 0.3125)], [-Math.PI / 2, 0, 0]), s), E([0, 0.22, -0.05], s));
+    P('3', half(at(ss, [0, u(Y.setScrew), -u(2.24 - 0.3125)], [-Math.PI / 2, 0, 0]), s), E([DX, LIFT + 0.12, -0.05], s));
 
     // 5 — tige chromée Ø 3 po : queue Ø 1 po filetée 1-12 UNF, épaulement,
     // portée réduite et lamage du capuchon en bout (fond conique de foret).
@@ -203,7 +203,7 @@ export default function P164(api) {
     P('9', half(L([
       [0, Y.rodEnd - 0.9], [0.66, Y.rodEnd - 0.9], [0.7, Y.rodEnd - 0.86], [0.7, Y.rodEnd + 0.04], [1.46, Y.rodEnd + 0.04], [1.5, Y.rodEnd + 0.08],
       ...kn, [0, Y.capTop],
-    ], 'darkSteel', 48), s), E([DX, LIFT + 0.07, 0], s));
+    ], 'darkSteel', 48), s), E([DX, LIFT + 0.2, 0], s));
 
     // 8 — entretoise de course sur la tige
     P('8', half(L([
