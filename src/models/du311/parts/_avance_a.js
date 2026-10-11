@@ -155,10 +155,11 @@ export function elbow(kindA, nA, nB, { angle = 90, mat = MAT } = {}) {
   const parts = [];
   let yc; // centre du corps
   if (kindA === 'swivel') {
-    // Écrou tournant sur le mâle qui le reçoit : le siège est à y = 0.
+    // Écrou tournant vissé sur le mâle qui le reçoit (siège à y = 0) : il
+    // en couvre le filet sur 0,6 × sa hauteur.
     const nh = sa.nut * 0.7;
-    parts.push(hex(sa.nut, nh, nh * 0.15, mat));
-    yc = nh * 0.6 + rb;
+    parts.push(hex(sa.nut, nh, -nh * 0.2, mat));
+    yc = nh * 0.3 + rb;
   } else if (kindA === 'orb') {
     // Contre-écrou + rondelle d'appui (raccord orientable).
     const nh = sa.hex * 0.42;
@@ -172,7 +173,7 @@ export function elbow(kindA, nA, nB, { angle = 90, mat = MAT } = {}) {
     yc = 0.004 + rb * 1.1;
   }
   // Corps forgé : fût vertical arrondi en haut, bras vers B.
-  parts.push(S.cyl(rb, yc - (kindA === 'swivel' ? sa.nut * 0.3 : 0), mat, { seg: 18, pos: [0, (yc + (kindA === 'swivel' ? sa.nut * 0.3 : 0)) / 2, 0] }));
+  parts.push(S.cyl(rb, yc - (kindA === 'swivel' ? sa.nut * 0.1 : 0), mat, { seg: 18, pos: [0, (yc + (kindA === 'swivel' ? sa.nut * 0.1 : 0)) / 2, 0] }));
   parts.push(S.ball(rb, mat, { pos: [0, yc, 0] }));
   const arm = rb * 1.25;
   const armObj = S.cyl(rb * 0.92, arm, mat, { seg: 18 });
@@ -201,8 +202,8 @@ export function tee(kindA, nA, n = nA, { mat = MAT } = {}) {
   let y0 = 0;
   if (kindA === 'swivel') {
     const nh = s.nut * 0.7;
-    parts.push(hex(s.nut, nh, nh * 0.15, mat));
-    y0 = nh * 0.65;
+    parts.push(hex(s.nut, nh, -nh * 0.2, mat));
+    y0 = nh * 0.3;
   } else if (kindA === 'jic') {
     // Mâle JIC vers −Y, bout (siège) à y = 0.
     const L = jicLen(s.jic);

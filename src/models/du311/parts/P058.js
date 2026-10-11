@@ -29,27 +29,26 @@
 //     14 descend au pied du mât.
 // Points de raccordement supposés (composants des autres assemblages, non
 // dessinés ici) :
-//   · P046 placé (P032 ne le place pas encore) platine contre la face avant
-//     de la plaque porte-tête (z = plateZ + 0.02), côté −X (centre x = −0.44),
-//     dessus du plancher à y = plateY + 0.20, potence vers l'avant (+Z) :
-//     axes de P046 tournés de +90° autour de Y (local −X → +Z). Avec la
-//     potence vers −X (axes de P046 inchangés), les coudes seraient à 0.4 m
-//     du moteur −X, sorties vers l'extérieur : les 23 po des 9 ne suffisent
-//     pas ; feed.js met un support provisoire à +X (rep. 9), le dessin P032
-//     le montre à −X.
-//   · Orifices des moteurs ME18 (topdrive.js : moteurs x = ±0.235, orifices
-//     à ±0.035, face avant z = AX + 0.105, y = plateY + 0.205), ORB-10.
+//   · P046 (support de traversée) posé axes inchangés (potence vers −X,
+//     coudes sous le bac, sorties vers +Z), origine O46 ; P156 (boucle)
+//     posé axes inchangés, pied du montant en O156 : poses exportées dans
+//     KIT058 pour que P032 les reprenne ; leurs sièges sont recalculés ici
+//     avec les mêmes raccords que P046.js / P156.js.
+//   · Orifices des moteurs ME18, ORB-10, ouverts vers le haut sur le dessus
+//     du carter de chaque moteur, devant le capot (dessin : piles verticales
+//     au pied des capots) : x = ±0.235 ± 0.035, y = plateY + 0.24,
+//     z = AX + 0.088 (topdrive.js les dessine encore sur la face avant).
 //   · Coude 3 sur le dessus du carter (y = plateY + 0.14), x = −0.10,
 //     z = AX − 0.12, entre le moteur −X et l'émerillon.
 //   · Tête supérieure du vérin d'avance P132 : deux orifices supposés par la
 //     face avant du haut du mât, (∓0.06, 2.93, 0.235), vers +Z.
-//   · Traversée P156 : rangée de six adaptateurs de traversée suivant Z à
-//     x = −0.32 (entre le flanc du mât et le vérin stinger −X, derrière son
-//     support), plaque à y = 2.06 ; sièges hauts vers +Y ; branches des tés
-//     de P156 (z = −0.03 et −0.07) vers −X.
+//   · P156 : sièges hauts des traversées (tés tournants -12 sur les deux
+//     premières, coudes tournants -12 sur les deux autres, -06 ; -08 sans son
+//     bouchon 11, configuration avec moteurs de détection de vitesse) ;
+//     12 et 14 sur les branches des deux tés.
 //   · 12 : orifice supposé au haut du flanc −X du mât (y = 3.0, z = −0.05),
-//     vers −X ; 14 : traversée supposée du pied de mât (−0.30, 0.04, −0.12),
-//     vers le haut.
+//     vers −X ; 14 : raccord sous le centre du pied du mât (0, −0.03, −0.08),
+//     vers le bas (dessin : 14 longe le stinger puis passe sous la semelle).
 // Tracés : boucle en arceau au-dessus du haut du mât (passage côté mât de la
 // tige du stinger −X, derrière ses supports), 12 et 14 le long du flanc −X
 // entre mât et vérin, derrière les supports ; chaque flexible a la longueur
@@ -57,7 +56,7 @@
 // Encombrement ≈ 1.0 (X, de −0.6 à 0.42) × 3.25 (Y, de 0.03 à 3.28) × 1.0
 // (Z, de −0.25 à 0.95) m.
 import { MAST } from '../mast.js';
-import { IN, straight, elbow, tee } from './_avance_a.js';
+import { IN, straight, elbow, tee, union, place, seat } from './_avance_a.js';
 import { hoseKit, S, E } from './_avance_a_hk1.js';
 
 const AX = 0.565; // axe de forage (feed.js)
@@ -71,11 +70,12 @@ const NH = [12, 12, 6, 12, 8, 12];
 // (+Y) et sortie basse (vers +Z) — cotes de _avance_a.js.
 const BK_TOP = { 6: 0.0292, 8: 0.0355, 12: 0.0467 };
 const BK_ARM = { 6: [0.0302, -0.0249], 8: [0.0383, -0.0291], 12: [0.0517, -0.036] };
-// Moteurs ME18 : orifices (face avant), y et z.
-const YM = MAST.plateY + 0.14 + 0.065, ZM = AX + 0.105;
-// Traversée P156 (flanc −X).
-const X156 = -0.32, Y156 = 1.8;
-const Z156 = [-0.03, -0.07, -0.11, -0.15, -0.19, -0.23];
+// Moteurs ME18 : orifices sur le dessus du carter, devant le capot.
+const YM = MAST.plateY + 0.24, ZM = AX + 0.088;
+// P156 (boucle) : pied du montant, axes inchangés.
+const O156 = [-0.43, 1.8, -0.13];
+const X156 = O156[0] + 0.085;
+export const KIT058 = { P046: { pos: O46, rot: [0, 0, 0] }, P156: { pos: O156, rot: [0, 0, 0] } };
 
 export default function P058(api) {
   const { fit, H } = hoseKit(api);
@@ -92,23 +92,33 @@ export default function P058(api) {
     };
   });
   // ------------------------------------------------ sièges de P156 (non dessiné)
-  const s156 = (i, n) => S([X156, Y156 + (n === 12 ? 0.05 : 0.04), Z156[i]], Y);
-  const tee156 = (i) => S([X156 - 0.045, Y156 - 0.06, Z156[i]], NX);
+  // Mêmes raccords que P156.js : traversées sur la tôle 3/8 (dessus y = 0 local).
+  const T6 = 0.375 * IN;
+  const ports = (o) => { o.ports = o.userData.ports; return o; };
+  const bh = (x, z, n) => ports(place(union(n, { bulkhead: true, t: T6 }), [O156[0] + x, O156[1] - T6, O156[2] + z]));
+  const teeAt = (z) => { const s0 = seat(bh(0.055, z, 12), 0); return ports(place(tee('swivel', 12, 12), s0.p, s0.d, X)); };
+  const elbAt = (z) => { const s0 = seat(bh(0.055, z, 12), 0); return seat(ports(place(elbow('swivel', 12, 12), s0.p, s0.d, X)), 0); };
+  const T1 = teeAt(-0.075), T2 = teeAt(-0.025);
+  const P156s = {
+    T1: seat(T1, 0), T2: seat(T2, 0), B1: seat(T1, 1), B2: seat(T2, 1),
+    E1: elbAt(0.025), E2: elbAt(0.075),
+    s06: seat(bh(0.115, -0.03, 6), 0), s08: seat(bh(0.115, 0.03, 8), 0),
+  };
 
   // ------------------------------------------------ raccords de la tête (moteurs)
   // Moteur −X : adaptateurs longs 5 (ORB-10 / JIC-12) puis tés tournants 1,
   // passage vers l'avant (arceaux des 11) ; branche du té extérieur vers −X,
-  // du té intérieur vers le bas (arrivées des 9).
+  // du té intérieur vers le bas et −X à 45° (arrivées des 9).
   const xm = (s, k) => s * 0.235 + k * 0.035;
-  const tees = [[-1, NX], [1, NY]].map(([k, br]) => {
-    const [a] = fit('5', straight('orb', 10, 12, { long: true }), [xm(-1, k), YM, ZM], Z, null, [0, 0, 0.1]);
-    const [run, b] = fit('1', tee('swivel', 12), a.p, Z, br, [0, 0, 0.2]);
+  const tees = [[-1, NX], [1, [-Math.SQRT1_2, 0, Math.SQRT1_2]]].map(([k, br]) => {
+    const [a] = fit('5', straight('orb', 10, 12, { long: true }), [xm(-1, k), YM, ZM], Y, null, [0, 0.1, 0]);
+    const [run, b] = fit('1', tee('swivel', 12), a.p, Y, br, [0, 0.2, 0]);
     return { run, br: b };
   });
   // Moteur +X : adaptateurs courts 4 puis coudes tournants 2, sorties vers le haut.
   const elbows = [-1, 1].map((k) => {
-    const [a] = fit('4', straight('orb', 10, 12), [xm(1, k), YM, ZM], Z, null, [0, 0, 0.1]);
-    const [s] = fit('2', elbow('swivel', 12, 12), a.p, Z, Y, [0, 0, 0.2]);
+    const [a] = fit('4', straight('orb', 10, 12), [xm(1, k), YM, ZM], Y, null, [0, 0.1, 0]);
+    const [s] = fit('2', elbow('swivel', 12, 12), a.p, Y, NX, [0, 0.2, 0]);
     return s;
   });
   // Coude 3 (ORB-06 / JIC-06) sur le dessus du carter, sortie vers −X.
@@ -118,9 +128,9 @@ export default function P058(api) {
   // Arceau au-dessus du haut du mât : montée au droit de P046, passage devant
   // puis côté mât du chapeau de la tige du stinger −X, descente derrière ses
   // supports jusqu'à P156.
-  const loop = (ref, L, n, i46, i156, apex, e) => {
-    const a = b46[i46].top, b = s156(i156, n);
-    const xa = a.p[0], zb = b.p[2];
+  const loop = (ref, L, n, i46, b, apex, e) => {
+    const a = b46[i46].top;
+    const xa = a.p[0], zb = b.p.z;
     H(ref, L, n, a, b, {
       vias: [
         [xa, apex - 0.22, O46[2] + 0.02],
@@ -132,20 +142,20 @@ export default function P058(api) {
     }, e);
   };
   // Arceaux emboîtés : plus haut pour la sortie la plus en arrière sur P156.
-  loop('10', 89, 12, 5, 0, 3.0, [-0.3, 0.25, -0.05]);
-  loop('8', 89, 8, 4, 1, 3.02, [-0.32, 0.27, -0.05]);
-  loop('10', 89, 12, 3, 2, 3.04, [-0.34, 0.29, -0.05]);
-  loop('6', 90, 6, 2, 3, 3.06, [-0.36, 0.31, -0.05]);
-  loop('13', 85, 12, 1, 4, 3.08, [-0.38, 0.33, -0.05]);
-  loop('13', 85, 12, 0, 5, 3.1, [-0.4, 0.35, -0.05]);
+  loop('10', 89, 12, 5, P156s.E2, 3.0, [-0.3, 0.25, 0.3]);
+  loop('8', 89, 8, 4, P156s.s08, 3.02, [-0.32, 0.27, 0.22]);
+  loop('10', 89, 12, 3, P156s.E1, 3.04, [-0.34, 0.29, 0.14]);
+  loop('6', 90, 6, 2, P156s.s06, 3.06, [-0.36, 0.31, 0.06]);
+  loop('13', 85, 12, 1, P156s.T2, 3.08, [-0.38, 0.33, -0.02]);
+  loop('13', 85, 12, 0, P156s.T1, 3.1, [-0.4, 0.35, -0.1]);
 
   // ------------------------------------------------ P046 → tête
   // 9 : coudes -12 intérieurs → branches des tés du moteur −X.
   H('9', 23, 12, b46[3].arm, tees[0].br, { vias: [[-0.5, YM - 0.01, 0.62]], sag: NX }, [-0.05, 0, 0.3]);
   H('9', 23, 12, b46[5].arm, tees[1].br, { sag: NY }, [-0.05, -0.05, 0.35]);
   // 11 : passages des tés → coudes du moteur +X, arceaux devant l'émerillon.
-  H('11', 27, 12, tees[0].run, E(elbows[0], '45', NX), { sag: Y }, [0, 0.3, 0.3]);
-  H('11', 27, 12, tees[1].run, E(elbows[1], '45', NX), { sag: [0, 0.6, 0.8] }, [0, 0.22, 0.3]);
+  H('11', 27, 12, tees[0].run, E(elbows[0], '45', Z), { sag: [0, 0.6, 0.8] }, [0, 0.3, 0.3]);
+  H('11', 27, 12, tees[1].run, E(elbows[1], '45', Z), { sag: [0, 0.6, 0.8] }, [0, 0.22, 0.38]);
   // 7 : coude -06 de P046 → coude 3 (embout 90°, arrivée par le haut),
   // derrière le moteur −X.
   H('7', 35, 6, b46[2].arm, E(s3, '90', Y), {
@@ -167,14 +177,16 @@ export default function P058(api) {
 
   // ------------------------------------------------ flanc −X : 12 et 14
   // 12 : branche du té avant de P156 → haut du flanc −X du mât.
-  H('12', 67, 12, tee156(0), S([-MAST.width / 2 - 0.015, 3.0, -0.05], NX), {
+  H('12', 67, 12, P156s.B1, S([-MAST.width / 2 - 0.015, 3.0, -0.05], NX), {
     vias: [[-0.38, 2.2, -0.04], [-0.37, 2.6, -0.045], [-0.34, 2.93, -0.05]],
     sag: NX,
   }, [-0.35, 0, -0.1]);
   // 14 : branche du second té → pied du mât, entre mât et vérin.
-  H('14', 98, 12, tee156(1), S([-0.3, 0.04, -0.12], Y), {
-    vias: [[-0.38, 1.85, -0.09], [-0.3, 1.5, -0.12], [-0.29, 0.8, -0.12]],
-    sag: NX,
+  // 14 : branche du second té → le long du fût du stinger −X, puis sous la
+  // semelle du pied jusqu'au raccord central.
+  H('14', 98, 12, P156s.B2, S([0, -0.03, -0.08], NY), {
+    vias: [[-0.34, 1.7, -0.06], [-0.36, 1.2, -0.02], [-0.36, 0.5, -0.02], [-0.3, -0.06, -0.06], [-0.12, -0.1, -0.08]],
+    sag: NY,
   }, [-0.35, 0, -0.15]);
 
   return { view: { dir: [-1.0, 0.5, 1.1] } };
