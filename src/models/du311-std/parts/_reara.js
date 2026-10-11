@@ -350,20 +350,21 @@ export function gasSpring(api, a, b, { bodyL, rB = 0.011, rR = 0.004, ends = 'ey
  * avec écrous à freinage côté opposé. Repère : axe du nœud selon Y, origine
  * au milieu de sa hauteur ; ailes dans le plan x ∈ [-0.008, -0.0032]
  * (appliquées contre une face d'appui x = -0.008, nœud devant), aile A vers
- * +Z (bâti), aile B vers -Z (porte) ; dB décale l'aile B en x (porte en saillie).
+ * +Z (bâti), aile B vers -Z (porte) — inversées si sz = -1 ; dA / dB décalent
+ * les ailes en x (faces d'appui en retrait ou en saillie).
  */
-export function hinge(api, { dA = 0, dB = 0, h = 0.076, wA = 0.042, wB = 0.026, nutsA = true, nutsB = true } = {}) {
+export function hinge(api, { dA = 0, dB = 0, h = 0.076, wA = 0.042, wB = 0.026, nutsA = true, nutsB = true, sz = 1 } = {}) {
   const { S } = api;
   const r = 0.008, tl = I(3 / 16), x0 = -r;
-  const leafA = S.box(tl, h, wA, 'zinc', { r: 0.0015, pos: [x0 + tl / 2 + dA, 0, r * 0.6 + wA / 2] });
-  const leafB = S.box(tl, h * 0.94, wB, 'zinc', { r: 0.0015, pos: [x0 + tl / 2 + dB, 0, -r * 0.6 - wB / 2] });
+  const leafA = S.box(tl, h, wA, 'zinc', { r: 0.0015, pos: [x0 + tl / 2 + dA, 0, sz * (r * 0.6 + wA / 2)] });
+  const leafB = S.box(tl, h * 0.94, wB, 'zinc', { r: 0.0015, pos: [x0 + tl / 2 + dB, 0, -sz * (r * 0.6 + wB / 2)] });
   const k = h / 3;
   const knuckles = [-1, 0, 1].map((i) => S.lathe([[0, -k / 2 + 0.0006], [r - 0.0008, -k / 2 + 0.0006], [r, -k / 2 + 0.0014], [r, k / 2 - 0.0014], [r - 0.0008, k / 2 - 0.0006], [0, k / 2 - 0.0006]], 'zinc', { seg: 20, pos: [0, i * k, 0] }));
   const pin = S.lathe([[0, -h / 2 - 0.004], [0.0028, -h / 2 - 0.004], [0.0028, h / 2], [0.0055, h / 2], [0.0055, h / 2 + 0.003], [0.0045, h / 2 + 0.0038], [0, h / 2 + 0.0038]], 'steel', { seg: 14 });
   const parts = [leafA, leafB, ...knuckles];
   // Vis à tête bombée 1/4 po (tête sur l'aile, côté +X) et écrous derrière la face d'appui.
   const fast = [];
-  for (const [w, zc, dx, nuts] of [[wA, r * 0.6 + wA / 2, dA, nutsA], [wB, -r * 0.6 - wB / 2, dB, nutsB]]) {
+  for (const [w, zc, dx, nuts] of [[wA, sz * (r * 0.6 + wA / 2), dA, nutsA], [wB, -sz * (r * 0.6 + wB / 2), dB, nutsB]]) {
     const zs = w > 0.03 ? [zc - w * 0.22, zc + w * 0.22] : [zc];
     for (const y of [-h * 0.3, h * 0.3]) {
       for (const zz of zs) {
@@ -465,7 +466,47 @@ export function foamGeo(THREE, out, holes = [], z0 = 0, tf = I(1)) {
  * de mousse : bande pliée sur le chant, 1 po sur la face et 1 po sur la tôle
  * (géométrie brute, contour du panneau, mousse de z0 à z0 + tf).
  */
-export function tapeGeo(THREE, out, z0 = 0, tf = I(1)) {
+export function tapeGeo(THREE, out, z0 = 0, tf = I(1), { hole = false } = {}) {
   const e = 0.0004, b = I(1);
-  return sweepGeo(THREE, ccw(out), [[-b, z0], [-b, z0 + e], [-e, z0 + e], [-e, z0 + tf + e], [b, z0 + tf + e], [b, z0 + tf], [0, z0 + tf], [0, z0 + e * 0.5]], { closed: true, loop: true });
+  return sweepGeo(THREE, hole ? ccw(out).slice().reverse() : ccw(out), [[-b, z0], [-b, z0 + e], [-e, z0 + e], [-e, z0 + tf + e], [b, z0 + tf + e], [b, z0 + tf], [0, z0 + tf], [0, z0 + e * 0.5]], { closed: true, loop: true });
+}
+
+// ------------------------------------------------------------------ repères des portes
+/**
+ * Porte latérale (P424 : s = -1, gauche ; P428 : s = +1, droite). Tôlerie
+ * décrite en (u, v, w) : u le long de la porte depuis son chant avant (côté
+ * charnières) vers l'arrière, v vers le haut depuis le bas de la porte, w
+ * profondeur vers l'intérieur du capot depuis la face extérieure de la peau.
+ * Repère de l'assemblage : origine sur l'axe des charnières (x = CAN.hx,
+ * z = s·CAN.hz) au niveau du bas de la porte (y = CAN.yb), axes parallèles au
+ * repère machine. Rend la matrice (u, v, w) → repère, la fonction de point P
+ * et les directions D.u, D.v, D.w (vecteurs du repère).
+ */
+export function doorFrame(THREE, s) {
+  const x0 = CAN.xf - CAN.hx, z0 = s * (CAN.zo - CAN.hz);
+  const m = new THREE.Matrix4().set(-1, 0, 0, x0, 0, 1, 0, 0, 0, 0, -s, z0, 0, 0, 0, 1);
+  return { m, P: (u, v, w) => [x0 - u, v, z0 - s * w], D: { u: [-1, 0, 0], v: [0, 1, 0], w: [0, 0, -s] } };
+}
+/**
+ * Porte du dessus (P426) : (u, v, w) avec u le long de la pente depuis le
+ * chant avant (charnières) vers l'arrière, v = z machine, w vers le bas depuis
+ * le dessus de la peau. Repère de l'assemblage : origine sur l'axe des
+ * charnières (x = CAN.hx, y = CAN.hy, z = 0), axes parallèles au repère
+ * machine porte posée à plat ; P422 l'incline de CAN.slope autour de Z.
+ */
+export function topFrame(THREE) {
+  const x0 = CAN.xf - CAN.hx, y0 = CAN.yf - CAN.hy;
+  const m = new THREE.Matrix4().set(-1, 0, 0, x0, 0, 0, -1, y0, 0, 1, 0, 0, 0, 0, 0, 1);
+  return { m, P: (u, v, w) => [x0 - u, y0 - w, v], D: { u: [-1, 0, 0], v: [0, 0, 1], w: [0, -1, 0] } };
+}
+/** Point machine d'un point (u, v, w) de la porte du dessus posée sur le capot (P422). */
+export function topToMachine(u, v, w) {
+  const x = CAN.xf - CAN.hx - u, y = CAN.yf - CAN.hy - w, c = Math.cos(CAN.slope), sn = Math.sin(CAN.slope);
+  return [CAN.hx + x * c - y * sn, CAN.hy + x * sn + y * c, v];
+}
+export const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+export const neg = (a) => a.map((v) => -v);
+/** Matrice d'un repère de tôle secondaire (aile, patte) : (x, y, z) local → (u, v, w) = o + x·ex + y·ey + z·ez. */
+export function basis(THREE, o, ex, ey, ez) {
+  return new THREE.Matrix4().set(ex[0], ey[0], ez[0], o[0], ex[1], ey[1], ez[1], o[1], ex[2], ey[2], ez[2], o[2], 0, 0, 0, 1);
 }
