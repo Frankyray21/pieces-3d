@@ -7,6 +7,8 @@ import P284 from './P284.js';
 import P286 from './P286.js';
 import P288 from './P288.js';
 import P290 from './P290.js';
+import P326 from './P326.js';
+import P328 from './P328.js';
 import P330 from './P330.js';
 
 export default {
@@ -17,5 +19,7 @@ export default {
   'P286': P286,
   'P288': P288,
   'P290': P290,
+  'P326': P326,
+  'P328': P328,
   'P330': P330,
 };

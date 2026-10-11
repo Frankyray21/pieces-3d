@@ -173,6 +173,16 @@ export function cabHw(api) {
     },
     /** Longueur (m) de l'adaptateur métrique metric(dmm, jd), de la face d'appui au bout du nez. */
     metricTip: (dmm, jd) => 0.0012 + Math.max(JIC[jd].hex * IN, (dmm / 2000) * 2.4) * 0.42 + JIC[jd].t * IN * 0.95,
+    /** Bout du mâle côté corps d'un raccord bulkhead(dash, kind) dans son repère : { p, d }. */
+    bulkheadTip(dash, kind = 'straight') {
+      const J = JIC[dash];
+      const r = (J.t * IN) / 2, hh = r * 1.1, nl = J.t * IN * 0.95;
+      if (kind === 'straight') return { p: [0, -hh - nl, 0], d: [0, -1, 0] };
+      const a = kind === '45' ? Math.PI / 4 : Math.PI / 2;
+      const yc = -hh - r * 1.05, d = [Math.sin(Math.PI - a), Math.cos(Math.PI - a), 0];
+      const L = r * 1.05 + nl;
+      return { p: [d[0] * L, yc + d[1] * L, 0], d };
+    },
     /** Adaptateur métrique (filetage M d mm, joint plat) → mâle JIC jd (CP0053xx), le long de +Y. */
     metric(dmm, jd) {
       const J = JIC[jd];
