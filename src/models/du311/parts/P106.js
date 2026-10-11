@@ -1,85 +1,91 @@
 // P106 — Tube de centreur CM45362 rév. 2 (page 106) : « CENTRALIZER TUBES ».
-// Profilé en C de tôle de 1/2 po (âme et deux ailes, angles pliés) ouvert
-// vers l'axe de forage, qui coulisse dans le châssis du centreur fendu (P102)
-// et reçoit une mâchoire (P146 repère 2) entre ses ailes. Les ailes sont
-// échancrées en demi-cercle R 2.9 po côté tige ; l'aile haute a une
-// encoche de 3.9 × 2.2 po côté âme (l'âme y est abaissée au niveau de la
-// mâchoire). Trou de l'axe de mâchoire Ø 1 1/4 dans chaque aile, garni d'une
-// bague roulée : P108 (1, 0.370 po) dans l'aile basse, CP10017 (2, 1/2 po)
-// dans l'aile haute (coupe A-A).
+// Fourreau mécano-soudé qui coulisse dans le châssis du centreur fendu (P102)
+// et porte une mâchoire (P146 repère 2) : deux tôles de 0.52 po (dessus et
+// dessous) écartées de 3.1 po, réunies par deux flancs aux angles pliés ;
+// côté tige, les deux tôles sont échancrées en demi-cercle R 3.45 po centré
+// sur l'axe de forage ; côté extérieur, encoche de 5.05 × 2.85 po (passage de
+// la tige du vérin du centreur, attelée dans la poche de la mâchoire). Trou
+// de l'axe de mâchoire dans chaque tôle, garni d'une bague roulée Ø 1 × 1 1/4
+// po : P108 (1, 0.370 po) dans la tôle basse, CP10017 (2, 1/2 po) dans la
+// tôle haute (coupe A-A).
 // Repère (commun avec P104 et P146) : origine sur l'axe de forage, mâchoires
-// fermées, au niveau du dessus de l'aile basse (= dessous de la mâchoire) ;
-// +X de l'axe vers l'âme (sens d'ouverture), Y vers le haut, Z selon la
-// longueur du profilé. Encombrement 0.175 (X, de 0.005 à 0.180) × 0.085 (Y,
-// de -0.0127 à 0.0724) × 0.222 (Z) m.
-// Cotes : vue de face de la page 106 (bague Ø 1 1/4 pour l'échelle :
-// largeur 8 3/4, profondeur 6.9, échancrure R 2.9, axe à 3.7 po de l'axe de
-// forage), section A-A (hauteur intérieure 2.35 po = mâchoire de 2 1/4).
+// fermées, au niveau du dessus de la tôle basse (dessous de la mâchoire) ;
+// +X de l'axe de forage vers l'extérieur (sens d'ouverture, le long du
+// fourreau), Y vers le haut, Z en travers. Encombrement 0.224 (X, de 0.005 à
+// 0.229) × 0.105 (Y, de -0.013 à 0.092) × 0.263 (Z) m.
+// Cotes : vue de face et coupe A-A de la page 106, à l'échelle de l'alésage
+// des bagues (Ø 1 po = 100 px) : largeur 10.35, longueur 8.8, tôles 0.52,
+// jour 3.1, échancrure R 3.45 (centre à 0.2 po du bout), axe à 4.32 po du
+// bout côté tige.
 import { u } from './_avance_b.js';
 
+const T = 0.52, GAP = 3.1, W = 10.35, X0 = 0.2, X1 = 9.0, R = 3.45, PX = 4.52;
+const NW = 5.05 / 2, NX = X1 - 2.85;
+
 export const TUBE106 = {
-  x0: u(0.2), x1: u(7.1), len: u(8.75), t: u(0.5), gap: u(2.35), pinX: u(3.7),
-  notch: { w: u(3.9), x: u(4.9) }, arcR: u(2.9),
+  x0: u(X0), x1: u(X1), width: u(W), t: u(T), gap: u(GAP), pinX: u(PX),
+  notch: { w: u(2 * NW), x: u(NX) }, arcR: u(R),
 };
 
 export default function P106(api) {
-  const { THREE, S } = api;
+  const { S } = api;
   const { extrude, merged, group, at } = S;
   const P = (ref, obj, e) => api.part(ref, obj, e);
-  const T = 0.5, X0 = 0.2, X1 = 7.1, Z = 8.75 / 2, R = 2.9, GAP = 2.35, PX = 3.7, NW = 3.9 / 2, NX = 4.9;
-  const arc = (n = 20) => {
+  const Z = W / 2, RB = T; // rayon extérieur des plis
+  const zi = Z - RB; // les tôles s'arrêtent aux plis
+  const arc = (n = 24) => {
     const a0 = Math.acos(X0 / R);
     return Array.from({ length: n + 1 }, (_, i) => {
-      const a = -a0 + (2 * a0 * i) / n; // de -Z vers +Z, côté +X
+      const a = a0 - (2 * a0 * i) / n; // de +Z vers -Z, côté +X
       return [R * Math.cos(a), R * Math.sin(a)];
     });
   };
-  // Aile horizontale (contour (x, z) en po), de y0 à y0 + T ; trou de bague.
-  const flange = (pts, y0) => {
+  // Tôle horizontale (contour (x, z) en po), de y0 à y0 + T ; trou de bague.
+  const sheet = (y0) => {
+    const pts = [[X0, -zi], [X1, -zi], [X1, -NW], [NX, -NW], [NX, NW], [X1, NW], [X1, zi], [X0, zi], ...arc().slice(1, -1)];
     const m = extrude(pts.map(([x, z]) => [u(x), -u(z)]), u(T), 'grey', { holes: [[u(PX), 0, u(0.627)]] });
     m.rotation.x = -Math.PI / 2;
     m.position.y = u(y0 + T / 2);
     return m;
   };
-  // Échancrure : du bord avant (x = X0) en demi-cercle autour de la tige.
-  const lower = [[X0, -Z], [X1 - T, -Z], [X1 - T, Z], [X0, Z], ...arc().reverse()];
-  const upper = [[X0, -Z], [X1 - T, -Z], [X1 - T, -NW], [NX, -NW], [NX, NW], [X1 - T, NW], [X1 - T, Z], [X0, Z], ...arc().reverse()];
-  // Âme (plan YZ) entre les ailes ; angles pliés : quart de rond extérieur
-  // de rayon T (le pli de l'aile haute s'interrompt à l'encoche).
-  const web = extrude([[-Z, 0], [Z, 0], [Z, GAP], [-Z, GAP]].map(([z, y]) => [u(z), u(y)]), u(T), 'grey');
-  web.rotation.y = -Math.PI / 2;
-  web.position.x = u(X1 - T / 2);
-  const bend = (yc, sgn, z0, z1) => {
+  // Flancs (plan XY) entre les plis, sur toute la longueur.
+  const flank = (s) => {
+    const m = extrude([[X0, 0], [X1, 0], [X1, GAP], [X0, GAP]].map(([x, y]) => [u(x), u(y)]), u(T), 'grey');
+    m.position.z = s * u(Z - T / 2);
+    return m;
+  };
+  // Plis : quart de rond de rayon RB (dans le plan ZY) extrudé selon X.
+  const bend = (yc, sy, sz) => {
     const pts = [[0, 0]];
     for (let i = 0; i <= 8; i++) {
       const a = (i / 8) * Math.PI / 2;
-      pts.push([T * Math.sin(a), sgn * T * Math.cos(a)]);
+      pts.push([RB * Math.sin(a), sy * RB * Math.cos(a)]);
     }
-    const m = extrude((sgn > 0 ? pts.slice().reverse() : pts).map(([x, yy]) => [u(x), u(yy)]), u(z1 - z0), 'grey');
-    m.position.set(u(X1 - T), u(yc), u((z0 + z1) / 2));
+    // Plan local (a, y) avec a = -z après rotation de +π/2 autour de Y.
+    const m = extrude(pts.map(([a, y]) => [-sz * u(a), u(y)]), u(X1 - X0), 'grey');
+    m.rotation.y = Math.PI / 2;
+    m.position.set(u((X0 + X1) / 2), u(yc), sz * u(zi));
     return m;
   };
   const tube = merged([
-    flange(lower, -T),
-    flange(upper, GAP),
-    web,
-    bend(0, -1, -Z, Z),
-    bend(GAP, 1, -Z, -NW),
-    bend(GAP, 1, NW, Z),
+    sheet(-T), sheet(GAP),
+    flank(1), flank(-1),
+    bend(0, -1, 1), bend(0, -1, -1), bend(GAP, 1, 1), bend(GAP, 1, -1),
   ], 'grey');
 
-  // Bagues roulées dans les trous de l'axe.
-  const sub = api.sub('P108');
-  P('1', at(sub, [u(PX), -u(0.37) / 2, 0]), [0, -0.04, 0]);
-  // 2 — bague 1 × 1 1/4 × 1/2 po (même construction que P108, longueur 1/2).
+  // 1 — bague P108 (0.370 po) affleurant le dessus de la tôle basse.
+  P('1', at(api.sub('P108'), [u(PX), -u(0.37) / 2, 0]), [0, -0.05, 0]);
+  // 2 — bague 1 × 1 1/4 × 1/2 po (roulée, joint agrafé), affleurant le dessous
+  // de la tôle haute.
   const ro = u(0.625), ri = u(0.5), h = u(0.25);
   const w = u(0.012) / ro, e = u(0.008);
   const b2 = S.slotted(ro, ri, -h, h, [
     { a: 0, w, y0: -h, y1: e }, { a: 0.16, w: 0.32 + w, y0: -e, y1: e }, { a: 0.32, w, y0: -e, y1: h },
   ], 'brass', { seg: 48 });
-  const b2g = P('2', at(group(b2), [u(PX), u(GAP + T / 2), 0]), [0, 0.04, 0]);
-  // Le profilé est l'assemblage lui-même (CM45362, sans ligne dans sa liste) :
-  // posé dans la racine du modèle, hors repères, il reste fixe à l'éclaté.
+  const b2g = P('2', at(group(b2), [u(PX), u(GAP + 0.25), 0]), [0, 0.05, 0]);
+  // Le fourreau est l'assemblage lui-même (CM45362, sans ligne dans sa
+  // liste) : posé dans la racine du modèle, hors repères, il reste fixe à
+  // l'éclaté.
   b2g.parent.add(tube);
 
   return { view: { dir: [1, 0.8, 1.1] } };
