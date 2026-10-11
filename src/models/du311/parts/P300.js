@@ -46,16 +46,15 @@ export default function P300(api) {
   for (let k = 0; k < nF; k++) {
     const yc = f0 + ((f1 - f0) * k) / (nF - 1);
     prof.push(
-      [root, yc - 2.2 * MM], [root + 2 * MM, yc - 1.8 * MM], [LR.finR - 1 * MM, yc - 1.25 * MM],
-      [LR.finR, yc - 0.5 * MM], [LR.finR, yc + 0.5 * MM], [LR.finR - 1 * MM, yc + 1.25 * MM],
-      [root + 2 * MM, yc + 1.8 * MM], [root, yc + 2.2 * MM],
+      [root, yc - 2.2 * MM], [LR.finR - 1 * MM, yc - 1.25 * MM], [LR.finR, yc - 0.3 * MM],
+      [LR.finR, yc + 0.3 * MM], [LR.finR - 1 * MM, yc + 1.25 * MM], [root, yc + 2.2 * MM],
     );
   }
   prof.push(
     [root, yt - 1.5 * MM], [root + 3 * MM, yt], [rT - 1 * MM, yt], [rT, yt + 1 * MM], [rT, LR.headFace - 1 * MM],
     [rT - 1 * MM, LR.headFace], [rB + 1.2 * MM, LR.headFace], [rB, LR.headFace - 1.2 * MM], [rB, ys],
   );
-  const barrel = lathe(prof, 'castIron', { seg: 56 });
+  const barrel = lathe(prof, 'castIron', { seg: 32 });
   // Bride de pied : carré à coins arrondis, quatre trous de vis, ouverture du fût.
   const foot = lrPrism(api, lrRoundRect(2 * LR.flange, 2 * LR.flange, 12 * MM, 5),
     [lrCircle(rS - 0.5 * MM, 40), ...corners.map(([x, z]) => lrCircle(5.2 * MM, 14, x, z))], yb, yf, 'castIron');

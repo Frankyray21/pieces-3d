@@ -23,6 +23,7 @@
 // vilebrequin, au droit du cylindre ; Y le long de l'axe du cylindre vers la
 // culasse ; X le long du vilebrequin (aspiration −X, refoulement +X). Plan de
 // joint à y = LR.headFace = 0.275, dessus des bouchons à y = 0.3605.
+// Option { lite } : allège les lumières des pièces de clapet (voir plus bas).
 // Encombrement 0.164 (X, brides de raccord) × 0.0855 (y 0.275 → 0.3605) ×
 // 0.15 m (bride Ø 0,15).
 // Cotes estimées (dessin non coté) : clapets Ø 57 mm, vis 3/8 po, bouchons
@@ -40,11 +41,14 @@ function hull(pts) {
   return lo.slice(0, -1).concat(hi.slice(0, -1));
 }
 
-export default function P290(api) {
+export default function P290(api, opts = {}) {
   const { S } = api;
   const { lathe, slotted, roundHole, ring, torus, box, bolt, nut, washer, spring, merged, group, at } = S;
   const P = (ref, obj, e) => api.part(ref, obj, e);
 
+  // Option { lite } (bloc P288, trois culasses) : lames sans lumières, une
+  // seule couronne de lumières aux sièges et butées, chemises sans lumières.
+  const lite = !!opts.lite;
   const VX = LR.valveX;
   const yG = LR.headFace; // dessous du joint de culasse
   const y0 = yG + 0.8 * MM; // dessous de la culasse
@@ -66,16 +70,16 @@ export default function P290(api) {
     for (let k = 0; k <= 16; k++) { const a = Math.PI / 2 + (Math.PI * k) / 16; pts.push([-VX + R * Math.cos(a), R * Math.sin(a)]); }
     return pts;
   };
-  const pockets = [-VX, VX].map((x) => lrCircle(rPk, 40, x, 0));
-  const flange = lrPrism(api, lrCircle(75 * MM, 64), [
-    ...[-VX, VX].map((x) => lrCircle(20 * MM, 32, x, 0)),
+  const pockets = [-VX, VX].map((x) => lrCircle(rPk, 28, x, 0));
+  const flange = lrPrism(api, lrCircle(75 * MM, 44), [
+    ...[-VX, VX].map((x) => lrCircle(20 * MM, 20, x, 0)),
     ...boltPts.map(([x, z]) => lrCircle(5.2 * MM, 14, x, z)),
   ], y0, y1, 'castIron');
   const body = lrPrism(api, stadium(38 * MM), pockets, y1, yD, 'castIron');
   // Deux ailettes autour du corps, entre la bride et la portée des bouchons.
   const fins = [0.2975, 0.3095].map((y) => lrPrism(api, stadium(47 * MM), pockets, y - 1.25 * MM, y + 1.25 * MM, 'castIron'));
   // Bossages des vis de culasse (dessus à 0.303) et congés sur la bride.
-  const bosses = boltPts.map(([x, z]) => lathe([[0, y1], [12 * MM, y1], [9.5 * MM, y1 + 3 * MM], [9.5 * MM, 0.303], [0, 0.303]], 'castIron', { seg: 20, pos: [x, 0, z] }));
+  const bosses = boltPts.map(([x, z]) => lathe([[0, y1], [12 * MM, y1], [9.5 * MM, y1 + 3 * MM], [9.5 * MM, 0.303], [0, 0.303]], 'castIron', { seg: 14, pos: [x, 0, z] }));
   // Brides de raccord en losange (deux trous), d'axe X, à y = 0.305.
   const yP = 0.305;
   const lozenge = hull([...lrCircle(15 * MM, 24), ...lrCircle(8 * MM, 12, 0, 25 * MM), ...lrCircle(8 * MM, 12, 0, -25 * MM)]);
@@ -89,7 +93,7 @@ export default function P290(api) {
   };
   // Conduits : bossage cylindrique entre le corps et chaque bride.
   const ducts = [-1, 1].map((sx) => {
-    const d = lathe([[0, 0], [14 * MM, 0], [14 * MM, 10 * MM], [0, 10 * MM]], 'castIron', { seg: 24 });
+    const d = lathe([[0, 0], [14 * MM, 0], [14 * MM, 10 * MM], [0, 10 * MM]], 'castIron', { seg: 16 });
     d.rotation.z = -sx * Math.PI / 2;
     d.position.set(sx * (VX + 30 * MM), yP, 0);
     return d;
@@ -97,7 +101,7 @@ export default function P290(api) {
   P('2', merged([flange, body, ...fins, ...bosses, portFlange(-1), portFlange(1), ...ducts], 'castIron'), [0, 0.05, 0]);
 
   // ---------------------------------------------------------------- 37 — joint de culasse
-  P('37', lrPrism(api, lrCircle(75 * MM, 64), [lrCircle(LR.bore / 2 + 1 * MM, 48), ...boltPts.map(([x, z]) => lrCircle(5.5 * MM, 14, x, z))], yG, y0, 'cream'), [0, 0.02, 0]);
+  P('37', lrPrism(api, lrCircle(75 * MM, 44), [lrCircle(LR.bore / 2 + 1 * MM, 32), ...boltPts.map(([x, z]) => lrCircle(5.5 * MM, 14, x, z))], yG, y0, 'cream'), [0, 0.02, 0]);
 
   // ---------------------------------------------------------------- 38 — vis de culasse (4)
   for (const [x, z] of boltPts) P('38', at(bolt(0.375 * IN, 1.5 * IN, 'steel', { washer: true }), [x, 0.303, z]), [0, 0.3, 0]);
@@ -107,25 +111,25 @@ export default function P290(api) {
   // trous [r, n, rh, phase], de ya à yb, centré sur l'axe du logement x = cx.
   const disk = (cx, R, rc, rows, ya, yb, mat, extra = []) => {
     const holes = rc > 0 ? [lrCircle(rc, 16, cx, 0)] : [];
-    for (const [r, n, rh, ph = 0] of rows) {
+    for (const [r, n, rh, ph = 0] of (lite ? rows.slice(0, mat === 'steel' ? 1 : 0) : rows)) {
       for (let k = 0; k < n; k++) {
         const a = ph + (2 * Math.PI * k) / n;
-        holes.push(lrCircle(rh, 12, cx + r * Math.cos(a), r * Math.sin(a)));
+        holes.push(lrCircle(rh, 7, cx + r * Math.cos(a), r * Math.sin(a)));
       }
     }
-    return lrPrism(api, lrCircle(R, 48, cx, 0), holes.concat(extra), ya, yb, mat);
+    return lrPrism(api, lrCircle(R, 28, cx, 0), holes.concat(extra), ya, yb, mat);
   };
   const seatRows = [[11.5 * MM, 8, 2.6 * MM], [21 * MM, 12, 2.6 * MM, 0.26]];
-  const guardRows = [[16 * MM, 10, 2.4 * MM, 0.31], [24.5 * MM, 14, 1.8 * MM]];
+  const guardRows = [[16 * MM, 10, 2.4 * MM, 0.31], [24 * MM, 10, 1.8 * MM]];
   const plateRows = [[16 * MM, 10, 1.6 * MM, 0.31]];
-  const springRows = [[13 * MM, 6, 2.2 * MM], [20 * MM, 9, 2.2 * MM, 0.35]];
+  const springRows = [[16.5 * MM, 8, 2.6 * MM, 0.2]];
   const cap = (cx, yb, rOut, hexR, mat) => {
     // Bouchon creux : queue filetée dans le logement, corps rond, six-pans,
     // prise de pilotage au centre.
     const yt = 0.3545;
     return merged([
       lathe([[27.5 * MM, yD - 7 * MM], [rPk, yD - 7 * MM], [rPk, yb], [rOut, yb], [rOut, yt - 2 * MM], [rOut - 2 * MM, yt],
-        [3.5 * MM, yt], [3.5 * MM, yt - 5 * MM], [27.5 * MM, yt - 5 * MM], [27.5 * MM, yD - 7 * MM]], mat, { seg: 48, pos: [cx, 0, 0] }),
+        [3.5 * MM, yt], [3.5 * MM, yt - 5 * MM], [27.5 * MM, yt - 5 * MM], [27.5 * MM, yD - 7 * MM]], mat, { seg: 28, pos: [cx, 0, 0] }),
       lathe([[3.5 * MM, yt], [hexR, yt], [hexR, yt + 4.8 * MM], [hexR - 1.2 * MM, 0.3605], [3.5 * MM, 0.3605], [3.5 * MM, yt]], mat, { seg: 6, pos: [cx, 0, 0] }),
     ], mat);
   };
@@ -134,10 +138,10 @@ export default function P290(api) {
     const win = [];
     for (let k = 0; k < 6; k++) {
       const a = (k * Math.PI) / 3;
-      win.push(...roundHole(a, ya + 7 * MM, 4 * MM, 26.5 * MM, { steps: 6 }));
+      if (!lite) win.push(...roundHole(a, ya + 7 * MM, 4 * MM, 26.5 * MM, { steps: 2 }));
       win.push({ a: a + Math.PI / 6, w: 0.32, y0: yb - 4 * MM, y1: yb });
     }
-    return slotted(26.5 * MM, 22.5 * MM, ya, yb, win, 'darkSteel', { seg: 48, pos: [cx, 0, 0] });
+    return slotted(26.5 * MM, 22.5 * MM, ya, yb, win, 'darkSteel', { seg: 24, pos: [cx, 0, 0] });
   };
 
   // ---------------------------------------------------------------- 3 / 22 — ensembles de clapets
@@ -145,7 +149,7 @@ export default function P290(api) {
   // enveloppe transparente du clapet monté, dans son logement, qui porte le
   // repère de l'ensemble sans masquer ses pièces.
   for (const [ref, cx] of [['3', -VX], ['22', VX]]) {
-    P(ref, lathe([[0, y1 + 1 * MM], [rV + 0.4 * MM, y1 + 1 * MM], [rV + 0.4 * MM, y1 + 21.5 * MM], [0, y1 + 21.5 * MM]], 'glass', { seg: 40, pos: [cx, 0, 0] }), [cx < 0 ? -0.045 : 0.045, 0.09, 0]);
+    P(ref, lathe([[0, y1 + 1 * MM], [rV + 0.4 * MM, y1 + 1 * MM], [rV + 0.4 * MM, y1 + 21.5 * MM], [0, y1 + 21.5 * MM]], 'glass', { seg: 28, pos: [cx, 0, 0] }), [cx < 0 ? -0.045 : 0.045, 0.09, 0]);
   }
 
   // ---------------------------------------------------------------- 3 — clapet d'aspiration (côté −X)
@@ -153,7 +157,7 @@ export default function P290(api) {
     const cx = -VX, sd = -1;
     let k = 0;
     const Q = (ref, obj) => P(ref, obj, col(sd, k++));
-    Q('16', lrPrism(api, lrCircle(rPk - 0.3 * MM, 40, cx, 0), [lrCircle(25 * MM, 40, cx, 0)], y1, y1 + 1 * MM, 'copper'));
+    Q('16', lrPrism(api, lrCircle(rPk - 0.3 * MM, 28, cx, 0), [lrCircle(25 * MM, 28, cx, 0)], y1, y1 + 1 * MM, 'copper'));
     const yS = y1 + 1 * MM; // dessous du siège
     // 6 — vis centrale M6, tête sous le siège, tige vers le haut.
     Q('6', at(bolt(6 * MM, 37 * MM, 'steel', { axis: '-y' }), [cx, yS, 0]));
@@ -171,7 +175,7 @@ export default function P290(api) {
       [lrCircle(1.8 * MM, 10, cx, 22 * MM), lrCircle(3.4 * MM, 12, cx, 17 * MM), lrCircle(3.4 * MM, 12, cx, -17 * MM)]));
     const yU = yGd + 9 * MM; // dessus de la butée
     Q('13', at(lathe([[3.2 * MM, yU], [4.5 * MM, yU], [4.5 * MM, yU + 6.5 * MM], [3.2 * MM, yU + 6.5 * MM], [3.2 * MM, yU]], 'steel', { seg: 16 }), [cx, 0, 0]));
-    Q('15', spring(6.2 * MM, 0.7 * MM, 6 * MM, 3.5, 'darkSteel', { pos: [cx, yU + 3.2 * MM, 0], perTurn: 16, radial: 6 }));
+    Q('15', spring(6.2 * MM, 0.7 * MM, 6 * MM, 3.5, 'darkSteel', { pos: [cx, yU + 3.2 * MM, 0], perTurn: 10, radial: 5 }));
     // 14 — fourche de délestage : traverse selon Z, deux doigts dans la butée.
     const yF = yU + 6.5 * MM;
     Q('14', merged([
@@ -188,10 +192,10 @@ export default function P290(api) {
     const pl = [[17 * MM, yb], [22 * MM, yb]];
     for (const g of [yb + 3 * MM, yb + 10.5 * MM, yb + 18 * MM]) pl.push([22 * MM, g - 1.1 * MM], [20.2 * MM, g - 1.1 * MM], [20.2 * MM, g + 1.1 * MM], [22 * MM, g + 1.1 * MM]);
     pl.push([22 * MM, yb + 21 * MM], [21 * MM, yb + 22 * MM], [0, yb + 22 * MM], [0, yb + 6 * MM], [17 * MM, yb + 6 * MM], [17 * MM, yb]);
-    Q('19', ring(22.4 * MM, 20.2 * MM, 2 * MM, 'cream', { seg: 32, pos: [cx, yb + 3 * MM, 0] }));
+    Q('19', ring(22.4 * MM, 20.2 * MM, 2 * MM, 'cream', { seg: 24, pos: [cx, yb + 3 * MM, 0] }));
     Q('18', torus(21.3 * MM, 1.1 * MM, 'rubber', { pos: [cx, yb + 10.5 * MM, 0] }));
-    Q('19', ring(22.4 * MM, 20.2 * MM, 2 * MM, 'cream', { seg: 32, pos: [cx, yb + 18 * MM, 0] }));
-    Q('20', lathe(pl, 'steel', { seg: 36, pos: [cx, 0, 0] }));
+    Q('19', ring(22.4 * MM, 20.2 * MM, 2 * MM, 'cream', { seg: 24, pos: [cx, yb + 18 * MM, 0] }));
+    Q('20', lathe(pl, 'steel', { seg: 24, pos: [cx, 0, 0] }));
     Q('21', cap(cx, yD, 33 * MM, 20 * MM, 'steel'));
   }
 
@@ -200,7 +204,7 @@ export default function P290(api) {
     const cx = VX, sd = 1;
     let k = 0;
     const Q = (ref, obj) => P(ref, obj, col(sd, k++));
-    Q('32', lrPrism(api, lrCircle(rPk - 0.3 * MM, 40, cx, 0), [lrCircle(25 * MM, 40, cx, 0)], y1, y1 + 1 * MM, 'copper'));
+    Q('32', lrPrism(api, lrCircle(rPk - 0.3 * MM, 28, cx, 0), [lrCircle(25 * MM, 28, cx, 0)], y1, y1 + 1 * MM, 'copper'));
     const yS = y1 + 1 * MM;
     const yT = yS + 8 * MM;
     // 23 — siège à goujon central (M8, jusqu'à 0.319).
@@ -222,7 +226,7 @@ export default function P290(api) {
     Q('30', nut(13 * MM, 5 * MM, 'steel', { pos: [cx, yU + 1.5 * MM + 2.5 * MM, 0] }));
     Q('25', nut(13 * MM, 3.5 * MM, 'steel', { pos: [cx, yU + 6.5 * MM + 1.75 * MM, 0] }));
     Q('33', sleeve(cx, yU, 0.335));
-    Q('36', lrPrism(api, lrCircle(34 * MM, 48, cx, 0), [lrCircle(rPk + 0.2 * MM, 40, cx, 0)], yD, yD + 1.5 * MM, 'copper'));
+    Q('36', lrPrism(api, lrCircle(34 * MM, 28, cx, 0), [lrCircle(rPk + 0.2 * MM, 28, cx, 0)], yD, yD + 1.5 * MM, 'copper'));
     Q('34', cap(cx, yD + 1.5 * MM, 33 * MM, 21 * MM, 'steel'));
   }
 

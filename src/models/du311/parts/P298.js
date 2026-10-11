@@ -88,7 +88,7 @@ export default function P298(api, opts = {}) {
     const n = 16;
     for (let k = 0; k < n; k++) {
       // Rouleau conique d'axe X, incliné de 8° vers l'axe côté petit bout.
-      const r = lathe([[0, -7 * MM], [4.2 * MM, -7 * MM], [3.4 * MM, 7 * MM], [0, 7 * MM]], 'chrome', { seg: 10 });
+      const r = lathe([[0, -7 * MM], [4.2 * MM, -7 * MM], [3.4 * MM, 7 * MM], [0, 7 * MM]], 'chrome', { seg: 7 });
       r.rotation.z = -Math.PI / 2 - 0.14;
       r.position.set(1 * MM, 28.3 * MM, 0);
       const g = group(r);
@@ -113,7 +113,7 @@ export default function P298(api, opts = {}) {
     rim.push([Ro, c - top], [Ro - gd, c - Math.max(bot, 1.2 * MM)], [Ro - gd, c + Math.max(bot, 1.2 * MM)], [Ro, c + top]);
   }
   rim.push([Ro, xs + hw - 2 * MM], [Ro - 2 * MM, xs + hw], [Ro - 0.032, xs + hw], [Ro - 0.036, xs + hw - 4 * MM], [Ro - 0.036, xs - hw + 4 * MM], [Ro - 0.032, xs - hw]);
-  const rimM = latheX(rim, 'castIron', 96);
+  const rimM = latheX(rim, 'castIron', 72);
   const hub = latheX([[rF + 0.1 * MM, xs - hw + 1 * MM], [36 * MM, xs - hw + 1 * MM], [42 * MM, xs - 0.02], [42 * MM, xs + 0.02], [36 * MM, xs + hw - 1 * MM],
     [rF + 0.1 * MM, xs + hw - 1 * MM], [rF + 0.1 * MM, xs - hw + 1 * MM]], 'castIron', 40);
   // Trois bras courbes en lame (comme une hélice), de la jante au moyeu.

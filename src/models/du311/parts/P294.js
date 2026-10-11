@@ -52,7 +52,7 @@ export default function P294(api) {
     [7 * MM, x0 + 4 * MM], [44 * MM, x0 + 4 * MM], [45 * MM, x0 + 3 * MM], [45 * MM, x0], [R1, x0],
     [R1, xF + 1.5 * MM], [R1 - 1.5 * MM, xF], [rB + 6 * MM, xF], [rB, xF - 3 * MM], [rB, xB + 1 * MM], [rB - 1 * MM, xB],
     [33 * MM, xB], [33 * MM, xB + 2 * MM], [7 * MM, xB + 2 * MM], [7 * MM, x0 + 4 * MM],
-  ], 'castIron', 64);
+  ], 'castIron', 48);
   // Trous des vis du plateau (bagues sombres affleurantes = lamages).
   const spot = bolts.map(([y, z]) => at(latheX([[5 * MM, xF - 0.3 * MM], [8.5 * MM, xF - 0.3 * MM], [8.5 * MM, xF + 0.5 * MM], [5 * MM, xF + 0.5 * MM]], 'castIron', 16), [0, y, z]));
   P('1', merged([body, ...spot], 'castIron'), [-0.08, 0, 0]);

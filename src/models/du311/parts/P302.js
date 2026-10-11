@@ -68,10 +68,10 @@ export default function P302(api, opts = {}) {
   P('17', merged([ret, ...pads], 'castIron'), [-0.1, 0, 0]);
 
   // ---------------------------------------------------------------- 2 / 3 / 4 — cales de précharge
-  const shimHoles = boltYZ.map(([y, z]) => lrCircle(5.5 * MM, 12, -y, z));
+  const shimHoles = boltYZ.map(([y, z]) => lrCircle(5.5 * MM, 8, -y, z));
   let xs = x0;
   [['2', 'steel'], ['3', 'brass'], ['4', 'zinc']].forEach(([ref, mat], k) => {
-    P(ref, prismX(lrCircle(LR.retR - 2 * MM, 72), [lrCircle(LR.rearOpenR + 0.5 * MM, 64), ...shimHoles], xs - tS[k], xs, mat), [-0.02 - 0.012 * k, 0, 0]);
+    P(ref, prismX(lrCircle(LR.retR - 2 * MM, 56), [lrCircle(LR.rearOpenR + 0.5 * MM, 48), ...shimHoles], xs - tS[k], xs, mat), [-0.02 - 0.012 * k, 0, 0]);
     xs -= tS[k];
   });
 
@@ -129,7 +129,7 @@ export default function P302(api, opts = {}) {
     vane.rotation.x = t;
     P('8', vane, [-0.31, 0.035 * uy, 0.035 * uz]);
     const base = rRo - slotD, sl = Math.max(tip - vh - base, 1.5 * MM);
-    const spr = spring(1.1 * MM, 0.25 * MM, sl, 4, 'steel', { perTurn: 12, radial: 5 });
+    const spr = spring(1.1 * MM, 0.25 * MM, sl, 4, 'steel', { perTurn: 8, radial: 4 });
     const g = at(group(spr), [(xa + xb) / 2, (base + sl / 2) * uy, (base + sl / 2) * uz], [t, 0, 0]);
     P('9', g, [-0.31, 0.012 * uy, 0.012 * uz]);
   }
@@ -153,13 +153,13 @@ export default function P302(api, opts = {}) {
   // 5 — crépine : tube coudé Ø 10 mm, six-pans, tamis perforé couché au fond du carter.
   const yS = -0.133;
   const pipe = tube([[xi + 11 * MM, yA, 0], [xi + 24 * MM, yA, 0], [xi + 30 * MM, yA - 15 * MM, 0], [xi + 30 * MM, yS + 14 * MM, 0], [xi + 36 * MM, yS, 0], [xi + 42 * MM, yS, 0]],
-    5 * MM, 'steel', { seg: 40, radial: 12, tension: 0.3 });
+    5 * MM, 'steel', { seg: 28, radial: 10, tension: 0.3 });
   const xs0 = xi + 42 * MM;
   const hex = latheX([[0, xs0], [10 * MM, xs0], [10 * MM, xs0 + 8 * MM], [0, xs0 + 8 * MM]], 'steel', 6);
   hex.position.y = yS;
   const holes = [];
-  for (let i = 0; i < 9; i++) for (let k = 0; k < 10; k++) holes.push(...roundHole((2 * Math.PI * (k + (i % 2) * 0.5)) / 10, 4 * MM + i * 5.2 * MM, 1.5 * MM, 12 * MM, { steps: 3 }));
-  const screen = at(slotted(12 * MM, 11.3 * MM, 0, 50 * MM, holes, 'zinc', { axis: 'x', seg: 40 }), [xs0 + 8 * MM, yS, 0]);
+  for (let i = 0; i < 5; i++) for (let k = 0; k < 6; k++) holes.push(...roundHole((2 * Math.PI * k) / 6, 7 * MM + i * 9 * MM, 2.2 * MM, 12 * MM, { steps: 2 }));
+  const screen = at(slotted(12 * MM, 11.3 * MM, 0, 50 * MM, holes, 'zinc', { axis: 'x', seg: 24 }), [xs0 + 8 * MM, yS, 0]);
   const endCap = latheX([[0, xs0 + 58 * MM], [12.5 * MM, xs0 + 58 * MM], [12.5 * MM, xs0 + 61 * MM], [11 * MM, xs0 + 62 * MM], [0, xs0 + 62 * MM]], 'steel', 32);
   endCap.position.y = yS;
   const collar = latheX([[0, xs0 + 8 * MM], [12.5 * MM, xs0 + 8 * MM], [12.5 * MM, xs0 + 11 * MM], [0, xs0 + 11 * MM]], 'steel', 32);

@@ -50,9 +50,9 @@ export default function P304(api, opts = {}) {
   }
   head.push([rP, yc - 1 * MM], [rP - 1 * MM, yc], [rP * 0.6, yc + 0.6 * MM], [0, yc + 0.8 * MM], [0, yc - 9 * MM],
     [rIn - 4 * MM, yc - 9 * MM], [rIn, yc - 13 * MM], [rIn, yr]);
-  const crown = lathe(head, 'castAlu', { seg: 48 });
+  const crown = lathe(head, 'castAlu', { seg: 32 });
   // Jupe percée des deux trous d'axe (Ø des bagues).
-  const skirt = slotted(rP, rIn, yk, yr, roundHole(Math.PI / 2, pinY, 11.6 * MM, rP, { through: true, steps: 8 }), 'castAlu', { seg: 48 });
+  const skirt = slotted(rP, rIn, yk, yr, roundHole(Math.PI / 2, pinY, 11.6 * MM, rP, { through: true, steps: 5 }), 'castAlu', { seg: 32 });
   // Bossages d'axe (le long de X) et voiles qui les relient à la tête.
   const bosses = [], webs = [];
   for (const s of [-1, 1]) {
@@ -64,10 +64,10 @@ export default function P304(api, opts = {}) {
 
   // ---------------------------------------------------------------- 9 — segments (trousse)
   const rings = [];
-  for (const [g, w] of grooves.slice(0, 2)) rings.push(ring(rP + 0.05 * MM, rP - 3.4 * MM, w - 0.1 * MM, 'steel', { seg: 48, pos: [0, g, 0] }));
+  for (const [g, w] of grooves.slice(0, 2)) rings.push(ring(rP + 0.05 * MM, rP - 3.4 * MM, w - 0.1 * MM, 'steel', { seg: 28, pos: [0, g, 0] }));
   const [go, wo] = grooves[2];
-  const rails = [-1, 1].map((s) => ring(rP + 0.05 * MM, rP - 3 * MM, 0.6 * MM, 'chrome', { seg: 48, pos: [0, go + s * (wo / 2 - 0.4 * MM), 0] }));
-  const expander = ring(rP - 1.2 * MM, rP - 3.4 * MM, wo - 1.8 * MM, 'steel', { seg: 48, pos: [0, go, 0] });
+  const rails = [-1, 1].map((s) => ring(rP + 0.05 * MM, rP - 3 * MM, 0.6 * MM, 'chrome', { seg: 28, pos: [0, go + s * (wo / 2 - 0.4 * MM), 0] }));
+  const expander = ring(rP - 1.2 * MM, rP - 3.4 * MM, wo - 1.8 * MM, 'steel', { seg: 28, pos: [0, go, 0] });
   P('9', group(merged(rings.concat(expander), 'darkSteel'), merged(rails, 'chrome')), [0, 0.22, 0]);
 
   // ---------------------------------------------------------------- 2 — axe de piston
