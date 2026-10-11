@@ -32,11 +32,11 @@
 //     adaptateurs CYL du bloc bas de P042 → coudes de P092 : 17 (34 1/2) et
 //     19 (40) côté +X, 18 (35) et 20 (39 1/2, embout 90°) côté −X.
 //   · Plaque à coins (P056 sur le flanc −X, vérins de coins CX077208 de P044) :
-//     té à branche tournante 1 du dessus du bloc → deux 9 (57 po) qui montent
-//     aux coudes VALVE de P056 ; coudes CYL de P056 → 12 (72 po × 2, embout
-//     90°) qui redescendent aux tés union 5 près du vérin de coin −X ; tés →
-//     14 (14 3/4, embout 45°) et 15 (12, embout 45°) vers le vérin −X, 9
-//     (57) et 10 (53, embout 90°) vers le vérin +X par l'avant du centreur.
+//     té à branche tournante 1 du dessus du bloc → 9 (57 po) et 10 (53 po,
+//     embout 90°) qui montent aux coudes VALVE de P056 (vues 64 / 66) ; coudes
+//     CYL (45°) de P056 → 14 (14 3/4) et 15 (12), embout 45°, aux tés union 5
+//     à mi-hauteur du flanc −X ; tés → 9 (57 po × 2) vers le vérin de coin −X
+//     et 12 (72 po × 2, embout 90°) vers le vérin +X par l'avant du centreur.
 //   · Drain : coude tournant 2 sous le bloc → 24 (180 po), remontée par
 //     l'arrière du flanc −X, passage derrière le haut du mât et descente sur
 //     le flanc +X jusqu'à la troisième union 4 (y ≈ 2.75), bout bas libre
@@ -55,8 +55,7 @@
 //   · vérins de coins : axe Z en x = ±0.27, y = 0.10 (Ø 2 po), orifices sur
 //     le dessus en z = 0.45 et 0.66 ;
 //   · orifices des vérins du centreur sur le dessus, à |x| = 0.185 et 0.29.
-// Écarts (revue) : 14 / 15 / 10 posés au pied alors que le dessin les
-// montre vers P056 à mi-hauteur ; plusieurs boyaux plient sous 65 mm près
+// Écarts (revue) : plusieurs boyaux plient sous 65 mm près
 // de leurs embouts (tracés à reprendre quand P042, P056, P092 seront placés) ;
 // 8 (HA06002-7) est droit / 90° au catalogue mais tracé droit / droit : 7 po
 // ne suffisent pas pour un coude entre le bloc et P042 posés face à face.
@@ -81,7 +80,7 @@ const WDG = { x: 0.27, y: 0.1, r: 1.0 * IN, zs: [0.45, 0.66] };
 // Relais (unions) et tés union.
 const U = [[-0.3, 0.93, 0.172], [-0.3, 0.95, 0.202]];
 const U3 = [0.3, 1.9, -0.17];
-const UT = [[-0.19, 0.17, 0.535], [-0.2, 0.17, 0.61]];
+const UT = [[-0.3, 1.04, 0.03], [-0.3, 1.1, 0.075]];
 
 export const KIT064 = {
   block: BLK,
@@ -229,18 +228,20 @@ export default function P064(apiIn) {
   H('18', 35, swT[0].br, swg['-10'], { vias: [[-0.1, 0.22, 0.45]], sag: [0, 0.3, 1] }, [-0.12, -0.04, 0.06]);
   H('20', 39.5, swT[1].br, E(swg['-11'], '90', NY), { vias: [[-0.12, 0.12, 0.31], [-0.42, 0.22, 0.52]], sag: NX }, [-0.14, -0.04, 0.08]);
 
-  // Plaque à coins : té 1 → VALVE de P056 (9 × 2), CYL de P056 → tés union (12 × 2).
+  // Plaque à coins : té 1 → VALVE de P056 : 9 (57 po) et 10 (53 po, embout
+  // 90° sur P056) qui montent le long du flanc −X ; CYL de P056 (coudes 45°)
+  // → 14 / 15 (embout 45°) qui descendent aux tés union 5 à mi-hauteur ;
+  // tés → vérins de coins : bas du té → 9 (57 po) vers le vérin −X, branche →
+  // 12 (72 po, embout 90°) vers le vérin +X, par l'avant du centreur.
   const lane9 = (dz) => [[-0.264, 0.6, 0.165 + dz], [-0.264, 1.05, 0.165 + dz], [-0.29, 1.24, -0.02 + dz]];
   H('9', 57, brTee.run, val56[0], { vias: lane9(0), sag: NY }, [-0.2, 0.02, 0]);
-  H('9', 57, brTee.br, val56[1], { vias: lane9(0.025), sag: NY }, [-0.22, 0.02, 0]);
-  const lane12 = (dx) => [[-0.27 + dx, 1.22, 0.02], [-0.26 + dx, 1.12, 0.2], [-0.25 + dx, 0.7, 0.245], [-0.2 + dx, 0.5, 0.55 + dx]];
-  H('12', 72, cyl56[0], E(ut[0].run, '90', NZ), { vias: lane12(0), sag: Z }, [-0.24, 0, 0.06]);
-  H('12', 72, cyl56[1], E(ut[1].run, '90', NZ), { vias: lane12(-0.02), sag: Z }, [-0.26, 0, 0.06]);
-  // Tés union → vérins de coins : 14 / 15 côté −X, 9 / 10 côté +X par l'avant.
-  H('14', 14.75, ut[0].a, E(wdg['-10'], '45', X), { sag: X }, [-0.06, -0.03, 0.08]);
-  H('15', 12, ut[1].a, E(wdg['-11'], '45', X), { sag: X }, [-0.06, -0.03, 0.1]);
-  H('9', 57, ut[0].br, wdg['10'], { vias: [[-0.33, 0.14, 0.64], [-0.15, 0.12, 0.8], [0.18, 0.12, 0.81], [0.36, 0.13, 0.6]], sag: NY }, [0.02, -0.04, 0.14]);
-  H('10', 53, ut[1].br, E(wdg['11'], '90', NZ), { vias: [[-0.34, 0.15, 0.7], [-0.14, 0.15, 0.8], [0.15, 0.15, 0.82]], sag: NY }, [0.04, -0.04, 0.16]);
+  H('10', 53, brTee.br, E(val56[1], '90', NY), { vias: lane9(0.025), sag: NY }, [-0.22, 0.02, 0]);
+  H('14', 14.75, cyl56[0], E(ut[0].run, '45', Z), { sag: NX }, [-0.06, 0.03, 0.08]);
+  H('15', 12, cyl56[1], E(ut[1].run, '45', Z), { sag: NX }, [-0.06, 0.03, 0.1]);
+  ut.forEach((t, i) => {
+    H('9', 57, t.a, wdg[`-1${i}`], { vias: [[-0.3, 0.7, 0.1 + 0.03 * i], [-0.29, 0.3, 0.3 + 0.1 * i]], sag: NX }, [-0.04, -0.04, 0.12]);
+    H('12', 72, t.br, E(wdg[`1${i}`], '90', NZ), { vias: [[-0.28, 0.75, 0.3 + 0.03 * i], [-0.1, 0.3, 0.68 + 0.03 * i]], sag: NY }, [0.04, -0.04, 0.16]);
+  });
 
   // 24 : drain sous le bloc → derrière le flanc −X → derrière le mât →
   // union du flanc +X à y = 1.9 (même cote que P088 pour le 11).
