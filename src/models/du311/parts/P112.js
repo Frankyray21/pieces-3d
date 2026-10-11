@@ -13,7 +13,8 @@
 // du caisson), X selon l'axe 1 (collet vers -X), Z selon le caisson, de la
 // semelle (face d'appui à z = -4 po) vers l'ouverture (z = +1.75 po), Y vers
 // les bras. Oreilles des vérins de coins : axes selon X à y = 2.9, z = 3.0 po,
-// x = -2.0 et +4.8 po. Encombrement ≈ 0.343 (X) × 0.256 (Y) × 0.187 (Z) m.
+// x = -2.0 et +4.8 po. Encombrement ≈ 0.343 (X) × 0.254 (Y,
+// de -0.095 à +0.159) × 0.214 (Z, de -0.116 au bout des vis à +0.098) m.
 // Cotes : liste (axe, bagues, vis) ; bras, oreilles et patte d'après les
 // proportions de l'isométrie de la page 112 ; bagues 4 comme celles des
 // chapes de la plaque à coins P044 (axes CM77208-003 Ø 3/4 po, mêmes que

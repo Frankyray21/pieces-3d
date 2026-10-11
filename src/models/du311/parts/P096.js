@@ -10,8 +10,8 @@
 // d'appui), Y normal à la semelle vers le dosseret (haut du dessin) ; Z selon
 // la profondeur de la semelle, dosseret et contre-plaque vers -Z, coins
 // arrondis vers +Z ; X en travers, goussets à ±X. Encombrement ≈ 0.173 (X,
-// contre-plaque) × 0.169 (Y, de -0.029 sous les écrous à +0.140) × 0.209
-// (Z, de -0.112 aux écrous arrière à +0.070) m.
+// contre-plaque) × 0.169 (Y, de -0.029 sous les écrous à +0.140) × 0.183
+// (Z, de -0.113 aux écrous arrière à +0.070) m.
 // Cotes : vis, rondelles, écrous (liste) ; mécano-soudure d'après les
 // proportions de l'isométrie (tête de vis 3/4 po sur plat pour l'échelle) :
 // semelle 4 1/2 × 5 1/2 po, dosseret 3 1/2 × 5 po, contre-plaque 6 3/4 × 3 po.

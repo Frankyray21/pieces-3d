@@ -16,7 +16,7 @@
 // long des tiges) ; X selon la ligne des pivots (axes à x = ±11 po) ; +Z vers
 // l'axe de forage, à z = 20.4 po (0.518 m) ; les chapes des vérins sont sur
 // la ligne des pivots, à x = ±14.8 po. Encombrement ≈ 0.80 (X, des chapes)
-// × 0.34 (Y) × 0.83 (Z, de -0.048 au dos des moyeux à +0.785 à l'avant) m.
+// × 0.335 (Y) × 0.836 (Z, de -0.051 au dos des moyeux à +0.785 à l'avant) m.
 // Cotes : bagues (liste) ; vue de dessus à l'échelle des moyeux (Ø 3 3/4 po,
 // 38,7 px/po) : entraxe des pivots 22 po, axe de forage à 20.4 po, largeur
 // 26.2 po ; coupe D-D : moyeux de 5 po, 1.8 po entre moyeu bas et moyeu haut,

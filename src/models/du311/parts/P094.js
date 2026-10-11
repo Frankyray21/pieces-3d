@@ -23,8 +23,8 @@
 // Repère : origine sur l'axe de l'œil de fond, Y le long du vérin vers la
 // tige ; Z selon les axes des deux œils (axes de pivot verticaux dans P092) ;
 // X en travers, orifices et bouchons vers -X. Vérin rentré : entraxe des
-// œils 13.95 po (0.354 m), sorti 18.45 po (0.469 m). Encombrement ≈ 0.11
-// (X, de -0.069 aux bouchons à +0.044) × 0.424 (Y, de -0.035 à 0.389) ×
+// œils 13.95 po (0.354 m), sorti 18.45 po (0.469 m). Encombrement ≈ 0.109
+// (X, de -0.064 aux bouchons à +0.045) × 0.424 (Y, de -0.035 à 0.389) ×
 // 0.089 (Z, tube Ø 3 1/2 ; œils de 1 et 7/8 po) m.
 // Cotes : liste (alésage, course, écrou 1"-14, bouchons 7/16-20) ; le reste
 // relevé sur la coupe à l'échelle de l'alésage (38,7 px/po sur la page) :

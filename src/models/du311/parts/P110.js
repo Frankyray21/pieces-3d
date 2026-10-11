@@ -15,7 +15,7 @@
 // caisson), X selon l'axe 1 (collet vers +X), Z selon le caisson, de la
 // semelle (face d'appui arrière à z = -4 po) vers l'ouverture du caisson
 // (z = +1.75 po) ; Y complète le trièdre (haut du dessin). Encombrement ≈
-// 0.343 (X) × 0.191 (Y) × 0.162 (Z) m.
+// 0.343 (X) × 0.191 (Y) × 0.160 (Z, de -0.116 au bout des vis à +0.044) m.
 // Cotes : liste (axe, bagues, vis) ; caisson, semelle et goussets d'après
 // les proportions de l'isométrie (diamètre de l'axe pour l'échelle) :
 // semelle 13 1/2 × 7 1/2 po. La fonction centralizerBracket() sert aussi

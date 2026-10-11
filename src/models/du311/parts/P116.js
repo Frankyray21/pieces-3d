@@ -21,8 +21,8 @@
 // tiges) ; X selon la ligne des pivots (axes à x = ±11 po) ; +Z vers le
 // centreur et l'axe de forage (à z = +20.4 po, voir FRAME102), le pied
 // s'étend vers -Z. Axes des vérins (5) à x = ±11.5, z = -13.5 po, œil de tige
-// centré à y = 3.06 po. Encombrement ≈ 0.70 (X) × 0.51 (Y, de -0.203 sous les
-// blocs à +0.319 en haut des axes) × 0.48 (Z) m.
+// centré à y = 3.06 po. Encombrement ≈ 0.686 (X) × 0.521 (Y, de -0.203 sous
+// les blocs à +0.318 en haut des axes) × 0.470 (Z, de -0.406 à +0.064) m.
 // Cotes : liste (axes, vis, goupilles) ; entraxe des pivots repris de P102
 // (22 po) ; la position des axes 5 met les œils des vérins P094 (13.95 po
 // rentrés) à portée des chapes de P102 ; semelle, âmes, plaque en U et
