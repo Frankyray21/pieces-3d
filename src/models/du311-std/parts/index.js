@@ -1,5 +1,6 @@
 // Généré par scripts/parts-index.mjs — ne pas modifier à la main.
 // Un builder par assemblage du manuel (voir README.md dans ce dossier).
+import P224 from './P224.js';
 import P226 from './P226.js';
 import P238 from './P238.js';
 import P278 from './P278.js';
@@ -12,6 +13,7 @@ import P328 from './P328.js';
 import P330 from './P330.js';
 
 export default {
+  'P224': P224,
   'P226': P226,
   'P238': P238,
   'P278': P278,
