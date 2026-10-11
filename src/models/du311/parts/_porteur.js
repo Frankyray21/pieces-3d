@@ -170,12 +170,14 @@ export const racOut = (dir, k) => {
 /**
  * Fabrique de raccords et de boulonnerie liée à la bibliothèque de formes
  * (api.S). Tailles d'entrée en « dash » (1/16 po). Pièces de révolution à
- * 9-10 facettes (ombrage lissé), six-pans à 6, sans filets dessinés.
+ * 9-10 facettes (ombrage lissé ; { light: true } : 8-9), six-pans à 6, sans
+ * filets dessinés.
  */
-export function racFactory(S) {
+export function racFactory(S, { light = false } = {}) {
   const { lathe, merged, group } = S;
   const COS30 = Math.cos(Math.PI / 6);
-  const sg = (r) => (r > 0.012 ? 9 : 8);
+  // light : 8-9 facettes (gros ensembles) ; sinon 9-10 (ombrage lissé).
+  const sg = light ? (r) => (r > 0.012 ? 9 : 8) : (r) => (r > 0.012 ? 10 : 9);
   const hexR = (af) => af / 2 / COS30;
 
   // Six-pans (surplat af) de y0 à y0 + h, chanfrein du dessus ; percé (ri) si demandé.
