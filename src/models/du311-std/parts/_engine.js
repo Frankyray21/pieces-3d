@@ -55,6 +55,9 @@ export const ENG = {
   feet: [[0.62, -0.25], [0.62, 0.25], [0.055, -0.3], [0.055, 0.3]], // [x, z]
   // Turbocompresseur (côté +z) : centre du corps, roue de compresseur vers −x.
   turbo: { x: 0.3, y: 0.26, z: 0.3 },
+  turbOut: { x: 0.37, y: 0.16, z: 0.32 }, // bride de sortie de turbine (vers −y)
+  compOut: { x: 0.23, y: 0.36, z: 0.34 }, // sortie du compresseur (vers +y)
+  compIn: { x: 0.155, y: 0.26, z: 0.3 }, // entrée du compresseur (vers −x)
   intake: { x: 0.13, y: 0.43, z: -0.22 }, // entrée de la tubulure d'admission (vers +y)
   thermo: { x: 0.69, y: 0.44, z: 0.07 }, // sortie du boîtier de thermostat (vers +z)
   pumpIn: { x: 0.69, y: 0.06, z: 0.15 }, // entrée de la pompe à eau (vers +z)
@@ -120,12 +123,14 @@ export const STAND = { x0: -2.44, x1: -2.0, zPlate: -0.575 };
 // vers la porte gauche (−Z), électrovannes vers le moteur, orifices vers
 // l'avant (+X). Platine rep. 40 : tôle horizontale portée par la console
 // rep. 30 vissée sur le carter de volant.
-export const PLATE = { y: 1.465, t: 0.012, x0: -1.86, x1: -1.32, z0: -0.42, z1: -0.9 };
+export const PLATE = { y: 1.5, t: 0.012, x0: -1.86, x1: -1.42, z0: -0.42, z1: -0.8 };
+export const PLATE_TOP = PLATE.y + PLATE.t / 2;
 export const TVALVE = { x: -1.545, z: -0.62 }; // centre du distributeur (y = dessus de la platine)
 export const BOOST = { x: -1.76, z: -0.74, w: 0.1, h: 0.15, d: 0.09 }; // bloc surpresseur rep. 21
-export const HPF = { x: -1.915, z: [-0.5, -0.64], y: 1.69 }; // filtres HP (origine de P264 / P352)
-export const INTENS = { x: -1.39, y: 1.355, z0: -0.47, z1: -0.88, r: 0.05 }; // multiplicateur rep. 16
-export const RFILT = { x: -2.39, y: 1.72, z: 0.36 }; // filtre de retour (dessous de la tête)
+export const HPF = { x: -1.875, z: [-0.5, -0.64], y: 1.69 }; // filtres HP (origine de P264 / P352)
+export const INTENS = { x0: -1.78, x1: -1.38, y: 1.435, z: -0.865, r: 0.05 }; // multiplicateur rep. 16 (axe selon X)
+export const RFILT = { x: -2.25, y: 1.7, z: 0.6 }; // filtre de retour (dessous de la tête)
+export const MOUNTX = [-1.895, -1.345]; // traverses du kit de suspension (axe selon Z), dessus à y = 1.06
 
 // ---------------------------------------------------------------- silencieux P272
 export const MUF = { x: -2.24, y: 0.75, z0: -0.3, z1: 0.3, r: 0.12 };
@@ -312,4 +317,226 @@ export function rectTube(S, L, w, h, t, mat) {
     S.box(t, h, w, mat, { pos: [-L / 2 + t / 2, 0, 0] }),
     S.box(t, h, w, mat, { pos: [L / 2 - t / 2, 0, 0] }),
   ], mat);
+}
+
+// ---------------------------------------------------------------- raccords hydrauliques légers
+// Raccords SAE / JIC / NPT en peu de facettes (une centaine de raccords dans
+// P246) : construits le long de +Y local, origine sur la face de l'orifice
+// (ou sur le bout mâle pour un écrou tournant) ; chaque fonction renvoie
+// { obj, tip, dir } : bout mâle de sortie et sa direction (repère local).
+// Tailles « dash » en seizièmes de pouce : t = Ø du filet JIC / ORB (po),
+// hex = six-pans (po).
+export const DASH = {
+  2: { t: 5 / 16, hex: 7 / 16 }, 4: { t: 7 / 16, hex: 9 / 16 }, 5: { t: 1 / 2, hex: 5 / 8 }, 6: { t: 9 / 16, hex: 11 / 16 },
+  8: { t: 3 / 4, hex: 7 / 8 }, 10: { t: 7 / 8, hex: 1 }, 12: { t: 1 + 1 / 16, hex: 1.25 }, 16: { t: 1 + 5 / 16, hex: 1.5 },
+  20: { t: 1 + 5 / 8, hex: 1.875 }, 24: { t: 1 + 7 / 8, hex: 2.125 }, 32: { t: 2.5, hex: 2.75 },
+};
+const dsh = (d) => DASH[d] || DASH[8];
+
+/** Bout mâle JIC 37° (filet suggéré, cône) de y0 sur la longueur L, rayon de filet rt. */
+function jicNose(S, rt, y0, L, mat) {
+  return S.lathe([[0, y0], [rt * 0.85, y0], [rt * 0.85, y0 + L * 0.12], [rt, y0 + L * 0.18], [rt, y0 + L * 0.4], [rt * 0.93, y0 + L * 0.46], [rt, y0 + L * 0.52], [rt, y0 + L * 0.72], [rt * 0.62, y0 + L], [rt * 0.42, y0 + L], [0, y0 + L - 0.001]], mat, { seg: 10 });
+}
+/** Queue filetée ORB / NPT vissée sous y = 0 (cachée en grande partie). */
+function tailPart(S, r, mat) {
+  return S.lathe([[0, -r * 1.4], [r * 0.9, -r * 1.4], [r, -r * 1.2], [r, 0], [0, 0]], mat, { seg: 8 });
+}
+
+/** Adaptateur droit ORB (ou NPT) → JIC mâle : six-pans puis bout mâle. */
+export function fitStraight(S, dash, jic = dash, { mat = 'zinc' } = {}) {
+  const a = dsh(dash), b = dsh(jic);
+  const ro = u(a.t / 2), rt = u(b.t / 2), af = u(Math.max(a.hex, b.hex)), hh = af * 0.42, L = rt * 2.5;
+  const obj = S.merged([tailPart(S, ro, mat), hexHead(S, af, hh, 0, mat), jicNose(S, rt, hh, L, mat)], mat);
+  return { obj, tip: [0, hh + L, 0], dir: [0, 1, 0] };
+}
+
+/** Coude ORB → JIC à contre-écrou (angle 90° ou 45°) : sortie dans le plan YZ vers +Z ; swivel : écrou tournant. */
+export function fitElbow(S, dash, jic = dash, { mat = 'zinc', angle = 90, swivel = false } = {}) {
+  const a = dsh(dash), b = dsh(jic);
+  const ro = u(a.t / 2), rt = u(b.t / 2), af = u(a.hex), s = u(Math.max(a.hex, b.hex)) * 0.8;
+  const parts = [];
+  let y0;
+  if (swivel) {
+    const nh = u(a.t / 2) * 1.5;
+    parts.push(hexHead(S, u(a.hex + 0.0625), nh, -nh * 0.6, mat));
+    y0 = nh * 0.4;
+  } else {
+    parts.push(tailPart(S, ro, mat), hexHead(S, af, af * 0.34, 0, mat));
+    y0 = af * 0.34;
+  }
+  const yb = y0 + s * 0.65;
+  parts.push(S.cyl(rt * 0.95, yb - y0, mat, { seg: 8, pos: [0, (y0 + yb) / 2, 0] }));
+  parts.push(S.box(s * 0.9, s, s * 0.9, mat, { r: s * 0.25, pos: [0, yb, 0] }));
+  const ang = (angle * Math.PI) / 180;
+  const dir = [0, Math.cos(ang), Math.sin(ang)];
+  const L = rt * 2.4;
+  const nose = S.group(jicNose(S, rt, s * 0.42, L, mat));
+  nose.rotation.x = ang;
+  nose.position.y = yb;
+  parts.push(nose);
+  return { obj: S.merged(parts, mat), tip: [0, yb + dir[1] * (s * 0.42 + L), dir[2] * (s * 0.42 + L)], dir };
+}
+
+/** Té (passage selon Y depuis l'orifice, branche vers +Z), queue ORB ou écrou tournant. */
+export function fitTee(S, dash, { mat = 'zinc', swivel = false } = {}) {
+  const b = dsh(dash), rt = u(b.t / 2), s = u(b.hex);
+  const parts = [];
+  let y0;
+  if (swivel) { const nh = rt * 1.5; parts.push(hexHead(S, u(b.hex + 0.0625), nh, -nh * 0.6, mat)); y0 = nh * 0.4; }
+  else { parts.push(tailPart(S, rt, mat), hexHead(S, s, s * 0.34, 0, mat)); y0 = s * 0.34; }
+  const yc = y0 + s * 0.55;
+  parts.push(S.box(s * 0.92, s * 1.1, s * 0.92, mat, { r: s * 0.12, pos: [0, yc, 0] }));
+  const L = rt * 2.4;
+  parts.push(jicNose(S, rt, yc + s * 0.5, L, mat));
+  const br = S.group(jicNose(S, rt, s * 0.46, L, mat));
+  br.rotation.x = Math.PI / 2;
+  br.position.y = yc;
+  parts.push(br);
+  return { obj: S.merged(parts, mat), tip: [0, yc + s * 0.5 + L, 0], dir: [0, 1, 0], branch: [0, yc, s * 0.46 + L] };
+}
+
+/** Réduction / expansion : écrou tournant femelle (sur le bout mâle de l'orifice) puis bout mâle d'une autre taille. */
+export function fitReducer(S, dash, jic, { mat = 'zinc' } = {}) {
+  const a = dsh(dash), b = dsh(jic), ra = u(a.t / 2), rt = u(b.t / 2);
+  const nh = ra * 1.5, L = rt * 2.4;
+  const obj = S.merged([hexHead(S, u(a.hex + 0.0625), nh, -nh * 0.6, mat), hexHead(S, u(b.hex), rt * 0.9, nh * 0.4, mat), jicNose(S, rt, nh * 0.4 + rt * 0.9, L, mat)], mat);
+  return { obj, tip: [0, nh * 0.4 + rt * 0.9 + L, 0], dir: [0, 1, 0] };
+}
+
+/** Bouchon ORB à tête six-pans et joint torique. */
+export function fitPlug(S, dash, { mat = 'zinc' } = {}) {
+  const a = dsh(dash), ro = u(a.t / 2), af = u(a.hex);
+  return { obj: S.group(S.merged([tailPart(S, ro, mat), hexHead(S, af, af * 0.45, 0.0008, mat), S.cyl(af * 0.55, 0.0008, mat, { seg: 12, pos: [0, 0.0004, 0] })], mat), S.torus(ro * 1.08, ro * 0.08, 'rubber', { pos: [0, 0.0005, 0] })), tip: [0, af * 0.45, 0], dir: [0, 1, 0] };
+}
+
+/** Prise de mesure : six-pans, corps et capuchon plastique. */
+export function fitTestPort(S, dash = 4, { mat = 'zinc' } = {}) {
+  const a = dsh(dash), ro = u(a.t / 2), af = u(a.hex), h = af * 0.42;
+  return {
+    obj: S.group(
+      S.merged([tailPart(S, ro, mat), hexHead(S, af, h, 0, mat), S.cyl(0.0055, 0.018, mat, { seg: 10, pos: [0, h + 0.009, 0] })], mat),
+      S.lathe([[0, h + 0.012], [0.0078, h + 0.012], [0.0078, h + 0.026], [0.006, h + 0.029], [0, h + 0.029]], 'black', { seg: 12 }),
+    ),
+    tip: [0, h + 0.029, 0], dir: [0, 1, 0],
+  };
+}
+
+// Brides 4 vis SAE J518 : entraxes L (long), W (court), vis d, collet (po).
+const J518 = {
+  61: { 16: [2.062, 1.031, 0.375, 1.75], 32: [3.062, 1.688, 0.5, 2.81] },
+  62: { 16: [2.25, 1.094, 0.4375, 1.88] },
+};
+/**
+ * Trousse de demi-brides J518 (deux demi-brides, quatre vis à rondelles) et
+ * collet de l'embout, le long de +Y depuis la portée (y = 0) ; vis selon
+ * l'entraxe long en X. Retourne { obj, top, rb }.
+ */
+export function splitFlangeKit(S, dash, code = 61, { mat = 'zinc', head = 'steel', neck = 0.015 } = {}) {
+  const [Lb, Wb, d, hd] = (J518[code] || J518[61])[dash] || J518[61][16];
+  const L = u(Lb), W = u(Wb), rh = u(hd / 2), rb = u(dash / 32);
+  const T = u(0.16 * Lb + 0.22), hc = T * 0.45;
+  const halves = [];
+  for (const s of [-1, 1]) {
+    halves.push(S.box(L + u(d) * 2.2, T, W / 2 + u(d) * 1.1 - rh * 0.15, mat, { r: 0.002, pos: [0, hc + T / 2, s * (W / 2 + u(d) * 1.1 + rh * 0.15) / 2] }));
+  }
+  const bolts = [];
+  for (const sx of [-1, 1]) for (const sz of [-1, 1]) bolts.push(S.at(bolt(S, d, d * 2 + 0.25), [sx * L / 2, hc + T, sz * W / 2]));
+  const collar = S.lathe([[rb, 0], [rh, 0], [rh, hc], [rb + 0.004, hc], [rb + 0.004, hc + T + neck], [rb, hc + T + neck], [rb, 0]], head, { seg: 16 });
+  return { obj: S.group(S.merged(halves, mat), S.merged(bolts, 'zinc'), collar), top: hc + T + neck, rb };
+}
+
+/** Clapet / limiteur en ligne : corps six-pans (af, longueur L, m) à deux bouts JIC, axe Y, de y = 0 à L. */
+export function inlineValve(S, L, af, rt, { mat = 'steel', arrow = true } = {}) {
+  const parts = [hexHead(S, af, L * 0.7, L * 0.15, mat), jicNose(S, rt, L * 0.85, L * 0.15, mat)];
+  const n0 = S.group(jicNose(S, rt, 0, L * 0.15, mat));
+  n0.rotation.x = Math.PI;
+  n0.position.y = L * 0.15;
+  parts.push(n0);
+  const g = S.group(S.merged(parts, mat));
+  if (arrow) g.add(S.box(0.0005, L * 0.35, af * 0.12, 'black', { pos: [af * 0.5, L * 0.5, 0] }));
+  return g;
+}
+
+/**
+ * Pose un raccord { obj, tip, dir } sur un orifice : face en p, axe selon n ;
+ * la sortie (coude, té) est tournée au plus près de la direction want.
+ * Retourne { obj, tip, dir } en coordonnées du parent.
+ */
+export function placeFit(THREE, fit, p, n, want = null) {
+  let best = null;
+  for (let k = 0; k < (want ? 8 : 1); k++) {
+    const spin = (k * Math.PI) / 4;
+    const inner = new THREE.Group();
+    inner.rotation.y = spin;
+    const g = new THREE.Group();
+    g.add(inner);
+    g.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), new THREE.Vector3(...n).normalize());
+    g.position.set(...p);
+    g.updateMatrixWorld(true);
+    const tip = new THREE.Vector3(...fit.tip).applyMatrix4(inner.matrixWorld);
+    const dir = new THREE.Vector3(...fit.dir).transformDirection(inner.matrixWorld);
+    const score = want ? dir.dot(new THREE.Vector3(...want).normalize()) : 0;
+    if (!best || score > best.score) best = { score, spin, tip, dir };
+  }
+  const inner = new THREE.Group();
+  inner.rotation.y = best.spin;
+  inner.add(fit.obj);
+  const g = new THREE.Group();
+  g.add(inner);
+  g.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), new THREE.Vector3(...n).normalize());
+  g.position.set(...p);
+  return { obj: g, tip: best.tip.toArray(), dir: best.dir.toArray() };
+}
+
+/**
+ * Raccords des orifices reliés par les flexibles du surpresseur (P276), en
+ * repère machine : bloc surpresseur (rep. 21), multiplicateur (16),
+ * distributeur P262, pompe 90 cc, collecteur P260. Utilisé par P246 (qui
+ * enregistre les raccords sous leurs repères) et par P276 (qui ne lit que
+ * les bouts mâles). Retourne [{ ref, key, obj, tip, dir }].
+ */
+export function boosterFittings(S, THREE) {
+  const out = [];
+  const add = (ref, key, fit, p, n, want) => {
+    const f = placeFit(THREE, fit, p, n, want);
+    out.push({ ref, key, ...f });
+    return f;
+  };
+  const B = BOOST, by0 = PLATE_TOP;
+  // Bloc surpresseur : trois coudes -08 (55) sur la face −Z, sorties vers le haut.
+  add('55', 'b21a', fitElbow(S, 8), [B.x - 0.03, by0 + 0.1, B.z - B.d / 2], [0, 0, -1], [0, 1, 0]);
+  add('55', 'b21b', fitElbow(S, 8), [B.x, by0 + 0.06, B.z - B.d / 2], [0, 0, -1], [0, 1, 0]);
+  add('55', 'b21c', fitElbow(S, 8), [B.x + 0.03, by0 + 0.1, B.z - B.d / 2], [0, 0, -1], [0, 1, 0]);
+  // Face +X : coude -08 (55) vers le haut, vers l'orifice P du distributeur.
+  add('55', 'b21d', fitElbow(S, 8), [B.x + B.w / 2, by0 + 0.1, B.z], [1, 0, 0], [0, 1, 0]);
+  // Dessus : té de dérivation -12 (52) puis réductions -12 / -08 (42) sur la branche et le passage.
+  const tee = add('52', 'b21tee', fitTee(S, 12), [B.x, by0 + B.h, B.z + 0.015], [0, 1, 0], null);
+  const teeObj = out.at(-1);
+  const brTip = new THREE.Vector3(...fitTee(S, 12).branch);
+  teeObj.obj.updateMatrixWorld(true);
+  const brW = brTip.clone().applyMatrix4(teeObj.obj.children[0].matrixWorld);
+  const brDir = new THREE.Vector3(0, 0, 1).transformDirection(teeObj.obj.children[0].matrixWorld);
+  add('42', 'b21run', fitReducer(S, 12, 8), tee.tip, tee.dir);
+  add('42', 'b21br', fitReducer(S, 12, 8), brW.toArray(), brDir.toArray());
+  // Multiplicateur : adaptateurs BSPP / JIC -08 (69) et coudes tournants -08 (44), sorties vers le haut.
+  const I = INTENS;
+  for (const [key, x, y, n] of [['intIN', I.x1, I.y + 0.02, [1, 0, 0]], ['intR', I.x1, I.y - 0.02, [1, 0, 0]], ['intH', I.x0, I.y, [-1, 0, 0]]]) {
+    const a = add('69', key + '0', fitStraight(S, 8), [x, y, I.z], n);
+    add('44', key, fitElbow(S, 8, 8, { swivel: true }), a.tip, a.dir, [0, 1, 0]);
+  }
+  // Distributeur P262 (orifices vers +X à x = TVALVE.x + 0.05) : P (67 puis 42), section de translation A / B (66).
+  const tvx = TVALVE.x + 0.05, tvy = by0;
+  const pA = add('67', 'tvP0', fitStraight(S, 12), [tvx, tvy + 0.297, TVALVE.z + 0.028], [1, 0, 0]);
+  add('42', 'tvP', fitReducer(S, 12, 8), pA.tip, pA.dir);
+  const ySec = tvy + 0.03 + 0.048 * 2.5;
+  add('66', 'tvA', fitStraight(S, 10, 8), [tvx, ySec, TVALVE.z - 0.024], [1, 0, 0]);
+  add('66', 'tvB', fitStraight(S, 10, 8), [tvx, ySec, TVALVE.z + 0.024], [1, 0, 0]);
+  // Pompe 90 cc : adaptateur -08 / -06 (64) sur le flanc +X du fond.
+  add('64', 'p90', fitStraight(S, 8, 6), [ENG.x + 0.11, ENG.y + 0.04, ENG.zSae - 0.215], [1, 0, 0]);
+  // Collecteur P260 (dos à TMAN, face avant vers −Z) : 63 sur le flanc +X, 54 en façade.
+  const tm = (x, y, z) => [TMAN.x - x, TMAN.y + y, TMAN.z - z];
+  add('63', 'tmA', fitStraight(S, 6, 8), tm(-0.15, -0.045, 0.155), [1, 0, 0]);
+  add('63', 'tmB', fitStraight(S, 6, 8), tm(-0.15, -0.01, 0.09), [1, 0, 0]);
+  add('54', 'tmC', fitElbow(S, 6), tm(0.03, 0.06, 0.18), [0, 0, -1], [1, 0, 0]);
+  return out;
 }
