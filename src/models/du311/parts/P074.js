@@ -4,11 +4,13 @@
 // - bras de pince mécano-soudé (8) : deux plaques de 3/4 po (dessus et
 //   dessous) en « C » au bout (fourche qui reçoit la tige Ø 5 po et, dessus et
 //   dessous, les mâchoires fixes du jeu 10 de P070), âme latérale ajourée,
-//   moyeu en deux colliers fendus (chapeau boulonné par 2 vis 12 + rondelles
-//   15 chacun) garnis d'une bague fendue à collerette (1), flasques entre les
+//   moyeu en deux colliers fendus au plan z = 0 (chapeau côté +Z boulonné
+//   par 2 vis 12 + rondelles 15 chacun, têtes sur la face +Z) garnis d'une bague fendue à collerette (1), flasques entre les
 //   colliers portant les deux vis carrées de réglage (14 + contre-écrous 16)
 //   qui pincent la patte de l'arbre, bossages de l'œil de fond du vérin ;
-// - vérin (3, P078) en diagonale dans le bras, entre ses deux axes verticaux :
+// - vérin (3, P078), tige presque sortie (mâchoire fermée), en diagonale entre
+//   l'œil de fond près du moyeu (côté -Z) et la chape de la mâchoire, de
+//   l'autre côté de son pivot ; deux axes verticaux :
 //   axe de fond (6) dans les bossages avec deux entretoises (7), axe d'embout
 //   (5, Ø 1 × 3 po, goupille élastique 2) dans la chape de la mâchoire avec
 //   deux entretoises (7) ; orifices tournés vers le bas (pince haute, P076) et
@@ -20,8 +22,8 @@
 // Repère : origine sur l'axe du moyeu (axe de l'arbre du bras), à mi-hauteur
 // entre les plaques ; Y vers le haut ; +X le long du bras vers la fourche ;
 // la fourche s'ouvre vers +Z (vue de l'ouverture, moyeu à gauche et fourche à
-// droite comme sur l'isométrique de P074) ; âme ajourée côté +Z, vérin et
-// bossage de son œil de fond côté -Z. Les cotes du code sont « logiques »
+// droite comme sur l'isométrique de P074) ; âme ajourée et bossage de l'œil
+// de fond du vérin côté -Z, côté +Z ouvert sur le vérin. Les cotes du code sont « logiques »
 // (po, z logique = -Z) : V() et prism() font le miroir. Centre de la tige
 // serrée en CLAMP074.pipe (x = 21 po = 0.533 m, z = 0) ; plaques de y = ±2.25
 // à ±3 po. Option { portsUp: true } : vérin retourné, orifices vers le haut
@@ -41,10 +43,13 @@ const PL = { t: 0.75, gap: 2.25 }; // plaques : épaisseur, demi-écart intérie
 const JP = [16.0, -3.6]; // axe de pivot de la mâchoire (x, z)
 const PC = [JP[0] + JAW082.pipe[0], JP[1] + JAW082.pipe[1]]; // centre de la tige
 const RP = [JP[0] + JAW082.pin[0], JP[1] + JAW082.pin[1]]; // axe d'embout du vérin
-const PHI = Math.atan2(-5.55, 10.9); // direction du vérin (fond → tige)
-const D = [Math.cos(PHI), Math.sin(PHI)];
-const LEN = CYL078.retracted / IN;
-const BP = [RP[0] - LEN * D[0], RP[1] - LEN * D[1]]; // axe de fond du vérin
+// Vérin dessiné presque sorti (mâchoire fermée sur la tige) : de la chape de
+// la mâchoire vers l'œil de fond, près du moyeu côté -Z (vue de face de P072,
+// éclaté de P074, vue 2 de P076).
+const LEN = (CYL078.retracted + CYL078.stroke) / IN; // entraxe, tige sortie
+const DB = (() => { const v = [-12.8, 7.3], n = Math.hypot(...v); return [v[0] / n, v[1] / n]; })();
+const BP = [RP[0] + LEN * DB[0], RP[1] + LEN * DB[1]]; // axe de fond du vérin
+const D = [-DB[0], -DB[1]]; // direction du vérin (fond → tige)
 const HUB = { R: 3.25, bore: 2.0, y0: 1.25, y1: 3.0 }; // colliers : demi-largeur, alésage, hauteur
 const THROAT = 3.0; // rayon du fond de la fourche
 
@@ -108,9 +113,9 @@ export default function P074(api, opts = {}) {
     [0, -HUB.R], [12.8, -HUB.R], [14.2, -4.6], [17.4, -4.6], ...arc(17.4, -4.0, 0.6, -90, 0, 3).slice(1), [18.0, 0],
     ...arc(PC[0], PC[1], THROAT, 180, 0, 18).slice(1),
     [24.0, -4.0], ...arc(24.6, -4.0, 0.6, 180, 270, 3).slice(1), [26.9, -4.6], ...arc(26.9, -3.9, 0.7, -90, 0, 3).slice(1),
-    [27.6, 3.8], ...arc(26.8, 3.8, 0.8, 0, 90, 3).slice(1), [14.5, 4.6], [9.2, 4.9],
-    ...arc(BP[0], BP[1], 1.75, 20, 160, 8),
-    [2.6, 3.0], ...arc(0, 0, HUB.R, 70, 270, 14).slice(1, -1),
+    [27.6, 3.8], ...arc(26.8, 3.8, 0.8, 0, 90, 3).slice(1), [14.5, 4.6], [8.0, 6.3], [BP[0] + 1.1, 6.3],
+    ...arc(BP[0], BP[1], 1.75, 50, 180, 8), [BP[0] - 1.75, 3.6],
+    ...arc(0, 0, HUB.R, 125, 270, 12).slice(1, -1),
   ];
   const plateHoles = [
     [JP[0], JP[1], 0.64], [BP[0], BP[1], 0.64], [0, 0, HUB.bore],
@@ -119,12 +124,12 @@ export default function P074(api, opts = {}) {
   ];
   const yT = PL.gap, yB = -PL.gap - PL.t;
   const plates = [prism(outline, plateHoles, yT, yT + PL.t), prism(outline, plateHoles, yB, yB + PL.t)];
-  // Colliers du moyeu (moitié fixe) et chapeaux boulonnés : blocs 6 1/2 po
-  // de large, fendus au plan de l'axe (jeu 1/8 po).
-  const half = (sx) => {
-    const x1 = sx * 3.25, x0 = sx * 0.06;
-    const pts = [[x0, -HUB.R], [x1 - sx * 0.4, -HUB.R], [x1, -HUB.R + 0.4], [x1, HUB.R - 0.4], [x1 - sx * 0.4, HUB.R], [x0, HUB.R], [x0, HUB.bore], ...arc(0, 0, HUB.bore, 90 - sx * 2, sx > 0 ? -88 : 268, 12).map(([x, z]) => [Math.abs(x) < 0.06 ? x0 : x, z]), [x0, -HUB.bore]];
-    return sx > 0 ? pts : pts.reverse();
+  // Colliers du moyeu : moitié fixe (côté -Z) et chapeau boulonné (côté +Z,
+  // ouverture de fourche), blocs 6 1/2 po fendus au plan z = 0 (jeu 1/8 po).
+  const half = (sz) => {
+    const z0 = 0.06, b = HUB.bore, c = 0.4, X = 3.25, Z = HUB.R;
+    const pts = [[-X, z0], [-b, z0], ...arc(0, 0, b, 178, 2, 12).slice(1, -1), [b, z0], [X, z0], [X, Z - c], [X - c, Z], [-X + c, Z], [-X, Z - c]];
+    return pts.map(([x, z]) => [x, sz * z]);
   };
   const collars = [];
   for (const [y0, y1] of [[HUB.y0, HUB.y1], [-HUB.y1, -HUB.y0]]) {
@@ -133,10 +138,12 @@ export default function P074(api, opts = {}) {
   // Flasques entre les colliers (vis de réglage 14), âme latérale ajourée,
   // bossages de l'œil de fond.
   const flanks = [-1, 1].map((s) => prism([[-3.25, s > 0 ? 2.75 : -3.25], [3.25, s > 0 ? 2.75 : -3.25], [3.25, s > 0 ? 3.25 : -2.75], [-3.25, s > 0 ? 3.25 : -2.75]], [], -HUB.y0, HUB.y0));
-  const web = prism([[3.0, -PL.gap], [13.0, -PL.gap], [13.0, PL.gap], [3.0, PL.gap]], [slot(5.2, 0, 7.6, 0, 1.0), slot(9.2, 0, 11.4, 0, 1.0)], HUB.R - 0.5, HUB.R, 'xy');
+  // Âme ajourée côté -Z (côté œil de fond), au bord élargi des plaques ; le
+  // côté +Z reste ouvert sur le vérin et ses orifices.
+  const web = prism([[1.6, -PL.gap], [7.8, -PL.gap], [7.8, PL.gap], [1.6, PL.gap]], [slot(3.2, 0, 4.4, 0, 0.9), slot(5.6, 0, 6.6, 0, 0.9)], -6.3, -5.8, 'xy');
   const bosses = [[1.25, 2.25], [-2.25, -1.25]].map(([y0, y1]) => L(S, [[0.64, y0], [1.25, y0], [1.25, y1], [0.64, y1], [0.64, y0]], 'grey', 32, { pos: [u(BP[0]), 0, -u(BP[1])] }));
   const beads = [
-    ...[PL.gap, -PL.gap].map((y) => weld([V(3.1, y, -2.7), V(12.9, y, -2.7)], u(0.22), 'grey')),
+    ...[PL.gap, -PL.gap].map((y) => weld([V(1.7, y, 5.7), V(7.7, y, 5.7)], u(0.22), 'grey')),
     ...[PL.gap, -PL.gap].map((y) => weldRing(u(1.28), u(0.2), 'grey', { pos: [u(BP[0]), u(y - Math.sign(y) * 0.06), -u(BP[1])] })),
   ];
   P('8', group(merged([...plates, ...collars, ...flanks, web, ...bosses], 'grey'), ...beads), [0, 0, 0]);
@@ -153,12 +160,13 @@ export default function P074(api, opts = {}) {
   }
 
   // ================================================ 12 / 15 — vis des chapeaux
-  // HHCS 3/4-10 × 4 Gr 8 selon +X, têtes et rondelles sur la face des chapeaux.
+  // HHCS 3/4-10 × 4 Gr 8 selon -Z, têtes et rondelles sur la face +Z des
+  // chapeaux, de part et d'autre de l'alésage.
   const W15 = 0.148;
   for (const y of [2.125, -2.125]) {
-    for (const z of [2.3, -2.3]) {
-      P('15', along(THREE, flatWasher(S, THREE, 0.75, { t: W15, od: 1.47 }), [-1, 0, 0], V(-3.25, y, z)), [-0.16, 0, 0]);
-      P('12', along(THREE, hexBolt(0.75, 4.0), [-1, 0, 0], V(-3.25 - W15, y, z)), [-0.26, 0, 0]);
+    for (const x of [2.65, -2.65]) {
+      P('15', along(THREE, flatWasher(S, THREE, 0.75, { t: W15, od: 1.47 }), [0, 0, 1], V(x, y, -HUB.R)), [0, 0, 0.16]);
+      P('12', along(THREE, hexBolt(0.75, 4.0), [0, 0, 1], V(x, y, -HUB.R - W15)), [0, 0, 0.26]);
     }
   }
 
@@ -180,7 +188,7 @@ export default function P074(api, opts = {}) {
   const ey = new THREE.Vector3(D[0], 0, -D[1]);
   const ez = new THREE.Vector3().crossVectors(ex, ey);
   const q = new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(ex, ey, ez));
-  const cyl = api.sub('P078', { rodEye: 'x' });
+  const cyl = api.sub('P078', { rodEye: 'x', extended: true });
   cyl.quaternion.copy(q);
   cyl.position.set(u(BP[0]), 0, -u(BP[1]));
   const CE = [0, 0.12, -0.45];
@@ -274,9 +282,8 @@ export default function P074(api, opts = {}) {
   for (const [x, z] of [JP, BP]) P('11', at(elbow(), V(x, PIN6.y1, z), [0, Math.PI / 2, 0]), [0, 0.12, 0]);
   P('11', at(elbow(), V(RP[0], 1.5, RP[1]), [0, Math.PI, 0]), [JE[0], 0.1, JE[2]]);
   for (const y of [2.125, -2.125]) {
-    const e = along(THREE, elbow(), [-1, 0, 0], V(-3.25, y, 0));
-    e.rotateY(y > 0 ? -Math.PI / 2 : Math.PI / 2);
-    P('11', e, [-0.14, 0, 0]);
+    const e = along(THREE, elbow(), [0, 0, 1], V(-1.0, y, -HUB.R));
+    P('11', e, [0, 0, 0.14]);
   }
 
   return { view: { dir: [-0.6, 0.9, 1] } };

@@ -1,8 +1,8 @@
 // P082 — Mâchoire mobile de la pince de tige Ø 5 po CX011242 rév. 1 (page
 // 82) : « PIPE ARM CLAMP Ø 5.00 DRILL PIPE ». Pièce mécano-soudée (2) en tôle
 // épaisse : bec en arc (rayon 2.55 po, épouse la tige Ø 5 po), âme qui le
-// relie au tube de pivot (3) soudé, chape à deux joues percées Ø 1 po où
-// s'attelle l'embout du vérin (axe 5 de P074) ; deux bagues (1) emmanchées
+// relie au tube de pivot (3) soudé, chape à deux joues percées Ø 1 po, de
+// l'autre côté du tube, où s'attelle l'embout du vérin (axe 5 de P074) ; deux bagues (1) emmanchées
 // aux deux bouts du tube, pour l'axe de pivot Ø 1 1/4 po (6 de P074).
 // Repère (celui de P074 translaté) : origine sur l'axe du tube de pivot, à
 // mi-hauteur ; Y vers le haut (axe du pivot, axes verticaux) ; X le long du
@@ -18,7 +18,7 @@
 import { L, u, bushing } from './_avance_b.js';
 
 export const JAW082 = {
-  pin: [1.18, 2.317], // axe de chape (po), depuis l'axe du pivot
+  pin: [-2.7, 1.1], // axe de chape (po), depuis l'axe du pivot : côté opposé au bec
   pipe: [5.0, 3.6], // centre de la tige serrée (po)
   tubeH: 4.375, // hauteur du tube (po)
   tubeR: 1.125,
@@ -63,7 +63,9 @@ export default function P082(api) {
   // Âme : du tube de pivot au bec, en dessous de la chape.
   const web = [[-0.35, -1.07], [1.6, -0.9], [3.77, 0.22], [3.54, 1.51], [2.2, 0.95], [0.6, 0.75], [-0.95, 0.55]];
   // Joues de chape (haute et basse), percées Ø 1 po.
-  const cheek = [[-0.95, 0.4], [2.4, 0.8], [2.6, 2.4], [2.15, 3.35], [0.95, 3.62], [0.0, 3.05]];
+  // Ordre du dessin (page 82) : chape — tube — bec ; la chape prolonge le
+  // corps au-delà du tube, du côté du moyeu de la pince.
+  const cheek = [[0.6, -0.9], [-0.4, -1.1], [-2.6, -0.1], [-3.55, 0.45], [-3.75, 1.1], [-3.55, 1.75], [-2.7, 2.1], [-1.9, 2.0], [-0.2, 1.1], [0.6, 0.7]];
   const body = merged([
     slab(band, -H, H),
     slab(web, -H, H),

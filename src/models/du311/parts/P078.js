@@ -76,7 +76,13 @@ export function oring(S, R, r, y = 0, mat = 'rubber', seg = 28) {
 export default function P078(api, opts = {}) {
   const { THREE, S } = api;
   const { extrude, weldRing, slotted, roundHole, merged, group, at } = S;
-  const P = (ref, obj, e) => api.part(ref, obj, e);
+  // Option { extended: true } : tige sortie de la course (piston, écrou,
+  // tige, contre-écrou, embout et sa rotule avancent selon +Y).
+  const MOVING = new Set(['1', '4', '7', '8', '10']);
+  const P = (ref, obj, e) => {
+    if (opts.extended && MOVING.has(ref)) obj.position.y += u(STROKE);
+    return api.part(ref, obj, e);
+  };
   const rodEyeX = opts.rodEye === 'x';
 
   // Œil plat (po) : profil dans le plan (a, y) — bloc de demi-largeur R
@@ -207,7 +213,7 @@ export default function P078(api, opts = {}) {
   // Fond : axe de l'œil selon X ; embout : selon Z (ou X, option rodEye).
   const eyes = [
     { pos: [0, 0, 0], dir: [1, 0, 0], e: [0, -0.04, 0], out: [0.12, 0, 0] },
-    { pos: [0, u(Y.eye), 0], dir: rodEyeX ? [1, 0, 0] : [0, 0, 1], e: [0.14, 0.3, 0], out: rodEyeX ? [0.12, 0, 0] : [0, 0, 0.12] },
+    { pos: [0, u(Y.eye + (opts.extended ? STROKE : 0)), 0], dir: rodEyeX ? [1, 0, 0] : [0, 0, 1], e: [0.14, 0.3, 0], out: rodEyeX ? [0.12, 0, 0] : [0, 0, 0.12] },
   ];
   for (const { pos, dir, e, out } of eyes) {
     P('3', along(THREE, S.group(sphericalBall()), dir, pos), [e[0] + out[0] * 0.6, e[1] + out[1] * 0.6, e[2] + out[2] * 0.6]);
