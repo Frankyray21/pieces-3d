@@ -11,9 +11,9 @@
 //   câble sur le fond de la douille ;
 // - câble précâblé M12, 4 fils, 5 m (6) : connecteur femelle surmoulé branché
 //   dans la chambre sur l'embase M12 du détecteur, sortie par le
-//   presse-étoupe ; seule l'amorce (≈ 0.55 m) est dessinée.
+//   presse-étoupe ; seule l'amorce (≈ 0.4 m) est dessinée.
 // Repère : origine au centre de la face avant du capuchon, Y le long de l'axe
-// vers l'arrière (câble) ; amorce de câble coudée vers +X. Encombrement
+// vers l'arrière (câble) ; amorce de câble sortie vers +X puis descendant vers -Z. Encombrement
 // ≈ 0.043 × 0.10 (corps) m, plus l'amorce de câble.
 // Cotes : coupe A-A à l'échelle du corps M30 (≈ 5.5 px/mm) : longueur 85 mm,
 // douille Ø 43, capuchon Ø 40 × 21, chambre Ø 38.
@@ -57,7 +57,7 @@ export default function P112(api) {
   ), [0, 0.08, 0]);
 
   // 6 — câble M12 : connecteur surmoulé dans la chambre, câble Ø 6 sortant, amorce coudée
-  const tail = [[0, 0.096, 0], [0, 0.125, 0], [0.012, 0.15, 0], [0.06, 0.165, 0], [0.2, 0.17, -0.01], [0.4, 0.16, -0.02], [0.55, 0.15, -0.02]];
+  const tail = [[0, 0.096, 0], [0, 0.125, 0], [0.02, 0.15, 0], [0.06, 0.16, -0.01], [0.075, 0.165, -0.06], [0.08, 0.17, -0.15], [0.08, 0.175, -0.32]];
   P('6', group(
     Lm([[0, 63], [8, 63], [8, 70], [9.5, 74], [9.5, 80], [4, 81], [3.2, 81], [3.2, 95], [0, 95]], 'plastic', 24),
     S.tube(tail, mm(3.1), 'black', { seg: 40, radial: 8 }),

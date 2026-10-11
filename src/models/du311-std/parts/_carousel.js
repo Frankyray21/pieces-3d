@@ -49,7 +49,7 @@ export const RING = {
   gateHalf: 14 * DEG, // demi-ouverture de la paroi au portillon
   // montants (repères 2, 3, 4 de P136) : rayon et angle en plan
   posts: { r: 0.375, a: { 4: 222 * DEG, 3: 282 * DEG, 2: 342 * DEG }, w: u(3.0) },
-  backZ: -0.30, // face arrière des brides de fixation sur le cadre de montage P098
+  backZ: -0.32, // face arrière des brides de fixation sur le cadre de montage P098 (repère de l'avance)
 };
 
 // ---------------------------------------------------------------- hauteurs
@@ -78,6 +78,7 @@ export const H = {
   arms: FEED.clamp.arms,
 };
 H.armCyl = H.pivot + 0.036; // axe du vérin P122 (œils verticaux)
+H.lowEnd = H.armLow - 0.003; // bouts bas (arbre, bossage bas) sous la collerette des bagues du bras bas
 
 // Vérin du bras de tige P122 (Ø 3 × 6 1/8 po) : œil de fond sur la chape haute
 // du bras pivotant haut (près du bossage du couvercle), œil de tige sur le bras
@@ -543,3 +544,38 @@ export function swingArmBody(api, kind, mat = 'grey') {
 // H.swingCylLow (axe monté par-dessous).
 export const COVER_CLEVIS = { gap: u(1.06), cheek: u(0.75), R: u(1.4) };
 COVER_CLEVIS.plan = swingToPlan(SWLOCAL.swingRear);
+
+// ---------------------------------------------------------------- cadre, carter, supports
+
+/** Enveloppe convexe de deux cercles (c1, r1) et (c2, r2) en plan (contour en « goutte »). */
+export function hull2(c1, r1, c2, r2, n = 40) {
+  const dx = c2[0] - c1[0], dz = c2[1] - c1[1], d = Math.hypot(dx, dz), ph = Math.atan2(dz, dx);
+  const b = Math.acos((r1 - r2) / d);
+  const n2 = Math.max(6, Math.round((n * b) / Math.PI));
+  return [...arc(c1[0], c1[1], r1, ph + b, ph + 2 * Math.PI - b, n), ...arc(c2[0], c2[1], r2, ph - b, ph + b, n2).slice(1, -1)];
+}
+
+// Carter d'indexage (sur le cadre haut, sous le couvercle haut) : étoile à 17
+// encoches sur l'axe central, manivelle à galet (19 de P108) sur l'arbre du
+// moteur Ross (7) placé à c = 0.168 m de l'axe, côté extérieur avant (φ = 20°).
+// Cotes en repère local du carrousel (origine sur son axe).
+export const DRIVE = { phi: 20 * DEG, c: 0.168, R1: 0.205, R2: 0.075, wall: u(0.75), star: 0.165, crank: 0.031 };
+DRIVE.D = polar(DRIVE.c, DRIVE.phi, [0, 0]);
+// Plaque d'inspection du carter (20 de P108) : local, rayon du trou.
+export const INSPECT = { p: polar(0.15, -30 * DEG, [0, 0]), r: u(0.8) };
+// Support du distributeur (6 de P136) : centre en plan (local), dessus de la platine.
+export const VBM = { c: [0.15, -0.26], w: 0.32, d: 0.26, top: 2.47 + u(0.375) };
+// Vérin stinger côté carrousel (P064) tenu par les demi-colliers 5 de P136.
+export const STINGER = { p: [FEED.stingers[1][0] - C[0], FEED.stingers[1][1] - C[1]], r: 0.0565, notch: 0.095, clamp: [2.215, 2.317] };
+// Contour des plaques des cadres (fond du cadre bas, dessus du cadre haut) en local.
+export function frameOutline() {
+  const R = RING.plate, S = STINGER;
+  const sa = Math.atan2(-S.p[1], -S.p[0]); // direction stinger → axe
+  return [
+    ...arc(0, 0, R, -8 * DEG, 200 * DEG, 40),
+    [-0.345, -0.2], [-0.345, -0.33], [-0.27, -0.421], [0.27, -0.421],
+    ...arc(S.p[0], S.p[1], S.notch, sa + Math.PI / 2, sa - Math.PI / 2, 10),
+    [0.45, -0.2], [0.43, -0.06],
+  ];
+}
+export const BACK = { z0: -0.44, z1: -0.421, x: 0.27 }; // bride arrière (local)

@@ -60,13 +60,13 @@ export default function P116(api) {
   // ================================================ 11 — arbre du bras
   const collars = [
     [H.armLow + H.hub + 0.002, 1], // au-dessus du moyeu du bras pivotant bas
-    [H.armUp - 0.002, -1], // sous le moyeu du bras pivotant haut
+    [H.armUp - 0.004, -1], // sous le moyeu du bras pivotant haut
     ...H.arms.flatMap((c) => [[c - CA.half - 0.001, -1], [c + CA.half + 0.001, 1]]),
   ];
   const sh = [
-    lathe([[0, H.armLow], [SH.r - 0.0015, H.armLow], [SH.r, H.armLow + 0.0015], [SH.r, H.pivot + PIVOT126.hubH], [SH.splR, H.pivot + PIVOT126.hubH], [SH.splR, top - 0.002], [SH.splR - 0.002, top], [0, top]], 'grey', { seg: 32 }),
+    lathe([[0, H.lowEnd], [SH.r - 0.0015, H.lowEnd], [SH.r, H.lowEnd + 0.0015], [SH.r, H.pivot + PIVOT126.hubH], [SH.splR, H.pivot + PIVOT126.hubH], [SH.splR, top - 0.002], [SH.splR - 0.002, top], [0, top]], 'grey', { seg: 32 }),
     // tenon de bout bas (rondelle à fente)
-    S.box(u(1.5), u(0.25), u(0.75), 'steel', { pos: [0, H.armLow - u(0.125), 0] }),
+    S.box(u(1.5), u(0.25), u(0.75), 'steel', { pos: [0, H.lowEnd - u(0.125), 0] }),
     ...collars.map(([y, s]) => lathe([[SH.r, 0], [SH.collarR - 0.001, 0], [SH.collarR, 0.001], [SH.collarR, SH.collarT - 0.001], [SH.collarR - 0.001, SH.collarT], [SH.r, SH.collarT]], 'grey', { seg: 32, pos: [0, s > 0 ? y : y - SH.collarT, 0] })),
   ];
   // cannelures du bout haut (dans la bague de réglage)
@@ -93,8 +93,8 @@ export default function P116(api) {
   const nlT = u(2 * Math.max(0.05, 0.75 * 0.11));
   // bout bas de l'arbre (tourne avec lui), bossage bas (sous le moyeu) et bossage haut (sur le moyeu)
   const stacks = [
-    { x: 0, z: 0, y: H.armLow, s: -1, tag: true },
-    { x: Cl[0], z: Cl[1], y: H.armLow, s: -1 },
+    { x: 0, z: 0, y: H.lowEnd, s: -1, tag: true },
+    { x: Cl[0], z: Cl[1], y: H.lowEnd, s: -1 },
     { x: Cl[0], z: Cl[1], y: H.armUp + H.hub, s: 1 },
   ];
   for (const st of stacks) {
