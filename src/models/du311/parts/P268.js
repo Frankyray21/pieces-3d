@@ -44,7 +44,7 @@ export default function P268(api) {
       at(cyl(RF + 0.006, 0.012, 'black', { axis: 'x', seg: 48 }), [XF0 + 0.05, YT, Z]),
     ];
     const outlet = at(shell(R4, R4 - 0.002, 0.07, 'black', { axis: 'x', seg: 32 }), [XF1 + 0.03, YT, Z]);
-    const inlet = at(shell(0.0635, 0.0615, 0.12, 'black', { seg: 32 }), [XF1 - 0.1, YT + RF + 0.04, Z]);
+    const inlet = at(shell(0.0635, 0.0615, 0.12, 'black', { seg: 32 }), [XF1 - 0.07, YT + RF + 0.04, Z]);
     const vac = group(
       at(cyl(0.022, 0.03, 'black', { seg: 20 }), [XF0 + 0.06, YT - RF - 0.012, Z]),
       lathe([[0, -0.07], [0.012, -0.07], [0.022, -0.035], [0.024, 0], [0, 0]], 'rubber', { seg: 20, pos: [XF0 + 0.06, YT - RF - 0.02, Z] }),
@@ -69,19 +69,19 @@ export default function P268(api) {
 
   // 2 — colliers de fixation : bande d'acier, oreilles de serrage dessus,
   // pied à deux trous dessous.
-  for (const x of [XF0 + 0.11, XF1 - 0.08]) {
+  for (const x of [XF0 + 0.11, 0.33]) {
     const band = at(shell(RF + 0.006, RF + 0.0005, 0.04, 'black', { axis: 'x', seg: 48 }), [x, YT, Z]);
     const ears = [-1, 1].map((s) => at(box(0.04, 0.025, 0.004, 'black'), [x, YT + RF + 0.014, Z + s * 0.008]));
     const foot = at(box(0.05, 0.006, 0.16, 'black', { r: 0.002 }), [x, YT - RF - 0.009, Z]);
     const web = at(box(0.04, 0.02, 0.006, 'black'), [x, YT - RF + 0.002, Z]);
     const tb = at(bolt(0.008, 0.03, 'zinc', { axis: 'z' }), [x, YT + RF + 0.014, Z + 0.012]);
-    P('2', group(merged([band, ...ears, foot, web], 'black'), tb), [0, 0.12, 0]);
+    P('2', group(merged([band, ...ears, foot, web], 'black'), tb), [0, -0.3, 0]);
   }
 
   // 1 — chapeau d'entrée : champignon à pare-pluie, grille annulaire,
   // manchon serré sur la tubulure supérieure.
   {
-    const x = XF1 - 0.1, y0 = YT + RF + 0.08;
+    const x = XF1 - 0.07, y0 = YT + RF + 0.08;
     const hood = group(
       shell(0.068, 0.0635, 0.06, 'black', { seg: 32 }),
       lathe([[0, 0.06], [0.07, 0.06], [0.07, 0.065], [0.16, 0.085], [0.165, 0.095], [0.15, 0.11], [0.08, 0.12], [0, 0.122]], 'black', { seg: 48 }),
@@ -102,7 +102,7 @@ export default function P268(api) {
   P('4', lathe([
     [R4 - 0.001, X4a], [R4 + 0.006, X4a], [R4 + 0.006, X4a + 0.035], [R4 + 0.016, X4a + 0.05], [R4 + 0.006, X4a + 0.065],
     [R3 + 0.006, X4b - 0.035], [R3 + 0.006, X4b], [R3 - 0.001, X4b], [R3 - 0.001, X4b - 0.035], [R4 - 0.004, X4a + 0.065], [R4 - 0.001, X4a + 0.035],
-  ], 'rubber', { axis: 'x', seg: 40, pos: [0, YT, Z] }), [0.05, 0, 0]);
+  ], 'rubber', { axis: 'x', seg: 40, pos: [0, YT, Z] }), [0.16, 0, 0]);
 
   // 9 — tubes 3 po × 3 po zingués : haut (réducteur → coude) et bas (coude →
   // embout du moteur).
@@ -138,7 +138,7 @@ export default function P268(api) {
     return o;
   };
   // 7 — collier 4 1/2 po sur la grande manchette du réducteur.
-  P('7', tclamp([X4a + 0.018, YT, Z], 'x', R4 + 0.006), [0.03, 0.06, 0]);
+  P('7', tclamp([X4a + 0.018, YT, Z], 'x', R4 + 0.006), [0.08, 0.06, 0]);
   // 6 — six colliers 3 po.
   const c6 = [
     [[X4b - 0.018, YT, Z], 'x'], [[XE + 0.016, YT, Z], 'x'], [[XV, YT - RB - CUFF + 0.016, Z], 'y'],
