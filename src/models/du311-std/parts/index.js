@@ -10,6 +10,7 @@ import P362 from './P362.js';
 import P364 from './P364.js';
 import P366 from './P366.js';
 import P368 from './P368.js';
+import P372 from './P372.js';
 import P380 from './P380.js';
 import P382 from './P382.js';
 import P384 from './P384.js';
@@ -22,6 +23,7 @@ import P400 from './P400.js';
 import P402 from './P402.js';
 import P404 from './P404.js';
 import P408 from './P408.js';
+import P410 from './P410.js';
 
 export default {
   'P012': P012,
@@ -34,6 +36,7 @@ export default {
   'P364': P364,
   'P366': P366,
   'P368': P368,
+  'P372': P372,
   'P380': P380,
   'P382': P382,
   'P384': P384,
@@ -46,4 +49,5 @@ export default {
   'P402': P402,
   'P404': P404,
   'P408': P408,
+  'P410': P410,
 };
