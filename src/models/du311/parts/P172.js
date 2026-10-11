@@ -53,18 +53,17 @@ export function hexScrew(S, d, len, mat = 'zinc') {
 
 /** Vis à tête cylindrique à six-pans creux (CHC) Ø d × len. */
 export function socketScrew(S, d, len, mat = 'blackOxide') {
-  const R = 0.75 * d, h = d, r = d / 2, k = (0.36 * d) / Math.cos(Math.PI / 6), c = d * 0.08;
+  const R = 0.75 * d, h = d, r = d / 2, k = (0.36 * d) / Math.cos(Math.PI / 6);
   return S.merged([
-    S.lathe([[0, 0], [R, 0], [R, h - c], [R - c, h], [k, h], [k, h * 0.55], [0, h * 0.45]], mat, { seg: 14 }),
-    S.lathe([[k, h], [k, h * 0.55], [0, h * 0.45]], mat, { seg: 6 }),
-    S.lathe([[0, -len], [r * 0.8, -len], [r, -len + r * 0.2], [r, 0.0005], [0, 0.0005]], mat, { seg: 10 }),
+    S.lathe([[0, 0], [R, 0], [R, h], [k, h], [k, h * 0.55], [0, h * 0.45]], mat, { seg: d < 0.018 ? 9 : 12 }),
+    S.lathe([[0, -len], [r, -len], [r, 0.0005], [0, 0.0005]], mat, { seg: 7 }),
   ], mat);
 }
 
-/** Rondelle (plate, Nord-Lock ou à haut collet) Ø d : couronne chanfreinée de 0 à t. */
+/** Rondelle (plate, Nord-Lock ou à haut collet) Ø d : couronne de 0 à t. */
 export function washerD(S, d, mat = 'zinc', { od = 2 * d, t = 0.16 * d } = {}) {
-  const ro = od / 2, ri = d * 0.53, c = Math.min(t * 0.3, 0.0006);
-  return S.lathe([[ri, 0], [ro - c, 0], [ro, c], [ro, t - c], [ro - c, t], [ri, t], [ri, 0]], mat, { seg: 14 });
+  const ro = od / 2, ri = d * 0.53;
+  return S.lathe([[ri, 0], [ro, 0], [ro, t], [ri, t], [ri, 0]], mat, { seg: d < 0.018 ? 9 : 12 });
 }
 
 /** Écrou hexagonal (surplat af, hauteur h) taraudé Ø d, face d'appui à y = 0, vers +Y. */
@@ -84,13 +83,18 @@ export function pose(THREE, obj, p, dir = [0, 1, 0]) {
 
 export default function P172(api) {
   const { THREE, S } = api;
-  const { lathe, box, plate, gear, extrude, merged, torus, creaseNormals, group, at } = S;
+  const { lathe, box, plate, gear, extrude, merged, creaseNormals, group, at } = S;
   const P = (ref, obj, e) => api.part(ref, obj, e);
   const put = (obj, p, dir) => pose(THREE, obj, p, dir);
   const [BX, BY, BZ] = ACT172.body;
   const HX = BX / 2, HY = BY / 2, HZ = BZ / 2;
   const TZ = ACT172.tubeZ;
   const PAINT = 'grey';
+  // Joint torique léger : section hexagonale révolutionnée (axe y, ou x).
+  const oring = (R, r, axis) => lathe(Array.from({ length: 7 }, (_, i) => {
+    const a = -Math.PI / 2 + (i * Math.PI) / 3;
+    return [R + r * Math.cos(a), r * Math.sin(a)];
+  }), 'rubber', { axis: axis === 'x' ? 'x' : 'y', seg: axis === 'x' ? 32 : 16 });
 
   // Extrusion selon Y d'un contour [[x, z], …] de y0 à y1 (arêtes cassées).
   const slabY = (pts, y0, y1, mat) => {
@@ -100,11 +104,19 @@ export default function P172(api) {
     m.geometry = creaseNormals(m.geometry);
     return m;
   };
-  // Plaque percée dont l'épaisseur est selon X (bride, fond) : w selon Y, d selon Z.
-  const plateX = (w, d, t, mat, opts) => {
-    const m = plate(w, d, t, mat, opts);
-    m.rotation.z = Math.PI / 2;
-    return group(m);
+  // Bride de tube : plaque 0.19 (Y) × 0.158 (Z) × 0.035 (X), coins abattus,
+  // alésage du tube ; extrusion légère selon X.
+  const flange = () => {
+    const w = 0.095, d = 0.079, c = 0.008;
+    const shape = new THREE.Shape([[-w + c, -d], [w - c, -d], [w, -d + c], [w, d - c], [w - c, d], [-w + c, d], [-w, d - c], [-w, -d + c]].map(([y, z]) => new THREE.Vector2(y, z)));
+    const hole = new THREE.Path();
+    hole.absarc(0, 0, 0.0637, 0, Math.PI * 2, true);
+    shape.holes.push(hole);
+    const geo = new THREE.ExtrudeGeometry(shape, { depth: FT, bevelEnabled: false, curveSegments: 20 });
+    geo.translate(0, 0, -FT / 2);
+    // (a, b, c) → (x = c, y = a, z = b) : contour dans le plan YZ, épaisseur selon X.
+    geo.applyMatrix4(new THREE.Matrix4().set(0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1));
+    return merged([new THREE.Mesh(geo)], PAINT);
   };
 
   // ---------------------------------------------------------------- 6 — carter
@@ -246,13 +258,13 @@ export default function P172(api) {
         [0, -0.036], [0.0525, -0.036], [0.0535, -0.034], [0.0535, -0.03], [0.05, -0.03], [0.05, -0.02], [0.0535, -0.02],
         [0.0535, -0.008], [0.048, -0.008], [0.048, 0.008], [0.0535, 0.008], [0.0535, 0.02], [0.05, 0.02], [0.05, 0.03],
         [0.0535, 0.03], [0.0535, 0.034], [0.0525, 0.036], [0, 0.036],
-      ], 'steel', { axis: 'x', seg: 36 });
+      ], 'steel', { axis: 'x', seg: 24 });
       P('10', at(piston, [xc, 0, s * TZ]), [e * 0.12, 0, s * 0.3]);
       // 25 — bagues d'usure ; 22 — joint de piston
       for (const d of [-0.025, 0.025]) {
-        P('25', at(lathe([[0.0502, -0.005], [0.054, -0.005], [0.054, 0.005], [0.0502, 0.005], [0.0502, -0.005]], 'cream', { axis: 'x', seg: 36 }), [xc + d * e, 0, s * TZ]), [e * (0.2 + (d * e > 0 ? 0.06 : 0)), 0, s * 0.3]);
+        P('25', at(lathe([[0.0502, -0.005], [0.054, -0.005], [0.054, 0.005], [0.0502, 0.005], [0.0502, -0.005]], 'cream', { axis: 'x', seg: 24 }), [xc + d * e, 0, s * TZ]), [e * (0.2 + (d * e > 0 ? 0.06 : 0)), 0, s * 0.3]);
       }
-      P('22', at(lathe([[0.0482, -0.0078], [0.054, -0.0078], [0.054, 0.0078], [0.0482, 0.0078], [0.0482, -0.0078]], 'rubber', { axis: 'x', seg: 36 }), [xc, 0, s * TZ]), [e * 0.23, 0, s * 0.3]);
+      P('22', at(lathe([[0.0482, -0.0078], [0.054, -0.0078], [0.054, 0.0078], [0.0482, 0.0078], [0.0482, -0.0078]], 'rubber', { axis: 'x', seg: 24 }), [xc, 0, s * TZ]), [e * 0.23, 0, s * 0.3]);
       // 29 — goupille élastique 1/4 × 2 po qui lie le piston à la crémaillère
       P('29', at(lathe([[0.0028, -0.0254], [0.0032, -0.0246], [0.0032, 0.0246], [0.0028, 0.0254], [0.0024, 0.0254], [0.0024, -0.0254], [0.0028, -0.0254]], 'steel', { seg: 10 }), [e * 0.345, 0, s * (TZ + 0.025)]), [e * 0.05, 0.12, s * 0.3]);
     }
@@ -267,11 +279,11 @@ export default function P172(api) {
       const p = (z) => [x, 0, s * z];
       const d = [0, 0, s];
       P('5', put(lathe([
-        [0, 0.133], [0.0085, 0.133], [0.0095, 0.135], ...S.thread(0.0095, 0.135, 0.19, { pitch: IN / 16, maxTurns: 6 }),
+        [0, 0.133], [0.0085, 0.133], [0.0095, 0.135], ...S.thread(0.0095, 0.135, 0.19, { pitch: IN / 16, maxTurns: 3 }),
         [0.0085, 0.192], [0.0055, 0.192], [0.0055, 0.184], [0, 0.183],
-      ].map(([r, y]) => [r, y - 0.133]), 'steel', { seg: 14 }), p(0.133), d), [0, 0, s * 0.62]);
+      ].map(([r, y]) => [r, y - 0.133]), 'steel', { seg: 10 }), p(0.133), d), [0, 0, s * 0.62]);
       P('1', put(washerD(S, 0.75 * IN, 'zinc', { od: 0.035, t: 0.006 }), p(zF), d), [0, 0, s * 0.72]);
-      P('2', put(torus(0.0125, 0.0016, 'rubber'), p(zF + 0.003), d), [0, 0, s * 0.77]);
+      P('2', put(oring(0.0125, 0.0016, 'x0'), p(zF + 0.003), d), [0, 0, s * 0.77]);
       P('36', put(hexNut(S, 0.75 * IN, 1.125 * IN, 0.41 * IN), p(zF + 0.006), d), [0, 0, s * 0.84]);
     }
   }
@@ -288,16 +300,16 @@ export default function P172(api) {
       // 11 — tube Ø 5 po × 0.25, engagé dans le carter et dans le fond
       P('11', at(S.shell(0.0635, 0.054, XC - 0.15, PAINT, { axis: 'x' }), [e * (0.15 + XC) / 2, 0, z]), [e * 0.3, 0, 0]);
       // 12 — brides (0.19 × 0.16 × 0.035) intérieure et extérieure
-      const fl = (x) => at(plateX(0.19, 0.158, FT, PAINT, { holes: [[0, 0, 0.0637]], r: 0.008 }), [x, 0, z]);
+      const fl = (x) => at(flange(), [x, 0, z]);
       P('12', fl(e * (XI + FT / 2 + 0.001)), [e * 0.42, 0, 0]);
       P('12', fl(e * (XO + FT / 2)), [e * 0.48, 0, 0]);
       // 15 — clavettes fendues dans les gorges du tube, contre les brides
-      const key = (x) => at(lathe([[0.0605, -0.005], [0.07, -0.005], [0.071, -0.004], [0.071, 0.004], [0.07, 0.005], [0.0605, 0.005], [0.0605, -0.005]], 'darkSteel', { axis: 'x', seg: 32 }), [x, 0, z]);
+      const key = (x) => at(lathe([[0.0605, -0.005], [0.07, -0.005], [0.071, -0.004], [0.071, 0.004], [0.07, 0.005], [0.0605, 0.005], [0.0605, -0.005]], 'darkSteel', { axis: 'x', seg: 24 }), [x, 0, z]);
       P('15', key(e * (XI + FT + 0.0065)), [e * 0.36, 0, s * 0.05]);
       P('15', key(e * (XO - 0.0055)), [e * 0.4, 0, s * 0.05]);
       // 27 — joints toriques des bouts de tube (carter, fond)
-      P('27', at(torus(0.06, 0.0022, 'rubber', { axis: 'x' }), [e * 0.155, 0, z]), [e * 0.2, 0, s * 0.08]);
-      P('27', at(torus(0.06, 0.0022, 'rubber', { axis: 'x' }), [e * 0.66, 0, z]), [e * 0.55, 0, s * 0.08]);
+      P('27', at(oring(0.06, 0.0022, 'x'), [e * 0.155, 0, z]), [e * 0.2, 0, s * 0.08]);
+      P('27', at(oring(0.06, 0.0022, 'x'), [e * 0.66, 0, z]), [e * 0.55, 0, s * 0.08]);
       // 34 + 40 — vis CHC des brides intérieures (vers le carter) et des fonds (vers la bride extérieure)
       for (const [y, dz] of flangePts) {
         const xi = e * (XI + FT + 0.001);
