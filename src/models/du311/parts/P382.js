@@ -59,23 +59,23 @@ export default function P382(api, opts = {}) {
   const zt = ZE + 0.0025; // face avant des pattes
   for (const [x, y] of DCU.tabs) {
     const p = [XC + x, y, zt];
-    P('7', K.washer(0.25 * IN, 'zinc', { pos: p, axis: 'z', seg: 8 }), [0, 0, ED + 0.04]);
-    P('5', K.screw(0.25 * IN, 0.5 * IN, 'zinc', { pos: [p[0], p[1], zt + 0.0016], axis: 'z' }), [0, 0, ED + 0.08]);
+    P('7', K.washer(0.25 * IN, 'zinc', { pos: p, axis: 'z', seg: 6 }), [0, 0, ED + 0.04]);
+    P('5', K.screw(0.25 * IN, 0.5 * IN, 'zinc', { pos: [p[0], p[1], zt + 0.0016], axis: 'z', seg: 6 }), [0, 0, ED + 0.08]);
   }
   // 6 — vis H 5/16 × 3/4 et 8 — rondelles Nord-Lock (paire), dans l'aile d'attache.
   for (const [x, y] of KIT382.holes) {
-    const nl = merged([K.band(0.0085, 0.0043, 0, 0.0017, 'zinc', 8), K.band(0.0085, 0.0043, 0.0017, 0.0034, 'zinc', 8)], 'zinc');
+    const nl = K.band(0.0085, 0.0043, 0, 0.0034, 'zinc', 6); // paire collée
     P('8', K.place(nl, { pos: [x, y, T], axis: 'z' }), [0, 0, 0.16]);
-    P('6', K.screw(0.3125 * IN, 0.75 * IN, 'zinc', { pos: [x, y, T + 0.0034], axis: 'z' }), [0, 0, 0.22]);
+    P('6', K.screw(0.3125 * IN, 0.75 * IN, 'zinc', { pos: [x, y, T + 0.0034], axis: 'z', seg: 6 }), [0, 0, 0.22]);
   }
 
   // ------------------------------------------- 1 — antenne omni 3 dBi (N)
   // Repère local : origine sur le dessus du toit, +Y vers le haut.
   const tr = KIT382.roofT;
   const ant = group(
-    lathe([[0, 0], [0.018, 0], [0.018, 0.006], [0.0155, 0.009], [0.0135, 0.011], [0.0135, 0.07], [0.011, 0.078], [0.006, 0.0815], [0, 0.0825]], 'black', { seg: 14 }),
+    lathe([[0, 0], [0.018, 0], [0.018, 0.006], [0.0155, 0.009], [0.0135, 0.011], [0.0135, 0.07], [0.011, 0.078], [0.006, 0.0815], [0, 0.0825]], 'black', { seg: 8 }),
     merged([
-      lathe([[0, -tr - 0.024], [0.0075, -tr - 0.024], [0.0075, -tr], [0.006, -tr], [0, -tr]], 'steel', { seg: 10 }),
+      lathe([[0, -tr - 0.024], [0.0075, -tr - 0.024], [0.0075, -tr], [0.006, -tr], [0, -tr]], 'steel', { seg: 6 }),
       at(K.hex(0.022, 0.005), [0, -tr - 0.0025, 0]), // contre-écrou sous le toit
     ], 'steel'),
   );
@@ -84,7 +84,7 @@ export default function P382(api, opts = {}) {
   // ------------------------------------- 2 — câble d'antenne N / N, 4 m
   // Fiches N mâles aux deux bouts (écrou moleté, manchon), câble Ø 10 mm.
   const plug = () => merged([
-    lathe([[0, 0], [0.0105, 0], [0.0105, 0.02], [0.0075, 0.023], [0.0068, 0.04], [0, 0.04]], 'steel', { seg: 10 }),
+    lathe([[0, 0], [0.0105, 0], [0.0105, 0.02], [0.0075, 0.023], [0.0068, 0.04], [0, 0.04]], 'steel', { seg: 7 }),
   ], 'steel');
   const jack = [XC + DCU.nJack[0], DCU.nJack[1], ZE + DCU.nJack[2]]; // bout de la traversée N du coffret
   const a0 = [jack[0], jack[1] + 0.012, jack[2]]; // fiche : de a0 vers le bas
@@ -117,7 +117,7 @@ export default function P382(api, opts = {}) {
   }
   const pts = route(n ? (lo + hi) / 2 : 0.0001, n);
   const plugs = merged([K.toward(plug(), [0, -1, 0], a0), K.toward(plug(), [0, -1, 0], top)], 'steel');
-  P('2', group(tube(pts, R, 'black', { seg: 100, radial: 5, ends: 'none' }), plugs), [0.12, 0, 0]);
+  P('2', group(tube(pts, R, 'black', { seg: 52, radial: 4, ends: 'none' }), plugs), [0.12, 0, 0]);
 
   return { view: { dir: [0.9, 0.45, 1] } };
 }
