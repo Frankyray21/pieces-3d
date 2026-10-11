@@ -62,9 +62,9 @@ export function kit(api) {
 
   const band = (ro, ri, y0, y1, mat, seg = 14) => lathe([[ri, y0], [ro, y0], [ro, y1], [ri, y1], [ri, y0]], mat, { seg });
 
-  const washer = (d, mat = 'zinc', opts = {}) => {
+  const washer = (d, mat = 'zinc', { seg = 12, ...opts } = {}) => {
     const t = Math.max(d * 0.16, 0.0012);
-    return place(band(d * 1.05, d * 0.54, 0, t, mat, 12), opts);
+    return place(band(d * 1.05, d * 0.54, 0, t, mat, seg), opts);
   };
 
   const lock = (d, mat = 'zinc', opts = {}) => {
@@ -120,6 +120,7 @@ export const JIC = {
   12: { t: 1 + 1 / 16, hex: 1.25, nut: 1.25 },
   16: { t: 1 + 5 / 16, hex: 1.5, nut: 1.5 },
   20: { t: 1 + 5 / 8, hex: 1.875, nut: 2 },
+  24: { t: 1 + 7 / 8, hex: 2.25, nut: 2.375 },
 };
 // NPT : diamètre extérieur du tube (po) et six-pans usuel (po), par taille en 1/16 po.
 export const NPT = {
@@ -174,7 +175,7 @@ export const racOut = (dir, k) => {
 export function racFactory(S) {
   const { lathe, merged, group } = S;
   const COS30 = Math.cos(Math.PI / 6);
-  const sg = (r) => (r > 0.012 ? 10 : r > 0.006 ? 9 : 8);
+  const sg = (r) => (r > 0.012 ? 9 : 8);
   const hexR = (af) => af / 2 / COS30;
 
   // Six-pans (surplat af) de y0 à y0 + h, chanfrein du dessus ; percé (ri) si demandé.
@@ -228,11 +229,12 @@ export function racFactory(S) {
   const portEnd = (port, dash, zinc, rub, adjustable) => {
     if (port === 'npt') { zinc.push(nptStud(NPT[dash].t)); return 0; }
     const s = JIC[dash];
-    zinc.push(orbStud(s.t, rub));
-    if (!adjustable) return 0;
+    if (!adjustable) { zinc.push(orbStud(s.t, rub)); return 0; }
+    // Orientable : joint caché sous la bague, non dessiné.
+    zinc.push(orbStud(s.t, []));
     // Bague d'appui sous l'écrou de blocage (un seul profil).
     const r = (s.t * IN) / 2, h = r * 0.55, R = hexR(s.hex * IN * 1.02), c = R * 0.12, w = r * 0.12;
-    zinc.push(lathe([[r * 0.85, 0], [R * 0.92, 0], [R * 0.92, w], [R, w], [R, w + h - c * 0.6], [R - c, w + h], [r * 0.85, w + h]], 'zinc', { seg: 6 }));
+    zinc.push(lathe([[r * 0.85, 0], [R, 0], [R, w + h - c * 0.6], [R - c, w + h], [r * 0.85, w + h]], 'zinc', { seg: 6 }));
     return w + h;
   };
   const dimsOf = (port, dash) => (port === 'npt' ? NPT[dash] : JIC[dash]);
@@ -243,7 +245,7 @@ export function racFactory(S) {
     /** Vis H d × len (m), tête en haut à l'origine, tige vers −Y. */
     bolt: (d, len, mat = 'zinc') => merged([
       hexY(d * 1.5, 0, d * 0.65, 0, mat),
-      lathe([[0, -len], [d * 0.42, -len], [d / 2, -len + d * 0.1], [d / 2, 0.0005]], mat, { seg: 6 }),
+      lathe([[0, -len], [d / 2, -len], [d / 2, 0.0005]], mat, { seg: 6 }),
     ], mat),
     /** Rondelle plate (SAE) ou fendue (grower) de vis d, posée sur y = 0. */
     washer: (d, { split = false, mat = 'zinc' } = {}) => {
