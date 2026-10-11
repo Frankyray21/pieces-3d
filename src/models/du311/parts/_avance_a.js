@@ -628,3 +628,23 @@ export function cbvStack(y0 = 0) {
     return { obj: g, ports, holes: v.userData.holes.map((h) => h.clone().applyQuaternion(g.quaternion).add(g.position)) };
   });
 }
+
+/**
+ * Platine d'attache anti-fouet 2 po (CX030490, « ASSY, WHIP CHECK MOUNT
+ * 2.0" ») : tôle 1/4 po en goutte percée Ø 2 3/8 po (enfilée sur le filetage
+ * 2 po), deux oreilles et leurs manilles. Plan XY, trou centré à l'origine,
+ * oreilles vers +Y, épaisseur selon Z (centrée).
+ */
+export function whipCheckMount() {
+  const r2 = (2.375 * IN) / 2;
+  const pts = [];
+  for (let i = 0; i <= 24; i++) { const a = Math.PI + (i / 24) * Math.PI; pts.push([Math.cos(a) * 0.055, Math.sin(a) * 0.055]); }
+  pts.push([0.055, 0.03], [0.04, 0.085], [0.015, 0.085], [0.01, 0.06], [-0.01, 0.06], [-0.015, 0.085], [-0.04, 0.085], [-0.055, 0.03]);
+  const parts = [S.extrude(pts, 0.25 * IN, 'zinc', { holes: [[0, 0, r2 + 0.001], [0.0275, 0.073, 0.005], [-0.0275, 0.073, 0.005]] })];
+  for (const x of [-0.0275, 0.0275]) {
+    parts.push(at(S.torus(0.012, 0.0028, 'zinc', { axis: 'x' }), [x, 0.085, 0]));
+    parts.push(at(S.cyl(0.003, 0.03, 'zinc', { axis: 'z', seg: 10 }), [x, 0.075, 0]));
+    parts.push(at(S.cyl(0.0045, 0.004, 'zinc', { axis: 'z', seg: 10 }), [x, 0.075, 0.015]));
+  }
+  return S.group(S.merged(parts, 'zinc'));
+}
