@@ -6,9 +6,10 @@
 // aux deux bouts du tube, pour l'axe de pivot Ø 1 1/4 po (6 de P074).
 // Repère (celui de P074 translaté) : origine sur l'axe du tube de pivot, à
 // mi-hauteur ; Y vers le haut (axe du pivot, axes verticaux) ; X le long du
-// bras de pince (vers le bout des fourches), Z en travers (+Z vers le fond de
-// la fourche). Axe de chape (vérin) en JAW082.pin, centre de la tige serrée en
-// JAW082.pipe (po, dans le plan X-Z). Encombrement ≈ 0.22 (X) × 0.111 (Y,
+// bras de pince (vers le bout des fourches), Z en travers (-Z vers le fond de
+// la fourche, +Z vers son ouverture). Axe de chape (vérin) en JAW082.pin,
+// centre de la tige serrée en JAW082.pipe : cotes « logiques » (po, [x, z
+// logique], z logique = -Z). Encombrement ≈ 0.22 (X) × 0.111 (Y,
 // tube de 4 3/8 po) × 0.18 (Z) m.
 // Cotes : non cotées ; tube Ø 2 1/4 × 4 3/8 po (entre les plaques de P074 et
 // les cales 4), corps de 3 po d'épaisseur, fente de chape de 1 3/4 po (œil de
@@ -37,10 +38,10 @@ export default function P082(api) {
   // Prisme vertical d'un contour [[x, z], …] (po) de y0 à y1, trous [x, z, r] ;
   // arêtes cassées (≈ 1 mm).
   const slab = (pts, y0, y1, mat, holes = []) => {
-    const shape = new THREE.Shape(pts.map(([x, z]) => new THREE.Vector2(u(x), -u(z))));
+    const shape = new THREE.Shape(pts.map(([x, z]) => new THREE.Vector2(u(x), u(z))));
     for (const [x, z, r] of holes) {
       const p = new THREE.Path();
-      p.absarc(u(x), -u(z), u(r), 0, Math.PI * 2, true);
+      p.absarc(u(x), u(z), u(r), 0, Math.PI * 2, true);
       shape.holes.push(p);
     }
     const t = u(y1 - y0), b = 0.0012;
@@ -72,7 +73,7 @@ export default function P082(api) {
   // Cordons : bec / âme et joues / tube (lignes sur les faces haute et basse).
   const beads = [];
   for (const y of [H, -H]) {
-    beads.push(weld([[3.62, y, 1.4], [3.85, y, 0.3]].map(([x, yy, z]) => [u(x), u(yy), u(z)]), u(0.18), 'grey'));
+    beads.push(weld([[3.62, y, 1.4], [3.85, y, 0.3]].map(([x, yy, z]) => [u(x), u(yy), -u(z)]), u(0.18), 'grey'));
   }
   P('2', group(body, ...beads), [0, 0, 0]);
 
@@ -91,5 +92,5 @@ export default function P082(api) {
     P('1', b, [0, s * 0.12, 0]);
   }
 
-  return { view: { dir: [-0.7, 0.8, -1] } };
+  return { view: { dir: [-0.7, 0.8, 1] } };
 }
