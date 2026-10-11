@@ -511,3 +511,98 @@ export function ballValve3(api, npt = 8, { s = 0.048, stem = 0.06, material = 'b
   lever.position.y = s / 2 + stem + 0.014;
   return { obj: S.group(S.merged(body, material), bonnet, S.merged(steel, 'steel'), lever), ports, top: s / 2 + stem };
 }
+
+// ------------------------------------------------------------ brides 4 vis SAE J518 (code 61 / 62)
+// Par code et taille dash (seizièmes de pouce du passage) : entraxes long L et
+// court W des vis (po), vis d (po), Ø du collet de l'embout à bride head (po),
+// passage bore (po). Épaisseur des demi-brides : T = 0.16 L + 0.22 po.
+export const J518 = {
+  61: {
+    16: { L: 2.062, W: 1.031, d: 0.375, head: 1.75, bore: 1.0 },
+    20: { L: 2.312, W: 1.188, d: 0.4375, head: 2.0, bore: 1.25 },
+    24: { L: 2.75, W: 1.406, d: 0.5, head: 2.38, bore: 1.5 },
+    32: { L: 3.062, W: 1.688, d: 0.5, head: 2.81, bore: 2.0 },
+    40: { L: 3.5, W: 2.0, d: 0.5, head: 3.31, bore: 2.5 },
+  },
+  62: {
+    16: { L: 2.25, W: 1.094, d: 0.4375, head: 1.88, bore: 1.0 },
+    20: { L: 2.625, W: 1.25, d: 0.5, head: 2.12, bore: 1.25 },
+  },
+};
+
+/** Cotes (m) d'une bride J518 : L, W, d, rh (rayon du collet), rb (passage), T (demi-brides), hc (collet), rn (col de l'embout). */
+export function j518(dash, code = 61) {
+  const f = (J518[code] || J518[61])[dash] || J518[61][16];
+  const T = (0.16 * f.L + 0.22) * IN;
+  return {
+    L: f.L * IN, W: f.W * IN, d: f.d * IN, rh: (f.head * IN) / 2, rb: (f.bore * IN) / 2,
+    T, hc: T * 0.45, rn: (f.bore * IN) / 2 + Math.max(0.0025, f.bore * IN * 0.1),
+  };
+}
+
+/**
+ * Embout à collet J518 le long de +Y, face d'étanchéité sur y = 0 : collet
+ * (rh, hauteur hc) à joint torique dans sa gorge, puis col cylindrique (rn) de
+ * hauteur neck. Alésage creux visible. Retourne l'objet (matériau material).
+ */
+export function flangeHead(api, dash, code = 61, neck = 0.02, material = 'steel') {
+  const { S } = api;
+  const f = j518(dash, code);
+  const c = Math.min(0.0012, f.hc * 0.2);
+  return S.group(
+    S.lathe([
+      [f.rb, 0], [f.rh - c, 0], [f.rh, c], [f.rh, f.hc - c], [f.rh - c, f.hc], [f.rn, f.hc], [f.rn, f.hc + neck], [f.rb, f.hc + neck], [f.rb, 0],
+    ], material, { seg: 32 }),
+    S.torus((f.rb + f.rh) / 2 - 0.001, Math.min(0.0018, (f.rh - f.rb) * 0.12), 'rubber', { pos: [0, 0.0006, 0] }),
+  );
+}
+
+/**
+ * Paire de demi-brides J518 et leurs 4 vis H à rondelles Grower, le long de
+ * +Y, face de l'orifice sur y = 0 : les demi-brides coiffent le collet de
+ * l'embout (de y = hc à hc + T), entraxe long L selon X, court W selon Z ;
+ * vis vers -Y dans l'orifice. Retourne { obj, top } (dessus des demi-brides).
+ */
+export function splitFlange(api, dash, code = 61, { material = 'zinc', bolts = true } = {}) {
+  const { S, THREE } = api;
+  const f = j518(dash, code);
+  const y0 = f.hc, gap = 0.0008;
+  const half = (s) => {
+    const xl = f.L / 2 + f.d * 1.05, zo = f.W / 2 + f.d * 1.05;
+    const sh = new THREE.Shape();
+    const rc = f.rn + 0.0006;
+    sh.moveTo(-xl, gap);
+    sh.lineTo(-rc, gap);
+    for (let i = 1; i < 16; i++) {
+      const a = Math.PI - (i / 16) * Math.PI;
+      sh.lineTo(rc * Math.cos(a), gap + rc * Math.sin(a));
+    }
+    sh.lineTo(rc, gap);
+    sh.lineTo(xl, gap);
+    sh.lineTo(xl, zo - f.d * 0.6);
+    sh.lineTo(xl - f.d * 0.6, zo);
+    sh.lineTo(-xl + f.d * 0.6, zo);
+    sh.lineTo(-xl, zo - f.d * 0.6);
+    sh.closePath();
+    for (const sx of [-1, 1]) {
+      const p = new THREE.Path();
+      p.absarc(sx * f.L / 2, f.W / 2, f.d * 0.55, 0, Math.PI * 2, true);
+      sh.holes.push(p);
+    }
+    const geo = new THREE.ExtrudeGeometry(sh, { depth: f.T - 0.002, bevelEnabled: true, bevelSize: 0.0008, bevelThickness: 0.001, bevelOffset: -0.0008, bevelSegments: 1, curveSegments: 12 });
+    // Plan (x, z) du contour → XZ, épaisseur selon +Y à partir de y0.
+    geo.rotateX(Math.PI / 2);
+    geo.translate(0, y0 + f.T - 0.001, 0);
+    if (s < 0) geo.rotateY(Math.PI);
+    S.creaseNormals(geo);
+    return new THREE.Mesh(geo);
+  };
+  const parts = [half(1), half(-1)];
+  const g = S.group(S.merged(parts, material));
+  if (bolts) {
+    const pts = [];
+    for (const sx of [-1, 1]) for (const sz of [-1, 1]) pts.push([sx * f.L / 2, y0 + f.T, sz * f.W / 2]);
+    g.add(S.boltSet(pts, f.d, f.T + f.d * 1.6, 'zinc', { washer: true }));
+  }
+  return { obj: g, top: y0 + f.T, f };
+}
