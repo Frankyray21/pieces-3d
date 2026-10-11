@@ -13,9 +13,9 @@
 // Raccordements supposés (aucun dessin ni schéma) :
 //   · côté châssis : platine de traversée horizontale sous / derrière le
 //     pied du mât, dessus à y = −0.30 (KIT088.chassis), unions de traversée
-//     debout, sièges hauts vers +Y : deux rangées de cinq -06 par côté
-//     (x = ±(0.26 … 0.364), z −0.40 / −0.44), une rangée de quatre -12 et
-//     deux -06 côté −X (z −0.48 / −0.52). Embouts 45° de 12, 13 et 14 côté
+//     debout, sièges hauts vers +Y : dix -06 par côté en quinconce
+//     (x = ±(0.26 + 0.026·k), z −0.40 / −0.44), quatre -12 côté −X
+//     (z −0.48), une -06 de chaque côté à z = −0.52 (11 : x 0.30, 12 : −0.36). Embouts 45° de 12, 13 et 14 côté
 //     châssis, inclinés vers le mât (+Z) ;
 //   · 1 à 10 (×2 : un par flanc, circuit symétrique) : coudes de traversée du
 //     mât (P130 repère 7), bouts côté mât (TRAV.inner de _avance_a_hk2.js :
@@ -23,34 +23,35 @@
 //     3 → 0.80, 4 → 0.85, 5 → 1.20, 6 → 1.25, 7 → 1.30, 8 → 1.35,
 //     9 → 1.40, 10 → 1.45 ;
 //   · 13 / 14 (-12) : unions de traversée -12 de la boucle de tête P156
-//     (sièges inférieurs) ; 11 (-06) : sa traversée -06. P156 posé comme le
-//     suppose P058 (rangée des -12 à x = −0.32, platine à y = 1.80) : origine
-//     (−0.265, 1.80, −0.13), X local → −X, Z local → −Z (KIT088.p156) ;
-//   · 12 (-06, 45°) : coude bas du flanc −X du sélecteur P152 (posé par
-//     KIT060 en (−0.4, 1.0, 0.1)), tourné vers l'arrière.
+//     (sièges inférieurs) ; 12 (-06, 45°) : sa traversée -06. P156 posé comme
+//     le suppose P058 (rangée des -12 à x = −0.32, platine à y = 1.80) :
+//     origine (−0.265, 1.80, −0.13), X local → −X, Z local → −Z (KIT088.p156) ;
+//   · 11 (-06, 180 po) : siège bas de la troisième union de P064 (repère 4,
+//     relais du drain 24) sur le flanc +X, (0.30, 2.75, −0.17) (cotes de P064).
 // Tracés : faisceau le long des flancs du mât, entre le flanc et le bord
 // intérieur du vérin stinger, derrière les mamelons des coudes de traversée :
 // couloirs -06 en grille x = ±(0.262 … 0.306) × z (−0.07 … −0.136), le
 // boyau du coude le plus bas dans le couloir le plus proche du coude, les
 // suivants en diagonale (aucun croisement à la sortie) ; -12 derrière
-// (x ±0.27 / ±0.305, z −0.165 / −0.195) jusqu'à y = 1.45 puis vers P156 ; 11
-// à côté d'eux (x −0.338, z −0.185) ; 12 derrière le vérin −X (x −0.45). En bas, le faisceau passe
+// (x ±0.27 / ±0.305, z −0.165 / −0.195) jusqu'à y = 1.45 puis vers P156, 12
+// à côté d'eux (x −0.338, z −0.185) ; 11 derrière le flanc +X (x 0.30,
+// z −0.17) jusqu'à y = 2.75. En bas, le faisceau passe
 // derrière les oreilles de pivot (z < −0.14 sous y = 0.2) puis descend
 // vers la platine ; le mou de chaque boyau forme une boucle pendante derrière
 // le pied du mât (boucle de pivot), d'autant plus grande que le boyau est long
 // par rapport à son trajet.
 // Écarts : les longueurs graduées de 1/2 po ne correspondent pas à l'écart
 // des coudes (1.2 m) : le mou est très différent d'un boyau à l'autre ; la
-// platine du châssis, P156 et P152 ne sont pas dessinés ici (sièges seuls) ;
+// platine du châssis, P156 et P064 ne sont pas dessinés ici (sièges seuls) ;
 // le mamelon +X à y = 1.45 est dans le support stinger simplifié de feed.js ;
 // la montée du 13 sous la traversée -12 avant de P156 croise la descente du
-// 14 de P058 (dont la pose de P156 diffère de celle de son fichier).
-// Encombrement ≈ 1.01 (X, de −0.51 à 0.51) × 2.55 (Y, de −0.79 à 1.77) × 1.30
-// (Z, de −1.29 à 0.01) m, boucles de pivot comprises.
-import { IN, union, elbow } from './_avance_a.js';
+// 14 de P058 (dont la pose de P156 diffère de celle de son fichier) ; le
+// coude bas du faisceau −X (y ≈ 0.15) frôle le drain 24 de P064.
+// Encombrement ≈ 1.01 (X, de −0.51 à 0.51) × 3.52 (Y, de −0.79 à 2.73) × 1.15
+// (Z, de −1.14 à 0.01) m, boucles de pivot comprises.
+import { IN, union } from './_avance_a.js';
 import { TRAV, mount, xs, seatOf, v3 } from './_avance_a_hk2.js';
 import { slackHose } from './_avance_a_hk4.js';
-import { KIT060 } from './P060.js';
 
 const YC = -0.3; // dessus de la platine du châssis
 const T6 = 0.375 * IN; // platine de P156
@@ -60,9 +61,8 @@ const NB156 = [
   { n: 12, x: 0.055, z: -0.075 }, { n: 12, x: 0.055, z: -0.025 }, { n: 12, x: 0.055, z: 0.025 }, { n: 12, x: 0.055, z: 0.075 },
   { n: 6, x: 0.115, z: -0.03 },
 ];
-// Sélecteur P152 (cotes de P060).
-const P152_ZV = -(2 * IN + 0.012) - 0.375 * IN - 1.0 * IN - 1.0 * IN;
-const P152_W = 2.25 * IN, P152_YV = -0.035;
+// Troisième union (relais du drain 24) de P064, flanc +X (cotes de P064, U3).
+const U3_064 = [0.3, 1.9, -0.17];
 
 // Couloirs -06 (|x|, z) en diagonale depuis le coin le plus proche des coudes.
 // Trois colonnes seulement : la quatrième gênerait la plongée des boyaux de
@@ -70,13 +70,18 @@ const P152_W = 2.25 * IN, P152_YV = -0.035;
 const LX = [0.262, 0.284, 0.306], LZ = [-0.07, -0.092, -0.114, -0.136];
 const LANES = [[0, 0], [1, 0], [0, 1], [2, 0], [1, 1], [0, 2], [2, 1], [1, 2], [0, 3], [2, 2]];
 
+// Note : les boyaux 1 à 8 (121.5 à 125 po) dépassent de loin le trajet de la
+// platine estimée aux coudes du mât (0.7 à 1.9 m) ; le surplus est rangé en
+// boucles de pivot derrière le pied, à confirmer : la vraie platine est sans
+// doute plus loin du pied (flèche / berceau). Drain 11 et union U3 de P064
+// ramenés à y = 1.9 sur le flanc +X (même cote dans P064).
 export const KIT088 = {
   chassis: {
     y: YC,
     // -06 : x = ±(0.26 + 0.026·k), rangée z −0.40 (k pair) / −0.44 (k impair).
     row06: { x0: 0.26, dx: 0.026, z: [-0.4, -0.44] },
     row12: { x: [-0.27, -0.32, -0.37, -0.42], z: -0.48 },
-    extra06: { x: [-0.3, -0.36], z: -0.52 },
+    extra06: { x: [0.3, -0.36], z: -0.52 },
   },
   p156: { at: [-0.265, 1.8, -0.13], X: [-1, 0, 0], Y: [0, 1, 0] },
 };
@@ -88,18 +93,15 @@ export default function P088(api) {
 
   // Sièges inférieurs des traversées de P156, dans P032.
   const s156 = NB156.map((b) => xs(M156, seatOf(union(b.n, { bulkhead: true, t: T6 }), [b.x, -T6, b.z], Y, null, 1)));
-  // Coude bas du flanc −X du sélecteur, sortie vers l'arrière.
-  const sel = (() => {
-    const s = seatOf(elbow('orb', 6, 6), [-P152_W / 2, P152_YV - 0.022, P152_ZV], [-1, 0, 0], [0, -0.3, -1]);
-    return { p: s.p.add(v3(KIT060.selector.at)), d: s.d };
-  })();
 
   // Boucle de pivot derrière le pied : montée de la platine, crosse vers
   // l'arrière, point bas, retour vers l'avant ; les trois points de la
   // boucle (indices 1 à 3) reçoivent le mou (vers l'arrière et le bas).
   const loop = (xb, zb, xm, i = 0) => [
-    [xb, YC + 0.14, zb],
-    [xm, YC + 0.24, zb - 0.16 - 0.006 * i],
+    // Montée droite de 0.2 m au-dessus de l'union avant la crosse (rayon de
+    // courbure du -12 respecté).
+    [xb, YC + 0.2, zb],
+    [xm, YC + 0.34, zb - 0.2 - 0.006 * i],
     [xm, YC - 0.02, zb - 0.26 - 0.006 * i],
     [xm, YC + 0.16, -0.33 - 0.004 * i],
   ];
@@ -119,7 +121,7 @@ export default function P088(api) {
       const xf = s * Math.max(LX[ix], 0.29 + 0.006 * (k % 3));
       const vias = [...loop(xb, zb, (xb + xf) / 2, k), [xf, 0.17, -0.2 - 0.004 * k]];
       if (y > 0.5) vias.push([xl, 0.32, zl], [xl, y - 0.07, zl]);
-      slackHose(api, ref, L, 6, a, TRAV.inner(s, y), { vias, ...LOOP }, [s * (0.12 + 0.012 * k), -0.1, -0.15]);
+      slackHose(api, ref, L, 6, a, TRAV.inner(s, y), { vias, ...LOOP }, [s * (0.4 + 0.03 * k), 0.06 * k - 0.15, -0.2]);
     });
   }
 
@@ -136,26 +138,29 @@ export default function P088(api) {
         [xl, 0.32, zl], [xl, 1.45, zl], [b.p.x, 1.62, b.p.z],
       ],
       ...LOOP,
-    }, [-0.3 - 0.03 * i, -0.1, -0.25]);
+    }, [-0.3 - 0.05 * i, 0.1, -0.6]);
   });
 
-  // ------------------------------------------------ 11 / 12 : -06 derrière le vérin −X
+  // ------------------------------------------------ 11 / 12 : -06
+  // 11 : derrière le flanc +X jusqu'au siège bas de la 3e union de P064.
   const e06 = KIT088.chassis.extra06;
-  const b11 = s156[4];
-  slackHose(api, '11', 180, 6, up(6, e06.x[0], e06.z), b11, {
+  const u3 = seatOf(union(6), U3_064, Y, null, 1);
+  slackHose(api, '11', 180, 6, up(6, e06.x[0], e06.z), u3, {
     vias: [
-      ...loop(e06.x[0], e06.z, -0.35, 14),
-      [-0.34, 0.2, -0.22], [-0.338, 0.5, -0.185], [-0.338, 1.45, -0.185], [b11.p.x, 1.64, b11.p.z],
+      ...loop(e06.x[0], e06.z, 0.3, 14),
+      [0.3, 0.2, -0.24], [0.3, 0.5, -0.17], [0.3, 1.6, -0.17],
     ],
     ...LOOP,
-  }, [-0.45, -0.1, -0.2]);
-  slackHose(api, '12', 146, 6, tilt(up(6, e06.x[1], e06.z), e06.x[1], e06.z), sel, {
+  }, [0.75, 0.2, -0.4]);
+  // 12 : à côté des -12 jusqu'à la traversée -06 de P156.
+  const b12 = s156[4];
+  slackHose(api, '12', 146, 6, tilt(up(6, e06.x[1], e06.z), e06.x[1], e06.z), b12, {
     vias: [
-      ...loop(e06.x[1], e06.z, -0.4, 15),
-      [-0.43, 0.2, -0.2], [-0.45, 0.5, -0.12], [-0.46, 0.85, -0.12],
+      ...loop(e06.x[1], e06.z, -0.35, 15),
+      [-0.34, 0.2, -0.22], [-0.338, 0.5, -0.185], [-0.338, 1.45, -0.185], [b12.p.x, 1.64, b12.p.z],
     ],
     ...LOOP,
-  }, [-0.55, -0.1, -0.2]);
+  }, [-0.75, 0.2, -0.4]);
 
   return { view: { dir: [-0.9, 0.35, -1.1] } };
 }

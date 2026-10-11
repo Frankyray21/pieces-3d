@@ -55,6 +55,11 @@
 //   · vérins de coins : axe Z en x = ±0.27, y = 0.10 (Ø 2 po), orifices sur
 //     le dessus en z = 0.45 et 0.66 ;
 //   · orifices des vérins du centreur sur le dessus, à |x| = 0.185 et 0.29.
+// Écarts (revue) : 14 / 15 / 10 posés au pied alors que le dessin les
+// montre vers P056 à mi-hauteur ; plusieurs boyaux plient sous 65 mm près
+// de leurs embouts (tracés à reprendre quand P042, P056, P092 seront placés) ;
+// 8 (HA06002-7) est droit / 90° au catalogue mais tracé droit / droit : 7 po
+// ne suffisent pas pour un coude entre le bloc et P042 posés face à face.
 // Écarts : feed.js ne dessine ni P092 (vérins de pivotement), ni les vérins
 // de coins, ni P042 / P056 à ces places ; la répartition des fonctions entre
 // boyaux est déduite des longueurs et des vues ; le 24 (180 po) n'a pas de
@@ -75,7 +80,7 @@ const SWG = { x: 0.33, y: 0.24, r: 1.5 * IN, zs: [0.46, 0.62] };
 const WDG = { x: 0.27, y: 0.1, r: 1.0 * IN, zs: [0.45, 0.66] };
 // Relais (unions) et tés union.
 const U = [[-0.3, 0.93, 0.172], [-0.3, 0.95, 0.202]];
-const U3 = [0.3, 2.75, -0.17];
+const U3 = [0.3, 1.9, -0.17];
 const UT = [[-0.19, 0.17, 0.535], [-0.2, 0.17, 0.61]];
 
 export const KIT064 = {
@@ -85,7 +90,18 @@ export const KIT064 = {
   swing: SWG, wedge: WDG, jaw: JAW,
 };
 
-export default function P064(api) {
+// Vue éclatée : chaque grappe (fonction) s'écarte en bloc, en plus du
+// déplacement propre de chaque pièce.
+const GRP = {
+  1: [-0.35, 0, 0], 2: [-0.35, 0, 0], 7: [-0.35, 0, 0], 8: [-0.35, 0, 0], 11: [-0.35, 0, 0], 13: [-0.35, 0, 0],
+  21: [0, 0, 0.4], 16: [0, 0, 0.4], 22: [0, 0, 0.4], 23: [0, 0, 0.4],
+  17: [0.4, 0, 0], 18: [0.4, 0, 0], 19: [0.4, 0, 0], 20: [0.4, 0, 0], 3: [0.4, 0, 0],
+  9: [-0.3, 0.3, 0], 10: [-0.3, 0.3, 0], 12: [-0.3, 0.3, 0], 14: [-0.3, 0.3, 0], 15: [-0.3, 0.3, 0], 5: [-0.3, 0.3, 0],
+  24: [0, 0, -0.4],
+};
+
+export default function P064(apiIn) {
+  const api = { ...apiIn, part: (ref, obj, e) => apiIn.part(ref, obj, (e || [0, 0, 0]).map((c, i) => c + (GRP[ref] || [0, 0, 0])[i])) };
   const P = (ref, obj, e) => api.part(ref, obj, e);
   const H = (ref, L, a, b, opts, e) => addHose(api, ref, L, 6, a, b, opts, e);
   const X = [1, 0, 0], Y = [0, 1, 0], Z = [0, 0, 1];
@@ -226,10 +242,11 @@ export default function P064(api) {
   H('9', 57, ut[0].br, wdg['10'], { vias: [[-0.33, 0.14, 0.64], [-0.15, 0.12, 0.8], [0.18, 0.12, 0.81], [0.36, 0.13, 0.6]], sag: NY }, [0.02, -0.04, 0.14]);
   H('10', 53, ut[1].br, E(wdg['11'], '90', NZ), { vias: [[-0.34, 0.15, 0.7], [-0.14, 0.15, 0.8], [0.15, 0.15, 0.82]], sag: NY }, [0.04, -0.04, 0.16]);
 
-  // 24 : drain sous le bloc → derrière le flanc −X → haut du mât → union du flanc +X.
+  // 24 : drain sous le bloc → derrière le flanc −X → derrière le mât →
+  // union du flanc +X à y = 1.9 (même cote que P088 pour le 11).
   H('24', 180, drain, u3.up, {
-    vias: [[-0.42, 0.16, 0.12], [-0.3, 0.2, -0.17], [-0.3, 1.6, -0.17], [-0.3, 2.95, -0.2],
-      [-0.22, 3.12, -0.25], [0.31, 3.08, -0.25], [0.31, 2.9, -0.21]],
+    vias: [[-0.42, 0.16, 0.12], [-0.3, 0.2, -0.17], [-0.3, 1.6, -0.17], [-0.25, 2.25, -0.25],
+      [0.31, 2.25, -0.25], [0.31, 2.05, -0.21]],
     sag: NZ,
   }, [0, 0, -0.2]);
 
