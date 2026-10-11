@@ -10,6 +10,7 @@ import P090 from './P090.js';
 import P092 from './P092.js';
 import P094 from './P094.js';
 import P098 from './P098.js';
+import P102 from './P102.js';
 
 export default {
   'P032': P032,
@@ -22,4 +23,5 @@ export default {
   'P092': P092,
   'P094': P094,
   'P098': P098,
+  'P102': P102,
 };
