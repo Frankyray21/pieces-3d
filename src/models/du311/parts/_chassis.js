@@ -383,3 +383,89 @@ export function orient(api, obj, pos, dir, side = null) {
   g.position.set(...pos);
   return g;
 }
+
+// ------------------------------------------------------------ raccords NPT
+// Tube NPT : Ø extérieur du filet (po) par « dash » (seizièmes de pouce) :
+// -02 = 1/8, -04 = 1/4, -06 = 3/8, -08 = 1/2, -12 = 3/4, -16 = 1, -20 = 1 1/4,
+// -24 = 1 1/2, -32 = 2 NPT.
+export const NPT = { 2: 0.405, 4: 0.54, 6: 0.675, 8: 0.84, 12: 1.05, 16: 1.315, 20: 1.66, 24: 1.9, 32: 2.375 };
+
+/** Profil d'un filet NPT mâle conique (1:16) de y0 (bout) à y1, rayon r au gros bout. */
+function nptMaleProfile(api, r, y0, y1) {
+  const { S } = api;
+  return S.thread(r * 0.94, y0, y1, { r1: r, pitch: r * 0.2, maxTurns: 7 });
+}
+
+/**
+ * Raccord à queue NPT mâle (vissée sous y = 0, dans l'orifice) : six-pans de
+ * y = 0 à hh, puis sortie inclinée de angle (degrés, de +Y vers +Z) :
+ * end = 'jic' (embout JIC mâle), 'swivel' (écrou tournant JIC femelle),
+ * 'fnpt' (taraudage NPT femelle, coude de tuyauterie), 'npt' (mamelon NPT mâle).
+ * npt, jic : tailles dash. Retourne { obj, out (centre du bout), dir (axe de sortie) }.
+ */
+export function nptFitting(api, { npt = 8, jic = npt, angle = 0, end = 'jic', material = 'zinc' } = {}) {
+  const { THREE, S } = api;
+  const rn = (NPT[npt] * IN) / 2;
+  const b = SAE[jic] || SAE[8];
+  const rt = (b.t * IN) / 2;
+  const af = Math.max(b.hex * IN, rn * 2.25);
+  const hh = af * 0.45;
+  const parts = [
+    S.lathe([[0, -rn * 1.6], ...nptMaleProfile(api, rn, -rn * 1.6, 0), [rn * 0.9, 0], [0, 0]], material, { seg: 14 }),
+  ];
+  const a = (angle * Math.PI) / 180;
+  const dir = new THREE.Vector3(0, Math.cos(a), Math.sin(a));
+  let base; // centre de départ du bout de sortie
+  if (angle === 0) {
+    parts.push(S.nut(af, hh, material, { pos: [0, hh / 2, 0] }));
+    base = new THREE.Vector3(0, hh, 0);
+  } else {
+    // Corps forgé : six-pans bas, coude rond, collet de sortie.
+    parts.push(S.nut(af, hh, material, { pos: [0, hh / 2, 0] }));
+    const rb = af * 0.42;
+    const c = new THREE.Vector3(0, hh + rb, 0);
+    parts.push(S.cyl(rb, rb * 2, material, { seg: 18, pos: [0, hh + rb * 0.5, 0] }));
+    parts.push(S.ball(rb, material, { pos: c.toArray() }));
+    const p1 = c.clone().addScaledVector(dir, rb * 1.1);
+    parts.push(S.rod(c.toArray(), p1.toArray(), rb, material, 18));
+    base = p1;
+  }
+  const q = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
+  const tail = (obj) => { obj.quaternion.copy(q); obj.position.copy(base); return obj; };
+  let len;
+  if (end === 'jic') {
+    len = rt * 2.6 + 0.003;
+    parts.push(tail(S.lathe([[0, 0], [rt * 0.85, 0], [rt * 0.85, 0.003], ...jicMaleProfile(api, rt, 0.003, len - 0.003)], material, { seg: 16 })));
+  } else if (end === 'npt') {
+    len = rn * 1.6;
+    parts.push(tail(S.lathe([[0, 0], [rn, 0], ...nptMaleProfile(api, rn, 0, len).map(([r, y]) => [r, len - y]).reverse(), [0, len]], material, { seg: 14 })));
+  } else if (end === 'swivel') {
+    const sn = (b.hex + 0.0625) * IN, nh = rt * 1.5;
+    len = 0.004 + nh;
+    parts.push(tail(S.group(S.cyl(rt * 0.8, 0.005, material, { seg: 14, pos: [0, 0.0025, 0] }), S.nut(sn, nh, material, { pos: [0, 0.004 + nh / 2, 0] }))));
+  } else {
+    // Bout femelle NPT : manchon taraudé (vrai alésage).
+    len = rn * 1.7;
+    parts.push(tail(S.lathe([[rn * 0.95, len], [rn * 0.95, 0], [rn * 1.3, 0], [rn * 1.38, len * 0.1], [rn * 1.38, len - 0.002], [rn * 1.3, len], [rn * 0.95, len]], material, { seg: 18 })));
+    parts.push(tail(S.cyl(rn, 0.002, material, { seg: 16, pos: [0, len * 0.2, 0] })));
+  }
+  const out = base.clone().addScaledVector(dir, len);
+  return { obj: S.merged(parts, material), out: out.toArray(), dir: dir.toArray() };
+}
+
+/** Clapet anti-retour en ligne, corps six-pans (af, longueur L) taraudé NPT femelle aux deux bouts, axe Y centré. */
+export function inlineCheck(api, npt, L, af, material = 'steel') {
+  const { S, THREE } = api;
+  const rn = (NPT[npt] * IN) / 2;
+  const hexR = af / 2 / Math.cos(Math.PI / 6);
+  const shape = new THREE.Shape(Array.from({ length: 6 }, (_, i) => new THREE.Vector2(hexR * Math.cos((i * Math.PI) / 3), hexR * Math.sin((i * Math.PI) / 3))));
+  const h = new THREE.Path();
+  h.absarc(0, 0, rn * 0.97, 0, Math.PI * 2, true);
+  shape.holes.push(h);
+  const mb = 0.0008;
+  const geo = new THREE.ExtrudeGeometry(shape, { depth: L - 2 * mb, bevelEnabled: true, bevelSize: mb, bevelThickness: mb, bevelOffset: -mb, bevelSegments: 1, curveSegments: 18 });
+  geo.translate(0, 0, -L / 2 + mb);
+  geo.rotateX(-Math.PI / 2);
+  // Cloison du siège au milieu (l'alésage n'est pas traversant).
+  return S.merged([new THREE.Mesh(geo), S.cyl(rn, L * 0.4, material, { seg: 16 })], material);
+}
