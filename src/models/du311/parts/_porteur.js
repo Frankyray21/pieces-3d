@@ -9,7 +9,7 @@ export const IN = 0.0254;
 /**
  * Outils liés à l'api d'un builder : const T = kit(api).
  *   T.plate(w, d, t, mat, { holes: [[x, z, r]], cutouts: [[x, z, w, d]], r, seg })
- *     tôle dans le plan XZ centrée (épaisseur selon Y), trous à seg segments.
+ *     tôle dans le plan XZ centrée (épaisseur selon Y), trous à seg côtés.
  *   T.band(ro, ri, y0, y1, mat, seg) : bague de section rectangulaire (joint,
  *     rondelle, circlip) autour de Y.
  *   T.washer(d, mat, { pos, axis }) : rondelle plate pour vis de diamètre d,
@@ -54,7 +54,7 @@ export function kit(api) {
       p.closePath();
       s.holes.push(p);
     }
-    const geo = new THREE.ExtrudeGeometry(s, { depth: t, bevelEnabled: false, curveSegments: Math.max(2, Math.round(seg / 4)) });
+    const geo = new THREE.ExtrudeGeometry(s, { depth: t, bevelEnabled: false, curveSegments: Math.max(2, Math.round(seg / 2)) });
     geo.translate(0, 0, -t / 2);
     geo.rotateX(-Math.PI / 2);
     return merged([new THREE.Mesh(geo)], mat);
@@ -174,7 +174,7 @@ export const racOut = (dir, k) => {
 export function racFactory(S) {
   const { lathe, merged, group } = S;
   const COS30 = Math.cos(Math.PI / 6);
-  const sg = (r) => (r > 0.009 ? 10 : 9);
+  const sg = (r) => (r > 0.012 ? 10 : r > 0.006 ? 9 : 8);
   const hexR = (af) => af / 2 / COS30;
 
   // Six-pans (surplat af) de y0 à y0 + h, chanfrein du dessus ; percé (ri) si demandé.
@@ -192,22 +192,22 @@ export function racFactory(S) {
   const jicNose = (t, y0) => {
     const r = (t * IN) / 2, L = noseLen(t), y1 = y0 + L;
     return lathe([
-      [0, y0], [r * 0.86, y0], [r * 0.86, y0 + L * 0.16], [r, y0 + L * 0.22],
-      [r, y1 - L * 0.24], [r * 0.64, y1], [r * 0.4, y1], [0, y1 - L * 0.3],
+      [0, y0], [r * 0.86, y0], [r, y0 + L * 0.2],
+      [r, y1 - L * 0.24], [r * 0.64, y1], [0, y1 - L * 0.3],
     ], 'zinc', { seg: sg(r) });
   };
   // Joint torique (section carrée).
-  const oring = (R, w, y) => lathe([[R - w, y - w * 0.5], [R + w, y - w * 0.5], [R + w, y + w * 0.5], [R - w, y + w * 0.5], [R - w, y - w * 0.5]], 'rubber', { seg: 10 });
+  const oring = (R, w, y) => lathe([[R + w, y - w * 0.5], [R + w, y + w * 0.5], [R - w, y + w * 0.5]], 'rubber', { seg: 9 });
   // Queue ORB (filetage droit, dégagement, joint) sous y = 0.
   const orbStud = (t, rub) => {
     const r = (t * IN) / 2, L = r * 1.25;
     rub.push(oring(r * 0.92, r * 0.09, -r * 0.12));
-    return lathe([[0, -L], [r, -L], [r, -r * 0.3], [r * 0.84, -r * 0.2], [r * 0.84, 0.0005], [0, 0.0005]], 'zinc', { seg: 8 });
+    return lathe([[0, -L], [r, -L], [r, -r * 0.3], [r * 0.84, 0.0005], [0, 0.0005]], 'zinc', { seg: 8 });
   };
   // Queue NPT conique sous y = 0.
   const nptStud = (t) => {
     const r = (t * IN) / 2, L = r * 1.3;
-    return lathe([[0, -L], [r * 0.86, -L], [r, 0.0005], [0, 0.0005]], 'zinc', { seg: 8 });
+    return lathe([[0, -L], [r * 0.86, -L], [r, 0.0005], [0, 0.0005]], 'zinc', { seg: 7 });
   };
   // Mâle NPT vers le haut, de y0 à y0 + L.
   const nptUp = (t, y0) => {
@@ -243,15 +243,15 @@ export function racFactory(S) {
     /** Vis H d × len (m), tête en haut à l'origine, tige vers −Y. */
     bolt: (d, len, mat = 'zinc') => merged([
       hexY(d * 1.5, 0, d * 0.65, 0, mat),
-      lathe([[0, -len], [d * 0.42, -len], [d / 2, -len + d * 0.1], [d / 2, 0.0005], [0, 0.0005]], mat, { seg: 8 }),
+      lathe([[0, -len], [d * 0.42, -len], [d / 2, -len + d * 0.1], [d / 2, 0.0005]], mat, { seg: 6 }),
     ], mat),
     /** Rondelle plate (SAE) ou fendue (grower) de vis d, posée sur y = 0. */
     washer: (d, { split = false, mat = 'zinc' } = {}) => {
       const ro = split ? d * 0.88 : d * 1.05, ri = d * 0.54, t = split ? d * 0.25 : d * 0.16;
-      return lathe([[ri, 0], [ro, 0], [ro, t], [ri, t], [ri, 0]], mat, { seg: 8 });
+      return lathe([[ro, 0], [ro, t], [ri, t]], mat, { seg: 8 });
     },
     /** Écrou H de vis d, posé sur y = 0. */
-    nut: (d, mat = 'zinc') => hexY(d * 1.5, 0, d * 0.85, d * 0.5, mat),
+    nut: (d, mat = 'zinc') => lathe([[d * 0.87, 0], [d * 0.87, d * 0.85], [d * 0.5, d * 0.85]], mat, { seg: 6 }),
 
     /** Adaptateur droit : orifice (ORB / NPT pd) → mâle JIC jd (FA01055, FA01033). */
     straight({ port = 'orb', pd, jd }) {
@@ -419,3 +419,39 @@ export function racBlock(S, THREE, W, H, D, ports = [], { material = 'zinc', seg
   if (spots.length) g.add(merged(spots, 'steel'));
   return g;
 }
+
+// ============================================================================
+// Chenilles (P336, une chenille ; P338 réducteur ; P344 raccords des moteurs).
+// Repère de P336 : origine au sol, sur l'axe de la chenille (milieu de la
+// largeur des patins), au milieu de l'entraxe barbotin / roue folle ; X vers
+// l'avant, Y vers le haut, +Z vers l'intérieur de la machine (chenille droite).
+// Repère machine (P328, P344) : origine au sol au milieu entre les chenilles,
+// au milieu de leur longueur ; chenille droite (RH) centrée en z = −gauge/2,
+// gauche (LH, P336 en miroir Z) en z = +gauge/2.
+// Cotes estimées d'après la vue de côté et la vue arrière de la page 330
+// (échelle : traverse arrière = largeur du châssis 39 po), et la page 336.
+// ============================================================================
+export const TRACK = {
+  gauge: 1.2, // voie : entraxe des deux chenilles (m)
+  shoeW: 0.3, // largeur des patins
+  pitch: 4.504 / 35, // pas de la chaîne (35 maillons)
+  sprocketX: -0.78, idlerX: 0.78, // axes du barbotin (arrière) et de la roue folle
+  axleY: 0.292, // hauteur des deux axes
+  pinR: 0.217, // rayon primitif (axes de chaîne) au barbotin et à la roue folle
+  frameTop: 0.465, // dessus du châssis de chenille (appui du châssis porteur)
+  padZ: [0.1, 0.16], // console d'appui côté intérieur (z de P336)
+  length: 2.14, // longueur hors tout
+  height: 0.67, // hauteur hors tout (dessus du brin supérieur sur le galet porteur)
+  gbxZ: 0.09, // face d'appui de la bride du réducteur P338 (z de P336)
+};
+
+/**
+ * Point [x, y, z] de P338 → repère de P336 : le réducteur est tourné de 180°
+ * autour de Y (son +Z, l'extérieur, devient −Z) et sa face d'appui posée en
+ * z = TRACK.gbxZ, axe sur celui du barbotin.
+ */
+export const gbxToTrack = ([x, y, z]) => [TRACK.sprocketX - x, TRACK.axleY + y, TRACK.gbxZ - z];
+export const gbxDirToTrack = ([x, y, z]) => [-x, y, -z];
+/** Point de P336 → repère machine, chenille 'R' (droite) ou 'L' (gauche, miroir). */
+export const trackToMachine = ([x, y, z], side = 'R') => (side === 'R' ? [x, y, z - TRACK.gauge / 2] : [x, y, TRACK.gauge / 2 - z]);
+export const trackDirToMachine = ([x, y, z], side = 'R') => (side === 'R' ? [x, y, z] : [x, y, -z]);
