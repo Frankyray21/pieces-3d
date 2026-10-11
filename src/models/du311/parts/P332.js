@@ -129,27 +129,27 @@ export default function P332(api) {
   const head = lathe([
     [RR + 0.0005, YH0], [RCI - 0.0003, YH0], [RCI - 0.0003, YC1 - 0.004], [RC - 0.004, YC1 - 0.004], [RC - 0.004, YC1], [RR + 0.0005, YC1], [RR + 0.0005, YH0],
   ], 'darkSteel', { seg: 16 });
-  P('31', head, [0, 0.3, 0]);
+  P('31', head, [-0.28, 0.3, 0]);
   // 29, 30 — joint torique et bague anti-extrusion sur le pourtour de la tête
-  P('29', band(RCI + 0.0002, RCI - 0.004, 0.55, 0.555, 'rubber'), [0, 0.37, 0]);
-  P('30', band(RCI + 0.0002, RCI - 0.004, 0.556, 0.559, 'cream'), [0, 0.41, 0]);
+  P('29', band(RCI + 0.0002, RCI - 0.004, 0.55, 0.555, 'rubber'), [-0.28, 0.37, 0]);
+  P('30', band(RCI + 0.0002, RCI - 0.004, 0.556, 0.559, 'cream'), [-0.28, 0.41, 0]);
   // 15 — joint de tige ; 28 — racleur, en haut de l'alésage de la tête
-  P('15', band(RR + 0.006, RR - 0.0002, 0.585, 0.598, 'rubber'), [0, 0.47, 0]);
-  P('28', band(RR + 0.005, RR - 0.0005, 0.612, 0.62, 'blackCast'), [0, 0.52, 0]);
+  P('15', band(RR + 0.006, RR - 0.0002, 0.585, 0.598, 'rubber'), [-0.28, 0.47, 0]);
+  P('28', band(RR + 0.005, RR - 0.0005, 0.612, 0.62, 'blackCast'), [-0.28, 0.52, 0]);
   // 14 — circlip intérieur sous la tête (dans le cylindre)
-  P('14', band(RCI + 0.0015, RCI - 0.004, YH0 - 0.004, YH0 - 0.0015, 'blackOxide'), [0, 0.22, 0]);
+  P('14', band(RCI + 0.0015, RCI - 0.004, YH0 - 0.004, YH0 - 0.0015, 'blackOxide'), [-0.28, 0.22, 0]);
   // 12 — joint torique de face entre tête et couronne
-  P('12', band(RR + 0.016, RR + 0.012, YC1, YC1 + 0.0025, 'rubber'), [0, 0.58, 0]);
+  P('12', band(RR + 0.016, RR + 0.012, YC1, YC1 + 0.0025, 'rubber'), [-0.28, 0.58, 0]);
   // 27 — couronne de retenue (sur le cylindre)
   const crown = lathe([
     [RR + 0.002, YC1], [RC, YC1], [RC, YK1 - 0.003], [RC - 0.003, YK1], [RR + 0.004, YK1], [RR + 0.002, YK1 - 0.002], [RR + 0.002, YC1],
   ], 'darkSteel', { seg: 16 });
-  P('27', crown, [0, 0.63, 0]);
+  P('27', crown, [-0.28, 0.63, 0]);
   // 13 — vis H 3/8 × 1 1/4 (×4) de la couronne, vissées dans la tête
   const RB13 = (RR + RC) / 2;
   for (let i = 0; i < 4; i++) {
     const a = Math.PI / 4 + (i * Math.PI) / 2;
-    P('13', K.screw(0.375 * IN, 1.25 * IN, 'zinc', { pos: [Math.cos(a) * RB13, YK1, Math.sin(a) * RB13], seg: 6 }), [0, 0.72, 0]);
+    P('13', K.screw(0.375 * IN, 1.25 * IN, 'zinc', { pos: [Math.cos(a) * RB13, YK1, Math.sin(a) * RB13], seg: 6 }), [-0.28, 0.72, 0]);
   }
 
   // ---------------------------------------------------------------- 16 — tige creuse et piston
@@ -157,31 +157,31 @@ export default function P332(api) {
     [RRI, YR0], [RR - 0.0025, YR0], [RR - 0.0025, YP1 + 0.002], [RR, YP1 + 0.006], [RR, YR1 - 0.03],
     [RR - 0.004, YR1 - 0.026], [RR - 0.004, YR1 - 0.002], [RR - 0.006, YR1], [RRI, YR1], [RRI, YR0],
   ], 'chrome', { seg: 14 });
-  P('16', rodBody, [0, 0, 0]);
+  P('16', rodBody, [0.3, 0, 0]);
   // 21 — piston (alésé sur le bout réduit de la tige)
   const piston = lathe([
     [RR - 0.0025, YP0], [RCI - 0.001, YP0], [RCI - 0.001, YP1], [RR - 0.0025, YP1], [RR - 0.0025, YP0],
   ], 'darkSteel', { seg: 16 });
-  P('21', piston, [0, -0.24, 0]);
+  P('21', piston, [0.3, -0.24, 0]);
   // 18 — joint de piston ; 19 — bague d'usure du piston
-  P('18', band(RCI, RCI - 0.006, 0.142, 0.152, 'rubber'), [0, -0.235, 0]);
-  P('19', band(RCI, RCI - 0.0035, 0.122, 0.134, 'cream'), [0, -0.255, 0]);
+  P('18', band(RCI, RCI - 0.006, 0.142, 0.152, 'rubber'), [0.3, -0.235, 0]);
+  P('19', band(RCI, RCI - 0.0035, 0.122, 0.134, 'cream'), [0.3, -0.255, 0]);
   // 34, 35 — joint torique et bagues anti-extrusion (×2) entre tige et piston
-  P('34', band(RR - 0.0005, RR - 0.0045, 0.136, 0.139, 'rubber'), [0, -0.21, 0]);
-  for (const y of [0.132, 0.1395]) P('35', band(RR - 0.0005, RR - 0.0045, y, y + 0.0015, 'cream'), [0, -0.21, 0]);
+  P('34', band(RR - 0.0005, RR - 0.0045, 0.136, 0.139, 'rubber'), [0.3, -0.21, 0]);
+  for (const y of [0.132, 0.1395]) P('35', band(RR - 0.0005, RR - 0.0045, y, y + 0.0015, 'cream'), [0.3, -0.21, 0]);
   // 20 — circlip extérieur sous le piston
-  P('20', band(RR - 0.0005, RR - 0.0055, 0.108, 0.111, 'blackOxide'), [0, -0.29, 0]);
+  P('20', band(RR - 0.0005, RR - 0.0055, 0.108, 0.111, 'blackOxide'), [0.3, -0.29, 0]);
   // 36 — bille nylon, 37 — vis de pression : perçage radial du piston (face +X)
-  P('36', lathe([[0, -0.0024], [0.0017, -0.0017], [0.0024, 0], [0.0017, 0.0017], [0, 0.0024]], 'white', { seg: 8, pos: [RR + 0.003, 0.125, 0] }), [0.05, -0.24, 0]);
+  P('36', lathe([[0, -0.0024], [0.0017, -0.0017], [0.0024, 0], [0.0017, 0.0017], [0, 0.0024]], 'white', { seg: 8, pos: [RR + 0.003, 0.125, 0] }), [0.35, -0.24, 0]);
   const setScrew = lathe([[0.0016, 0], [0.004, 0], [0.004, 0.012], [0, 0.012], [0, 0.003], [0.0016, 0.003]], 'blackOxide', { seg: 10 });
-  P('37', toward(setScrew, [1, 0, 0], [RR + 0.006, 0.125, 0]), [0.08, -0.24, 0]);
+  P('37', toward(setScrew, [1, 0, 0], [RR + 0.006, 0.125, 0]), [0.38, -0.24, 0]);
 
   // ---------------------------------------------------------------- arrêts du bloc sur la tige
   // 24 — circlip sur la tige, juste sous le bloc
-  P('24', band(RR, RR - 0.004, VB.y0 - 0.004, VB.y0 - 0.0012, 'blackOxide'), [0, 0.76, 0]);
+  P('24', band(RR, RR - 0.004, VB.y0 - 0.004, VB.y0 - 0.0012, 'blackOxide'), [-0.28, 0.76, 0]);
   // 22, 23 — joint torique et deux bagues dans l'alésage du bloc, autour de la tige
-  P('22', band(RR - 0.0035, RR - 0.0075, 0.722, 0.726, 'rubber'), [0, 0.81, 0]);
-  for (const y of [0.7165, 0.727]) P('23', band(RR - 0.0035, RR - 0.0075, y, y + 0.0015, 'cream'), [0, 0.84, 0]);
+  P('22', band(RR - 0.0035, RR - 0.0075, 0.722, 0.726, 'rubber'), [-0.28, 0.81, 0]);
+  for (const y of [0.7165, 0.727]) P('23', band(RR - 0.0035, RR - 0.0075, y, y + 0.0015, 'cream'), [-0.28, 0.84, 0]);
   // 25, 26 — vis H 3/8 et rondelle Grower : patte d'arrêt du bloc vissée sur le haut du fourreau (+X)
   P('26', K.lock(0.375 * IN, 'zinc', { pos: [RW - 0.012, YW1, 0.03] }), [0, 0.06, 0]);
   P('25', K.screw(0.375 * IN, 0.75 * IN, 'zinc', { pos: [RW - 0.012, YW1 + 0.0024, 0.03], seg: 6 }), [0, 0.1, 0]);
@@ -210,12 +210,12 @@ export default function P332(api) {
   P('2', at(cv(), [XV, VB.y0 + 0.022, 0]), up(0.11));
   // 7, 8 — joints toriques et bagues des clapets (×2 chacun)
   for (const [y, dy] of [[0.09, 0.155], [0.05, 0.11]]) {
-    P('7', band(0.0108, 0.0085, VB.y0 + y, VB.y0 + y + 0.0026, 'rubber'), up(dy + 0.02));
-    P('8', band(0.0108, 0.0085, VB.y0 + y - 0.0022, VB.y0 + y - 0.0006, 'cream'), up(dy + 0.012));
+    P('7', band(0.0108, 0.0085, VB.y0 + y, VB.y0 + y + 0.0026, 'rubber'), [EV[0], EV[1] + dy, 0.07]);
+    P('8', band(0.0108, 0.0085, VB.y0 + y - 0.0022, VB.y0 + y - 0.0006, 'cream'), [EV[0], EV[1] + dy, 0.1]);
   }
   // 10, 11 — joint torique et bague au fond de l'alésage
-  P('10', band(0.0085, 0.0062, VB.y0 + 0.013, VB.y0 + 0.0155, 'rubber'), up(0.07));
-  P('11', band(0.0085, 0.0062, VB.y0 + 0.0105, VB.y0 + 0.0122, 'cream'), up(0.06));
+  P('10', band(0.0085, 0.0062, VB.y0 + 0.013, VB.y0 + 0.0155, 'rubber'), [EV[0], EV[1] + 0.04, 0.07]);
+  P('11', band(0.0085, 0.0062, VB.y0 + 0.0105, VB.y0 + 0.0122, 'cream'), [EV[0], EV[1] + 0.04, 0.1]);
   // 3, 4 — ressort et pointeau du clapet de décharge (alésage horizontal, face −X)
   const yD = VB.y0 + 0.012;
   P('4', at(lathe([[0, 0], [0.0035, 0.003], [0.0042, 0.008], [0.0042, 0.016], [0, 0.016]], 'steel', { seg: 10 }), [VB.x0 + 0.03, yD, 0.025], [0, 0, Math.PI / 2]), [EV[0] - 0.06, EV[1], 0]);
