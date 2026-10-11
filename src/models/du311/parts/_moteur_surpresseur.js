@@ -44,6 +44,11 @@ export const ENG = {
   feet: [[0.055, -0.25], [0.055, 0.25], [0.6, -0.21], [0.6, 0.21]], // [x, z]
   exhaust: { y: 0.37, z: -0.235, outX: 0.08 }, // collecteur : axe, sortie arrière
   intake: { y: 0.44, z: 0.17 }, // tubulure d'admission (raccord P268 à l'avant)
+  // Filtres déportés (P262, P264) sur la cornière P256 rep. 8 posée en travers
+  // sur le carter de volant : aile verticale dans le plan x = flangeX (face
+  // −X), filtres suspendus derrière elle ; consoles de filtres du moteur
+  // (P260 : huile à x = 0.47, gazole à x = 0.345, sous y = −0.106, z = 0.215).
+  filters: { flangeX: 0.023, oilZ: 0.27, fuelZ: 0.4, headTopY: 0.19, axisX: -0.045 },
 };
 
 // ---------------------------------------------------------------- compresseur Le Roi CP48001
