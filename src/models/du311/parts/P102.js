@@ -87,7 +87,8 @@ export default function P102(api) {
   const mirror = (pts) => pts.map(([x, z]) => [-x, z]).reverse();
   const plates = [];
   for (const y0 of [UP[0], UP[1] - T]) {
-    plates.push(slabY(uniq.slice().reverse(), y0, T), slabY(mirror(uniq.slice().reverse()), y0, T, [[LOCK.x, LOCK.z, LOCK.ri]]));
+    // Plaque basse : passage Ø 3.04 du bout de tube du verrou P114 (lamage).
+    plates.push(slabY(uniq.slice().reverse(), y0, T), slabY(mirror(uniq.slice().reverse()), y0, T, [[LOCK.x, LOCK.z, y0 === UP[0] ? 1.52 : LOCK.ri]]));
   }
   // Moyeux de pivot (haut et bas) et cordons au pied des moyeux bas.
   const bosses = [], beads = [];
@@ -125,7 +126,10 @@ export default function P102(api) {
   // (P104) y coulissent entre les plaques et ferment le passage.
   // Moyeu du verrou entre les deux plaques (bagues 2).
   // Moyeu en saillie de 0.1 po sur chaque plaque (lamage des bagues visible).
-  const lockBoss = shell(u(LOCK.ro), u(LOCK.ri), u(UP[1] - UP[0] + 0.2), 'grey', { seg: 32, pos: v(LOCK.x, (UP[0] + UP[1]) / 2, LOCK.z) });
+  // Moyeu du verrou : du fond du lamage (0.35 po au-dessus du dessous du
+  // caisson, appui du bout de tube de P114) à 0.1 po au-dessus du caisson.
+  const LB0 = UP[0] + 0.35;
+  const lockBoss = shell(u(LOCK.ro), u(LOCK.ri), u(UP[1] + 0.1 - LB0), 'grey', { seg: 32, pos: v(LOCK.x, (LB0 + UP[1] + 0.1) / 2, LOCK.z) });
   // Glissières de la plaque à coins (P044, 10 1/4 po de large) sur les deux
   // moitiés : bandes de 1/2 × 1 po le long de X, de part et d'autre de la plaque
   // (largeur 10.35 po centrée sur l'axe de forage), du passage de tige au flanc.
@@ -166,8 +170,8 @@ export default function P102(api) {
   // 2 — bagues du pêne de verrou, Ø 1 1/2 × 2 × 2 1/2 po, collerette en haut.
   const lockBush = () => L(S, [[0.75, -1.25], [0.98, -1.25], [0.98, 1.1], [1.0, 1.1], [1.0, 1.25], [0.8, 1.25], [0.75, 1.2], [0.75, -1.25]], 'steel', 32);
   // Montées par le dessous (côté vérin), comme sur la coupe B-B.
-  P('2', at(lockBush(), v(LOCK.x, UP[0] + 1.25, LOCK.z)), [0, -0.3, 0]);
-  P('2', at(lockBush(), v(LOCK.x, UP[0] + 3.75, LOCK.z)), [0, -0.2, 0]);
+  P('2', at(lockBush(), v(LOCK.x, LB0 + 0.05 + 1.25, LOCK.z)), [0, -0.3, 0]);
+  P('2', at(lockBush(), v(LOCK.x, LB0 + 0.05 + 3.75, LOCK.z)), [0, -0.2, 0]);
 
   return { view: { dir: [0.9, 0.8, 1.0] } };
 }
