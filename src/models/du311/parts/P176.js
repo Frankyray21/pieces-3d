@@ -72,7 +72,7 @@ export const CYL176 = {
  */
 export function cbValve(S) {
   const { lathe, merged, group, at, nut } = S;
-  const L = (pts, m, seg = 20) => lathe(pts.map(([r, y]) => [u(r), u(y)]), m, { seg });
+  const L = (pts, m, seg = 14) => lathe(pts.map(([r, y]) => [u(r), u(y)]), m, { seg });
   return group(
     merged([
       // six-pans de la cartouche et collet
@@ -84,7 +84,7 @@ export function cbValve(S) {
       L([[0, 1.56], [0.16, 1.56], [0.16, 1.86], [0.13, 1.90], [0, 1.90]], 'steel', 14),
     ], 'zinc'),
     // capuchon plastique de protection du réglage
-    L([[0, 1.62], [0.30, 1.62], [0.31, 1.66], [0.31, 2.02], [0.27, 2.06], [0, 2.06]], 'black', 18),
+    L([[0, 1.62], [0.30, 1.62], [0.31, 1.66], [0.31, 2.02], [0.27, 2.06], [0, 2.06]], 'black', 12),
   );
 }
 
@@ -92,11 +92,11 @@ export function cbValve(S) {
 export function zerk(S, scale = 1) {
   const { lathe, merged, at, nut } = S;
   const k = scale;
-  const L = (pts, seg = 12) => lathe(pts.map(([r, y]) => [u(r * k), u(y * k)]), 'brass', { seg });
+  const L = (pts, seg = 10) => lathe(pts.map(([r, y]) => [u(r * k), u(y * k)]), 'brass', { seg });
   return merged([
     L([[0, -0.25], [0.12, -0.25], [0.12, 0], [0, 0]], 10),
     at(nut(u(0.3125 * k), u(0.17 * k), 'brass'), [0, u(0.085 * k), 0]),
-    L([[0, 0.17], [0.09, 0.17], [0.09, 0.30], [0.12, 0.34], [0.13, 0.40], [0.11, 0.46], [0.05, 0.50], [0, 0.50]], 14),
+    L([[0, 0.17], [0.09, 0.17], [0.09, 0.30], [0.12, 0.34], [0.13, 0.40], [0.11, 0.46], [0.05, 0.50], [0, 0.50]], 10),
   ], 'brass');
 }
 
@@ -114,7 +114,7 @@ export default function P176(api) {
   // tangents jusqu'au pied (x0), chanfrein de pied optionnel.
   const eyeOutline = (cx, dir, x0, foot) => {
     const pts = [];
-    const n = 28;
+    const n = 20;
     for (let i = 0; i <= n; i++) {
       const a = -Math.PI / 2 + (i / n) * Math.PI;
       pts.push([cx + dir * EYE.R * Math.cos(a), EYE.R * Math.sin(a)]);
@@ -138,21 +138,21 @@ export default function P176(api) {
   const block = L([
     [0, X.lugEnd], [TUBE - 0.08, X.lugEnd], [TUBE, X.lugEnd + 0.08], [TUBE, X.blockEnd - 0.05],
     [TUBE - 0.05, X.blockEnd], [BORE - 0.3, X.blockEnd], [0, X.blockEnd],
-  ], 'grey', 64);
+  ], 'grey', 28);
   // Tube Ø 6 5/8 × 5/16 : bout côté bloc chanfreiné (cordon), taraudage de la tête au bout
   const TAP = { y0: X.tubeEnd - 1.6, y1: X.tubeEnd - 0.1 };
   const barrel = merged([
     L([
       [BORE, X.blockEnd + 0.02], [TUBE - 0.12, X.blockEnd + 0.02], [TUBE, X.blockEnd + 0.14], [TUBE, X.tubeEnd - 0.04],
       [TUBE - 0.04, X.tubeEnd], [BORE, X.tubeEnd], [BORE, X.blockEnd + 0.02],
-    ], 'grey', 64),
-    L([[BORE, TAP.y0], ...thread(BORE, TAP.y0, TAP.y1, { pitch: 1 / 12, maxTurns: 12, chamferBottom: false }).reverse()], 'grey', 64),
+    ], 'grey', 28),
+    L([[BORE, TAP.y0], ...thread(BORE, TAP.y0, TAP.y1, { pitch: 1 / 12, maxTurns: 4, chamferBottom: false }).reverse()], 'grey', 28),
   ], 'grey');
   barrel.userData.hasInterior = true;
   // Portées planes (lamages) des valves, du bouchon et des orifices A / B sur le bloc
   const xv = (X.lugEnd + X.blockEnd) / 2;
-  const seat = (y, sz) => at(cyl(u(0.72), u(0.6), 'grey', { axis: 'z', seg: 32 }), v3(xv, y, sz * (Math.sqrt(TUBE * TUBE - y * y) - 0.24)));
-  const portSeat = (sy) => at(cyl(u(0.55), u(0.10), 'grey', { seg: 28 }), v3(xv, sy * (TUBE - 0.02), 0));
+  const seat = (y, sz) => at(cyl(u(0.72), u(0.6), 'grey', { axis: 'z', seg: 16 }), v3(xv, y, sz * (Math.sqrt(TUBE * TUBE - y * y) - 0.24)));
+  const portSeat = (sy) => at(cyl(u(0.55), u(0.10), 'grey', { seg: 16 }), v3(xv, sy * (TUBE - 0.02), 0));
   // Bossage de l'orifice côté tige, sous le bout du tube de transfert
   const bossB = at(box(u(1.0), u(0.6), u(0.9), 'grey', { r: u(0.08) }), [0, 0, 0]);
   const bossGrp = group(bossB);
@@ -160,8 +160,8 @@ export default function P176(api) {
   bossGrp.rotation.x = PHI;
   // Garniture de l'orifice B : bouchon plastique sur un orifice libre
   const orbCaps = merged([
-    at(cyl(u(0.36), u(0.18), 'plastic', { seg: 18 }), v3(xv, TUBE + 0.12, 0)),
-    at(cyl(u(0.36), u(0.18), 'plastic', { seg: 18 }), v3(xv, -TUBE - 0.12, 0)),
+    at(cyl(u(0.36), u(0.18), 'plastic', { seg: 12 }), v3(xv, TUBE + 0.12, 0)),
+    at(cyl(u(0.36), u(0.18), 'plastic', { seg: 12 }), v3(xv, -TUBE - 0.12, 0)),
   ], 'yellow');
   P('5', group(
     capEye, block, barrel,
@@ -222,7 +222,7 @@ export default function P176(api) {
   const nutAt = (x) => at(nut(u(0.6875), u(0.42), 'zinc', { axis: 'x' }), rad(x, r1, PHI));
   const nutEnd = at(nut(u(0.6875), u(0.42), 'zinc', { axis: 'x' }), rad(X.portB - 1.42, TUBE + 0.3, PHI));
   P('7', group(
-    tube(path, u(0.1875), 'steel', { seg: 90, tension: 0.4, radial: 12 }),
+    tube(path, u(0.1875), 'steel', { seg: 50, tension: 0.4, radial: 12 }),
     merged([nutAt(xe + 1.12), nutEnd], 'zinc'),
     // raccord droit soudé du bossage (embout JIC vers -X)
     at(lathe([[0, 0], [0.3, 0], [0.3, 0.3], [0.25, 0.35], [0.25, 0.7], [0, 0.7]].map(([r, y]) => [u(r), u(y)]), 'zinc', { seg: 16, axis: '-x' }), rad(X.portB - 0.5, TUBE + 0.3, PHI)),
@@ -232,21 +232,21 @@ export default function P176(api) {
   const head = L([
     [ROD + G, X.hpBot + 0.08], [ROD + 0.1, X.hpBot], [BORE - 0.05, X.hpBot], [BORE - G, X.hpBot + 0.05],
     [BORE - G, X.hpBot + 0.75], [BORE - 0.12, X.hpBot + 0.75], [BORE - 0.12, X.hpBot + 0.95], [BORE - G, X.hpBot + 0.95], // gorge du torique
-    ...thread(BORE - G, X.tubeEnd - 1.6, X.tubeEnd - 0.1, { pitch: 1 / 12, maxTurns: 12 }),
+    ...thread(BORE - G, X.tubeEnd - 1.6, X.tubeEnd - 0.1, { pitch: 1 / 12, maxTurns: 4 }),
     [BORE - G, X.tubeEnd], [TUBE, X.tubeEnd], [TUBE, X.hpTop - 0.06], [TUBE - 0.06, X.hpTop],
     [1.6, X.hpTop], [1.6, X.hpTop - 0.22], [ROD + G, X.hpTop - 0.22], // lamage du racleur
     [ROD + G, X.hpBot + 0.08],
-  ], 'grey', 64);
+  ], 'grey', 28);
   // Racleur visible dans le lamage (fait partie de la tête montée)
-  const wiper = L([[ROD + G, X.hpTop - 0.22], [1.58, X.hpTop - 0.22], [1.58, X.hpTop + 0.02], [1.40, X.hpTop + 0.06], [ROD + G, X.hpTop + 0.02]], 'rubber', 48);
+  const wiper = L([[ROD + G, X.hpTop - 0.22], [1.58, X.hpTop - 0.22], [1.58, X.hpTop + 0.02], [1.40, X.hpTop + 0.06], [ROD + G, X.hpTop + 0.02]], 'rubber', 24);
   P('12', group(head, wiper), [0.22, 0, 0]);
 
   // ================================================ 6 — tige soudée
   // Tige chromée, queue filetée, chanfrein vers le col, œil de tige soudé.
   const rodEye = eyeBody(X.eye, 1, X.eyeBase, [[X.eyeBase + 0.7, EYE.R], [X.eyeBase, 1.6], [X.eyeBase, -1.6], [X.eyeBase + 0.7, -EYE.R]]);
   P('6', group(
-    L([[0, X.pistonEnd], [ROD - 0.06, X.pistonEnd], [ROD, X.pistonEnd + 0.06], [ROD, X.hpTop + 0.4], [0.72, X.neck], [0.72, X.eyeBase + 0.02], [0, X.eyeBase + 0.02]], 'chrome', 40),
-    L([[0, X.blockEnd + 0.1], ...thread(PILOT, X.blockEnd + 0.1, X.pistonEnd - 0.1, { pitch: 1 / 12, maxTurns: 16 }), [PILOT, X.pistonEnd], [0, X.pistonEnd]], 'steel', 28),
+    L([[0, X.pistonEnd], [ROD - 0.06, X.pistonEnd], [ROD, X.pistonEnd + 0.06], [ROD, X.hpTop + 0.4], [0.72, X.neck], [0.72, X.eyeBase + 0.02], [0, X.eyeBase + 0.02]], 'chrome', 24),
+    L([[0, X.blockEnd + 0.1], ...thread(PILOT, X.blockEnd + 0.1, X.pistonEnd - 0.1, { pitch: 1 / 12, maxTurns: 5 }), [PILOT, X.pistonEnd], [0, X.pistonEnd]], 'steel', 16),
     rodEye,
     weldRing(u(0.8), u(0.2), 'grey', { axis: 'x', pos: v3(X.eyeBase - 0.05, 0, 0) }),
   ), [0.45, 0, 0]);
@@ -257,10 +257,10 @@ export default function P176(api) {
     [BORE - 0.18, X.ringEnd + 0.35], [BORE - 0.18, X.ringEnd + 0.75], [BORE - G, X.ringEnd + 0.75], // bague de guidage
     [BORE - G, X.ringEnd + 0.85], [BORE - 0.32, X.ringEnd + 0.85], [BORE - 0.32, X.ringEnd + 1.30], [BORE - G, X.ringEnd + 1.30], // joint
     [BORE - G, X.pistonEnd - 0.05], [BORE - 0.06, X.pistonEnd], [PILOT + G, X.pistonEnd],
-  ], 'steel', 56), [0.18, 0.2, 0]);
+  ], 'steel', 28), [0.18, 0.2, 0]);
   P('13', L([
     [PILOT + G, X.blockEnd + 0.03], [2.75, X.blockEnd + 0.03], [2.8, X.blockEnd + 0.08], [2.8, X.ringEnd - 0.05], [2.75, X.ringEnd], [PILOT + G, X.ringEnd],
-  ], 'steel', 48), [0.06, 0.2, 0]);
+  ], 'steel', 24), [0.06, 0.2, 0]);
   // vis sans tête à six-pans creux 3/8-24, radiale, affleurante en haut de la bague
   {
     const Ls = (pts) => lathe(pts.map(([r, y]) => [u(r), u(y)]), 'blackOxide', { seg: 14 });
@@ -271,11 +271,11 @@ export default function P176(api) {
   // ================================================ 4 — rotules, 2 — circlips, 9 — graisseurs
   const ball = () => {
     // bague extérieure (largeur 1.75 po) et rotule (alésage 2 1/2 po, largeur 2.19 po)
-    const Lz = (pts, m, seg = 40) => lathe(pts.map(([r, y]) => [u(r), u(y)]), m, { seg, axis: 'z' });
+    const Lz = (pts, m, seg = 24) => lathe(pts.map(([r, y]) => [u(r), u(y)]), m, { seg, axis: 'z' });
     const R = 1.72; // rayon de la sphère
     const sph = [];
-    for (let i = 0; i <= 10; i++) {
-      const z = -1.095 + (i / 10) * 2.19;
+    for (let i = 0; i <= 8; i++) {
+      const z = -1.095 + (i / 8) * 2.19;
       sph.push([Math.sqrt(R * R - z * z), z]);
     }
     return group(
@@ -285,7 +285,7 @@ export default function P176(api) {
   };
   const circlip = () => {
     // circlip intérieur : anneau à section rectangulaire ouvert, deux oreilles percées
-    const n = 40, ro = EYE.bore + 0.09, ri = EYE.bore - 0.17, gap = 0.35;
+    const n = 24, ro = EYE.bore + 0.09, ri = EYE.bore - 0.17, gap = 0.35;
     const pts = [];
     for (let i = 0; i <= n; i++) { const a = gap / 2 + (i / n) * (Math.PI * 2 - gap); pts.push([ro * Math.cos(a), ro * Math.sin(a)]); }
     for (let i = n; i >= 0; i--) { const a = gap / 2 + (i / n) * (Math.PI * 2 - gap); pts.push([ri * Math.cos(a), ri * Math.sin(a)]); }
