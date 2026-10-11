@@ -43,7 +43,7 @@ export const ENG = {
   footY: -0.26,
   feet: [[0.055, -0.25], [0.055, 0.25], [0.6, -0.21], [0.6, 0.21]], // [x, z]
   exhaust: { y: 0.37, z: -0.235, outX: 0.08 }, // collecteur : axe, sortie arrière
-  intake: { y: 0.44, z: 0.17 }, // tubulure d'admission (raccord P268 à l'avant)
+  intake: { y: 0.44, z: 0.17, x: 0.66 }, // tubulure d'admission : embout 3 po vers +X (raccord P268)
   // Filtres déportés (P262, P264) sur la cornière P256 rep. 8 posée en travers
   // sur le carter de volant : aile verticale dans le plan x = flangeX (face
   // −X), filtres suspendus derrière elle ; consoles de filtres du moteur
@@ -467,6 +467,20 @@ export const ACC = (() => {
       return o;
     },
     turn,
+    // Place obj en pos, son axe local +Y selon y et son axe local +X selon x
+    // (vecteurs du repère parent, perpendiculaires) ; Z = X × Y.
+    orient: (api, obj, pos, y, x) => {
+      const { THREE } = api;
+      const Y = new THREE.Vector3(...y).normalize(), X = new THREE.Vector3(...x).normalize();
+      const Z = new THREE.Vector3().crossVectors(X, Y);
+      const o = new THREE.Group();
+      o.add(obj);
+      o.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(X, Y, Z));
+      o.position.set(...pos);
+      return o;
+    },
+    // Point du repère parent d'un point local [lx, ly] d'un objet orienté par orient().
+    local: (pos, y, x, lx, ly) => pos.map((p, i) => p + x[i] * lx + y[i] * ly),
   };
 })();
 
