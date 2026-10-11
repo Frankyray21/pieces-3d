@@ -53,7 +53,7 @@ export default function P348(api) {
     const x = SLEEVE[0] + ((SLEEVE[1] - SLEEVE[0]) * k) / 24;
     pts.push([x, yAt(x), 0]);
   }
-  const sleeve = tube(pts, 0.0105, 'rubber', { seg: 48, ends: 'none', radial: 12 });
+  const sleeve = tube(pts, 0.0105, 'rubber', { seg: 20, ends: 'none', radial: 8 });
   const caps = [SLEEVE[0], SLEEVE[1]].map((x) => S.lathe([[0, -0.004], [0.006, -0.004], [0.0105, 0], [0, 0]], 'rubber', { axis: x < 0.3 ? '-x' : 'x', seg: 12, pos: [x, yAt(x), 0] }));
   api.part('2', group(sleeve, ...caps), [0, 0.06, 0]);
 

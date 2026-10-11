@@ -70,7 +70,7 @@ export default function P332(api) {
   const K = kit(api);
 
   // Bague de section rectangulaire (joint, bague d'usure, circlip) autour de Y.
-  const band = (ro, ri, y0, y1, mat, seg = 10) => lathe([[ri, y0], [ro, y0], [ro, y1], [ri, y1], [ri, y0]], mat, { seg });
+  const band = (ro, ri, y0, y1, mat, seg = 8) => lathe([[ri, y0], [ro, y0], [ro, y1], [ri, y1], [ri, y0]], mat, { seg });
   // Bouchon six-pans creux : collerette + empreinte, le long de +Y depuis la face.
   const hollowPlug = (r) => lathe([
     [0, -r * 1.2], [r, -r * 1.2], [r, 0], [r * 1.25, 0], [r * 1.25, r * 0.35], [r * 0.55, r * 0.35], [r * 0.55, r * 0.05], [0, r * 0.05],
@@ -86,7 +86,7 @@ export default function P332(api) {
   // ---------------------------------------------------------------- 32 — fourreau soudé dans sa chaise
   const tubeW = lathe([
     [RWI, YW0], [RW - 0.002, YW0], [RW, YW0 + 0.002], [RW, YW1 - 0.002], [RW - 0.002, YW1], [RWI, YW1], [RWI, YW0],
-  ], 'grey', { seg: 20 });
+  ], 'grey', { seg: 16 });
   // Platine dans le plan XY, trous Ø 1 1/16 po (contours à 10 segments).
   const shape = new THREE.Shape();
   shape.moveTo(-PW / 2, PY0); shape.lineTo(PW / 2, PY0); shape.lineTo(PW / 2, PY1); shape.lineTo(-PW / 2, PY1); shape.closePath();
@@ -113,11 +113,11 @@ export default function P332(api) {
   // ---------------------------------------------------------------- 38 — cylindre mobile et patin rotulé
   const cylT = lathe([
     [0, YC0 - 0.014], [RC * 0.72, YC0 - 0.014], [RC, YC0 + 0.006], [RC, YC1 - 0.002], [RC - 0.002, YC1], [RCI, YC1], [RCI, YC0 + 0.012], [0, YC0 + 0.012],
-  ], 'chrome', { seg: 20 });
+  ], 'chrome', { seg: 16 });
   // Pied : rotule sous le fond, coupelle emboutie et semelle Ø 9 po.
   const foot = lathe([
     [0, 0], [0.114, 0], [0.114, 0.012], [0.105, 0.016], [0.07, 0.03], [0.05, 0.05], [0.047, 0.058], [0.04, 0.062], [0, 0.062],
-  ], 'grey', { seg: 20 });
+  ], 'grey', { seg: 16 });
   const knuckle = lathe([[0, 0.045], [0.032, 0.05], [0.04, 0.062], [RC * 0.72, YC0 - 0.014], [0, YC0 - 0.014]], 'darkSteel', { seg: 16 });
   P('38', group(cylT, foot, knuckle), [0, -0.9, 0]);
 

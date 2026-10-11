@@ -36,8 +36,8 @@ export default function P378(api) {
     // Bride carrée, tête ronde, couvercle à 4 vis, bossages des orifices.
     merged([
       box(0.15, 0.012, 0.15, 'castAlu', { r: 0.01, pos: [0, 0.006, 0] }),
-      lathe([[0, 0.012], [0.065, 0.012], [0.065, 0.07], [0, 0.07]], 'castAlu', { seg: 24 }),
-      lathe([[0, 0.07], [0.062, 0.07], [0.062, 0.084], [0.055, 0.09], [0, 0.09]], 'castAlu', { seg: 24 }),
+      lathe([[0, 0.012], [0.065, 0.012], [0.065, 0.07], [0, 0.07]], 'castAlu', { seg: 14 }),
+      lathe([[0, 0.07], [0.062, 0.07], [0.062, 0.084], [0.055, 0.09], [0, 0.09]], 'castAlu', { seg: 14 }),
       box(0.03, 0.05, 0.06, 'castAlu', { r: 0.004, pos: [-0.072, 0.04, 0] }),
       box(0.03, 0.055, 0.065, 'castAlu', { r: 0.004, pos: [0.072, 0.04, 0] }),
     ], 'castAlu'),
@@ -45,7 +45,7 @@ export default function P378(api) {
     merged([0, 1, 2, 3].map((i) => K.hex(0.012, 0.007, 'zinc', { pos: [Math.cos(i * Math.PI / 2 + 0.785) * 0.05, 0.094, Math.sin(i * Math.PI / 2 + 0.785) * 0.05] })), 'zinc'),
     at(cyl(0.012, 0.02, 'red', { axis: 'z', seg: 10 }), [0, 0.045, 0.07]),
     // Cuve et élément dans le réservoir.
-    lathe([[0, -0.3], [0.045, -0.3], [0.05, -0.29], [0.05, 0], [0, 0]], 'steel', { seg: 16 }),
+    lathe([[0, -0.3], [0.045, -0.3], [0.05, -0.29], [0.05, 0], [0, 0]], 'steel', { seg: 10 }),
   );
   P('18', at(head, [fx, yT, fz]), [0, 0.5, 0]);
   // 16, 17 — vis de la bride
@@ -94,8 +94,8 @@ export default function P378(api) {
   P('15', at(lathe([[0.01, 0], [0.0133, 0], [0.0133, 0.076], [0.01, 0.076]], 'zinc', { seg: 12 }), [vx, yT + 0.03, vz]), [0, 0.2, 0]);
   const yB = yT + 0.03 + 0.076 - 0.015;
   const cap = group(
-    lathe([[0, 0], [0.034, 0], [0.036, 0.004], [0.036, 0.04], [0.032, 0.046], [0, 0.048]], 'black', { seg: 20 }),
-    merged(Array.from({ length: 14 }, (_, i) => { const a = (i / 14) * Math.PI * 2; return box(0.004, 0.03, 0.005, 'black', { pos: [Math.cos(a) * 0.036, 0.02, Math.sin(a) * 0.036], rot: [0, -a, 0] }); }), 'black'),
+    lathe([[0, 0], [0.034, 0], [0.036, 0.004], [0.036, 0.04], [0.032, 0.046], [0, 0.048]], 'black', { seg: 14 }),
+    merged(Array.from({ length: 10 }, (_, i) => { const a = (i / 10) * Math.PI * 2; return box(0.004, 0.03, 0.005, 'black', { pos: [Math.cos(a) * 0.036, 0.02, Math.sin(a) * 0.036], rot: [0, -a, 0] }); }), 'black'),
   );
   P('2', at(cap, [vx, yB, vz]), [0, 0.3, 0]);
 

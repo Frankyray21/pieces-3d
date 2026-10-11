@@ -90,7 +90,7 @@ export default function P370(api) {
   const yC = yF + 0.002; // dessous du couvercle
   const lid = plate(CV.w, CV.d, 0.1875 * IN, 'grey', { holes: [...holesCV.map(([x, z]) => [x, z, 0.0052]), [0, NECK.z, NECK.r - 0.004]], r: 0.006 });
   lid.position.set(CV.x, yC + 0.09375 * IN, 0);
-  const neck = lathe([[NECK.r - 0.004, yC], [NECK.r, yC], [NECK.r, yC + NECK.h], [NECK.r - 0.004, yC + NECK.h]], 'grey', { seg: 32, pos: [CV.x, 0, NECK.z] });
+  const neck = lathe([[NECK.r - 0.004, yC], [NECK.r, yC], [NECK.r, yC + NECK.h], [NECK.r - 0.004, yC + NECK.h]], 'grey', { seg: 20, pos: [CV.x, 0, NECK.z] });
   P('5', merged([lid, neck], 'grey'), [0, 0.16, 0]);
   const yB = yC + 0.1875 * IN;
   holesCV.forEach(([x, z], i) => {
@@ -104,7 +104,7 @@ export default function P370(api) {
   const cap = lathe([
     [NECK.r - 0.008, yN - 0.03], [NECK.r - 0.006, yN - 0.03], [NECK.r - 0.006, yN - 0.002], [NECK.r + 0.006, yN - 0.002],
     [NECK.r + 0.008, yN + 0.003], [NECK.r + 0.008, yN + 0.016], [NECK.r + 0.004, yN + 0.02], [0, yN + 0.02],
-  ], 'black', { seg: 32 });
+  ], 'black', { seg: 20 });
   const lugsCap = [0, Math.PI / 2].map((a) => box(2 * NECK.r + 0.01, 0.012, 0.007, 'black', { r: 0.002, pos: [0, yN + 0.025, 0], rot: [0, a, 0] }));
   P('3', at(group(cap, ...lugsCap), [CV.x, 0, NECK.z]), [0, 0.34, 0]);
 

@@ -28,7 +28,7 @@ const sphere = (r) => Array.from({ length: 7 }, (_, i) => { const a = -Math.PI /
 
 export default function P366(api) {
   const { THREE, S } = api;
-  const { lathe, cyl, box, ballValve, merged, group, at } = S;
+  const { lathe, cyl, box, merged, group, at } = S;
   const T = kit(api);
   const P = (ref, obj, e) => api.part(ref, obj, e);
   const dirOf = { x: [1, 0, 0], '-x': [-1, 0, 0], y: [0, 1, 0], '-y': [0, -1, 0], z: [0, 0, 1], '-z': [0, 0, -1] };
@@ -41,10 +41,18 @@ export default function P366(api) {
   };
   // Mamelon : tube avec filets apparents aux deux bouts (bandes de reflet).
   const nipple = (len) => lathe([
-    [0.0133, -len / 2], [RP - 0.0008, -len / 2], ...S.thread(RP, -len / 2 + 0.001, -len / 2 + ENG, { pitch: 0.0022, maxTurns: 2 }),
-    [RP, len / 2 - ENG], ...S.thread(RP, len / 2 - ENG + 0.001, len / 2 - 0.001, { pitch: 0.0022, maxTurns: 2 }),
+    [0.0133, -len / 2], [RP - 0.0008, -len / 2], ...S.thread(RP, -len / 2 + 0.001, -len / 2 + ENG, { pitch: 0.0022, maxTurns: 1 }),
+    [RP, len / 2 - ENG], ...S.thread(RP, len / 2 - ENG + 0.001, len / 2 - 0.001, { pitch: 0.0022, maxTurns: 1 }),
     [RP - 0.0008, len / 2], [0.0133, len / 2], [0.0133, -len / 2],
   ], 'zinc', { seg: 10 });
+  // Robinet à bille 1 po (léger) : corps laiton, embouts six-pans, levier jaune.
+  const valve = () => group(
+    T.toward(lathe([[0, -0.042], [0.021, -0.042], [0.021, -0.03], [0.026, -0.022], [0.027, 0], [0.026, 0.022], [0.021, 0.03], [0.021, 0.042], [0, 0.042]], 'brass', { seg: 10 }), [1, 0, 0]),
+    at(T.hex(0.042, 0.012, 'brass', { axis: 'x' }), [-0.036, 0, 0]),
+    at(T.hex(0.042, 0.012, 'brass', { axis: 'x' }), [0.036, 0, 0]),
+    at(cyl(0.005, 0.02, 'steel', { seg: 6 }), [0, 0.034, 0]),
+    at(box(0.12, 0.004, 0.014, 'safety', { r: 0.002 }), [0.055, 0.045, 0]),
+  );
   // Réduction six-pans 1 po × d (vissée dans un embout, six-pans dehors), le long de +Y.
   const bushing = (rIn) => group(
     lathe([[rIn, -ENG], [RP, -ENG], [RP, 0], [rIn, 0]], 'zinc', { seg: 12 }),
@@ -114,7 +122,7 @@ export default function P366(api) {
 
   // ---------------------------------------------------------------- 1 — robinets à bille 1 po (×2)
   const XV = X11 + 0.019 - ENG + 0.042;
-  P('1', at(ballValve(0.034, 'brass', { axis: 'x' }), [XV, Y9C, 0]), [0.12, 0.12, 0]);
+  P('1', at(valve(), [XV, Y9C, 0]), [0.12, 0.12, 0]);
   // 6 — coude 90° mâle-femelle 1 po : entre le mamelon court et le robinet du bas
   const XE = X11 + 0.019 - ENG + 0.022;
   const street = group(
@@ -123,7 +131,7 @@ export default function P366(api) {
     T.toward(lathe([[0.0133, 0], [0.0215, 0], [0.0215, 0.008], [RP, 0.012], [RP, 0.04], [0.0133, 0.04]], 'zinc', { seg: 14 }), [0, 0, 1]),
   );
   P('6', at(street, [XE, 0, 0]), [0.09, -0.04, 0]);
-  const valveLow = ballValve(0.034, 'brass', { axis: 'x' });
+  const valveLow = valve();
   P('1', at(group(valveLow), [XE, 0, 0.04 - ENG + 0.042], [0, -Math.PI / 2, 0]), [0.09, -0.04, 0.1]);
 
   void THREE;

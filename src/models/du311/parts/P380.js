@@ -119,7 +119,7 @@ export default function P380(api) {
   P('6', group(rear, handle), [0, 0.3, -0.04]);
   for (const [x, z] of [...lidPts, ...rearPts]) {
     const ex = z > HT.seam ? [0, 0.34, 0.04] : [0, 0.4, -0.04];
-    P('9', K.washer(0.3125 * IN, 'zinc', { seg: 6, pos: [x, yT, z] }), ex);
+    P('9', K.washer(0.3125 * IN, 'zinc', { seg: 5, pos: [x, yT, z] }), ex);
     P('7', K.screw(0.3125 * IN, 0.75 * IN, 'zinc', { pos: [x, yT + 0.05 * IN, z], seg: 6 }), [ex[0], ex[1] + 0.06, ex[2]]);
   }
 
@@ -129,7 +129,7 @@ export default function P380(api) {
   for (const s of [-1, 1]) for (const k of [-1, 1]) cpts.push([C.z + s * (C.w / 2 - 0.012), C.y + k * 0.03]);
   for (const s of [-1, 1]) {
     const x0 = s * (L / 2 + 0.25 * IN); // face des cadres
-    const gk = K.plate(C.h, C.w, 0.002, 'rubber', { cutouts: [[0, 0, C.h - 0.05, C.w - 0.05]], holes: cpts.map(([z, y]) => [y - C.y, z - C.z, 0.005]), seg: 6 });
+    const gk = K.plate(C.h, C.w, 0.002, 'rubber', { cutouts: [[0, 0, C.h - 0.05, C.w - 0.05]], holes: cpts.map(([z, y]) => [y - C.y, z - C.z, 0.005]), seg: 4 });
     gk.rotation.z = Math.PI / 2;
     gk.position.set(x0 + s * 0.001, C.y, C.z);
     P('2', gk, [s * 0.07, 0, 0]);
@@ -152,7 +152,7 @@ export default function P380(api) {
     const xb = xo;
     for (const [z, y] of cpts) {
       const ax = s > 0 ? 'x' : '-x';
-      P('10', K.washer(0.375 * IN, 'zinc', { seg: 6, axis: ax, pos: [xb, y, z] }), [s * 0.2, 0, 0]);
+      P('10', K.washer(0.375 * IN, 'zinc', { seg: 5, axis: ax, pos: [xb, y, z] }), [s * 0.2, 0, 0]);
       P('8', K.screw(0.375 * IN, 1 * IN, 'zinc', { seg: 6, axis: ax, pos: [xb + s * 0.06 * IN, y, z] }), [s * 0.26, 0, 0]);
     }
   }

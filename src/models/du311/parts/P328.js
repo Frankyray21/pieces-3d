@@ -47,7 +47,7 @@ const TANKX = -1.25; // axe de la paroi arrière + 0.16 (réservoir hydraulique)
 
 export default function P328(api) {
   const { THREE, S } = api;
-  const { box, cyl, lathe, merged, group, at, gauge, tube, nameplate } = S;
+  const { box, cyl, lathe, merged, group, at, tube, nameplate } = S;
   const K = kit(api);
   const P = (ref, obj, e) => api.part(ref, obj, e);
   const sub = (id, pos, rot, e, scale) => P(REF[id], at(api.sub(id), pos, rot, scale), e);
@@ -180,7 +180,14 @@ export default function P328(api) {
   // 23 — platines de manomètres (×2) sur le flanc droit, 9 et 10 dessus.
   for (const [x, ref] of [[0.15, '9'], [1.45, '10']]) {
     P('23', at(K.plate(0.12, 0.12, 0.006, 'grey', { holes: [[0, 0, 0.012]], seg: 12 }), [x, DECK + 0.08, -ZR - 0.04], [R90, 0, 0]), [0, 0, -0.15]);
-    P(ref, at(gauge(0.032, { axis: '-z' }), [x, DECK + 0.08, -ZR - 0.05]), [0, 0, -0.25]);
+    // Manomètre Ø 2 1/2 po (léger) : boîtier inox, cadran blanc, aiguille, raccord laiton.
+    const gg = group(
+      lathe([[0, -0.012], [0.03, -0.012], [0.032, -0.008], [0.032, 0.008], [0.029, 0.011], [0, 0.011]], 'chrome', { seg: 16 }),
+      at(cyl(0.028, 0.002, 'white', { seg: 16 }), [0, 0.0115, 0]),
+      at(box(0.002, 0.001, 0.022, 'red'), [0.004, 0.0128, -0.006], [0, 0.5, 0]),
+      at(cyl(0.006, 0.03, 'brass', { seg: 6 }), [0, -0.027, 0]),
+    );
+    P(ref, at(gg, [x, DECK + 0.08, -ZR - 0.055], [-R90, 0, 0]), [0, 0, -0.25]);
   }
   // 11 — valve de décharge manuelle (sur le dessus du réservoir, côté droit).
   P('11', at(group(box(0.06, 0.05, 0.05, 'zinc', { r: 0.004 }), at(cyl(0.006, 0.05, 'steel', { seg: 10 }), [0, 0.045, 0]), at(cyl(0.02, 0.012, 'black', { seg: 14 }), [0, 0.075, 0])), [-1.0, 1.08, -0.3]), [0, 0.35, 0]);

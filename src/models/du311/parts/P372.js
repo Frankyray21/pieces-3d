@@ -98,7 +98,7 @@ export default function P372(api) {
   for (const ym of [ym3, ym4]) {
     for (const sx of [-1, 1]) for (const dy of [-0.045, 0.045]) {
       const p = [sx * hx, ym + dy, zH];
-      P('8', K.washer(0.25 * IN, 'zinc', { axis: 'z', pos: p }), [0, 0, 0.24]);
+      P('8', K.washer(0.25 * IN, 'zinc', { axis: 'z', pos: p, seg: 6 }), [0, 0, 0.24]);
       P('6', K.screw(0.25 * IN, 1 * IN, 'zinc', { axis: 'z', pos: [p[0], p[1], zH + 0.04 * IN] }), [0, 0, 0.3]);
       // Écrous derrière les ailes pour la plaque basse.
       if (ym === ym4) {
@@ -110,20 +110,20 @@ export default function P372(api) {
   void nNut;
   // Rondelles des écrous (côté intérieur des ailes).
   for (const sx of [-1, 1]) for (const dy of [-0.045, 0.045]) {
-    P('8', K.washer(0.25 * IN, 'zinc', { axis: '-z', pos: [sx * hx, ym4 + dy, ZF - T] }), [0, 0, -0.03]);
+    P('8', K.washer(0.25 * IN, 'zinc', { axis: '-z', pos: [sx * hx, ym4 + dy, ZF - T], seg: 6 }), [0, 0, -0.03]);
   }
 
   // ---------------------------------------------------------------- vis des coffrets 5 et rondelles 8 (joues)
   for (const [s, y, z] of holesJ) {
     const ax = s > 0 ? 'x' : '-x';
-    P('8', K.washer(0.25 * IN, 'zinc', { axis: ax, pos: [s * XJ, y, z] }), [s * 0.06, 0, 0]);
+    P('8', K.washer(0.25 * IN, 'zinc', { axis: ax, pos: [s * XJ, y, z], seg: 6 }), [s * 0.06, 0, 0]);
     P('5', K.screw(0.25 * IN, 0.75 * IN, 'zinc', { axis: ax, pos: [s * (XJ + 0.04 * IN), y, z] }), [s * 0.11, 0, 0]);
   }
 
   // ---------------------------------------------------------------- 7, 9 — vis des semelles
   for (const s of [-1, 1]) for (const dz of [-0.025, 0.025]) {
     const p = [s * (XJ - 0.045), TF, (ZF + ZB) / 2 + dz];
-    P('9', K.washer(0.5 * IN, 'zinc', { pos: p }), [0, 0.18, -0.12]);
+    P('9', K.washer(0.5 * IN, 'zinc', { pos: p, seg: 8 }), [0, 0.18, -0.12]);
     P('7', K.screw(0.5 * IN, 1.25 * IN, 'zinc', { pos: [p[0], TF + 0.08 * IN, p[2]] }), [0, 0.26, -0.12]);
   }
 
