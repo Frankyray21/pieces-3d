@@ -33,8 +33,10 @@ builder du même numéro (`machine.js`, `frame.js`, `feed.js`, `mast.js`,
 - **Cotes réelles, en mètres** (Y vers le haut) : descriptions de la liste
   (« HHCS,0.750UNC-2.250 » = vis H 3/4 po × 2 1/4 po ; « Ø3.00 X 54" » = alésage
   3 po, course 54 po ; 1 po = 0,0254 m), dessins du manuel
-  (`public/equipment/du311/pages/Pxxx.webp`), modèles voisins déjà faits. Ce qui
-  n'est pas coté s'estime d'après les proportions du dessin.
+  (`public/equipment/du311/pages/Pxxx.webp` ; `python3 -I tools/page_png.py du311
+  P026 sortie.png [x0 y0 x1 y1]` en donne une page ou une zone agrandie en PNG),
+  modèles voisins déjà faits. Ce qui n'est pas coté s'estime d'après les
+  proportions du dessin.
 - **Repère en tête de fichier** : origine (face d'appui, axe de pivot, centre de
   bride…), orientation des axes, encombrement. Les trousses posées sur un
   ensemble (boyaux, graissage, étiquettes, câblage) se modélisent **dans le
