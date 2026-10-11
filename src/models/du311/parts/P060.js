@@ -17,10 +17,10 @@
 //   · 7 (15 po, 90° / 90°) : boucle de l'adaptateur droit CYL 1 du clapet 12
 //     au coude d'entrée du régulateur de débit 11 (P050) (vue 7) ;
 //   · 3 (20 po) / 4 (30 po) : régulateur (sortie restreinte) → fond du vérin
-//     −X, té tournant du clapet (branche) → tige du vérin −X ;
-//   · 5 (41 po) / 6 (49 po) : coude tournant du clapet → tige du vérin +X,
-//     régulateur (2e sortie) → fond du vérin +X, le long du bord avant (vues
-//     5 et 6).
+//     +X, té tournant du clapet (branche) → tige du vérin +X (blocs voisins) ;
+//   · 5 (41 po) / 6 (49 po) : coude tournant du clapet → tige du vérin −X,
+//     régulateur (2e sortie) → fond du vérin −X, à plat le long du bord avant
+//     (vues 5 et 6).
 // Repère : celui de P032 (feed.js, mast.js) — axe du mât selon +Y (pied à
 // y = 0), face avant (tête de rotation) vers +Z ; P032 insère la trousse à
 // l'origine. Les ensembles qui reçoivent les boyaux sont placés par P032 ;
@@ -32,12 +32,12 @@
 //     au niveau du bras du support stinger) ;
 //   · pied de mât (non modélisé par feed.js) : dessus de la semelle à
 //     y = −0.47 (niveau des patins des rallonges de tige stinger), bord avant
-//     à z = 0.74 ; clapet 12 (P052) couché sur la semelle, cuvette en haut,
-//     orifices CYL vers l'avant, en (−0.30, −0.47, 0.36) ; régulateur 11 (P050)
-//     couché devant lui, sorties vers l'avant, en (−0.36, −0.47, 0.52) ;
-//   · vérins du déflecteur couchés le long du bord avant, sous la semelle
-//     (axe y = −0.56, z = 0.80), tiges vers le milieu : orifices de fond à
-//     x = ±0.44, de tige à x = ±0.24, sur le dessus incliné vers l'avant.
+//     à z = 0.74 ; clapet 12 (P052) couché sur la semelle, au coin opposé au
+//     sélecteur (vues 7 / 8), cuvette en haut, en (0.30, −0.47, 0.36) ;
+//     régulateur 11 (P050) couché devant lui, en (0.36, −0.47, 0.52) ;
+//   · vérins du déflecteur couchés sur la marche basse du bord avant (axe
+//     y = −0.52, z = 0.70), tiges vers le milieu : orifices de fond à
+//     x = ±0.44, de tige à x = ±0.24, coudes ouverts vers le haut et l'arrière.
 // Écarts : le dessin met les deux blocs sur la semelle du pied à côté du
 // passage de tige stinger, sans cote ; feed.js les place encore sur le flanc
 // +X du mât (y 0.3 / 0.45) et le déflecteur à y = −0.55 en forme simplifiée.
@@ -55,15 +55,15 @@ const P152_ZV = -(2 * IN + 0.012) - 0.375 * IN - 1.0 * IN - 1.0 * IN;
 const P152_W = 2.25 * IN, P152_YV = -0.035;
 // Pied de mât et vérins du déflecteur.
 const YF = -0.47, ZFRONT = 0.74;
-const CYL = { y: -0.56, z: 0.8, r: 1.25 * IN, cap: 0.44, rod: 0.24 };
-const M052 = mount([-0.3, YF, 0.36], [-1, 0, 0], [0, 0, 1]);
-const M050 = mount([-0.36, YF, 0.52], [0, 0, 1], [1, 0, 0]);
+const CYL = { y: YF - 0.05, z: 0.7, r: 1.25 * IN, cap: 0.44, rod: 0.24 };
+const M052 = mount([0.3, YF, 0.36], [-1, 0, 0], [0, 0, 1]);
+const M050 = mount([0.36, YF, 0.52], [0, 0, 1], [1, 0, 0]);
 
 export const KIT060 = {
   selector: { at: SEL },
   foot: { y: YF, front: ZFRONT },
-  P052: { at: [-0.3, YF, 0.36], X: [-1, 0, 0], Y: [0, 0, 1] },
-  P050: { at: [-0.36, YF, 0.52], X: [0, 0, 1], Y: [1, 0, 0] },
+  P052: { at: [0.3, YF, 0.36], X: [-1, 0, 0], Y: [0, 0, 1] },
+  P050: { at: [0.36, YF, 0.52], X: [0, 0, 1], Y: [1, 0, 0] },
   cylinders: CYL,
 };
 
@@ -129,12 +129,12 @@ export default function P060(api) {
   // ------------------------------------------------ 2 — coudes des vérins
   // Orifice sur le dessus du vérin, incliné de 45° vers l'avant ; sortie du
   // coude vers le haut et l'arrière (vers la semelle).
-  const nrm = v3([0, 1, 1]).normalize();
+  const nrm = v3([0, 1, -0.4]).normalize();
   const cyl = {};
   for (const s of [-1, 1]) {
     for (const k of ['cap', 'rod']) {
       const p = v3([s * CYL[k], CYL.y, CYL.z]).addScaledVector(nrm, CYL.r);
-      const e = place(elbow('orb', 6, 6), p, nrm, [0, 1, -1]);
+      const e = place(elbow('orb', 6, 6), p, nrm, [0, 0.3, -1]);
       P('2', e, [0, 0.05, 0.06]);
       cyl[`${k}${s}`] = seat(e);
     }
@@ -145,24 +145,29 @@ export default function P060(api) {
   H('9', 9, sLo, qdTop[0], {}, [0.05, 0.03, -0.08]);
   H('10', 11.5, sHi, qdTop[1], { sag: [0.3, 0, -1] }, [0.05, 0.03, -0.12]);
   // 8 : embouts mâles → coudes 45° des orifices VALVE du clapet 12 : descente
-  // derrière le fût, sous le bras du support, puis vers l'avant sur la semelle.
-  const [v1, v2] = valve[0].p.x > valve[1].p.x ? valve : [valve[1], valve[0]];
+  // le long du fût du stinger −X puis en travers de la semelle jusqu'au coin
+  // opposé (vues 8 : le dessin les fait longer le bord avant, mais 77 po ne
+  // suffisent pas avec les poses estimées ici).
+  const [v1, v2] = valve[0].p.x < valve[1].p.x ? valve : [valve[1], valve[0]];
   H('8', 77, qdBot[0], v1, {
-    vias: [[-0.33, 0.2, -0.04], [-0.31, -0.25, 0.0], [-0.27, -0.43, 0.12]],
-    sag: [0.6, 0, 0.8],
+    vias: [[-0.34, 0.1, -0.03], [-0.35, -0.4, 0.12], [-0.05, -0.455, 0.3]],
+    sag: [0, 0, 1],
   }, [0.12, -0.05, -0.15]);
   H('8', 77, qdBot[1], v2, {
-    vias: [[-0.36, 0.2, -0.03], [-0.345, -0.25, 0.02], [-0.33, -0.435, 0.14]],
-    sag: [0.6, 0, 0.8],
+    vias: [[-0.37, 0.1, -0.02], [-0.38, -0.4, 0.14], [-0.05, -0.44, 0.33]],
+    sag: [0, 0, 1],
   }, [0.06, -0.05, -0.2]);
-  // 7 : boucle 90° / 90° de l'adaptateur CYL 1 au coude d'entrée du régulateur.
-  H('7', 15, { ...L052.s6, end: '90', t: [0, 1, 0] }, { ...in50, end: '90', t: [0, 1, 0] }, { sag: [0, 1, 0] }, [0, 0.12, 0.04]);
-  // 3 / 4 : vérin −X ; 5 / 6 : vérin +X, le long du bord avant.
-  const [o50a, o50b] = out50[0].p.x < out50[1].p.x ? out50 : [out50[1], out50[0]];
-  H('3', 20, o50a, cyl['cap-1'], { vias: [[-0.49, -0.44, 0.66]], sag: [-1, 0, 0] }, [-0.05, 0.06, 0.12]);
-  H('4', 30, L052.tee, cyl['rod-1'], { vias: [[-0.3, -0.4, 0.28], [-0.26, -0.39, 0.6]], sag: [0, 1, 0] }, [0, 0.1, 0.1]);
-  H('5', 41, L052.elb, cyl.rod1, { vias: [[-0.24, -0.42, 0.42], [0.05, -0.44, 0.69]], sag: [0, 1, 0] }, [0.06, 0.12, 0.14]);
-  H('6', 49, o50b, cyl.cap1, { vias: [[-0.2, -0.44, 0.7], [0.12, -0.445, 0.72], [0.38, -0.44, 0.73]], sag: [0, 1, 0] }, [0.1, 0.08, 0.18]);
+  // 7 : boucle courte à plat, 90° / 90°, de l'adaptateur CYL 1 au coude
+  // d'entrée du régulateur, douilles horizontales l'une vers l'autre.
+  const tx = v3(in50.p).sub(v3(L052.s6.p)).setY(0).normalize().toArray();
+  H('7', 15, { ...L052.s6, end: '90', t: tx }, { ...in50, end: '90', t: tx.map((c) => -c) }, { sag: [0, 0, 1] }, [0, 0.12, 0.04]);
+  // 3 / 4 : vérin +X, voisin des blocs ; 5 / 6 : vérin −X, le long du bord
+  // avant, à plat sur la marche.
+  const [o50a, o50b] = out50[0].p.x > out50[1].p.x ? out50 : [out50[1], out50[0]];
+  H('3', 20, o50a, cyl.cap1, { sag: [0, 1, 0] }, [0.05, 0.06, 0.12]);
+  H('4', 30, L052.tee, cyl.rod1, { sag: [0, 1, 0] }, [0, 0.1, 0.1]);
+  H('5', 41, L052.elb, cyl['rod-1'], { vias: [[0.12, -0.46, 0.6], [-0.1, -0.46, 0.66]], sag: [0, 0, -1] }, [-0.06, 0.12, 0.14]);
+  H('6', 49, o50b, cyl['cap-1'], { vias: [[0.2, -0.46, 0.64], [-0.1, -0.46, 0.67], [-0.34, -0.46, 0.66]], sag: [0, 0, -1] }, [-0.1, 0.08, 0.18]);
 
   void LCV; void tee;
   return { view: { dir: [-1.0, 0.55, 0.9] } };
