@@ -11,7 +11,8 @@
 //
 // Quantités : avec --qty, chaque ligne doit avoir autant d'objets 3D que sa
 // quantité (ou que extra.qty3d, quand le dessin du catalogue en montre un autre
-// nombre). Avec --max-tris N, un modèle de plus de N triangles est en échec.
+// nombre). Avec --max-tris N, un modèle de plus de N triangles en propre (hors
+// sous-assemblages insérés) est en échec.
 //
 // Usage : node scripts/check-models.mjs [--eq du311] [--qty] [--max-tris 150000] [--from P064] [F05 F08 ...]
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
@@ -60,10 +61,12 @@ if (existsSync(partsDir)) {
 }
 partial = Object.keys(data.assemblies).some((id) => !builders[id]);
 
-function stats(root) {
+function stats(root, own = false) {
   let meshes = 0, tris = 0;
   root.traverse((o) => {
-    if (!o.isMesh) return;
+    // own : sans les sous-assemblages insérés (leurs triangles sont comptés chez eux).
+    if (own && o !== root && o.userData.isAssembly) { o.traverse((c) => { c.userData._skip = true; }); }
+    if (!o.isMesh || (own && o.userData._skip)) return;
     meshes++;
     const g = o.geometry;
     const n = g.index ? g.index.count / 3 : g.attributes.position.count / 3;
@@ -112,7 +115,8 @@ for (const [id, asm] of Object.entries(data.assemblies)) {
   for (const r of rows) {
     // Lignes sans objet propre : sans 3D (clé, option non dessinée), entrée de table
     // des matières, trousse, renvoi à un document ; une ligne répétée désigne la première.
-    if (r.no3d || r.index || /\bKIT\b/i.test(r.desc) || documents.has(r.link)) continue;
+    // Quantité 0 : pièce de rechange ou option non montée sur la machine.
+    if (r.no3d || r.index || r.qty === 0 || /\bKIT\b/i.test(r.desc) || documents.has(r.link)) continue;
     const target = r.mirrorOf || r.same || r.ref;
     if (model.refs.has(target)) continue;
     const m = members(r);
@@ -123,7 +127,8 @@ for (const [id, asm] of Object.entries(data.assemblies)) {
   const qtyOff = [];
   if (checkQty) {
     for (const r of rows) {
-      if (r.no3d || r.index || r.same || r.mirrorOf || r.group || /\bKIT\b/i.test(r.desc) || documents.has(r.link)) continue;
+      // Unité autre que la pièce (longueur de câble en pouces, volume…) : pas un nombre d'objets.
+      if (r.no3d || r.index || r.same || r.mirrorOf || r.group || r.uom || /\bKIT\b/i.test(r.desc) || documents.has(r.link)) continue;
       const want = r.qty3d ?? (/^\d+$/.test(String(r.qty ?? '').trim()) ? +r.qty : null);
       const got = model.refs.get(r.ref)?.length;
       if (want == null || !got || got === want) continue;
@@ -139,7 +144,7 @@ for (const [id, asm] of Object.entries(data.assemblies)) {
   });
   const s = stats(model.root);
   const size = new THREE.Box3().setFromObject(model.root).getSize(new THREE.Vector3());
-  const heavy = s.tris > maxTris;
+  const heavy = maxTris < Infinity && stats(model.root, true).tris > maxTris;
   const ok = !missing.length && !extra.length && !nan.length && !qtyOff.length && !heavy;
   if (!ok) failed = true;
   console.log(`${ok ? '✓' : '✕'} ${id} : ${model.parts.length} objets, ${s.meshes} maillages, ${s.tris.toLocaleString('fr-CA')} triangles, ` +
