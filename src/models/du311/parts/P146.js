@@ -21,7 +21,7 @@ import { u } from './_avance_b.js';
 
 const JW = { half: 6.0, width: 8.75, h: 2.25, bore: 2.53, gap: 0.03, ch: 0.45 };
 const SLOT = { x0: 3.0, w: 3.25, y0: 0.45, y1: 1.8 }; // poche en bout (po)
-const PIN = { x: 4.6, r: 0.53, cb: 0.8, cbd: 0.25 }; // trou de l'axe Ø 1 po, lamage
+const PIN = { x: 3.7, r: 0.53, cb: 0.8, cbd: 0.25 }; // trou de l'axe Ø 1 po (axe du tube P106), lamage
 const WIPER_DROP = 5.5; // dessus du racleur sous le dessous des mâchoires (po), à caler dans P098
 
 export const JAW146 = { half: u(JW.half), width: u(JW.width), h: u(JW.h), pinX: u(PIN.x), wiperTop: -u(WIPER_DROP) };
