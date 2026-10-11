@@ -49,6 +49,15 @@ export const ENG = {
   // −X), filtres suspendus derrière elle ; consoles de filtres du moteur
   // (P260 : huile à x = 0.47, gazole à x = 0.345, sous y = −0.106, z = 0.215).
   filters: { flangeX: 0.023, oilZ: 0.27, fuelZ: 0.4, headTopY: 0.19, axisX: -0.045 },
+  // Refroidisseur d'huile hydraulique (P256 rep. 7) debout devant la
+  // soufflante (qui aspire au travers) : faisceau dans le plan YZ, centre
+  // (x, y, z), largeur w (Z), hauteur h (Y), épaisseur t (X) ; boîtier de
+  // commande du moteur (P260 rep. 6) posé dessus, façade vers +X.
+  cooler: { x: 0.9, y: 0.17, z: 0.05, w: 0.46, h: 0.4, t: 0.06 },
+  panel: { x: 0.9, y: 0.565, z: 0.02 },
+  // Supports de pattes (P256 rep. 17) : dessous à mountY, sur les plots
+  // antivibratoires de P242 (trousses P248).
+  mountY: -0.35,
 };
 
 // ---------------------------------------------------------------- compresseur Le Roi CP48001
