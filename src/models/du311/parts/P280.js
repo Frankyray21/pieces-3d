@@ -42,11 +42,13 @@ export default function P280(api) {
   const onCyl = (i, obj) => at(group(obj), [LR.cyl[i].x, 0, 0], [LR.cyl[i].a, 0, 0]);
   const out = (i, d) => { const u = D(i, [0, 1, 0]); return [u[0] * d, u[1] * d, u[2] * d]; };
 
-  P('6', api.sub('P282'), [0, 0, 0]);
+  P('6', api.sub('P282', { noShipping: true }), [0, 0, 0]);
 
   // ---------------------------------------------------------------- aspiration (+X)
   const XB = XF + 0.045; // face extérieure du bloc 9
   for (let i = 0; i < 3; i++) {
+    // 1 — joint torique haute température entre la bride d'aspiration et le bloc 9.
+    P('1', onCyl(i, at(torus(0.0175, 0.0018, 'rubber', { axis: 'x' }), [XF + 0.0008, YP, 0])), [0.08, ...out(i, 0.12).slice(1)]);
     P('9', onCyl(i, group(
       box(XB - XF, 0.07, 0.078, 'darkSteel', { r: 0.004, pos: [(XF + XB) / 2, YP, 0] }),
       at(cyl(0.017, 0.003, 'blackOxide', { axis: 'x', seg: 20 }), [XB + 0.0012, YP, 0]),
@@ -91,61 +93,66 @@ export default function P280(api) {
     // Raccord ORB dans la bride (11 au centre vers la croix, 7 sur les latéraux).
     const fit = ACC.orient(api, ACC.straight(S, { a: 24, b: i === 1 ? 32 : 24, aType: 'orb' }), [X8, YP, 0], [-1, 0, 0], [0, 1, 0]);
     P(i === 1 ? '11' : '7', onCyl(i, fit), [-0.18, ...out(i, 0.1).slice(1)]);
-    P('1', onCyl(i, at(torus(0.0175, 0.0018, 'rubber', { axis: 'x' }), [X8 - 0.0012, YP, 0])), [-0.15, ...out(i, 0.12).slice(1)]);
     tips.push(T(i, [X8 - fit.children[0].userData.tip, YP, 0]));
   }
 
-  // ---------------------------------------------------------------- croix, sortie
-  const R2 = ACC.pipeOD(32) / 2;
-  const cross = ACC.pipeTee(S, 32, { cross: true });
-  const A = cross.userData.a;
-  const XC = tips[1][0] - A + 0.01; // croix emboîtée sur le raccord 11
-  const C = [XC, YP, 0];
-  P('4', ACC.orient(api, cross, C, [-1, 0, 0], [0, 0, 1]), [-0.3, 0.05, 0]);
-  // 15 et 12 — réductions et coudes des branches ±Z, embouts JIC vers le haut.
-  const elbTips = [];
-  for (const s of [-1, 1]) {
-    const pz = s * A;
-    P('15', ACC.orient(api, ACC.hexBushing(S, 32, 24), [XC, YP, pz], [0, 0, s], [1, 0, 0]), [-0.3, 0.05, s * 0.12]);
-    const e = ACC.elbow(S, { a: 24, b: 24 });
-    P('12', ACC.orient(api, e, [XC, YP, pz + s * 0.012], [0, 0, s], [0, 1, 0]), [-0.3, 0.12, s * 0.2]);
-    elbTips.push([XC, YP + e.userData.out[0], pz + s * (0.012 + e.userData.out[1])]);
-  }
-  // 18, 17, 14, 2, 3 — mamelon, té et thermomètre.
-  const L18 = 0.075;
-  P('18', ACC.orient(api, ACC.nipple(S, 32, L18, 'darkSteel', { sch: 80 }), [XC - A + 0.018, YP, 0], [-1, 0, 0], [0, 1, 0]), [-0.4, 0.05, 0]);
-  const tee = ACC.pipeTee(S, 32);
-  const XT = XC - A - L18 + 0.036 - tee.userData.a;
-  P('17', ACC.orient(api, tee, [XT, YP, 0], [-1, 0, 0], [0, 1, 0]), [-0.5, 0.05, 0]);
-  const yB = YP + tee.userData.a;
-  P('14', at(ACC.hexBushing(S, 32, 8), [XT, yB, 0]), [-0.5, 0.15, 0]);
-  P('2', group(
-    lathe([[0, -0.064], [0.0055, -0.064], [0.0065, -0.06], [0.0065, -0.01], [0.009, -0.006], [0.009, 0], [0.012, 0], [0.012, 0.012], [0.006, 0.016], [0, 0.016]], 'steel', { seg: 16, pos: [XT, yB + 0.011, 0] }),
-  ), [-0.5, 0.22, 0]);
-  P('3', group(
-    at(cyl(0.004, 0.03, 'steel', { seg: 10 }), [XT, yB + 0.042, 0]),
-    at(gauge(0.032, { axis: '-x' }), [XT - 0.0, yB + 0.09, 0]),
-  ), [-0.5, 0.3, 0]);
-  P('18', ACC.orient(api, ACC.nipple(S, 32, L18, 'darkSteel', { sch: 80 }), [XT - tee.userData.a + 0.018, YP, 0], [-1, 0, 0], [0, 1, 0]), [-0.6, 0.05, 0]);
-  // 16, 15, 13 — coude 90° vers le bas, réduction, adaptateur de sortie -32.
+  // ---------------------------------------------------------------- refoulement central, croix, sortie
+  // Page 280 : raccord 11 → réduction 15 → coude 16 qui descend → mamelon 18
+  // vertical → croix 4 (bras ±Y, ±Z) ; bras bas et −Z : réductions 15 et
+  // coudes 12 (vers −X) qui reçoivent les flexibles 19 ; bras +Z : mamelon
+  // 18, té 17 dans l'axe, réduction 14 + doigt de gant 2 + thermomètre 3 en
+  // bout, adaptateur de sortie 13 sur la branche du té, vers −X.
+  const E3 = 0.012; // engagement d'un filet NPT
   const el16 = ACC.pipeElbow(S, 32, { forged: true });
-  const XE = XT - tee.userData.a - L18 + 0.036 - el16.userData.a;
-  P('16', ACC.orient(api, el16, [XE, YP, 0], [1, 0, 0], [0, -1, 0]), [-0.7, 0, 0]);
-  const yO = YP - el16.userData.a;
-  P('15', ACC.orient(api, ACC.hexBushing(S, 32, 24), [XE, yO, 0], [0, -1, 0], [1, 0, 0]), [-0.7, -0.08, 0]);
-  P('13', ACC.orient(api, ACC.straight(S, { a: 24, b: 32 }), [XE, yO - 0.012, 0], [0, -1, 0], [1, 0, 0]), [-0.7, -0.15, 0]);
+  const A16 = el16.userData.a;
+  const XC = tips[1][0] - 0.02 - A16; // axe vertical de la descente
+  P('15', ACC.orient(api, ACC.hexBushing(S, 32, 24), [tips[1][0] - 0.02 + 0.006, YP, 0], [1, 0, 0], [0, 1, 0]), [-0.25, 0.08, 0]);
+  P('16', ACC.orient(api, el16, [XC, YP, 0], [-1, 0, 0], [0, -1, 0]), [-0.3, 0.05, 0]);
+  const L18 = 0.075;
+  const y18 = YP - A16 + E3;
+  P('18', ACC.orient(api, ACC.nipple(S, 32, L18, 'darkSteel', { sch: 80 }), [XC, y18, 0], [0, -1, 0], [1, 0, 0]), [-0.3, -0.02, 0]);
+  const cross = ACC.pipeTee(S, 32, { cross: true });
+  const A4 = cross.userData.a;
+  const YC = y18 - L18 + E3 - A4;
+  P('4', ACC.orient(api, cross, [XC, YC, 0], [0, 1, 0], [0, 0, 1]), [-0.3, -0.1, 0]);
+  const elbTips = [];
+  for (const d of [[0, -1, 0], [0, 0, -1]]) {
+    const pf = [XC + d[0] * A4, YC + d[1] * A4, d[2] * A4];
+    P('15', ACC.orient(api, ACC.hexBushing(S, 32, 24), pf, d, [1, 0, 0]), [-0.3, -0.1 + d[1] * 0.1, d[2] * 0.12]);
+    const e = ACC.elbow(S, { a: 24, b: 24 });
+    const pe = [pf[0], pf[1] + d[1] * E3, pf[2] + d[2] * E3];
+    P('12', ACC.orient(api, e, pe, d, [-1, 0, 0]), [-0.35, -0.1 + d[1] * 0.18, d[2] * 0.2]);
+    const [ox, oy] = e.userData.out;
+    elbTips.push([pe[0] - ox, pe[1] + d[1] * oy, pe[2] + d[2] * oy]);
+  }
+  const z18 = A4 - E3;
+  P('18', ACC.orient(api, ACC.nipple(S, 32, L18, 'darkSteel', { sch: 80 }), [XC, YC, z18], [0, 0, 1], [1, 0, 0]), [-0.3, -0.1, 0.12]);
+  const tee = ACC.pipeTee(S, 32);
+  const A17 = tee.userData.a;
+  const ZT = z18 + L18 - E3 + A17;
+  P('17', ACC.orient(api, tee, [XC, YC, ZT], [0, 0, 1], [-1, 0, 0]), [-0.3, -0.1, 0.2]);
+  const zB = ZT + A17;
+  P('14', ACC.orient(api, ACC.hexBushing(S, 32, 8), [XC, YC, zB], [0, 0, 1], [1, 0, 0]), [-0.3, -0.1, 0.28]);
+  P('2', ACC.orient(api, lathe([[0, -0.064], [0.0055, -0.064], [0.0065, -0.06], [0.0065, -0.01], [0.009, -0.006], [0.009, 0], [0.012, 0], [0.012, 0.012], [0.006, 0.016], [0, 0.016]], 'steel', { seg: 16 }), [XC, YC, zB + 0.011], [0, 0, 1], [1, 0, 0]), [-0.3, -0.1, 0.36]);
+  P('3', group(
+    at(cyl(0.004, 0.03, 'steel', { axis: 'z', seg: 10 }), [XC, YC, zB + 0.04]),
+    at(gauge(0.032, { axis: 'z' }), [XC, YC + 0.032, zB + 0.06]),
+  ), [-0.3, -0.1, 0.45]);
+  P('13', ACC.orient(api, ACC.straight(S, { a: 32, b: 32 }), [XC - A17, YC, ZT], [-1, 0, 0], [0, 1, 0]), [-0.45, -0.1, 0.2]);
 
   // ---------------------------------------------------------------- 19 — flexibles JIC 34 po
-  // Des raccords 7 des culasses latérales aux coudes 12 de la croix, en
-  // boucle au-dessus (vue de face de la page 280).
-  [[0, 0], [2, 1]].forEach(([i, k]) => {
+  // Boucles en U à peu près horizontales, à la hauteur des brides : des
+  // raccords 7 des culasses latérales vers −X, au-delà de la croix, puis
+  // retour sur les coudes 12 (bras −Z de la croix pour le cylindre −60°,
+  // bras bas pour le cylindre +60°).
+  [[0, 1], [2, 0]].forEach(([i, k]) => {
     const a = tips[i], b = elbTips[k];
-    const s = k === 0 ? -1 : 1;
+    const xm = XC - 0.25;
     const pts = [
-      a, [a[0] - 0.05, a[1] + 0.01, a[2]], [a[0] - 0.12, a[1] + 0.12, a[2] + s * 0.02],
-      [b[0] - 0.04, b[1] + 0.2, b[2] + s * 0.05], [b[0], b[1] + 0.09, b[2]], b,
+      a, [a[0] - 0.06, a[1], a[2]], [xm, (a[1] + b[1]) / 2 + 0.02, a[2] * 0.8],
+      [xm - 0.04, (a[1] + b[1]) / 2, (a[2] + b[2]) / 2], [b[0] - 0.12, b[1], b[2]], [b[0] - 0.05, b[1], b[2]], b,
     ];
-    P('19', hose(pts, 0.019), [-0.25, 0.3, s * 0.15]);
+    P('19', hose(pts, 0.019), [-0.3, 0.05, (i === 0 ? -1 : 1) * 0.2]);
   });
 
   void plate; void merged;

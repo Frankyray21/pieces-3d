@@ -12,7 +12,7 @@
 // son centre pour passer devant la pièce d'origine ; en vue éclatée, ces
 // pièces sortent du bloc dans l'axe de leur montage. Correspondances :
 //   2 pistons ← P304 rep. 1 (×3) ; 7 carter ← P296 rep. 1 ; 8 bague
-//   d'étanchéité ← P296 rep. 2 ; 9 poulie ← P298 rep. 8 ; 12 joints de
+//   d'étanchéité ← P296 rep. 2 ; 9 poulie ← P298 rep. 8 (seule poulie dessinée, sans grossissement : P288 est nu) ; 12 joints de
 //   cylindre ← P300 rep. 3 ; 13 ← P290 rep. 18 ; 14 ← P290 rep. 19 ; 15 ←
 //   P290 rep. 16 et 32 ; 16 ← P290 rep. 35 (six à la liste pour un par
 //   culasse : le second jeu double le premier) ; 17 ← P290 rep. 36 ; 18 ←
@@ -28,7 +28,7 @@
 // LR.footY = −0.165. Encombrement ≈ 0.48 (X) × 0.8 (Y) × 0.85 (Z) m.
 import { LR, IN, MM } from './_moteur_surpresseur.js';
 
-export default function P282(api) {
+export default function P282(api, opts = {}) {
   const { THREE, S } = api;
   const { box, cyl, lathe, bolt, washer, merged, at, group } = S;
   const P = (ref, obj, e) => api.part(ref, obj, e);
@@ -84,7 +84,8 @@ export default function P282(api) {
   P('7', pick('P296', '1')[0], [0, -0.25, 0]);
   P('8', pick('P296', '2')[0], [0.3, 0, 0]);
   P('32', pick('P296', '26')[0], [0.26, 0, 0]);
-  P('9', pick('P298', '8', { crank })[0], [0.42, 0, 0]);
+  // Poulie : P288 est nu (sans poulie) ; pièce réelle, sans grossissement.
+  { const p = pick('P298', '8', { crank })[0]; p.children[0].scale.setScalar(1); P('9', p, [0.42, 0, 0]); }
   [['4', '19', [0.3, 0.12, 0]], ['5', '20', [0.48, 0, 0]], ['6', '21', [0.52, 0, 0]], ['7', '22', [0.56, 0, 0]]]
     .forEach(([src, ref, e]) => P(ref, pick('P298', src, { crank })[0], e));
   // 26-28 — cales de précharge : trois de chaque épaisseur, empilées contre
@@ -131,7 +132,8 @@ export default function P282(api) {
     const bolts = [-1, 1].map((s) => at(bolt(0.008, 0.016, 'zinc', { axis: sx > 0 ? 'x' : '-x' }), [sx * 0.077, 0.305, s * 0.025]));
     return group(m, ...bolts);
   };
-  for (let i = 0; i < 3; i++) {
+  // Option { noShipping } (P280) : plaques retirées au montage de la tuyauterie.
+  for (let i = 0; i < 3 && !opts.noShipping; i++) {
     P('39', at(group(shipPlate(-1)), cylX(i).pos, cylX(i).rot), [-0.12, ...along(i, 0.3).slice(1)]);
     P('40', at(group(shipPlate(1)), cylX(i).pos, cylX(i).rot), [0.12, ...along(i, 0.3).slice(1)]);
   }
