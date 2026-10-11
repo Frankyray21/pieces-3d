@@ -62,7 +62,6 @@ export function buildFromGltf(id, scene) {
     if (!m) return;
     node.userData.partRef = m[1];
     node.userData.explode = null;
-    node.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
     root.add(node);
     parts.push(node);
   });

@@ -16,50 +16,84 @@ const sameMatrix = (a, b) => a.elements.every((x, i) => Math.abs(x - b.elements[
 const AXES = { x: new THREE.Vector3(1, 0, 0), y: new THREE.Vector3(0, 1, 0), z: new THREE.Vector3(0, 0, 1) };
 // Un sous-groupe éclaté prend plus de place : on l'écarte d'autant de son parent.
 const SPREAD = 0.9;
-// Lumières fixes, orientées d'après la vue par défaut du modèle : clé haute
-// à gauche de l'œil (porte l'ombre), débouchage bas à droite. [azimut, élévation] en degrés.
-const KEY_AZEL = [40, 57];
-const FILL_AZEL = [-45, 24];
+// Lumières (aucune ombre portée) orientées d'après la caméra, comme une table
+// tournante : clé haute à gauche de l'œil, débouchage bas à droite.
+// [azimut, élévation] en degrés, azimut 0 = côté caméra.
+const KEY_AZEL = [35, 60];
+// Clé à KEY_DIST rayons du modèle, éclairement KEY_LUX au centre.
+const KEY_DIST = 4;
+const KEY_LUX = 3.6;
+const FILL_AZEL = [-55, 10];
 const azEl = (az, el) => {
   const a = THREE.MathUtils.degToRad(az), e = THREE.MathUtils.degToRad(el);
   return new THREE.Vector3(Math.cos(e) * Math.cos(a), Math.sin(e), Math.cos(e) * Math.sin(a));
 };
 
+// Rendu de tons : « neutral » (Khronos PBR Neutral, conçu pour la photo
+// produit) garde la teinte des peintures : rouge MRI franc, jaune des
+// chenilles, bleu moteur, comme la photo F01 et les dessins (ACES virait le
+// rouge au cramoisi et le jaune à la moutarde). « aces » et « agx » en option.
+const TONE = { neutral: [THREE.NeutralToneMapping, 'NeutralToneMapping'], agx: [THREE.AgXToneMapping, 'AgXToneMapping'], aces: [THREE.ACESFilmicToneMapping, 'ACESFilmicToneMapping'] };
+
+// Studio : luminance du dôme (zénith, horizon, sol), courbe du dégradé
+// zénith-horizon et boîtes à lumière [largeur, hauteur, intensité, azimut,
+// élévation, teinte]. Fond sombre et grandes boîtes lumineuses, comme un
+// studio photo : volumes marqués, vernis saturés, reflets nets. Les faces
+// verticales vues d'en haut reflètent le bas du studio : deux réflecteurs au
+// sol, sur les côtés, y dessinent un reflet (peintures noires lisibles).
+const STUDIO = {
+  dome: [0.32, 0.06, 0.16],
+  curve: 1.6,
+  boxes: [
+    [16, 10, 2.0, 0, 88], // zénithale
+    [7, 9, 8, KEY_AZEL[0], 42, [1, 0.97, 0.93]], // clé, haute à gauche de l'œil
+    [6, 6, 0.9, FILL_AZEL[0], 12, [0.93, 0.96, 1]], // débouchage
+    [12, 4, 0.25, 180, 30], // fond haut : léger reflet sur les dessus vernis
+    [2.6, 15, 4.5, 150, 10], // contre-jour gauche
+    [2.6, 15, 3.8, -145, 10], // contre-jour droite
+    [10, 4, 1.6, 85, -28], // réflecteur au sol, côté clé
+    [10, 4, 1.0, -85, -28], // réflecteur au sol, côté débouchage
+    [16, 2.2, 0.8, 0, -3], // bande basse frontale (renvoi du sol)
+  ],
+};
+
 /**
- * Studio photo pour les reflets : dôme dégradé (plafond clair, sol sombre)
- * et boîtes à lumière. Donne des reflets nets sur le chrome et le vernis.
+ * Studio photo (éclairage d'ambiance et reflets), sans ombre : dôme sombre
+ * (zénith gris, horizon sombre, sol gris : ligne d'horizon dans les reflets
+ * du vernis, renvoi de lumière sous les pièces), boîtes à lumière. Construit
+ * pour une vue depuis l'azimut 0 ; la scène le fait tourner avec la caméra.
  */
-function studioEnvironment(renderer) {
+function studioEnvironment(renderer, cfg = STUDIO) {
   const scene = new THREE.Scene();
   const R = 30;
   const dome = new THREE.SphereGeometry(R, 48, 24);
-  const top = new THREE.Color(1.0, 1.0, 1.02), hor = new THREE.Color(0.74, 0.76, 0.79), low = new THREE.Color(0.46, 0.46, 0.47);
+  const [kt, kh, kl] = cfg.dome;
+  const top = new THREE.Color(kt, kt * 1.02, kt * 1.06), hor = new THREE.Color(kh, kh, kh * 1.02), low = new THREE.Color(kl * 1.04, kl, kl * 0.96);
   const col = [];
   const c = new THREE.Color();
   const p = dome.attributes.position;
   for (let i = 0; i < p.count; i++) {
     const y = p.getY(i) / R;
-    if (y >= 0) c.copy(hor).lerp(top, Math.pow(y, 0.6));
-    else c.copy(hor).lerp(low, Math.pow(-y, 0.4));
+    if (y >= 0) c.copy(hor).lerp(top, Math.pow(y, cfg.curve ?? 0.7));
+    else c.copy(hor).lerp(low, Math.min(1, Math.pow(-y * 2.5, 0.8)));
     col.push(c.r, c.g, c.b);
   }
   dome.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
   scene.add(new THREE.Mesh(dome, new THREE.MeshBasicMaterial({ vertexColors: true, side: THREE.BackSide })));
-  const panel = (w, h, k, pos) => {
-    const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: new THREE.Color(k, k, k), side: THREE.DoubleSide }));
-    m.position.set(...pos);
-    m.lookAt(0, 0, 0);
-    scene.add(m);
-  };
-  panel(18, 12, 1.9, [0, 24, 2]); // zénithal
-  panel(6, 16, 4.0, [-14, 8, 18]); // clé, avant-gauche
-  panel(4, 16, 2.4, [22, 6, -6]); // contre-jour droite
-  panel(16, 3, 1.5, [10, 2.5, 20]); // bande basse frontale
-  panel(5, 14, 2.2, [16, 7, 16]); // bande latérale droite
-  panel(14, 4, 1.2, [-12, 1.5, -16]); // réflecteur bas arrière
-  panel(20, 20, 0.9, [0, -22, 0]); // sol clair (réflecteur) : dessous des pièces lisible
+  // Boîte à lumière : panneau lumineux, bord adouci par un halo (diffuseur).
+  for (const [w, h, k, az, el, tint = [1, 1, 1]] of cfg.boxes) {
+    const g = new THREE.Group();
+    const col2 = new THREE.Color(k * tint[0], k * tint[1], k * tint[2]);
+    g.add(new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: col2, side: THREE.DoubleSide })));
+    const halo = new THREE.Mesh(new THREE.PlaneGeometry(w * 1.2, h * 1.12), new THREE.MeshBasicMaterial({ color: col2.clone().multiplyScalar(0.3), side: THREE.DoubleSide }));
+    halo.position.z = -0.05;
+    g.add(halo);
+    g.position.copy(azEl(az, el).multiplyScalar(19));
+    g.lookAt(0, 0, 0);
+    scene.add(g);
+  }
   const pmrem = new THREE.PMREMGenerator(renderer);
-  const tex = pmrem.fromScene(scene, 0.02).texture;
+  const tex = pmrem.fromScene(scene, 0.015).texture;
   pmrem.dispose();
   scene.traverse((o) => { if (o.isMesh) { o.geometry.dispose(); o.material.dispose(); } });
   return tex;
@@ -106,17 +140,18 @@ function gridMaterial() {
   });
 }
 
-// Composition finale : l'occlusion ambiante assombrit les pièces et, sur le
-// sol, épaissit l'alpha (contact sur le fond CSS transparent) ; les silhouettes
-// (sauts de profondeur) sont tracées en noir comme sur le dessin ; puis rendu
-// de tons et sRGB. Les couleurs de la cible sont prémultipliées.
+// Composition finale : occlusion des creux fins (quelques centimètres,
+// discrète, jamais une ombre ; rien sur le sol ni le fond), silhouettes en
+// option (contours façon dessin), rendu de tons, sRGB et tramage léger contre
+// les bandes de dégradé. Les couleurs de la cible sont prémultipliées. La
+// profondeur est recopiée dans le canevas pour les surimpressions (plan de coupe).
 const COMPOSITE = {
+  defines: { TONE_FN: 'NeutralToneMapping' },
   uniforms: {
     tColor: { value: null },
     tAO: { value: null },
     tDepth: { value: null },
     aoStrength: { value: 1 },
-    groundAO: { value: 0.6 },
     edgeStrength: { value: 0.85 },
     edgeColor: { value: new THREE.Color(0x16181b) },
     texel: { value: new THREE.Vector2(1, 1) },
@@ -128,20 +163,21 @@ const COMPOSITE = {
     precision highp float;
     uniform mat4 modelViewMatrix;
     uniform mat4 projectionMatrix;
-    attribute vec3 position;
-    attribute vec2 uv;
-    varying vec2 vUv;
+    in vec3 position;
+    in vec2 uv;
+    out vec2 vUv;
     void main() {
       vUv = uv;
       gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
     }`,
   fragmentShader: /* glsl */`
     precision highp float;
+    #define texture2D texture
+    layout(location = 0) out highp vec4 outColor;
     uniform sampler2D tColor;
     uniform sampler2D tAO;
     uniform sampler2D tDepth;
     uniform float aoStrength;
-    uniform float groundAO;
     uniform float edgeStrength;
     uniform vec3 edgeColor;
     uniform vec2 texel;
@@ -149,7 +185,7 @@ const COMPOSITE = {
     uniform float cameraFar;
     #include <tonemapping_pars_fragment>
     #include <colorspace_pars_fragment>
-    varying vec2 vUv;
+    in vec2 vUv;
     // Inverse de la distance de vue : affine à l'écran sur une face plane.
     float invZ(float d) {
       return (cameraFar - (cameraFar - cameraNear) * d) / (cameraNear * cameraFar);
@@ -167,15 +203,19 @@ const COMPOSITE = {
     void main() {
       vec4 c = texture2D(tColor, vUv);
       float depth = texture2D(tDepth, vUv).x;
-      float ao = depth < 1.0 ? mix(1.0, texture2D(tAO, vUv).r, aoStrength) : 1.0;
+      // Occlusion seulement sur les pièces opaques, plafonnée : un simple
+      // ombrage de creux, jamais une tache sombre.
+      float ao = depth < 1.0 && c.a > 0.9 ? mix(1.0, max(texture2D(tAO, vUv).r, 0.55), aoStrength) : 1.0;
       vec3 rgb = c.a > 0.0001 ? c.rgb / c.a : vec3(0.0);
-      rgb = NeutralToneMapping(rgb * ao);
+      rgb = TONE_FN(rgb * ao);
       if (edgeStrength > 0.0 && depth < 1.0 && c.a > 0.9) {
         rgb = mix(rgb, edgeColor, silhouette(depth) * edgeStrength);
       }
       vec4 o = sRGBTransferOETF(vec4(rgb, 1.0));
-      float a = clamp(c.a + (1.0 - c.a) * (1.0 - ao) * groundAO, 0.0, 1.0);
-      gl_FragColor = vec4(o.rgb * c.a, a);
+      // Tramage ±0,5/255 (bruit de hachage) : pas de bandes sur les vernis.
+      float n = fract(52.9829189 * fract(dot(gl_FragCoord.xy, vec2(0.06711056, 0.00583715))));
+      outColor = vec4((o.rgb + (n - 0.5) / 255.0) * c.a, c.a);
+      gl_FragDepth = depth;
     }`,
 };
 
@@ -188,17 +228,21 @@ const COMPOSITE = {
  * petit ensemble. Une pièce est désignée par son chemin de repères depuis la
  * racine, ex. ['F14', '1', '4'] = vue générale › mât › tête de rotation › moteur.
  *
- * Rendu « produit » : studio (clé / débouchage / contre-jour + reflets),
- * ombres douces calées sur le modèle, occlusion ambiante (GTAO) avec
- * antialiasing MSAA, contours façon dessin technique. L'image n'est
- * recalculée que lorsque quelque chose change ; la qualité baisse d'elle-même
- * sur petit écran ou machine lente (AO coupée en mouvement, puis résolution).
+ * Rendu photographique sans aucune ombre : studio en éclairage d'ambiance
+ * (IBL, reflets nets sur chrome et vernis) + clé / débouchage / contre-jour
+ * sans ombre portée, matériaux physiques à relief de surface, occlusion
+ * limitée aux creux fins, antialiasing MSAA, contours façon dessin en option.
+ * L'image n'est recalculée que lorsque quelque chose change ; la qualité
+ * baisse d'elle-même sur petit écran ou machine lente (occlusion coupée en
+ * mouvement, puis résolution, puis rendu direct).
  */
 export class Viewer {
-  constructor(container, { onHover, onSelect } = {}) {
+  constructor(container, { onHover, onSelect, insets } = {}) {
     this.container = container;
     this.onHover = onHover || (() => {});
     this.onSelect = onSelect || (() => {});
+    // Marges (px) couvertes par l'interface posée sur la vue : { top, bottom, left, right }
+    this.insets = insets || null;
     this.model = null;
     this.nodes = [];
     this.hoverKey = null;
@@ -207,22 +251,19 @@ export class Viewer {
     this.selectedObjs = [];
     this.isolate = false;
     this.labelsVisible = true;
-    this.edgesVisible = false;
+    this.edgesVisible = false; // rendu réaliste par défaut ; contours en option
     this.labels = [];
     this.tweens = [];
     this.section = { on: false, axis: 'z', pos: 0.5, flip: false, scope: 'all' };
     this._edgeQueue = [];
     this._dirty = true;
-    this._shadowDirty = true;
     this._lowFrame = false;
     this._lastCam = new THREE.Matrix4();
     this._lastProj = new THREE.Matrix4();
-    this._perf = { last: 0, dts: [] };
+    this._perf = { last: 0, dts: [], sum: 0 };
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true, powerPreference: 'high-performance' });
-    renderer.toneMapping = THREE.NeutralToneMapping;
-    renderer.toneMappingExposure = 1.0;
-    renderer.shadowMap.enabled = false; // aucune ombre portée dans la 3D
+    renderer.shadowMap.enabled = false; // aucune ombre dans la 3D
     renderer.localClippingEnabled = true;
     container.appendChild(renderer.domElement);
     this.renderer = renderer;
@@ -235,46 +276,39 @@ export class Viewer {
     this.labelRenderer = labels;
 
     const scene = new THREE.Scene();
-    scene.environment = studioEnvironment(renderer);
-    scene.environmentIntensity = 0.8; // reflets du studio : rendu photo, sans zones noires
     this.scene = scene;
+    this.setStudio(STUDIO, 0.55);
 
-    // Éclairage studio : ciel / sol, clé (ombre), débouchage, contre-jour lié à la caméra.
-    this.hemi = new THREE.HemisphereLight(0xf2f5fa, 0x8d8983, 0.3);
+    // Éclairage studio sans ombre : ciel / sol léger, clé chaude, débouchage
+    // froid, renvoi du sol par-dessous (aucune face noire), contre-jour lié à
+    // la caméra (détache les silhouettes du fond).
+    this.hemi = new THREE.HemisphereLight(0xeef2f8, 0x8a847c, 0.15);
+    // Clé : source à distance finie (décroissance douce), comme une boîte à
+    // lumière de studio : léger dégradé de lumière sur les grands panneaux.
+    this.key = new THREE.PointLight(0xfff2e4, 3.6, 0, 1);
+    this.fill = new THREE.DirectionalLight(0xdfe8ff, 0.4);
+    this.bounce = new THREE.DirectionalLight(0xf2ece4, 0.3);
+    this.bounce.position.set(0.2, -1, 0.3);
+    this.rim = new THREE.DirectionalLight(0xffffff, 0.8);
     scene.add(this.hemi);
-    const key = new THREE.DirectionalLight(0xfff7ee, 1.55);
-    key.castShadow = false;
-    key.shadow.mapSize.set(2048, 2048);
-    key.shadow.bias = -0.0003;
-    key.shadow.radius = 6;
-    key.shadow.blurSamples = 12;
-    scene.add(key, key.target);
-    this.sun = key;
-    const fill = new THREE.DirectionalLight(0xe6eeff, 0.5);
-    scene.add(fill, fill.target);
-    this.fill = fill;
-    const rim = new THREE.DirectionalLight(0xffffff, 0.45);
-    scene.add(rim, rim.target);
-    this.rim = rim;
+    scene.add(this.key);
+    for (const l of [this.fill, this.bounce, this.rim]) scene.add(l, l.target);
+    this.setLook({ tone: 'neutral', exposure: 1 }); // exposition ajustée au thème
 
-    const ground = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.ShadowMaterial({ opacity: 0.2 }));
-    ground.rotation.x = -Math.PI / 2;
-    ground.visible = false; // pas d'ombre au sol
-    scene.add(ground);
-    this.ground = ground;
     this.grid = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), gridMaterial());
     this.grid.rotation.x = -Math.PI / 2;
     this.grid.renderOrder = -1;
     scene.add(this.grid);
 
-    // Repère visuel du plan de coupe (cadre orange translucide).
-    const planeMat = new THREE.MeshBasicMaterial({ color: 0xff7a1a, transparent: true, opacity: 0.07, side: THREE.DoubleSide, depthWrite: false });
+    // Repère visuel du plan de coupe (cadre orange translucide), dessiné par-dessus
+    // l'image finale : teinte légère et égale, même sur les pièces sombres.
+    const planeMat = new THREE.MeshBasicMaterial({ color: 0xff7a1a, transparent: true, opacity: 0.07, side: THREE.DoubleSide, depthWrite: false, toneMapped: false });
     this.planeHelper = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), planeMat);
-    const edge = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.PlaneGeometry(1, 1)), new THREE.LineBasicMaterial({ color: 0xff7a1a, transparent: true, opacity: 0.8, depthWrite: false }));
+    const edge = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.PlaneGeometry(1, 1)), new THREE.LineBasicMaterial({ color: 0xff7a1a, transparent: true, opacity: 0.8, depthWrite: false, toneMapped: false }));
     this.planeHelper.add(edge);
     this.planeHelper.visible = false;
-    this.planeHelper.renderOrder = 10;
-    scene.add(this.planeHelper);
+    this.overlay = new THREE.Scene();
+    this.overlay.add(this.planeHelper);
 
     const camera = new THREE.PerspectiveCamera(38, 1, 0.01, 500);
     camera.position.set(6, 4, 6);
@@ -345,19 +379,42 @@ export class Viewer {
         p.position.copy(p.userData.basePos).addScaledVector(p.userData.explode, t * k);
       }
     }
-    this.invalidate(true);
+    this.invalidate();
   }
 
-  /** Demande un nouveau rendu (scene = true : la géométrie a bougé, ombres à refaire). */
-  invalidate(scene = false) {
+  /** Demande un nouveau rendu. */
+  invalidate() {
     this._dirty = true;
-    if (scene) this._shadowDirty = true;
+  }
+
+  /**
+   * Rendu de tons et exposition. tone : 'neutral' | 'agx' | 'aces'.
+   * Appliqué au rendu direct comme à la composition finale.
+   */
+  setLook({ tone = this._tone || 'neutral', exposure = this.renderer.toneMappingExposure } = {}) {
+    const [tm, fn] = TONE[tone] || TONE.neutral;
+    this._tone = tone;
+    this.renderer.toneMapping = tm;
+    this.renderer.toneMappingExposure = exposure;
+    const m = this.post?.quad.material;
+    if (m && m.defines.TONE_FN !== fn) {
+      m.defines.TONE_FN = fn;
+      m.needsUpdate = true;
+    }
+    this.invalidate();
+  }
+
+  /** Studio d'éclairage d'ambiance (reflets) : configuration et intensité. */
+  setStudio(cfg = STUDIO, intensity = this.scene.environmentIntensity) {
+    this.scene.environment?.dispose();
+    this.scene.environment = studioEnvironment(this.renderer, cfg);
+    this.scene.environmentIntensity = intensity;
+    this.invalidate();
   }
 
   /** Exécute fn avec chaque groupe à son état final (fin d'animation). */
   _atTargets(fn, override = null) {
     const keep = this.nodes.map((n) => n.userData.explodeT);
-    const shadowDirty = this._shadowDirty; // pose rétablie à l'identique : ombres inchangées
     this.nodes.forEach((n) => { n.userData.explodeT = override ?? n.userData.targetT; });
     this._applyAll();
     this.model.root.updateMatrixWorld(true);
@@ -365,7 +422,6 @@ export class Viewer {
     this.nodes.forEach((n, i) => { n.userData.explodeT = keep[i]; });
     this._applyAll();
     this.model.root.updateMatrixWorld(true);
-    this._shadowDirty = shadowDirty;
     return out;
   }
 
@@ -376,8 +432,6 @@ export class Viewer {
     const size = all.getSize(new THREE.Vector3());
     const c = all.getCenter(new THREE.Vector3());
     const span = Math.max(size.x, size.z, size.y) * 2.2;
-    this.ground.position.set(c.x, all.min.y - 0.002, c.z);
-    this.ground.scale.set(span, span, 1);
     // Grille : pas adapté à la taille, fondu au-delà du modèle.
     const step = span > 12 ? 1 : span > 4 ? 0.5 : span > 1.2 ? 0.1 : 0.05;
     this.grid.position.set(c.x, all.min.y - 0.001, c.z);
@@ -386,60 +440,31 @@ export class Viewer {
     gu.uStep.value = step;
     gu.uFade.value = span * 0.75;
     gu.uCenter.value.set(c.x, c.z);
-    const asmBox = new THREE.Box3().setFromPoints(assembled);
-    this._modelSize = asmBox.getSize(new THREE.Vector3()).length();
+    // Clé ponctuelle à distance fixe du centre du modèle ; le studio est
+    // ensuite orienté d'après la caméra à chaque image (_placeLights).
+    const rad = Math.max(0.3, size.length() / 2);
+    this._rig = { c: c.clone(), rad };
+    this.key.intensity = KEY_LUX * Math.pow(rad * KEY_DIST, this.key.decay);
     const vd = this.model.view.dir || [1, 0.65, 1.1];
-    const viewAz = THREE.MathUtils.radToDeg(Math.atan2(vd[2], vd[0]));
-    this._keyDir = azEl(viewAz + KEY_AZEL[0], KEY_AZEL[1]);
-    this._fillDir = azEl(viewAz + FILL_AZEL[0], FILL_AZEL[1]);
+    this._placeLights(THREE.MathUtils.radToDeg(Math.atan2(vd[2], vd[0])));
 
     this.camera.near = Math.max(0.005, size.length() / 600);
     this.camera.far = size.length() * 30 + 10;
     this.camera.updateProjectionMatrix();
-    this.invalidate(true);
+    this.invalidate();
   }
 
   /**
-   * Lumières fixes autour du modèle ; caméra d'ombre ajustée au plus près de
-   * la pose actuelle (pièces + leur ombre portée au sol) : ombres fines.
+   * Oriente le studio (boîtes à lumière, clé, débouchage) d'après l'azimut
+   * de la caméra (degrés), comme une table tournante dans un studio fixe :
+   * la face regardée est toujours éclairée, aucune face ne tombe dans le noir.
    */
-  _fitShadow() {
-    if (!this.model) return;
-    const box = new THREE.Box3().setFromPoints(this._meshCorners());
-    if (box.isEmpty()) return;
-    const floorY = this.ground.position.y;
-    const c = box.getCenter(new THREE.Vector3());
-    const r = box.getSize(new THREE.Vector3()).length() * 0.5 + 0.1;
-    const key = this._keyDir, fill = this._fillDir;
-    this.sun.position.copy(c).addScaledVector(key, r * 3);
-    this.sun.target.position.copy(c);
-    this.fill.position.copy(c).addScaledVector(fill, r * 3);
-    this.fill.target.position.copy(c);
-    this.sun.updateMatrixWorld();
-    this.sun.target.updateMatrixWorld();
-    this.fill.target.updateMatrixWorld();
-    const cam = this.sun.shadow.camera;
-    cam.position.copy(this.sun.position);
-    cam.lookAt(c);
-    cam.updateMatrixWorld();
-    const toLight = cam.matrixWorld.clone().invert();
-    const lb = new THREE.Box3();
-    const v = new THREE.Vector3();
-    for (const x of [box.min.x, box.max.x]) for (const y of [box.min.y, box.max.y]) for (const z of [box.min.z, box.max.z]) {
-      v.set(x, y, z);
-      lb.expandByPoint(v.clone().applyMatrix4(toLight));
-      // Projection de ce coin sur le sol le long de la lumière.
-      v.addScaledVector(key, -(y - floorY) / key.y);
-      lb.expandByPoint(v.applyMatrix4(toLight));
-    }
-    const m = Math.max(lb.max.x - lb.min.x, lb.max.y - lb.min.y) * 0.04;
-    cam.left = lb.min.x - m; cam.right = lb.max.x + m;
-    cam.bottom = lb.min.y - m; cam.top = lb.max.y + m;
-    cam.near = Math.max(0.01, -lb.max.z - m);
-    cam.far = -lb.min.z + m;
-    cam.updateProjectionMatrix();
-    const texel = Math.max(cam.right - cam.left, cam.top - cam.bottom) / this.sun.shadow.mapSize.x;
-    this.sun.shadow.normalBias = texel * 1.5;
+  _placeLights(viewAz) {
+    if (!this._rig) return;
+    const { c, rad } = this._rig;
+    this.key.position.copy(c).addScaledVector(azEl(viewAz + KEY_AZEL[0], KEY_AZEL[1]), rad * KEY_DIST);
+    this.fill.position.copy(azEl(viewAz + FILL_AZEL[0], FILL_AZEL[1]));
+    this.scene.environmentRotation.set(0, -THREE.MathUtils.degToRad(viewAz), 0);
   }
 
   // -------------------------------------------------------------- éclaté
@@ -557,8 +582,7 @@ export class Viewer {
     const top = hPx ? ins.top || 0 : 0, bottom = hPx ? ins.bottom || 0 : 0, side = wPx ? ins.side || 0 : 0;
     const tanFull = Math.tan(THREE.MathUtils.degToRad(this.camera.fov) / 2);
     const tanV = tanFull * Math.max(0.3, 1 - (top + bottom) / (hPx || 1));
-    const tanH = tanFull * this.camera.aspect * Math.max(0.3, 1 - (2 * side) / (wPx || 1));
-    const proj = points.map((p) => { const v = p.clone().sub(c0); return [v.dot(right), v.dot(camUp), v.dot(viewDir)]; });
+    const tanH = tanFull * this.camera.aspect * Math.max(0.3, 1 - (2 * side) / (wPx || 1));    const proj = points.map((p) => { const v = p.clone().sub(c0); return [v.dot(right), v.dot(camUp), v.dot(viewDir)]; });
     let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
     proj.forEach(([x, y]) => { x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); });
     const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
@@ -567,8 +591,7 @@ export class Viewer {
     dist *= box ? 1.35 : 1.06;
     // Centre de la bande libre : le modèle descend de (haut − bas) / 2 px.
     const shift = hPx ? ((top - bottom) / hPx) * dist * tanFull : 0;
-    const center = c0.addScaledVector(right, cx).addScaledVector(camUp, cy + shift);
-    this._moveCamera(center.clone().addScaledVector(viewDir, dist), center, instant);
+    const center = c0.addScaledVector(right, cx).addScaledVector(camUp, cy + shift);    this._moveCamera(center.clone().addScaledVector(viewDir, dist), center, instant);
   }
 
   /** Cadre une pièce ou un groupe (à son état final si une animation est en cours). */
@@ -654,10 +677,7 @@ export class Viewer {
     for (const o of this.hoverObjs) if (!sel.includes(o)) applyState(o, 'hover', cutAll);
     for (const o of sel) applyState(o, cutSel ? 'base' : 'select', cutAll || cutSel);
     this._refreshLabels();
-    // Ombres à refaire si la coupe (clipShadows) ou les pièces estompées changent.
-    const sig = `${sec.on ? 1 : 0}:${ghostOthers ? this.selectedKey : ''}`;
-    this.invalidate(sec.on || sig !== this._shadowSig);
-    this._shadowSig = sig;
+    this.invalidate();
   }
 
   _bindPointer() {
@@ -781,7 +801,7 @@ export class Viewer {
     if (axis === 'x') { h.rotation.y = Math.PI / 2; h.scale.set(size.z, size.y, 1); }
     else if (axis === 'y') { h.rotation.x = -Math.PI / 2; h.scale.set(size.x, size.z, 1); }
     else h.scale.set(size.x, size.y, 1);
-    this.invalidate(true);
+    this.invalidate();
   }
 
   // ------------------------------------------------------------ repères
@@ -1048,14 +1068,19 @@ export class Viewer {
       gtao.output = GTAOPass.OUTPUT.Off;
       // Profondeur de la passe couleur (MSAA résolue) : respecte coupe, fantômes, capuchons.
       gtao.setGBuffer(depthTexture);
-      gtao.updateGtaoMaterial({ radius: 0.25, distanceExponent: 1.4, thickness: 1, distanceFallOff: 1, scale: 2.0, samples: 16 });
-      gtao.updatePdMaterial({ lumaPhi: 10, depthPhi: 2, normalPhi: 3, radius: 5, rings: 2, samples: 12 });
+      // Creux fins seulement (rayon de quelques cm, réglé à chaque image).
+      gtao.updateGtaoMaterial({ radius: 0.03, distanceExponent: 1.6, thickness: 0.03, distanceFallOff: 1, scale: 1.0, samples: 12 });
+      gtao.updatePdMaterial({ lumaPhi: 10, depthPhi: 2, normalPhi: 3, radius: 4, rings: 2, samples: 12 });
       const mat = new THREE.RawShaderMaterial({
+        defines: { TONE_FN: (TONE[this._tone] || TONE.neutral)[1] },
         uniforms: THREE.UniformsUtils.clone(COMPOSITE.uniforms),
         vertexShader: COMPOSITE.vertexShader,
         fragmentShader: COMPOSITE.fragmentShader,
-        depthTest: false,
-        depthWrite: false,
+        glslVersion: THREE.GLSL3,
+        // Écrit la profondeur de la scène (toujours) : les surimpressions s'y masquent.
+        depthTest: true,
+        depthFunc: THREE.AlwaysDepth,
+        depthWrite: true,
         blending: THREE.NoBlending,
       });
       mat.uniforms.tColor.value = rt.texture;
@@ -1085,17 +1110,12 @@ export class Viewer {
     this.rim.position.copy(t).addScaledVector(h, -dist).addScaledVector(side, dist * 0.6).addScaledVector(this.camera.up, dist * 0.3);
     this.rim.target.position.copy(t);
     this.rim.target.updateMatrixWorld();
-    if (this._shadowDirty) {
-      this._fitShadow();
-      r.shadowMap.needsUpdate = true;
-      this._shadowDirty = false;
-    }
+    this._placeLights(THREE.MathUtils.radToDeg(Math.atan2(h.z, h.x)));
     if (this.quality.post) {
       const p = this._ensurePost();
       const u = p.quad.material.uniforms;
       u.toneMappingExposure.value = r.toneMappingExposure;
-      u.groundAO.value = 0; // pas d'assombrissement au sol
-      u.aoStrength.value = useAO ? 0.4 : 0; // creux fins seulement, jamais d'ombrage
+      u.aoStrength.value = useAO ? 0.5 : 0;
       u.edgeStrength.value = this.edgesVisible ? 0.85 : 0;
       u.cameraNear.value = this.camera.near;
       u.cameraFar.value = this.camera.far;
@@ -1103,9 +1123,9 @@ export class Viewer {
       r.setRenderTarget(p.rt);
       r.render(this.scene, this.camera);
       if (useAO) {
-        // AO limitée aux creux fins (quelques cm) : jamais d'effet d'ombre.
-        const rad = Math.min(0.05, Math.max(0.012, dist * 0.004));
-        p.gtao.updateGtaoMaterial({ radius: rad, thickness: rad * 2 });
+        // Creux fins seulement : 1,5 à 4 cm selon le zoom, jamais une ombre.
+        const rad = THREE.MathUtils.clamp(dist * 0.006, 0.015, 0.04);
+        p.gtao.updateGtaoMaterial({ radius: rad, thickness: rad });
         p.gtao.render(r, null, p.rt);
       }
       r.setRenderTarget(null);
@@ -1113,6 +1133,11 @@ export class Viewer {
     } else {
       r.setRenderTarget(null);
       r.render(this.scene, this.camera);
+    }
+    if (this.planeHelper.visible) {
+      r.autoClear = false;
+      r.render(this.overlay, this.camera);
+      r.autoClear = true;
     }
     if (this.labelsVisible) this.labelRenderer.render(this.scene, this.camera);
   }
@@ -1123,13 +1148,17 @@ export class Viewer {
     if (!moving) { pf.last = 0; return; }
     if (pf.last) {
       const dt = now - pf.last;
-      if (dt < 250) pf.dts.push(dt);
+      // Au-delà d'une seconde : pause (onglet masqué), pas une image lente.
+      if (dt < 1000) { pf.dts.push(dt); pf.sum += dt; }
     }
     pf.last = now;
-    if (pf.dts.length < 30) return;
+    // 30 images, ou au moins 8 images sur 1,5 s : une machine très lente
+    // (images de plusieurs centaines de ms) se dégrade aussi.
+    if (pf.dts.length < 30 && (pf.dts.length < 8 || pf.sum < 1500)) return;
     // Médiane : insensible aux à-coups ponctuels (compilation de shaders).
     const med = pf.dts.sort((a, b) => a - b)[pf.dts.length >> 1];
     pf.dts = [];
+    pf.sum = 0;
     const q = this.quality;
     if (med <= 40) return;
     if (q.ao && q.motionAO) q.motionAO = false; // AO seulement sur l'image fixe
@@ -1137,6 +1166,15 @@ export class Viewer {
       q.dpr = 1;
       this.renderer.setPixelRatio(1);
       this.resize();
+    } else if (q.post) {
+      // Dernier recours : rendu direct à l'écran (contours en traits seulement, sans AO).
+      q.post = false;
+      q.ao = false;
+      this._lowFrame = false;
+      if (this.post) {
+        this.post.rt.dispose(); this.post.gtao.dispose(); this.post.quad.dispose();
+        this.post = null;
+      }
     }
   }
 
@@ -1150,7 +1188,7 @@ export class Viewer {
     this._themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme', 'class'] });
   }
 
-  /** Grille, ombre et contours selon le fond CSS (clair ou sombre). */
+  /** Grille, contours et contre-jour selon le fond CSS (clair ou sombre). */
   _applyTheme() {
     const css = getComputedStyle(this.container);
     const v = (css.getPropertyValue('--stage-b') || css.getPropertyValue('--bg')).trim();
@@ -1162,15 +1200,18 @@ export class Viewer {
       } catch { /* couleur non lisible : thème clair */ }
     }
     const dark = lum < 0.35;
-    // Fond sombre ou gris moyen (studio) : grille en traits clairs ; fond clair : traits gris.
+    // Fond sombre, gris studio moyen ou clair : grille, contours et lumières adaptés.
     this.theme = lum < 0.06
-      ? { dark, grid: 0x9fb0c2, gridOpacity: 0.22, shadow: 0.42, groundAO: 0.85, edge: 0x0b0c0e }
+      ? { dark, grid: 0x9fb0c2, gridOpacity: 0.22, edge: 0x0b0c0e, rim: 1.3, fill: 0.55, exposure: 1.1 }
       : dark
-        ? { dark, grid: 0xdfe5eb, gridOpacity: 0.3, shadow: 0.3, groundAO: 0.7, edge: 0x111316 }
-        : { dark, grid: 0x7f8b98, gridOpacity: 0.42, shadow: 0.2, groundAO: 0.6, edge: 0x16181b };
+        ? { dark, grid: 0xdfe5eb, gridOpacity: 0.3, edge: 0x111316, rim: 1.05, fill: 0.48, exposure: 1.05 }
+        : { dark, grid: 0x7f8b98, gridOpacity: 0.42, edge: 0x16181b, rim: 0.8, fill: 0.4, exposure: 1 };
     this.grid.material.uniforms.uColor.value.setHex(this.theme.grid);
     this.grid.material.uniforms.uOpacity.value = this.theme.gridOpacity;
-    this.ground.material.opacity = this.theme.shadow;
+    // Fond sombre : contre-jour et débouchage renforcés, pièces noires lisibles.
+    this.rim.intensity = this.theme.rim;
+    this.fill.intensity = this.theme.fill;
+    this.setLook({ exposure: this.theme.exposure });
     setEdgeColor(this.theme.edge);
     this.post?.quad.material.uniforms.edgeColor.value.setHex(this.theme.edge);
   }
@@ -1240,6 +1281,8 @@ export class Viewer {
     this._themeObserver?.disconnect();
     if (this.model) { this._clearEdges(); disposeObject(this.model.root); }
     if (this.post) { this.post.rt.dispose(); this.post.gtao.dispose(); this.post.quad.dispose(); }
+    this.overlay.traverse((o) => { o.geometry?.dispose(); o.material?.dispose(); });
+    this.scene.environment?.dispose();
     this.renderer.dispose();
     this.container.innerHTML = '';
   }

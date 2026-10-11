@@ -36,7 +36,7 @@ const S = {
   expanded: new Set(), // groupes éclatés sur place (clés de chemins)
   filter: '',
   labels: true,
-  edges: false, // contours des pièces (traits du dessin), sur demande
+  edges: false, // contours des pièces (traits du dessin) : en option, rendu réaliste par défaut
   isolate: false,
   explode: 0,
   section: { on: false, axis: 'z', pos: 0.5, flip: false, scope: 'all' },
@@ -44,8 +44,7 @@ const S = {
 let viewer = null;
 
 try { S.labels = localStorage.getItem('pieces3d.labels') !== '0'; } catch { /* préférence non disponible */ }
-// Contours de dessin : désactivés par défaut (rendu photo), à la demande.
-try { S.edges = localStorage.getItem('pieces3d.edges') === '1'; } catch { /* préférence non disponible */ }
+try { S.edges = localStorage.getItem('pieces3d.contours') === '1'; } catch { /* préférence non disponible */ }
 
 // ------------------------------------------------------------------ démarrage
 
@@ -214,6 +213,7 @@ function isGroupPath(path) {
 function ensureViewer() {
   if (viewer) return viewer;
   viewer = new Viewer($('#viewport'), {
+    insets: viewInsets,
     onHover: (path) => markRow(path, 'hov'),
     onSelect: (path, { double }) => {
       if (!path) { select(null); return; }
@@ -289,6 +289,15 @@ function fitHome() {
   fitHomeChrome();
 }
 
+/** Marges de cadrage d'un assemblage : hors de la barre d'outils (haut) et du cartouche (bas). */
+function viewInsets() {
+  const vp = $('#viewport').getBoundingClientRect();
+  const tools = $('#tools'), tb = $('#titleblock');
+  const top = tools.hidden ? 0 : tools.getBoundingClientRect().bottom - vp.top + 6;
+  const bottom = tb.hidden || !tb.offsetHeight ? 0 : vp.bottom - tb.getBoundingClientRect().top + 6;
+  return { top, bottom };
+}
+
 /**
  * Marges de cadrage de la page d'accueil : sous la barre d'outils, place pour
  * les légendes du bas et pour celles qui dépassent des outils en bout de rangée.
@@ -327,9 +336,10 @@ async function openAssembly(id, { select: selPath = null } = {}) {
     await new Promise((r) => requestAnimationFrame(() => setTimeout(r, 0)));
     const model = buildProcedural(builders, id, S.view.portrait != null ? { portrait: S.view.portrait } : {});
     $('#loading').hidden = true;
+    renderTitleblock(asm); // avant le cadrage, qui évite le cartouche
     if (model) {
       S.view.home = !!model.view.home;
-      v.insets = S.view.home ? homeInsets : null;
+      v.insets = S.view.home ? homeInsets : viewInsets;
       v.setModel(model);
       v.setIsolate(S.isolate && !S.view.home);
       S.section.axis = model.view.section?.axis || 'z';
@@ -911,7 +921,7 @@ function bindChrome() {
     S.edges = !S.edges;
     eb.setAttribute('aria-pressed', String(S.edges));
     viewer?.setEdges(S.edges);
-    try { localStorage.setItem('pieces3d.edges', S.edges ? '1' : '0'); } catch { /* ignoré */ }
+    try { localStorage.setItem('pieces3d.contours', S.edges ? '1' : '0'); } catch { /* ignoré */ }
   });
   const iso = $('#btn-isolate');
   iso.addEventListener('click', () => {
