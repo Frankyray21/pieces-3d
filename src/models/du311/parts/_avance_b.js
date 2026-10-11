@@ -29,10 +29,12 @@ const AF = { 0.25: 0.4375, 0.3125: 0.5, 0.375: 0.5625, 0.5: 0.75, 0.625: 0.9375,
 const af = (d) => AF[d] ?? d * 1.5;
 
 /** Prisme hexagonal (surplat a, hauteur h, po) chanfreiné à 30° aux deux faces, percé r0 (po), de y0 à y0 + h. */
-function hexPrism(S, THREE, a, h, y0, r0, mat) {
+export function hexPrism(S, THREE, a, h, y0, r0, mat) {
   const R = a / 2 / Math.cos(Math.PI / 6);
-  const c = Math.min(a * 0.06, h * 0.25);
-  const side = [[R - c * 1.6, y0], [R, y0 + c], [R, y0 + h - c], [R - c * 1.6, y0 + h]];
+  // Chanfrein 30° du dessus seulement (le dessous porte sur sa face d'appui :
+  // une facette tournée vers le bas renverrait le ciel en reflet blanc).
+  const c = Math.min(a * 0.05, h * 0.25);
+  const side = [[R, y0], [R, y0 + h - c], [R - c * 1.7, y0 + h]];
   const m = L(S, r0 > 0 ? [[r0, y0], ...side, [r0, y0 + h], [r0, y0]] : [[0, y0], ...side, [0, y0 + h]], mat, 6);
   m.children[0].rotation.y = Math.PI / 6;
   return m;
