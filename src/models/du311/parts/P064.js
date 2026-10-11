@@ -48,10 +48,10 @@
 //     orifices VALVE de P042), trois sur le dessus, un dessous ;
 //   · P042 posé sous le centreur, en (0.012, 0.17, 0.30), axes tournés :
 //     X de P042 → −Z, orifices VALVE vers −X (le bloc), CYL vers +X ;
-//   · P056 sur le flanc −X, semelle contre le flanc à (−0.23, 1.38, −0.05),
+//   · P056 sur le flanc −X, semelle contre le flanc à (−0.23, 1.29, −0.11),
 //     X de P056 → +Y, Y → −X (VALVE vers l'arrière, CYL vers l'avant) ;
 //   · vérins de pivotement : axe Z en x = ±0.33, y = 0.24 (Ø 3 po), orifices
-//     sur le dessus en z = 0.46 (coude vers −Z) et 0.62 (coude vers l'extérieur) ;
+//     sur le dessus en z = 0.46 (coude vers l'axe) et 0.62 (coude vers l'extérieur) ;
 //   · vérins de coins : axe Z en x = ±0.27, y = 0.10 (Ø 2 po), orifices sur
 //     le dessus en z = 0.45 et 0.66 ;
 //   · orifices des vérins du centreur sur le dessus, à |x| = 0.185 et 0.29.
@@ -59,8 +59,8 @@
 // de coins, ni P042 / P056 à ces places ; la répartition des fonctions entre
 // boyaux est déduite des longueurs et des vues ; le 24 (180 po) n'a pas de
 // destination visible sur les dessins (deux bulles au pied) : tracé estimé.
-// Encombrement ≈ 0.85 (X, de −0.42 à 0.42) × 3.05 (Y, de 0.07 à 3.12) × 1.1
-// (Z, de −0.26 à 0.84) m.
+// Encombrement ≈ 1.0 (X, de −0.51 à 0.48) × 3.3 (Y, de −0.12 à 3.16) × 1.2
+// (Z, de −0.35 à 0.85) m.
 import { IN, LCV, loadCheckValve, place, seat, straight, elbow, tee, union } from './_avance_a.js';
 import { v3, mount, xs, seatOf, addHose } from './_avance_a_hk2.js';
 
@@ -68,7 +68,7 @@ import { v3, mount, xs, seatOf, addHose } from './_avance_a_hk2.js';
 const BLK = { x0: -0.4, x1: -0.24, y0: 0.16, y1: 0.28, z: 0.3 };
 const O42 = [0.012, 0.17, 0.3];
 const M42 = mount(O42, [0, 0, -1], [0, 1, 0]);
-const M56 = mount([-0.23, 1.38, -0.05], [0, 1, 0], [-1, 0, 0]);
+const M56 = mount([-0.23, 1.29, -0.11], [0, 1, 0], [-1, 0, 0]);
 // Vérins (orifices).
 const JAW = { y: 0.4, z: 0.445, r: 0.035, xs: [0.185, 0.29] };
 const SWG = { x: 0.33, y: 0.24, r: 1.5 * IN, zs: [0.46, 0.62] };
@@ -76,12 +76,12 @@ const WDG = { x: 0.27, y: 0.1, r: 1.0 * IN, zs: [0.45, 0.66] };
 // Relais (unions) et tés union.
 const U = [[-0.3, 0.93, 0.172], [-0.3, 0.95, 0.202]];
 const U3 = [0.3, 2.75, -0.17];
-const UT = [[-0.19, 0.17, 0.535], [-0.19, 0.17, 0.595]];
+const UT = [[-0.19, 0.17, 0.535], [-0.2, 0.17, 0.61]];
 
 export const KIT064 = {
   block: BLK,
   P042: { at: O42, X: [0, 0, -1], Y: [0, 1, 0] },
-  P056: { at: [-0.23, 1.38, -0.05], X: [0, 1, 0], Y: [-1, 0, 0] },
+  P056: { at: [-0.23, 1.29, -0.11], X: [0, 1, 0], Y: [-1, 0, 0] },
   swing: SWG, wedge: WDG, jaw: JAW,
 };
 
@@ -134,8 +134,8 @@ export default function P064(api) {
   const t3 = ad([-0.27, BLK.y1, BLK.z], Y, [0, 0.05, 0]);
   const b1 = ad([-0.32, BLK.y0, BLK.z], NY, [0, -0.05, 0]);
 
-  // 1 — té à branche tournante sur T1 (branche vers −X) ; 2 — coude tournant sous le bloc.
-  const g1 = place(tee('swivel', 6, 6), t1.p, t1.d, NX);
+  // 1 — té à branche tournante sur T1 (branche vers l'arrière) ; 2 — coude tournant sous le bloc.
+  const g1 = place(tee('swivel', 6, 6), t1.p, t1.d, NZ);
   P('1', g1, [0, 0.1, 0]);
   const brTee = { run: seat(g1, 0), br: seat(g1, 1) };
   const g2 = place(elbow('swivel', 6, 6), b1.p, b1.d, NX);
@@ -143,8 +143,9 @@ export default function P064(api) {
   const drain = seat(g2);
 
   // ------------------------------------------------ 3 — tés tournants sur CYL bas de P042
-  const swT = cylLow.map((s) => {
-    const g = place(tee('swivel', 6, 6), s.p, s.d, NY);
+  // (branche vers l'avant sur CYL 1, vers le bas sur CYL 2)
+  const swT = cylLow.map((s, i) => {
+    const g = place(tee('swivel', 6, 6), s.p, s.d, i ? NY : Z);
     P('3', g, [0.08, -0.03, 0]);
     return { run: seat(g, 0), br: seat(g, 1) };
   });
@@ -172,7 +173,7 @@ export default function P064(api) {
   // Vérins de pivotement (coudes de P092, non dessinés ici) : sièges.
   const swg = {};
   for (const s of [-1, 1]) {
-    swg[`${s}0`] = seatOf(elbow('orb', 4, 6), [s * SWG.x, SWG.y + SWG.r, SWG.zs[0]], Y, NZ);
+    swg[`${s}0`] = seatOf(elbow('orb', 4, 6), [s * SWG.x, SWG.y + SWG.r, SWG.zs[0]], Y, [-s, 0, 0]);
     swg[`${s}1`] = seatOf(elbow('orb', 4, 6), [s * SWG.x, SWG.y + SWG.r, SWG.zs[1]], Y, [s, 0, 0]);
   }
 
@@ -194,8 +195,8 @@ export default function P064(api) {
 
   // ------------------------------------------------ flexibles
   // 13 / 11 : unions → P et T du bloc (embout 90°, douille vers l'arrière).
-  H('13', 32.5, un[0].down, E(t2, '90', NZ), { vias: [[-0.31, 0.55, 0.2]], sag: NX }, [-0.12, 0, 0]);
-  H('11', 34, un[1].down, E(t3, '90', NZ), { vias: [[-0.28, 0.55, 0.23]], sag: NX }, [-0.12, 0, 0.03]);
+  H('13', 32.5, un[0].down, E(t2, '90', NZ), { vias: [[-0.31, 0.55, 0.2]], sag: [-0.4, 0, 1] }, [-0.12, 0, 0]);
+  H('11', 34, un[1].down, E(t3, '90', NZ), { vias: [[-0.28, 0.55, 0.23]], sag: [-0.4, 0, 1] }, [-0.12, 0, 0.03]);
 
   // 8 : bloc → VALVE de P042, face à face.
   blkX.forEach((s, i) => H('8', 7, s, valve[i], { sag: i < 2 ? NY : Y }, [0.03, 0, 0.12]));
@@ -207,23 +208,23 @@ export default function P064(api) {
   H('23', 21.5, cylTee[1].br, jaw['-11'], { vias: [[-0.12, 0.46, 0.33]], sag: Y }, [-0.08, 0.08, 0.1]);
 
   // Pivotement : tés tournants 3 → coudes des vérins de P092.
-  H('17', 34.5, swT[0].run, swg['10'], { vias: [[0.2, 0.2, 0.3], [0.3, 0.3, 0.33]], sag: X }, [0.12, -0.04, 0.06]);
-  H('19', 40, swT[1].run, swg['11'], { vias: [[0.2, 0.18, 0.27], [0.42, 0.25, 0.5]], sag: [1, 0, 0] }, [0.14, -0.04, 0.08]);
-  H('18', 35, swT[0].br, swg['-10'], { vias: [[-0.05, 0.12, 0.35], [-0.2, 0.2, 0.4]], sag: Y }, [-0.12, -0.04, 0.06]);
+  H('17', 34.5, swT[0].run, swg['10'], { vias: [[0.2, 0.22, 0.38]], sag: [0.5, 0.5, -0.5] }, [0.12, -0.04, 0.06]);
+  H('19', 40, swT[1].run, swg['11'], { vias: [[0.2, 0.18, 0.27], [0.43, 0.24, 0.5]], sag: Y }, [0.14, -0.04, 0.08]);
+  H('18', 35, swT[0].br, swg['-10'], { vias: [[-0.1, 0.22, 0.45]], sag: [0, 0.3, 1] }, [-0.12, -0.04, 0.06]);
   H('20', 39.5, swT[1].br, E(swg['-11'], '90', NY), { vias: [[-0.12, 0.12, 0.31], [-0.42, 0.22, 0.52]], sag: NX }, [-0.14, -0.04, 0.08]);
 
   // Plaque à coins : té 1 → VALVE de P056 (9 × 2), CYL de P056 → tés union (12 × 2).
-  const lane9 = (dz) => [[-0.264, 0.6, 0.15 + dz], [-0.264, 1.05, 0.15 + dz], [-0.29, 1.24, -0.02 + dz]];
-  H('9', 57, brTee.run, val56[0], { vias: lane9(0), sag: NX }, [-0.2, 0.02, 0]);
-  H('9', 57, brTee.br, val56[1], { vias: lane9(0.025), sag: NX }, [-0.22, 0.02, 0]);
-  const lane12 = (dx) => [[-0.27 + dx, 1.3, 0.12], [-0.25 + dx, 1.1, 0.24], [-0.25 + dx, 0.7, 0.245], [-0.2 + dx, 0.5, 0.55 + dx]];
+  const lane9 = (dz) => [[-0.264, 0.6, 0.165 + dz], [-0.264, 1.05, 0.165 + dz], [-0.29, 1.24, -0.02 + dz]];
+  H('9', 57, brTee.run, val56[0], { vias: lane9(0), sag: NY }, [-0.2, 0.02, 0]);
+  H('9', 57, brTee.br, val56[1], { vias: lane9(0.025), sag: NY }, [-0.22, 0.02, 0]);
+  const lane12 = (dx) => [[-0.27 + dx, 1.22, 0.02], [-0.26 + dx, 1.12, 0.2], [-0.25 + dx, 0.7, 0.245], [-0.2 + dx, 0.5, 0.55 + dx]];
   H('12', 72, cyl56[0], E(ut[0].run, '90', NZ), { vias: lane12(0), sag: Z }, [-0.24, 0, 0.06]);
   H('12', 72, cyl56[1], E(ut[1].run, '90', NZ), { vias: lane12(-0.02), sag: Z }, [-0.26, 0, 0.06]);
   // Tés union → vérins de coins : 14 / 15 côté −X, 9 / 10 côté +X par l'avant.
   H('14', 14.75, ut[0].a, E(wdg['-10'], '45', X), { sag: X }, [-0.06, -0.03, 0.08]);
   H('15', 12, ut[1].a, E(wdg['-11'], '45', X), { sag: X }, [-0.06, -0.03, 0.1]);
-  H('9', 57, ut[0].br, wdg['10'], { vias: [[-0.12, 0.13, 0.8], [0.2, 0.12, 0.82], [0.36, 0.13, 0.6]], sag: [0, 0, 1] }, [0.02, -0.04, 0.14]);
-  H('10', 53, ut[1].br, E(wdg['11'], '90', NZ), { vias: [[-0.14, 0.15, 0.76], [0.15, 0.15, 0.79]], sag: [0, 0, 1] }, [0.04, -0.04, 0.16]);
+  H('9', 57, ut[0].br, wdg['10'], { vias: [[-0.33, 0.14, 0.64], [-0.15, 0.12, 0.8], [0.18, 0.12, 0.81], [0.36, 0.13, 0.6]], sag: NY }, [0.02, -0.04, 0.14]);
+  H('10', 53, ut[1].br, E(wdg['11'], '90', NZ), { vias: [[-0.34, 0.15, 0.7], [-0.14, 0.15, 0.8], [0.15, 0.15, 0.82]], sag: NY }, [0.04, -0.04, 0.16]);
 
   // 24 : drain sous le bloc → derrière le flanc −X → haut du mât → union du flanc +X.
   H('24', 180, drain, u3.up, {
