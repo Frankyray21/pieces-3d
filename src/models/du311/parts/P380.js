@@ -105,7 +105,7 @@ export default function P380(api) {
   const rearPts = boltsTop(O.z0, HT.seam, O.z0 + 0.015);
   // 4 — couvercle avant : trou du filtre de retour, piquages (P378).
   const lid = K.plate(2 * O.x, O.z1 - HT.seam, HT.lid, 'grey', {
-    holes: [...lidPts.map(([x, z]) => [x, z - (HT.seam + O.z1) / 2, 0.0045]), ...Object.values(HT.holes).map(([x, z, r]) => [x, z - (HT.seam + O.z1) / 2, r])], seg: 16,
+    holes: [...lidPts.map(([x, z]) => [x, z - (HT.seam + O.z1) / 2, 0.0045]), ...Object.values(HT.holes).map(([x, z, r]) => [x, z - (HT.seam + O.z1) / 2, r])], seg: 10,
   });
   lid.position.set(0, yL + HT.lid / 2, (HT.seam + O.z1) / 2);
   P('4', lid, [0, 0.24, 0.04]);
@@ -115,11 +115,11 @@ export default function P380(api) {
   });
   rear.position.set(0, yL + HT.lid / 2, (HT.seam + O.z0) / 2);
   const yT = yL + HT.lid;
-  const handle = tube([[-0.22, yT, -0.06], [-0.22, yT + 0.05, -0.07], [-0.2, yT + 0.065, -0.07], [0.2, yT + 0.065, -0.07], [0.22, yT + 0.05, -0.07], [0.22, yT, -0.06]], 0.0125, 'grey', { seg: 40, radial: 10 });
+  const handle = tube([[-0.22, yT, -0.06], [-0.22, yT + 0.05, -0.07], [-0.2, yT + 0.065, -0.07], [0.2, yT + 0.065, -0.07], [0.22, yT + 0.05, -0.07], [0.22, yT, -0.06]], 0.0125, 'grey', { seg: 18, radial: 8 });
   P('6', group(rear, handle), [0, 0.3, -0.04]);
   for (const [x, z] of [...lidPts, ...rearPts]) {
     const ex = z > HT.seam ? [0, 0.34, 0.04] : [0, 0.4, -0.04];
-    P('9', K.washer(0.3125 * IN, 'zinc', { seg: 8, pos: [x, yT, z] }), ex);
+    P('9', K.washer(0.3125 * IN, 'zinc', { seg: 6, pos: [x, yT, z] }), ex);
     P('7', K.screw(0.3125 * IN, 0.75 * IN, 'zinc', { pos: [x, yT + 0.05 * IN, z], seg: 6 }), [ex[0], ex[1] + 0.06, ex[2]]);
   }
 
@@ -152,7 +152,7 @@ export default function P380(api) {
     const xb = xo;
     for (const [z, y] of cpts) {
       const ax = s > 0 ? 'x' : '-x';
-      P('10', K.washer(0.375 * IN, 'zinc', { seg: 8, axis: ax, pos: [xb, y, z] }), [s * 0.2, 0, 0]);
+      P('10', K.washer(0.375 * IN, 'zinc', { seg: 6, axis: ax, pos: [xb, y, z] }), [s * 0.2, 0, 0]);
       P('8', K.screw(0.375 * IN, 1 * IN, 'zinc', { seg: 6, axis: ax, pos: [xb + s * 0.06 * IN, y, z] }), [s * 0.26, 0, 0]);
     }
   }

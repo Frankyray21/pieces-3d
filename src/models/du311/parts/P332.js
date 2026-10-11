@@ -38,7 +38,7 @@
 // Encombrement 0.305 (X, platine) × 0.83 (Y) × 0.24 (Z, de −0.098 au patin
 // et aux orifices) m.
 
-const IN = 0.0254;
+import { IN, kit } from './_porteur.js';
 
 // Fourreau et chaise
 const RW = 3.0 * IN; // rayon ext. du fourreau
@@ -67,13 +67,14 @@ export default function P332(api) {
   const { THREE, S } = api;
   const { lathe, box, plate, cyl, nut, weld, merged, group, at, washer } = S;
   const P = (ref, obj, e) => api.part(ref, obj, e);
+  const K = kit(api);
 
   // Bague de section rectangulaire (joint, bague d'usure, circlip) autour de Y.
-  const band = (ro, ri, y0, y1, mat, seg = 14) => lathe([[ri, y0], [ro, y0], [ro, y1], [ri, y1], [ri, y0]], mat, { seg });
+  const band = (ro, ri, y0, y1, mat, seg = 10) => lathe([[ri, y0], [ro, y0], [ro, y1], [ri, y1], [ri, y0]], mat, { seg });
   // Bouchon six-pans creux : collerette + empreinte, le long de +Y depuis la face.
   const hollowPlug = (r) => lathe([
     [0, -r * 1.2], [r, -r * 1.2], [r, 0], [r * 1.25, 0], [r * 1.25, r * 0.35], [r * 0.55, r * 0.35], [r * 0.55, r * 0.05], [0, r * 0.05],
-  ], 'zinc', { seg: 8 });
+  ], 'zinc', { seg: 6 });
   // Oriente un objet construit le long de +Y vers la direction d (vecteur).
   const toward = (obj, d, pos) => {
     const g = group(obj);
@@ -85,12 +86,12 @@ export default function P332(api) {
   // ---------------------------------------------------------------- 32 — fourreau soudé dans sa chaise
   const tubeW = lathe([
     [RWI, YW0], [RW - 0.002, YW0], [RW, YW0 + 0.002], [RW, YW1 - 0.002], [RW - 0.002, YW1], [RWI, YW1], [RWI, YW0],
-  ], 'grey', { seg: 32 });
+  ], 'grey', { seg: 20 });
   // Platine dans le plan XY, trous Ø 1 1/16 po (contours à 10 segments).
   const shape = new THREE.Shape();
   shape.moveTo(-PW / 2, PY0); shape.lineTo(PW / 2, PY0); shape.lineTo(PW / 2, PY1); shape.lineTo(-PW / 2, PY1); shape.closePath();
   for (const x of [-HX, HX]) for (const y of HY) shape.holes.push(new THREE.Path().absarc(x, y, (1.0625 * IN) / 2, 0, Math.PI * 2, true));
-  const pg = new THREE.ExtrudeGeometry(shape, { depth: PT, bevelEnabled: false, curveSegments: 10 });
+  const pg = new THREE.ExtrudeGeometry(shape, { depth: PT, bevelEnabled: false, curveSegments: 4 });
   const back = new THREE.Mesh(pg);
   back.position.z = -ZP;
   // Joues latérales : de la platine au plan avant du fourreau.
@@ -106,28 +107,28 @@ export default function P332(api) {
   // 33 — graisseur droit 1/8 NPT sur le fourreau, face +X
   const nipple = lathe([
     [0, 0], [0.0045, 0], [0.0045, 0.006], [0.0055, 0.006], [0.0055, 0.013], [0.0028, 0.013], [0.0028, 0.016], [0.0042, 0.018], [0.0035, 0.022], [0, 0.022],
-  ], 'brass', { seg: 10 });
+  ], 'brass', { seg: 8 });
   P('33', toward(nipple, [1, 0, 0], [RW - 0.001, 0.215, 0]), [0.06, 0, 0]);
 
   // ---------------------------------------------------------------- 38 — cylindre mobile et patin rotulé
   const cylT = lathe([
     [0, YC0 - 0.014], [RC * 0.72, YC0 - 0.014], [RC, YC0 + 0.006], [RC, YC1 - 0.002], [RC - 0.002, YC1], [RCI, YC1], [RCI, YC0 + 0.012], [0, YC0 + 0.012],
-  ], 'chrome', { seg: 32 });
+  ], 'chrome', { seg: 20 });
   // Pied : rotule sous le fond, coupelle emboutie et semelle Ø 9 po.
   const foot = lathe([
     [0, 0], [0.114, 0], [0.114, 0.012], [0.105, 0.016], [0.07, 0.03], [0.05, 0.05], [0.047, 0.058], [0.04, 0.062], [0, 0.062],
-  ], 'grey', { seg: 32 });
-  const knuckle = lathe([[0, 0.045], [0.032, 0.05], [0.04, 0.062], [RC * 0.72, YC0 - 0.014], [0, YC0 - 0.014]], 'darkSteel', { seg: 24 });
+  ], 'grey', { seg: 20 });
+  const knuckle = lathe([[0, 0.045], [0.032, 0.05], [0.04, 0.062], [RC * 0.72, YC0 - 0.014], [0, YC0 - 0.014]], 'darkSteel', { seg: 16 });
   P('38', group(cylT, foot, knuckle), [0, -0.9, 0]);
 
   // 17 — bagues d'usure du cylindre (×2), dans les gorges du cylindre
-  for (const y of [0.24, 0.44]) P('17', band(RWI - 0.0004, RC - 0.0015, y, y + 0.022, 'cream', 24), [0, -0.9, 0]);
+  for (const y of [0.24, 0.44]) P('17', band(RWI - 0.0004, RC - 0.0015, y, y + 0.022, 'cream', 16), [0, -0.9, 0]);
 
   // ---------------------------------------------------------------- tête de vérin, couronne
   // 31 — tête : fût dans le cylindre, épaulement sur le bord, gorges des joints.
   const head = lathe([
     [RR + 0.0005, YH0], [RCI - 0.0003, YH0], [RCI - 0.0003, YC1 - 0.004], [RC - 0.004, YC1 - 0.004], [RC - 0.004, YC1], [RR + 0.0005, YC1], [RR + 0.0005, YH0],
-  ], 'darkSteel', { seg: 28 });
+  ], 'darkSteel', { seg: 16 });
   P('31', head, [0, 0.3, 0]);
   // 29, 30 — joint torique et bague anti-extrusion sur le pourtour de la tête
   P('29', band(RCI + 0.0002, RCI - 0.004, 0.55, 0.555, 'rubber'), [0, 0.37, 0]);
@@ -142,25 +143,25 @@ export default function P332(api) {
   // 27 — couronne de retenue (sur le cylindre)
   const crown = lathe([
     [RR + 0.002, YC1], [RC, YC1], [RC, YK1 - 0.003], [RC - 0.003, YK1], [RR + 0.004, YK1], [RR + 0.002, YK1 - 0.002], [RR + 0.002, YC1],
-  ], 'darkSteel', { seg: 28 });
+  ], 'darkSteel', { seg: 16 });
   P('27', crown, [0, 0.63, 0]);
   // 13 — vis H 3/8 × 1 1/4 (×4) de la couronne, vissées dans la tête
   const RB13 = (RR + RC) / 2;
   for (let i = 0; i < 4; i++) {
     const a = Math.PI / 4 + (i * Math.PI) / 2;
-    P('13', S.bolt(0.375 * IN, 1.25 * IN, 'zinc', { pos: [Math.cos(a) * RB13, YK1, Math.sin(a) * RB13] }), [0, 0.72, 0]);
+    P('13', K.screw(0.375 * IN, 1.25 * IN, 'zinc', { pos: [Math.cos(a) * RB13, YK1, Math.sin(a) * RB13], seg: 6 }), [0, 0.72, 0]);
   }
 
   // ---------------------------------------------------------------- 16 — tige creuse et piston
   const rodBody = lathe([
     [RRI, YR0], [RR - 0.0025, YR0], [RR - 0.0025, YP1 + 0.002], [RR, YP1 + 0.006], [RR, YR1 - 0.03],
     [RR - 0.004, YR1 - 0.026], [RR - 0.004, YR1 - 0.002], [RR - 0.006, YR1], [RRI, YR1], [RRI, YR0],
-  ], 'chrome', { seg: 24 });
+  ], 'chrome', { seg: 14 });
   P('16', rodBody, [0, 0, 0]);
   // 21 — piston (alésé sur le bout réduit de la tige)
   const piston = lathe([
     [RR - 0.0025, YP0], [RCI - 0.001, YP0], [RCI - 0.001, YP1], [RR - 0.0025, YP1], [RR - 0.0025, YP0],
-  ], 'darkSteel', { seg: 28 });
+  ], 'darkSteel', { seg: 16 });
   P('21', piston, [0, -0.24, 0]);
   // 18 — joint de piston ; 19 — bague d'usure du piston
   P('18', band(RCI, RCI - 0.006, 0.142, 0.152, 'rubber'), [0, -0.235, 0]);
@@ -182,8 +183,8 @@ export default function P332(api) {
   P('22', band(RR - 0.0035, RR - 0.0075, 0.722, 0.726, 'rubber'), [0, 0.81, 0]);
   for (const y of [0.7165, 0.727]) P('23', band(RR - 0.0035, RR - 0.0075, y, y + 0.0015, 'cream'), [0, 0.84, 0]);
   // 25, 26 — vis H 3/8 et rondelle Grower : patte d'arrêt du bloc vissée sur le haut du fourreau (+X)
-  P('26', washer(0.0095, 0.005, 0.0024, 'zinc', { pos: [RW - 0.012, YW1 + 0.0012, 0.03] }), [0, 0.06, 0]);
-  P('25', S.bolt(0.375 * IN, 0.75 * IN, 'zinc', { pos: [RW - 0.012, YW1 + 0.0024, 0.03] }), [0, 0.1, 0]);
+  P('26', K.lock(0.375 * IN, 'zinc', { pos: [RW - 0.012, YW1, 0.03] }), [0, 0.06, 0]);
+  P('25', K.screw(0.375 * IN, 0.75 * IN, 'zinc', { pos: [RW - 0.012, YW1 + 0.0024, 0.03], seg: 6 }), [0, 0.1, 0]);
 
   // ---------------------------------------------------------------- 6 — bloc de clapets et ses pièces
   const EV = [0, 0.95, 0]; // éclaté du bloc
@@ -193,9 +194,9 @@ export default function P332(api) {
   const blockBody = box(W, H, D, 'zinc', { r: 0.002, pos: [xc, yc, zc] });
   // Orifices SAE (lamages) sur la face +Z, perçage du clapet de décharge sur −X.
   const spot = [];
-  for (const x of [0.005, 0.045]) spot.push(at(cyl(0.014, 0.003, 'zinc', { axis: 'z', seg: 16 }), [x, VB.y0 + 0.07, VB.z1 + 0.0015]));
+  for (const x of [0.005, 0.045]) spot.push(at(cyl(0.014, 0.003, 'zinc', { axis: 'z', seg: 12 }), [x, VB.y0 + 0.07, VB.z1 + 0.0015]));
   const bores = [];
-  for (const x of [0.005, 0.045]) bores.push(at(cyl(0.0095, 0.004, 'blackOxide', { axis: 'z', seg: 12 }), [x, VB.y0 + 0.07, VB.z1 + 0.0012]));
+  for (const x of [0.005, 0.045]) bores.push(at(cyl(0.0095, 0.004, 'blackOxide', { axis: 'z', seg: 10 }), [x, VB.y0 + 0.07, VB.z1 + 0.0012]));
   P('6', group(merged([blockBody, ...spot], 'zinc'), merged(bores, 'blackOxide')), EV);
   // 1 — bouchon de retenue (collerette sur le dessus du bloc)
   const retPlug = lathe([[0, -0.02], [0.012, -0.02], [0.012, 0], [0.0155, 0], [0.0155, 0.005], [0.0145, 0.006], [0, 0.006]], 'zinc', { seg: 16 });
@@ -204,21 +205,21 @@ export default function P332(api) {
   const cv = () => lathe([
     [0, 0], [0.006, 0], [0.008, 0.003], [0.01, 0.003], [0.01, 0.009], [0.0105, 0.01], [0.0105, 0.026],
     [0.01, 0.027], [0.01, 0.032], [0.0055, 0.034], [0.0055, 0.037], [0, 0.037],
-  ], 'steel', { seg: 10 });
+  ], 'steel', { seg: 8 });
   P('2', at(cv(), [XV, VB.y0 + 0.062, 0]), up(0.155));
   P('2', at(cv(), [XV, VB.y0 + 0.022, 0]), up(0.11));
   // 7, 8 — joints toriques et bagues des clapets (×2 chacun)
   for (const [y, dy] of [[0.09, 0.155], [0.05, 0.11]]) {
-    P('7', band(0.0108, 0.0085, VB.y0 + y, VB.y0 + y + 0.0026, 'rubber', 14), up(dy + 0.02));
-    P('8', band(0.0108, 0.0085, VB.y0 + y - 0.0022, VB.y0 + y - 0.0006, 'cream', 14), up(dy + 0.012));
+    P('7', band(0.0108, 0.0085, VB.y0 + y, VB.y0 + y + 0.0026, 'rubber'), up(dy + 0.02));
+    P('8', band(0.0108, 0.0085, VB.y0 + y - 0.0022, VB.y0 + y - 0.0006, 'cream'), up(dy + 0.012));
   }
   // 10, 11 — joint torique et bague au fond de l'alésage
-  P('10', band(0.0085, 0.0062, VB.y0 + 0.013, VB.y0 + 0.0155, 'rubber', 14), up(0.07));
-  P('11', band(0.0085, 0.0062, VB.y0 + 0.0105, VB.y0 + 0.0122, 'cream', 14), up(0.06));
+  P('10', band(0.0085, 0.0062, VB.y0 + 0.013, VB.y0 + 0.0155, 'rubber'), up(0.07));
+  P('11', band(0.0085, 0.0062, VB.y0 + 0.0105, VB.y0 + 0.0122, 'cream'), up(0.06));
   // 3, 4 — ressort et pointeau du clapet de décharge (alésage horizontal, face −X)
   const yD = VB.y0 + 0.012;
   P('4', at(lathe([[0, 0], [0.0035, 0.003], [0.0042, 0.008], [0.0042, 0.016], [0, 0.016]], 'steel', { seg: 10 }), [VB.x0 + 0.03, yD, 0.025], [0, 0, Math.PI / 2]), [EV[0] - 0.06, EV[1], 0]);
-  P('3', S.spring(0.0032, 0.0006, 0.016, 5, 'steel', { axis: 'x', pos: [VB.x0 + 0.01, yD, 0.025], perTurn: 6, radial: 3 }), [EV[0] - 0.1, EV[1], 0]);
+  P('3', S.spring(0.0032, 0.0006, 0.016, 4, 'steel', { axis: 'x', pos: [VB.x0 + 0.01, yD, 0.025], perTurn: 6, radial: 3 }), [EV[0] - 0.1, EV[1], 0]);
   // 5 — bouchons six-pans creux (×5) : perçages de fabrication
   const plugs5 = [
     [[-1, 0, 0], [VB.x0, yD, 0.025]], // bouchon du clapet de décharge

@@ -14,7 +14,7 @@
 // à y = −0.069. Encombrement 0.51 (X) × 0.49 (Y, de −0.13 à 0.36) × 0.27 (Z) m.
 // Le réservoir est posé par ses pattes (y = 0) sur une console du porteur
 // échancrée pour la pompe.
-import { IN, kit } from './_porteur.js';
+import { IN, kit, racFactory, racPose } from './_porteur.js';
 import { PUMP } from './P370.js';
 
 const YA = -0.069; // axe de la pompe
@@ -22,7 +22,7 @@ const RC = 2 * IN; // fût du moteur à air (Ø 4 po)
 
 export default function P368(api) {
   const { THREE, S } = api;
-  const { lathe, box, cyl, fitting, merged, group, at } = S;
+  const { lathe, box, cyl, merged, group, at } = S;
   const T = kit(api);
   const P = (ref, obj, e) => api.part(ref, obj, e);
 
@@ -60,11 +60,8 @@ export default function P368(api) {
   P('3', T.toward(plug, [0, 0, 1], [x0, YA - 0.005, z0 + 0.0425]), [0, -0.12, 0.06]);
 
   // 4 — coudes 90° 1/4 NPT × -06 (×3)
-  const elbow = (dir, pos, rot) => {
-    const e = T.toward(fitting(0.014, 0.034, 'zinc', { elbow: true }), dir, pos);
-    if (rot) e.rotateY(rot);
-    return e;
-  };
+  const F = racFactory(S);
+  const elbow = (dir, pos, side = [0, 1, 0]) => racPose(THREE, F.elbow({ port: 'npt', pd: 4, jd: 6 }), pos, dir, side);
   P('4', elbow([-1, 0, 0], [xF0 - 0.001, YA + 0.02, z0]), [-0.08, -0.12, 0]);
   P('4', elbow([1, 0, 0], [x0 + 0.169, YA, z0]), [0.08, -0.12, 0]);
   P('4', elbow([0, -1, 0], [x0 - 0.02, YA - 0.0425, z0 + 0.02]), [0, -0.2, 0]);

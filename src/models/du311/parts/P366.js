@@ -36,15 +36,15 @@ export default function P366(api) {
   // Té 1 po en fonte malléable galvanisée : corps renflé, bourrelets des trois
   // embouts ; run selon X, dérivation selon branch.
   const tee = (branch) => {
-    const end = (d) => T.toward(lathe([[RP, 0], [0.022, 0], [0.022, TE - 0.008], [0.024, TE - 0.006], [0.024, TE], [RP, TE], [RP, 0]], 'zinc', { seg: 14 }), dirOf[d]);
-    return merged([end('x'), end('-x'), end(branch), lathe(sphere(0.0225), 'zinc', { seg: 12 })], 'zinc');
+    const end = (d) => T.toward(lathe([[RP, 0], [0.022, 0], [0.022, TE - 0.008], [0.024, TE - 0.006], [0.024, TE], [RP, TE], [RP, 0]], 'zinc', { seg: 10 }), dirOf[d]);
+    return merged([end('x'), end('-x'), end(branch), lathe(sphere(0.0225), 'zinc', { seg: 10 })], 'zinc');
   };
   // Mamelon : tube avec filets apparents aux deux bouts (bandes de reflet).
   const nipple = (len) => lathe([
-    [0.0133, -len / 2], [RP - 0.0008, -len / 2], ...S.thread(RP, -len / 2 + 0.001, -len / 2 + ENG, { pitch: 0.0022, maxTurns: 3 }),
-    [RP, len / 2 - ENG], ...S.thread(RP, len / 2 - ENG + 0.001, len / 2 - 0.001, { pitch: 0.0022, maxTurns: 3 }),
+    [0.0133, -len / 2], [RP - 0.0008, -len / 2], ...S.thread(RP, -len / 2 + 0.001, -len / 2 + ENG, { pitch: 0.0022, maxTurns: 2 }),
+    [RP, len / 2 - ENG], ...S.thread(RP, len / 2 - ENG + 0.001, len / 2 - 0.001, { pitch: 0.0022, maxTurns: 2 }),
     [RP - 0.0008, len / 2], [0.0133, len / 2], [0.0133, -len / 2],
-  ], 'zinc', { seg: 14 });
+  ], 'zinc', { seg: 10 });
   // Réduction six-pans 1 po × d (vissée dans un embout, six-pans dehors), le long de +Y.
   const bushing = (rIn) => group(
     lathe([[rIn, -ENG], [RP, -ENG], [RP, 0], [rIn, 0]], 'zinc', { seg: 12 }),

@@ -30,7 +30,7 @@ export default function P348(api) {
     const pts = [];
     for (let i = 0; i <= 6; i++) { const a = -Math.PI / 2 + (i / 6) * Math.PI; pts.push(new THREE.Vector3(h + Math.cos(a) * r, Math.sin(a) * r, 0)); }
     for (let i = 0; i <= 6; i++) { const a = Math.PI / 2 + (i / 6) * Math.PI; pts.push(new THREE.Vector3(-h + Math.cos(a) * r, Math.sin(a) * r, 0)); }
-    return new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts, true), 20, WIRE, 6, true);
+    return new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts, true), 12, WIRE, 4, true);
   };
   const proto = linkGeo();
   const links = [];
