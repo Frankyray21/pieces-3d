@@ -469,3 +469,45 @@ export function inlineCheck(api, npt, L, af, material = 'steel') {
   // Cloison du siège au milieu (l'alésage n'est pas traversant).
   return S.merged([new THREE.Mesh(geo), S.cyl(rn, L * 0.4, material, { seg: 16 })], material);
 }
+
+/** Point local [x, y, z] d'un objet orienté par orient(pos, dir, side) → coordonnées du parent. */
+export function orientPoint(api, local, pos, dir, side) {
+  const { THREE } = api;
+  const Y = new THREE.Vector3(...dir).normalize();
+  let Z = side ? new THREE.Vector3(...side) : (Math.abs(Y.y) < 0.9 ? new THREE.Vector3(0, 1, 0) : new THREE.Vector3(0, 0, 1));
+  Z = Z.sub(Y.clone().multiplyScalar(Z.dot(Y))).normalize();
+  const X = new THREE.Vector3().crossVectors(Y, Z);
+  return new THREE.Vector3(...pos).addScaledVector(X, local[0]).addScaledVector(Y, local[1]).addScaledVector(Z, local[2]).toArray();
+}
+
+/**
+ * Vanne à boisseau sphérique 3 voies montée sur panneau : corps cubique
+ * (côté s), trois bossages taraudés NPT (±X et -Y), chapeau fileté et écrou de
+ * panneau sur +Y, levier plat. Centre du corps à l'origine. Retourne
+ * { obj, ports: { '-x', '+x', '-y' } (faces des orifices) }.
+ */
+export function ballValve3(api, npt = 8, { s = 0.048, stem = 0.06, material = 'brass', handle = 'red' } = {}) {
+  const { S } = api;
+  const rn = (NPT[npt] * IN) / 2;
+  const boss = rn * 1.45, bl = 0.012;
+  const body = [S.box(s, s, s, material, { r: 0.004 })];
+  const ports = {};
+  for (const [k, dir] of [['-x', [-1, 0, 0]], ['+x', [1, 0, 0]], ['-y', [0, -1, 0]]]) {
+    const c = dir.map((v) => v * (s / 2 + bl / 2));
+    body.push(S.at(S.lathe([[rn * 0.95, bl / 2], [rn * 0.95, -bl / 2], [boss, -bl / 2], [boss, bl / 2 - 0.0015], [boss - 0.0015, bl / 2], [rn * 0.95, bl / 2]], material, { seg: 6 }), c,
+      dir[0] ? [0, 0, -dir[0] * Math.PI / 2] : [Math.PI, 0, 0]));
+    ports[k] = dir.map((v) => v * (s / 2 + bl));
+  }
+  // Chapeau fileté (traverse le panneau), écrou de panneau, tige carrée, levier.
+  const bonnet = S.lathe([[0, s / 2], [0.016, s / 2], [0.016, s / 2 + 0.004], ...S.thread(0.0125, s / 2 + 0.004, s / 2 + stem, { pitch: 0.0016, maxTurns: 12, chamferBottom: false }), [0, s / 2 + stem]], material, { seg: 24 });
+  const steel = [
+    S.cyl(0.005, 0.016, 'steel', { seg: 4, pos: [0, s / 2 + stem + 0.008, 0] }),
+    S.nut(0.008, 0.005, 'steel', { pos: [0, s / 2 + stem + 0.02, 0] }),
+  ];
+  const lever = S.group(
+    S.box(0.13, 0.006, 0.028, handle, { r: 0.0025, pos: [0.045, 0, 0] }),
+    S.box(0.03, 0.012, 0.03, handle, { r: 0.004, pos: [0, -0.003, 0] }),
+  );
+  lever.position.y = s / 2 + stem + 0.014;
+  return { obj: S.group(S.merged(body, material), bonnet, S.merged(steel, 'steel'), lever), ports, top: s / 2 + stem };
+}
