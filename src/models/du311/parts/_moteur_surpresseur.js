@@ -464,3 +464,30 @@ export const ACC = (() => {
     turn,
   };
 })();
+
+// Prisme couché : contour [[x, z], …] percé de contours [[[x, z], …], …],
+// extrudé selon +Y de y0 à y1, normales lissées sur les arrondis (fonte,
+// brides, plaques). Renvoie un maillage du matériau donné.
+export function lrPrism(api, outline, holes, y0, y1, material) {
+  const { THREE, S } = api;
+  const v = (pts) => pts.map(([x, z]) => new THREE.Vector2(x, -z));
+  const shape = new THREE.Shape(v(outline));
+  holes.forEach((h) => shape.holes.push(new THREE.Path(v(h))));
+  const geo = new THREE.ExtrudeGeometry(shape, { depth: y1 - y0, bevelEnabled: false, curveSegments: 12 });
+  geo.rotateX(-Math.PI / 2);
+  geo.translate(0, y0, 0);
+  return S.merged([new THREE.Mesh(S.creaseNormals(geo))], material);
+}
+
+// Rectangle à coins arrondis (rayon r, n points par coin) centré en (cx, cz).
+export function lrRoundRect(w, d, r, n = 4, cx = 0, cz = 0) {
+  const out = [];
+  const c = [[w / 2 - r, d / 2 - r, 0], [-w / 2 + r, d / 2 - r, 1], [-w / 2 + r, -d / 2 + r, 2], [w / 2 - r, -d / 2 + r, 3]];
+  for (const [x, z, q] of c) {
+    for (let k = 0; k <= n; k++) {
+      const a = ((q + k / n) * Math.PI) / 2;
+      out.push([cx + x + r * Math.cos(a), cz + z + r * Math.sin(a)]);
+    }
+  }
+  return out;
+}
