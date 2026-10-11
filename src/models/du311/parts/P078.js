@@ -99,8 +99,8 @@ export default function P078(api, opts = {}) {
   // Tube percé des deux orifices (-X), fond tourné, chape de fond (œil selon
   // X), bossages d'orifice, cordons de soudure.
   const portHoles = PORTS.flatMap((y) => roundHole(-Math.PI / 2, u(y), u(0.2), u(TUBE), { steps: 6 }));
-  const tube = slotted(u(TUBE), u(BORE), u(Y.floor), u(Y.tubeTop), portHoles, 'grey', { seg: 36 });
-  const cap = L(S, [[0, Y.capBot], [TUBE - 0.08, Y.capBot], [TUBE, Y.capBot + 0.08], [TUBE, Y.floor], [BORE, Y.floor], [BORE, Y.floor + 0.02], [0, Y.floor + 0.02]], 'grey', 36);
+  const tube = slotted(u(TUBE), u(BORE), u(Y.floor), u(Y.tubeTop), portHoles, 'grey', { seg: 28 });
+  const cap = L(S, [[0, Y.capBot], [TUBE - 0.08, Y.capBot], [TUBE, Y.capBot + 0.08], [TUBE, Y.floor], [BORE, Y.floor], [BORE, Y.floor + 0.02], [0, Y.floor + 0.02]], 'grey', 28);
   // Chape de fond : œil plat, axe selon X (bloc tourné d'un quart de tour autour de Y)
   const lug = eyeBlock(0, Y.capBot + 0.05, 'grey', -1);
   lug.rotation.y = Math.PI / 2;
@@ -111,8 +111,8 @@ export default function P078(api, opts = {}) {
   const ww = u(EYE.w / 2 + 0.05), wz = u(EYE.R + 0.03);
   P('5', group(
     merged([tube, cap, lug, ...PORTS.map(boss)], 'grey'),
-    weldRing(u(TUBE - 0.02), u(0.2), 'grey', { pos: [0, u(Y.floor), 0] }),
-    S.weld([[-ww, u(Y.capBot - 0.04), -wz], [ww, u(Y.capBot - 0.04), -wz], [ww, u(Y.capBot - 0.04), wz], [-ww, u(Y.capBot - 0.04), wz]], u(0.2), 'grey', { closed: true }),
+    weldRing(u(TUBE - 0.02), u(0.26), 'grey', { pos: [0, u(Y.floor), 0] }),
+    S.weld([[-ww, u(Y.capBot - 0.04), -wz], [ww, u(Y.capBot - 0.04), -wz], [ww, u(Y.capBot - 0.04), wz], [-ww, u(Y.capBot - 0.04), wz]], u(0.26), 'grey', { closed: true }),
   ), [0, -0.03, 0]);
 
   // 9 — bouchons d'orifice SAE -04 à six-pans creux et joint torique
@@ -140,7 +140,7 @@ export default function P078(api, opts = {}) {
     [BORE - 0.17, 7.45], [BORE - 0.17, 7.75], [BORE - 0.02, 7.75], [BORE - 0.02, Y.tubeTop - 0.06],
     [BORE - 0.08, Y.tubeTop], [0.98, Y.tubeTop], [0.98, Y.tubeTop - 0.22], [RG, Y.tubeTop - 0.22],
     [RG, 7.55], [0.86, 7.55], [0.86, 7.15], [RG, 7.15], [RG, Y.headBot],
-  ], 'grey', 36);
+  ], 'grey', 28);
   // trous de clé à ergot Ø 1/4 sur la face (fond plat suggéré)
   const keys = [-1, 1].map((s) => L(S, [[0, Y.tubeTop - 0.25], [0.13, Y.tubeTop - 0.25], [0.13, Y.tubeTop + 0.002], [0, Y.tubeTop + 0.002]], 'darkSteel', 12, { pos: [0, 0, s * u(1.3)] }));
   P('6', group(
@@ -171,7 +171,7 @@ export default function P078(api, opts = {}) {
       [TH + 0.02, 2.66], [0.62, 2.66], [0.62, Y.pistonBot], [LAND - 0.05, Y.pistonBot], [LAND, Y.pistonBot + 0.05],
       [LAND, 2.62], [BORE - 0.28, 2.62], [BORE - 0.28, 3.24], [LAND, 3.24], [LAND, Y.pistonTop - 0.05], [LAND - 0.05, Y.pistonTop],
       [0.56, Y.pistonTop], [0.5, Y.pistonTop - 0.06], [TH + 0.02, Y.pistonTop - 0.06], [TH + 0.02, 2.66],
-    ], 'steel', 36),
+    ], 'steel', 28),
     // 11.6 — joint de piston (élément noir et deux bagues d'appui)
     L(S, [[BORE - 0.27, 2.72], [BORE - 0.01, 2.72], [BORE - 0.01, 3.14], [BORE - 0.27, 3.14], [BORE - 0.27, 2.72]], 'rubber', 36),
     merged([

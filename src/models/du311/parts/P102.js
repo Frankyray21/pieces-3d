@@ -5,8 +5,8 @@
 // flancs), deux bras en caisson qui rejoignent les colonnes de pivot, et à
 // chaque colonne un moyeu haut (dans le caisson) et un moyeu bas suspendu
 // sous le caisson, portant deux chapes plates côté extérieur (œil de fond du
-// vérin de pivotement P094, axe P098 repère 7). Sur le dessus, à droite,
-// les deux glissières des mâchoires ; à l'avant, au droit de la fente, le
+// vérin de pivotement P094, axe P098 repère 7). Sur le dessus, de chaque côté,
+// les glissières de la plaque à coins (P044), les fourreaux de mâchoires (P104) coulissant dans le caisson par ses flancs ouverts ; à l'avant, au droit de la fente, le
 // moyeu du verrou (vérin P114 dessous). Garnitures :
 // - 1 : huit bagues bronze-aluminium 2 × 2 1/4 × 2 po, deux par moyeu ;
 // - 3 : quatre entretoises entre les deux bagues de chaque moyeu (coupe D-D) ;
@@ -29,7 +29,7 @@ const DZ = 20.4; // axe de forage
 const HOLE = 4.26; // rayon du passage de tige
 const B = { ro: 1.875, ri: 1.125 }; // moyeux Ø 3 3/4, alésage = Ø ext. des bagues
 const LOW = [0, 5]; // moyeu bas
-const UP = [6.8, 11.8]; // moyeu haut = hauteur du caisson
+const UP = [6.8, 12.0]; // moyeu haut = hauteur du caisson (jour intérieur 4.2 po : fourreaux P104)
 const T = 0.5; // tôles
 const LUG = { x: 14.8, r: 1.0, hole: 0.515, t: 0.6, y: [0.6, 3.0] };
 const LOCK = { x: 2.97, z: 28.3, ro: 1.375, ri: 1.0 }; // moyeu du verrou
@@ -109,7 +109,9 @@ export default function P102(api) {
     gus.position.x = u(s * (PX - 0.6));
     bosses.push(gus);
     // Flanc extérieur, âmes des bras.
-    plates.push(wall([s * (SIDE - T / 2), 1.6], [s * (SIDE - T / 2), CH], UP[0] + T, UP[1] - T));
+    // Flanc extérieur, ouvert au droit du fourreau de mâchoire (10.6 × 4.2 po).
+    plates.push(wall([s * (SIDE - T / 2), 1.6], [s * (SIDE - T / 2), DZ - 5.3], UP[0] + T, UP[1] - T));
+    plates.push(wall([s * (SIDE - T / 2), DZ + 5.3], [s * (SIDE - T / 2), CH], UP[0] + T, UP[1] - T));
     plates.push(wall([s * ARM.x + -s * T / 2, 1.9], [s * ARM.x + -s * T / 2, ARM.z0], UP[0] + T, UP[1] - T));
     plates.push(wall([s * (ARM.x - T / 2), ARM.z0], [s * ARM.xi, ARM.zi - T / 2], UP[0] + T, UP[1] - T));
     // Plaque avant : pan coupé.
@@ -119,23 +121,28 @@ export default function P102(api) {
   plates.push(wall([-6.6, FRONT - T / 2], [6.6, FRONT - T / 2], UP[0], UP[1]));
   plates.push(wall([-ARM.xi, ARM.zi - T / 2], [ARM.xi, ARM.zi - T / 2], UP[0] + T, UP[1] - T));
   // Paroi du passage de tige (fendue au milieu).
-  const bore = S.slotted(u(HOLE + 0.4), u(HOLE), u(UP[0] + T), u(UP[1] - T), [{ a: 0, w: 0.015, y0: -1, y1: 1 }, { a: Math.PI, w: 0.015, y0: -1, y1: 1 }], 'grey', { seg: 48, pos: v(0, 0, DZ) });
+  // Pas de paroi autour du passage de tige : les fourreaux de mâchoires
+  // (P104) y coulissent entre les plaques et ferment le passage.
   // Moyeu du verrou entre les deux plaques (bagues 2).
   // Moyeu en saillie de 0.1 po sur chaque plaque (lamage des bagues visible).
   const lockBoss = shell(u(LOCK.ro), u(LOCK.ri), u(UP[1] - UP[0] + 0.2), 'grey', { seg: 32, pos: v(LOCK.x, (UP[0] + UP[1]) / 2, LOCK.z) });
-  // Glissières des mâchoires sur la moitié droite : deux blocs chanfreinés.
+  // Glissières de la plaque à coins (P044, 10 1/4 po de large) sur les deux
+  // moitiés : bandes de 1/2 × 1 po le long de X, de part et d'autre de la plaque
+  // (largeur 10.35 po centrée sur l'axe de forage), du passage de tige au flanc.
   const rails = [];
-  for (const [z0, z1] of [[15.1, 17.9], [22.9, 25.8]]) {
-    const prof = [[4.2, UP[1]], [13.8, UP[1]], [13.8, UP[1] + 1.4], [4.8, UP[1] + 1.4], [3.1, UP[1] + 0.6], [3.1, UP[1]]];
-    const m = extrude(prof.map(([x, y]) => [u(x), u(y)]), u(z1 - z0), 'grey');
-    m.position.z = u((z0 + z1) / 2);
-    rails.push(m);
+  for (const s of [-1, 1]) {
+    for (const zc of [DZ - 5.175 - 0.3, DZ + 5.175 + 0.3]) {
+      const prof = [[s * 4.6, UP[1]], [s * 13.0, UP[1]], [s * 13.0, UP[1] + 1.0], [s * 4.9, UP[1] + 1.0], [s * 4.6, UP[1] + 0.7]];
+      const m = extrude((s > 0 ? prof : prof.slice().reverse()).map(([x, y]) => [u(x), u(y)]), u(0.5), 'grey');
+      m.position.z = u(zc);
+      rails.push(m);
+    }
   }
   // Repères en saillie : arêtes de soudure des plaques du caisson.
   for (const y of [UP[0] + T + 0.06, UP[1] - T - 0.06]) {
     for (const s of [-1, 1]) beads.push(weld([v(s * (SIDE - T - 0.06), y, 2.2), v(s * (SIDE - T - 0.06), y, CH - 0.3)], u(0.18), 'grey'));
   }
-  const frame = merged([...plates, ...bosses, bore, lockBoss, ...rails], 'grey');
+  const frame = merged([...plates, ...bosses, lockBoss, ...rails], 'grey');
   frame.userData.hasInterior = true;
   const weldMesh = merged(beads, 'grey');
   weldMesh.geometry.userData.edgeAngle = 75;
