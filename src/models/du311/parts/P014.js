@@ -8,7 +8,7 @@
 // y = 0.76, mât dressé de x = 2.62 à 3.04 (pied à y = 0.6). P012 insère la
 // trousse à l'origine, P010 insère P012 à l'origine.
 // Encombrement : de x = −1.97 (banc de translation) à 2.85 (flancs du mât),
-// y = 0.65 à 3.49, z = −0.68 à 0.74.
+// y = 0.65 à 3.49, z = −0.68 à 0.74 (x mini de la glissière : 1.98).
 // Faute de dessin, les emplacements sont estimés d'après la fonction de chaque
 // étiquette et posés à plat sur les formes simplifiées de frame.js et
 // machine.js :
@@ -23,8 +23,9 @@
 //  · vidanges (blanches, goutte noire) au bas du réservoir hydraulique, du
 //    moteur, du surpresseur, du réservoir d'air et de la pompe à eau ;
 //  · entrées d'air (flanc −Z) et d'eau (flanc +Z) sur les longerons, à l'avant ;
-//  · V-30 sur le flanc −Z du mât, graissage de glissière sur le flasque +Z de
-//    la glissière (formes provisoires de machine.js, repère 3 de P010).
+//  · V-30 sur le flanc −Z du mât ; graissage de la glissière sur la face
+//    arrière (x = 1.98) de la colonne +Z de P168 (caisson z 0.57–0.67),
+//    sous le bloc de graissage centralisé (y 1.075–1.325).
 // Repères 2 à 5 (« LABEL » sans libellé) : sur le banc de translation.
 
 import { etiquettes } from './_glissiere_options.js';
@@ -127,8 +128,9 @@ export default function P014(api) {
   put('38', inlet(150, 'blue'), [1.3, 0.665, 0.68], [0, 0, 1], 0.25);
   // 47 — V-30 : flanc −Z du mât, en haut.
   put('47', { w: 0.1, h: 0.04, bg: 'black', ink: 'white', lines: 1, seed: 160 }, [MAST.x, MAST.y0 + 2.87, -MAST.zs], [0, 0, -1], 0.25);
-  // 69 — points de graissage de la glissière : flasque +Z (z 0.57), sous le bloc de graissage.
-  put('69', { w: 0.1, h: 0.07, bg: 'white', ink: 'black', border: 'black', pics: [['plain', 'can']], lines: 3, seed: 161 }, [2.38, 0.98, 0.57], [0, 0, 1], 0.25);
+  // 69 — points de graissage de la glissière : face arrière (x 1.98) de la
+  // colonne +Z de P168 (z 0.57–0.67), juste sous le bloc de graissage.
+  put('69', { w: 0.085, h: 0.065, bg: 'white', ink: 'black', border: 'black', pics: [['plain', 'can']], lines: 3, seed: 161 }, [1.98, 0.97, 0.62], [-1, 0, 0], 0.25);
 
   return { view: { dir: [0.9, 0.7, 1.2] } };
 }
