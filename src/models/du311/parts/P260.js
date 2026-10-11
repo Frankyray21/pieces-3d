@@ -15,15 +15,15 @@
 // vilebrequin, dans le plan de la face SAE du carter de volant ; +X vers
 // l'avant (soufflante), Y vers le haut, +Z à droite en regardant vers l'avant
 // (côté injection, filtres et capot d'air), −Z côté échappement et démarreur.
-// Dessous des pattes à y = ENG.footY. Encombrement ≈ 0.84 (X, de −0.01 à
-// 0.83) × 0.80 (Y, de −0.30 à 0.50 ; boîtier de commande jusqu'à 0.69) ×
+// Dessous des pattes à y = ENG.footY. Encombrement ≈ 0.93 (X, de −0.10 à
+// 0.83) × 0.80 (Y, de −0.30 à 0.50 ; boîtier de commande jusqu'à 0.59) ×
 // 0.60 (Z) m.
 // Cotes : alésage 102 mm (Deutz), entraxe des cylindres estimé 125 mm, carter
 // de volant SAE 3 (alésage 16,125 po, 12 vis sur Ø 16,875 po), volant SAE
 // 11,5 po ; le reste d'après les proportions de la vue de la page 260.
 // Boîtier de commande (6) : livré avec le moteur (« INCLUDED W/ CP004250 »,
-// page 256) ; posé ici sur une console au-dessus de la soufflante, face vers
-// +Z — son emplacement sur la machine est donné par P256 / P242.
+// page 256) ; posé ici sur une console au-dessus du carter de volant, face
+// vers +Z — son emplacement sur la machine est donné par P256 / P242.
 import { ENG, IN, MM } from './_moteur_surpresseur.js';
 
 export default function P260(api) {
@@ -161,8 +161,8 @@ export default function P260(api) {
   acc.push(tube([[0.12, IY, IZ], [0.6, IY, IZ]], 0.028, 'castAlu', { sharp: true, seg: 2, radial: 24 }));
   acc.push(at(cyl(0.036, 0.01, 'castAlu', { axis: 'x' }), [0.12, IY, IZ]));
   for (const x of ENG.cylX) acc.push(bx(x - 0.024, x + 0.024, IY - 0.035, IY - 0.005, 0.115, IZ, 'castAlu', 0.006));
-  acc.push(tube([[0.6, IY, IZ], [0.64, IY + 0.01, IZ], [0.655, IY + 0.05, IZ]], 0.034, 'castAlu', { seg: 16, radial: 24 }));
-  acc.push(at(cyl(0.044, 0.012, 'castAlu'), [0.656, IY + 0.056, IZ]));
+  // Embout d'aspiration 3 po vers l'avant (raccord du tuyau P268 rep. 9).
+  acc.push(lathe([[0, 0.59], [0.03, 0.59], [0.0381, 0.6], [0.0381, ENG.intake.x - 0.012], [0.0395, ENG.intake.x - 0.008], [0.0381, ENG.intake.x - 0.004], [0.0381, ENG.intake.x], [0, ENG.intake.x]], 'castAlu', { axis: 'x', seg: 32, pos: [0, IY, IZ] }));
   // Pompes d'injection : quatre corps sous le capot, bride à deux vis.
   for (const x of ENG.cylX) {
     accBlk.push(bx(x - 0.022, x + 0.022, -0.09, 0.0, 0.17, 0.205, 'darkSteel', 0.004));
@@ -249,9 +249,9 @@ export default function P260(api) {
   // ---------------------------------------------------------------- 6 — boîtier de commande
   // Coffret à six instruments (manomètre d'huile, thermomètre, compte-tours,
   // ampèremètre, horamètre, voyants), contacteur à clé et voyants, sur une
-  // console au-dessus de la soufflante ; façade vers +Z.
+  // console au-dessus du carter de volant ; façade vers +Z.
   {
-    const cx = 0.74, cy = 0.56, cz = 0.21, w = 0.2, h = 0.28, d = 0.14;
+    const cx = 0.0, cy = 0.45, cz = 0.22, w = 0.2, h = 0.28, d = 0.14;
     const bodyBox = box(w, h, d, 'black', { r: 0.008, pos: [cx, cy, cz] });
     const lid = box(w - 0.014, h - 0.014, 0.004, 'black', { r: 0.004, pos: [cx, cy, cz + d / 2 + 0.002] });
     const gauges = [];
@@ -262,7 +262,7 @@ export default function P260(api) {
     for (let k = 0; k < 4; k++) sw.push(at(cyl(0.005, 0.008, 'red', { axis: 'z', seg: 12 }), [cx + 0.075, cy - 0.105 + k * 0.022, cz + d / 2 + 0.006]));
     const bracket = group(
       bx(cx - 0.06, cx + 0.06, cy - h / 2 - 0.006, cy - h / 2, cz - 0.06, cz + 0.06, 'black'),
-      bx(cx - 0.02, cx + 0.02, FY + ENG.blowerR, cy - h / 2, cz - 0.02, cz + 0.02, 'black'),
+      bx(cx - 0.02, cx + 0.02, 0.25, cy - h / 2, cz - 0.02, cz + 0.02, 'black'),
     );
     P('6', group(bodyBox, lid, ...gauges, merged(sw.filter((o, i) => i === 0), 'chrome'), merged(sw.filter((o, i) => i > 0), 'red'), bracket), [0.15, 0.25, 0.15]);
   }
