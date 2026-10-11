@@ -8,16 +8,16 @@
 // support (P198) et le tube, deux rondelles de butée (1) de part et d'autre du
 // tube, goupille fendue Ø 3/16 × 2 1/4 po (8) sous l'oreille basse. Enrouleur
 // type 20.1 K560 (6) : coffret d'entraînement à toit incliné et couvercle à
-// charnière, gaine annelée de sortie du câble, tambour Ø 0,84 m, deux joues en
-// fer plat roulé Ø 1,40 m à douze rayons en cornière, moyeu à bride. Plaque
+// charnière, gaine annelée de sortie du câble, tambour Ø 0,66 m, deux joues en
+// fer plat roulé Ø 1,10 m à douze rayons en cornière, moyeu à bride. Plaque
 // d'enrouleur (4) : contre-plaque carrée boulonnée au fond du coffret
 // (« located inside cable reel box »).
 // Repère : origine sur l'axe du pivot, à la face inférieure du tube de pivot
 // (sur la rondelle de butée basse) ; Y vers le haut ; le bras s'étend vers -X
 // (plaque porte-enrouleur centrée à x = -1.0) ; +Z vers l'extérieur : axe de
 // l'enrouleur selon Z, joues à z = 0.40 et 0.82, axe à y = 0.43.
-// Encombrement ≈ 2.0 (X) × 1.43 (Y) × 1.05 (Z) m. Diamètres de l'enrouleur,
-// longueur du bras et sections estimés d'après les proportions des pages 198
+// Encombrement ≈ 1.85 (X) × 1.12 (Y) × 1.02 (Z) m. Diamètres de l'enrouleur,
+// longueur du bras et sections estimés d'après les proportions des pages 186, 198
 // et 200 (le manuel ne les cote pas).
 
 const IN = 0.0254;
@@ -35,7 +35,7 @@ export default function P200(api) {
   const XP = -1.0, ZP = 0.15; // centre de la plaque porte-enrouleur
   const PT = 0.5 * IN;
   const YP = YA + BH / 2 + PT; // dessus de la plaque
-  const R = 0.7, RD = 0.42; // joues, tambour
+  const R = 0.55, RD = 0.33; // joues, tambour
   const ZR0 = 0.4, ZR1 = 0.82; // joues arrière / avant
   const YC = YP + 0.25; // axe de l'enrouleur
   const BOX = { x: 0.56, y: 0.44, z0: -0.04, z1: 0.36 }; // coffret
