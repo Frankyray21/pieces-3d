@@ -32,8 +32,8 @@
 // portée de 21 po (centre de tige) et largeurs relevées sur la vue de face de
 // P072 (≈ 26 px/po) ; disposition (vérin en diagonale depuis le bossage
 // latéral du moyeu jusqu'à la chape de mâchoire) d'après l'éclaté de P074.
-import { L, u, along, hhcs, shcs, sqss, hexNut, flatWasher, pin } from './_avance_b.js';
-import { CYL078 } from './P078.js';
+import { L, u, along, hhcs, sqss, hexNut, flatWasher, pin } from './_avance_b.js';
+import { CYL078, oring } from './P078.js';
 import { JAW082 } from './P082.js';
 
 const IN = 0.0254;
@@ -63,6 +63,8 @@ export default function P074(api, opts = {}) {
   const { THREE, S } = api;
   const { merged, group, at, weld, weldRing } = S;
   const P = (ref, obj, e) => api.part(ref, obj, e);
+  // Vis CHC légère (d × len po) : tête Ø 1.5 d à six-pans creux, dessous à y = 0.
+  const capScrew = (d, len) => L(S, [[0, -len], [d * 0.42, -len], [d / 2, -len + d * 0.1], [d / 2, 0], [d * 0.75, 0], [d * 0.75, d * 0.92], [d * 0.7, d], [d * 0.3, d], [d * 0.3, d * 0.5], [0, d * 0.5]], 'blackOxide', 12);
   const V = (x, y, z) => [u(x), u(y), -u(z)]; // cotes logiques (po) → repère (z miroir)
 
   // Prisme d'un contour [[a, b], …] (po) percé de trous (contours ou
@@ -129,7 +131,6 @@ export default function P074(api, opts = {}) {
   const beads = [
     ...[PL.gap, -PL.gap].map((y) => weld([V(3.1, y, -2.7), V(12.9, y, -2.7)], u(0.22), 'grey')),
     ...[PL.gap, -PL.gap].map((y) => weldRing(u(1.28), u(0.2), 'grey', { pos: [u(BP[0]), u(y - Math.sign(y) * 0.06), -u(BP[1])] })),
-    ...[PL.gap, -PL.gap].flatMap((y) => [weld([V(3.3, y, -2.6), V(3.3, y, 2.6)], u(0.22), 'grey')]),
   ];
   P('8', group(merged([...plates, ...collars, ...flanks, web, ...bosses], 'grey'), ...beads), [0, 0, 0]);
 
@@ -188,11 +189,11 @@ export default function P074(api, opts = {}) {
     // ORB 7/16-20 → JIC 9/16-18 : six-pans 3/4, nez conique, torique
     const g = new THREE.Group();
     g.add(merged([
-      L(S, [[0, -0.36], ...S.thread(0.2185, -0.36, -0.1, { pitch: 0.05, maxTurns: 5 }), [0.19, -0.1], [0.19, 0], [0, 0]], 'zinc', 12),
+      L(S, [[0, -0.36], ...S.thread(0.2185, -0.36, -0.1, { pitch: 0.05, maxTurns: 3 }), [0.19, -0.1], [0.19, 0], [0, 0]], 'zinc', 10),
       hexPrismY(0.75, 0.3, 0),
-      L(S, [[0, 0.3], [0.24, 0.3], [0.24, 0.38], ...S.thread(0.281, 0.38, 0.78, { pitch: 0.055, maxTurns: 6, chamferBottom: false }), [0.2, 0.9], [0, 0.9]], 'zinc', 14),
+      L(S, [[0, 0.3], [0.24, 0.3], [0.24, 0.38], ...S.thread(0.281, 0.38, 0.78, { pitch: 0.055, maxTurns: 4, chamferBottom: false }), [0.2, 0.9], [0, 0.9]], 'zinc', 10),
     ], 'zinc'));
-    g.add(S.torus(u(0.21), u(0.032), 'rubber', { pos: [0, -u(0.06), 0] }));
+    g.add(oring(S, 0.21, 0.032, -0.06, 'rubber', 14));
     return g;
   }
   function hexPrismY(af, h, y0) {
@@ -240,7 +241,7 @@ export default function P074(api, opts = {}) {
     p6.position.set(u(x), u((PIN6.y0 + PIN6.y1) / 2), -u(z));
     P('6', p6, [0, -0.3, 0]);
     // 13 — vis CHC 1/4-20 × 2 au travers du bas de l'axe (selon X)
-    P('13', along(THREE, shcs(S, THREE, 0.25, 2.0), [-1, 0, 0], V(x - 0.75, PIN6.y0 + 0.3, z)), [-0.08, -0.3, 0]);
+    P('13', along(THREE, capScrew(0.25, 2.0), [-1, 0, 0], V(x - 0.75, PIN6.y0 + 0.3, z)), [-0.08, -0.3, 0]);
   }
   // 5 — axe Ø 1 × 3 dans la chape de la mâchoire ; 2 — goupille élastique
   // Ø 1/4 × 2 au travers de la joue basse et de l'axe
@@ -255,10 +256,10 @@ export default function P074(api, opts = {}) {
   const elbow = () => {
     const g = [
       hexPrismY(0.4375, 0.18, 0),
-      L(S, [[0, -0.25], ...S.thread(0.2, -0.25, -0.02, { pitch: 0.04, maxTurns: 4 }), [0.18, 0], [0, 0]], 'zinc', 10),
-      L(S, [[0, 0.18], [0.16, 0.18], [0.16, 0.5], [0.12, 0.56], [0, 0.56]], 'zinc', 12),
+      L(S, [[0, -0.25], [0.18, -0.25], [0.2, -0.2], [0.2, 0], [0, 0]], 'zinc', 8),
+      L(S, [[0, 0.18], [0.16, 0.18], [0.16, 0.5], [0.12, 0.56], [0, 0.56]], 'zinc', 8),
     ];
-    const arm = L(S, [[0, 0], [0.14, 0], [0.14, 0.32], [0.1, 0.36], [0.1, 0.42], [0.13, 0.45], [0.13, 0.52], [0.07, 0.56], [0, 0.56]], 'zinc', 12, { axis: 'x' });
+    const arm = L(S, [[0, 0], [0.14, 0], [0.14, 0.32], [0.1, 0.36], [0.1, 0.42], [0.13, 0.45], [0.13, 0.52], [0.07, 0.56], [0, 0.56]], 'zinc', 8, { axis: 'x' });
     arm.position.y = u(0.4);
     g.push(arm);
     return merged(g, 'zinc');

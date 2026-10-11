@@ -61,9 +61,21 @@ export const CYL078 = {
   portY: PORTS.map(u),
 };
 
+/**
+ * Joint torique léger (section hexagonale arrondie, 6 × seg facettes) : plan
+ * perpendiculaire à Y, rayon moyen R, section r (po), centré en y (po).
+ */
+export function oring(S, R, r, y = 0, mat = 'rubber', seg = 28) {
+  const pts = Array.from({ length: 7 }, (_, i) => {
+    const a = -Math.PI / 2 + (i / 6) * Math.PI * 2;
+    return [R + r * Math.cos(a), y + r * Math.sin(a)];
+  });
+  return L(S, pts, mat, seg);
+}
+
 export default function P078(api, opts = {}) {
   const { THREE, S } = api;
-  const { extrude, weldRing, slotted, roundHole, torus, merged, group, at } = S;
+  const { extrude, weldRing, slotted, roundHole, merged, group, at } = S;
   const P = (ref, obj, e) => api.part(ref, obj, e);
   const rodEyeX = opts.rodEye === 'x';
 
@@ -87,8 +99,8 @@ export default function P078(api, opts = {}) {
   // Tube percé des deux orifices (-X), fond tourné, chape de fond (œil selon
   // X), bossages d'orifice, cordons de soudure.
   const portHoles = PORTS.flatMap((y) => roundHole(-Math.PI / 2, u(y), u(0.2), u(TUBE), { steps: 6 }));
-  const tube = slotted(u(TUBE), u(BORE), u(Y.floor), u(Y.tubeTop), portHoles, 'grey', { seg: 48 });
-  const cap = L(S, [[0, Y.capBot], [TUBE - 0.08, Y.capBot], [TUBE, Y.capBot + 0.08], [TUBE, Y.floor], [BORE, Y.floor], [BORE, Y.floor + 0.02], [0, Y.floor + 0.02]], 'grey', 48);
+  const tube = slotted(u(TUBE), u(BORE), u(Y.floor), u(Y.tubeTop), portHoles, 'grey', { seg: 36 });
+  const cap = L(S, [[0, Y.capBot], [TUBE - 0.08, Y.capBot], [TUBE, Y.capBot + 0.08], [TUBE, Y.floor], [BORE, Y.floor], [BORE, Y.floor + 0.02], [0, Y.floor + 0.02]], 'grey', 36);
   // Chape de fond : œil plat, axe selon X (bloc tourné d'un quart de tour autour de Y)
   const lug = eyeBlock(0, Y.capBot + 0.05, 'grey', -1);
   lug.rotation.y = Math.PI / 2;
@@ -99,9 +111,8 @@ export default function P078(api, opts = {}) {
   const ww = u(EYE.w / 2 + 0.05), wz = u(EYE.R + 0.03);
   P('5', group(
     merged([tube, cap, lug, ...PORTS.map(boss)], 'grey'),
-    weldRing(u(TUBE - 0.02), u(0.16), 'grey', { pos: [0, u(Y.floor), 0] }),
-    S.weld([[-ww, u(Y.capBot - 0.04), -wz], [ww, u(Y.capBot - 0.04), -wz], [ww, u(Y.capBot - 0.04), wz], [-ww, u(Y.capBot - 0.04), wz]], u(0.16), 'grey', { closed: true }),
-    ...PORTS.map((y) => weldRing(u(BOSS.r + 0.03), u(0.1), 'grey', { axis: 'x', pos: [-u(1.95), u(y), 0] })),
+    weldRing(u(TUBE - 0.02), u(0.2), 'grey', { pos: [0, u(Y.floor), 0] }),
+    S.weld([[-ww, u(Y.capBot - 0.04), -wz], [ww, u(Y.capBot - 0.04), -wz], [ww, u(Y.capBot - 0.04), wz], [-ww, u(Y.capBot - 0.04), wz]], u(0.2), 'grey', { closed: true }),
   ), [0, -0.03, 0]);
 
   // 9 — bouchons d'orifice SAE -04 à six-pans creux et joint torique
@@ -112,11 +123,11 @@ export default function P078(api, opts = {}) {
     const r = 0.2185, R = 0.31, h = 0.14, hx = 0.0945 / Math.cos(Math.PI / 6);
     return group(
       merged([
-        L(S, [[hx, h * 0.35], [hx, h], [R - 0.02, h], [R, h - 0.02], [R, 0.02], [R - 0.02, 0], [0, 0], [0, h * 0.35]].reverse(), 'zinc', 20),
+        L(S, [[hx, h * 0.35], [hx, h], [R - 0.02, h], [R, h - 0.02], [R, 0.02], [R - 0.02, 0], [0, 0], [0, h * 0.35]].reverse(), 'zinc', 14),
         L(S, [[0, h * 0.35], [hx, h * 0.35], [hx, h], [0, h]].reverse(), 'zinc', 6),
-        L(S, [[0, -0.36], ...S.thread(r, -0.36, -0.08, { pitch: 0.05, maxTurns: 5 }), [r * 0.9, 0], [0, 0]], 'zinc', 12),
+        L(S, [[0, -0.36], ...S.thread(r, -0.36, -0.08, { pitch: 0.05, maxTurns: 4 }), [r * 0.9, 0], [0, 0]], 'zinc', 10),
       ], 'zinc'),
-      torus(u(0.235), u(0.035), 'rubber', { pos: [0, -u(0.04), 0] }),
+      oring(S, 0.235, 0.035, -0.04, 'rubber', 16),
     );
   }
 
@@ -129,26 +140,26 @@ export default function P078(api, opts = {}) {
     [BORE - 0.17, 7.45], [BORE - 0.17, 7.75], [BORE - 0.02, 7.75], [BORE - 0.02, Y.tubeTop - 0.06],
     [BORE - 0.08, Y.tubeTop], [0.98, Y.tubeTop], [0.98, Y.tubeTop - 0.22], [RG, Y.tubeTop - 0.22],
     [RG, 7.55], [0.86, 7.55], [0.86, 7.15], [RG, 7.15], [RG, Y.headBot],
-  ], 'grey', 48);
+  ], 'grey', 36);
   // trous de clé à ergot Ø 1/4 sur la face (fond plat suggéré)
   const keys = [-1, 1].map((s) => L(S, [[0, Y.tubeTop - 0.25], [0.13, Y.tubeTop - 0.25], [0.13, Y.tubeTop + 0.002], [0, Y.tubeTop + 0.002]], 'darkSteel', 12, { pos: [0, 0, s * u(1.3)] }));
   P('6', group(
     head,
     merged(keys, 'darkSteel'),
     // 11.2 / 11.3 : torique et bague anti-extrusion dans la gorge
-    torus(u(BORE - 0.1), u(0.07), 'rubber', { pos: [0, u(7.66), 0] }),
-    L(S, [[BORE - 0.16, 7.46], [BORE - 0.03, 7.46], [BORE - 0.03, 7.53], [BORE - 0.16, 7.53], [BORE - 0.16, 7.46]], 'cream', 48),
+    oring(S, BORE - 0.1, 0.07, 7.66),
+    L(S, [[BORE - 0.16, 7.46], [BORE - 0.03, 7.46], [BORE - 0.03, 7.53], [BORE - 0.16, 7.53], [BORE - 0.16, 7.46]], 'cream', 36),
     // 11.4 : joint de tige en U ; 11.5 : racleur à lèvre
-    L(S, [[RG, 7.17], [0.84, 7.17], [0.84, 7.53], [RG, 7.53], [RG + 0.04, 7.35], [RG, 7.17]], 'blue', 32),
-    L(S, [[RG, Y.tubeTop - 0.2], [0.96, Y.tubeTop - 0.2], [0.96, Y.tubeTop - 0.02], [0.8, Y.tubeTop + 0.06], [RG, Y.tubeTop + 0.04], [RG, Y.tubeTop - 0.2]], 'rubber', 32),
+    L(S, [[RG, 7.17], [0.84, 7.17], [0.84, 7.53], [RG, 7.53], [RG + 0.04, 7.35], [RG, 7.17]], 'blue', 28),
+    L(S, [[RG, Y.tubeTop - 0.2], [0.96, Y.tubeTop - 0.2], [0.96, Y.tubeTop - 0.02], [0.8, Y.tubeTop + 0.06], [RG, Y.tubeTop + 0.04], [RG, Y.tubeTop - 0.2]], 'rubber', 28),
   ), [0, 0.13, 0]);
 
   // ================================================ 7 — tige chromée
   P('7', group(
     L(S, [[0, Y.pistonTop], [ROD - 0.05, Y.pistonTop], [ROD, Y.pistonTop + 0.05], [ROD, Y.rodShoulder - 0.05], [ROD - 0.05, Y.rodShoulder], [0, Y.rodShoulder]], 'chrome', 32),
     // queues filetées 7/8-14 (piston en bas, embout en haut)
-    L(S, [[0, Y.nutBot - 0.05], ...S.thread(TH, Y.nutBot - 0.05, Y.pistonBot + 0.4, { pitch: 1 / 14, maxTurns: 9 }), [TH, Y.pistonTop], [0, Y.pistonTop]], 'steel', 16),
-    L(S, [[0, Y.rodShoulder], [TH, Y.rodShoulder], ...S.thread(TH, Y.rodShoulder + 0.05, Y.endNeck - 0.05, { pitch: 1 / 14, maxTurns: 12, chamferBottom: false }), [TH - 0.06, Y.endNeck], [0, Y.endNeck]], 'steel', 16),
+    L(S, [[0, Y.nutBot - 0.05], ...S.thread(TH, Y.nutBot - 0.05, Y.pistonBot + 0.4, { pitch: 1 / 14, maxTurns: 6 }), [TH, Y.pistonTop], [0, Y.pistonTop]], 'steel', 14),
+    L(S, [[0, Y.rodShoulder], [TH, Y.rodShoulder], ...S.thread(TH, Y.rodShoulder + 0.05, Y.endNeck - 0.05, { pitch: 1 / 14, maxTurns: 7, chamferBottom: false }), [TH - 0.06, Y.endNeck], [0, Y.endNeck]], 'steel', 14),
   ), [0.14, 0.2, 0]);
 
   // ================================================ 8 — piston et ses joints
@@ -160,15 +171,15 @@ export default function P078(api, opts = {}) {
       [TH + 0.02, 2.66], [0.62, 2.66], [0.62, Y.pistonBot], [LAND - 0.05, Y.pistonBot], [LAND, Y.pistonBot + 0.05],
       [LAND, 2.62], [BORE - 0.28, 2.62], [BORE - 0.28, 3.24], [LAND, 3.24], [LAND, Y.pistonTop - 0.05], [LAND - 0.05, Y.pistonTop],
       [0.56, Y.pistonTop], [0.5, Y.pistonTop - 0.06], [TH + 0.02, Y.pistonTop - 0.06], [TH + 0.02, 2.66],
-    ], 'steel', 48),
+    ], 'steel', 36),
     // 11.6 — joint de piston (élément noir et deux bagues d'appui)
-    L(S, [[BORE - 0.27, 2.72], [BORE - 0.01, 2.72], [BORE - 0.01, 3.14], [BORE - 0.27, 3.14], [BORE - 0.27, 2.72]], 'rubber', 48),
+    L(S, [[BORE - 0.27, 2.72], [BORE - 0.01, 2.72], [BORE - 0.01, 3.14], [BORE - 0.27, 3.14], [BORE - 0.27, 2.72]], 'rubber', 36),
     merged([
-      L(S, [[BORE - 0.27, 2.63], [BORE - 0.01, 2.63], [BORE - 0.01, 2.71], [BORE - 0.27, 2.71], [BORE - 0.27, 2.63]], 'cream', 48),
-      L(S, [[BORE - 0.27, 3.15], [BORE - 0.01, 3.15], [BORE - 0.01, 3.23], [BORE - 0.27, 3.23], [BORE - 0.27, 3.15]], 'cream', 48),
+      L(S, [[BORE - 0.27, 2.63], [BORE - 0.01, 2.63], [BORE - 0.01, 2.71], [BORE - 0.27, 2.71], [BORE - 0.27, 2.63]], 'cream', 36),
+      L(S, [[BORE - 0.27, 3.15], [BORE - 0.01, 3.15], [BORE - 0.01, 3.23], [BORE - 0.27, 3.23], [BORE - 0.27, 3.15]], 'cream', 36),
     ], 'cream'),
     // 11.1 — torique tige / piston
-    torus(u(0.5), u(0.035), 'rubber', { pos: [0, u(Y.pistonTop - 0.04), 0] }),
+    oring(S, 0.5, 0.035, Y.pistonTop - 0.04, 'rubber', 20),
   ), [0.14, 0.12, 0]);
 
   // 1 — écrou frein 7/8-14 (six-pans 1 5/16, collerette)
@@ -206,14 +217,14 @@ export default function P078(api, opts = {}) {
   function sphericalBall() {
     const ro = EYE.bore, ri = 0.5, w = 0.875, rb = 0.68;
     const g = new THREE.Group();
-    g.add(L(S, [[rb * 0.9, -w / 2], [ro, -w / 2], [ro, w / 2], [rb * 0.9, w / 2], [rb * 0.9, -w / 2]], 'steel', 32));
+    g.add(L(S, [[rb * 0.9, -w / 2], [ro, -w / 2], [ro, w / 2], [rb * 0.9, w / 2], [rb * 0.9, -w / 2]], 'steel', 24));
     const prof = [];
     const a0 = Math.asin(0.62 / rb);
     for (let i = 0; i <= 10; i++) {
       const a = -a0 + (2 * a0 * i) / 10;
       prof.push([rb * Math.cos(a), rb * Math.sin(a)]);
     }
-    g.add(L(S, [[ri, -0.62], ...prof, [ri, 0.62], [ri, -0.62]], 'chrome', 32));
+    g.add(L(S, [[ri, -0.62], ...prof, [ri, 0.62], [ri, -0.62]], 'chrome', 24));
     return g;
   }
   function circlipObj() {
