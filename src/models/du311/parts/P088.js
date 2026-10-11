@@ -62,7 +62,7 @@ const NB156 = [
   { n: 6, x: 0.115, z: -0.03 },
 ];
 // Troisième union (relais du drain 24) de P064, flanc +X (cotes de P064, U3).
-const U3_064 = [0.3, 2.75, -0.17];
+const U3_064 = [0.3, 1.9, -0.17];
 
 // Couloirs -06 (|x|, z) en diagonale depuis le coin le plus proche des coudes.
 // Trois colonnes seulement : la quatrième gênerait la plongée des boyaux de
@@ -70,6 +70,11 @@ const U3_064 = [0.3, 2.75, -0.17];
 const LX = [0.262, 0.284, 0.306], LZ = [-0.07, -0.092, -0.114, -0.136];
 const LANES = [[0, 0], [1, 0], [0, 1], [2, 0], [1, 1], [0, 2], [2, 1], [1, 2], [0, 3], [2, 2]];
 
+// Note : les boyaux 1 à 8 (121.5 à 125 po) dépassent de loin le trajet de la
+// platine estimée aux coudes du mât (0.7 à 1.9 m) ; le surplus est rangé en
+// boucles de pivot derrière le pied, à confirmer : la vraie platine est sans
+// doute plus loin du pied (flèche / berceau). Drain 11 et union U3 de P064
+// ramenés à y = 1.9 sur le flanc +X (même cote dans P064).
 export const KIT088 = {
   chassis: {
     y: YC,
@@ -93,8 +98,10 @@ export default function P088(api) {
   // l'arrière, point bas, retour vers l'avant ; les trois points de la
   // boucle (indices 1 à 3) reçoivent le mou (vers l'arrière et le bas).
   const loop = (xb, zb, xm, i = 0) => [
-    [xb, YC + 0.14, zb],
-    [xm, YC + 0.24, zb - 0.16 - 0.006 * i],
+    // Montée droite de 0.2 m au-dessus de l'union avant la crosse (rayon de
+    // courbure du -12 respecté).
+    [xb, YC + 0.2, zb],
+    [xm, YC + 0.34, zb - 0.2 - 0.006 * i],
     [xm, YC - 0.02, zb - 0.26 - 0.006 * i],
     [xm, YC + 0.16, -0.33 - 0.004 * i],
   ];
@@ -114,7 +121,7 @@ export default function P088(api) {
       const xf = s * Math.max(LX[ix], 0.29 + 0.006 * (k % 3));
       const vias = [...loop(xb, zb, (xb + xf) / 2, k), [xf, 0.17, -0.2 - 0.004 * k]];
       if (y > 0.5) vias.push([xl, 0.32, zl], [xl, y - 0.07, zl]);
-      slackHose(api, ref, L, 6, a, TRAV.inner(s, y), { vias, ...LOOP }, [s * (0.12 + 0.012 * k), -0.1, -0.15]);
+      slackHose(api, ref, L, 6, a, TRAV.inner(s, y), { vias, ...LOOP }, [s * (0.4 + 0.03 * k), 0.06 * k - 0.15, -0.2]);
     });
   }
 
@@ -131,7 +138,7 @@ export default function P088(api) {
         [xl, 0.32, zl], [xl, 1.45, zl], [b.p.x, 1.62, b.p.z],
       ],
       ...LOOP,
-    }, [-0.3 - 0.03 * i, -0.1, -0.25]);
+    }, [-0.3 - 0.05 * i, 0.1, -0.6]);
   });
 
   // ------------------------------------------------ 11 / 12 : -06
@@ -141,10 +148,10 @@ export default function P088(api) {
   slackHose(api, '11', 180, 6, up(6, e06.x[0], e06.z), u3, {
     vias: [
       ...loop(e06.x[0], e06.z, 0.3, 14),
-      [0.3, 0.2, -0.24], [0.3, 0.5, -0.17], [0.3, 2.4, -0.17],
+      [0.3, 0.2, -0.24], [0.3, 0.5, -0.17], [0.3, 1.6, -0.17],
     ],
     ...LOOP,
-  }, [0.45, -0.1, -0.2]);
+  }, [0.75, 0.2, -0.4]);
   // 12 : à côté des -12 jusqu'à la traversée -06 de P156.
   const b12 = s156[4];
   slackHose(api, '12', 146, 6, tilt(up(6, e06.x[1], e06.z), e06.x[1], e06.z), b12, {
@@ -153,7 +160,7 @@ export default function P088(api) {
       [-0.34, 0.2, -0.22], [-0.338, 0.5, -0.185], [-0.338, 1.45, -0.185], [b12.p.x, 1.64, b12.p.z],
     ],
     ...LOOP,
-  }, [-0.45, -0.1, -0.2]);
+  }, [-0.75, 0.2, -0.4]);
 
   return { view: { dir: [-0.9, 0.35, -1.1] } };
 }
