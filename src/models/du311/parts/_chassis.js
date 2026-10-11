@@ -606,3 +606,33 @@ export function splitFlange(api, dash, code = 61, { material = 'zinc', bolts = t
   }
   return { obj: g, top: y0 + f.T, f };
 }
+
+// ------------------------------------------------------------ coude orientable MORB → MJIC
+
+/**
+ * Adaptateur coudé 90° MORB → MJIC (FA01052) le long de +Y, origine sur la
+ * face de l'orifice : queue ORB vissée sous y = 0 (cachée), joint torique,
+ * contre-écrou six-pans et sa bague d'appui, fût, corps forgé du coude, puis
+ * embout JIC mâle selon +Z. Retourne { obj, out: [0, y, z] du bout mâle }.
+ */
+export function orbElbow(api, orb, jic = orb, material = 'zinc') {
+  const { S } = api;
+  const a = sae(orb), b = sae(jic);
+  const rt = (b.t * IN) / 2, ro = (a.t * IN) / 2;
+  const af = a.hex * IN, hh = af * 0.36;
+  const s = Math.max(a.hex, b.hex) * IN * 0.82;
+  const yb = hh + 0.0025 + s * 0.6;
+  const len = rt * 2.4;
+  const parts = [
+    S.lathe([[0, -ro * 1.5], [ro * 0.95, -ro * 1.5], [ro, -ro * 1.3], [ro, 0], [0, 0]], material, { seg: 14 }),
+    S.cyl(af * 0.5, 0.0012, material, { seg: 18, pos: [0, 0.0006, 0] }),
+    S.nut(af, hh, material, { pos: [0, 0.0012 + hh / 2, 0] }),
+    S.cyl(ro * 0.95, yb - hh, material, { seg: 16, pos: [0, hh + (yb - hh) / 2, 0] }),
+    S.box(s * 0.92, s, s * 0.92, material, { r: s * 0.3, pos: [0, yb, 0] }),
+    S.at(S.lathe([[0, 0], [rt * 0.85, 0], [rt * 0.85, 0.003], ...jicMaleProfile(api, rt, 0.003, len)], material, { seg: 16 }), [0, yb, s * 0.42], [Math.PI / 2, 0, 0]),
+  ];
+  return {
+    obj: S.group(S.merged(parts, material), S.torus(ro * 1.05, ro * 0.08, 'rubber', { pos: [0, 0.0005, 0] })),
+    out: [0, yb, s * 0.42 + 0.003 + len],
+  };
+}
