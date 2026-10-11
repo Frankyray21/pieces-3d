@@ -36,9 +36,9 @@ export default function P256(api) {
   const hn = (d, c, axis = 'y') => at(nut(d * 1.5, d * 0.85, 'zinc', { axis }), c);
 
   // ---------------------------------------------------------------- sous-assemblages
-  P('6', api.sub('P260'), [0, 0, 0]);
+  P('6', api.sub('P260', { remoteFilters: true }), [0, 0, 0]);
   P('10', api.sub('P262'), [0, 0, 0.35]);
-  P('11', api.sub('P266'), [-0.35, 0.1, -0.2]);
+  P('11', api.sub('P266'), [-0.6, 0.15, -0.25]);
   P('13', api.sub('P268'), [0, 0.45, 0]);
 
   // ---------------------------------------------------------------- 7 — refroidisseur d'huile
@@ -119,7 +119,7 @@ export default function P256(api) {
   // 24 — pieds des colliers du filtre (P268 rep. 2) sur le plateau : vis 3/8,
   // rondelles 31 sous la tête, écrous 34 sous le plateau.
   const D24 = 0.375 * IN;
-  for (const x of [0.21, 0.44]) for (const s of [-1, 1]) {
+  for (const x of [0.21, 0.33]) for (const s of [-1, 1]) {
     const z = Z15 + s * 0.065;
     P('24', at(bolt(D24, 1.25 * IN, 'zinc'), [x, YS + 0.006 + D24 * 0.25, z]), [0, 0.55, 0]);
     P('31', lw(D24, [x, YS + 0.006 + D24 * 0.125, z]), [0, 0.5, 0]);
@@ -176,20 +176,20 @@ export default function P256(api) {
   // ---------------------------------------------------------------- 16, 19 — accélérateur
   // Équerre 16 boulonnée au carter de régulateur, gaine du câble serrée par
   // la vis 21 ; chape du câble sur le levier par la vis 22 ; le câble monte
-  // vers le pupitre (bout libre à 1 m au-dessus).
+  // puis file vers l'arrière le long du capot d'air (bout libre vers le pupitre).
   const T16 = [0.64, -0.02, 0.26];
   P('16', group(merged([
     bx(T16[0] - 0.03, T16[0] + 0.03, T16[1] - 0.004, T16[1] + 0.002, 0.2, T16[2] + 0.02, 'black'),
     bx(T16[0] - 0.03, T16[0] + 0.03, T16[1] + 0.002, T16[1] + 0.05, T16[2] + 0.014, T16[2] + 0.02, 'black'),
   ], 'black')), [0.1, 0, 0.2]);
   {
-    const top = [T16[0] - 0.01, 1.1, T16[2] + 0.08];
+    const top = [T16[0] - 0.4, 0.36, T16[2] + 0.12];
     const clevis = group(
       at(box(0.024, 0.01, 0.018, 'zinc', { r: 0.002 }), [T16[0] - 0.01, T16[1] - 0.018, T16[2] - 0.02]),
       at(cyl(0.0025, 0.05, 'steel', { seg: 8 }), [T16[0] - 0.01, T16[1] - 0.0, T16[2] - 0.02]),
     );
     P('19', group(
-      cable([[T16[0] - 0.01, T16[1] + 0.03, T16[2] + 0.017], [T16[0] - 0.01, 0.25, T16[2] + 0.06], [T16[0] - 0.05, 0.7, T16[2] + 0.08], top], 0.005),
+      cable([[T16[0] - 0.01, T16[1] + 0.03, T16[2] + 0.017], [T16[0] - 0.01, 0.2, T16[2] + 0.06], [T16[0] - 0.08, 0.34, T16[2] + 0.1], top], 0.005),
       clevis,
     ), [0.15, 0.2, 0.2]);
     const D = 0.25 * IN;

@@ -15,7 +15,8 @@
 // Y vers le haut ; +Z = X × Y. Cylindres à −60° (côté −Z, x = −0.03), 0 (x =
 // 0) et +60° (côté +Z, x = +0.03) autour de X. Dessous des quatre pattes à
 // y = LR.footY = −0.165, trous Ø 13 mm à x = −0.112 / 0.082, z = ±0.145.
-// Poulie Ø 16 po (0.406) à x = 0.215 ; couvercle de pompe à x = −0.215.
+// Bloc nu (« NO SHEAVE », P282 rep. 11) : P298 sans sa poulie (posée par
+// P282 rep. 9, Ø 16 po à x = 0.215) ; couvercle de pompe à x = −0.215.
 // Encombrement ≈ 0.48 (X, −0.215 → 0.267) × 0.53 (y −0.165 → 0.36 au dessus
 // des bouchons du cylindre central) × 0.62 (Z, culasses latérales) m.
 
@@ -31,7 +32,7 @@ export default function P288(api) {
   const three = (id, opts = () => ({})) => group([0, 1, 2].map((i) => onCyl(id, i, opts(i))));
 
   P('3', api.sub('P296'), [0, 0, 0]);
-  P('5', api.sub('P298', { crank }), [0.36, 0, 0]);
+  P('5', api.sub('P298', { crank, noSheave: true }), [0.36, 0, 0]);
   P('7', api.sub('P302', { crank }), [-0.2, 0, 0]);
   P('2', api.sub('P294'), [-0.32, 0, 0]);
   P('8', three('P304', (i) => ({ crank, i })), [0, 0.16, 0]);

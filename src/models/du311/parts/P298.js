@@ -130,7 +130,8 @@ export default function P298(api, opts = {}) {
     }
     arms.push(side([...L, ...Rr.reverse()], 0.03, xs - 0.004, 'castIron'));
   }
-  P('8', merged([rimM, hub, ...arms], 'castIron'), [0.16, 0, 0]);
+  // Option { noSheave } : bloc nu P288 (« NO SHEAVE »), poulie posée par P282.
+  if (!opts.noSheave) P('8', merged([rimM, hub, ...arms], 'castIron'), [0.16, 0, 0]);
 
   // ---------------------------------------------------------------- 4 — clavette 1/2 × 1/2 × 3 1/4 po
   const kL = 3.25 * IN, kS = 0.5 * IN;

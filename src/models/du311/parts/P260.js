@@ -26,7 +26,7 @@
 // d'huile (P256 rep. 7) devant la soufflante, façade vers +X (ENG.panel).
 import { ENG, IN, MM } from './_moteur_surpresseur.js';
 
-export default function P260(api) {
+export default function P260(api, opts = {}) {
   const { THREE, S } = api;
   const { box, cyl, lathe, shell, extrude, plate, gear, bolt, boltSet, boltCircle, tube, hose, gauge, nameplate, weld, merged, at, group } = S;
   const P = (ref, obj, e) => api.part(ref, obj, e);
@@ -190,8 +190,20 @@ export default function P260(api) {
   accStl.push(lathe(groove(0.09, 2), 'darkSteel', { axis: 'x', seg: 48, pos: [ENG.pulleyX - 0.02, 0, 0] }));
   accStl.push(lathe(groove(0.075, 2), 'darkSteel', { axis: 'x', seg: 48, pos: [ENG.pulleyX - 0.02, FY, FZ] }));
   accStl.push(at(cyl(0.045, 0.06, 'darkSteel', { axis: 'x' }), [ENG.blowerX[1] + 0.02, 0, 0])); // amortisseur / moyeu
+  // Carter de courroies à persiennes (pages 242 et 258) devant les poulies et
+  // l'alternateur : tôle de 3 mm, joue pliée vers l'arrière côté −Z.
+  const guard = [];
+  {
+    const xg = 0.84, y0 = -0.13, y1 = 0.41, z0 = -0.22, z1 = 0.18;
+    guard.push(bx(xg, xg + 0.003, y0, y1, z0, z1, 'black', 0.002));
+    guard.push(bx(xg - 0.1, xg, y0, y1, z0 - 0.003, z0, 'black', 0.002));
+    for (let k = 0; k < 6; k++) {
+      const y = 0.02 + k * 0.03;
+      guard.push(at(box(0.008, 0.008, 0.11, 'black', { r: 0.002 }), [xg + 0.004, y, -0.11], [0.5, 0, 0]));
+    }
+  }
   P('2', group(
-    merged(acc, 'castAlu'), merged(accBlk.filter((o) => o.isObject3D), 'darkSteel'), merged(accStl, 'steel'), dipHandle,
+    merged(acc, 'castAlu'), merged(accBlk.filter((o) => o.isObject3D), 'darkSteel'), merged(accStl, 'steel'), dipHandle, merged(guard, 'black'),
   ), [0, 0.18, 0.18]);
 
   // ---------------------------------------------------------------- filtres (3 huile, 9 gazole)
@@ -214,8 +226,11 @@ export default function P260(api) {
     bx(x - 0.035, x + 0.035, -0.105, -0.06, 0.17, 0.25, 'castAlu', 0.006),
     at(cyl(0.012, 0.02, 'steel', { axis: 'x', seg: 12 }), [x + 0.045, -0.08, 0.22]),
   );
-  P('3', group(console(0.47), at(spinOn(0.047, 0.15, 'black'), [0.47, -0.106, 0.215])), [0, -0.12, 0.25]);
-  P('9', group(console(0.345), at(spinOn(0.04, 0.14, 'white'), [0.345, -0.106, 0.215])), [0, -0.16, 0.22]);
+  // Option { remoteFilters } (P256, filtres déportés P262 / P264) : les
+  // cartouches quittent le moteur, seules leurs consoles restent (repères 3 et 9).
+  const rf = !!opts.remoteFilters;
+  P('3', group(console(0.47), rf ? null : at(spinOn(0.047, 0.15, 'black'), [0.47, -0.106, 0.215])), [0, -0.12, 0.25]);
+  P('9', group(console(0.345), rf ? null : at(spinOn(0.04, 0.14, 'white'), [0.345, -0.106, 0.215])), [0, -0.16, 0.22]);
 
   // ---------------------------------------------------------------- 4 — collecteur d'échappement
   // Caisson cylindrique le long des culasses (−Z), quatre pipes à bride ovale,

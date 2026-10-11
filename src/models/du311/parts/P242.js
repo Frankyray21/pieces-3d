@@ -32,9 +32,9 @@ export default function P242(api) {
   const YS = ENG.mountY - 0.041;
 
   // ---------------------------------------------------------------- 11 — moteur équipé
-  P('11', api.sub('P256'), [0, 0.25, 0]);
+  P('11', api.sub('P256'), [0, 0.35, 0]);
   // 5 — plots antivibratoires sous les supports de pattes (P256 rep. 17).
-  for (const [x, z] of ENG.feet) P('5', at(api.sub('P248'), [x, YS, z]), [0, -0.12, Math.sign(z) * 0.12]);
+  for (const [x, z] of ENG.feet) P('5', at(api.sub('P248'), [x, YS, z]), [0, 0, Math.sign(z) * 0.3]);
 
   // ---------------------------------------------------------------- 1 — pompe hydraulique
   // Cloche d'accouplement (non listée, dessinée avec la pompe) sur la face SAE
@@ -136,9 +136,9 @@ export default function P242(api) {
     bx(0.15, 0.33, 0.15, SH, ZB, -0.096, 'black'),
     bx(0.15, 0.33, SH - 0.006, SH, ZB, 0.065, 'black'),
     bx(0.15, 0.156, SH - 0.06, SH - 0.006, -0.096, 0.065, 'black'), // gousset
-  ], 'black'), boltSet([[0.18, 0.2, -0.096], [0.3, 0.2, -0.096]], 0.008, 0.02, 'zinc', { axis: 'z' }))), [0.3, 0.2, 0]);
+  ], 'black'), boltSet([[0.18, 0.2, -0.096], [0.3, 0.2, -0.096]], 0.008, 0.02, 'zinc', { axis: 'z' }))), [0.3, 0.5, -0.3]);
   P('9', local(api.sub('P254'), [0.24, SH, -0.02]), [0.3, 0.45, 0]);
-  P('8', local(api.sub('P252'), [0.24, 0.22, ZB], [0, Math.PI, 0]), [0.45, 0.1, 0]);
+  P('8', local(api.sub('P252'), [0.24, 0.22, ZB], [0, Math.PI, 0]), [0.6, 0, -0.35]);
 
   // ---------------------------------------------------------------- 10 — support du refroidisseur
   // Deux montants en U de part et d'autre du faisceau, traverse haute, semelle
