@@ -34,7 +34,7 @@
 
 export default function P412(api) {
   const { THREE, S } = api;
-  const { box, cyl, lathe, cable, hose, merged, at, group, nut, ring, torus, plate } = S;
+  const { box, cyl, lathe, cable, hose, tube, merged, at, group, nut, ring, torus, plate } = S;
   const P = (ref, obj, e) => api.part(ref, obj, e);
   const IN = 0.0254;
   const V = (p) => new THREE.Vector3(...p);
@@ -49,7 +49,7 @@ export default function P412(api) {
   // Connecteur en ligne (boîtier à oreilles) le long de X, centré en p.
   const conn = (p, rotY = 0) => {
     const g = group(merged([
-      box(0.045, 0.016, 0.018, 'black', { r: 0.003 }),
+      box(0.045, 0.016, 0.018, 'black'),
       box(0.012, 0.004, 0.032, 'black'),
     ], 'black'));
     g.position.set(...p);
@@ -247,8 +247,8 @@ export default function P412(api) {
       at(nut(0.03, 0.02, 'brass'), [TEE[0], TEE[1] + 0.03, TEE[2]]),
     ], 'brass'),
     // descente réservoir → té
-    hose([[TK[0] + 0.07, TK[1] + 0.61, TK[2]], [-1.6, 1.15, 0.8], [-1.55, 0.8, 0.7], [TEE[0], TEE[1] + 0.04, TEE[2]]], RH),
-    ...lines.map((pts) => hose(pts, RH)),
+    tube([[TK[0] + 0.07, TK[1] + 0.61, TK[2]], [-1.6, 1.15, 0.8], [-1.55, 0.8, 0.7], [TEE[0], TEE[1] + 0.04, TEE[2]]], RH, 'hose', { seg: 20, radial: 8 }),
+    ...lines.map((pts) => tube(pts, RH, 'hose', { seg: 36, radial: 8, tension: 0.5 })),
   ), [0, -0.12, 0]);
 
   // ================================================ 26 — buses, 27 — rondelles frein, 28 — équerres
@@ -277,8 +277,8 @@ export default function P412(api) {
   const grom = [[0.4, 1.0, -0.70], [-0.4, 0.92, -0.69], [-1.4, 0.92, -0.68], [1.45, 0.92, -0.2], [-0.3, 0.88, -0.67], [0.4, 1.5, -0.45]];
   for (const g of grom) {
     P('30*', at(group(merged([
-      ring(0.016, 0.004, 0.008, 'rubber', { axis: 'x', seg: 16 }),
-      ring(0.019, 0.013, 0.003, 'rubber', { axis: 'x', seg: 16 }),
+      ring(0.016, 0.004, 0.008, 'rubber', { axis: 'x', seg: 10 }),
+      ring(0.019, 0.013, 0.003, 'rubber', { axis: 'x', seg: 10 }),
     ], 'rubber')), g), [0, 0.04, 0]);
   }
 

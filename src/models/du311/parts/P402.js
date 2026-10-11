@@ -119,14 +119,14 @@ export default function P402(api) {
     key.position.set(...pos(2.52, 0.75));
     P('5', key, [0, 0.06, 0]);
     // ressort de clavette : petit ressort de compression derrière la plaquette, dans la semelle
-    P('13', at(spring(u(0.13), u(0.03), u(0.3), 4, 'zinc', { perTurn: 12, radial: 6 }), pos(2.74, 0.5), [0, -t, -Math.PI / 2]), [0.04 * Math.cos(t), 0.08, 0.04 * Math.sin(t)]);
+    P('13', at(spring(u(0.13), u(0.03), u(0.3), 4, 'zinc', { perTurn: 8, radial: 4 }), pos(2.74, 0.5), [0, -t, -Math.PI / 2]), [0.04 * Math.cos(t), 0.08, 0.04 * Math.sin(t)]);
   }
 
   // ================================================ 2 — ressort de rappel, 1 — guide
   // Logés dans le dos de la mâchoire, appuyés sur la tête du manche (axe selon X).
   const sx = -1.55, sz = 1.05;
   P('1', at(Ly([[0, -1.4], [0.15, -1.4], [0.15, 0.3], [0.28, 0.3], [0.28, 0.5], [0, 0.5]], 'zinc', 14), v3(sx, 0, sz), [0, 0, Math.PI / 2]), [0, 0.1, 0.06]);
-  P('2', at(spring(u(0.24), u(0.05), u(1.3), 9, 'blackOxide', { perTurn: 14, radial: 6 }), v3(sx, 0, sz), [0, 0, Math.PI / 2]), [0, 0.06, 0.08]);
+  P('2', at(spring(u(0.24), u(0.05), u(1.3), 9, 'blackOxide', { perTurn: 10, radial: 5 }), v3(sx, 0, sz), [0, 0, Math.PI / 2]), [0, 0.06, 0.08]);
 
   // ================================================ 9 — suspente, 10 — axe, 3 — boulon
   // Barre plate 1/2 × 1 1/4 po, petit œil articulé sur l'axe 10 près de la tête

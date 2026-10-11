@@ -33,9 +33,9 @@ export function leafPlates(S, n, x0 = 0, mat = 'darkSteel') {
   const { extrude, merged, group } = S;
   const r = 0.55, w = 0.42;
   const outline = [];
-  for (let i = 0; i <= 12; i++) { const a = -Math.PI / 2 - (i / 12) * Math.PI; outline.push([r * Math.cos(a), r * Math.sin(a)]); }
+  for (let i = 0; i <= 8; i++) { const a = -Math.PI / 2 - (i / 8) * Math.PI; outline.push([r * Math.cos(a), r * Math.sin(a)]); }
   outline.push([PITCH / 2, w]);
-  for (let i = 0; i <= 12; i++) { const a = Math.PI / 2 - (i / 12) * Math.PI; outline.push([PITCH + r * Math.cos(a), r * Math.sin(a)]); }
+  for (let i = 0; i <= 8; i++) { const a = Math.PI / 2 - (i / 8) * Math.PI; outline.push([PITCH + r * Math.cos(a), r * Math.sin(a)]); }
   outline.push([PITCH / 2, -w]);
   const pts = outline.map(([x, z]) => [u(x), u(z)]);
   // contour dans le sens trigonométrique
@@ -46,7 +46,8 @@ export function leafPlates(S, n, x0 = 0, mat = 'darkSteel') {
   for (let k = 0; k < n; k++) {
     const slots = (k + (x0 / PITCH)) % 2 === 0 ? [0, 2, 4, 6] : [1, 3, 5];
     for (const s of slots) {
-      const m = extrude(pts, u(0.12), mat, { holes: [[0, 0, u(0.23)], [u(PITCH), 0, u(0.23)]] });
+      // les axes remplissent les trous : plaques pleines (plus légères)
+      const m = extrude(pts, u(0.12), mat);
       m.rotation.x = Math.PI / 2;
       const g = group(m);
       g.position.set(u(x0 + k * PITCH), u((s - 3) * 0.13), 0);
