@@ -60,7 +60,7 @@ export const ENG = {
   compIn: { x: 0.155, y: 0.26, z: 0.3 }, // entrée du compresseur (vers −x)
   intake: { x: 0.13, y: 0.43, z: -0.22 }, // entrée de la tubulure d'admission (vers +y)
   thermo: { x: 0.69, y: 0.44, z: 0.07 }, // sortie du boîtier de thermostat (vers +z)
-  pumpIn: { x: 0.69, y: 0.06, z: 0.15 }, // entrée de la pompe à eau (vers +z)
+  pumpIn: { x: 0.69, y: 0.06, z: 0.21 }, // entrée de la pompe à eau (vers +z)
 };
 
 /** Point du repère moteur → repère machine. */
@@ -126,7 +126,7 @@ export const STAND = { x0: -2.44, x1: -2.0, zPlate: -0.575 };
 export const PLATE = { y: 1.5, t: 0.012, x0: -1.86, x1: -1.42, z0: -0.42, z1: -0.8 };
 export const PLATE_TOP = PLATE.y + PLATE.t / 2;
 export const TVALVE = { x: -1.545, z: -0.62 }; // centre du distributeur (y = dessus de la platine)
-export const BOOST = { x: -1.76, z: -0.74, w: 0.1, h: 0.15, d: 0.09 }; // bloc surpresseur rep. 21
+export const BOOST = { x: -1.76, z: -0.7445, w: 0.1, h: 0.15, d: 0.065 }; // bloc surpresseur rep. 21 (contre l'âme verticale de la platine 40)
 export const HPF = { x: -1.875, z: [-0.5, -0.64], y: 1.69 }; // filtres HP (origine de P264 / P352)
 export const INTENS = { x0: -1.78, x1: -1.38, y: 1.435, z: -0.865, r: 0.05 }; // multiplicateur rep. 16 (axe selon X)
 export const RFILT = { x: -2.25, y: 1.7, z: 0.6 }; // filtre de retour (dessous de la tête)
