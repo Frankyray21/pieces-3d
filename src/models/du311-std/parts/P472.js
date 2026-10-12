@@ -65,8 +65,6 @@ export default function P472(api, opts = {}) {
     g.userData.back = -d - 0.009 - 0.013; // bout de la queue
     return g;
   };
-  // Adaptateur 5 vissé sur la queue d'un manomètre : face femelle à 1 filet du bout.
-  const adapter = (x, y, back) => P('5', O(femJic5(), [x, y, back + E4], NZ, X), [0, 0, -0.08]);
   const femJic5 = () => {
     const rn = pipeR(4), af = I(0.75), L = I(0.55);
     return merged([
@@ -74,6 +72,8 @@ export default function P472(api, opts = {}) {
       lathe([[I(9 / 32) * 0.82, L], [I(9 / 32), L + 0.003], [I(9 / 32), L + 0.009], [I(9 / 32) * 0.6, L + 0.012], [0, L + 0.012]], 'zinc', { seg: 14 }),
     ], 'zinc');
   };
+  // Adaptateur 5 vissé sur la queue d'un manomètre : face femelle à 1 filet du bout.
+  const adapter = (x, y, back) => P('5', O(femJic5(), [x, y, back + E4], NZ, X), [0, 0, -0.08]);
 
   // ---------------------------------------------------------------- 4 — thermomètre déporté (capillaire armé)
   {

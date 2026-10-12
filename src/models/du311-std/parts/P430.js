@@ -46,7 +46,7 @@ const R24 = I(1.0); // flexible -24 (Ø ext. ≈ 2 po)
 
 export default function P430(api) {
   const { THREE, S } = api;
-  const { box, cyl, lathe, extrude, bolt, washer, weld, merged, group, at } = S;
+  const { box, cyl, lathe, bolt, washer, weld, merged, group, at } = S;
   const P = (ref, obj, e) => api.part(ref, obj, e);
   const O = (obj, pos, y, x) => ACC.orient(api, obj, pos, y, x);
   const T = (k) => xf(api, RB[k]);

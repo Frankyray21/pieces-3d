@@ -54,7 +54,8 @@ export default function P470(api) {
     const tee = ACC.swivelTee(S, 6);
     P('10', O(tee, tip, NY, X), [0, -0.04, 0.08]);
     const run = [tip[0], tip[1] - tee.userData.run[1], tip[2]];
-    P('5', at(api.sub('P384'), [run[0], run[1] + 0.01, run[2]]), [0, -0.1, 0.08]);
+    // P384 : face d'appui du six-pans sur le bout du té, embase vers +Y, corps vers −Y
+    P('5', at(api.sub('P384'), run, [Math.PI, 0, 0]), [0, -0.1, 0.08]);
   }
 
   // ---------------------------------------------------------------- 4 — soupape pilote de mise à vide
