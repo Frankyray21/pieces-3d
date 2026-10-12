@@ -22,7 +22,7 @@ import { u, L, put, along, hb, nt, fw, sw, yoke1410, UJ } from './_carrier.js';
 const HX = 1.9; // demi-longueur du carter (po)
 const FOOT = 5.0; // axe → dessous de la semelle (po)
 const YE = 2.9; // pied de chape → centre du croisillon (po)
-export const YOKE308 = { x: u(HX + 0.25 + YE), footY: -u(FOOT) };
+export const YOKE308 = { x: u(HX + 0.25 + YE), footY: -u(FOOT), port: [u(0.6), u(3.85), 0], holes: [[-u(0.9 + 0.65), u(4.0)], [-u(0.9 + 0.65), -u(4.0)], [-u(0.9 - 0.65), u(4.0)], [-u(0.9 - 0.65), -u(4.0)]] };
 
 export default function P308(api) {
   const { THREE, S } = api;
@@ -33,7 +33,7 @@ export default function P308(api) {
   const holes = [];
   for (const sx of [-1, 1]) for (const sz of [-1, 1]) holes.push([sx * u(0.65), sz * u(4.0), u(11 / 32)]);
   const footPlate = S.plate(u(2.6), u(10), u(0.5), 'black', { holes: holes.map(([x, z, r]) => [x, z, r]), r: u(0.4) });
-  footPlate.position.set(-u(HX - 1.3), -u(FOOT - 0.25), 0);
+  footPlate.position.set(-u(0.9), -u(FOOT - 0.25), 0);
   const web = S.extrude([[-u(4.6), -u(FOOT - 0.5)], [u(4.6), -u(FOOT - 0.5)], [u(3.2), -u(1.2)], [u(2.2), u(0.4)], [-u(2.2), u(0.4)], [-u(3.2), -u(1.2)]], u(0.6), 'black');
   web.rotation.y = Math.PI / 2;
   web.position.x = -u(HX + 0.3);
@@ -47,7 +47,7 @@ export default function P308(api) {
       L(S, [[0, 2.8], [0.45, 2.8], [0.45, 3.85], [0, 3.85]], 'black', 14, { pos: [u(0.6), 0, 0] }),
       L(S, [[0, 2.8], [0.32, 2.8], [0.32, 3.75], [0, 3.75]], 'black', 12, { pos: [-u(0.9), 0, 0] }),
     ], 'black'),
-    // vis du flasque, bouchon de l'orifice (pendant le montage), vis de purge
+    // vis du flasque, taraudage de l'orifice de desserrage (raccord de P292), vis de purge
     merged(Array.from({ length: 6 }, (_, i) => {
       const a = (i / 6) * Math.PI * 2 + Math.PI / 6;
       return put(THREE, hb(S, 0.375, 0.75), [-u(HX + 0.3), Math.sin(a) * u(3.55), Math.cos(a) * u(3.55)], [-1, 0, 0]);
@@ -56,7 +56,7 @@ export default function P308(api) {
     L(S, [[0, -HX - 2.2], [0.875, -HX - 2.2], [0.875, HX + 2.2], [0, HX + 2.2]], 'steel', 20, { axis: 'x' }),
     S.gear(u(0.8), u(0.9), 16, u(3.4), 'steel', { axis: 'x', pos: [-u(HX + 1.4), 0, 0] }),
     S.gear(u(0.8), u(0.9), 16, u(3.4), 'steel', { axis: 'x', pos: [u(HX + 1.4), 0, 0] }),
-    put(THREE, S.merged([L(S, [[0, 0], [0.36, 0], [0.36, 0.25], [0, 0.25]], 'zinc', 6)], 'zinc'), [u(0.6), u(3.85), 0], [0, 1, 0]),
+    put(THREE, L(S, [[0, 0], [0.22, 0], [0.22, 0.02], [0, 0.02]], 'darkSteel', 12), [u(0.6), u(3.85), 0], [0, 1, 0]),
     put(THREE, S.merged([L(S, [[0, 0], [0.25, 0], [0.25, 0.18], [0.12, 0.18], [0.12, 0.4], [0, 0.4]], 'zinc', 6)], 'zinc'), [-u(0.9), u(3.75), 0], [0, 1, 0]),
   );
   P('1', body, [0, 0, 0]);

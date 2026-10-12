@@ -52,17 +52,13 @@ function hexLathe(S, a, h, y0, r0, mat) {
  * Vis à tête hexagonale (po) : tête vers +Y, dessous de tête à y = 0, tige
  * jusqu'à -len, deux sillons de filet suggérés au bout. Un seul maillage.
  */
-export function hb(S, d, len, mat = 'zinc', seg = 8) {
+export function hb(S, d, len, mat = 'zinc', seg = 6) {
   const r = d / 2, a = af(d), hh = d * 0.64;
-  const t = Math.min(len * 0.45, d * 1.6);
-  const prof = [[0, -len], [r * 0.82, -len], [r, -len + r * 0.18]];
-  for (let k = 1; k <= 2; k++) { const y = -len + (t * k) / 3; prof.push([r, y - d * 0.05], [r * 0.9, y], [r, y + d * 0.05]); }
-  prof.push([r, 0], [0, 0]);
-  return S.merged([
-    hexLathe(S, a, hh, d * 0.04, 0, mat),
-    L(S, [[0, 0], [a * 0.47, 0], [a * 0.47, d * 0.04], [0, d * 0.04]], mat, 12),
-    L(S, prof, mat, seg),
-  ], mat);
+  // tige à bout chanfreiné ; un sillon de filet sur les vis de 5/8 po et plus
+  const prof = [[0, -len], [r * 0.8, -len], [r, -len + r * 0.2]];
+  if (d >= 0.6) { const y = -len + Math.min(len * 0.45, d * 1.6) * 0.5; prof.push([r, y - d * 0.05], [r * 0.9, y], [r, y + d * 0.05]); }
+  prof.push([r, 0]);
+  return S.merged([hexLathe(S, a, hh, 0, 0, mat), L(S, prof, mat, d >= 0.6 ? 8 : seg)], mat);
 }
 
 /** Vis H métrique (mm) : même construction que hb. */
@@ -101,7 +97,7 @@ export const T_SW = (d) => Math.max(0.062, d * 0.25);
 export const T_NL = (d) => Math.max(0.06, d * 0.13) * 2;
 
 /** Rondelle plate SAE (po) de y = 0 à t. */
-export function fw(S, d, { mat = 'zinc', od, t, seg = 14 } = {}) {
+export function fw(S, d, { mat = 'zinc', od, t, seg = 10 } = {}) {
   const ro = (od ?? d * 2.0) / 2, th = t ?? T_FW(d);
   return L(S, [[d * 0.54, 0], [ro, 0], [ro, th], [d * 0.54, th], [d * 0.54, 0]], mat, seg);
 }
@@ -109,15 +105,14 @@ export function fw(S, d, { mat = 'zinc', od, t, seg = 14 } = {}) {
 /** Rondelle fendue (Grower, po) : coupure en biais, de y = 0 à t. */
 export function sw(S, d, { mat = 'zinc' } = {}) {
   const t = u(T_SW(d));
-  return S.slotted(u(d * 0.86), u(d * 0.53), 0, t, [{ a: 0.4, w: 0.12, y0: 0, y1: t }], mat, { seg: 14 });
+  return S.slotted(u(d * 0.86), u(d * 0.53), 0, t, [{ a: 0.4, w: 0.12, y0: 0, y1: t }], mat, { seg: 10 });
 }
 
 /** Paire de rondelles autobloquantes à cames (Nord-Lock, po), de y = 0 à 2 t. */
 export function nl(S, d, { mat = 'zinc' } = {}) {
   const t = T_NL(d) / 2, ro = d * 0.82, ri = d * 0.53;
-  const g = [L(S, [[ri, 0], [ro, 0], [ro, t * 0.92], [ri, t * 0.92], [ri, 0]], mat, 14),
-    L(S, [[ri, t * 1.04], [ro, t * 1.04], [ro, 2 * t], [ri, 2 * t], [ri, t * 1.04]], mat, 14)];
-  return S.merged(g, mat);
+  // deux rondelles accolées : joint en V sur le pourtour
+  return S.merged([L(S, [[ri, 0], [ro, 0], [ro - t * 0.3, t], [ro, 2 * t], [ri, 2 * t], [ri, 0]], mat, 10)], mat);
 }
 
 /** Bouchon ORB à six-pans creux (po, n° de taille dash) : tête de y = 0 à +Y, queue vers -Y, torique. */
@@ -137,15 +132,15 @@ export function orbPlug(S, THREE, dash = 6, { mat = 'zinc' } = {}) {
 const RJ = { 4: 0.2185, 6: 0.281, 8: 0.375, 12: 0.531, 16: 0.656 };
 
 /** Nez JIC 37° (po) de y0 vers +Y : gorge, filet, cône. */
-function jicNose(S, rj, y0, mat, seg = 10) {
-  return L(S, [[0, y0], [rj * 0.8, y0], [rj * 0.8, y0 + 0.06], [rj, y0 + 0.1], [rj, y0 + rj * 0.7], [rj * 0.93, y0 + rj * 0.85], [rj, y0 + rj], [rj, y0 + rj * 1.5],
+function jicNose(S, rj, y0, mat, seg = 8) {
+  return L(S, [[0, y0], [rj * 0.8, y0], [rj * 0.8, y0 + 0.06], [rj, y0 + 0.1], [rj * 0.93, y0 + rj * 0.8], [rj, y0 + rj * 1.5],
     [rj * 0.7, y0 + rj * 1.9], [rj * 0.45, y0 + rj * 1.9], [0, y0 + rj * 1.9]], mat, seg);
 }
 
 /** Queue ORB (po) sous y = 0 : filet droit, collet, torique. */
-function orbTail(S, ro, mat, seg = 10) {
+function orbTail(S, ro, mat, seg = 8) {
   return [
-    L(S, [[0, -ro * 1.5], [ro * 0.85, -ro * 1.5], [ro, -ro * 1.35], [ro, -ro * 0.7], [ro * 0.93, -ro * 0.6], [ro, -ro * 0.5], [ro, -0.12], [ro * 0.88, -0.1], [ro * 0.88, 0], [0, 0]], mat, seg),
+    L(S, [[0, -ro * 1.5], [ro * 0.85, -ro * 1.5], [ro, -ro * 1.35], [ro * 0.93, -ro * 0.6], [ro, -0.12], [ro * 0.88, -0.1], [ro * 0.88, 0], [0, 0]], mat, seg),
   ];
 }
 
@@ -158,7 +153,7 @@ export function jicStraight(S, THREE, dash = 6, jd = dash, { mat = 'zinc', metri
   const a = Math.max(rj, ro) * 2.5 + 0.06, hh = a * 0.45;
   const g = new THREE.Group();
   g.add(S.merged([hexLathe(S, a, hh, 0, 0, mat), jicNose(S, rj, hh, mat), ...orbTail(S, ro, mat)], mat));
-  g.add(L(S, [[ro * 0.95, -0.09], [ro * 1.12, -0.09], [ro * 1.12, -0.02], [ro * 0.95, -0.02], [ro * 0.95, -0.09]], 'rubber', 12));
+  g.add(L(S, [[ro * 0.95, -0.09], [ro * 1.12, -0.09], [ro * 1.12, -0.02], [ro * 0.95, -0.02], [ro * 0.95, -0.09]], 'rubber', 10));
   return g;
 }
 
@@ -182,7 +177,7 @@ export function jicElbow(S, THREE, dash = 12, jd = dash, { mat = 'zinc', angle =
   parts.push(arm);
   const g = new THREE.Group();
   g.add(S.merged(parts, mat));
-  g.add(L(S, [[ro * 0.95, -0.09], [ro * 1.12, -0.09], [ro * 1.12, -0.02], [ro * 0.95, -0.02], [ro * 0.95, -0.09]], 'rubber', 12));
+  g.add(L(S, [[ro * 0.95, -0.09], [ro * 1.12, -0.09], [ro * 1.12, -0.02], [ro * 0.95, -0.02], [ro * 0.95, -0.09]], 'rubber', 10));
   return g;
 }
 
@@ -257,7 +252,7 @@ export function cross1410(S, THREE, { mat = 'steel' } = {}) {
   const g = [];
   const half = UJ.span / 2, rc = UJ.cap / 2;
   for (const [ax, sg] of [['x', 1], ['x', -1], ['z', 1], ['z', -1]]) {
-    const cap = L(S, [[0, half - 0.62], [rc, half - 0.62], [rc, half - 0.05], [rc - 0.05, half], [0, half]], 'steel', 14);
+    const cap = L(S, [[0, half - 0.62], [rc, half - 0.62], [rc, half - 0.05], [rc - 0.05, half], [0, half]], 'steel', 10);
     const obj = new THREE.Group();
     obj.add(cap);
     if (ax === 'x') obj.rotation.z = -sg * Math.PI / 2; else obj.rotation.x = sg * Math.PI / 2;
@@ -313,7 +308,7 @@ export function wheel1200(api, { side = 1 } = {}) {
   const h = W / 2, rb = 0.262;
   const prof = [[rb, -0.092], [0.29, -0.118], [0.34, -0.143], [0.4, -h], [0.46, -h * 0.98], [0.5, -h * 0.9], [0.518, -h * 0.77], [0.528, -h * 0.58]];
   const full = [...prof, ...prof.slice().reverse().map(([r, z]) => [r, -z])];
-  g.add(S.lathe([[rb - 0.004, -0.092], ...full, [rb - 0.004, 0.092], [rb - 0.004, -0.092]], 'rubber', { axis: 'z', seg: 56 }));
+  g.add(S.lathe([[rb - 0.004, -0.092], ...full, [rb - 0.004, 0.092], [rb - 0.004, -0.092]], 'rubber', { axis: 'z', seg: 36 }));
   // Crampons en chevrons : deux rangées décalées, inclinées de ±28°, hauts de 32 mm
   const lugs = [];
   const n = 22, hl = R - 0.522;
@@ -345,21 +340,20 @@ export function wheel1200(api, { side = 1 } = {}) {
     [0.236, -wr + 0.012], [rr - 0.004, -wr], [rr + 0.03, -wr - 0.004], [rr + 0.034, -wr + 0.008], [rr + 0.006, -wr + 0.016],
     [rr - 0.004, -wr + 0.04], [0.238, -wr + 0.05], [0.238, wr - 0.03], [rr - 0.004, wr - 0.02], [rr + 0.006, wr - 0.012],
     [rr + 0.034, wr - 0.008], [rr + 0.03, wr + 0.004], [rr - 0.004, wr], [0.236, wr - 0.012], [0.232, wr - 0.03], [0.232, -wr + 0.03], [0.236, -wr + 0.012],
-  ], 'lightGrey', { axis: 'z', seg: 48 }));
-  g.add(at2(S.lathe([[rr - 0.006, -0.006], [rr + 0.008, -0.006], [rr + 0.008, 0.006], [rr - 0.006, 0.006], [rr - 0.006, -0.006]], 'lightGrey', { axis: 'z', seg: 40 }), [0, 0, side * (wr - 0.022)]));
+  ], 'lightGrey', { axis: 'z', seg: 32 }));
+  g.add(at2(S.lathe([[rr - 0.006, -0.006], [rr + 0.008, -0.006], [rr + 0.008, 0.006], [rr - 0.006, 0.006], [rr - 0.006, -0.006]], 'lightGrey', { axis: 'z', seg: 32 }), [0, 0, side * (wr - 0.022)]));
   // Voile : disque embouti à 10 trous de goujon Ø 26 mm (cercle 335 mm), 6 aérations, alésage central
   const zd = -side * 0.055;
   const holes = [];
-  for (let i = 0; i < 10; i++) { const a = (i / 10) * Math.PI * 2; holes.push([Math.cos(a) * 0.1675, Math.sin(a) * 0.1675, 0.013]); }
   for (let i = 0; i < 6; i++) { const a = ((i + 0.5) / 6) * Math.PI * 2; holes.push([Math.cos(a) * 0.205, Math.sin(a) * 0.205, 0.024]); }
-  const disc = S.extrude(ring2D(0.236, 64), 0.016, 'lightGrey', { holes: [[0, 0, 0.11], ...holes] });
+  const disc = S.extrude(ring2D(0.236, 32), 0.016, 'lightGrey', { holes: [[0, 0, 0.11], ...holes] });
   disc.position.z = zd;
   g.add(disc);
   // goujons et écrous de roue (côté extérieur du voile), valve de gonflage
   const nuts = [];
   for (let i = 0; i < 10; i++) {
     const a = (i / 10) * Math.PI * 2;
-    const nut = S.merged([hexLathe(S, 1.25, 0.95, 0.31, 0, 'zinc'), L(S, [[0, 0], [0.63, 0], [0.6, 0.31], [0, 0.31]], 'zinc', 10), L(S, [[0, 1.26], [0.3, 1.26], [0.3, 1.65], [0.24, 1.72], [0, 1.72]], 'zinc', 8)], 'zinc');
+    const nut = S.merged([hexLathe(S, 1.25, 1.1, 0, 0, 'zinc'), L(S, [[0, 1.1], [0.3, 1.1], [0.3, 1.5], [0, 1.58]], 'zinc', 6)], 'zinc');
     put(THREE, nut, [Math.cos(a) * 0.1675, Math.sin(a) * 0.1675, zd + side * 0.008], [0, 0, side]);
     nuts.push(nut);
   }
@@ -490,9 +484,10 @@ export function outriggerBody(api, { pz = -1, ext = 0 } = {}) {
  * arbres), stabilisateurs (dessus des fûts, patins au sol jambe sortie).
  */
 export const CAR = {
-  hub: { top: 0.88, bot: 0.44, t: u(3.3) },
+  hub: { top: 0.88, bot: 0.44, t: u(3.3), fork: 0.081 }, // moyeux (châssis arrière), chapes avant à ±fork
   steer: { rear: [-0.96, 0.62, 0.38], rod: [0.09, 0.62, 0.27] },
-  drive: { y: 0.6, rearPinion: -1.29, boxRear: -0.62, boxFront: -0.3, brake: 0.48, frontPinion: 1.26 },
+  // transmission : hauteur des arbres, centres des croisillons (pont arrière, boîte, frein, pont avant)
+  drive: { y: 0.663, rearPinion: -1.244, boxRear: -0.566, boxFront: -0.274, brake: 0.48, frontPinion: 1.264, box: [-0.5, -0.34], input: 0.833 },
   jack: { x: M.jackX, z: 0.85, top: 0.93 },
   frontOut: { x: 2.62, z: 0.8, top: 0.93 },
   axleF: AXLE.front,
@@ -516,4 +511,151 @@ export function outriggerMount(api, pz, opts = {}) {
   api.part('2', api.sub('P320', { pz }), [0, 0.2, 0]);
   api.part('1', api.sub('P318', { pz }), [0, 0.35, 0]);
   return { view: { dir: [-1, 0.5, -pz * 1.1] } };
+}
+
+/**
+ * Écran du détecteur de proximité (CX009157 gauche / CX024252 droit) dans le
+ * repère ST : tôle de 3/16 po pliée en Z, semelle serrée sous les vis des trous
+ * 3 et 4 de la colonne -X de la platine, joue au bout du détecteur et capot à
+ * lumière de réglage devant lui. Épaisseur ajoutée sous ces vis : SHIELD_T.
+ */
+export const SHIELD_T = 0.1875;
+export const SHIELD_HOLES = [2, 3]; // rangs (0 en haut) des trous de la colonne -X
+export function stShield(api, pz, mat = 'lightGrey') {
+  const { S } = api;
+  const t = SHIELD_T, w0 = ST.barrel.ro; // face extérieure de la platine (côté fût)
+  const yc = ST.plate.hy0 - 2.5 * ST.plate.pitch, hgt = 3.8;
+  // profil (x, w) : w distance à la face de la platine vers le fût
+  const prof = [[-2.9, 0], [-5.8, 0], [-5.8, 4.3], [-1.9, 4.3], [-1.9, 4.3 - t], [-5.8 + t, 4.3 - t], [-5.8 + t, t], [-2.9, t]];
+  const pts = prof.map(([x, w]) => [u(x), u(pz * (w0 - w))]);
+  // extrusion selon Y : profil dans le plan (X, Z)
+  const m = S.extrude(pz > 0 ? pts.slice().reverse() : pts, u(hgt), mat);
+  m.rotation.x = Math.PI / 2;
+  m.position.y = u(yc);
+  const slot = S.box(u(1.6), u(0.5), u(0.05), 'darkSteel');
+  slot.position.set(u(-3.9), u(yc), u(pz * (w0 - 4.3 - 0.01)));
+  return S.group(S.merged([m], mat), slot);
+}
+
+/**
+ * Support du projecteur à DEL des stabilisateurs avant (CX004687 / CX004688)
+ * dans le repère ST : équerre de 1/4 po serrée sous les vis des deux trous du
+ * bas de la colonne +X, tablette vers +X portant le projecteur (visé vers +X,
+ * dessiné en tireté au manuel). Épaisseur ajoutée sous ces vis : BRACKET_T.
+ */
+export const BRACKET_T = 0.25;
+export const BRACKET_HOLES = [5, 6];
+export function stLightBracket(api, pz, light) {
+  const { S } = api;
+  const t = BRACKET_T, w0 = ST.barrel.ro;
+  const yb = ST.plate.y0 - 0.2;
+  const flange = S.box(u(2.2), u(4.6), u(t), 'lightGrey');
+  flange.position.set(u(3.75), u(yb + 2.3), u(pz * (w0 - t / 2)));
+  const shelf = S.box(u(4.2), u(t), u(4.2), 'lightGrey');
+  shelf.position.set(u(5.0), u(yb + t / 2), u(pz * (w0 - 2.1)));
+  const lip = S.box(u(4.2), u(0.9), u(t), 'lightGrey');
+  lip.position.set(u(5.0), u(yb - 0.45 + t), u(pz * (w0 - 4.2 + t / 2)));
+  const g = S.group(S.merged([flange, shelf, lip], 'lightGrey'));
+  if (light) { light.position.set(u(5.0), u(yb + t) + 0.098, u(pz * (w0 - 2.1))); g.add(light); }
+  return g;
+}
+
+// ------------------------------------------------------------------ tuyauterie d'air 2 po
+
+/** Tube 2 po (Ø ext. 2 3/8 po) le long d'une ligne brisée, coudes cintrés de rayon R (m), cordons aux coudes. */
+export const PIPE_R = u(2.375 / 2);
+export function bentPipe(api, pts, { R = 0.075, mat = 'grey', welds = true } = {}) {
+  const { THREE, S } = api;
+  const V = pts.map((p) => new THREE.Vector3(...p));
+  const path = [V[0]];
+  const ends = [];
+  for (let i = 1; i < V.length - 1; i++) {
+    const a = V[i].clone().sub(V[i - 1]).normalize(), b = V[i + 1].clone().sub(V[i]).normalize();
+    const th = Math.acos(Math.max(-1, Math.min(1, a.dot(b))));
+    if (th < 1e-3) { path.push(V[i]); continue; }
+    const t = R * Math.tan(th / 2);
+    const p0 = V[i].clone().addScaledVector(a, -t), p2 = V[i].clone().addScaledVector(b, t);
+    const n = Math.max(4, Math.round(th / 0.14));
+    for (let k = 0; k <= n; k++) {
+      const s = k / n;
+      path.push(p0.clone().multiplyScalar((1 - s) * (1 - s)).addScaledVector(V[i], 2 * s * (1 - s)).addScaledVector(p2, s * s));
+    }
+    ends.push([p0, a], [p2, b]);
+  }
+  path.push(V[V.length - 1]);
+  const curve = new THREE.CurvePath();
+  for (let i = 0; i < path.length - 1; i++) if (path[i].distanceTo(path[i + 1]) > 1e-6) curve.add(new THREE.LineCurve3(path[i], path[i + 1]));
+  const tube = new THREE.Mesh(new THREE.TubeGeometry(curve, Math.min(400, path.length * 2), PIPE_R, 16, false));
+  const list = [tube];
+  if (welds) for (const [p, d] of ends) list.push(along(THREE, S.weldRing(PIPE_R + 0.001, 0.005, mat), p.toArray(), d.toArray()));
+  return S.merged(list, mat);
+}
+
+/** Collet de bride code 61 2 po soudé en bout de tube (le long de +Y : face d'étanchéité à y = 0, tube vers -Y). */
+export function flangeHead(api, mat = 'grey') {
+  const { S } = api;
+  return S.merged([L(S, [[1.0, -1.6], [1.24, -1.6], [1.27, -0.36], [1.53, -0.36], [1.53, -0.06], [1.48, 0], [1.0, 0], [1.0, -1.6]], mat, 28)], mat);
+}
+
+/** Bloc de bride (raccord tube à tube) : patin 3 1/16 × 5 1/2 × 1 po, 4 taraudages 1/2-13 ; face à y = 0, tube vers -Y, long côté selon X local. */
+export function flangePad(api, mat = 'grey') {
+  const { S } = api;
+  return S.group(
+    S.box(u(5.5), u(1.0), u(3.06), mat, { r: u(0.12), pos: [0, -u(0.5), 0] }),
+    S.merged([[-1, -1], [-1, 1], [1, -1], [1, 1]].map(([a, b]) => L(S, [[0, -0.01], [0.21, -0.01], [0.21, 0.004], [0, 0.004]], 'darkSteel', 8, { pos: [a * u(1.531), 0, b * u(0.844)] })), 'darkSteel'),
+  );
+}
+
+/**
+ * Trousse de bride fendue 2 po code 61 (FA01290-32) : deux demi-brides, 4 vis
+ * 1/2-13 × 1 3/4 et rondelles fendues, torique ; en un objet, le long de +Y :
+ * face d'étanchéité à y = 0 (le collet est sous les demi-brides), vis tête
+ * vers -Y, long côté selon X local.
+ */
+export function splitFlangeKit(api, mat = 'grey') {
+  const { THREE, S } = api;
+  const halves = [-1, 1].map((s) => {
+    const pts = [[-1.75, 0], [-1.3, 0]];
+    for (let i = 1; i < 8; i++) { const a = Math.PI - (i / 8) * Math.PI; pts.push([1.3 * Math.cos(a), 1.3 * Math.sin(a)]); }
+    pts.push([1.3, 0], [1.75, 0], [1.75, 0.95], [1.5, 1.2], [-1.5, 1.2], [-1.75, 0.95]);
+    const m = S.extrude(pts.map(([x, z]) => [u(x), u(z)]), u(0.85), mat, { holes: [[-u(1.531), u(0.844), u(0.27)], [u(1.531), u(0.844), u(0.27)]] });
+    m.rotation.x = -Math.PI / 2; // profil (x, z) dans le plan horizontal, épaisseur selon Y
+    m.position.y = -u(0.36 + 0.425);
+    const g = new THREE.Group();
+    g.add(m);
+    g.scale.z = -s;
+    return g;
+  });
+  const bolts = [];
+  for (const [a, b] of [[-1, -1], [-1, 1], [1, -1], [1, 1]]) {
+    const y = -u(0.36 + 0.85);
+    bolts.push(put(THREE, sw(S, 0.5), [a * u(1.531), y, b * u(0.844)], [0, -1, 0]));
+    bolts.push(put(THREE, hb(S, 0.5, 1.75), [a * u(1.531), y - u(T_SW(0.5)), b * u(0.844)], [0, -1, 0]));
+  }
+  return S.group(S.merged(halves, mat), S.merged(bolts, 'zinc'),
+    L(S, Array.from({ length: 7 }, (_, i) => { const a = -Math.PI / 2 + (i / 6) * Math.PI * 2; return [1.3 + 0.07 * Math.cos(a), 0.035 + 0.07 * Math.sin(a)]; }), 'rubber', 28));
+}
+
+/**
+ * Collier de tube 2 po (CX001337, deux demi-coquilles en polypropylène) et sa
+ * plaque de recouvrement (CX001338) : base posée à y = 0, axe du tube selon X
+ * local à y = 1,65 po ; trous des deux vis à x = ±1,35 po.
+ */
+export function pipeClamp(api) {
+  const { S } = api;
+  const H = 3.3, W = 1.2, Lc = 3.7;
+  const half = (y0, y1) => S.box(u(W), u(y1 - y0), u(Lc), 'plastic', { r: u(0.12), pos: [0, u((y0 + y1) / 2), 0] });
+  const clamp = S.group(S.merged([half(0, H / 2 - 0.03), half(H / 2 + 0.03, H)], 'plastic'));
+  const cover = S.group(S.box(u(W + 0.1), u(0.12), u(Lc + 0.2), 'zinc', { pos: [0, u(H + 0.06), 0] }));
+  return { clamp, cover, holes: [-u(1.35), u(1.35)], top: u(H + 0.12), axisY: u(H / 2) };
+}
+
+/** Oriente un objet construit le long de +Y (X local = côté long) : +Y sur n, X sur e1, en pos (m). */
+export function frameAt(THREE, obj, pos, n, e1) {
+  const N = new THREE.Vector3(...n).normalize(), E = new THREE.Vector3(...e1).normalize();
+  const Z = new THREE.Vector3().crossVectors(E, N).normalize();
+  const m = new THREE.Matrix4().makeBasis(E, N, Z);
+  obj.quaternion.setFromRotationMatrix(m);
+  obj.position.set(...pos);
+  return obj;
 }
