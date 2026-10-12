@@ -3,6 +3,7 @@
 import P012 from './P012.js';
 import P014 from './P014.js';
 import P016 from './P016.js';
+import P028 from './P028.js';
 import P032 from './P032.js';
 import P034 from './P034.js';
 import P046 from './P046.js';
@@ -127,6 +128,7 @@ export default {
   'P012': P012,
   'P014': P014,
   'P016': P016,
+  'P028': P028,
   'P032': P032,
   'P034': P034,
   'P046': P046,
