@@ -47,8 +47,10 @@ export const RB = {
   // intérieure du flanc droit du châssis (z = 0.845), à l'avant du pont
   // (vue de situation de la page 470) ; local +X → −X, local +Z → −Z.
   ctl: { pos: [-2.98, 0.62, 0.845], rot: [0, Math.PI, 0] },
-  // P472 — manomètres du panneau arrière gauche, cadrans vers −X.
-  gp: { pos: [-4.33, 1.5, -0.62], rot: [0, -Math.PI / 2, 0] },
+  // P472 — manomètres sur la tôle du panneau (P422 rep. 8, paroi avant du capot,
+  // côté gauche : x −2.838 … −2.808, y 1.35 … 1.63, z −0.82 … −0.49), cadrans
+  // vers −X (lus porte gauche ouverte).
+  gp: { pos: [-2.838, 1.49, -0.655], rot: [0, -Math.PI / 2, 0] },
   // P474 — arrivée d'eau à l'avant droit, au-dessus du refroidisseur ;
   // ligne haute selon −Z (local +X → −Z), té côté flanc droit.
   wi: { pos: [-3.68, 1.4, 0.72], rot: [0, Math.PI / 2, 0] },
