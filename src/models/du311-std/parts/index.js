@@ -10,6 +10,12 @@ import P128 from './P128.js';
 import P130 from './P130.js';
 import P132 from './P132.js';
 import P136 from './P136.js';
+import P140 from './P140.js';
+import P142 from './P142.js';
+import P144 from './P144.js';
+import P146 from './P146.js';
+import P148 from './P148.js';
+import P150 from './P150.js';
 
 export default {
   'P108': P108,
@@ -22,4 +28,10 @@ export default {
   'P130': P130,
   'P132': P132,
   'P136': P136,
+  'P140': P140,
+  'P142': P142,
+  'P144': P144,
+  'P146': P146,
+  'P148': P148,
+  'P150': P150,
 };
