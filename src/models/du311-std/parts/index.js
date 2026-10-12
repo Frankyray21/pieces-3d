@@ -3,6 +3,7 @@
 import P224 from './P224.js';
 import P226 from './P226.js';
 import P228 from './P228.js';
+import P234 from './P234.js';
 import P238 from './P238.js';
 import P278 from './P278.js';
 import P284 from './P284.js';
@@ -17,6 +18,7 @@ export default {
   'P224': P224,
   'P226': P226,
   'P228': P228,
+  'P234': P234,
   'P238': P238,
   'P278': P278,
   'P284': P284,
