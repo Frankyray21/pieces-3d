@@ -98,7 +98,7 @@ export default function P138(api) {
 
   // ============================================================ 2 / 1 / 7 / 8 / 9 / 10 — colliers et brides de sécurité
   const nl = 2 * Math.max(0.0008, 0.5 * IN * 0.09) * 1.1;
-  const clampAt = (c, tabDir, low) => {
+  const clampAt = (c, tabDir) => {
     const T = V(...tabDir);
     const ring = S.ring(RH + 0.0018, RH + 0.0003, 0.02, 'zinc', { seg: 32, pos: c.toArray() });
     const ears = [-1, 1].map((k) => { const b = S.box(0.004, 0.02, 0.022, 'zinc'); const g = place(b, c.clone().addScaledVector(T, RH + 0.012).add(V(0, 0, 0)).toArray(), [0, 1, 0], T.toArray()); g.translateZ(k * 0.003); return g; });
