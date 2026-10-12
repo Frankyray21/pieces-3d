@@ -10,6 +10,9 @@ import P334 from './P334.js';
 import P338 from './P338.js';
 import P340 from './P340.js';
 import P346 from './P346.js';
+import P356 from './P356.js';
+import P360 from './P360.js';
+import P392 from './P392.js';
 
 export default {
   'P012': P012,
@@ -22,4 +25,7 @@ export default {
   'P338': P338,
   'P340': P340,
   'P346': P346,
+  'P356': P356,
+  'P360': P360,
+  'P392': P392,
 };

@@ -281,3 +281,40 @@ export function solenoidHarness(api, hub, { bend = 0.07, explode = [0, -0.05, 0]
     P('7', at(S.lathe([[0.0086, 0], [0.0098, 0], [0.0098, IN], [0.0086, IN], [0.0086, 0]], 'black', { seg: 20 }), q.p, q.t), 2);
   }
 }
+
+// ------------------------------------------------------------ refroidisseur d'huile (hors liste)
+/**
+ * Refroidisseur d'huile à eau à faisceau tubulaire, dessiné en fantôme page
+ * 392 (pas de repère dans P392) : à poser par P208 (repère du porteur) pour
+ * recevoir les raccords de P392. Repère machine (CO) : calandre d'axe X de
+ * CO.x0 à CO.x1 (face avant de la boîte à eau), deux bossages d'huile 2 NPT
+ * sur le dessus (CO.oil), boîtes à eau boulonnées aux deux bouts (huit vis),
+ * deux orifices d'eau 1 NPT sur la boîte avant (CO.water), deux pattes de
+ * fixation en selle. Retourne un Group.
+ */
+export function oilCooler(api) {
+  const { S } = api;
+  const { x0, x1, y, z, r } = CO;
+  const L = x1 - x0;
+  const shell = [S.cyl(r, L - 0.07, 'black', { axis: 'x', seg: 40, pos: [(x0 + x1) / 2, y, z] })];
+  for (const [xa, s] of [[x0, 1], [x1, -1]]) {
+    // Bride de calandre, plaque à tubes, boîte à eau à fond bombé.
+    shell.push(S.cyl(r + 0.02, 0.012, 'black', { axis: 'x', seg: 40, pos: [xa + s * 0.041, y, z] }));
+    shell.push(S.lathe([[0, 0], [r + 0.02, 0], [r + 0.02, 0.012], [r + 0.004, 0.016], [r, 0.03], [r * 0.6, 0.035], [0, 0.035]], 'black', { axis: s > 0 ? '-x' : 'x', seg: 40, pos: [xa + s * 0.035, y, z] }));
+  }
+  for (const xp of CO.oil) shell.push(S.cyl(0.04, 0.02, 'black', { seg: 28, pos: [xp, y + r + 0.004, z] }));
+  for (const dy of CO.water) shell.push(S.cyl(0.024, 0.012, 'black', { axis: 'x', seg: 24, pos: [x1 - 0.006, y + dy, z] }));
+  // Pattes en selle.
+  for (const xp of [x0 + 0.1, x1 - 0.12]) {
+    shell.push(S.box(0.04, 0.05, 0.16, 'black', { r: 0.004, pos: [xp, y - r - 0.01, z] }));
+    shell.push(S.box(0.06, 0.008, 0.18, 'black', { r: 0.002, pos: [xp, y - r - 0.039, z] }));
+  }
+  const bolts = [];
+  for (const [xa, s] of [[x0, 1], [x1, -1]]) {
+    for (let k = 0; k < 8; k++) {
+      const a = (k / 8) * Math.PI * 2 + Math.PI / 8;
+      bolts.push(S.at(S.nut(0.013, 0.007, 'zinc', { axis: 'x' }), [xa + s * 0.031, y + Math.sin(a) * (r + 0.012), z + Math.cos(a) * (r + 0.012)]));
+    }
+  }
+  return S.group(S.merged(shell, 'black'), S.merged(bolts, 'zinc'));
+}
