@@ -18,7 +18,7 @@
 // Cotes : filets des bouchons (liste) ; bloc et cartouches à l'échelle des
 // bouchons -06 (Ø 9/16 po) sur les vues isométriques ; couples de serrage de
 // la note d'installation (non représentés).
-import { u, L, hex, prism, rrect, orbPlug, place } from './_carousel.js';
+import { u, L, hex, orbPlug, place } from './_carousel.js';
 
 const B = { x0: -2.5, x1: 2.5, step: 0.6, hHi: 3.0, hLo: 2.5, d: 2.5 };
 // Orifices des raccords de P142 (po) : dessous [x, z] et face -X [y, z].
@@ -72,6 +72,5 @@ export default function P144(api) {
   for (const [p, d] of [[[-1.45, 0, 0], [0, -1, 0]], [[0.35, 0, 0], [0, -1, 0]], [[1.25, 0, 0], [0, -1, 0]], [[2.2, 0, -0.2], [0, -1, 0]], [[B.step, 2.75, 0], [1, 0, 0]], [[B.x0, 2.3, 0], [-1, 0, 0]]]) {
     P('7', place(api, orbPlug(api, 8, { countersunk: true }), V(...p), d), d.map((v) => v * 0.05));
   }
-  void prism; void rrect;
   return { view: { dir: [0.8, 0.7, 1] } };
 }

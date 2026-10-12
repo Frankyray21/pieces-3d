@@ -45,8 +45,8 @@ import { body } from '../layout.js';
 import { FEED } from '../feed.js';
 import { AXLE114 } from './P114.js';
 import {
-  u, DEG, C, K, H, RING, SWING, DRIVE, INSPECT, BACK, STINGER,
-  arc, circle, rrect, prism, hull2, place, frame, L, hex, bolt, nut, washer, lockWasher, nordLock, boltStack,
+  u, DEG, C, K, H, RING, SWING, DRIVE, INSPECT, BACK,
+  arc, circle, rrect, prism, hull2, place, frame, L, hex, bolt, nut, nordLock, boltStack,
   supportClamp, clampHole, flangedBushing, fitElbow, greaseNipple,
 } from './_carousel.js';
 
@@ -361,6 +361,5 @@ export default function P108(api) {
     P('16', atC(at(group(merged([...halves, ...ears, baseB], 'zinc'), merged([...hw, ...nuts], 'zinc')), [hp[0], yH, zc])), [0, 0, -0.2]);
   }
 
-  void washer; void lockWasher; void STINGER;
   return { view: { dir: [1, 0.6, 1.1] } };
 }

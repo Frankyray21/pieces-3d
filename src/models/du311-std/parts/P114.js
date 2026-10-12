@@ -21,7 +21,7 @@
 // Cotes : vis et quantités de la liste ; diamètres et hauteurs des brides
 // d'après l'élévation de P108 (≈ 0.8 px/mm), joints aux hauteurs des brides
 // boulonnées de l'élévation ; portées dans les bagues du cadre (P136).
-import { IN, u, L, bolt, nut, nordLock, prism, circle, H } from './_carousel.js';
+import { u, bolt, nut, nordLock, prism, circle, H } from './_carousel.js';
 
 const R = { body: u(1.75), jour: u(1.25), flange: u(4.25), bc: u(3.25), collar: u(1.625) };
 const FT = u(0.625); // épaisseur des brides
@@ -122,6 +122,5 @@ export default function P114(api) {
   P('8', at(nordLock(api, 0.75), [0, Y.top + u(0.3125), 0]), [0, 0.17, 0]);
   P('6', at(bolt(api, 0.75, 1.5), [0, Y.top + u(0.3125) + nlT, 0]), [0, 0.24, 0]);
 
-  void IN; void L;
   return { view: { dir: [1, 0.35, 1.1] } };
 }

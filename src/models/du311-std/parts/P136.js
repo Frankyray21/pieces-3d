@@ -36,12 +36,12 @@
 // Ø 4 po au rayon FEED.car.rp ; hauteurs d'après l'élévation de P108
 // (≈ 0.8 px/mm) et les tiges de 6 pi rangées (bouts à 0.34 et 2.23 m).
 import {
-  u, DEG, H, RING, DRIVE, INSPECT, VBM, STINGER, BACK, COVER_CLEVIS, SWING, C,
-  arc, circle, rrect, prism, hull2, frameOutline, place, frame, bolt, washer, nut, lockWasher, boltStack, L,
+  u, DEG, H, RING, DRIVE, INSPECT, VBM, STINGER, BACK, COVER_CLEVIS, C,
+  arc, circle, rrect, prism, hull2, frameOutline, boltStack, L,
 } from './_carousel.js';
 
 export default function P136(api) {
-  const { THREE, S } = api;
+  const { S } = api;
   const { group, merged, at, weld, weldRing, lathe } = S;
   const P = (ref, obj, e) => api.part(ref, obj, e);
   const { Ri, Ro, gate: G, gateHalf: GH } = RING;
@@ -50,7 +50,6 @@ export default function P136(api) {
   const band = (ri, ro, a0, a1, y0, y1, mat = 'lightGrey', n = 64) => prism(api, [...arc(0, 0, ro, a0, a1, n), ...arc(0, 0, ri, a1, a0, n)], y0, y1, mat);
   const ringA0 = G + GH, ringA1 = G - GH + 2 * Math.PI; // paroi : du bord arrière du portillon au bord avant
   const cvl = [COVER_CLEVIS.plan[0] - C[0], COVER_CLEVIS.plan[1] - C[1]];
-  const swingPhi = SWING.phi;
 
   // Pont arrière (entre la paroi et le contour arrière) et tôles de fermeture
   const backPts = OL.slice(OL.findIndex((p) => p[0] === -0.345 && p[1] === -0.2));
@@ -141,7 +140,6 @@ export default function P136(api) {
   // ================================================ couvercles : chapes, bossages
   const cc = COVER_CLEVIS;
   // chape : joues en langue autour de l'axe, âme à l'arrière (côté opposé au vérin)
-  const back = [Math.cos(swingPhi + Math.PI) * 0.6 + Math.cos(Math.atan2(cvl[1], cvl[0])) * 0.4, 0];
   const bd = Math.atan2(cvl[1], cvl[0]) - 0.35; // direction de l'âme (vers l'extérieur, côté portillon)
   const tongue = [...arc(cvl[0], cvl[1], cc.R, bd + Math.PI / 2, bd + 1.5 * Math.PI, 12), [cvl[0] + Math.cos(bd) * u(2.2) + Math.cos(bd + Math.PI / 2) * cc.R, cvl[1] + Math.sin(bd) * u(2.2) + Math.sin(bd + Math.PI / 2) * cc.R], [cvl[0] + Math.cos(bd) * u(2.2) - Math.cos(bd + Math.PI / 2) * cc.R, cvl[1] + Math.sin(bd) * u(2.2) - Math.sin(bd + Math.PI / 2) * cc.R]].reverse();
   const webOl = rrect(-u(0.4), -cc.R, u(0.4), cc.R, 0.002, 2).map(([x, z]) => {
@@ -156,7 +154,6 @@ export default function P136(api) {
       ? [prism(api, tongue, base, yc0, 'grey', h), prism(api, tongue, yc1, yc1 + cc.cheek, 'grey', h), prism(api, webOl, base, yc1 + cc.cheek, 'grey')]
       : [prism(api, tongue, yc1, base, 'grey', h), prism(api, tongue, yc0 - cc.cheek, yc0, 'grey', h), prism(api, webOl, yc0 - cc.cheek, base, 'grey')];
   };
-  void back;
   const tang = (y0) => S.box(u(1.5), u(0.25), u(0.75), 'steel', { pos: [0, y0 + u(0.125), 0] });
   const boltHoles = (pts) => pts.map(([x, z]) => [x, z, u(0.28)]);
 
@@ -219,13 +216,11 @@ export default function P136(api) {
   const pw = RING.posts.w;
   for (const [ref, a] of Object.entries(RING.posts.a)) {
     const p = plan(RING.posts.r, a);
-    const len = postY1 - postY0;
     const sq = prism(api, rrect(-pw / 2, -pw / 2, pw / 2, pw / 2, u(0.375), 3), postY0 + u(0.75), postY1 - u(0.75), 'lightGrey', [rrect(-pw / 2 + u(0.25), -pw / 2 + u(0.25), pw / 2 - u(0.25), pw / 2 - u(0.25), u(0.15), 2)]);
     const ends = [postY0, postY1 - u(0.75)].map((y) => prism(api, rrect(-pw / 2 - u(0.25), -pw / 2 - u(0.25), pw / 2 + u(0.25), pw / 2 + u(0.25), 0.002, 2), y, y + u(0.75), 'lightGrey'));
     const wl = [postY0 + u(0.75), postY1 - u(0.75)].map((y) => weld([[-pw / 2, y, -pw / 2], [pw / 2, y, -pw / 2], [pw / 2, y, pw / 2], [-pw / 2, y, pw / 2]], 0.006, 'lightGrey', { closed: true }));
     const g = group(merged([sq, ...ends], 'lightGrey'), merged(wl, 'lightGrey'));
     P(ref, at(g, [p[0], 0, p[1]], [0, -a, 0]), [Math.cos(a) * 0.35, 0, Math.sin(a) * 0.35]);
-    void len;
     // deux vis par bout, en diagonale, têtes dans les logements (sous le pont bas, sur le pont haut)
     for (const s of [-1, 1]) {
       const off = [Math.cos(-a) * s * u(0.9) - Math.sin(-a) * s * u(0.9), -(Math.sin(-a) * s * u(0.9) + Math.cos(-a) * s * u(0.9))];
@@ -307,6 +302,5 @@ export default function P136(api) {
     P('22', s.washer, [0.1, 0.36, -0.1]); P('13', s.bolt, [0.1, 0.42, -0.1]);
   }
 
-  void THREE; void frame; void place; void washer; void nut; void lockWasher; void bolt;
   return { view: { dir: [1, 0.6, 1.1] } };
 }

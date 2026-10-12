@@ -22,7 +22,7 @@
 // × 0.40 (Y, de 2.48 à 2.88) × 0.33 (Z) m.
 // Cotes : vis de la liste ; distributeur PVG 32 (P148) ; équerre, platine et
 // capot proportionnés sur l'éclaté de P140 ; boîte 8 × 10 × 4 po (P150).
-import { u, C, VBM, rrect, prism, place, frame, boltStack, supportClamp, clampHole } from './_carousel.js';
+import { u, C, VBM, rrect, prism, frame, boltStack, supportClamp, clampHole } from './_carousel.js';
 import { JB150 } from './P150.js';
 
 export default function P140(api) {
@@ -52,11 +52,10 @@ export default function P140(api) {
   const floorHoles = [[-0.11, 0.105], [0.18, 0.105], [-0.11, -0.04], [0.18, -0.04]];
   P('1', atO(merged([
     prism(api, rrect(bx0, bz0, bx1, bz1, 0.006, 3), -T, 0, 'grey', [...floorHoles.map(([x, z]) => [x, z, u(0.28)]), rrect(-0.02, 0.06, 0.09, 0.1, 0.015, 3)]),
-    frontWall(bz0, [[bx0, 0], [bx1, 0], [bx1, bH], [bx0, bH]], [[-0.035, PVGy(0.015), u(0.17)], [0.035, PVGy(0.015), u(0.17)], [-0.035, 0.205, u(0.17)], [0.035, 0.205, u(0.17)], [0.035, 0.11, u(0.6)], [0.035, 0.155, u(0.6)]]),
+    frontWall(bz0, [[bx0, 0], [bx1, 0], [bx1, bH], [bx0, bH]], [[-0.035, 0.015, u(0.17)], [0.035, 0.015, u(0.17)], [-0.035, 0.205, u(0.17)], [0.035, 0.205, u(0.17)], [0.035, 0.11, u(0.6)], [0.035, 0.155, u(0.6)]]),
     sideWall(bx0, sidePts, sideHoles),
     sideWall(bx1 - T, sidePts, sideHoles),
   ], 'grey')), [0, -0.05, 0]);
-  function PVGy(v) { return v; }
   for (const [x, z] of floorHoles) {
     const s = boltStack(api, W([x, 0, z]), [0, 1, 0], 0.5, z > 0 ? 1.5 : 1.75, { washer: 'flat' });
     P('17', s.washer, [0, 0.05, 0]); P(z > 0 ? '14' : '15', s.bolt, [0, 0.1, 0]);
@@ -131,13 +130,10 @@ export default function P140(api) {
   // ================================================ 2 — collier du câble composite, 10 / 18
   const d2 = 11 / 16, ch = clampHole(d2);
   const cc = [-0.155, 0.235, -0.025]; // axe du câble (descente sous le presse-étoupe 3/4 de la boîte)
-  const org = [cc[0] - ch.zFace, cc[1], cc[2]];
-  void org;
   P('2', frame(api, supportClamp(api, d2), [0, 0, 1], [0, 1, 0], W(cc)), [-0.08, 0, 0]);
   const hp = [cc[0] - ch.zIn, cc[1], cc[2] + ch.x];
   const s2 = boltStack(api, W(hp), [-1, 0, 0], 0.375, 0.625, { washer: 'lock' });
   P('18', s2.washer, [-0.12, 0, 0]); P('10', s2.bolt, [-0.15, 0, 0]);
 
-  void place;
   return { view: { dir: [1, 0.7, 1.2] } };
 }

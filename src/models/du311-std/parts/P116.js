@@ -41,8 +41,8 @@ import { CYL094 } from '../../du311/parts/P094.js';
 import { CYL122 } from './P122.js';
 import { PIVOT126 } from './P126.js';
 import {
-  u, K, C, H, SWING, ARMCYL, armCylRod, SWLOCAL, swingToPlan, COVER_CLEVIS, ARM,
-  frame, place, prism, circle, rrect, arc, L, bolt, nordLock, tabPin, boltStack, fitElbow,
+  u, K, C, H, SWING, ARMCYL, armCylRod, SWLOCAL, swingToPlan, COVER_CLEVIS,
+  frame, place, prism, circle, rrect, L, bolt, nordLock, tabPin, boltStack, fitElbow,
 } from './_carousel.js';
 
 const SH = { r: u(1.75), collarR: u(2.25), collarT: u(0.5), splR: u(1.5) };
@@ -192,6 +192,5 @@ export default function P116(api) {
     P('16', body('clamp', st.bolt), [0.38, 0, s * 0.02]);
   }
 
-  void THREE; void arc; void ARM;
   return { view: { dir: [1, 0.5, 0.9] } };
 }
