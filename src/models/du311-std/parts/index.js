@@ -7,13 +7,24 @@ import P032 from './P032.js';
 import P034 from './P034.js';
 import P046 from './P046.js';
 import P048 from './P048.js';
+import P058 from './P058.js';
+import P060 from './P060.js';
+import P062 from './P062.js';
+import P064 from './P064.js';
+import P068 from './P068.js';
+import P070 from './P070.js';
+import P074 from './P074.js';
 import P076 from './P076.js';
+import P078 from './P078.js';
 import P088 from './P088.js';
 import P090 from './P090.js';
 import P092 from './P092.js';
 import P094 from './P094.js';
 import P098 from './P098.js';
+import P100 from './P100.js';
 import P102 from './P102.js';
+import P104 from './P104.js';
+import P106 from './P106.js';
 import P108 from './P108.js';
 import P112 from './P112.js';
 import P114 from './P114.js';
@@ -24,6 +35,7 @@ import P128 from './P128.js';
 import P130 from './P130.js';
 import P132 from './P132.js';
 import P136 from './P136.js';
+import P138 from './P138.js';
 import P140 from './P140.js';
 import P142 from './P142.js';
 import P144 from './P144.js';
@@ -119,13 +131,24 @@ export default {
   'P034': P034,
   'P046': P046,
   'P048': P048,
+  'P058': P058,
+  'P060': P060,
+  'P062': P062,
+  'P064': P064,
+  'P068': P068,
+  'P070': P070,
+  'P074': P074,
   'P076': P076,
+  'P078': P078,
   'P088': P088,
   'P090': P090,
   'P092': P092,
   'P094': P094,
   'P098': P098,
+  'P100': P100,
   'P102': P102,
+  'P104': P104,
+  'P106': P106,
   'P108': P108,
   'P112': P112,
   'P114': P114,
@@ -136,6 +159,7 @@ export default {
   'P130': P130,
   'P132': P132,
   'P136': P136,
+  'P138': P138,
   'P140': P140,
   'P142': P142,
   'P144': P144,
