@@ -17,7 +17,7 @@
 // Encombrement 0.30 (X) × 0.23 (Y) × 0.25 (Z) m.
 // Cotes : liste (rondelles, filets) ; carter, patte et chapes d'après les vues
 // de la page 308 à l'échelle des chapes 1410 (envergure 4 3/16 po).
-import { u, L, put, along, hb, nt, fw, sw, yoke1410, UJ } from './_carrier.js';
+import { u, L, put, hb, nt, fw, sw, yoke1410 } from './_carrier.js';
 
 const HX = 1.9; // demi-longueur du carter (po)
 const FOOT = 5.0; // axe → dessous de la semelle (po)

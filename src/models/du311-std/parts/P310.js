@@ -14,7 +14,7 @@
 // Encombrement 0.38 (X, de -0.32 à +0.06) × 0.27 (Y) × 0.24 (Z) m.
 // Cotes : moteur de 107 cm³ de cette famille (bride 4 trous Ø 18 sur entraxe
 // 180 mm, centrage Ø 127, arbre Ø 38) ; formes d'après la vue de la page 310.
-import { L, put, along } from './_carrier.js';
+import { L, put } from './_carrier.js';
 
 const MM = 0.001;
 /** Orifices (repère P310, m) : brides A / B, drain T, pilotage X1 / X2, capteur ; trous de la bride. */

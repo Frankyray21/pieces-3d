@@ -56,8 +56,8 @@
 // (p. 298), articulation à l'échelle de l'écrou 1 1/2 po (coupe E-E, p. 302).
 import { WHEEL, AXLE, M, body, ramDetailed } from '../layout.js';
 import {
-  u, L, put, along, bolted, hb, hbm, nt, fw, sw, nl, nyloc, orbPlug, jicStraight, jicElbow, jicTee, cross1410, yoke1410,
-  wheel1200, CAR, ST, stTop, stPlateHoles, stPorts, stShield, SHIELD_T, SHIELD_HOLES, splitFlangeKit, pipeClamp, frameAt, T_FW, T_SW, UJ,
+  u, L, put, bolted, hb, nt, fw, orbPlug, jicStraight, jicElbow, jicTee, cross1410, yoke1410,
+  wheel1200, CAR, ST, stTop, stPlateHoles, stPorts, stShield, SHIELD_T, SHIELD_HOLES, splitFlangeKit, pipeClamp, frameAt, UJ,
 } from './_carrier.js';
 import { CYL306 } from './P306.js';
 import { YOKE308 } from './P308.js';
