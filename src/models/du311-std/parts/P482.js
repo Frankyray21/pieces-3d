@@ -99,6 +99,10 @@ function geom(S) {
 export function afwPorts(S) {
   return geom(S).arms.map(({ tip, dir }) => ({ tip, dir }));
 }
+/** Abscisse (repère de P482) de l'axe du tube montant d'entrée 8, pour le collier P430 rep. 7. */
+export function afwInletX(S) {
+  return geom(S).c29a[0];
+}
 /** Cotes des têtes de filtre (m). */
 export const AFW = { HW, HH, HD };
 

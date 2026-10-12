@@ -7,7 +7,7 @@
 // Tuyauterie de culasses (vues de la page 432) :
 //   · aspiration, côté poulie (+X) : joint torique (2), bride ORB -24 à deux
 //     vis (9) sur la bride losangée de chaque culasse, coude 90° ORB/JIC -24
-//     (8) tourné vers le haut le long de l'axe du cylindre (« SUCTION AIR ») ;
+//     (8) tourné vers le haut, sur le flanc de la culasse (« SUCTION AIR ») ;
 //   · refoulement, côté opposé (−X) : joint de bride (3), bride ORB -24 à
 //     trois oreilles (7), raccord droit ORB/JIC -24 (6) sur les culasses
 //     −60° et centrale, coude 90° (8) sur la culasse +60° ;
@@ -39,6 +39,8 @@ const T = (i, [x, y, z]) => {
   return [cx + x, y * Math.cos(a) - z * Math.sin(a), y * Math.sin(a) + z * Math.cos(a)];
 };
 const D = (i, v) => { const p = T(i, v); return [p[0] - LR.cyl[i].x, p[1], p[2]]; };
+// Verticale du bloc exprimée dans le repère du cylindre i (coudes tournés vers le haut).
+const UP = (i) => [0, Math.cos(LR.cyl[i].a), -Math.sin(LR.cyl[i].a)];
 
 /**
  * Bouts des raccords d'aspiration (8) et de refoulement (6 / 8) des trois
@@ -48,9 +50,10 @@ const D = (i, v) => { const p = T(i, v); return [p[0] - LR.cyl[i].x, p[1], p[2]]
 export function boostPorts(S) {
   const el = ACC.elbow(S, { a: 24, aType: 'orb' }).userData.out;
   const st = ACC.straight(S, { a: 24, b: 24, aType: 'orb' }).userData.tip;
-  const suction = [0, 1, 2].map((i) => ({ tip: T(i, [XE + el[1], YP + el[0], 0]), dir: D(i, [0, 1, 0]) }));
+  const up = (i, x, k) => T(i, [x, YP + UP(i)[1] * k, UP(i)[2] * k]);
+  const suction = [0, 1, 2].map((i) => ({ tip: up(i, XE + el[1], el[0]), dir: [0, 1, 0] }));
   const discharge = [0, 1, 2].map((i) => (i === 2
-    ? { tip: T(i, [X7 - el[1], YP + el[0], 0]), dir: D(i, [0, 1, 0]) }
+    ? { tip: up(i, X7 - el[1], el[0]), dir: [0, 1, 0] }
     : { tip: T(i, [X7 - st, YP, 0]), dir: D(i, [-1, 0, 0]) }));
   return { suction, discharge };
 }
@@ -202,7 +205,7 @@ export default function P432(api) {
       at(cyl(0.024, 0.004, 'darkSteel', { axis: 'x', seg: 28 }), [XS + 0.002, YP, 0]),
       merged([-0.026, 0.026].map((z) => at(bolt(I(0.375), I(1.25), 'blackOxide', { axis: 'x', washer: true }), [XS, YP, z])), 'blackOxide'),
     )), [0.12, ...out(i, 0.08).slice(1)]);
-    P('8', onCyl(i, O(elS(), [XE, YP, 0], [1, 0, 0], [0, 1, 0])), [0.2, ...out(i, 0.15).slice(1)]);
+    P('8', onCyl(i, O(elS(), [XE, YP, 0], [1, 0, 0], UP(i))), [0.2, ...out(i, 0.15).slice(1)]);
   }
 
   // ---------------------------------------------------------------- refoulement : 3, 7, 6 / 8
@@ -223,7 +226,7 @@ export default function P432(api) {
     P('3', onCyl(i, lozenge(XG, -XF, 'cream', 0.0185)), [-0.05, ...out(i, 0.05).slice(1)]);
     const bolts = [[YP, -0.026], [YP, 0.026], [YP + 0.044, 0]].map(([y, z]) => at(bolt(I(0.375), I(1.25), 'blackOxide', { axis: '-x', washer: true }), [X7, y, z]));
     P('7', onCyl(i, group(flat(ears(), X7, XG, 'darkSteel'), merged(bolts, 'blackOxide'))), [-0.1, ...out(i, 0.05).slice(1)]);
-    if (i === 2) P('8', onCyl(i, O(elS(), [X7, YP, 0], [-1, 0, 0], [0, 1, 0])), [-0.18, ...out(i, 0.12).slice(1)]);
+    if (i === 2) P('8', onCyl(i, O(elS(), [X7, YP, 0], [-1, 0, 0], UP(i))), [-0.18, ...out(i, 0.12).slice(1)]);
     else P('6', onCyl(i, O(ACC.straight(S, { a: 24, b: 24, aType: 'orb' }), [X7, YP, 0], [-1, 0, 0], [0, 1, 0])), [-0.18, ...out(i, 0.1).slice(1)]);
   }
 

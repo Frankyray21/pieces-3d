@@ -29,24 +29,34 @@ export const RB = {
   // P482 — filtre / séparateur d'admission : ligne 3 po selon Z, à l'arrière
   // (local +X → machine +Z, local +Z → machine −X).
   afw: { pos: [-4.19, 1.7, 0.2], rot: [0, -Math.PI / 2, 0] },
-  // P466 — refroidisseur final contre la paroi avant du capot, piquages
-  // tournés vers l'arrière (local +Z → −X, local +X → +Z).
-  ac: { pos: [-3.72, 1.19, 0.47], rot: [0, -Math.PI / 2, 0] },
-  // P476 — collecteur de refoulement couché selon X, sous la croix d'aspiration.
-  man: { pos: [-3.98, 1.13, 0.1], rot: [0, 0, 0] },
-  // P462 — dérivation (ligne d'air) et électrovanne d'eau.
-  byp: { pos: [-4.0, 1.42, 0.62], rot: [0, 0, 0] },
-  bypW: { pos: [-3.93, 1.18, 0.8], rot: [0, -Math.PI / 2, 0] },
-  // P470 — commande du compresseur, au-dessus du refroidisseur.
-  ctl: { pos: [-3.66, 1.62, 0.45], rot: [0, -Math.PI / 2, 0] },
-  // P472 — panneau de manomètres arrière, cadrans vers −X.
-  gp: { pos: [-4.33, 1.5, -0.68], rot: [0, -Math.PI / 2, 0] },
-  // P474 — arrivée d'eau, au pied du refroidisseur côté −Z.
-  wi: { pos: [-3.86, 1.2, 0.17], rot: [0, -Math.PI / 2, 0] },
-  // P478 — purge automatique, sous la vanne papillon d'admission.
-  adv: { pos: [-4.3, 1.12, 0.54], rot: [0, -Math.PI / 2, 0] },
-  // P480 — pressostat différentiel du filtre.
-  pds: { pos: [-4.04, 1.86, 0.36], rot: [0, -Math.PI / 2, 0] },
+  // P466 — refroidisseur final contre la paroi avant du capot (âme de la
+  // platine à x = −3.735), piquages tournés vers l'arrière (local +Z → −X,
+  // local +X → +Z) ; bas de la platine sur le pont.
+  ac: { pos: [-3.735, 1.155, 0.47], rot: [0, -Math.PI / 2, 0] },
+  // P476 — collecteur de refoulement couché selon Z, bas, derrière le
+  // refroidisseur : local +X → +Z (bride de sortie vers F1), local +Z → +Y
+  // (arrivées vers le haut, patte horizontale sur la cornière P430 rep. 9),
+  // local +Y → +X.
+  man: { pos: [-3.96, 1.098, 0.37], rot: [-Math.PI / 2, 0, -Math.PI / 2] },
+  // P462 — ligne d'air de dérivation verticale contre le flanc droit (axes
+  // machine) ; électrovanne d'eau (centre de P464) en bypW, tournée de −90°
+  // autour de Y (câble vers +Z).
+  byp: { pos: [-3.93, 1.4, 0.865], rot: [0, 0, 0] },
+  bypW: { pos: [-4.04, 1.3, 0.75], rot: [0, -Math.PI / 2, 0] },
+  // P470 — commande du compresseur sous le plancher, contre la face
+  // intérieure du flanc droit du châssis (z = 0.845), à l'avant du pont
+  // (vue de situation de la page 470) ; local +X → −X, local +Z → −Z.
+  ctl: { pos: [-2.98, 0.62, 0.845], rot: [0, Math.PI, 0] },
+  // P472 — manomètres du panneau arrière gauche, cadrans vers −X.
+  gp: { pos: [-4.33, 1.5, -0.62], rot: [0, -Math.PI / 2, 0] },
+  // P474 — arrivée d'eau à l'avant droit, au-dessus du refroidisseur ;
+  // ligne haute selon −Z (local +X → −Z), té côté flanc droit.
+  wi: { pos: [-3.68, 1.4, 0.72], rot: [0, Math.PI / 2, 0] },
+  // P478 — purge automatique sous la vanne papillon d'admission (local +X → +Z,
+  // colliers vers l'arrière).
+  adv: { pos: [-4.28, 1.22, 0.5], rot: [0, -Math.PI / 2, 0] },
+  // P480 — pressostat différentiel devant la tête du filtre 1 µm.
+  pds: { pos: [-4.03, 1.8, 0.4], rot: [0, -Math.PI / 2, 0] },
 };
 
 // ---------------------------------------------------------------- géométrie

@@ -21,7 +21,8 @@
 //     MNPT 1/2 → JIC -08 (12) en sortie.
 // Repère : axes du repère machine (P430 pose l'ensemble en RB.byp sans
 // rotation) ; origine au centre de la vanne 1, ligne d'air selon +Y ; ligne
-// d'eau décalée de W462.off (centre de l'électrovanne P464, même axes),
+// d'eau décalée de W462.off (centre de l'électrovanne P464) et tournée de
+// RB.bypW.rot autour de la verticale (câble de P464 vers +Z machine),
 // manchon de l'équerre 13 entre y = W462.cpl[1] et W462.cpl[1] − W462.L.
 // Encombrement ≈ 0.40 (X) × 0.66 (Y) × 0.42 (Z) m. Cotes : raccords NPT / JIC
 // de la liste ; vannes aux proportions de la page 462.
@@ -154,8 +155,10 @@ export default function P462(api) {
 
   // ---------------------------------------------------------------- ligne d'eau : 6, 10, 16, 17, 15, 4, 12
   const o = g.off;
-  P('6', at(api.sub('P464'), o), [0, 0, -0.12]);
-  P('10', O(ACC.elbow(S, { a: 16, b: 16 }), [o[0], o[1] + SV.port, o[2]], Y, X), [0, 0.1, -0.12]);
+  // Ligne d'eau tournée autour de la verticale passant par o (RB.bypW.rot).
+  const Wr = (obj) => { const inner = group(obj); inner.position.set(-o[0], -o[1], -o[2]); return at(group(inner), o, RB.bypW.rot); };
+  P('6', Wr(at(api.sub('P464'), o)), [0, 0, -0.12]);
+  P('10', Wr(O(ACC.elbow(S, { a: 16, b: 16 }), [o[0], o[1] + SV.port, o[2]], Y, X)), [0, 0.1, -0.12]);
   P('16', O(hexNipple(S, 16), g.c16, NY, X), [0, -0.06, -0.12]);
   P('17', O(ACC.hexBushing(S, 16, 8), [o[0], g.p17, o[2]], NY, X), [0, -0.12, -0.12]);
   P('15', O(hexNipple(S, 8), [o[0], g.c15, o[2]], NY, X), [0, -0.15, -0.12]);
@@ -176,7 +179,7 @@ export default function P462(api) {
       lobes.push(at(box(0.026, 0.01, 0.011, 'black', { r: 0.004 }), [Math.cos(a) * 0.016, 0, Math.sin(a) * 0.016], [0, -a, 0]));
     }
     const wheel = at(group(merged(lobes, 'black')), [0, 0, 0.075], [Math.PI / 2, 0, 0]);
-    P('4', at(group(body, stem, wheel), [o[0], yc, o[2]]), [0, -0.2, -0.12]);
+    P('4', Wr(at(group(body, stem, wheel), [o[0], yc, o[2]])), [0, -0.2, -0.12]);
     const a12 = ACC.straight(S, { a: 8, b: 8 });
     P('12', O(a12, [o[0], top - L, o[2]], NY, X), [0, -0.25, -0.12]);
   }
