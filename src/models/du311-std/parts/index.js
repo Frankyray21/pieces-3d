@@ -26,10 +26,22 @@ import P186 from './P186.js';
 import P188 from './P188.js';
 import P190 from './P190.js';
 import P192 from './P192.js';
+import P194 from './P194.js';
 import P196 from './P196.js';
 import P200 from './P200.js';
 import P202 from './P202.js';
 import P204 from './P204.js';
+import P292 from './P292.js';
+import P306 from './P306.js';
+import P308 from './P308.js';
+import P310 from './P310.js';
+import P312 from './P312.js';
+import P314 from './P314.js';
+import P316 from './P316.js';
+import P318 from './P318.js';
+import P320 from './P320.js';
+import P322 from './P322.js';
+import P324 from './P324.js';
 import P348 from './P348.js';
 import P350 from './P350.js';
 import P352 from './P352.js';
@@ -85,10 +97,22 @@ export default {
   'P188': P188,
   'P190': P190,
   'P192': P192,
+  'P194': P194,
   'P196': P196,
   'P200': P200,
   'P202': P202,
   'P204': P204,
+  'P292': P292,
+  'P306': P306,
+  'P308': P308,
+  'P310': P310,
+  'P312': P312,
+  'P314': P314,
+  'P316': P316,
+  'P318': P318,
+  'P320': P320,
+  'P322': P322,
+  'P324': P324,
   'P348': P348,
   'P350': P350,
   'P352': P352,
