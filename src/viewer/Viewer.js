@@ -367,6 +367,59 @@ export class Viewer {
     this.frame({ instant: true });
   }
 
+  /**
+   * Remplace sur place une pièce du modèle (sous-assemblage simplifié affiché
+   * pendant le chargement de la vue d'ensemble) par sa version détaillée :
+   * même place, même repère, même éclatement ; survol, sélection, repères et
+   * contours suivent. Sans effet si l'ancienne pièce n'est plus affichée.
+   */
+  replacePart(oldObj, newObj) {
+    const parent = oldObj.parent;
+    if (!this.model || !parent) return false;
+    for (const k of ['partRef', 'explode', 'noLabel', 'caption', 'basePos', 'body']) {
+      if (k in oldObj.userData) newObj.userData[k] = oldObj.userData[k];
+    }
+    newObj.position.copy(oldObj.position);
+    newObj.quaternion.copy(oldObj.quaternion);
+    newObj.scale.copy(oldObj.scale);
+    const gone = new Set();
+    oldObj.traverse((o) => gone.add(o));
+    parent.add(newObj);
+    parent.remove(oldObj);
+    const list = parent.userData.parts || [];
+    const i = list.indexOf(oldObj);
+    if (i >= 0) list[i] = newObj;
+    const t = oldObj.userData.explodeT ?? 0, tt = oldObj.userData.targetT ?? t;
+    this.nodes = this.nodes.filter((n) => !gone.has(n));
+    newObj.traverse((o) => {
+      if (!o.userData.isAssembly) return;
+      o.userData.explodeT = o === newObj ? t : 0;
+      o.userData.targetT = o === newObj ? tt : 0;
+      this.nodes.push(o);
+    });
+    this.tweens = this.tweens.filter((tw) => !gone.has(tw.node));
+    this._edgeQueue = (this._edgeQueue || []).filter((p) => !gone.has(p));
+    if (this.edgesVisible && this.model.root.userData.edgesQueued) {
+      const walk = (node) => {
+        for (const p of node.userData.parts || []) {
+          if (p.userData.isAssembly) walk(p);
+          else this._edgeQueue.push(p);
+        }
+      };
+      if (newObj.userData.isAssembly) walk(newObj);
+      else this._edgeQueue.push(newObj);
+    }
+    disposeObject(oldObj);
+    this._clearLabels();
+    this._createLabels();
+    this.hoverObjs = this.hoverKey ? this.resolve(this.hoverKey.split('>')) : [];
+    this.selectedObjs = this.selectedKey ? this.resolve(this.selectedKey.split('>')) : [];
+    if (this.section.on) this._updatePlane();
+    this._applyAll();
+    this._refreshStates();
+    return true;
+  }
+
   get explode() {
     return this.model ? this.model.root.userData.explodeT : 0;
   }

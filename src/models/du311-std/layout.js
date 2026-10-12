@@ -67,8 +67,8 @@ export function ram(id, a, b, obj) {
  * (rear, suit le corps a) et de l'œil de tige (rod, suit le corps b) dans le repère de
  * l'objet, course (m). Les pièces côté tige sont marquées par rodSide().
  */
-export function ramDetailed(id, a, b, obj, { rear, rod, stroke }) {
-  obj.userData.ram = { id, a, b, pins: { rear, rod }, stroke };
+export function ramDetailed(id, a, b, obj, { rear, rod, stroke, closed }) {
+  obj.userData.ram = { id, a, b, pins: { rear, rod }, stroke, closed };
   return obj;
 }
 

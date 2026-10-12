@@ -13,7 +13,7 @@ import { decal as isoDecal } from './decals.js';
 // Position de l'avance : barres de guidage du cadre du carrousel dans les
 // patins du MCP, cadre centré sur l'actionneur rotatif, pied du mât à 0,3 m.
 const MCP_X = SLIDE.face + MCP.t / 2;
-const FEED_POS = { x: MCP_X + MCP.front + 0.005 - FEED.frame.z1, y: 0.3, z: FEED.frame.xc };
+export const FEED_POS = { x: MCP_X + MCP.front + 0.005 - FEED.frame.z1, y: 0.3, z: FEED.frame.xc };
 
 /** Point du repère de l'avance (x, y, z) dans le repère machine. */
 export function feedToMachine([x, y, z]) {

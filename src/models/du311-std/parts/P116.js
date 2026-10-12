@@ -130,7 +130,7 @@ export default function P116(api) {
   const Yc = [(Q0[0] - Rr[0]) / L0, 0, (Q0[1] - Rr[1]) / L0];
   const Xc = [-Yc[2], 0, Yc[0]]; // Y × (0, 1, 0) : orifices (-X) vers l'extérieur du bras
   const cyl = frame(api, api.sub('P122', { ext: L0 - ARMCYL.retracted }), Xc, Yc, [Rr[0], H.armCyl, Rr[1]]);
-  P('2', ramDetailed('arm', 'ext', 'clamp', cyl, { rear: [0, 0, 0], rod: [0, L0, 0], stroke: ARMCYL.stroke }), [0.15, 0.3, 0.1]);
+  P('2', ramDetailed('arm', 'ext', 'clamp', cyl, { rear: [0, 0, 0], rod: [0, L0, 0], stroke: ARMCYL.stroke, closed: ARMCYL.retracted }), [0.15, 0.3, 0.1]);
 
   // 14 — coudes sur les orifices des vérins (nez vers le fond du vérin)
   const elbows = (pos, X, Y, portX, portY, e) => {

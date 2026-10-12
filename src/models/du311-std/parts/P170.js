@@ -302,7 +302,7 @@ export default function P170(api) {
     const p0 = [G.cylX, yc, G.cylZ0];
     const ex = [0, 0, 1], ey = [0, sy, 0], ez = [-sy, 0, 0];
     const cylObj = frame(THREE, api.sub('P178', { ext }), p0, ex, ey, ez);
-    P('20', ramDetailed(sy > 0 ? 'shift' : 'shift2', 'tilt', 'shift', cylObj, { rear: [0, 0, 0], rod: [L0, 0, 0], stroke: CYL178.stroke }), [0, sy * 0.25, 0]);
+    P('20', ramDetailed(sy > 0 ? 'shift' : 'shift2', 'tilt', 'shift', cylObj, { rear: [0, 0, 0], rod: [L0, 0, 0], stroke: CYL178.stroke, closed: CYL178.pinRetracted }), [0, sy * 0.25, 0]);
     // 29 — coudes 90° ORB → JIC sur les orifices 1 du bloc (faces ±Z locales), nez vers le fond
     for (const [px, py, pz] of CYL178.ports) {
       const n = Math.sign(pz);

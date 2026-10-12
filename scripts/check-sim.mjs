@@ -49,10 +49,12 @@ rig.sweepRams();
 for (const r of rig.rams) {
   if (r.detailed) {
     // vérin détaillé : la course balayée doit tenir dans sa course réelle
-    const ok = !r.stroke || r.Lmax - r.Lmin <= r.stroke + 0.002;
+    // (et, longueur fermée connue, rester entre fermé et sorti à fond)
+    const ok = (!r.stroke || r.Lmax - r.Lmin <= r.stroke + 0.002) &&
+      (!r.closed || (r.Lmin >= r.closed - 0.002 && (!r.stroke || r.Lmax <= r.closed + r.stroke + 0.002)));
     if (!ok) failed = true;
     console.log(`${ok ? '✓' : '✕'} vérin ${r.id.padEnd(7)} (${r.a} → ${r.b}, détaillé) : entre axes ${mm(r.Lmin)} à ${mm(r.Lmax)} (repos ${mm(r.L0)}), ` +
-      `course balayée ${mm(r.Lmax - r.Lmin)}${r.stroke ? ` sur ${mm(r.stroke)}` : ''} — liaisons ${r.joints.join(', ')}`);
+      `course balayée ${mm(r.Lmax - r.Lmin)}${r.stroke ? ` sur ${mm(r.stroke)}` : ''}${r.closed ? `, fermé ${mm(r.closed)}` : ''} — liaisons ${r.joints.join(', ')}`);
     continue;
   }
   const g = Rig.ramGeometry(r);
@@ -89,7 +91,7 @@ for (const b of limited) {
 // pose combinée : translation (mât couché), puis forage incliné et décalé
 const poses = {
   translation: { tilt: 80 * Math.PI / 180, jackL: 0.18, jackR: 0.18, outL: 0.24, outR: 0.24, ext: 0.3, front: 0.5 },
-  'forage incliné': { tilt: -0.2, shift: 0.25, roll: 1.2, ext: -0.15, feed: -1.75, clamp: CLAMP_STROKE, slip: 0.22, carousel: carouselAngle(5) },
+  'forage incliné': { tilt: -0.2, shift: 0.25, roll: 1.2, ext: -0.15, feed: -1.75, clamp: CLAMP_STROKE, slip: 0.1, carousel: carouselAngle(5) },
   calage: { stingUp: 0.35, toGround: true }, // stinger bas sortis jusqu'au contact au sol
 };
 // Sortie du stinger bas jusqu'au contact au sol (recherche par dichotomie).

@@ -26,6 +26,8 @@ const flag = (name) => { const i = args.indexOf(name); if (i >= 0) args.splice(i
 const value = (name) => { const i = args.indexOf(name); return i >= 0 ? args.splice(i, 2)[1] : null; };
 const checkQty = flag('--qty');
 const maxTris = Number(value('--max-tris')) || Infinity;
+// --quality q : facettes allégées (vue d'ensemble du site), pour mesurer.
+const quality = Number(value('--quality')) || 1;
 // --from P064 : seulement les assemblages à partir de cette page (ordre des numéros).
 const from = value('--from');
 // Repères en double dans une liste : la 3D de la première ligne suffit (voir src/data/equipment.js).
@@ -81,7 +83,7 @@ for (const [id, asm] of Object.entries(data.assemblies)) {
   if (partial && !builders[id]) continue;
   let model;
   try {
-    model = buildProcedural(builders, id);
+    model = buildProcedural(builders, id, { quality });
   } catch (err) {
     console.log(`✕ ${id} : erreur de construction — ${err.stack.split('\n').slice(0, 3).join(' | ')}`);
     failed = true;

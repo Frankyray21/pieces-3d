@@ -22,7 +22,7 @@
       "manufacturer": "Sandvik",
       "category": "Foreuse sur roues",
       "thumbnail": "equipment/du311-std/thumbnail.webp",
-      "status": "3D : machine complète, porteur sur roues, pont arrière, glissière, MCP, avance 6 pi à carrousel, tête de rotation et autocollants ISO (12 assemblages) — dessins et listes pour les 189 assemblages, 29 schémas et listes électriques"
+      "status": "3D détaillée : 189 assemblages sur 189, jusqu'à la plus petite pièce (porteur Pegasus, cabine, moteur, pont avant, distributeurs, pont arrière et surpresseur, glissière, MCP, avance 6 pi à carrousel, extinction d'incendie, autocollants ISO) — 29 schémas et listes électriques"
     },
     {
       "id": "epiroc-ith",

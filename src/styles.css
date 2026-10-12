@@ -218,6 +218,11 @@ details.more summary { cursor: pointer; margin: 0 6px; color: var(--muted); font
   text-transform: uppercase; letter-spacing: 0.06em; color: var(--stage-ink); background: color-mix(in srgb, var(--stage-b) 55%, transparent);
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
 }
+.loading-detail {
+  position: absolute; right: 12px; bottom: 12px; padding: 5px 10px; border-radius: 999px; pointer-events: none;
+  font: 600 11px var(--f-display); text-transform: uppercase; letter-spacing: 0.06em; color: var(--stage-ink);
+  background: color-mix(in srgb, var(--stage-b) 70%, transparent);
+}
 .docview { position: absolute; inset: 0; overflow: auto; padding: 64px 16px 16px; display: grid; gap: 14px; align-content: start; justify-items: center; }
 .docview .sheettabs { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
 .docview figure { margin: 0; width: min(100%, 1400px); background: #fff; border: 1px solid var(--line); box-shadow: var(--shadow); }

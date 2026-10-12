@@ -119,7 +119,7 @@ export default function P168(api) {
     const cylObj = group(dumpCylinder(ext));
     cylObj.position.set(ax, ay, z);
     cylObj.rotation.z = phi;
-    P('3', ramDetailed(s > 0 ? 'dumpR' : 'dumpL', 'front', 'tilt', cylObj, { rear: [0, 0, 0], rod: [L0, 0, 0], stroke: u(DC.stroke) }), [0, 0, s * 0.35]);
+    P('3', ramDetailed(s > 0 ? 'dumpR' : 'dumpL', 'front', 'tilt', cylObj, { rear: [0, 0, 0], rod: [L0, 0, 0], stroke: u(DC.stroke), closed: u(DC.eye) }), [0, 0, s * 0.35]);
     // coudes sur les orifices (dessus du vérin, +Y local), nez vers le fond (−X local)
     const c = Math.cos(phi), sn = Math.sin(phi);
     for (const px of DC.ports) {

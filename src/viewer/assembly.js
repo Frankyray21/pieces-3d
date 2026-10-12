@@ -19,6 +19,15 @@ import * as shapes from './shapes.js';
 export function buildProcedural(builders, id, opts = {}) {
   const builder = builders[id];
   if (!builder) return null;
+  // Qualité des facettes pour tout l'arbre (vue d'ensemble allégée), rétablie après.
+  if (opts.quality && opts.quality < 1) {
+    const prev = shapes.setQuality(opts.quality);
+    try {
+      return buildProcedural(builders, id, { ...opts, quality: undefined });
+    } finally {
+      shapes.setQuality(prev);
+    }
+  }
   const root = new THREE.Group();
   root.name = id;
   const parts = [];
@@ -26,6 +35,20 @@ export function buildProcedural(builders, id, opts = {}) {
     S: shapes,
     THREE,
     part(ref, obj, explode = null, opts = {}) {
+      // Sous-assemblage enveloppé dans un simple groupe de pose (sans autre
+      // donnée qu'une étiquette de corps) : déballé, la pose passant sur lui,
+      // pour qu'il reste éclatable sur place et adressable par ses repères.
+      while (obj.isGroup && !obj.userData.isAssembly && obj.children.length === 1 && obj.children[0].userData.isAssembly &&
+        Object.keys(obj.userData).every((k) => k === 'body')) {
+        const child = obj.children[0];
+        obj.updateMatrix();
+        child.updateMatrix();
+        child.matrix.premultiply(obj.matrix);
+        child.matrix.decompose(child.position, child.quaternion, child.scale);
+        if (obj.userData.body !== undefined && child.userData.body === undefined) child.userData.body = obj.userData.body;
+        obj.remove(child);
+        obj = child;
+      }
       obj.userData.partRef = String(ref);
       obj.userData.explode = explode ? new THREE.Vector3(...explode) : null;
       obj.userData.noLabel = !!opts.noLabel;

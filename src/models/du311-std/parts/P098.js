@@ -27,9 +27,8 @@
 // Repère : celui de l'avance (placé à l'identité par P028). Cadre de y = 0,35
 // à 2,65 (FEED.frame), barres de guidage à x = 0,085 et 0,615 (FEED.frame.xc ±
 // bar), z de -0,44 à -0,30 ; axe du vérin d'extension (œil du fût du vérin du
-// MCP, slide.js) à (0,35 ; 0,50 ; -0,39), selon X. Le dessin de la page 98
-// porte le support du vérin en haut du cadre ; ici il est en bas, où le vérin
-// d'extension du MCP (../slide.js) attelle son fût. La face avant du cadre
+// MCP) en EYE_TOP (0,35 ; 2,50 ; -0,39), selon X : support en haut du cadre
+// comme sur le dessin de la page 98 (œil de tige du vérin, P156). La face avant du cadre
 // est à z = -0,23 pour laisser libre le cercle du carrousel (FEED.car) ;
 // seule l'âme -X rejoint le dos du mât (z = -0,16).
 // Encombrement ≈ 0.70 (X) × 2.53 (Y) × 0.29 (Z) m.
@@ -44,7 +43,9 @@ const WL = [0.100, 0.1127], WR = [0.5873, 0.600]; // âmes (x)
 const ZB = -0.445, ZF = -0.23, ZM = F.z0; // arrière des âmes, avant du cadre, dos du mât
 const ZK = -0.30; // dos du caisson (traverses)
 const BAR = { x: [[0.070, 0.100], [0.600, 0.630]], z: [-0.44, -0.30], y: [0.505, 0.505 + 72 * IN] };
-const EYE = [F.xc, 0.50, -0.39]; // axe du vérin d'extension (repère de l'avance)
+const EYE = [F.xc, 0.50, -0.39]; // axe du vérin d'extension tel que dessiné (sous le cadre)
+/** Axe de la chape du vérin d'extension posé (haut du cadre, repère de l'avance). */
+export const EYE_TOP = [EYE[0], F.y0 + F.y1 - EYE[1], EYE[2]];
 const CHEEK = { gap: 1.4 * IN, t: 1.0 * IN }; // jour et épaisseur des joues du support
 
 export default function P098(api) {
@@ -140,7 +141,17 @@ export default function P098(api) {
     }
   });
 
-  // ================================================ 5 — support du vérin d'extension
+  // ================================================ 5 — support du vérin d'extension (haut du cadre)
+  // Dessiné sous la plaque d'extrémité basse, puis retourné d'un demi-tour autour
+  // de Z sur l'axe du cadre (x = EYE.x, y = mi-hauteur) : semelle sur la plaque
+  // d'extrémité haute, joues pendantes, axe en EYE_TOP (page 98).
+  const YM = (y0 + y1) / 2;
+  const PM = (ref, obj, e) => {
+    const g = group(obj);
+    g.rotation.z = Math.PI;
+    g.position.set(2 * EYE[0], 2 * YM, 0);
+    return P(ref, g, e && [-e[0], -e[1], e[2]]);
+  };
   const [ex, ey, ez] = EYE;
   const mount = [];
   // Semelle 1 po sous la plaque d'extrémité, prolongée entre les âmes vers le MCP.
@@ -162,9 +173,9 @@ export default function P098(api) {
   const mBeads = [xj[0] - 0.003, xj[3] + 0.003].map((x) => W([[x, y0 + 0.004, MS.z0 + 0.01], [x, y0 + 0.004, -0.325]], 0.006));
   const mountM = merged(mount, 'lightGrey');
   mountM.userData.hasInterior = true;
-  P('5', group(mountM, merged(mBeads, 'lightGrey')), [0, -0.15, -0.1]);
+  PM('5', group(mountM, merged(mBeads, 'lightGrey')), [0, -0.15, -0.1]);
   // 3 — bagues roulées dans les joues.
-  for (const k of [0, 2]) P('3', at(rolledBushing(S, 1.19 * IN, 1.0 * IN, CHEEK.t, { a: Math.PI / 2, oil: true }), [(xj[k] + xj[k + 1]) / 2, ey, ez], [0, 0, Math.PI / 2]), [k ? 0.08 : -0.08, -0.15, -0.1]);
+  for (const k of [0, 2]) PM('3', at(rolledBushing(S, 1.19 * IN, 1.0 * IN, CHEEK.t, { a: Math.PI / 2, oil: true }), [(xj[k] + xj[k + 1]) / 2, ey, ez], [0, 0, Math.PI / 2]), [k ? 0.08 : -0.08, -0.15, -0.1]);
   // 1 — axe d'extension Ø 2 po, plaquette d'arrêt soudée côté +X (trou de la vis 14).
   const pinL = xj[3] - xj[0] + 0.5 * IN;
   const x0p = xj[0] - 0.25 * IN;
@@ -176,19 +187,19 @@ export default function P098(api) {
     keeper,
   ], 'steel'));
   pin1.position.set(0, ey, ez);
-  P('1', pin1, [0.25, -0.15, -0.1]);
+  PM('1', pin1, [0.25, -0.15, -0.1]);
   // 14 — vis d'arrêt parallèle à l'axe (tête côté plaquette), 18 / 20, 25.
   const xk = xj[3] + 0.25 * IN;
-  P('18', along(THREE, flatWasher(S, THREE, 0.5), [1, 0, 0], [xk, yb14, ez]), [0.3, -0.15, -0.1]);
-  P('20', along(THREE, nordLock(S, THREE, 0.5), [1, 0, 0], [xk + 0.1 * IN, yb14, ez]), [0.34, -0.15, -0.1]);
-  P('14', along(THREE, hhcs(S, THREE, 0.5, 4.5), [1, 0, 0], [xk + 0.1 * IN + u(nlT(0.5)), yb14, ez]), [0.4, -0.15, -0.1]);
-  P('18', along(THREE, flatWasher(S, THREE, 0.5), [-1, 0, 0], [xj[0], yb14, ez]), [-0.3, -0.15, -0.1]);
-  P('20', along(THREE, nordLock(S, THREE, 0.5), [-1, 0, 0], [xj[0] - 0.1 * IN, yb14, ez]), [-0.34, -0.15, -0.1]);
-  P('25', along(THREE, hexNut(S, THREE, 0.5), [-1, 0, 0], [xj[0] - 0.1 * IN - u(nlT(0.5)), yb14, ez]), [-0.4, -0.15, -0.1]);
+  PM('18', along(THREE, flatWasher(S, THREE, 0.5), [1, 0, 0], [xk, yb14, ez]), [0.3, -0.15, -0.1]);
+  PM('20', along(THREE, nordLock(S, THREE, 0.5), [1, 0, 0], [xk + 0.1 * IN, yb14, ez]), [0.34, -0.15, -0.1]);
+  PM('14', along(THREE, hhcs(S, THREE, 0.5, 4.5), [1, 0, 0], [xk + 0.1 * IN + u(nlT(0.5)), yb14, ez]), [0.4, -0.15, -0.1]);
+  PM('18', along(THREE, flatWasher(S, THREE, 0.5), [-1, 0, 0], [xj[0], yb14, ez]), [-0.3, -0.15, -0.1]);
+  PM('20', along(THREE, nordLock(S, THREE, 0.5), [-1, 0, 0], [xj[0] - 0.1 * IN, yb14, ez]), [-0.34, -0.15, -0.1]);
+  PM('25', along(THREE, hexNut(S, THREE, 0.5), [-1, 0, 0], [xj[0] - 0.1 * IN - u(nlT(0.5)), yb14, ez]), [-0.4, -0.15, -0.1]);
   // 16 / 23 — vis H 1 po par le dessous de la semelle.
   for (const dx of [-0.08, 0.08]) {
-    P('23', along(THREE, nordLock(S, THREE, 1.0), [0, -1, 0], [ex + dx, MS.yb, -0.275]), [0, -0.22, 0]);
-    P('16', along(THREE, hhcs(S, THREE, 1.0, 2.5), [0, -1, 0], [ex + dx, MS.yb - u(nlT(1.0)), -0.275]), [0, -0.3, 0]);
+    PM('23', along(THREE, nordLock(S, THREE, 1.0), [0, -1, 0], [ex + dx, MS.yb, -0.275]), [0, -0.22, 0]);
+    PM('16', along(THREE, hhcs(S, THREE, 1.0, 2.5), [0, -1, 0], [ex + dx, MS.yb - u(nlT(1.0)), -0.275]), [0, -0.3, 0]);
   }
   // 6 — goupilles à collerette ovale dans les âmes, 11 / 19 et 12 / 20.
   for (const [s, xw] of [[-1, WL[0]], [1, WR[1]]]) {
@@ -200,12 +211,12 @@ export default function P098(api) {
       flm.rotation.y = Math.PI / 2;
       const g6 = group(merged([flm, L(S, [[0, -0.125], [0.5, -0.125], [0.5, 1.9], [0.46, 1.95], [0, 1.95]], 'zinc', 20, { axis: s < 0 ? 'x' : '-x' })], 'zinc'));
       g6.position.set(xw + s * 0.125 * IN, yp, zp);
-      P('6', g6, [s * 0.12, 0, 0]);
+      PM('6', g6, [s * 0.12, 0, 0]);
       const xh = xw + s * 0.25 * IN;
-      P('19', along(THREE, nordLock(S, THREE, 0.375), [s, 0, 0], [xh, yp + 0.036, zp]), [s * 0.16, 0, 0]);
-      P('11', along(THREE, hhcs(S, THREE, 0.375, 0.75), [s, 0, 0], [xh + s * u(nlT(0.375)), yp + 0.036, zp]), [s * 0.2, 0, 0]);
-      P('20', along(THREE, nordLock(S, THREE, 0.5), [s, 0, 0], [xh, yp - 0.036, zp]), [s * 0.16, -0.03, 0]);
-      P('12', along(THREE, hhcs(S, THREE, 0.5, 0.75), [s, 0, 0], [xh + s * u(nlT(0.5)), yp - 0.036, zp]), [s * 0.2, -0.03, 0]);
+      PM('19', along(THREE, nordLock(S, THREE, 0.375), [s, 0, 0], [xh, yp + 0.036, zp]), [s * 0.16, 0, 0]);
+      PM('11', along(THREE, hhcs(S, THREE, 0.375, 0.75), [s, 0, 0], [xh + s * u(nlT(0.375)), yp + 0.036, zp]), [s * 0.2, 0, 0]);
+      PM('20', along(THREE, nordLock(S, THREE, 0.5), [s, 0, 0], [xh, yp - 0.036, zp]), [s * 0.16, -0.03, 0]);
+      PM('12', along(THREE, hhcs(S, THREE, 0.5, 0.75), [s, 0, 0], [xh + s * u(nlT(0.5)), yp - 0.036, zp]), [s * 0.2, -0.03, 0]);
     }
   }
 

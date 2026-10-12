@@ -81,7 +81,9 @@ export default function P208(api) {
     // pattes des goupilles du couvercle du pont (nez)
     ...[1, -1].map((s) => at(extrude([[-0.04, 0], [0.04, 0], [0.03, 0.05], [-0.03, 0.05]], t6, 'lightGrey', { holes: [[0, 0.028, 0.009]] }), [2.08, FT, s * 0.42])),
   ));
-  P('7', group(carrier, api.sub('P330'), supports), [0, 0, 0]);
+  // boîtier P330 et supports portés par le porteur (hors de sa liste : immobiles à l'éclatement)
+  carrier.add(api.sub('P330'), supports);
+  P('7', carrier, [0, 0, 0]);
 
   // 2 — console du réservoir et de la pompe de graisse (flanc gauche avant)
   {
@@ -154,7 +156,9 @@ export default function P208(api) {
   // 28 — raccords rapides 3/8 (TVK P162) sous le bloc de capteurs
   F('28', at(api.sub('P390'), [0.62, 0.66, 0.56]), [-0.2, -0.25, 0.5]);
   // 29 — refroidisseur hydraulique : raccords (P392) et faisceau
-  F('29', group(api.sub('P392'), oilCooler(api)), [0, 0.5, -0.45]);
+  const p392 = api.sub('P392');
+  p392.add(oilCooler(api));
+  F('29', p392, [0, 0.5, -0.45]);
   P('30', api.sub('P394'), [0.2, 0.55, 0]);
   P('31', api.sub('P398'), [0.2, 0.5, 0.2]);
   P('32', api.sub('P402'), [0.2, 0.5, -0.2]);

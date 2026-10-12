@@ -75,6 +75,9 @@ export function xf(api, { pos, rot = [0, 0, 0] }) {
 
 /** Pose un objet construit en repère local selon un placement [pos, rot]. */
 export function put(S, obj, { pos, rot = [0, 0, 0] }) {
+  // Sous-assemblage inséré (repère à l'identité) : posé tel quel, pour rester
+  // éclatable et adressable par ses repères (chemins de la simulation).
+  if (obj.userData.isAssembly && obj.position.lengthSq() === 0 && obj.quaternion.w === 1) return S.at(obj, pos, rot);
   return S.at(S.group(obj), pos, rot);
 }
 

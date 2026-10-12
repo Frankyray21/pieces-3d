@@ -4,12 +4,18 @@ import { buildProcedural } from './viewer/assembly.js';
 import { loadIndex, loadEquipment, search, sourceLabel, sheetLabel, sizeGroups, isPnText } from './data/equipment.js';
 import cubexModels from './models/cubex-mri-5200/index.js';
 import du311Models from './models/du311/index.js';
-import du311StdModels from './models/du311-std/index.js';
+import du311StdModels, { overview as du311StdOverview } from './models/du311-std/index.js';
 import epirocModels from './models/epiroc-ith/index.js';
 import './ui/resize.js';
 
 // Modèles 3D disponibles par équipement (builders procéduraux).
 const MODELS = { 'cubex-mri-5200': cubexModels, du311: du311Models, 'du311-std': du311StdModels, 'epiroc-ith': epirocModels };
+// Vue d'ensemble légère : sous-assemblages simplifiés affichés d'abord, remplacés
+// un à un par leur version détaillée (facettes allégées) une fois la vue montrée.
+const OVERVIEW = { 'du311-std': du311StdOverview };
+// Appareils modestes (téléphone, peu de mémoire) : la vue d'ensemble reste simplifiée.
+const LIGHT = (navigator.deviceMemory && navigator.deviceMemory < 4) || matchMedia('(pointer: coarse) and (max-width: 900px)').matches;
+let detailToken = 0;
 
 // Développement (npm run dev) : un fichier src/models/<eq>/parts/Pxxx.js pas
 // encore inscrit dans parts/index.js (brouillon) s'affiche quand même, pour
@@ -355,7 +361,9 @@ async function openAssembly(id, { select: selPath = null } = {}) {
     const v = ensureViewer();
     $('#loading').hidden = false;
     await new Promise((r) => requestAnimationFrame(() => setTimeout(r, 0)));
-    const model = buildProcedural(builders, id, S.view.portrait != null ? { portrait: S.view.portrait } : {});
+    detailToken++;
+    const ov = OVERVIEW[eq.id]?.root === id ? OVERVIEW[eq.id] : null;
+    const model = buildProcedural(ov ? { ...builders, ...ov.builders } : builders, id, S.view.portrait != null ? { portrait: S.view.portrait } : {});
     $('#loading').hidden = true;
     renderTitleblock(asm); // avant le cadrage, qui évite le cartouche
     if (model) {
@@ -363,6 +371,7 @@ async function openAssembly(id, { select: selPath = null } = {}) {
       v.insets = S.view.home ? homeInsets : viewInsets;
       v.setModel(model);
       v.setIsolate(S.isolate && !S.view.home);
+      if (ov && !LIGHT) upgradeDetail(model, builders, ov);
       S.section.axis = model.view.section?.axis || 'z';
       S.section.pos = model.view.section?.pos ?? 0.5;
       if (S.explode > 0 && !S.view.home) {
@@ -382,6 +391,27 @@ async function openAssembly(id, { select: selPath = null } = {}) {
   renderTitleblock(asm);
   renderPanel();
   if (selPath) select(selPath, { focus: true });
+}
+
+/**
+ * Vue d'ensemble : remplace un à un les sous-assemblages simplifiés par leur
+ * version détaillée, entre deux images (la page reste utilisable) ; abandonné
+ * si l'on change de vue.
+ */
+function upgradeDetail(model, builders, ov) {
+  const token = detailToken;
+  const queue = (model.root.userData.parts || []).filter((p) => p.userData.isAssembly && ov.builders[p.userData.assemblyId]);
+  const badge = $('#loadingDetail');
+  const live = () => token === detailToken && viewer?.model === model;
+  badge.hidden = !queue.length;
+  const step = () => {
+    if (!live() || !queue.length) { if (token === detailToken) badge.hidden = true; return; }
+    const p = queue.shift();
+    const det = buildProcedural(builders, p.userData.assemblyId, { quality: ov.quality });
+    if (det && live()) viewer.replacePart(p, det.root);
+    setTimeout(step, 60);
+  };
+  setTimeout(step, 400);
 }
 
 /** Éclate (ou rassemble) un groupe sur place, avec ses parents. */

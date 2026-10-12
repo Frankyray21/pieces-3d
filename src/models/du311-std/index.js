@@ -62,3 +62,8 @@ export default {
   P022,
   ...parts,
 };
+
+// Vue d'ensemble du site : les grands ensembles simplifiés (porteur, pont
+// arrière, glissière, avance) s'affichent d'abord, puis src/main.js les
+// remplace un à un par leurs versions détaillées (facettes allégées).
+export const overview = { root: 'P010', quality: 0.5, builders: { P208, P416, P164, P028 } };

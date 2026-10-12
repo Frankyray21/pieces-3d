@@ -80,12 +80,26 @@ pas les déplacer) :
 Vérins articulés : `ramDetailed(id, a, b, obj, { rear, rod, stroke })` sur le
 vérin détaillé (axes des œils dans le repère de l'objet, course en m) et
 `rodSide(objet)` sur les pièces côté tige (tige, piston, œil de tige,
-contre-écrou). Identifiants attendus par la simulation : `steerR`, `steerL`
+contre-écrou) ; `closed` (entraxe vérin fermé) fait aussi contrôler que la
+simulation reste entre fermé et sorti à fond. Identifiants attendus par la simulation : `steerR`, `steerL`
 (direction, `chassis` → `front`), `dumpR`, `dumpL` (basculement, `front` →
 `tilt`), `shift` et `shift2` (translation, `tilt` → `shift`), `mcp`
-(extension, `ext` → `roll`), `slip` et `slip2` (plaque à coins, `ext` →
+(extension, `roll` → `ext` : fond sur le MCP, tige au haut du cadre de l'avance), `slip` et `slip2` (plaque à coins, `ext` →
 `slip`). Un corps sans aucune pièce étiquetée fait échouer
 `node scripts/check-sim.mjs`.
+
+## Vue d'ensemble du site
+
+La machine complète (P010) compte plus de 11 000 maillages : le site affiche
+d'abord les grands ensembles simplifiés (`overview` dans `../index.js` :
+P208, P416, P164, P028 de `../carrier.js`, `../reardeck.js`, `../slide.js`,
+`../feed.js`), puis les remplace un à un par leurs versions détaillées
+construites avec des facettes allégées (`buildProcedural(…, { quality })`,
+`setQuality` de `src/viewer/shapes.js` ; les six-pans et prismes de 8 pans ou
+moins ne changent pas). Ces builders simplifiés restent donc à jour.
+Un sous-assemblage posé dans un simple groupe (`at(group(api.sub(…)))`) est
+déballé par `api.part` pour rester éclatable et adressable ; un groupe qui
+porte autre chose (vérin `ramDetailed`, plusieurs enfants) reste tel quel.
 
 ## Contrôles
 

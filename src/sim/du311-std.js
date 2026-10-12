@@ -49,7 +49,7 @@ export const BODIES = [
   { name: 'clamp', parent: 'ext', type: 'rev', axis: [0, 1, 0], origin: fm([K.x, 0, K.z]), min: Math.min(CLAMP_IN, 0), max: Math.max(CLAMP_IN, 0) },
   { name: 'stingUp', parent: 'ext', type: 'pri', axis: [0, 1, 0], min: 0, max: 0.5 },
   { name: 'stingDn', parent: 'ext', type: 'pri', axis: [0, -1, 0], min: 0, max: 0.5 },
-  { name: 'slip', parent: 'ext', type: 'pri', axis: [0, 0, 1], min: 0, max: 0.22 }, // vers -X de l'avance
+  { name: 'slip', parent: 'ext', type: 'pri', axis: [0, 0, 1], min: 0, max: 0.1 }, // vers -X de l'avance
   // pont arrière : enrouleur de câble, volant du surpresseur, poulie du moteur
   { name: 'reel', parent: 'chassis', type: 'rev', axis: [1, 0, 0], origin: [REEL.x, REEL.y, 0] },
   { name: 'flywheel', parent: 'chassis', type: 'rev', axis: [0, 0, 1], origin: [DRIVE.x, DRIVE.yComp, DRIVE.z] },
@@ -62,6 +62,9 @@ export const RULES = [
   { path: ['8', '4', '3'], body: 'spin' },
   { path: ['8', '4', '5'], body: 'spin' },
   { path: ['8', '4', '1'], body: 'spin' },
+  // poulie du surpresseur Le Roi (P416 → P420 → P430 → P432 → P434 : poulie 9,
+  // clavette 19, rondelle 20, rondelle frein 21, vis 22) : tourne avec le volant
+  ...['9', '19', '20', '21', '22'].map((ref) => ({ path: ['9', '7', '3', '10', '4', ref], body: 'flywheel' })),
 ];
 
 // ---------------------------------------------------------------- commandes

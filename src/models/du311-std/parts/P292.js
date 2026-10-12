@@ -240,7 +240,7 @@ export default function P292(api) {
     const ext = Lp - CYL306.retracted;
     const cyl29 = api.sub('P306', { ext });
     at(cyl29, A, [s < 0 ? Math.PI : 0, Math.atan2(-dz, dx), 0, 'YXZ']);
-    P('29', ramDetailed(s > 0 ? 'steerR' : 'steerL', 'chassis', 'front', cyl29, { rear: [0, 0, 0], rod: [CYL306.retracted + ext, 0, 0], stroke: CYL306.stroke }), [0, 0.25, s * 0.25]);
+    P('29', ramDetailed(s > 0 ? 'steerR' : 'steerL', 'chassis', 'front', cyl29, { rear: [0, 0, 0], rod: [CYL306.retracted + ext, 0, 0], stroke: CYL306.stroke, closed: CYL306.retracted }), [0, 0.25, s * 0.25]);
     // axes expansibles Ø 2 po : axe, bagues coniques fendues et vis à rondelle aux deux bouts
     for (const [p, front] of [[A, false], [B, true]]) {
       const yb = p[1] - 0.064, yt = p[1] + 0.064;

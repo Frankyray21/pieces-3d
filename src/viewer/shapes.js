@@ -17,6 +17,21 @@ const V = (a) => (a instanceof THREE.Vector3 ? a : new THREE.Vector3(...a));
 const TAN30 = Math.tan(Math.PI / 6);
 const COS30 = Math.cos(Math.PI / 6);
 
+// Qualité des facettes (1 : pleine) : une vue d'ensemble de centaines d'assemblages
+// détaillés se construit avec moins de segments (buildProcedural, option quality).
+// Les prismes à 8 pans ou moins (six-pans) ne changent jamais.
+let QUALITY = 1;
+/** Fixe la qualité des facettes (0 < q ≤ 1) ; renvoie la précédente. */
+export function setQuality(q) {
+  const prev = QUALITY;
+  QUALITY = Math.min(1, Math.max(0.2, q));
+  return prev;
+}
+/** Segments autour d'un axe selon la qualité. */
+const qs = (seg) => (seg <= 8 || QUALITY >= 1 ? seg : Math.max(Math.min(seg, 10), Math.round(seg * QUALITY)));
+/** Segments le long d'un chemin ou d'une courbe plane selon la qualité. */
+const ql = (seg, min = 4) => (QUALITY >= 1 ? seg : Math.max(Math.min(seg, min), Math.round(seg * QUALITY)));
+
 function orient(obj, axis) {
   if (axis === 'x') obj.rotation.z = -Math.PI / 2;
   else if (axis === 'z') obj.rotation.x = Math.PI / 2;
@@ -88,6 +103,7 @@ function mesh(geometry, material) {
  * profil (chanfreins nets), lisses autour de l'axe — ou facettées (hexagone).
  */
 function revolveGeo(profile, seg, faceted = false) {
+  seg = qs(seg);
   const pos = [], nor = [], uv = [], idx = [];
   for (let i = 0; i < profile.length - 1; i++) {
     const [r0, y0] = profile[i];
@@ -138,7 +154,7 @@ function cylProfile(rb, rt, len, cMax = 0.004) {
 
 function cylGeo(r, len, { r2, seg = 28, open = false } = {}) {
   const rt = r2 ?? r;
-  if (open) return new THREE.CylinderGeometry(rt, r, len, seg, 1, true);
+  if (open) return new THREE.CylinderGeometry(rt, r, len, qs(seg), 1, true);
   return revolveGeo(cylProfile(r, rt, len), seg, seg <= 8);
 }
 
@@ -336,7 +352,7 @@ export function washer(rOut, rIn, thick, material = 'steel', { axis = 'y', pos }
 
 /** Tore (joint torique, anneau de levage). Plan perpendiculaire à l'axe. */
 export function torus(R, r, material = 'rubber', { axis = 'y', pos } = {}) {
-  const geo = new THREE.TorusGeometry(R, r, 10, 36);
+  const geo = new THREE.TorusGeometry(R, r, QUALITY >= 1 ? 10 : 8, qs(36));
   geo.rotateX(Math.PI / 2);
   const m = mesh(geo, material);
   orient(m, axis);
@@ -359,6 +375,7 @@ function flipGeometry(geo) {
  * à l'extrémité +axe (pour une forme conique).
  */
 export function shell(rOut, rIn, len, material = 'steel', { axis = 'y', r2Out, r2In, seg = 32, pos } = {}) {
+  seg = qs(seg);
   const ro2 = r2Out ?? rOut, ri2 = r2In ?? rIn;
   const outer = new THREE.CylinderGeometry(ro2, rOut, len, seg, 1, true);
   const inner = flipGeometry(new THREE.CylinderGeometry(ri2, rIn, len, seg, 1, true));
@@ -422,7 +439,7 @@ export function tube(points, r, material = 'black', { seg = 48, closed = false, 
   } else {
     curve = new THREE.CatmullRomCurve3(pts, closed, 'catmullrom', tension);
   }
-  const m = mesh(new THREE.TubeGeometry(curve, seg, r, radial, closed), material);
+  const m = mesh(new THREE.TubeGeometry(curve, ql(seg, 8), r, qs(radial), closed), material);
   const kind = ends ?? ((material === 'hose' || material === 'rubber') && !sharp && !closed && r >= 0.003 ? 'ferrule' : 'none');
   if (kind !== 'none' && !closed && pts.length > 1) addEnds(m, curve, r, kind, endMaterial);
   return m;
@@ -470,7 +487,7 @@ export function weld(points, size = 0.006, material = 'red', { closed = false } 
   for (let i = 0; i < (closed ? n : n - 1); i++) path.add(new THREE.LineCurve3(pts[i], pts[(i + 1) % n]));
   const L = path.getLength();
   const r = size / 2;
-  const seg = Math.max(4, Math.min(400, Math.round(L / (r * 1.25))));
+  const seg = Math.max(4, Math.min(400, Math.round((L / (r * 1.25)) * QUALITY)));
   const radial = 6;
   const geo = new THREE.TubeGeometry(path, seg, r, radial, closed);
   // Écailles : rayon modulé d'un anneau à l'autre ; extrémités effilées.
@@ -528,14 +545,14 @@ export function extrude(points, depth, material = 'red', { holes = [], bevel = 0
   const mb = microBevel(depth);
   if (bevel > 0 || !mb) {
     geo = new THREE.ExtrudeGeometry(shape, {
-      depth, bevelEnabled: bevel > 0, bevelSize: bevel, bevelThickness: bevel, bevelSegments: 2, curveSegments: 20,
+      depth, bevelEnabled: bevel > 0, bevelSize: bevel, bevelThickness: bevel, bevelSegments: 2, curveSegments: ql(20, 6),
     });
     if (center) geo.translate(0, 0, -depth / 2);
   } else {
     // Arêtes cassées (≈1 mm) sans changer l'encombrement : un filet de lumière
     // le long des bords, comme une tôle découpée et ébavurée.
     geo = new THREE.ExtrudeGeometry(shape, {
-      depth: depth - 2 * mb, bevelEnabled: true, bevelSize: mb, bevelThickness: mb, bevelOffset: -mb, bevelSegments: 1, curveSegments: 20,
+      depth: depth - 2 * mb, bevelEnabled: true, bevelSize: mb, bevelThickness: mb, bevelOffset: -mb, bevelSegments: 1, curveSegments: ql(20, 6),
     });
     geo.translate(0, 0, center ? -(depth - 2 * mb) / 2 : mb);
   }
@@ -567,8 +584,8 @@ export function plate(w, d, t, material = 'red', { holes = [], cutouts = [], r =
   });
   const mb = microBevel(t);
   const geo = mb
-    ? new THREE.ExtrudeGeometry(shape, { depth: t - 2 * mb, bevelEnabled: true, bevelSize: mb, bevelThickness: mb, bevelOffset: -mb, bevelSegments: 1, curveSegments: 16 })
-    : new THREE.ExtrudeGeometry(shape, { depth: t, bevelEnabled: false, curveSegments: 16 });
+    ? new THREE.ExtrudeGeometry(shape, { depth: t - 2 * mb, bevelEnabled: true, bevelSize: mb, bevelThickness: mb, bevelOffset: -mb, bevelSegments: 1, curveSegments: ql(16, 6) })
+    : new THREE.ExtrudeGeometry(shape, { depth: t, bevelEnabled: false, curveSegments: ql(16, 6) });
   geo.translate(0, 0, -(t - 2 * mb) / 2);
   geo.rotateX(-Math.PI / 2);
   return mesh(geo, material);
@@ -1202,7 +1219,7 @@ function slottedGeo(rOut, rIn, ya, yb, windows, seg) {
 
 /** Tube percé (corps à fenêtres, trous de goupille). Voir slottedGeo ; axe Y par défaut. */
 export function slotted(rOut, rIn, ya, yb, windows, material = 'steel', { axis = 'y', seg = 48, pos } = {}) {
-  const m = mesh(slottedGeo(rOut, rIn, ya, yb, windows, seg), material);
+  const m = mesh(slottedGeo(rOut, rIn, ya, yb, windows, qs(seg)), material);
   orient(m, axis);
   const g = group(m);
   g.userData.hasInterior = true;

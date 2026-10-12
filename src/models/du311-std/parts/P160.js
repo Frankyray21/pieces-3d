@@ -26,7 +26,7 @@ export const P160G = {
   pads: [0.52, -0.5], // centres (y) des paires de boîtiers
   padL: 27.5 * IN, // longueur des boîtiers
   bar: { x0: 0.25, x1: 0.28, z0: 0.04, z1: MCP.front }, // barres de guidage de l'avance (côté +X)
-  clevis: { y: 0.94, z: 0.12 }, // axe de la chape (œil de tige du vérin d'extension)
+  clevis: { y: -0.93, z: 0.12 }, // axe de la chape basse (œil de fond du vérin d'extension)
 };
 
 export default function P160(api) {
