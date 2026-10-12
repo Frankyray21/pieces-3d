@@ -430,14 +430,14 @@ function pvgSpool(api, kind = 'mot') {
   const prof = [[0, x0], [r * 0.8, x0], [r, x0 + 0.0012]];
   for (const gx of grooves) prof.push([r, gx - 0.004], [r * 0.74, gx - 0.0032], [r * 0.74, gx + 0.0032], [r, gx + 0.004]);
   prof.push([r, x1 - 0.001], [r * 0.5, x1], [r * 0.5, x1 + 0.016], [0, x1 + 0.016]);
-  const spool = S.lathe(prof, 'chrome', { seg: 18 });
+  const spool = S.lathe(prof, 'chrome', { seg: 12 });
   spool.rotation.z = -Math.PI / 2; // axe Y du profil → +X
   const parts = [spool];
   if (kind.endsWith('ls')) parts.push(S.box(0.012, 0.0016, 0.004, 'chrome', { pos: [0.0, r - 0.0004, 0] })); // méplat LS
   const steel = [
     S.cyl(0.0115, 0.0012, 'steel', { axis: 'x', seg: 18, pos: [x1 + 0.0006, 0, 0] }),
     S.cyl(0.0115, 0.0012, 'steel', { axis: 'x', seg: 18, pos: [x1 + 0.0146, 0, 0] }),
-    S.spring(0.0098, 0.0012, 0.013, 4, 'steel', { axis: 'x', pos: [x1 + 0.0076, 0, 0], perTurn: 12, radial: 5 }),
+    S.spring(0.0098, 0.0012, 0.013, 4, 'steel', { axis: 'x', pos: [x1 + 0.0076, 0, 0], perTurn: 8, radial: 4 }),
     S.box(0.006, 0.012, 0.009, 'steel', { pos: [x1 + 0.019, 0, 0] }), // chape
   ];
   const g = S.group(S.merged(parts, 'chrome'), S.merged(steel, 'steel'));
@@ -473,14 +473,14 @@ function pvgHandle(api) {
     steel.push(S.cyl(0.0025, 0.014, 'steel', { axis: 'x', seg: 8, pos: [x0 + 0.039, 0, z] }));
     steel.push(S.nut(0.008, 0.004, 'steel', { axis: 'x', pos: [x0 + 0.039, 0, z] }));
   }
-  for (const y of [-0.0145, 0.0145]) for (const z of [-0.035, 0.035]) steel.push(S.at(capScrew(api, 0.005, 0.012, 'steel'), [x0 + 0.008, y, z], [0, 0, -Math.PI / 2]));
+  for (const y of [-0.0145, 0.0145]) for (const z of [-0.035, 0.035]) steel.push(S.cyl(0.0042, 0.005, 'steel', { axis: 'x', seg: 10, pos: [x0 + 0.0105, y, z] }));
   // Levier : moyeu, tige inclinée vers +Z, bout fileté, pommeau.
   const ang = 0.26, Ll = 0.13;
   const p0 = [x0 + 0.043, 0, 0];
   const p1 = [p0[0] + Ll * Math.cos(ang), 0, Ll * Math.sin(ang)];
   steel.push(S.box(0.012, 0.014, 0.014, 'steel', { r: 0.002, pos: [x0 + 0.044, 0, 0] }));
   steel.push(S.rod(p0, p1, 0.005, 'steel', 14));
-  const knob = S.lathe([[0, 0], [0.008, 0], [0.012, 0.01], [0.0145, 0.026], [0.0135, 0.036], [0.009, 0.042], [0, 0.043]], 'plastic', { seg: 20 });
+  const knob = S.lathe([[0, 0], [0.008, 0], [0.012, 0.01], [0.0145, 0.026], [0.0135, 0.036], [0.009, 0.042], [0, 0.043]], 'plastic', { seg: 16 });
   knob.quaternion.setFromUnitVectors(new api.THREE.Vector3(0, 1, 0), new api.THREE.Vector3(Math.cos(ang), 0, Math.sin(ang)));
   knob.position.set(p1[0] - 0.012 * Math.cos(ang), 0, p1[2] - 0.012 * Math.sin(ang));
   return S.group(S.merged(alu, 'castAlu'), S.merged(steel, 'steel'), knob);
@@ -518,7 +518,7 @@ function pvgPVE(api, kind = 'fine') {
   const brass = [];
   for (const y of [-0.0075, -0.0025, 0.0025, 0.0075]) brass.push(S.cyl(0.0008, 0.006, 'brass', { axis: 'z', seg: 6, pos: [xc, y, zc + 0.017] }));
   const steel = [];
-  for (const y of [-0.0145, 0.0145]) for (const z of [-0.04, 0.036]) steel.push(S.at(capScrew(api, 0.004, 0.01, 'steel'), [xe, y, z], [0, 0, Math.PI / 2]));
+  for (const y of [-0.0145, 0.0145]) for (const z of [-0.04, 0.036]) steel.push(S.cyl(0.0034, 0.004, 'steel', { axis: 'x', seg: 10, pos: [xe - 0.002, y, z] }));
   if (kind === 'fine') steel.push(S.box(0.0008, 0.014, 0.02, 'steel', { r: 0.0003, pos: [xe - 0.0034, 0, 0.034] })); // plaque Danfoss
   return S.group(S.merged(alu, 'castAlu'), S.merged(pl, 'plastic'), S.merged(brass, 'brass'), S.merged(steel, 'steel'));
 }
