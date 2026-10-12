@@ -51,6 +51,12 @@ import P402 from './P402.js';
 import P404 from './P404.js';
 import P408 from './P408.js';
 import P410 from './P410.js';
+import P418 from './P418.js';
+import P422 from './P422.js';
+import P424 from './P424.js';
+import P426 from './P426.js';
+import P428 from './P428.js';
+import P488 from './P488.js';
 
 export default {
   'P012': P012,
@@ -104,4 +110,10 @@ export default {
   'P404': P404,
   'P408': P408,
   'P410': P410,
+  'P418': P418,
+  'P422': P422,
+  'P424': P424,
+  'P426': P426,
+  'P428': P428,
+  'P488': P488,
 };
