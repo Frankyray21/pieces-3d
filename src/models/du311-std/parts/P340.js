@@ -42,7 +42,7 @@ export const PUMPW = {
 };
 
 export default function P340(api, opts = {}) {
-  const { THREE, S } = api;
+  const { S } = api;
   const P = (ref, obj, e) => api.part(ref, obj, e);
   const YA = PUMPW.ya, XS = PUMPW.xs;
   const ZF = 0.055; // face avant du carter
