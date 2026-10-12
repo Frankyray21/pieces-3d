@@ -25,7 +25,7 @@ import { body, flex } from '../layout.js';
 
 export default function P326(api) {
   const { THREE, S } = api;
-  const { box, merged, group, at } = S;
+  const { box, merged, group } = S;
   const H_ = cabHw(api);
   const P = (ref, obj, e) => api.part(ref, obj, e);
   const F = (ref, obj, e) => P(ref, body('front', obj), e);

@@ -102,7 +102,6 @@ export default function P278(api) {
   for (const sx of [-1, 1]) for (const sz of [-1, 0, 1]) trapScrews.push(at(lathe([[0, 0], [0.008, 0], [0.006, 0.002], [0, 0.002]], 'blackOxide', { seg: 10 }), [O.floor.x + sx * (O.floor.w / 2 - 0.018), t + u(0.25), O.floor.z + sz * (O.floor.d / 2 - 0.018)]));
   const lift = box(0.1, 0.004, 0.03, 'blackOxide', { r: 0.002, pos: [O.floor.x + 0.12, t + u(0.25) + 0.0005, O.floor.z + 0.18] });
   P('28', C(group(trap, merged(trapScrews, 'blackOxide'), lift)), [0, 0.35, 0]);
-  const facetX = (z) => nose + ((z - noseZ[0]) / (-hz - noseZ[0])) * (hx - nose);
   const grip = [];
   for (let i = 0; i < 9; i++) for (let k = 0; k < 4; k++) grip.push([-0.29 + i * 0.07, -0.79 + k * 0.07, 0.012]);
   const landPl = prism(S, THREE, [[-hx + t, -hz + t], [-hx + t, land.z1], [hx, land.z1], [hx, -hz + t]], u(0.1875), 'grey', 'xz', land.y + u(0.094), { holes: grip });
@@ -239,7 +238,7 @@ export default function P278(api) {
 
   // ---------------------------------------------------------------- 42 — support du verrou ; 34 — verrou rangé ; 5 — goupille en T
   const yL = 0.1, xL = -hx - 0.035;
-  P('42', C(merged([0.24, 0.6].map((z) => prism(S, THREE, [[-0.03, 0], [0.03, 0], [0.03, 0.06], [-0.03, 0.06]], 0.008, 'lightGrey', 'xy', 0, { holes: [[0, 0.03, 0.006]] })).map((m, i) => { const g = group(m); g.position.set(-hx - 0.03, yL - 0.03, [0.24, 0.6][i]); return g; }), 'lightGrey')), [-0.15, 0, 0]);
+  P('42', C(merged([0.24, 0.6].map(() => prism(S, THREE, [[-0.03, 0], [0.03, 0], [0.03, 0.06], [-0.03, 0.06]], 0.008, 'lightGrey', 'xy', 0, { holes: [[0, 0.03, 0.006]] })).map((m, i) => { const g = group(m); g.position.set(-hx - 0.03, yL - 0.03, [0.24, 0.6][i]); return g; }), 'lightGrey')), [-0.15, 0, 0]);
   const lock = prism(S, THREE, [[-0.03, -0.022], [0.03, -0.022], [0.03, 0.022], [0.024, 0.022], [0.024, -0.016], [-0.024, -0.016], [-0.024, 0.022], [-0.03, 0.022]], 0.42, 'safety', 'xy', 0);
   const lockG = group(lock, box(0.07, 0.006, 0.03, 'safety', { pos: [0, -0.025, 0.2] }));
   lockG.position.set(xL, yL + 0.03, 0.42);

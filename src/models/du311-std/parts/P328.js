@@ -44,7 +44,7 @@ export default function P328(api) {
   const { box, cyl, lathe, merged, group, at, weld } = S;
   const H_ = cabHw(api);
   const P = (ref, obj, e) => api.part(ref, obj, e);
-  const { D, W, H, nose, ny, t } = TANK;
+  const { D, W, H, nose, ny } = TANK;
   const M = 'lightGrey';
   const xr = -D / 2; // face arrière du corps
 

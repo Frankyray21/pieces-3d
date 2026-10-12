@@ -43,9 +43,11 @@ export default function P228(api) {
     parts.push(box(FR.x1 - FR.x0, a, a, L, { r: 0.003, pos: [(FR.x0 + FR.x1) / 2, FR.yw0 + a / 2, z] }));
     for (const x of [FR.x0 + a / 2, FR.x1 - a / 2]) parts.push(box(a, FR.top - FT - 0.0127, a, L, { r: 0.003, pos: [x, (FR.top + FT + 0.0127) / 2, z] }));
     // Semelles (plat 1/2 po) sur le dessus des flancs du châssis, deux trous chacune.
-    for (const x of [FR.x0 + a / 2, FR.x1 - a / 2]) parts.push(H_.K.plate(0.1, 0.07, 0.0127, L, { holes: [[-0.032, 0, 0.0075], [0.032, 0, 0.0075]], seg: 8 }));
-    parts[parts.length - 2].position.set(FR.x0 + a / 2, FT + 0.0064, s * MM.frameZ);
-    parts[parts.length - 1].position.set(FR.x1 - a / 2, FT + 0.0064, s * MM.frameZ);
+    for (const x of [FR.x0 + a / 2, FR.x1 - a / 2]) {
+      const pl = H_.K.plate(0.1, 0.07, 0.0127, L, { holes: [[-0.032, 0, 0.0075], [0.032, 0, 0.0075]], seg: 8 });
+      pl.position.set(x, FT + 0.0064, s * MM.frameZ);
+      parts.push(pl);
+    }
     // Console extérieure (tôle 3/8) sous la fenêtre, avec jambe de force.
     const sz0 = s * (MM.frameZ + 0.015), sz1 = s * 0.78;
     parts.push(box(0.36, u(0.375), Math.abs(sz1 - sz0), L, { pos: [0.76, 0.955, (sz0 + sz1) / 2] }));
@@ -96,7 +98,7 @@ export default function P228(api) {
   // ---------------------------------------------------------------- 1 — platine de la pompe ; 5 — pompe (P232) ; 5.1 — élément filtrant
   const PU = [0.78, 1.86, -0.32]; // centre de la bride (face côté moteur)
   const plate1 = prism(S, THREE, [[B9.x + B9.a / 2, B9.y - 0.03], [B12.x - B12.a / 2, B12.y - 0.03], [B12.x - B12.a / 2, 1.93], [B9.x + B9.a / 2, 1.93]], u(0.25), L, 'xy', PU[2] - u(0.125), { holes: [[PU[0], PU[1], 0.043]] });
-  const ears1 = merged([[B9.x + B9.a / 2 + 0.003, 1], [B12.x - B12.a / 2 - 0.003, -1]].map(([x, s]) => box(0.006, 0.08, 0.05, L, { pos: [x, B12.y, PU[2] + 0.025] })), L);
+  const ears1 = merged([[B9.x + B9.a / 2 + 0.003, 1], [B12.x - B12.a / 2 - 0.003, -1]].map(([x]) => box(0.006, 0.08, 0.05, L, { pos: [x, B12.y, PU[2] + 0.025] })), L);
   F('1', group(plate1, ears1), [0, 0.2, -0.15]);
   const pump = api.sub('P232');
   pump.position.set(PU[0], PU[1], PU[2] + u(0.125));
