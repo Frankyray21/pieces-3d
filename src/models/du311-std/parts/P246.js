@@ -239,7 +239,7 @@ export default function P246(api) {
       cyl(0.022, 0.05, 'black', { axis: 'z', seg: 18, pos: [-0.115, 0.115, s * 0.095] }),
       bx(-0.13, -0.1, 0.13, 0.15, s * 0.11 - 0.012, s * 0.11 + 0.012, 'black', 0.003),
     ]), 'black'),
-    merged([[-0.2, 0.08, 0.09], [-0.2, -0.08, 0.09], [-0.2, 0.08, -0.09], [-0.2, -0.08, -0.09]].map(([x, y, z]) => at(bolt(S, 0.375, 1.0, { mat: 'blackOxide', socket: true }), [-0.25, y, z], [0, 0, Math.PI / 2])), 'blackOxide'),
+    merged([[-0.2, 0.08, 0.09], [-0.2, -0.08, 0.09], [-0.2, 0.08, -0.09], [-0.2, -0.08, -0.09]].map(([, y, z]) => at(bolt(S, 0.375, 1.0, { mat: 'blackOxide', socket: true }), [-0.25, y, z], [0, 0, Math.PI / 2])), 'blackOxide'),
     at(S.nameplate(0.06, 0.03), [-0.1, 0.0, 0.1005]),
   ), [0, 0, -0.35]);
   // 14 — joint torique entre la pompe 90 cc et la pompe 60 cc.

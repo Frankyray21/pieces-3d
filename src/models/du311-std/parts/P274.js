@@ -60,7 +60,6 @@ export default function P274(api) {
 
   // ================================================================ admission d'air
   const A = AIR;
-  const outEnd = [A.x, A.y, A.z0 + 0.06]; // bout du piquage de sortie (Ø 4 1/2 po)
   const inTop = [A.x, A.y + A.r + 0.045, A.inZ]; // bout du piquage d'entrée (Ø 5 po)
   // ---------------------------------------------------------------- 7 — filtre à air
   // Corps tôle, bourrelets, couvercle à trois agrafes et soupape d'évacuation
