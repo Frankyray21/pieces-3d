@@ -20,7 +20,7 @@ import { IN, u, BAR, hhcs, nordLock } from './_feed.js';
 
 const T = 1.0, W = 2.75, CH = 0.35, END = 0.5; // épaisseur, largeur, chanfrein d'arête, biseau des bouts (po)
 // Vis de haut en bas (fraction de la longueur depuis le haut, repère).
-const SEQ = [
+export const SEQ = [
   [0.0386, '4'], [0.125, '3'], [0.2116, '3'], [0.298, '4'], [0.385, '4'], [0.471, '3'], [0.558, '3'],
   [0.644, '4'], [0.731, '4'], [0.817, '4'], [0.904, '3'], [0.9587, '3'], [0.977, '4'],
 ];

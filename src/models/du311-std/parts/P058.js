@@ -6,7 +6,8 @@
 // intérieures, plaque de tête de 1 1/2 po fendue à l'avant (bride du vérin,
 // quatre vis 13), pied : semelle de 1 1/2 po, bloc avant, goussets, deux
 // bossages d'articulation garnis de bagues (1), doublures intérieures des
-// fixations du support latéral (P100) et de la boucle de boyaux (P104).
+// fixations du support latéral (P100) et de la boucle de boyaux (P104),
+// fourrures de 1/4 po sous les vis longues des barres de guidage.
 // Deux barres de guidage (5, P060) sur les lèvres avant (« LAY STRAIGHT EDGE
 // OVER BOTH SURFACES » : faces de guidage coplanaires). Onze tubes 3/8 po (3)
 // traversent le mât derrière le vérin, d'un coude de traversée -06 (7) du
@@ -27,6 +28,7 @@ import {
   IN, u, MAST, BAR, CYL, CYL_BOLTS, BLOCK_BOLTS, place, seat, bulkElbow, capNut, swivelNut,
   hhcs, nordLock, slab, orient, rrect, obround, bentTube, pClamp, welds, M,
 } from './_feed.js';
+import { SEQ as BAR_BOLTS } from './P060.js';
 
 const { hw, hd, tw, lip, tl, tb, yBase, yTop, baseX } = MAST;
 // Coudes de traversée -06 (hauteurs, mêmes sur les deux flancs) et -08.
@@ -98,7 +100,9 @@ export default function P058(api) {
     ...[1, -1].flatMap((s) => [-0.13, 0.13].flatMap((z) => [[[s * hw, yBase, z + 0.0064], [s * baseX, yBase, z + 0.0064]], [[s * hw, yBase, z + 0.0064], [s * hw, yBase + 0.16, z + 0.0064]]])),
     [[-hw, yBase, bz1 - 0.002], [hw, yBase, bz1 - 0.002]],
   ], 0.008, 'lightGrey');
-  P('4', group(M([...walls, ...lips, back, ...rungs, topPlate, base, front, ...gussets, ...eyes, ...dbl], 'lightGrey'), bead), [0, 0, -0.55]);
+  // Fourrures 1/4 po sous les lèvres, au droit des vis longues des barres de guidage (P060, repère 3).
+  const furs = BAR_BOLTS.filter(([, r]) => r === '3').flatMap(([f]) => [-1, 1].map((s) => box(0.045, 0.045, u(0.25), 'lightGrey', { pos: [s * BAR.xc, BAR.y0 + BAR.L * (1 - f), hd - tl - u(0.125)] })));
+  P('4', group(M([...walls, ...lips, back, ...rungs, topPlate, base, front, ...gussets, ...eyes, ...dbl, ...furs], 'lightGrey'), bead), [0, 0, -0.55]);
 
   // ============================================================ 1 — bagues des bossages
   EYES.forEach(([x, z]) => P('1', lathe([[u(0.75), 0.001], [u(1.0), 0.001], [u(1.0), 0.061], [u(0.75), 0.061], [u(0.75), 0.001]], 'brass', { seg: 28, pos: [x, 0, z] }), [x * 0.6, -0.12, 0.1]));
