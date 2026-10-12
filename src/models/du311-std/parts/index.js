@@ -5,6 +5,7 @@ import P422 from './P422.js';
 import P424 from './P424.js';
 import P426 from './P426.js';
 import P428 from './P428.js';
+import P488 from './P488.js';
 
 export default {
   'P418': P418,
@@ -12,4 +13,5 @@ export default {
   'P424': P424,
   'P426': P426,
   'P428': P428,
+  'P488': P488,
 };
