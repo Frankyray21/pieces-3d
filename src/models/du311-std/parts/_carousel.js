@@ -397,6 +397,16 @@ export const clampHole = (d) => ({ x: -u(d / 2 + 0.6), zFace: -u(d / 2 + 0.2), z
  * Nord-Lock, posés sur le corps du bras (repère local de swingArmBody).
  * refs = { bushing, pin, pinBolt, pinWasher, spacer, clamp, clampBolt, clampWasher }.
  */
+// Moyeux fendus des bras pivotants : bague à collerette Ø 3 1/2 × 4 (CX036643),
+// moyeu Ø 6 1/2 × 2 1/2 po, chapeau boulonné côté extérieur (4 vis 1/2 po).
+export const ARM = {
+  hubR: u(3.25), boreR: u(2.0), jourR: u(1.75), flangeR: u(2.375), flangeT: u(0.1875),
+  earZ: u(3.25) + u(1.4), earT: u(1.0), bodyEarT: u(1.75),
+  beamW: u(2.5), beamY: [u(0.25), u(2.25)],
+  bolts: [u(0.65), u(1.85)], // hauteurs des vis de chapeau
+  spacer: u(0.125), // entretoises CM85611 (Ø 1 × 1 3/4 × 1/8 po)
+};
+
 export function swingArmKit(api, kind, refs, pins) {
   const P = (ref, obj, e) => api.part(ref, obj, e);
   const { S } = api;
@@ -456,15 +466,6 @@ export function tabPin(api) {
 
 // ---------------------------------------------------------------- bras pivotants (P128, P132)
 
-// Moyeux fendus des bras pivotants : bague à collerette Ø 3 1/2 × 4 (CX036643),
-// moyeu Ø 6 1/2 × 2 1/2 po, chapeau boulonné côté extérieur (4 vis 1/2 po).
-export const ARM = {
-  hubR: u(3.25), boreR: u(2.0), jourR: u(1.75), flangeR: u(2.375), flangeT: u(0.1875),
-  earZ: u(3.25) + u(1.4), earT: u(1.0), bodyEarT: u(1.75),
-  beamW: u(2.5), beamY: [u(0.25), u(2.25)],
-  bolts: [u(0.65), u(1.85)], // hauteurs des vis de chapeau
-  spacer: u(0.125), // entretoises CM85611 (Ø 1 × 1 3/4 × 1/8 po)
-};
 
 /**
  * Corps mécano-soudé d'un bras pivotant (repère local : axe du bossage du

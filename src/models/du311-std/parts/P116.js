@@ -50,7 +50,7 @@ const CA = { half: u(2.0) }; // demi-hauteur des moyeux doubles des bras de serr
 const VALVE = { y0: 1.02, y1: 1.12 }; // clapet de serrage doux sur sa console
 
 export default function P116(api) {
-  const { THREE, S } = api;
+  const { S } = api;
   const { group, merged, at, weldRing, lathe } = S;
   const P = (ref, obj, e) => api.part(ref, obj, e);
   const lp = (p) => [p[0] - K[0], p[1] - K[1]];
