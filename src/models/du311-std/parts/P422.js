@@ -59,7 +59,6 @@ export default function P422(api) {
   const X = [1, 0, 0], Y = [0, 1, 0], Z = [0, 0, 1], nX = [-1, 0, 0], nZ = [0, 0, -1];
   // Boulon H d (po) × len (po), tête en p, tige selon dir (vecteur unitaire).
   const boltAt = (d, len, p, dir, washer = true) => orient(THREE, S.bolt(I(d), I(len), 'zinc', { washer }), p, dir.map((v) => -v), Math.abs(dir[0]) > 0.9 ? Z : X);
-  const nutAt = (d, p, dir) => orient(THREE, S.nut(I(d * 1.5), I(d * 0.85), 'zinc', { pos: [0, I(d * 0.425), 0] }), p, dir, Math.abs(dir[0]) > 0.9 ? Z : X);
 
   // ---------------------------------------------------------------- 9 — traverse avant et poteau central
   const g9 = [];

@@ -198,7 +198,8 @@ export function sweepGeo(THREE, pts, profile, { i0 = 0, i1 = pts.length - 1, loo
   }
   if (!closed) {
     const faces = THREE.ShapeUtils.triangulateShape(prof.map(([a, z]) => new THREE.Vector2(a, z)), []);
-    for (let [a, b, c] of faces) {
+    for (const [a, b0, c0] of faces) {
+      let b = b0, c = c0;
       const A = prof[a], B = prof[b], C = prof[c];
       if ((B[0] - A[0]) * (C[1] - A[1]) - (C[0] - A[0]) * (B[1] - A[1]) < 0) [b, c] = [c, b];
       // (a, b, c) trigonométrique dans (a, z) : normale +T. Fond de départ vers -T.
