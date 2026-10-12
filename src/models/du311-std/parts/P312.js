@@ -12,7 +12,7 @@
 // avant (corps « front ») : tube à 0,84 m du sol, z = -0,36 m ; brides F3
 // (0,72 ; 0,99 ; -0,36) vers +Y et F4 (2,15 ; 0,90 ; -0,36) vers +X ; colliers
 // (P292) aux points CLAMPS312.
-// Encombrement 1.47 (X) × 0.19 (Y) × 0.10 (Z) m.
+// Encombrement 1.49 (X) × 0.23 (Y) × 0.08 (Z) m.
 // Cotes : tube 2 po ; tracé d'après la vue de dessus de la page 296 (repère
 // 67) et la vue isométrique de la page 312.
 import { u, bentPipe, flangeHead, flangePad, splitFlangeKit, frameAt } from './_carrier.js';

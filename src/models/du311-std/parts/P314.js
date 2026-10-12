@@ -12,7 +12,7 @@
 // Repère machine (../layout.js), posé à l'identité par P292 (châssis arrière) :
 // tube à 0,858 m du sol ; brides F1 (-2,78 ; 0,858 ; -0,11) vers -X et
 // F2 (-1,19 ; 1,00 ; 0,38) vers +Y ; colliers (P292) aux points CLAMPS314.
-// Encombrement 1.62 (X) × 0.21 (Y) × 0.57 (Z) m.
+// Encombrement 1.65 (X) × 0.22 (Y) × 0.57 (Z) m.
 // Cotes : tube 2 po (liste « 2" CODE 61 ») ; tracé d'après la vue de dessus de
 // la page 296 (repère 68) et la vue isométrique de la page 314.
 import { u, PIPE_R, bentPipe, flangeHead, flangePad, splitFlangeKit, frameAt } from './_carrier.js';

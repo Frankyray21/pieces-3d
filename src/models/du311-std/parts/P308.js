@@ -14,7 +14,7 @@
 // l'arbre, Y vers le haut (dessous de la semelle en y = -0,127 m) ; oreilles
 // des chapes selon ±Z (axe des bols du croisillon côté frein), centres des
 // croisillons en x = ±0,128 m (YOKE308).
-// Encombrement 0.32 (X) × 0.23 (Y) × 0.26 (Z) m.
+// Encombrement 0.30 (X) × 0.23 (Y) × 0.25 (Z) m.
 // Cotes : liste (rondelles, filets) ; carter, patte et chapes d'après les vues
 // de la page 308 à l'échelle des chapes 1410 (envergure 4 3/16 po).
 import { u, L, put, along, hb, nt, fw, sw, yoke1410, UJ } from './_carrier.js';

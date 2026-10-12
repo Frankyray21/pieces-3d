@@ -10,7 +10,7 @@
 // Posées dans le bloc P320 : repère du stabilisateur (ST de _carrier.js),
 // origine au dessous du bloc sur l'axe, Y vers le haut ; cartouches dans les
 // faces ±X à 2,2 po de haut ; option { pz } : côté de la platine (comme P320).
-// Encombrement 0.155 (X) × 0.085 (Y) × 0.045 (Z) m.
+// Encombrement 0.16 (X) × 0.07 (Y) × 0.04 (Z) m.
 // Cotes : filetages ORB (-6 : 9/16-18, -4 : 7/16-20), cartouche de taille 2
 // (1 1/16-12) d'après la vue de la page 318.
 import { u, L, put, orbPlug } from './_carrier.js';

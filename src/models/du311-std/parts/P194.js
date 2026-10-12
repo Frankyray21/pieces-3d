@@ -15,7 +15,7 @@
 // caisson en z = ±0,7175 m (de x = 2,506 à 2,734 m, y = 0,62 à 0,99 m).
 // Pièces mobiles : fûts, écrans, supports, vis sur le châssis avant (corps
 // « front »), jambes et patins « outL » / « outR » (levée selon +Y).
-// Encombrement 0.37 (X) × 1.0 (Y) × 1.83 (Z) m.
+// Encombrement 0.33 (X) × 1.02 (Y) × 1.81 (Z) m.
 import { u, put, bolted, ST, CAR, stTop, stPlateHoles, stPorts, stShield, stLightBracket, SHIELD_T, SHIELD_HOLES, BRACKET_T, BRACKET_HOLES, jicStraight } from './_carrier.js';
 import { body } from '../layout.js';
 import { workLight } from '../lights.js';

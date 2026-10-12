@@ -49,7 +49,7 @@
 // jambes des stabilisateurs « jackL », « jackR » ; vérins de direction
 // « steerR », « steerL » (ramDetailed) ; arbre intermédiaire à cheval sur
 // l'articulation ([chassis, front, 0,5]).
-// Encombrement 5.0 (X) × 1.25 (Y) × 2.04 (Z) m.
+// Encombrement 5.05 (X, de -2.78 à +2.27) × 1.28 (Y) × 2.08 (Z) m.
 // Cotes : liste (vis, filets, pneus 12.00-20, vérins, brides) ; implantation
 // mesurée sur les vues de dessus et de dessous (p. 296, 300) à l'échelle de la
 // voie et de l'empattement de layout.js, hauteurs sur la vue B et la coupe C-C
@@ -633,7 +633,7 @@ export default function P292(api) {
     }
   }
   // consoles : 56 vidanges (flanc gauche), 57 flexibles (flancs convergents avant), 58 flexibles (flancs arrière),
-  // 59 collier du tube de radiateur, 62 / 63 colliers de flexibles, 64 flexibles (traverse C1)
+  // 59 collier du tube de radiateur, 62 / 63 colliers de flexibles, 64 flexibles (traverse du tourillon arrière)
   // Console pliée en L : semelle w × h appliquée au point c d'une face (normale dir), largeur selon e1,
   // aile relevée au bord ; n vis 3/8 × 1 (86) et rondelles fendues (103) dans la semelle.
   const bracket = (ref, front, c, w, h, n, dir, e1) => {
@@ -660,7 +660,7 @@ export default function P292(api) {
   bracket('59', false, [-2.6, FT, 0.3], 0.12, 0.1, 2, [0, 1, 0], [1, 0, 0]);
   bracket('62', false, [-2.2, FT, -0.3], 0.2, 0.1, 3, [0, 1, 0], [1, 0, 0]);
   bracket('63', false, [-2.2, FT, 0.15], 0.2, 0.1, 3, [0, 1, 0], [1, 0, 0]);
-  bracket('64', false, [C1x + 0.06, 0.98, -0.25], 0.2, 0.1, 3, [0, 1, 0], [1, 0, 0]);
+  bracket('64', false, [C3x, 0.81, 0.02], 0.2, 0.1, 3, [0, 1, 0], [1, 0, 0]);
   // 23 — additif d'huile pour ponts et freins (flacon), posé sur la traverse du tourillon avant
   P('23', group(
     S.lathe([[0, 0], [0.038, 0], [0.04, 0.01], [0.04, 0.1], [0.025, 0.125], [0.012, 0.13], [0, 0.13]], 'white', { pos: [C2x, 0.81, -0.38], seg: 20 }),

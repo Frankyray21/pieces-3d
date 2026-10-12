@@ -19,7 +19,7 @@
 // de tige ; axes des œils (rotules) selon Y ; bossages d'orifice et bouchons
 // des œils vers +Z. Option { ext } : sortie de tige (m, 0 à la course) ;
 // entraxe rentré 32,68 po (0,830 m), sorti 47,68 po (1,211 m).
-// Encombrement (rentré) 0.890 (X, de -0.060 à +0.890) × 0.044 (Y) × 0.124 (Z) m.
+// Encombrement (rentré) 0.95 (X, de -0.060 à +0.890) × 0.089 (Y, tube Ø 3 1/2) × 0.124 (Z) m.
 // Cotes : liste (alésage, course) et coupe de la page 306 à l'échelle de
 // l'alésage (≈ 71 px/po) : tube Ø 3 1/2, tige Ø 1 3/4, œils Ø 4 3/4 × 1 3/4,
 // rotules Ø 3 1/8 × 1 1/2 alésées Ø 2. Entraxe rentré choisi pour que la course
