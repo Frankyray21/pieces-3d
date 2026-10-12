@@ -87,12 +87,12 @@ export const STINGER_Y = 1.5; // centre du bloc central (repère de l'avance)
 // Boucle roulante dans le plan x = LOOP.x : brin fixe A (support bas 8 sur le
 // flanc −X) en z = zA, brin mobile B (support 6 sur la plaque porte-tête) en
 // z = zB, crosse de rayon (zB − zA) / 2 ; câbles de 96 po à ± LOOP.dx.
-export const LOOP = { x: -0.41, dx: 0.12, zA: 0.10, zB: 0.38, yA: 1.92, yB: 3.06, cable: 96 * 0.0254 };
+export const LOOP = { x: -0.42, dx: 0.15, zA: 0.10, zB: 0.38, yA: 1.92, yB: 3.06, cable: 96 * 0.0254 };
 LOOP.r = (LOOP.zB - LOOP.zA) / 2;
 // Hauteur du départ de la crosse, tête en haut (longueur des câbles constante).
 LOOP.yArch = (LOOP.cable - Math.PI * LOOP.r + LOOP.yA + LOOP.yB) / 2;
 // Collecteur d'air (P106) sur le support bas : sortie du coude 2 po vers le haut.
-export const AIR = { x: -0.47, z: 0.25, yOut: 2.02 };
+export const AIR = { x: -0.50, z: 0.17, yOut: 2.02 };
 
 // ------------------------------------------------------------------ formes
 
@@ -268,7 +268,7 @@ export const v3 = (...a) => new THREE.Vector3(...a);
 // ------------------------------------------------------------------ raccords allégés
 
 /** Mâle JIC 37° de taille n le long de +Y depuis y0 (collerette, filet, cône), profil de lathe. */
-function jicMale(n, y0) {
+export function jicMale(n, y0) {
   const r = size(n).jic / 2, L = size(n).jic * 0.95 + 0.004;
   return [[0, y0], [r * 0.95, y0], [r * 0.95, y0 + 0.002], [r * 0.8, y0 + 0.002], [r * 0.8, y0 + L * 0.2],
     ...S.thread(r, y0 + L * 0.22, y0 + L * 0.74, { pitch: r * 0.22, maxTurns: 3, chamferBottom: false }),
