@@ -103,7 +103,7 @@ export const radToM = ([x, y, z]) => [RAD.x + x, RAD.y + y, z];
 // repère local de P270 : origine sur l'axe de la charnière à mi-longueur,
 // X selon la longueur (X machine), Y vers le haut, +Z vers l'extérieur
 // (ailettes vers la porte droite).
-export const HC = { x: -2.07, y: 1.855, z: 0.94, L: 0.98, H: 0.6 };
+export const HC = { x: -2.07, y: 1.905, z: 0.94, L: 0.98, H: 0.6 };
 
 // ---------------------------------------------------------------- filtre à air (P274 rep. 7)
 // Couché selon Z côté gauche ; piquage d'entrée vertical sous l'entrée d'air

@@ -289,15 +289,16 @@ export default function P246(api) {
   }
   // Pompe 60 cc : aspiration 2 po (bride 73, coude 15, colliers 20), refoulement (57), drain et LS (55), régulateur (62).
   {
+    // Orifice d'aspiration sur la face −z du fond (vers l'avant de la machine) : bride 2 po code 61,
+    // coude 90° tourné vers +x (le long des pompes, vers le milieu du châssis), embout cannelé.
     const sk = splitFlangeKit(S, 32, 61, { neck: 0.0 });
-    PE('73', pose(THREE, sk.obj, [-0.42, -0.09, 0], [0, -1, 0], Math.PI / 2), [0, -0.15, 0]);
-    const y0 = -0.09 - sk.top;
-    // Coude d'aspiration : collet à bride, coude 90° vers −z (avant de la machine), embout cannelé.
-    const elbowPts = [[-0.42, y0, 0], [-0.42, y0 - 0.05, 0], [-0.42, y0 - 0.075, -0.025], [-0.42, y0 - 0.08, -0.08]];
+    PE('73', pose(THREE, sk.obj, [-0.42, 0.0, -0.086], [0, 0, -1], Math.PI / 2), [0, 0, -0.15]);
+    const z0 = -0.086 - sk.top;
+    const elbowPts = [[-0.42, 0, z0], [-0.42, 0, z0 - 0.04], [-0.395, 0, z0 - 0.07], [-0.34, 0, z0 - 0.078]];
     const barb = [];
-    for (let k = 0; k < 4; k++) barb.push(at(lathe([[0.03, 0], [0.034, 0.004], [0.031, 0.012], [0.03, 0.012]], 'steel', { axis: '-z', seg: 24 }), [-0.42, y0 - 0.08, -0.08 - k * 0.013]));
-    PE('15', group(merged([tube(elbowPts, 0.032, 'steel', { seg: 16, radial: 20 }), cyl(0.03, 0.06, 'steel', { axis: 'z', seg: 24, pos: [-0.42, y0 - 0.08, -0.11] }), ...barb], 'steel')), [0, -0.2, 0]);
-    for (const k of [0.025, 0.06]) PE('20', at(group(tBoltClamp(S, 0.071, { w: 0.016 })), [-0.42, y0 - 0.08, -0.1 - k], [Math.PI / 2, 0, 0]), [0, -0.22, -0.05]);
+    for (let k = 0; k < 4; k++) barb.push(at(lathe([[0.03, 0], [0.034, 0.004], [0.031, 0.012], [0.03, 0.012]], 'steel', { axis: 'x', seg: 24 }), [-0.33 + k * 0.013, 0, z0 - 0.078]));
+    PE('15', group(merged([tube(elbowPts, 0.032, 'steel', { seg: 16, radial: 20 }), cyl(0.03, 0.06, 'steel', { axis: 'x', seg: 24, pos: [-0.31, 0, z0 - 0.078] }), ...barb], 'steel')), [0, 0, -0.2]);
+    for (const k of [0.025, 0.06]) PE('20', at(group(tBoltClamp(S, 0.071, { w: 0.016 })), [-0.33 + k, 0, z0 - 0.078], [0, 0, Math.PI / 2]), [0, 0.05, -0.2]);
   }
   F('57', fitElbow(S, 16), [-0.42, 0.0, 0.085], [0, 0, 1], [0, 1, 0], null, true);
   F('55', fitElbow(S, 8), [-0.3, 0.09, 0.03], [0, 1, 0], [-1, 0, 0], null, true);
