@@ -472,6 +472,7 @@ function explodeEverything(on) {
 // (step.cam), ses outils et ses annotations. Le panneau donne le titre et le
 // texte de l'étape et un lien vers sa page de la procédure.
 const STEP_PAUSE = 2600; // lecture : pause après la pose d'une étape (ms)
+const STEP_CAM_BACK = 1.55; // recul de la caméra de l'étape
 let stepTimer = null;
 
 function stopStepPlay() {
@@ -513,7 +514,8 @@ function setStepN(n, { animate = true } = {}) {
   S.steps.n = Math.max(0, Math.min(list.length - 1, n));
   const st = list[S.steps.n];
   const ms = viewer.setStep(S.steps.n, { animate });
-  if (st.cam) viewer.lookAt(st.cam.pos, st.cam.tgt);
+  // Caméras de l'étape réglées pour la vidéo (cadre large) : reculées pour la scène du site, plus étroite.
+  if (st.cam) viewer.lookAt(st.cam.pos.map((v, i) => st.cam.tgt[i] + (v - st.cam.tgt[i]) * STEP_CAM_BACK), st.cam.tgt);
   renderSteps();
   return ms;
 }
