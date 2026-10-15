@@ -25,7 +25,9 @@ export const DURATION = SEGS.at(-1).start + SEGS.at(-1).dur;
 // ------------------------------------------------------------------ scène
 
 const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
-renderer.setPixelRatio(1);
+// ?scale=0.5 : aperçu rapide (rendu en demi-résolution, agrandi au montage).
+const SCALE = Number(new URLSearchParams(location.search).get('scale')) || 1;
+renderer.setPixelRatio(SCALE);
 renderer.setSize(VW, VH);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 0.78;

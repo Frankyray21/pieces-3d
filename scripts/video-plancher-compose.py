@@ -51,7 +51,10 @@ def frame(f):
     lv = levels[str(f)]
     i = lv['seg']
     im = Image.new('RGBA', (1280, 720), BG + (255,))
-    im.paste(Image.open(os.path.join(out, '3d', f'f_{f:05d}.jpg')).convert('RGBA'), (0, 0))
+    img3d = Image.open(os.path.join(out, '3d', f'f_{f:05d}.jpg')).convert('RGBA')
+    if img3d.size != (1280, 590):  # aperçu en demi-résolution
+        img3d = img3d.resize((1280, 590), Image.BILINEAR)
+    im.paste(img3d, (0, 0))
     band = layer('band', i)
     prev = layer('band', i - 1) if i > 0 else None
     if lv['text'] < 1 and prev is not None:
