@@ -1,12 +1,18 @@
-// Capture image par image de la vidéo du plancher (video-plancher.html), puis
-// encodage MP4 (H.264, 1280 × 720, 24 i/s).
+// Capture et montage de la vidéo du plancher (video-plancher.html) :
+// 1280 × 720, 24 i/s, H.264.
+//
+// 1. Calques : bandeau, « Pourquoi », carton et étiquette capturés une fois
+//    par segment (PNG transparents) ;
+// 2. 3D : chaque image calculée par window.__frame(t) et lue sur le canevas
+//    (JPEG), avec les opacités des calques ; une capture d'écran de la page
+//    entière coûterait 2 à 3 s par image, la 3D seule 50 ms ;
+// 3. composition (scripts/video-plancher-compose.py, Pillow) envoyée à ffmpeg.
 //
 // Serveur de développement lancé (npm run dev), Playwright installé à part :
 //   PW=$(npm root -g)/playwright node scripts/video-plancher.mjs --out scratch/video
-//   options : --from 0 --to 310 (s) · --jobs 2 · --stills 12.5,40 (images isolées)
-//             --encode-only · --url http://localhost:5173
+//   options : --jobs 2 · --stills 12.5,40 (images composées isolées) · --encode-only
 import { createRequire } from 'node:module';
-import { mkdirSync, existsSync, readdirSync } from 'node:fs';
+import { mkdirSync, existsSync, writeFileSync, readFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { join } from 'node:path';
 
@@ -19,7 +25,7 @@ const out = opt('out', 'scratch/video');
 const base = opt('url', 'http://localhost:5173');
 const jobs = Number(opt('jobs', '2'));
 const FPS = 24;
-mkdirSync(join(out, 'frames'), { recursive: true });
+for (const d of ['3d', 'layers']) mkdirSync(join(out, d), { recursive: true });
 
 async function open(browser) {
   const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
@@ -28,27 +34,34 @@ async function open(browser) {
   await page.waitForFunction(() => window.__ready === true, null, { timeout: 120000 });
   return page;
 }
-const shot = async (page, t, file) => {
-  await page.evaluate((x) => window.__render(x), t);
-  await page.screenshot({ path: file, type: 'jpeg', quality: 93, clip: { x: 0, y: 0, width: 1280, height: 720 } });
-};
 
 const browser = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
 const probe = await open(browser);
 const info = await probe.evaluate(() => window.__video);
 const total = Math.round(info.duration * FPS);
-
-if (opt('stills')) {
-  for (const t of opt('stills').split(',').map(Number)) await shot(probe, t, join(out, `still_${String(t).replace('.', '_')}.jpg`));
-  await browser.close();
-  process.exit(0);
-}
+const stills = opt('stills') ? opt('stills').split(',').map((t) => Math.round(Number(t) * FPS)) : null;
+const frameFile = (f) => join(out, '3d', `f_${String(f).padStart(5, '0')}.jpg`);
+const levelsFile = join(out, 'levels.json');
+const levels = existsSync(levelsFile) ? JSON.parse(readFileSync(levelsFile, 'utf8')) : {};
 
 if (!flag('encode-only')) {
-  const from = Math.round(Number(opt('from', '0')) * FPS);
-  const to = Math.min(total, Math.round(Number(opt('to', String(info.duration))) * FPS));
+  // Calques par segment (une page à part : son état ne sert plus au rendu 3D).
+  const lp = await open(browser);
+  for (let i = 0; i < info.segments.length; i++) {
+    // L'étiquette ne change pas : capturée au premier segment seulement.
+    for (const which of ['band', 'why', 'card', 'tag']) {
+      const file = join(out, 'layers', `${which}_${String(i).padStart(2, '0')}.png`);
+      if (existsSync(file) || (which === 'tag' && i > 0)) continue;
+      const has = await lp.evaluate(([k, w]) => window.__layer(k, w), [i, which]);
+      if ((which === 'why' && !has.why) || (which === 'card' && !has.card)) continue;
+      if (process.env.DEBUG) console.log('calque', which, i, has);
+      await lp.screenshot({ path: file, omitBackground: true, clip: { x: 0, y: 0, width: 1280, height: 720 } });
+    }
+  }
+  await lp.close();
+
   const todo = [];
-  for (let f = from; f < to; f++) if (!existsSync(join(out, 'frames', `f_${String(f).padStart(5, '0')}.jpg`))) todo.push(f);
+  for (let f = 0; f < total; f++) if ((!stills || stills.includes(f)) && (!existsSync(frameFile(f)) || !levels[f])) todo.push(f);
   console.log(`${info.duration.toFixed(1)} s, ${total} images ; ${todo.length} à rendre (${jobs} onglets)`);
   const pages = [probe];
   for (let i = 1; i < jobs; i++) pages.push(await open(browser));
@@ -57,17 +70,23 @@ if (!flag('encode-only')) {
   await Promise.all(pages.map(async (page, k) => {
     for (let i = k; i < todo.length; i += jobs) {
       const f = todo[i];
-      await shot(page, f / FPS, join(out, 'frames', `f_${String(f).padStart(5, '0')}.jpg`));
-      if (++done % 240 === 0) console.log(`${done}/${todo.length} · ${((Date.now() - t0) / done).toFixed(0)} ms/image`);
+      const r = await page.evaluate((x) => window.__frame(x), f / FPS);
+      writeFileSync(frameFile(f), Buffer.from(r.img.split(',')[1], 'base64'));
+      delete r.img;
+      levels[f] = r;
+      if (++done % 480 === 0) {
+        console.log(`${done}/${todo.length} · ${((Date.now() - t0) / done).toFixed(0)} ms/image`);
+        writeFileSync(levelsFile, JSON.stringify(levels));
+      }
     }
   }));
+  writeFileSync(levelsFile, JSON.stringify(levels));
 }
 await browser.close();
 
-const frames = readdirSync(join(out, 'frames')).filter((f) => f.endsWith('.jpg')).length;
-if (frames < total) { console.log(`Encodage reporté : ${frames}/${total} images.`); process.exit(0); }
-const mp4 = join(out, 'plancher_foreuse_diamants.mp4');
-execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-framerate', String(FPS), '-i', join(out, 'frames', 'f_%05d.jpg'),
-  '-c:v', 'libx264', '-preset', 'slow', '-crf', '23', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', mp4], { stdio: 'inherit' });
-execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-ss', '3.5', '-i', mp4, '-frames:v', '1', '-q:v', '4', join(out, 'plancher_poster.jpg')]);
-console.log(`→ ${mp4}`);
+const compose = ['scripts/video-plancher-compose.py', out, String(FPS)];
+if (stills) {
+  execFileSync('python3', [...compose, '--stills', stills.join(',')], { stdio: 'inherit' });
+} else {
+  execFileSync('python3', [...compose, String(total)], { stdio: 'inherit' });
+}

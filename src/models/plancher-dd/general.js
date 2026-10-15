@@ -1,7 +1,7 @@
 // Vue d'ensemble (P02) : plancher complet de 16 × 32 pi dans sa galerie, avec
 // la foreuse en silhouette et le matériel de sécurité de la procédure. Les
 // sous-assemblages sont construits dans le même repère et insérés tels quels.
-import { L, W, DECK, ground } from './plan.js';
+import { L, W, DECK, ground, STEPS } from './plan.js';
 import { labeler } from './lumber.js';
 import { gallery, paintLine, drill, barricade, cabinet, extinguisher } from './site.js';
 
@@ -29,5 +29,6 @@ export function P02(api) {
   const ext = extinguisher(S);
   ext.position.set(L - 1.35, DECK, W / 2 - 0.3);
   put('12', ext, [0, 2.6, 0.6], 18);
-  return { view: { dir: [1.05, 0.85, 1.2] } };
+  // steps : montage par étapes proposé sur cette vue (bouton « Montage »).
+  return { view: { dir: [1.05, 0.85, 1.2], steps: STEPS } };
 }

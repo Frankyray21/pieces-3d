@@ -244,15 +244,26 @@ function showSegment(s) {
   }
 }
 
+/** Opacités des calques à l'instant t (bandeau, texte du bandeau, « Pourquoi », carton). */
+function levels(t, s) {
+  const u = t - s.start;
+  const clamp = (x) => Math.min(1, Math.max(0, x));
+  return {
+    text: clamp(u / 0.35),
+    why: s.why ? clamp((u - 0.8) / 0.5) * clamp((s.dur - u) / 0.4) : 0,
+    card: s.card === 'title' ? (u < s.dur * 0.55 ? 1 : clamp(1 - (u - s.dur * 0.55) / 0.6)) : s.card === 'end' ? clamp((u - 1.2) / 0.6) : 0,
+    band: s.card === 'title' ? clamp((u - s.dur * 0.55) / 0.6) : 1,
+  };
+}
+
 function overlays(t, s) {
   if (shownSeg !== s) showSegment(s);
-  const u = t - s.start;
-  const fadeIn = Math.min(1, u / 0.35);
-  for (const id of ['num', 'title', 'text', 'detail']) $(id).style.opacity = fadeIn;
-  if (s.why) $('why').style.opacity = Math.min(1, Math.max(0, (u - 0.8) / 0.5)) * Math.min(1, (s.dur - u) / 0.4);
-  if (s.card === 'title') $('card').style.opacity = u < s.dur * 0.55 ? Math.min(1, u / 0.4 + 1) : Math.max(0, 1 - (u - s.dur * 0.55) / 0.6);
-  if (s.card === 'end') $('card').style.opacity = Math.min(1, Math.max(0, (u - 1.2) / 0.6));
-  $('band').style.opacity = s.card === 'title' ? Math.min(1, Math.max(0, (u - s.dur * 0.55) / 0.6)) : 1;
+  const lv = levels(t, s);
+  for (const id of ['num', 'title', 'text', 'detail']) $(id).style.opacity = lv.text;
+  $('why').style.opacity = lv.why;
+  $('card').style.opacity = lv.card;
+  $('band').style.opacity = lv.band;
+  return lv;
 }
 
 // ------------------------------------------------------------------ rendu d'une image
@@ -298,6 +309,27 @@ function render(t) {
 
 window.__video = { duration: DURATION, fps: 24, segments: SEGS.map(({ id, start, dur, band, lines }) => ({ id, start, dur, band, lines })) };
 window.__render = (t) => { render(t); return true; };
+// Capture rapide : la 3D seule (JPEG) et les opacités des calques ; les calques
+// eux-mêmes sont capturés une fois par segment (__layer), puis composés à part.
+window.__frame = (t) => {
+  render(t);
+  const s = segAt(t);
+  return { seg: SEGS.indexOf(s), ...levels(t, s), img: renderer.domElement.toDataURL('image/jpeg', 0.93) };
+};
+window.__layer = (i, which) => {
+  const s = SEGS[i];
+  showSegment(s);
+  document.body.style.background = 'transparent';
+  $('frame').style.background = 'transparent';
+  $('stage').style.visibility = 'hidden';
+  for (const id of ['band', 'why', 'card', 'tag']) {
+    const el = $(id);
+    el.style.visibility = id === which ? 'visible' : 'hidden';
+    el.style.opacity = 1;
+  }
+  for (const id of ['num', 'title', 'text', 'detail']) $(id).style.opacity = 1;
+  return { why: !!s.why, card: !!s.card };
+};
 // Aperçu dans le navigateur : lecture en temps réel (ou ?t=12.5 pour une image).
 const q = new URLSearchParams(location.search);
 if (q.has('t')) render(Number(q.get('t')));

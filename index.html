@@ -39,6 +39,7 @@
           <button type="button" class="tbtn strong" id="btn-explode-all" title="Éclater chaque groupe jusqu'au plus petit ensemble">Tout éclater</button>
         </div>
         <div class="tgroup">
+          <button type="button" class="tbtn" id="btn-steps" aria-pressed="false" title="Voir le montage étape par étape" hidden>Montage</button>
           <button type="button" class="tbtn" id="btn-section" aria-pressed="false" title="Vue en coupe">Coupe</button>
           <button type="button" class="tbtn" id="btn-labels" aria-pressed="true" title="Afficher les repères du manuel">Repères</button>
           <button type="button" class="tbtn" id="btn-edges" aria-pressed="false" title="Afficher les contours des pièces, comme les traits du dessin">Contours</button>
@@ -60,6 +61,20 @@
         </div>
       </div>
       <p class="hint" id="hint">Clic : identifier une pièce · double-clic sur un groupe : l'éclater sur place · glisser : tourner · clic droit : déplacer</p>
+      <div class="stepsbar" id="stepsbar" hidden>
+        <div class="st-head">
+          <button type="button" class="tbtn" id="st-prev" title="Étape précédente" aria-label="Étape précédente">◀</button>
+          <span class="st-num" id="st-num"></span>
+          <button type="button" class="tbtn" id="st-next" title="Étape suivante" aria-label="Étape suivante">▶</button>
+          <label class="sr" for="st-range">Étape du montage</label>
+          <input id="st-range" type="range" min="0" max="18" value="0">
+          <button type="button" class="tbtn" id="st-play" aria-pressed="false" title="Lecture automatique">Lecture</button>
+          <button type="button" class="tbtn" id="st-close" title="Fermer le montage (tout afficher)" aria-label="Fermer le montage">✕</button>
+        </div>
+        <strong class="st-title" id="st-title"></strong>
+        <p class="st-text" id="st-text"></p>
+        <button type="button" class="lnk st-page" id="st-page"></button>
+      </div>
       <div class="titleblock" id="titleblock"></div>
       <div class="loading" id="loading" hidden>Construction du modèle…</div>
       <div class="loading-detail" id="loadingDetail" hidden>Chargement des détails…</div>

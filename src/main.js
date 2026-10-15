@@ -67,6 +67,8 @@ const S = {
   isolate: false,
   explode: 0,
   section: { on: false, axis: 'z', pos: 0.5, flip: false, scope: 'all' },
+  steps: { on: false, n: 0 }, // montage par étapes (vue qui le propose : model.view.steps)
+  stepsList: null,
 };
 let viewer = null;
 
@@ -321,7 +323,9 @@ function viewInsets() {
   const vp = $('#viewport').getBoundingClientRect();
   const tools = $('#tools'), tb = $('#titleblock');
   const top = tools.hidden ? 0 : tools.getBoundingClientRect().bottom - vp.top + 6;
-  const bottom = tb.hidden || !tb.offsetHeight ? 0 : vp.bottom - tb.getBoundingClientRect().top + 6;
+  const sb = $('#stepsbar');
+  const above = (el) => (el.hidden || !el.offsetHeight ? 0 : vp.bottom - el.getBoundingClientRect().top + 6);
+  const bottom = Math.max(above(tb), above(sb));
   return { top, bottom };
 }
 
@@ -354,6 +358,7 @@ async function openAssembly(id, { select: selPath = null } = {}) {
   document.title = `${asm.titleFr} · ${eq.name} · Pièces 3D`;
   if (!has3d) {
     if (!same) { S.selected = null; S.expanded.clear(); showSheets(asm.sheets || [id]); }
+    S.stepsList = null;
     renderSectionBar();
   } else if (!same) {
     S.selected = null;
@@ -373,6 +378,8 @@ async function openAssembly(id, { select: selPath = null } = {}) {
       v.setModel(model);
       v.setIsolate(S.isolate && !S.view.home);
       if (ov && !LIGHT) upgradeDetail(model, builders, ov);
+      S.stepsList = model.view.steps || null;
+      S.steps = { on: false, n: 0 };
       S.section.axis = model.view.section?.axis || 'z';
       S.section.pos = model.view.section?.pos ?? 0.5;
       if (S.explode > 0 && !S.view.home) {
@@ -382,6 +389,7 @@ async function openAssembly(id, { select: selPath = null } = {}) {
     }
     renderSectionBar();
   }
+  renderSteps();
   // Page d'accueil : barre d'outils sans éclatement, consigne adaptée.
   $('#tools').classList.toggle('home', !!S.view.home);
   fitHomeChrome();
@@ -454,6 +462,86 @@ function explodeEverything(on) {
   viewer.frame();
   renderRows();
   renderDetail();
+}
+
+// ------------------------------------------------------------------ montage par étapes
+
+// Vue qui le propose (model.view.steps, ex. le plancher de foreuse) : les pièces
+// portent leur numéro d'étape ; le panneau avance d'une étape à l'autre, avec le
+// texte de l'étape et un lien vers sa page de la procédure.
+const STEP_MS = 4500;
+let stepTimer = null;
+
+function stopStepPlay() {
+  clearInterval(stepTimer);
+  stepTimer = null;
+  $('#st-play').setAttribute('aria-pressed', 'false');
+  $('#st-play').textContent = 'Lecture';
+}
+
+function renderSteps() {
+  const list = S.stepsList;
+  const on = !!list && S.steps.on && is3d();
+  $('#btn-steps').hidden = !list || !is3d();
+  $('#btn-steps').setAttribute('aria-pressed', String(on));
+  $('#stepsbar').hidden = !on;
+  $('#stage').classList.toggle('stepping', on);
+  if (!on) { stopStepPlay(); return; }
+  const n = S.steps.n, st = list[n], last = list.length - 1;
+  const range = $('#st-range');
+  range.max = last;
+  range.value = n;
+  $('#st-num').textContent = st.label || (n === 0 ? 'Avant' : `Étape ${n} / ${last}`);
+  $('#st-title').textContent = st.title;
+  $('#st-text').textContent = st.text;
+  const page = $('#st-page');
+  page.hidden = !st.page;
+  if (st.page) {
+    page.dataset.page = st.page;
+    page.textContent = `Voir la page ${st.page} de la procédure`;
+  }
+  $('#st-prev').disabled = n === 0;
+  $('#st-next').disabled = n === last;
+}
+
+function setStepN(n, { animate = true } = {}) {
+  const list = S.stepsList;
+  if (!list || !viewer) return;
+  S.steps.n = Math.max(0, Math.min(list.length - 1, n));
+  viewer.setStep(S.steps.n, { animate });
+  renderSteps();
+}
+
+function toggleSteps(on = !S.steps.on) {
+  if (!S.stepsList || !viewer) return;
+  S.steps.on = on;
+  if (on) {
+    if (S.explode > 0 || S.expanded.size) explodeEverything(false);
+    setStepN(0, { animate: false });
+    viewer.frame();
+  } else {
+    viewer.setStep(null);
+    renderSteps();
+    viewer.frame();
+  }
+}
+
+function bindSteps() {
+  $('#btn-steps').addEventListener('click', () => toggleSteps());
+  $('#st-close').addEventListener('click', () => toggleSteps(false));
+  $('#st-prev').addEventListener('click', () => { stopStepPlay(); setStepN(S.steps.n - 1, { animate: false }); });
+  $('#st-next').addEventListener('click', () => { stopStepPlay(); setStepN(S.steps.n + 1); });
+  $('#st-range').addEventListener('input', (e) => { stopStepPlay(); setStepN(Number(e.target.value), { animate: false }); });
+  $('#st-play').addEventListener('click', () => {
+    if (stepTimer) { stopStepPlay(); return; }
+    if (S.steps.n >= S.stepsList.length - 1) setStepN(0, { animate: false });
+    $('#st-play').setAttribute('aria-pressed', 'true');
+    $('#st-play').textContent = 'Pause';
+    stepTimer = setInterval(() => {
+      if (!S.steps.on || S.steps.n >= S.stepsList.length - 1) { stopStepPlay(); return; }
+      setStepN(S.steps.n + 1);
+    }, STEP_MS);
+  });
 }
 
 // ------------------------------------------------------------------ documents (schémas + listes)
@@ -934,6 +1022,7 @@ function setPane(p) {
 }
 
 function bindChrome() {
+  bindSteps();
   document.addEventListener('click', (e) => {
     const g = e.target.closest('[data-go]');
     if (g) {

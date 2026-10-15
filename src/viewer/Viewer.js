@@ -344,6 +344,8 @@ export class Viewer {
     }
     this.model = model;
     this.nodes = [];
+    this._stepLeaves = null;
+    this.step = null;
     model.root.traverse((o) => {
       if (o.userData.isAssembly) {
         o.userData.explodeT = 0;
@@ -433,6 +435,55 @@ export class Viewer {
       }
     }
     this.invalidate();
+  }
+
+  /**
+   * Montage par étapes (modèle dont les pièces portent userData.step, ex. le
+   * plancher de foreuse) : n'affiche que les pièces des étapes 0 à n ; null
+   * affiche tout. En avançant d'une étape, les nouvelles pièces descendent en
+   * place. Seules les pièces « feuilles » (sans pièce numérotée en dessous)
+   * sont masquées, si bien qu'un sous-assemblage peut mêler plusieurs étapes.
+   */
+  setStep(n, { animate = true } = {}) {
+    if (!this.model) return;
+    if (!this._stepLeaves) {
+      const hasStepBelow = (o) => o.children.some((c) => c.userData.step !== undefined || hasStepBelow(c));
+      this._stepLeaves = [];
+      this.model.root.traverse((o) => {
+        if (o !== this.model.root && o.userData.step !== undefined && !hasStepBelow(o)) this._stepLeaves.push(o);
+      });
+    }
+    const prev = this.step;
+    this.step = n;
+    const now = performance.now();
+    let i = 0;
+    for (const o of this._stepLeaves) {
+      const show = n == null || o.userData.step <= n;
+      const appears = show && !o.visible;
+      o.visible = show;
+      if (appears && animate && n != null && prev != null && o.userData.step === n && n > prev) {
+        // Descente en place, décalée d'une pièce à l'autre (ordre de construction).
+        const target = o.position.clone();
+        const delay = Math.min(i++ * 25, 900);
+        o.position.y = target.y + 0.45;
+        this.tweens.push({ start: now + delay, dur: 450, step: (k) => {
+          k = Math.max(0, k);
+          o.position.copy(target);
+          o.position.y += 0.45 * Math.pow(1 - k, 3);
+        } });
+      }
+    }
+    this._cullDirty = true;
+    this.labels.forEach((l) => { l.culled = false; });
+    this._refreshLabels();
+    this.invalidate();
+  }
+
+  /** Une pièce (ou un groupe) a-t-elle au moins un maillage affiché ? (montage par étapes) */
+  _anyShown(obj) {
+    if (!obj?.visible) return false;
+    if (obj.isMesh) return true;
+    return obj.children.some((c) => !c.isCSS2DObject && this._anyShown(c));
   }
 
   /** Demande un nouveau rendu. */
@@ -785,6 +836,9 @@ export class Viewer {
     for (const h of this.raycaster.intersectObject(root, true)) {
       const mesh = h.object;
       if (!mesh.isMesh || mesh.userData.state === 'ghost') continue;
+      let shown = true;
+      for (let a = mesh; a && a !== root; a = a.parent) if (!a.visible) { shown = false; break; }
+      if (!shown) continue;
       if (mesh.userData.cut && sectionPlane.distanceToPoint(h.point) < 0) continue;
       const chain = [];
       let o = mesh;
@@ -982,7 +1036,8 @@ export class Viewer {
     const root = this.model?.root;
     const dimOthers = (this.isolate || this.section.scope === 'selection') && this.selectedKey;
     for (const { key, owner, label, culled } of this.labels) {
-      label.visible = this.labelsVisible && (owner === root || owner.userData.explodeT > 0.05) && (!culled || key === this.selectedKey);
+      label.visible = this.labelsVisible && (owner === root || owner.userData.explodeT > 0.05) && (!culled || key === this.selectedKey)
+        && (this.step == null || this._anyShown(label.parent));
       const el = label.element;
       el.classList.toggle('is-selected', key === this.selectedKey);
       el.classList.toggle('is-hover', key === this.hoverKey);

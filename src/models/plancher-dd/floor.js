@@ -84,8 +84,8 @@ export function P10(api, opts = {}) {
       // Sous un soutien, les blocages s'alignent vis-à-vis le croisement (étape 11).
       const st = onSleeper ? stack(x, z, -B66, 'x') : stack(x, z, 0, 'z');
       const crib = st.pieces.some((p) => p.kind === 'crib');
-      if (crib) placeStack(api, st, { labeled, step: 11, group: { ref: '6', explode: [0, 0.1, 0.35] } });
-      else placeStack(api, st, { refs: { b38: '3', b66: '4', wedge: '5' }, labeled, step: 11, explode: { wedge: [0, 0.22, 0], b38: [0, 0.1, 0] } });
+      if (crib) placeStack(api, st, { labeled, step: onSleeper ? 10 : 11, group: { ref: '6', explode: [0, 0.1, 0.35] } });
+      else placeStack(api, st, { refs: { b38: '3', b66: '4', wedge: '5' }, labeled, step: onSleeper ? 10 : 11, explode: { wedge: [0, 0.22, 0], b38: [0, 0.1, 0] } });
     }
   }
   return { view: { dir: [-0.85, 0.7, 1.2] } };
