@@ -8,7 +8,7 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { timeline } from '../src/video/plancher-script.js';
 
-const VOIX = { 1: 'Formateur', 2: 'Travailleur' };
+const VOIX = { 1: 'Formateur', 2: 'Travailleuse' }; // voix d'homme, voix de femme
 // Formes à dire plutôt qu'à lire (sigles, numéros de procédure).
 const DIT = [
   [/PRO-DD-ST-003/g, 'P-R-O, D-D, S-T, zéro zéro trois'],
@@ -41,7 +41,7 @@ const md = [
   '',
   `Procédure PRO-DD-ST-003 (révision juillet 2026). Vidéo de ${tc(total)} (${total.toFixed(1)} s), ${rows.length} répliques, ${rows.reduce((n, r) => n + r.mots, 0)} mots.`,
   '',
-  'Deux voix, comme la vidéo du mandrin : **Formateur** (voix 1, posée, québécoise) et **Travailleur** (voix 2, aide-foreur). Coller `script-elevenlabs.txt` dans le mode dialogue d’ElevenLabs et associer chaque nom à sa voix. Débit visé : environ 2,5 mots par seconde. Les sigles sont écrits comme ils se disent (P-R-O, D-D, S-T, zéro zéro trois ; R-S-S-T).',
+  'Deux voix, comme la vidéo du mandrin : **Formateur** (voix 1, homme, posée, québécoise) et **Travailleuse** (voix 2, femme, aide-foreuse). Coller `script-elevenlabs.txt` dans le mode dialogue d’ElevenLabs et associer chaque nom à sa voix. Débit visé : environ 2,5 mots par seconde. Les sigles sont écrits comme ils se disent (P-R-O, D-D, S-T, zéro zéro trois ; R-S-S-T).',
   '',
   'Le minutage est celui de la vidéo actuelle. Une fois l’audio enregistré, la vidéo peut être recalée sur la voix (comme la vidéo du mandrin).',
   '',

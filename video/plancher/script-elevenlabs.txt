@@ -1,12 +1,12 @@
 Formateur: Aujourd'hui, on bâtit un plancher de foreuse au diamant sous terre : seize pieds par trente-deux.
 
-Travailleur: Le plancher complet, celui des trous de cinq cents mètres et plus ?
+Travailleuse: Le plancher complet, celui des trous de cinq cents mètres et plus ?
 
 Formateur: Exactement. On suit la procédure P-R-O, D-D, S-T, zéro zéro trois, étape par étape.
 
 Formateur: Avant de commencer : la barricade travaux en cours avec son flasher orange, l'armoire avec la trousse de premiers soins pis les deux lave-yeux, l'extincteur.
 
-Travailleur: Pis le bois : du six par six brut, du trois par huit brut, des coins pis des tire-fonds de six pouces.
+Travailleuse: Pis le bois : du six par six brut, du trois par huit brut, des coins pis des tire-fonds de six pouces.
 
 Formateur: Une règle qui change pas : les grosses pièces de bois, on les transporte toujours à deux.
 
@@ -18,7 +18,7 @@ Formateur: Étape deux : avec le niveau au laser Bosch, on trouve le point le pl
 
 Formateur: Étape trois : la structure de base en six par six, dans le sens contraire du forage. Les patins de la foreuse vont croiser les madriers.
 
-Travailleur: Pis en partant du point haut, on monte pas plus haut qu'il faut.
+Travailleuse: Pis en partant du point haut, on monte pas plus haut qu'il faut.
 
 Formateur: C'est ça : moins de blocage, moins de bois à forcer, moins de temps perdu.
 
@@ -32,13 +32,13 @@ Formateur: Au bout de la première section, on met tout de suite le blocage qui 
 
 Formateur: Étape six : on couvre avec du trois par huit brut, dans le sens contraire des six par six. La première planche est vissée avec des tire-fonds à chaque bout, pis on avance.
 
-Travailleur: On part de quel bord ?
+Travailleuse: On part de quel bord ?
 
 Formateur: Du bord où tu peux marcher sur ce qui est déjà couvert. On enjambe jamais les six par six : c'est là qu'on trébuche.
 
 Formateur: Étape sept : rendu à la moitié, on resserre. On visse la dernière planche, on enfonce des coins pour mettre les planches en tension, on visse la planche devant les coins, pis on retire les tire-fonds pour libérer les coins.
 
-Travailleur: Sinon, à la longue, ça ouvre.
+Travailleuse: Sinon, à la longue, ça ouvre.
 
 Formateur: Étape huit : on laisse environ deux planches libres au bout. Ça donne la place pour partir la deuxième section ; on les visse à la fin pour joindre les deux.
 
@@ -46,7 +46,7 @@ Formateur: Étape neuf : la deuxième section. Le laser donne la hauteur à sout
 
 Formateur: Étape dix : un madrier à seize pieds de la première section sert de guide. Quand la hauteur le permet, des six par six de seize pieds en dessous, dans le sens contraire.
 
-Travailleur: Ça fait une base stable pour poser les madriers dessus.
+Travailleuse: Ça fait une base stable pour poser les madriers dessus.
 
 Formateur: Étape onze : les madriers à trente-deux pouces centre, à la même hauteur que la première section. Les soutiens, toujours vis-à-vis le croisement des six par six.
 
@@ -60,7 +60,7 @@ Formateur: Étape quatorze : ici, le plancher dépasse douze pouces. Il faut des
 
 Formateur: Étape quinze : plus de douze pouces de haut, des garde-corps selon l'article douze du R-S-S-T. La lisse du haut entre un mètre pis un mètre vingt, une lisse à mi-hauteur, pis une plinthe d'au moins quatre-vingt-dix millimètres.
 
-Travailleur: Pis ça doit tenir combien ?
+Travailleuse: Pis ça doit tenir combien ?
 
 Formateur: Neuf cents newtons de côté, quatre cent cinquante vers le bas, sur la lisse du haut.
 
@@ -80,4 +80,4 @@ Formateur: À retenir : le premier madrier au point le plus haut, six appuis min
 
 Formateur: Plus de douze pouces : marches, garde-corps pis mains courantes. Pis le gros bois, toujours à deux.
 
-Travailleur: Compris. On est prêts à bâtir.
+Travailleuse: Compris. On est prêts à bâtir.

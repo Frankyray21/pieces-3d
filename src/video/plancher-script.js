@@ -6,7 +6,7 @@
 //              la procédure, détail = repères en gris) ;
 //   why      : encadré « Pourquoi » (texte de la procédure quand elle le donne) ;
 //   lines    : la narration, dialogue à deux voix pour ElevenLabs
-//              (orateur 1 = formateur, 2 = travailleur) ;
+//              (orateur 1 = formateur, voix d'homme ; 2 = travailleuse, voix de femme) ;
 //   reveal   : pièces qui apparaissent, par « cue » (voir plancher-video.js),
 //              à une fraction du segment (at) et étalées sur une fraction (span) ;
 //   show     : objets propres à la vidéo (laser, niveau, coins de serrage) ;
