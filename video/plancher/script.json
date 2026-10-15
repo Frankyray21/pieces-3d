@@ -1,0 +1,338 @@
+[
+ {
+  "passage": "titre",
+  "etape": null,
+  "orateur": 1,
+  "texte": "Aujourd'hui, on bâtit un plancher de foreuse au diamant sous terre : seize pieds par trente-deux.",
+  "mots": 16,
+  "debut": 0.6
+ },
+ {
+  "passage": "titre",
+  "etape": null,
+  "orateur": 2,
+  "texte": "Le plancher complet, celui des trous de cinq cents mètres et plus ?",
+  "mots": 13,
+  "debut": 7.6
+ },
+ {
+  "passage": "titre",
+  "etape": null,
+  "orateur": 1,
+  "texte": "Exactement. On suit la procédure P-R-O, D-D, S-T, zéro zéro trois, étape par étape.",
+  "mots": 9,
+  "debut": 13.4
+ },
+ {
+  "passage": "materiel",
+  "etape": null,
+  "orateur": 1,
+  "texte": "Avant de commencer : la barricade travaux en cours avec son flasher orange, l'armoire avec la trousse de premiers soins pis les deux lave-yeux, l'extincteur.",
+  "mots": 25,
+  "debut": 18.1
+ },
+ {
+  "passage": "materiel",
+  "etape": null,
+  "orateur": 2,
+  "texte": "Pis le bois : du six par six brut, du trois par huit brut, des coins pis des tire-fonds de six pouces.",
+  "mots": 22,
+  "debut": 28.7
+ },
+ {
+  "passage": "materiel",
+  "etape": null,
+  "orateur": 1,
+  "texte": "Une règle qui change pas : les grosses pièces de bois, on les transporte toujours à deux.",
+  "mots": 17,
+  "debut": 38.1
+ },
+ {
+  "passage": "inspection",
+  "etape": "0",
+  "orateur": 1,
+  "texte": "Le superviseur inspecte les lieux avant d'amener l'équipement : un sol sans débris, plat, pis les fonds de trous trouvés et marqués sur le mur.",
+  "mots": 25,
+  "debut": 46
+ },
+ {
+  "passage": "e1",
+  "etape": "1",
+  "orateur": 1,
+  "texte": "Étape un : plan de forage en main, on place le plancher d'après la position prévue de la foreuse. On trace la ligne à la peinture, bien droite sur toute la longueur : seize par trente-deux.",
+  "mots": 36,
+  "debut": 57.6
+ },
+ {
+  "passage": "e2",
+  "etape": "2",
+  "orateur": 1,
+  "texte": "Étape deux : avec le niveau au laser Bosch, on trouve le point le plus haut du sol. Le premier madrier repose directement là, sur le sol : c'est le repère de niveau pour tout le reste.",
+  "mots": 37,
+  "debut": 73.6
+ },
+ {
+  "passage": "e3",
+  "etape": "3",
+  "orateur": 1,
+  "texte": "Étape trois : la structure de base en six par six, dans le sens contraire du forage. Les patins de la foreuse vont croiser les madriers.",
+  "mots": 26,
+  "debut": 90
+ },
+ {
+  "passage": "e3",
+  "etape": "3",
+  "orateur": 2,
+  "texte": "Pis en partant du point haut, on monte pas plus haut qu'il faut.",
+  "mots": 13,
+  "debut": 101.1
+ },
+ {
+  "passage": "e3",
+  "etape": "3",
+  "orateur": 1,
+  "texte": "C'est ça : moins de blocage, moins de bois à forcer, moins de temps perdu.",
+  "mots": 15,
+  "debut": 106.8
+ },
+ {
+  "passage": "e4",
+  "etape": "4",
+  "orateur": 1,
+  "texte": "Étape quatre : un six par six à seize pieds du premier, pour un cadrage de seize par seize bien droit. Les autres entre les deux, à trente-deux pouces centre.",
+  "mots": 30,
+  "debut": 113.9
+ },
+ {
+  "passage": "e5",
+  "etape": "5",
+  "orateur": 1,
+  "texte": "Étape cinq : la mise de niveau. Un niveau de quarante-huit pouces sur un trois par huit d'au moins huit pieds, pour avoir de la portée.",
+  "mots": 26,
+  "debut": 127.5
+ },
+ {
+  "passage": "e5",
+  "etape": "5",
+  "orateur": 1,
+  "texte": "Sous chaque madrier : des blocages dans le sens contraire, pis des coins de bois pour ajuster. Au moins six appuis par six par six.",
+  "mots": 25,
+  "debut": 138.4
+ },
+ {
+  "passage": "e5b",
+  "etape": "5",
+  "orateur": 1,
+  "texte": "Au bout de la première section, on met tout de suite le blocage qui va porter aussi les madriers de la deuxième. Les deux sections vont être parfaitement égales.",
+  "mots": 29,
+  "debut": 149.9
+ },
+ {
+  "passage": "e6",
+  "etape": "6",
+  "orateur": 1,
+  "texte": "Étape six : on couvre avec du trois par huit brut, dans le sens contraire des six par six. La première planche est vissée avec des tire-fonds à chaque bout, pis on avance.",
+  "mots": 33,
+  "debut": 163.1
+ },
+ {
+  "passage": "e6",
+  "etape": "6",
+  "orateur": 2,
+  "texte": "On part de quel bord ?",
+  "mots": 6,
+  "debut": 177
+ },
+ {
+  "passage": "e6",
+  "etape": "6",
+  "orateur": 1,
+  "texte": "Du bord où tu peux marcher sur ce qui est déjà couvert. On enjambe jamais les six par six : c'est là qu'on trébuche.",
+  "mots": 24,
+  "debut": 179.8
+ },
+ {
+  "passage": "e7",
+  "etape": "7",
+  "orateur": 1,
+  "texte": "Étape sept : rendu à la moitié, on resserre. On visse la dernière planche, on enfonce des coins pour mettre les planches en tension, on visse la planche devant les coins, pis on retire les tire-fonds pour libérer les coins.",
+  "mots": 40,
+  "debut": 190.6
+ },
+ {
+  "passage": "e7",
+  "etape": "7",
+  "orateur": 2,
+  "texte": "Sinon, à la longue, ça ouvre.",
+  "mots": 6,
+  "debut": 207.2
+ },
+ {
+  "passage": "e8",
+  "etape": "8",
+  "orateur": 1,
+  "texte": "Étape huit : on laisse environ deux planches libres au bout. Ça donne la place pour partir la deuxième section ; on les visse à la fin pour joindre les deux.",
+  "mots": 31,
+  "debut": 210.9
+ },
+ {
+  "passage": "e9",
+  "etape": "9",
+  "orateur": 1,
+  "texte": "Étape neuf : la deuxième section. Le laser donne la hauteur à soutenir sous les six par six. Ici, le sol descend : il faut monter.",
+  "mots": 26,
+  "debut": 224.9
+ },
+ {
+  "passage": "e10",
+  "etape": "10",
+  "orateur": 1,
+  "texte": "Étape dix : un madrier à seize pieds de la première section sert de guide. Quand la hauteur le permet, des six par six de seize pieds en dessous, dans le sens contraire.",
+  "mots": 33,
+  "debut": 236.9
+ },
+ {
+  "passage": "e10",
+  "etape": "10",
+  "orateur": 2,
+  "texte": "Ça fait une base stable pour poser les madriers dessus.",
+  "mots": 10,
+  "debut": 250.7
+ },
+ {
+  "passage": "e11",
+  "etape": "11",
+  "orateur": 1,
+  "texte": "Étape onze : les madriers à trente-deux pouces centre, à la même hauteur que la première section. Les soutiens, toujours vis-à-vis le croisement des six par six.",
+  "mots": 27,
+  "debut": 256.1
+ },
+ {
+  "passage": "e11",
+  "etape": "11",
+  "orateur": 1,
+  "texte": "Dans un creux comme celui-là, on monte une cage : des bouts de vingt-quatre à trente-six pouces, empilés croisés.",
+  "mots": 19,
+  "debut": 267.4
+ },
+ {
+  "passage": "e12",
+  "etape": "12",
+  "orateur": 1,
+  "texte": "Étape douze : on couvre la deuxième section en répétant les étapes six pis sept. Les deux planches de jonction sont vissées à la fin.",
+  "mots": 25,
+  "debut": 276.4
+ },
+ {
+  "passage": "e13",
+  "etape": "13",
+  "orateur": 1,
+  "texte": "Étape treize : rien ne dépasse. Les bouts de six par six pis de trois par huit sont coupés carrés, égal avec le bord. Un bout qui dépasse, c'est une chute.",
+  "mots": 31,
+  "debut": 288
+ },
+ {
+  "passage": "e14",
+  "etape": "14",
+  "orateur": 1,
+  "texte": "Étape quatorze : ici, le plancher dépasse douze pouces. Il faut des marches : seize pouces de profondeur, entre trente-six pis soixante pouces de large, douze pouces de haut au maximum. On vise neuf.",
+  "mots": 34,
+  "debut": 302
+ },
+ {
+  "passage": "e15",
+  "etape": "15",
+  "orateur": 1,
+  "texte": "Étape quinze : plus de douze pouces de haut, des garde-corps selon l'article douze du R-S-S-T. La lisse du haut entre un mètre pis un mètre vingt, une lisse à mi-hauteur, pis une plinthe d'au moins quatre-vingt-dix millimètres.",
+  "mots": 38,
+  "debut": 317.2
+ },
+ {
+  "passage": "e15",
+  "etape": "15",
+  "orateur": 2,
+  "texte": "Pis ça doit tenir combien ?",
+  "mots": 6,
+  "debut": 333.2
+ },
+ {
+  "passage": "e15",
+  "etape": "15",
+  "orateur": 1,
+  "texte": "Neuf cents newtons de côté, quatre cent cinquante vers le bas, sur la lisse du haut.",
+  "mots": 16,
+  "debut": 336
+ },
+ {
+  "passage": "e16",
+  "etape": "16",
+  "orateur": 1,
+  "texte": "Étape seize : plus d'une marche, des mains courantes des deux bords.",
+  "mots": 12,
+  "debut": 343.5
+ },
+ {
+  "passage": "e17",
+  "etape": "17",
+  "orateur": 1,
+  "texte": "Étape dix-sept : entre le plancher pis le mur, douze pouces ou moins ? Un grillage de vingt-quatre pouces au bas du mur. Le pied passe pas dans le trou.",
+  "mots": 30,
+  "debut": 350.5
+ },
+ {
+  "passage": "sec",
+  "etape": "18",
+  "orateur": 1,
+  "texte": "La foreuse s'installe. À côté de la tour, le plancher secondaire : au moins trente-deux par soixante-douze pouces, douze pouces de haut au maximum, rien en porte-à-faux.",
+  "mots": 27,
+  "debut": 364.1
+ },
+ {
+  "passage": "sec",
+  "etape": "18",
+  "orateur": 1,
+  "texte": "Les deux planches les plus proches sont vissées, la dernière arrive à trois pouces de la tour. À chaque changement d'angle, on les ajuste. Pis pas de bois plané sur les planchers.",
+  "mots": 32,
+  "debut": 375.4
+ },
+ {
+  "passage": "demont",
+  "etape": null,
+  "orateur": 1,
+  "texte": "Au démantèlement, c'est l'inverse : le plancher secondaire d'abord, le principal en commençant par les planches du fond, les tire-fonds enlevés à mesure.",
+  "mots": 23,
+  "debut": 389.6
+ },
+ {
+  "passage": "demont",
+  "etape": null,
+  "orateur": 1,
+  "texte": "À la fin : clôture orange pis carte de ruban rouge. Trou non arpenté et non cimenté, la date, le nom du superviseur.",
+  "mots": 23,
+  "debut": 399.3
+ },
+ {
+  "passage": "fin",
+  "etape": null,
+  "orateur": 1,
+  "texte": "À retenir : le premier madrier au point le plus haut, six appuis minimum par six par six, enlignés aux croisements.",
+  "mots": 21,
+  "debut": 409.9
+ },
+ {
+  "passage": "fin",
+  "etape": null,
+  "orateur": 1,
+  "texte": "Plus de douze pouces : marches, garde-corps pis mains courantes. Pis le gros bois, toujours à deux.",
+  "mots": 17,
+  "debut": 419
+ },
+ {
+  "passage": "fin",
+  "etape": null,
+  "orateur": 2,
+  "texte": "Compris. On est prêts à bâtir.",
+  "mots": 6,
+  "debut": 426.5
+ }
+]

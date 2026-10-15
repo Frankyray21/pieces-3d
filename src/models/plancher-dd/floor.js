@@ -224,7 +224,7 @@ export function P16(api, opts = {}) {
   }
   // Grillage de 24 po fixé au bas de chaque mur (écart plancher-mur de 12 po).
   for (const s of [-1, 1]) {
-    const m = wireMesh(S, L + 0.6, 24 * IN, 2 * IN);
+    const m = wireMesh(S, L + 0.6, 24 * IN, 2 * IN, 'zinc', 0.005);
     m.position.set(L / 2, DECK - 0.3, s * (GAL - 0.04));
     put('6', m, [0, 0, s * 0.5], 17);
   }

@@ -33,7 +33,7 @@ const FIN = {
   // teinte inégales ; roche de galerie : relief marqué, mate.
   wood: { fine: 0.08, wave: 0.02, rough: 0.25, tint: 0.3, fs: 24, cs: 2.4, env: 0.45 },
   woodPlaned: { fine: 0.03, wave: 0.008, rough: 0.18, tint: 0.2, fs: 24, cs: 2.4, env: 0.5 },
-  rock: { fine: 0.3, wave: 0.12, rough: 0.2, tint: 0.35, fs: 9, cs: 0.7, env: 0.35 },
+  rock: { fine: 0.3, wave: 0.12, rough: 0.2, tint: 0.22, fs: 9, cs: 0.7, env: 0.35 },
 };
 
 // Peinture industrielle vernie (polyuréthane) : base satinée + vernis brillant.
@@ -85,7 +85,7 @@ const defs = {
   woodPlaned: { color: 0xd6b88a, metalness: 0, roughness: 0.7, fin: 'woodPlaned' },
   woodWedge: { color: 0xcda873, metalness: 0, roughness: 0.75, fin: 'woodPlaned' },
   // Galerie souterraine : roche, sol de roche concassée, peinture de marquage fluo.
-  rock: { color: 0x55595e, metalness: 0, roughness: 0.92, fin: 'rock' },
+  rock: { color: 0x474a4e, metalness: 0, roughness: 0.92, fin: 'rock' },
   rockFloor: { color: 0x3d3f42, metalness: 0, roughness: 0.95, fin: 'rock' },
   fluoRed: { color: 0xff3020, emissive: 0x5a0800, emissiveIntensity: 1, roughness: 0.6 },
   fluoOrange: { color: 0xff7a10, emissive: 0x4a1800, emissiveIntensity: 1, roughness: 0.55 },
