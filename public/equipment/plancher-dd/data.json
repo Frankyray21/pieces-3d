@@ -1,0 +1,752 @@
+{
+ "id": "plancher-dd",
+ "name": "Plancher pour foreuse aux diamants sous terre",
+ "manufacturer": "Machines Roger International",
+ "category": "Procédure de travail",
+ "serial": "PRO-DD-ST-003",
+ "document": {
+  "title": "Procédure de travail : fabrication d'un plancher pour foreuse aux diamants sous terre",
+  "reference": "PRO-DD-ST-003",
+  "preparedBy": "Machines Roger International (C. St-Amour, directeur des opérations ; révision É. Thibeault, F. Croteau)",
+  "date": "2026-07-27",
+  "sheets": 19,
+  "pagePattern": "pages/{sheet}.webp"
+ },
+ "specs": [
+  [
+   "Plancher complet",
+   "16 × 32 pi (deux sections de 16 × 16 pi)"
+  ],
+  [
+   "Structure de base",
+   "Madriers 6 × 6 brut, environ 32 po centre"
+  ],
+  [
+   "Recouvrement",
+   "Planches 3 × 8 brut, tire-fonds 6 po"
+  ],
+  [
+   "Hauteur du plancher",
+   "9 po au point le plus haut du sol"
+  ],
+  [
+   "Marches",
+   "16 po de profondeur, 36 à 60 po de large, 12 po de haut au plus"
+  ],
+  [
+   "Garde-corps",
+   "RSST art. 12, plancher de plus de 12 po"
+  ],
+  [
+   "ÉPI",
+   "Équipement de base obligatoire"
+  ]
+ ],
+ "weights": [
+  [
+   "Toujours transporter les grosses pièces de bois",
+   "à deux"
+  ]
+ ],
+ "sheetTitles": {
+  "P01": "Page couverture : objectif, application, responsabilités, matériel",
+  "P02": "Inspection des lieux et marquage (étape 1)",
+  "P03": "Point le plus haut et structure de base (étapes 2 et 3)",
+  "P04": "Cadrage 16 × 16 pi et mise de niveau (étapes 4 et 5)",
+  "P05": "Blocages et coins de bois",
+  "P06": "Blocage de jonction des sections",
+  "P07": "Recouvrement en 3 × 8 (étape 6)",
+  "P08": "Resserrer les planches avec des coins (étape 7)",
+  "P09": "Deux planches libres ; section 2 au laser (étapes 8 et 9)",
+  "P10": "Section 2 : madrier guide et soutiens 6 × 6 (étape 10)",
+  "P11": "Section 2 : madriers à 32 po centre",
+  "P12": "Soutiens alignés et cage de bois (étape 11)",
+  "P13": "Recouvrement de la section 2, bouts au ras (étapes 12 et 13)",
+  "P14": "Marches (étape 14)",
+  "P15": "Exemple de marches superposées",
+  "P16": "Garde-corps RSST art. 12, lisse inférieure, mains courantes, grillage (étapes 15 à 17)",
+  "P17": "Plancher secondaire",
+  "P18": "Démantèlement et fermeture du site",
+  "P19": "Critères de choix des planchers ; révisions"
+ },
+ "root": "P02",
+ "assemblies": {
+  "P02": {
+   "title": "Plancher complet 16 × 32 pi dans sa galerie",
+   "titleFr": "Plancher complet 16 × 32 pi dans sa galerie",
+   "sheets": [
+    "P02",
+    "P01"
+   ],
+   "note": "Reconstitution 3D d'après la procédure PRO-DD-ST-003 (révision juillet 2026). Sol de galerie fictif : il descend vers le bout de la galerie pour montrer les blocages, les soutiens, la cage, les marches et les garde-corps que la procédure exige. La foreuse est une silhouette (position, patins croisant les 6 × 6), pas un modèle de pièces. Chaque pièce porte son numéro d'étape pour l'animation du montage.",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "Ligne de référence en peinture (rive du premier madrier, repères à 16 et 32 pi)",
+     {
+      "note": "Étape 1 : tracée avec le plan de forage en main.",
+      "pnText": "Peinture fluo"
+     }
+    ],
+    [
+     "2",
+     "",
+     1,
+     "Structure de base, section 1 (16 × 16 pi)",
+     {
+      "link": "P04",
+      "pseudo": true
+     }
+    ],
+    [
+     "3",
+     "",
+     1,
+     "Recouvrement en 3 × 8, section 1",
+     {
+      "link": "P07",
+      "pseudo": true
+     }
+    ],
+    [
+     "4",
+     "",
+     1,
+     "Structure de base, section 2 (16 × 16 pi)",
+     {
+      "link": "P10",
+      "pseudo": true
+     }
+    ],
+    [
+     "5",
+     "",
+     1,
+     "Recouvrement en 3 × 8, section 2",
+     {
+      "link": "P13",
+      "pseudo": true
+     }
+    ],
+    [
+     "6",
+     "",
+     1,
+     "Marches et mains courantes",
+     {
+      "link": "P14",
+      "pseudo": true
+     }
+    ],
+    [
+     "7",
+     "",
+     1,
+     "Garde-corps, lisse inférieure et grillage",
+     {
+      "link": "P16",
+      "pseudo": true
+     }
+    ],
+    [
+     "8",
+     "",
+     1,
+     "Plancher secondaire à côté de la tour",
+     {
+      "link": "P17",
+      "pseudo": true
+     }
+    ],
+    [
+     "9",
+     "",
+     1,
+     "Foreuse aux diamants (silhouette, repère de position)",
+     {
+      "note": "Patins dans le sens du forage : ils croisent les madriers 6 × 6 (étape 3).",
+      "pseudo": true
+     }
+    ],
+    [
+     "10",
+     "",
+     1,
+     "Barricade travaux en cours avec flasher orange",
+     {
+      "pnText": "Matériel nécessaire"
+     }
+    ],
+    [
+     "11",
+     "",
+     1,
+     "Armoire : trousse de premiers soins et lave-yeux (2)",
+     {
+      "pnText": "Matériel nécessaire"
+     }
+    ],
+    [
+     "12",
+     "",
+     1,
+     "Extincteur",
+     {
+      "pnText": "Matériel nécessaire"
+     }
+    ],
+    [
+     "G",
+     "",
+     null,
+     "Galerie (contexte : sol de roche concassée, murs coupés, cibles des fonds de trous)",
+     {
+      "pseudo": true
+     }
+    ]
+   ]
+  },
+  "P04": {
+   "title": "Structure de base, section 1 (16 × 16 pi)",
+   "titleFr": "Structure de base, section 1 (16 × 16 pi)",
+   "sheets": [
+    "P03",
+    "P04",
+    "P05",
+    "P06"
+   ],
+   "note": "Écart dans la procédure : « un 6 × 6 à 16 pi de votre premier » puis « les 4 autres à 32 po centre » donne 6 madriers, mais 6 madriers sur 16 pi sont à 38 po centre, et 32 po centre sur 16 pi demande 7 madriers. La 3D en met 7 (environ 31 po centre, faces au ras des planches) ; le nombre est une constante de plan.js (JOISTS).",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "Premier madrier 6 × 6 × 16 pi, sur la ligne de peinture, au point le plus haut",
+     {
+      "note": "Étape 2 : il repose directement sur le sol, repère de niveau des autres.",
+      "pnText": "6 × 6 brut × 16 pi"
+     }
+    ],
+    [
+     "2",
+     "",
+     6,
+     "Madrier 6 × 6 × 16 pi (structure de base)",
+     {
+      "pnText": "6 × 6 brut × 16 pi"
+     }
+    ],
+    [
+     "3",
+     "",
+     7,
+     "Blocage 3 × 8 (24 po), dans le sens contraire des madriers",
+     {
+      "pnText": "3 × 8 brut × 24 po"
+     }
+    ],
+    [
+     "5",
+     "",
+     30,
+     "Coin de bois (mise de niveau)",
+     {
+      "note": "Au moins 6 appuis par madrier (étape 5) ; aux appuis où le sol touche le madrier, pas de coin.",
+      "pnText": "Coin de bois"
+     }
+    ],
+    [
+     "6",
+     "",
+     7,
+     "Blocage de jonction (porte aussi les madriers de la section 2)",
+     {
+      "note": "Étape 5 : placé en mettant de niveau le bout des 6 × 6 de la section 1.",
+      "pnText": "3 × 8 / 6 × 6 brut"
+     }
+    ],
+    [
+     "G",
+     "",
+     null,
+     "Sol de la galerie (contexte, vue seule)",
+     {
+      "pseudo": true
+     }
+    ]
+   ]
+  },
+  "P07": {
+   "title": "Recouvrement en 3 × 8, section 1",
+   "titleFr": "Recouvrement en 3 × 8, section 1",
+   "sheets": [
+    "P07",
+    "P08",
+    "P09"
+   ],
+   "note": "Planches posées dans le sens contraire des 6 × 6, en avançant sur la surface déjà couverte (ne pas enjamber les 6 × 6). Resserrage aux coins à environ 50 % (étape 7) : coins enfoncés, planche vissée devant, coins libérés. Deux planches laissées libres puis vissées à la fin pour joindre les sections (étape 8).",
+   "parts": [
+    [
+     "1",
+     "",
+     22,
+     "Planche 3 × 8 × 16 pi",
+     {
+      "pnText": "3 × 8 brut × 16 pi"
+     }
+    ],
+    [
+     "2",
+     "",
+     2,
+     "Planche de jonction 3 × 8 × 16 pi (posée à la fin)",
+     {
+      "pnText": "3 × 8 brut × 16 pi"
+     }
+    ],
+    [
+     "3",
+     "",
+     48,
+     "Tire-fond 6 po, à chaque extrémité des planches",
+     {
+      "qty3d": 1,
+      "note": "Un objet 3D pour tous les tire-fonds de la section.",
+      "pnText": "Tire-fond 6 po"
+     }
+    ],
+    [
+     "G",
+     "",
+     null,
+     "Sol de la galerie (contexte, vue seule)",
+     {
+      "pseudo": true
+     }
+    ]
+   ]
+  },
+  "P10": {
+   "title": "Structure de base, section 2 (16 × 16 pi)",
+   "titleFr": "Structure de base, section 2 (16 × 16 pi)",
+   "sheets": [
+    "P10",
+    "P11"
+   ],
+   "note": "Étapes 9 à 11 : hauteur au laser, madrier guide à 16 pi de la section 1, soutiens 6 × 6 de 16 pi dans le sens contraire là où la hauteur le permet (ici sur les cinq lignes d'appui, le sol descend vers le bout), blocages alignés vis-à-vis des croisements, cage de bois dans le creux du coin.",
+   "parts": [
+    [
+     "1",
+     "",
+     7,
+     "Madrier 6 × 6 × 16 pi",
+     {
+      "pnText": "6 × 6 brut × 16 pi"
+     }
+    ],
+    [
+     "2",
+     "",
+     5,
+     "Soutien 6 × 6 × 16 pi dans le sens contraire (le plus éloigné sert de madrier guide)",
+     {
+      "pnText": "6 × 6 brut × 16 pi"
+     }
+    ],
+    [
+     "3",
+     "",
+     21,
+     "Blocage 3 × 8 (24 po)",
+     {
+      "pnText": "3 × 8 brut × 24 po"
+     }
+    ],
+    [
+     "4",
+     "",
+     28,
+     "Blocage 6 × 6 (18 po)",
+     {
+      "pnText": "6 × 6 brut × 18 po"
+     }
+    ],
+    [
+     "5",
+     "",
+     34,
+     "Coin de bois ou paire de coins opposés",
+     {
+      "pnText": "Coin de bois"
+     }
+    ],
+    [
+     "6",
+     "",
+     1,
+     "Cage de bois (cas spécial)",
+     {
+      "link": "P12",
+      "pseudo": true
+     }
+    ],
+    [
+     "G",
+     "",
+     null,
+     "Sol de la galerie (contexte, vue seule)",
+     {
+      "pseudo": true
+     }
+    ]
+   ]
+  },
+  "P12": {
+   "title": "Cage de bois (cribbing)",
+   "titleFr": "Cage de bois (cribbing)",
+   "sheets": [
+    "P12"
+   ],
+   "note": "Étape 11 : dans les cas spéciaux, 3 × 8 et 6 × 6 de 24 à 36 po empilés en couches croisées ; soutiens toujours alignés vis-à-vis le croisement des 6 × 6.",
+   "parts": [
+    [
+     "1",
+     "",
+     8,
+     "Pièce 6 × 6 de 30 po (couches croisées)",
+     {
+      "pnText": "6 × 6 brut × 30 po"
+     }
+    ],
+    [
+     "2",
+     "",
+     1,
+     "Blocage 3 × 8 de 30 po (dessus)",
+     {
+      "pnText": "3 × 8 brut × 30 po"
+     }
+    ],
+    [
+     "3",
+     "",
+     1,
+     "Coin de bois",
+     {
+      "pnText": "Coin de bois"
+     }
+    ]
+   ]
+  },
+  "P13": {
+   "title": "Recouvrement en 3 × 8, section 2",
+   "titleFr": "Recouvrement en 3 × 8, section 2",
+   "sheets": [
+    "P13"
+   ],
+   "note": "Étapes 12 et 13 : mêmes règles que la section 1 ; à la fin, aucun 6 × 6 ni 3 × 8 ne dépasse, bouts coupés carrés au ras du plancher.",
+   "parts": [
+    [
+     "1",
+     "",
+     24,
+     "Planche 3 × 8 × 16 pi",
+     {
+      "pnText": "3 × 8 brut × 16 pi"
+     }
+    ],
+    [
+     "2",
+     "",
+     48,
+     "Tire-fond 6 po",
+     {
+      "qty3d": 1,
+      "note": "Un objet 3D pour tous les tire-fonds de la section.",
+      "pnText": "Tire-fond 6 po"
+     }
+    ],
+    [
+     "G",
+     "",
+     null,
+     "Sol de la galerie (contexte, vue seule)",
+     {
+      "pseudo": true
+     }
+    ]
+   ]
+  },
+  "P14": {
+   "title": "Marches et mains courantes",
+   "titleFr": "Marches et mains courantes",
+   "sheets": [
+    "P14",
+    "P15"
+   ],
+   "note": "Plancher plus haut que 12 po : marches de 16 po de profondeur (2 × 3 × 8), 48 po de large (36 à 60 po), hauteur de marche d'environ 9 po (12 po au plus). Deux marches, donc mains courantes (étape 16).",
+   "parts": [
+    [
+     "1",
+     "",
+     4,
+     "Giron : planche 3 × 8 × 48 po (2 par marche)",
+     {
+      "pnText": "3 × 8 brut × 48 po"
+     }
+    ],
+    [
+     "2",
+     "",
+     null,
+     "Support empilé 3 × 8 / 6 × 6",
+     {
+      "pnText": "3 × 8 / 6 × 6 brut"
+     }
+    ],
+    [
+     "3",
+     "",
+     null,
+     "Coin de bois",
+     {
+      "pnText": "Coin de bois"
+     }
+    ],
+    [
+     "4",
+     "",
+     2,
+     "Poteau de main courante 2 × 4",
+     {
+      "pnText": "2 × 4 raboté"
+     }
+    ],
+    [
+     "5",
+     "",
+     2,
+     "Main courante 2 × 4",
+     {
+      "pnText": "2 × 4 raboté"
+     }
+    ],
+    [
+     "G",
+     "",
+     null,
+     "Sol de la galerie (contexte, vue seule)",
+     {
+      "pseudo": true
+     }
+    ]
+   ]
+  },
+  "P16": {
+   "title": "Garde-corps, lisse inférieure et grillage",
+   "titleFr": "Garde-corps, lisse inférieure et grillage",
+   "sheets": [
+    "P16"
+   ],
+   "note": "RSST art. 12 : lisse supérieure entre 1 et 1,2 m (1,07 m ici), lisse intermédiaire à mi-hauteur, plinthe d'au moins 90 mm. Un 2 × 4 raboté sur chant ne fait que 89 mm : la 3D met un 2 × 4 brut (102 mm). Garde-corps là où le plancher dépasse 12 po de haut (calculé sur le sol de la galerie), jambes de force au bout du plancher. Grillage de 24 po au bas des murs : l'écart plancher-mur est de 12 po.",
+   "parts": [
+    [
+     "1",
+     "",
+     16,
+     "Poteau 2 × 4",
+     {
+      "pnText": "2 × 4 raboté"
+     }
+    ],
+    [
+     "2",
+     "",
+     4,
+     "Lisse supérieure 2 × 4 (1,07 m du plancher)",
+     {
+      "pnText": "2 × 4 raboté"
+     }
+    ],
+    [
+     "3",
+     "",
+     4,
+     "Lisse intermédiaire 2 × 4 (mi-hauteur)",
+     {
+      "pnText": "2 × 4 raboté"
+     }
+    ],
+    [
+     "4",
+     "",
+     4,
+     "Lisse inférieure (plinthe) 2 × 4 sur chant, 90 mm au moins",
+     {
+      "pnText": "2 × 4 brut"
+     }
+    ],
+    [
+     "5",
+     "",
+     5,
+     "Jambe de force 2 × 4",
+     {
+      "pnText": "2 × 4 raboté"
+     }
+    ],
+    [
+     "6",
+     "",
+     2,
+     "Grillage de 24 po fixé au bas du mur",
+     {
+      "pnText": "Grillage 24 po"
+     }
+    ],
+    [
+     "G",
+     "",
+     null,
+     "Sol de la galerie (contexte, vue seule)",
+     {
+      "pseudo": true
+     }
+    ]
+   ]
+  },
+  "P17": {
+   "title": "Plancher secondaire à côté de la tour",
+   "titleFr": "Plancher secondaire à côté de la tour",
+   "sheets": [
+    "P17"
+   ],
+   "note": "32 × 72 po, 9 po de haut (12 po au plus) ; aucun morceau en porte-à-faux ; les 2 planches les plus près de la foreuse vissées ; la dernière planche à 3 po de la tour. À chaque changement d'azimut ou d'angle, les 2 dernières planches et les garde-corps sont ajustés. Bois plané non toléré sur les planchers.",
+   "parts": [
+    [
+     "1",
+     "",
+     3,
+     "Travers 6 × 6 (32 po)",
+     {
+      "pnText": "6 × 6 brut × 32 po"
+     }
+    ],
+    [
+     "2",
+     "",
+     4,
+     "Planche 3 × 8 × 72 po",
+     {
+      "pnText": "3 × 8 brut × 72 po"
+     }
+    ],
+    [
+     "3",
+     "",
+     4,
+     "Tire-fond 6 po (2 planches côté foreuse)",
+     {
+      "qty3d": 1,
+      "pnText": "Tire-fond 6 po"
+     }
+    ]
+   ]
+  },
+  "P18": {
+   "title": "Après le démantèlement : clôture et carte",
+   "titleFr": "Après le démantèlement : clôture et carte",
+   "sheets": [
+    "P18"
+   ],
+   "note": "Démantèlement : plancher secondaire d'abord, puis le plancher principal en commençant par les planches du fond, clous et tire-fonds enlevés à mesure, puis la structure 6 × 6. Boue de forage : se placer sur la partie la plus solide et faire glisser les pièces. À la fin : clôture orange et carte de ruban rouge.",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "Collet du trou (non arpenté, non cimenté)",
+     {
+      "pseudo": true
+     }
+    ],
+    [
+     "2",
+     "",
+     1,
+     "Clôture orange",
+     {
+      "pnText": "Clôture orange"
+     }
+    ],
+    [
+     "3",
+     "",
+     7,
+     "Piquet",
+     {
+      "pnText": "Piquet"
+     }
+    ],
+    [
+     "4",
+     "",
+     1,
+     "Carte de ruban rouge : « Trou non arpenté et non cimenté », date, nom du superviseur",
+     {
+      "pnText": "Ruban rouge"
+     }
+    ],
+    [
+     "G",
+     "",
+     null,
+     "Galerie (contexte)",
+     {
+      "pseudo": true
+     }
+    ]
+   ]
+  },
+  "P19": {
+   "title": "Critères de choix des planchers",
+   "titleFr": "Critères de choix des planchers",
+   "sheets": [
+    "P19"
+   ],
+   "note": "Changement de bit connu sur un même set-up à moins de 100 m : ajout d'un support à tiges debout selon le nombre de tiges à arracher. Le support à tiges debout diminue le nombre de tiges à manipuler et à mettre sur le support couché.",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "0 à 49 m sans changement de bit : plancher 10 × 8 pi, sans support à tiges",
+     {
+      "pnText": "10 × 8 pi"
+     }
+    ],
+    [
+     "2",
+     "",
+     1,
+     "49 à 499 m ou arrachage de tiges prévu : plancher 10 × 16 pi avec support à tiges debout",
+     {
+      "pnText": "10 × 16 pi"
+     }
+    ],
+    [
+     "3",
+     "",
+     1,
+     "500 m et plus : plancher complet 16 × 32 pi",
+     {
+      "pnText": "16 × 32 pi"
+     }
+    ]
+   ]
+  }
+ },
+ "documents": []
+}

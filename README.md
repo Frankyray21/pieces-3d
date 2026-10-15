@@ -72,6 +72,21 @@ pièces (numéro, quantité, page du manuel).
   de pièces que la liste, la 3D suit le dessin et la ligne l'indique
   (« 2 en 3D »). Pages du catalogue en WebP couleur (P001 à P108).
 
+- **Plancher pour foreuse aux diamants sous terre** (`plancher-dd`, procédure
+  de travail PRO-DD-ST-003 de Machines Roger International, révision du
+  2026-07-27, 19 pages) : le plancher complet de 16 × 32 pi dans sa galerie,
+  pièce par pièce, d'après le texte et les photos de la procédure : ligne de
+  peinture, madriers 6 × 6, blocages 3 × 8 et 6 × 6 avec coins de bois (calculés
+  sur un sol de galerie qui descend, au moins 6 appuis par madrier), blocage
+  de jonction, soutiens de 16 pi et cage de bois de la section 2, planches
+  3 × 8 et tire-fonds, marches, garde-corps (RSST art. 12), grillage au bas des
+  murs, plancher secondaire à côté de la tour, foreuse en silhouette,
+  barricade, armoire et extincteur ; démantèlement (clôture et carte) et
+  critères de choix des planchers (10 × 8, 10 × 16, 16 × 32 pi). Dimensions,
+  sol et ordre des étapes dans `src/models/plancher-dd/plan.js` : chaque objet
+  porte son numéro d'étape (`userData.step`) pour animer le montage
+  (vidéo de formation).
+
 La page d'accueil (adresse sans « # », ou le logo en haut à gauche) liste
 les équipements et permet de passer de l'un à l'autre. Les adresses du premier équipement restent `#F05` ; celles des autres
 sont préfixées : `#du311.P032`, `#du311-std.P050`, `#epiroc-ith.P019`.

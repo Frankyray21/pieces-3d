@@ -29,6 +29,11 @@ const FIN = {
   plastic: { fine: 0.04, wave: 0.01, rough: 0.12, tint: 0.05, fs: 20, cs: 1.2, env: 1.1 },
   // Acier bruni des outils de forage : grain très fin, reflets renforcés (pièce sombre).
   oxide: { fine: 0.03, wave: 0.004, rough: 0.12, tint: 0.04, fs: 30, cs: 1.6, env: 1.9 },
+  // Bois de construction : surface sciée (bois brut) ou rabotée, taches et
+  // teinte inégales ; roche de galerie : relief marqué, mate.
+  wood: { fine: 0.08, wave: 0.02, rough: 0.25, tint: 0.3, fs: 24, cs: 2.4, env: 0.45 },
+  woodPlaned: { fine: 0.03, wave: 0.008, rough: 0.18, tint: 0.2, fs: 24, cs: 2.4, env: 0.5 },
+  rock: { fine: 0.3, wave: 0.12, rough: 0.2, tint: 0.35, fs: 9, cs: 0.7, env: 0.35 },
 };
 
 // Peinture industrielle vernie (polyuréthane) : base satinée + vernis brillant.
@@ -72,6 +77,18 @@ const defs = {
   blackOxide: { color: 0x1e2023, metalness: 0.75, roughness: 0.32, fin: 'oxide' },
   gunmetal: { color: 0x2c2f33, metalness: 0.8, roughness: 0.38, fin: 'oxide' },
   // Fonte / alu peints en noir (carters de pompe, moteurs hydrauliques).
+  // Bois (planchers de foreuse) : brut scié, raboté (2 × 4), coins.
+  wood: { color: 0xb38c5c, metalness: 0, roughness: 0.86, fin: 'wood' },
+  woodDark: { color: 0x8f6e48, metalness: 0, roughness: 0.9, fin: 'wood' },
+  woodLight: { color: 0xc9a46e, metalness: 0, roughness: 0.84, fin: 'wood' },
+  woodGrey: { color: 0x9a8a72, metalness: 0, roughness: 0.92, fin: 'wood' },
+  woodPlaned: { color: 0xd6b88a, metalness: 0, roughness: 0.7, fin: 'woodPlaned' },
+  woodWedge: { color: 0xcda873, metalness: 0, roughness: 0.75, fin: 'woodPlaned' },
+  // Galerie souterraine : roche, sol de roche concassée, peinture de marquage fluo.
+  rock: { color: 0x55595e, metalness: 0, roughness: 0.92, fin: 'rock' },
+  rockFloor: { color: 0x3d3f42, metalness: 0, roughness: 0.95, fin: 'rock' },
+  fluoRed: { color: 0xff3020, emissive: 0x5a0800, emissiveIntensity: 1, roughness: 0.6 },
+  fluoOrange: { color: 0xff7a10, emissive: 0x4a1800, emissiveIntensity: 1, roughness: 0.55 },
   blackCast: { color: 0x2a2c30, metalness: 0.1, roughness: 0.55, clearcoat: 0.3, clearcoatRoughness: 0.35, fin: 'paintDark' },};
 
 // ------------------------------------------------------- relief de surface
