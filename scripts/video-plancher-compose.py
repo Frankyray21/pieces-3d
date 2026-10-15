@@ -1,6 +1,6 @@
 """Composition de la vidéo du plancher (appelé par video-plancher.mjs).
 
-Chaque image : la 3D (1280 x 590) sur le fond du bandeau, puis les calques du
+Chaque image : la 3D (1280 x 540) sur le fond du bandeau, puis les calques du
 segment (PNG transparents capturés par la page) aux opacités relevées par
 window.__frame : le bandeau passe en fondu du segment précédent au suivant,
 « Pourquoi » et le carton apparaissent et disparaissent en fondu. Les images
@@ -52,8 +52,8 @@ def frame(f):
     i = lv['seg']
     im = Image.new('RGBA', (1280, 720), BG + (255,))
     img3d = Image.open(os.path.join(out, '3d', f'f_{f:05d}.jpg')).convert('RGBA')
-    if img3d.size != (1280, 590):  # aperçu en demi-résolution
-        img3d = img3d.resize((1280, 590), Image.BILINEAR)
+    if img3d.size != (1280, 540):  # aperçu en demi-résolution
+        img3d = img3d.resize((1280, 540), Image.BILINEAR)
     im.paste(img3d, (0, 0))
     band = layer('band', i)
     prev = layer('band', i - 1) if i > 0 else None

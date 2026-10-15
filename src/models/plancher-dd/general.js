@@ -4,6 +4,7 @@
 import { L, W, DECK, ground, STEPS, NOTES } from './plan.js';
 import { labeler } from './lumber.js';
 import { gallery, paintLine, barricade, cabinet, extinguisher, guides, highPoint } from './site.js';
+import { dimensions } from './dims.js';
 
 const IN_PLACE = { inPlace: true };
 
@@ -31,6 +32,8 @@ export function P02(api) {
   put('12', ext, [0.6, 0, 0], 0, { seq: 2 });
   // Outils montrés seulement à leurs étapes (laser, niveau, coins de serrage).
   for (const g of guides(S, highPoint())) api.add(g);
+  // Cotes et repères de mesure, affichés à leurs étapes.
+  for (const d of dimensions()) api.add(d);
   // steps : montage par étapes proposé sur cette vue (bouton « Montage »).
   return { view: { dir: [1.05, 0.85, 1.2], steps: STEPS, notes: NOTES } };
 }

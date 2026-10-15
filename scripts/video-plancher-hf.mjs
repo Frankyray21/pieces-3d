@@ -30,7 +30,9 @@ const RENDER = opt('render', null);
 const REPO = path.resolve(new URL('..', import.meta.url).pathname);
 if (PROJ.startsWith(REPO + path.sep)) throw new Error('Le projet HyperFrames doit être hors du dépôt.');
 
-const W = 1280, H = 720, H3 = 590;
+const W = 1280, H = 720, H3 = 540;
+// Tailles de police du bandeau mesurées dans la page de capture (fits.json), sinon estimées.
+const FITS = fs.existsSync(path.join(FRAMES, 'fits.json')) ? JSON.parse(fs.readFileSync(path.join(FRAMES, 'fits.json'), 'utf8')) : [];
 // --segments N : seulement les N premiers segments (essai rapide du montage).
 const SEGS = timeline().slice(0, Number(opt('segments', '999')));
 const DUR = SEGS.at(-1).start + SEGS.at(-1).dur;
@@ -112,8 +114,8 @@ SEGS.forEach((s, i) => {
   const fit = (txt, max, min, ref) => Math.max(min, Math.min(max, +(max * Math.sqrt(ref / Math.max(1, txt.length))).toFixed(1)));
   sub(`b${id}`, bStart, bLen, 1, `<div class="band">`
     + `<div class="bar">${bar(s)}</div><div class="head" style="${anim('fadein', 0, 0.35)}"><span class="num">${esc(label(b))}</span><span class="title">${b.n === '18' ? '' : esc(b.title)}</span></div>`
-    + `<div class="text" style="font-size:${fit(b.text, 17, 12, 235)}px;${anim('fadein', 0, 0.35)}">${esc(b.text)}</div>`
-    + `<div class="detail" style="font-size:${fit(b.detail, 14, 10.5, 175)}px;${anim('fadein', 0, 0.35)}">${esc(b.detail)}</div></div>`);
+    + `<div class="text" style="font-size:${FITS[i]?.text ?? fit(b.text, 22, 15, 150)}px;${anim('fadein', 0, 0.35)}">${esc(b.text)}</div>`
+    + `<div class="detail" style="font-size:${FITS[i]?.detail ?? fit(b.detail, 17, 13, 130)}px;${anim('fadein', 0, 0.35)}">${esc(b.detail)}</div></div>`);
   if (s.why) {
     const at = s.start + 0.8, d = s.dur - 0.8;
     L.push(`<div id="w${id}" class="clip why" data-start="${S(at)}" data-duration="${S(d)}" data-track-index="2" style="${inOut(0, d)}"><b>Pourquoi</b><span>${esc(s.why)}</span></div>`);
@@ -143,28 +145,28 @@ html, body { margin: 0; width: ${W}px; height: ${H}px; overflow: hidden; backgro
 #video { position: relative; width: ${W}px; height: ${H}px; overflow: hidden; background: #15191c; color: #f1f3f4; font-family: "IBM Plex Sans", sans-serif; }
 .hote { position: absolute; left: 0; top: 0; width: ${W}px; height: ${H}px; }
 .vue3d { position: absolute; left: 0; top: 0; width: ${W}px; height: ${H3}px; object-fit: fill; z-index: 1; }
-.tag { position: absolute; top: 16px; right: 18px; z-index: 5; font: 500 12px/1 "IBM Plex Mono", monospace; letter-spacing: .08em; color: rgba(255,255,255,.8); background: rgba(10,12,14,.55); padding: 6px 9px; border-radius: 4px; }
+.tag { position: absolute; top: 16px; right: 18px; z-index: 5; font: 500 15px/1 "IBM Plex Mono", monospace; letter-spacing: .08em; color: rgba(255,255,255,.8); background: rgba(10,12,14,.55); padding: 6px 9px; border-radius: 4px; }
 .bandbg { position: absolute; left: 0; top: ${H3}px; width: ${W}px; height: ${H - H3}px; background: #15191c; border-top: 3px solid #f2c230; box-sizing: border-box; z-index: 1; }
-.band { position: absolute; left: 0; top: ${H3}px; width: ${W}px; height: ${H - H3}px; box-sizing: border-box; padding: 9px 22px 10px; border-top: 3px solid #f2c230; background: #15191c; z-index: 2; display: grid; grid-template-rows: auto auto 1fr auto; row-gap: 3px; }
+.band { position: absolute; left: 0; top: ${H3}px; width: ${W}px; height: ${H - H3}px; box-sizing: border-box; padding: 10px 26px 12px; border-top: 3px solid #f2c230; background: #15191c; z-index: 2; display: grid; grid-template-rows: auto auto 1fr auto; row-gap: 4px; }
 .bar { display: flex; gap: 3px; }
-.bar i { flex: 1; font: 500 10px/14px "IBM Plex Mono", monospace; font-style: normal; text-align: center; color: #6c767d; background: #232a2f; border-radius: 2px; }
+.bar i { flex: 1; font: 500 13px/19px "IBM Plex Mono", monospace; font-style: normal; text-align: center; color: #6c767d; background: #232a2f; border-radius: 2px; }
 .bar i.done { background: #3b4348; color: #c8cfd3; }
 .bar i.on { background: #f2c230; color: #15191c; font-weight: 600; }
 .head { display: flex; align-items: baseline; gap: 12px; white-space: nowrap; overflow: hidden; }
-.num { font: 700 23px/1.05 "Barlow Condensed", sans-serif; color: #f2c230; text-transform: uppercase; letter-spacing: .02em; }
-.title { font: 600 23px/1.05 "Barlow Condensed", sans-serif; }
-.text { color: #f2c230; font-size: 17px; line-height: 1.28; overflow: hidden; min-height: 0; }
-.detail { color: #a9b3ba; font-size: 14px; line-height: 1.3; overflow: hidden; max-height: 37px; }
-.why { position: absolute; top: 16px; left: 18px; width: 380px; z-index: 4; background: rgba(14,17,20,.86); border-left: 4px solid #f2c230; border-radius: 4px; padding: 10px 14px 11px; font-size: 15px; line-height: 1.38; box-sizing: border-box; will-change: transform; }
-.why b { display: block; font: 700 15px/1 "Barlow Condensed", sans-serif; letter-spacing: .1em; text-transform: uppercase; color: #f2c230; margin-bottom: 6px; }
+.num { font: 700 30px/1.05 "Barlow Condensed", sans-serif; color: #f2c230; text-transform: uppercase; letter-spacing: .02em; }
+.title { font: 600 30px/1.05 "Barlow Condensed", sans-serif; }
+.text { color: #f2c230; font-size: 22px; line-height: 1.25; overflow: hidden; min-height: 0; }
+.detail { color: #c3ccd2; font-size: 17px; line-height: 1.3; overflow: hidden; max-height: 46px; }
+.why { position: absolute; top: 16px; left: 18px; width: 470px; z-index: 4; background: rgba(14,17,20,.88); border-left: 5px solid #f2c230; border-radius: 4px; padding: 12px 16px 13px; font-size: 19px; line-height: 1.35; box-sizing: border-box; will-change: transform; }
+.why b { display: block; font: 700 19px/1 "Barlow Condensed", sans-serif; letter-spacing: .1em; text-transform: uppercase; color: #f2c230; margin-bottom: 6px; }
 .card { position: absolute; left: 0; top: 0; width: ${W}px; height: ${H3}px; z-index: 3; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; padding: 0 90px; background: linear-gradient(90deg, rgba(12,14,16,.92) 0%, rgba(12,14,16,.78) 55%, rgba(12,14,16,.35) 100%); }
 .card.title h1 { font: 700 60px/1.02 "Barlow Condensed", sans-serif; margin: 10px 0 18px; max-width: 900px; text-transform: uppercase; }
-.card.title small { font: 500 15px/1 "IBM Plex Mono", monospace; letter-spacing: .12em; color: #f2c230; }
-.card.title p { margin: 0; font-size: 19px; color: #a9b3ba; }
+.card.title small { font: 500 18px/1 "IBM Plex Mono", monospace; letter-spacing: .12em; color: #f2c230; }
+.card.title p { margin: 0; font-size: 22px; color: #a9b3ba; }
 .card.end h2 { font: 700 48px/1 "Barlow Condensed", sans-serif; color: #f2c230; text-transform: uppercase; margin: 0 0 22px; }
-.card.end ol { margin: 0 0 24px; padding-left: 30px; font-size: 24px; line-height: 1.5; max-width: 980px; }
+.card.end ol { margin: 0 0 24px; padding-left: 34px; font-size: 27px; line-height: 1.5; max-width: 980px; }
 .card.end li::marker { color: #f2c230; font-weight: 600; }
-.card.end p { margin: 0; font-size: 14px; color: #a9b3ba; }
+.card.end p { margin: 0; font-size: 17px; color: #a9b3ba; }
 @keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
 ${keys.join('\n')}
 </style>
@@ -202,7 +204,7 @@ if (RENDER) {
     HYPERFRAMES_EXTRACT_CACHE_DIR: path.join(work, 'cache'), HYPERFRAMES_BROWSER_PATH: NAV,
     HYPERFRAMES_FFMPEG_PATH: spawnSync('which', ['ffmpeg']).stdout.toString().trim(), HYPERFRAMES_FFPROBE_PATH: spawnSync('which', ['ffprobe']).stdout.toString().trim(),
   };
-  const r = spawnSync('nice', ['-n', '10', HF, 'render', PROJ, '--output', path.resolve(RENDER), '--fps', String(FPS), '--crf', '22',
+  const r = spawnSync('nice', ['-n', '10', HF, 'render', PROJ, '--output', path.resolve(RENDER), '--fps', String(FPS), '--crf', opt('crf', '17'),
     '--workers', opt('workers', '2'), '--no-browser-gpu', '--quiet'], { stdio: 'inherit', env });
   if (r.status !== 0) throw new Error(`rendu HyperFrames : code ${r.status}`);
   console.log(`→ ${RENDER}`);

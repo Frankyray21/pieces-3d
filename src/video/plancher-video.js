@@ -3,7 +3,7 @@
 // procédure, caméra animée, bandeau avec le texte de la procédure, encadrés
 // « Pourquoi », cartons de titre et de fin. Chaque image est calculée par
 // window.__render(t) (t en secondes), sans horloge : la capture est
-// reproductible. Format : 1280 × 720, 3D 1280 × 590, bandeau de 130 px.
+// reproductible. Format : 1280 × 720, 3D 1280 × 540, bandeau de 180 px.
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import '@fontsource/barlow-condensed/600.css';
@@ -17,8 +17,10 @@ import * as S from '../viewer/shapes.js';
 import models from '../models/plancher-dd/index.js';
 import { IN, P3, P8, B66, W, L, SEC, ground } from '../models/plancher-dd/plan.js';
 import { timeline, RETENIR } from './plancher-script.js';
+import { NOTES } from '../models/plancher-dd/plan.js';
+import { tag, redrawLabels, setLabelScale } from '../models/plancher-dd/dims.js';
 
-const VW = 1280, VH = 590;
+const VW = 1280, VH = 540;
 const SEGS = timeline();
 export const DURATION = SEGS.at(-1).start + SEGS.at(-1).dur;
 
@@ -183,6 +185,34 @@ for (const o of Object.values(extras)) { o.visible = false; scene.add(o); }
 const shows = [];
 for (const s of SEGS) for (const sh of s.show || []) shows.push({ obj: extras[sh.obj], name: sh.obj, a: s.start + s.dur * sh.from, b: s.start + s.dur * sh.to });
 
+// ------------------------------------------------------------------ cotes et annotations
+
+// Cotes du modèle (userData.dimSteps) et annotations du montage (NOTES), montrées
+// pendant les segments de leur étape, en fondu.
+setLabelScale(1);
+const notes = [];
+model.root.traverse((o) => { if (o.userData.dimSteps) notes.push({ obj: o, steps: o.userData.dimSteps }); });
+for (const nt of NOTES) {
+  const o = tag(nt.pos, nt.text, { h: 0.048, color: '#ffffff' });
+  o.visible = false;
+  scene.add(o);
+  notes.push({ obj: o, steps: [].concat(nt.steps) });
+}
+for (const n of notes) {
+  n.mats = [];
+  n.obj.traverse((c) => { if (c.material) { n.mats.push(c.material); c.material.transparent = true; } });
+}
+function annotate(t, s) {
+  const step = s.band.n === '' ? null : Number(s.band.n);
+  const u = t - s.start;
+  const k = Math.min(1, Math.max(0, (u - 0.9) / 0.5)) * Math.min(1, Math.max(0, (s.dur - u) / 0.35));
+  for (const n of notes) {
+    const on = step != null && n.steps.includes(step) && k > 0;
+    n.obj.visible = on;
+    if (on) for (const m of n.mats) m.opacity = k;
+  }
+}
+
 // ------------------------------------------------------------------ caméra
 
 const ease = (x) => x * x * x * (x * (x * 6 - 15) + 10);
@@ -226,8 +256,8 @@ function showSegment(s) {
   $('title').textContent = b.n === '18' ? '' : b.title;
   $('text').textContent = b.text;
   $('detail').textContent = b.detail;
-  fit($('text'), 17, 12);
-  fit($('detail'), 14, 10.5);
+  fit($('text'), 22, 15);
+  fit($('detail'), 17, 13);
   const n = Number(b.n);
   for (const i of $('bar').children) {
     const k = Number(i.dataset.n);
@@ -305,6 +335,7 @@ function render(t) {
     }
   }
   cameraAt(t);
+  annotate(t, s);
   overlays(t, s);
   renderer.render(scene, camera);
 }
@@ -316,7 +347,7 @@ window.__render = (t) => { render(t); return true; };
 window.__frame = (t) => {
   render(t);
   const s = segAt(t);
-  return { seg: SEGS.indexOf(s), ...levels(t, s), img: renderer.domElement.toDataURL('image/jpeg', 0.93) };
+  return { seg: SEGS.indexOf(s), ...levels(t, s), img: renderer.domElement.toDataURL('image/jpeg', 0.96) };
 };
 window.__layer = (i, which) => {
   const s = SEGS[i];
@@ -331,7 +362,7 @@ window.__layer = (i, which) => {
     el.style.opacity = 1;
   }
   for (const id of ['num', 'title', 'text', 'detail']) $(id).style.opacity = 1;
-  return { why: !!s.why, card: !!s.card };
+  return { why: !!s.why, card: !!s.card, text: parseFloat($('text').style.fontSize), detail: parseFloat($('detail').style.fontSize) };
 };
 // Aperçu dans le navigateur : lecture en temps réel (ou ?t=12.5 pour une image).
 const q = new URLSearchParams(location.search);
@@ -341,4 +372,4 @@ else if (!q.has('capture')) {
   const loop = (now) => { render(((now - t0) / 1000) % DURATION); requestAnimationFrame(loop); };
   requestAnimationFrame(loop);
 }
-document.fonts.ready.then(() => { window.__ready = true; });
+document.fonts.ready.then(() => { redrawLabels(); window.__ready = true; });

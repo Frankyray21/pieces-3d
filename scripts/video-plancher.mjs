@@ -49,7 +49,11 @@ const levels = existsSync(levelsFile) ? JSON.parse(readFileSync(levelsFile, 'utf
 if (!flag('encode-only')) {
   // Calques par segment (une page à part : son état ne sert plus au rendu 3D).
   const lp = await open(browser);
+  const fits = [];
   for (let i = 0; i < info.segments.length; i++) {
+    // Tailles de police du bandeau ajustées dans la page (reprises par le montage HyperFrames).
+    const f = await lp.evaluate((k) => window.__layer(k, 'band'), i);
+    fits.push({ text: f.text, detail: f.detail });
     // L'étiquette ne change pas : capturée au premier segment seulement.
     for (const which of ['band', 'why', 'card', 'tag']) {
       const file = join(out, 'layers', `${which}_${String(i).padStart(2, '0')}.png`);
@@ -61,6 +65,7 @@ if (!flag('encode-only')) {
     }
   }
   await lp.close();
+  writeFileSync(join(out, 'fits.json'), JSON.stringify(fits));
 
   const todo = [];
   for (let f = 0; f < total; f++) if ((!stills || stills.includes(f)) && (!existsSync(frameFile(f)) || !levels[f])) todo.push(f);
