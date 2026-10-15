@@ -80,11 +80,12 @@ const KIND = { b38: 'wood', b66: 'wood', crib: 'woodDark' };
  * refs : { b38, b66, crib, wedge } ; labeled : Set des repères déjà étiquetés.
  * group : regroupe tout l'empilement sous un seul repère (cage, jonction).
  */
-export function placeStack(api, st, { refs, labeled, step, explode = {}, group = null }) {
+export function placeStack(api, st, { refs, labeled, step, explode = {}, group = null, seq }) {
   const S = api.S;
   const objs = st.pieces.map((p) => {
     const o = p.kind === 'wedge' ? wedge(S, p) : lumber(S, p.size, p.pos, KIND[p.kind]);
     o.userData.step = step;
+    if (seq !== undefined) o.userData.seq = seq;
     o.userData.kind = p.kind;
     return o;
   });
@@ -92,6 +93,7 @@ export function placeStack(api, st, { refs, labeled, step, explode = {}, group =
     if (!objs.length) return [];
     const g = S.group(objs);
     g.userData.step = step;
+    if (seq !== undefined) g.userData.seq = seq;
     const lab = labeled.has(group.ref);
     labeled.add(group.ref);
     return [api.part(group.ref, g, group.explode || [0, 0, 0], { noLabel: lab })];
@@ -107,8 +109,11 @@ export function placeStack(api, st, { refs, labeled, step, explode = {}, group =
 /** Petit utilitaire : bulle seulement sur le premier exemplaire d'un repère. */
 export function labeler(api) {
   const seen = new Set();
+  // opts.seq : ordre de pose dans l'étape (montage par étapes) ; opts.noDrop : apparaît sans descendre.
   return (ref, obj, explode, step, opts = {}) => {
     obj.userData.step = step;
+    if (opts.seq !== undefined) obj.userData.seq = opts.seq;
+    if (opts.noDrop) obj.userData.noDrop = true;
     const noLabel = seen.has(ref) || !!opts.noLabel;
     seen.add(ref);
     return api.part(ref, obj, explode, { ...opts, noLabel });

@@ -335,6 +335,10 @@ function variant(base, kind, cut) {
   } else if (kind === 'select') {
     v.emissive = new THREE.Color(0xff8a00);
     v.emissiveIntensity = 0.7;
+  } else if (kind === 'step') {
+    // Pièces de l'étape en cours (montage par étapes) : surbrillance douce.
+    v.emissive = new THREE.Color(0xff7a10);
+    v.emissiveIntensity = 0.32;
   } else if (kind === 'ghost') {
     v.transparent = true;
     v.opacity = 0.1;

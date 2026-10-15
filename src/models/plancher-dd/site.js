@@ -332,3 +332,70 @@ export function P19(api) {
 }
 
 export { GAL };
+
+// ------------------------------------------------------------------ outils du montage par étapes
+
+/**
+ * Outils et repères montrés seulement à certaines étapes du montage
+ * (userData.stepOnly) : plan du niveau au laser (étapes 2 et 3 sur la
+ * section 1, 9 et 10 sur la section 2), point le plus haut, niveau de 48 po
+ * sur un 3 × 8 de 8 pi (étape 5), coins de serrage entre deux planches (étape 7).
+ */
+export function guides(S, high) {
+  const out = [];
+  const only = (o, steps) => { o.userData.stepOnly = steps; o.visible = false; out.push(o); return o; };
+  const laserMat = new THREE.MeshBasicMaterial({ color: 0xff2a1a, transparent: true, opacity: 0.16, side: THREE.DoubleSide, depthWrite: false });
+  const plane = (x0, x1) => {
+    const g = S.group();
+    const geo = new THREE.PlaneGeometry(x1 - x0, W + 0.4);
+    const p = new THREE.Mesh(geo, laserMat);
+    const e = new THREE.LineSegments(new THREE.EdgesGeometry(geo), new THREE.LineBasicMaterial({ color: 0xff3020 }));
+    for (const m of [p, e]) { m.rotation.x = -Math.PI / 2; m.position.set((x0 + x1) / 2, 0.003, 0); g.add(m); }
+    return g;
+  };
+  const tool = (x, z) => {
+    const g = S.group(
+      S.box(0.11, 0.13, 0.1, 'blue', { r: 0.01, pos: [0, 0.065, 0] }),
+      S.box(0.112, 0.05, 0.06, 'fluoRed', { pos: [0, 0.1, 0] }),
+      S.box(0.09, 0.02, 0.09, 'black', { pos: [0, 0.14, 0] }),
+    );
+    g.position.set(x, ground(x, z), z);
+    return g;
+  };
+  only(S.group(plane(-0.4, 16 * FT + 0.3), tool(-0.35, -W / 2 + 0.6)), [2, 3]);
+  only(S.group(plane(16 * FT - 0.1, L + 0.3), tool(16 * FT - 0.05, W / 2 + 0.05)), [9, 10]);
+  const mark = S.group(
+    S.box(0.36, 0.006, 0.04, 'fluoRed'),
+    S.box(0.04, 0.006, 0.36, 'fluoRed'),
+    S.cyl(0.05, 0.12, 'fluoRed', { r2: 0.001, pos: [0, 0.18, 0] }),
+    S.cyl(0.012, 0.25, 'fluoRed', { pos: [0, 0.36, 0] }),
+  );
+  mark.children[2].rotation.x = Math.PI;
+  mark.position.set(high.x, high.y + 0.004, high.z);
+  only(mark, [2, 3]);
+  const level = S.group(
+    S.box(0.2, P3, 8 * FT, 'woodLight', { pos: [0, P3 / 2, 0] }),
+    S.box(0.045, 0.07, 48 * IN, 'blue', { pos: [0, P3 + 0.035, 0] }),
+    S.box(0.047, 0.02, 0.07, 'lampAmber', { pos: [0, P3 + 0.06, 0] }),
+  );
+  level.position.set(2.3, B66, -0.4);
+  only(level, [5]);
+  const wedges = S.group();
+  for (const z of [-1.6, -0.4, 0.8, 2.0]) {
+    const w = S.extrude([[0, 0], [0.025, 0], [0.012, -0.2]], 0.09, 'woodWedge');
+    w.position.set(11 * P8, B66 + P3 + 0.03, z);
+    wedges.add(w);
+  }
+  only(wedges, [7]);
+  return out;
+}
+
+/** Point le plus haut du sol sous la section 1 (étape 2). */
+export function highPoint() {
+  let best = { y: -Infinity };
+  for (let x = 0; x <= 16 * FT; x += 0.05) for (let z = -W / 2; z <= W / 2; z += 0.05) {
+    const y = ground(x, z);
+    if (y > best.y) best = { x, z, y };
+  }
+  return best;
+}

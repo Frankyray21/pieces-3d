@@ -58,6 +58,11 @@ export function buildProcedural(builders, id, opts = {}) {
       parts.push(obj);
       return obj;
     },
+    /** Objet ajouté à la scène sans être une pièce de la liste (outils et repères du montage par étapes). */
+    add(obj) {
+      root.add(obj);
+      return obj;
+    },
     sub(childId, childOpts = {}) {
       const child = buildProcedural(builders, childId, childOpts);
       if (!child) throw new Error(`Sous-assemblage introuvable : ${childId}`);

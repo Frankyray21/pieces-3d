@@ -54,10 +54,10 @@ export function P07(api, opts = {}) {
     const join = i >= PER_SEC - 2; // deux planches laissées libres puis vissées à la fin (étape 8)
     const p = lumber(S, [P8, P3, W], [plankX(i), B66 + P3 / 2, 0]);
     p.userData.order = i;
-    put(join ? '2' : '1', p, [0, join ? 0.75 : 0.45, 0], join ? 12 : 6);
+    put(join ? '2' : '1', p, [0, join ? 0.75 : 0.45, 0], join ? 12 : 6, { seq: join ? 1 : 0 });
     for (const s of [-1, 1]) screws.push([plankX(i), DECK, s * screwZ]);
   }
-  put('3', lagScrews(S, screws), [0, 1.05, 0], 6);
+  put('3', lagScrews(S, screws), [0, 1.05, 0], 6, { seq: 1 });
   return { view: { dir: [0.75, 1.0, 1.1] } };
 }
 
@@ -76,7 +76,7 @@ export function P10(api, opts = {}) {
   // Soutiens 6 × 6 de 16 pi dans le sens contraire, sous les madriers ; le
   // plus éloigné sert de madrier guide (étape 10).
   [...sleepers].sort((a, b) => b - a).forEach((x) => {
-    put('2', lumber(S, [B66, B66, W], [x, -B66 / 2, 0]), [0, 0.4, 0], 10);
+    put('2', lumber(S, [B66, B66, W], [x, -B66 / 2, 0]), [0, 0.4, 0], 10, { seq: 1 });
   });
   for (const x of SUPPORTS_S2) {
     const onSleeper = sleepers.has(x);
@@ -101,7 +101,7 @@ export function P13(api, opts = {}) {
     put('1', lumber(S, [P8, P3, W], [plankX(i), B66 + P3 / 2, 0]), [0, 0.45, 0], 12);
     for (const s of [-1, 1]) screws.push([plankX(i), DECK, s * screwZ]);
   }
-  put('2', lagScrews(S, screws), [0, 1.05, 0], 12);
+  put('2', lagScrews(S, screws), [0, 1.05, 0], 12, { seq: 2 });
   return { view: { dir: [-0.75, 1.0, 1.1] } };
 }
 
@@ -152,10 +152,10 @@ export function P14(api, opts = {}) {
     const top = DECK - i * rise;
     const x0 = L + (i - 1) * T;
     // Giron : deux 3 × 8 (16 po), de 48 po de large.
-    for (const k of [0, 1]) put('1', lumber(S, [P8, P3, STAIR.w], [x0 + (k + 0.5) * P8, top - P3 / 2, (z0 + z1) / 2]), [0.25 * i, 0.35, 0], 14);
+    for (const k of [0, 1]) put('1', lumber(S, [P8, P3, STAIR.w], [x0 + (k + 0.5) * P8, top - P3 / 2, (z0 + z1) / 2]), [0.25 * i, 0.35, 0], 14, { seq: i * 10 + 5 });
     // Supports empilés en 3 × 8 (dans le sens de la marche), mis de niveau aux coins.
     for (const z of [z0 + 0.12, (z0 + z1) / 2, z1 - 0.12]) {
-      placeStack(api, stack(x0 + T / 2, z, top - P3, 'x', { len38: T }), { refs: { b38: '2', b66: '2', crib: '2', wedge: '3' }, labeled, step: 14, explode: { wedge: [0.25 * i, 0.18, 0] } });
+      placeStack(api, stack(x0 + T / 2, z, top - P3, 'x', { len38: T }), { refs: { b38: '2', b66: '2', crib: '2', wedge: '3' }, labeled, step: 14, seq: i * 10, explode: { wedge: [0.25 * i, 0.18, 0] } });
     }
   }
   // Mains courantes (plus d'une marche) : 2 × 4 raboté de chaque côté.
@@ -163,8 +163,8 @@ export function P14(api, opts = {}) {
   for (const z of [z0 - S24.t, z1 + S24.t]) {
     const hb = DECK - (n - 1) * rise;
     const gb = ground(xb, z);
-    put('4', lumber(S, [S24.w, hb + 0.9 - gb, S24.t], [xb, (gb + hb + 0.9) / 2, z], 'woodPlaned'), [0.5, 0, Math.sign(z - (z0 + z1) / 2) * 0.3], 16);
-    put('5', between(S, [L + S24.t, DECK + 0.9, z], [xb, hb + 0.9, z], S24.t, S24.w), [0.5, 0.25, Math.sign(z - (z0 + z1) / 2) * 0.3], 16);
+    put('4', lumber(S, [S24.w, hb + 0.9 - gb, S24.t], [xb, (gb + hb + 0.9) / 2, z], 'woodPlaned'), [0.5, 0, Math.sign(z - (z0 + z1) / 2) * 0.3], 16, { seq: 0 });
+    put('5', between(S, [L + S24.t, DECK + 0.9, z], [xb, hb + 0.9, z], S24.t, S24.w), [0.5, 0.25, Math.sign(z - (z0 + z1) / 2) * 0.3], 16, { seq: 1 });
   }
   return { view: { dir: [1.3, 0.6, 0.9] } };
 }
@@ -210,23 +210,23 @@ export function P16(api, opts = {}) {
     const sz = (lu, h, t) => (alongX ? [lu, h, t] : [t, h, lu]);
     for (const u of postsAlong(seg.a, seg.b)) {
       const top = DECK + RAIL_TOP + 0.03;
-      put('1', lumber(S, sz(S24.w, top, S24.t), P(u, postC, top / 2), 'woodPlaned'), ex(1), 15);
+      put('1', lumber(S, sz(S24.w, top, S24.t), P(u, postC, top / 2), 'woodPlaned'), ex(1), 15, { seq: 0 });
       // Jambe de force vers le sol, au bout du plancher (dégagé).
       if (!alongX) {
         const xg = L + 0.75;
-        put('5', between(S, [L + S24.t, DECK + 0.75, u], [xg, ground(xg, u) + 0.02, u], S24.w, S24.t), ex(1.4), 15);
+        put('5', between(S, [L + S24.t, DECK + 0.75, u], [xg, ground(xg, u) + 0.02, u], S24.w, S24.t), ex(1.4), 15, { seq: 1 });
       }
     }
-    put('2', lumber(S, sz(len, S24.w, S24.t), P(mid, railC, DECK + RAIL_TOP - S24.w / 2), 'woodPlaned'), ex(2), 15);
-    put('3', lumber(S, sz(len, S24.w, S24.t), P(mid, railC, DECK + RAIL_TOP / 2), 'woodPlaned'), ex(1.6), 15);
+    put('2', lumber(S, sz(len, S24.w, S24.t), P(mid, railC, DECK + RAIL_TOP - S24.w / 2), 'woodPlaned'), ex(2), 15, { seq: 2 });
+    put('3', lumber(S, sz(len, S24.w, S24.t), P(mid, railC, DECK + RAIL_TOP / 2), 'woodPlaned'), ex(1.6), 15, { seq: 3 });
     // Plinthe : 2 × 4 brut sur chant (4 po, plus de 90 mm), posé sur le plancher.
-    put('4', lumber(S, sz(len, R24.w, R24.t), P(mid, plinthC, DECK + R24.w / 2), 'wood'), ex(1.2), 15);
+    put('4', lumber(S, sz(len, R24.w, R24.t), P(mid, plinthC, DECK + R24.w / 2), 'wood'), ex(1.2), 15, { seq: 4 });
   }
   // Grillage de 24 po fixé au bas de chaque mur (écart plancher-mur de 12 po).
   for (const s of [-1, 1]) {
     const m = wireMesh(S, L + 0.6, 24 * IN, 2 * IN, 'zinc', 0.005);
     m.position.set(L / 2, DECK - 0.3, s * (GAL - 0.04));
-    put('6', m, [0, 0, s * 0.5], 17);
+    put('6', m, [0, 0, s * 0.5], 17, { noDrop: true });
   }
   return { view: { dir: [1.2, 0.8, 1.0] } };
 }
@@ -246,15 +246,15 @@ export function P17(api) {
   const { x0, x1, z0, z1 } = secondaryPlan();
   const xc = (x0 + x1) / 2;
   // Travers 6 × 6 sous les planches : aucun morceau en porte-à-faux.
-  for (const z of [z0 + B66 / 2, (z0 + z1) / 2, z1 - B66 / 2]) put('1', lumber(S, [x1 - x0, B66, B66], [xc, DECK + B66 / 2, z]), [0, 0.2, 0], 18);
+  for (const z of [z0 + B66 / 2, (z0 + z1) / 2, z1 - B66 / 2]) put('1', lumber(S, [x1 - x0, B66, B66], [xc, DECK + B66 / 2, z]), [0, 0.2, 0], 18, { seq: 1 });
   const screws = [];
   for (let k = 0; k < 4; k++) {
     const x = x0 + (k + 0.5) * P8;
-    put('2', lumber(S, [P8, P3, z1 - z0], [x, DECK + B66 + P3 / 2, (z0 + z1) / 2]), [0, 0.45 + 0.05 * k, 0], 18);
+    put('2', lumber(S, [P8, P3, z1 - z0], [x, DECK + B66 + P3 / 2, (z0 + z1) / 2]), [0, 0.45 + 0.05 * k, 0], 18, { seq: 2 });
     // Les deux planches les plus près de la foreuse sont vissées.
     if (k < 2) for (const z of [z0 + B66 / 2, z1 - B66 / 2]) screws.push([x, DECK + B66 + P3, z]);
   }
-  put('3', lagScrews(S, screws), [0, 0.75, 0], 18);
+  put('3', lagScrews(S, screws), [0, 0.75, 0], 18, { seq: 3 });
   return { view: { dir: [1.2, 1.0, -0.6] } };
 }
 

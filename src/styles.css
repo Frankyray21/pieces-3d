@@ -189,9 +189,16 @@ details.more summary { cursor: pointer; margin: 0 6px; color: var(--muted); font
 .sectionbar .lbl { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
 .sectionbar .seg { display: flex; gap: 2px; }
 .sectionbar input { width: 130px; accent-color: var(--accent); }
+/* Plein écran : la scène seule (API Fullscreen, ou toute la fenêtre quand elle n'existe pas). */
+.stage:fullscreen { width: 100vw; height: 100vh; }
+.stage:-webkit-full-screen { width: 100vw; height: 100vh; }
+body.stage-full .stage { position: fixed; inset: 0; z-index: 50; width: auto; height: auto; }
+body.stage-full .topbar, body.stage-full .mtabs { display: none; }
+/* Annotations du montage par étapes : légende en accent, sous le point visé. */
+.balloon.caption.note { max-width: 15em; border-color: var(--accent); color: var(--accent-ink); background: var(--accent); pointer-events: none; }
 /* Montage par étapes (plancher de foreuse) : panneau en bas à gauche de la scène. */
 .stepsbar {
-  position: absolute; left: 12px; bottom: 12px; width: min(560px, calc(100% - 360px)); padding: 8px 12px 10px; border-radius: 10px;
+  position: absolute; left: 12px; right: 12px; bottom: 12px; max-width: 640px; box-sizing: border-box; padding: 8px 12px 10px; border-radius: 10px;
   background: color-mix(in srgb, var(--surface) 95%, transparent); border: 1px solid var(--accent); box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
   display: grid; gap: 4px;
 }
@@ -201,7 +208,7 @@ details.more summary { cursor: pointer; margin: 0 6px; color: var(--muted); font
 .st-title { font-size: 15px; line-height: 1.25; }
 .st-text { margin: 0; font-size: 13px; line-height: 1.4; color: var(--ink); }
 .st-page { justify-self: start; font-size: 12px; color: var(--muted); background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; }
-.stage.stepping .hint { display: none; }
+.stage.stepping .hint, .stage.stepping .titleblock { display: none; }
 .hint {
   position: absolute; left: 12px; bottom: 10px; margin: 0; max-width: calc(100% - 480px);
   font-size: 12px; color: var(--stage-ink); pointer-events: none; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);

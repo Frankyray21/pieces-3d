@@ -345,6 +345,9 @@ export class Viewer {
     this.model = model;
     this.nodes = [];
     this._stepLeaves = null;
+    this._stepFresh = null;
+    this._notes = [];
+    this._drops = [];
     this.step = null;
     model.root.traverse((o) => {
       if (o.userData.isAssembly) {
@@ -439,44 +442,104 @@ export class Viewer {
 
   /**
    * Montage par étapes (modèle dont les pièces portent userData.step, ex. le
-   * plancher de foreuse) : n'affiche que les pièces des étapes 0 à n ; null
-   * affiche tout. En avançant d'une étape, les nouvelles pièces descendent en
-   * place. Seules les pièces « feuilles » (sans pièce numérotée en dessous)
-   * sont masquées, si bien qu'un sous-assemblage peut mêler plusieurs étapes.
+   * plancher de foreuse) : n'affiche que les pièces des étapes jusqu'à n ;
+   * null affiche tout, -1 rien (sauf le décor, step < 0). Les pièces « feuilles »
+   * seulement (sans pièce numérotée en dessous) sont masquées : un
+   * sous-assemblage peut mêler plusieurs étapes.
+   *
+   * En arrivant à l'étape n (animate), ses pièces sont posées une à une dans
+   * l'ordre de pose (userData.seq, puis le long du plancher, en travers, de bas
+   * en haut) : chacune descend en place, en surbrillance. Les objets
+   * userData.stepOnly (outils, laser) et les annotations view.notes ne
+   * s'affichent qu'à leurs étapes. Retourne la durée de la pose (ms).
    */
   setStep(n, { animate = true } = {}) {
-    if (!this.model) return;
+    if (!this.model) return 0;
+    const root = this.model.root;
     if (!this._stepLeaves) {
       const hasStepBelow = (o) => o.children.some((c) => c.userData.step !== undefined || hasStepBelow(c));
       this._stepLeaves = [];
-      this.model.root.traverse((o) => {
-        if (o !== this.model.root && o.userData.step !== undefined && !hasStepBelow(o)) this._stepLeaves.push(o);
+      this._stepOnly = [];
+      root.updateMatrixWorld(true);
+      const box = new THREE.Box3(), c = new THREE.Vector3();
+      root.traverse((o) => {
+        if (o.userData.stepOnly) this._stepOnly.push(o);
+        else if (o !== root && o.userData.step !== undefined && !hasStepBelow(o)) {
+          box.setFromObject(o).getCenter(c);
+          o.userData.stepCenter = c.clone();
+          this._stepLeaves.push(o);
+        }
       });
+      const key = (o) => [o.userData.seq ?? 0, o.userData.stepCenter.x, o.userData.stepCenter.z, o.userData.stepCenter.y];
+      this._stepLeaves.sort((a, b) => {
+        const ka = key(a), kb = key(b);
+        for (let i = 0; i < 4; i++) if (Math.abs(ka[i] - kb[i]) > 1e-3) return ka[i] - kb[i];
+        return 0;
+      });
+      this._createNotes();
     }
-    const prev = this.step;
+    // Pose en cours interrompue : pièces remises en place.
+    for (const d of this._drops || []) { d.obj.position.copy(d.target); d.obj.visible = true; }
+    this._drops = [];
+    this.tweens = this.tweens.filter((t) => t.kind !== 'drop');
     this.step = n;
+    const fresh = this._stepLeaves.filter((o) => n != null && o.userData.step === n);
+    const gap = fresh.length ? Math.max(70, Math.min(550, 6500 / fresh.length)) : 0;
     const now = performance.now();
-    let i = 0;
-    for (const o of this._stepLeaves) {
-      const show = n == null || o.userData.step <= n;
-      const appears = show && !o.visible;
-      o.visible = show;
-      if (appears && animate && n != null && prev != null && o.userData.step === n && n > prev) {
-        // Descente en place, décalée d'une pièce à l'autre (ordre de construction).
+    for (const o of this._stepLeaves) o.visible = n == null || o.userData.step <= n;
+    let total = 0;
+    if (animate && n != null) {
+      fresh.forEach((o, i) => {
         const target = o.position.clone();
-        const delay = Math.min(i++ * 25, 900);
-        o.position.y = target.y + 0.45;
-        this.tweens.push({ start: now + delay, dur: 450, step: (k) => {
-          k = Math.max(0, k);
+        const delay = i * gap;
+        const drop = o.userData.noDrop ? 0 : 0.45;
+        o.visible = false;
+        const d = { obj: o, target };
+        this._drops.push(d);
+        this.tweens.push({ kind: 'drop', start: now + delay, dur: 420, step: (k) => {
+          if (k < 0) return;
+          o.visible = true;
           o.position.copy(target);
-          o.position.y += 0.45 * Math.pow(1 - k, 3);
+          o.position.y += drop * Math.pow(1 - k, 3);
+          if (k >= 1) this._drops = this._drops.filter((x) => x !== d);
+          this._refreshLabels();
         } });
-      }
+      });
+      total = fresh.length ? (fresh.length - 1) * gap + 420 : 0;
     }
+    for (const o of this._stepOnly) {
+      const only = [].concat(o.userData.stepOnly);
+      o.visible = n != null && only.includes(n);
+    }
+    for (const note of this._notes || []) note.label.visible = n != null && note.steps.includes(n);
+    this._stepFresh = new Set(fresh);
+    this._refreshStates();
     this._cullDirty = true;
     this.labels.forEach((l) => { l.culled = false; });
     this._refreshLabels();
     this.invalidate();
+    return total;
+  }
+
+  /** Annotations du montage (view.notes : { steps, pos, text }), en étiquettes posées dans la scène. */
+  _createNotes() {
+    this._notes = [];
+    for (const nt of this.model.view.notes || []) {
+      const el = document.createElement('div');
+      el.className = 'balloon caption note';
+      el.textContent = nt.text;
+      const label = new CSS2DObject(el);
+      label.center.set(0.5, 1);
+      label.position.set(...nt.pos);
+      label.visible = false;
+      this.model.root.add(label);
+      this._notes.push({ label, steps: [].concat(nt.steps) });
+    }
+  }
+
+  /** Déplace la caméra vers une position et une cible données (montage par étapes). */
+  lookAt(pos, target, { instant = false } = {}) {
+    this._moveCamera(new THREE.Vector3(...pos), new THREE.Vector3(...target), instant);
   }
 
   /** Une pièce (ou un groupe) a-t-elle au moins un maillage affiché ? (montage par étapes) */
@@ -778,6 +841,7 @@ export class Viewer {
     const cutAll = sec.on && !cutSel;
     const ghostOthers = (this.isolate && sel.length) || cutSel;
     applyState(this.model.root, ghostOthers ? 'ghost' : 'base', cutAll);
+    if (this.step != null && this._stepFresh) for (const o of this._stepFresh) if (!sel.includes(o)) applyState(o, 'step', cutAll);
     for (const o of this.hoverObjs) if (!sel.includes(o)) applyState(o, 'hover', cutAll);
     for (const o of sel) applyState(o, cutSel ? 'base' : 'select', cutAll || cutSel);
     this._refreshLabels();

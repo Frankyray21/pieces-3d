@@ -466,14 +466,16 @@ function explodeEverything(on) {
 
 // ------------------------------------------------------------------ montage par étapes
 
-// Vue qui le propose (model.view.steps, ex. le plancher de foreuse) : les pièces
-// portent leur numéro d'étape ; le panneau avance d'une étape à l'autre, avec le
+// Vue qui le propose (model.view.steps, ex. le plancher de foreuse) : au départ,
+// seulement le décor ; à chaque étape, ses pièces sont posées une à une dans
+// l'ordre de pose (Viewer.setStep), en surbrillance, avec la caméra de l'étape
+// (step.cam), ses outils et ses annotations. Le panneau donne le titre et le
 // texte de l'étape et un lien vers sa page de la procédure.
-const STEP_MS = 4500;
+const STEP_PAUSE = 2600; // lecture : pause après la pose d'une étape (ms)
 let stepTimer = null;
 
 function stopStepPlay() {
-  clearInterval(stepTimer);
+  clearTimeout(stepTimer);
   stepTimer = null;
   $('#st-play').setAttribute('aria-pressed', 'false');
   $('#st-play').textContent = 'Lecture';
@@ -504,12 +506,16 @@ function renderSteps() {
   $('#st-next').disabled = n === last;
 }
 
+/** Va à l'étape n : pièces des étapes précédentes en place, celles de n posées une à une (animate). Retourne la durée de la pose. */
 function setStepN(n, { animate = true } = {}) {
   const list = S.stepsList;
-  if (!list || !viewer) return;
+  if (!list || !viewer) return 0;
   S.steps.n = Math.max(0, Math.min(list.length - 1, n));
-  viewer.setStep(S.steps.n, { animate });
+  const st = list[S.steps.n];
+  const ms = viewer.setStep(S.steps.n, { animate });
+  if (st.cam) viewer.lookAt(st.cam.pos, st.cam.tgt);
   renderSteps();
+  return ms;
 }
 
 function toggleSteps(on = !S.steps.on) {
@@ -517,31 +523,79 @@ function toggleSteps(on = !S.steps.on) {
   S.steps.on = on;
   if (on) {
     if (S.explode > 0 || S.expanded.size) explodeEverything(false);
-    setStepN(0, { animate: false });
-    viewer.frame();
+    // Au départ, rien : seulement la galerie ; puis l'étape 0 se pose.
+    viewer.setStep(-1, { animate: false });
+    setStepN(0);
   } else {
+    stopStepPlay();
     viewer.setStep(null);
     renderSteps();
     viewer.frame();
   }
 }
 
+function playSteps() {
+  if (!S.steps.on) { stopStepPlay(); return; }
+  const last = S.stepsList.length - 1;
+  if (S.steps.n >= last) { stopStepPlay(); return; }
+  const ms = setStepN(S.steps.n + 1);
+  stepTimer = setTimeout(playSteps, ms + STEP_PAUSE);
+}
+
 function bindSteps() {
   $('#btn-steps').addEventListener('click', () => toggleSteps());
   $('#st-close').addEventListener('click', () => toggleSteps(false));
-  $('#st-prev').addEventListener('click', () => { stopStepPlay(); setStepN(S.steps.n - 1, { animate: false }); });
+  $('#st-prev').addEventListener('click', () => { stopStepPlay(); setStepN(S.steps.n - 1); });
   $('#st-next').addEventListener('click', () => { stopStepPlay(); setStepN(S.steps.n + 1); });
+  $('#st-replay').addEventListener('click', () => { stopStepPlay(); setStepN(S.steps.n); });
   $('#st-range').addEventListener('input', (e) => { stopStepPlay(); setStepN(Number(e.target.value), { animate: false }); });
   $('#st-play').addEventListener('click', () => {
     if (stepTimer) { stopStepPlay(); return; }
-    if (S.steps.n >= S.stepsList.length - 1) setStepN(0, { animate: false });
     $('#st-play').setAttribute('aria-pressed', 'true');
     $('#st-play').textContent = 'Pause';
-    stepTimer = setInterval(() => {
-      if (!S.steps.on || S.steps.n >= S.stepsList.length - 1) { stopStepPlay(); return; }
-      setStepN(S.steps.n + 1);
-    }, STEP_MS);
+    if (S.steps.n >= S.stepsList.length - 1) {
+      viewer.setStep(-1, { animate: false });
+      stepTimer = setTimeout(playSteps, 0);
+      S.steps.n = -1;
+      return;
+    }
+    playSteps();
   });
+}
+
+// ------------------------------------------------------------------ plein écran
+
+// Scène en plein écran (API Fullscreen, préfixe webkit sur iPad) ; sans elle
+// (iPhone), la scène occupe toute la fenêtre.
+function fullscreenEl() {
+  return document.fullscreenElement || document.webkitFullscreenElement || null;
+}
+
+function renderFullscreen() {
+  const on = !!fullscreenEl() || document.body.classList.contains('stage-full');
+  $('#btn-full').setAttribute('aria-pressed', String(on));
+  $('#btn-full').textContent = on ? 'Quitter le plein écran' : 'Plein écran';
+}
+
+function toggleFullscreen() {
+  const st = $('#stage');
+  if (fullscreenEl()) {
+    (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+  } else if (document.body.classList.contains('stage-full')) {
+    document.body.classList.remove('stage-full');
+  } else if (st.requestFullscreen || st.webkitRequestFullscreen) {
+    const req = (st.requestFullscreen || st.webkitRequestFullscreen).call(st);
+    if (req?.catch) req.catch(() => document.body.classList.add('stage-full'));
+  } else {
+    document.body.classList.add('stage-full');
+  }
+  setTimeout(() => { renderFullscreen(); viewer?.resize(); }, 120);
+}
+
+function bindFullscreen() {
+  $('#btn-full').addEventListener('click', toggleFullscreen);
+  for (const ev of ['fullscreenchange', 'webkitfullscreenchange']) document.addEventListener(ev, () => { renderFullscreen(); viewer?.resize(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && document.body.classList.contains('stage-full')) toggleFullscreen(); });
 }
 
 // ------------------------------------------------------------------ documents (schémas + listes)
@@ -1023,6 +1077,7 @@ function setPane(p) {
 
 function bindChrome() {
   bindSteps();
+  bindFullscreen();
   document.addEventListener('click', (e) => {
     const g = e.target.closest('[data-go]');
     if (g) {
