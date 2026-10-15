@@ -4,13 +4,14 @@
 const BASE = 'equipment/';
 
 export async function loadIndex() {
-  const res = await fetch(`${BASE}index.json`);
+  // Toujours revalidée : un équipement ajouté apparaît sans attendre la fin de la cache.
+  const res = await fetch(`${BASE}index.json`, { cache: 'no-cache' });
   if (!res.ok) throw new Error(`Index des équipements introuvable (${res.status})`);
   return (await res.json()).equipment;
 }
 
 export async function loadEquipment(id) {
-  const res = await fetch(`${BASE}${id}/data.json`);
+  const res = await fetch(`${BASE}${id}/data.json`, { cache: 'no-cache' });
   if (!res.ok) throw new Error(`Données de l'équipement « ${id} » introuvables (${res.status})`);
   return normalize(await res.json());
 }
