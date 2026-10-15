@@ -286,7 +286,7 @@
     "P08",
     "P09"
    ],
-   "note": "Planches posées dans le sens contraire des 6 × 6, en avançant sur la surface déjà couverte (ne pas enjamber les 6 × 6). Resserrage aux coins à environ 50 % (étape 7) : coins enfoncés, planche vissée devant, coins libérés. Deux planches laissées libres puis vissées à la fin pour joindre les sections (étape 8).",
+   "note": "Planches posées dans le sens contraire des 6 × 6, la première vissée avec des tire-fonds à chaque extrémité, en avançant sur la surface déjà couverte (ne pas enjamber les 6 × 6). Resserrage aux coins à environ 50 % (étape 7) : coins enfoncés, planche vissée devant, coins libérés. Deux planches laissées libres puis vissées à la fin pour joindre les sections (étape 8).",
    "parts": [
     [
      "1",
@@ -309,12 +309,31 @@
     [
      "3",
      "",
-     48,
-     "Tire-fond 6 po, à chaque extrémité des planches",
+     2,
+     "Tire-fond 6 po : première planche, à chaque extrémité (étape 6)",
      {
-      "qty3d": 1,
-      "note": "Un objet 3D pour tous les tire-fonds de la section.",
-      "pnText": "Tire-fond 6 po"
+      "pnText": "Tire-fond 6 po",
+      "qty3d": 1
+     }
+    ],
+    [
+     "4",
+     "",
+     2,
+     "Tire-fond 6 po : planche vissée devant les coins pour retenir la tension (étape 7)",
+     {
+      "pnText": "Tire-fond 6 po",
+      "qty3d": 1
+     }
+    ],
+    [
+     "5",
+     "",
+     4,
+     "Tire-fond 6 po : planches de jonction des sections, de chaque côté (étape 8)",
+     {
+      "pnText": "Tire-fond 6 po",
+      "qty3d": 1
      }
     ],
     [
@@ -460,12 +479,21 @@
     [
      "2",
      "",
-     48,
-     "Tire-fond 6 po",
+     2,
+     "Tire-fond 6 po : première planche de la section, à chaque extrémité",
      {
-      "qty3d": 1,
-      "note": "Un objet 3D pour tous les tire-fonds de la section.",
-      "pnText": "Tire-fond 6 po"
+      "pnText": "Tire-fond 6 po",
+      "qty3d": 1
+     }
+    ],
+    [
+     "3",
+     "",
+     2,
+     "Tire-fond 6 po : planche vissée devant les coins (étape 7 répétée)",
+     {
+      "pnText": "Tire-fond 6 po",
+      "qty3d": 1
      }
     ],
     [
@@ -550,12 +578,12 @@
    "sheets": [
     "P16"
    ],
-   "note": "RSST art. 12 : lisse supérieure entre 1 et 1,2 m (1,07 m ici), lisse intermédiaire à mi-hauteur, plinthe d'au moins 90 mm. Un 2 × 4 raboté sur chant ne fait que 89 mm : la 3D met un 2 × 4 brut (102 mm). Garde-corps là où le plancher dépasse 12 po de haut (calculé sur le sol de la galerie), jambes de force au bout du plancher. Grillage de 24 po au bas des murs : l'écart plancher-mur est de 12 po.",
+   "note": "RSST art. 12 : lisse supérieure entre 1 et 1,2 m (1,07 m ici), lisse intermédiaire à mi-hauteur, plinthe d'au moins 90 mm. Un 2 × 4 raboté sur chant ne fait que 89 mm : la 3D met un 2 × 4 brut (102 mm). Garde-corps là où le plancher dépasse 12 po de haut et donne sur un vide : au bout du plancher, de part et d'autre de l'escalier, avec jambes de force. Le long des parois rocheuses, il n'y a pas de vide : l'écart plancher-mur de 12 po est fermé par un grillage de 24 po au bas du mur.",
    "parts": [
     [
      "1",
      "",
-     16,
+     5,
      "Poteau 2 × 4",
      {
       "pnText": "2 × 4 raboté"
@@ -564,7 +592,7 @@
     [
      "2",
      "",
-     4,
+     2,
      "Lisse supérieure 2 × 4 (1,07 m du plancher)",
      {
       "pnText": "2 × 4 raboté"
@@ -573,7 +601,7 @@
     [
      "3",
      "",
-     4,
+     2,
      "Lisse intermédiaire 2 × 4 (mi-hauteur)",
      {
       "pnText": "2 × 4 raboté"
@@ -582,7 +610,7 @@
     [
      "4",
      "",
-     4,
+     2,
      "Lisse inférieure (plinthe) 2 × 4 sur chant, 90 mm au moins",
      {
       "pnText": "2 × 4 brut"

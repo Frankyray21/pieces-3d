@@ -1,6 +1,6 @@
 # Script ElevenLabs : fabrication d’un plancher pour foreuse aux diamants sous terre
 
-Procédure PRO-DD-ST-003 (révision juillet 2026). Vidéo de 7:09 (429.3 s), 42 répliques, 960 mots.
+Procédure PRO-DD-ST-003 (révision juillet 2026). Vidéo de 7:10 (430.5 s), 42 répliques, 963 mots.
 
 Deux voix, comme la vidéo du mandrin : **Formateur** (voix 1, homme, posée, québécoise) et **Travailleuse** (voix 2, femme, aide-foreuse). Coller `script-elevenlabs.txt` dans le mode dialogue d’ElevenLabs et associer chaque nom à sa voix. Débit visé : environ 2,5 mots par seconde. Les sigles sont écrits comme ils se disent (P-R-O, D-D, S-T, zéro zéro trois ; R-S-S-T).
 
@@ -38,15 +38,15 @@ Le minutage est celui de la vidéo actuelle. Une fois l’audio enregistré, la 
 | 4:36 | Étape 12 | Formateur | Étape douze : on couvre la deuxième section en répétant les étapes six pis sept. Les deux planches de jonction sont vissées à la fin. |
 | 4:48 | Étape 13 | Formateur | Étape treize : rien ne dépasse. Les bouts de six par six pis de trois par huit sont coupés carrés, égal avec le bord. Un bout qui dépasse, c'est une chute. |
 | 5:02 | Étape 14 | Formateur | Étape quatorze : ici, le plancher dépasse douze pouces. Il faut des marches : seize pouces de profondeur, entre trente-six pis soixante pouces de large, douze pouces de haut au maximum. On vise neuf. |
-| 5:17 | Étape 15 | Formateur | Étape quinze : plus de douze pouces de haut, des garde-corps selon l'article douze du R-S-S-T. La lisse du haut entre un mètre pis un mètre vingt, une lisse à mi-hauteur, pis une plinthe d'au moins quatre-vingt-dix millimètres. |
-| 5:33 | Étape 15 | Travailleuse | Pis ça doit tenir combien ? |
-| 5:36 | Étape 15 | Formateur | Neuf cents newtons de côté, quatre cent cinquante vers le bas, sur la lisse du haut. |
-| 5:43 | Étape 16 | Formateur | Étape seize : plus d'une marche, des mains courantes des deux bords. |
-| 5:50 | Étape 17 | Formateur | Étape dix-sept : entre le plancher pis le mur, douze pouces ou moins ? Un grillage de vingt-quatre pouces au bas du mur. Le pied passe pas dans le trou. |
-| 6:04 | Plancher secondaire | Formateur | La foreuse s'installe. À côté de la tour, le plancher secondaire : au moins trente-deux par soixante-douze pouces, douze pouces de haut au maximum, rien en porte-à-faux. |
-| 6:15 | Plancher secondaire | Formateur | Les deux planches les plus proches sont vissées, la dernière arrive à trois pouces de la tour. À chaque changement d'angle, on les ajuste. Pis pas de bois plané sur les planchers. |
-| 6:29 | Démantèlement | Formateur | Au démantèlement, c'est l'inverse : le plancher secondaire d'abord, le principal en commençant par les planches du fond, les tire-fonds enlevés à mesure. |
-| 6:39 | Démantèlement | Formateur | À la fin : clôture orange pis carte de ruban rouge. Trou non arpenté et non cimenté, la date, le nom du superviseur. |
-| 6:49 | À retenir | Formateur | À retenir : le premier madrier au point le plus haut, six appuis minimum par six par six, enlignés aux croisements. |
-| 6:59 | À retenir | Formateur | Plus de douze pouces : marches, garde-corps pis mains courantes. Pis le gros bois, toujours à deux. |
-| 7:06 | À retenir | Travailleuse | Compris. On est prêts à bâtir. |
+| 5:17 | Étape 15 | Formateur | Étape quinze : plus de douze pouces de haut pis un vide, des garde-corps selon l'article douze du R-S-S-T. La lisse du haut entre un mètre pis un mètre vingt, une lisse à mi-hauteur, pis une plinthe d'au moins quatre-vingt-dix millimètres. |
+| 5:34 | Étape 15 | Travailleuse | Pis ça doit tenir combien ? |
+| 5:37 | Étape 15 | Formateur | Neuf cents newtons de côté, quatre cent cinquante vers le bas, sur la lisse du haut. |
+| 5:44 | Étape 16 | Formateur | Étape seize : plus d'une marche, des mains courantes des deux bords. |
+| 5:51 | Étape 17 | Formateur | Étape dix-sept : entre le plancher pis le mur, douze pouces ou moins ? Un grillage de vingt-quatre pouces au bas du mur. Le pied passe pas dans le trou. |
+| 6:05 | Plancher secondaire | Formateur | La foreuse s'installe. À côté de la tour, le plancher secondaire : au moins trente-deux par soixante-douze pouces, douze pouces de haut au maximum, rien en porte-à-faux. |
+| 6:16 | Plancher secondaire | Formateur | Les deux planches les plus proches sont vissées, la dernière arrive à trois pouces de la tour. À chaque changement d'angle, on les ajuste. Pis pas de bois plané sur les planchers. |
+| 6:30 | Démantèlement | Formateur | Au démantèlement, c'est l'inverse : le plancher secondaire d'abord, le principal en commençant par les planches du fond, les tire-fonds enlevés à mesure. |
+| 6:40 | Démantèlement | Formateur | À la fin : clôture orange pis carte de ruban rouge. Trou non arpenté et non cimenté, la date, le nom du superviseur. |
+| 6:51 | À retenir | Formateur | À retenir : le premier madrier au point le plus haut, six appuis minimum par six par six, enlignés aux croisements. |
+| 7:00 | À retenir | Formateur | Plus de douze pouces : marches, garde-corps pis mains courantes. Pis le gros bois, toujours à deux. |
+| 7:07 | À retenir | Travailleuse | Compris. On est prêts à bâtir. |

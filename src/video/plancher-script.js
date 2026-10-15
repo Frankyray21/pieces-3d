@@ -19,7 +19,7 @@ const L = 9.7536, SEC = 4.8768, W = 4.8768, DECK = 0.2286;
 
 const C = {
   ov: { pos: [L / 2 + 6.2, 5.0, 8.4], tgt: [L / 2, -0.15, -0.4] },
-  entr: { pos: [L + 3.3, 1.55, 4.6], tgt: [L + 3.0, 0.45, -0.4] },
+  entr: { pos: [L + 6.6, 1.45, 1.1], tgt: [L + 4.3, 1.3, 0] },
   wall: { pos: [4.2, 1.7, 1.6], tgt: [3.1, 1.25, -2.7] },
   line: { pos: [-2.6, 2.0, 0.9], tgt: [3.2, -0.15, -2.35] },
   high: { pos: [-1.9, 1.45, 1.4], tgt: [0.9, -0.05, -1.7] },
@@ -61,7 +61,7 @@ export const SEGMENTS = [
       [1, 'Une règle qui change pas : les grosses pièces de bois, on les transporte toujours à deux.'],
     ],
     reveal: [{ cue: 'barricade', at: 0.05, span: 0.1 }, { cue: 'cabinet', at: 0.25, span: 0.1 }, { cue: 'ext', at: 0.35, span: 0.05 }],
-    cams: [{ t: 0.3, ...C.entr }, { t: 1, pos: [L + 1.6, 1.5, 4.4], tgt: [L + 3.0, 0.5, 0.2] }],
+    cams: [{ t: 0.3, ...C.entr }, { t: 1, pos: [L + 5.6, 1.5, 2.2], tgt: [L + 3.0, 0.7, 1.2] }],
   },
   {
     id: 'inspection', min: 9,
@@ -140,7 +140,7 @@ export const SEGMENTS = [
       [2, 'On part de quel bord ?'],
       [1, 'Du bord où tu peux marcher sur ce qui est déjà couvert. On enjambe jamais les six par six : c\'est là qu\'on trébuche.'],
     ],
-    reveal: [{ cue: 'deck1', from: 0, to: 12, at: 0.08, span: 0.8 }, { cue: 'screws1', at: 0.9, span: 0.05 }],
+    reveal: [{ cue: 'deck1', from: 0, to: 1, at: 0.08, span: 0 }, { cue: 'screws1', at: 0.16, span: 0 }, { cue: 'deck1', from: 1, to: 12, at: 0.25, span: 0.7 }],
     cams: [{ t: 0.25, ...C.deck1 }, { t: 1, pos: [-0.8, 2.6, 4.0], tgt: [SEC * 0.5, 0, 0] }],
   },
   {
@@ -151,7 +151,7 @@ export const SEGMENTS = [
       [2, 'Sinon, à la longue, ça ouvre.'],
     ],
     show: [{ obj: 'tightWedges', from: 0.12, to: 0.62 }],
-    reveal: [{ cue: 'deck1', from: 12, to: 22, at: 0.55, span: 0.4 }],
+    reveal: [{ cue: 'screwsT', at: 0.4, span: 0 }, { cue: 'deck1', from: 12, to: 22, at: 0.62, span: 0.33 }],
     cams: [{ t: 0.2, ...C.tight }, { t: 0.6, ...C.tight }, { t: 1, ...C.deck1 }],
   },
   {
@@ -199,7 +199,7 @@ export const SEGMENTS = [
     lines: [
       [1, 'Étape douze : on couvre la deuxième section en répétant les étapes six pis sept. Les deux planches de jonction sont vissées à la fin.'],
     ],
-    reveal: [{ cue: 'deck2', at: 0.05, span: 0.6 }, { cue: 'screws2', at: 0.68, span: 0.05 }, { cue: 'joinPlanks', at: 0.78, span: 0.08 }],
+    reveal: [{ cue: 'deck2', at: 0.05, span: 0.6 }, { cue: 'screws2', at: 0.68, span: 0.08 }, { cue: 'joinPlanks', at: 0.78, span: 0.08 }, { cue: 'joinScrews', at: 0.9, span: 0 }],
     cams: [{ t: 0.3, ...C.deck2 }, { t: 1, pos: [L + 2.4, 2.6, 4.2], tgt: [SEC, 0, 0] }],
   },
   {
@@ -221,9 +221,9 @@ export const SEGMENTS = [
   },
   {
     id: 'e15', min: 15,
-    band: { n: '15', title: 'Garde-corps (RSST, art. 12)', text: 'Si le plancher est plus haut que 12 pouces, des garde-corps devront être installés et respecter l’article 12 du RSST. Une lisse inférieure doit être ajoutée pour les endroits sur le plancher où les travailleurs ont accès.', detail: 'Lisse supérieure entre 1 m et 1,2 m · lisse intermédiaire à mi-distance · plinthe d’au moins 90 mm · 900 N horizontal et 450 N vertical à la lisse supérieure' },
+    band: { n: '15', title: 'Garde-corps (RSST, art. 12)', text: 'Si le plancher est plus haut que 12 pouces, des garde-corps devront être installés et respecter l’article 12 du RSST. Une lisse inférieure doit être ajoutée pour les endroits sur le plancher où les travailleurs ont accès.', detail: 'Ici : au bout du plancher, côté galerie (vide) ; le long des parois, le grillage ferme l’écart · lisse supérieure 1 m à 1,2 m · lisse intermédiaire · plinthe d’au moins 90 mm' },
     lines: [
-      [1, 'Étape quinze : plus de douze pouces de haut, des garde-corps selon l\'article douze du RSST. La lisse du haut entre un mètre pis un mètre vingt, une lisse à mi-hauteur, pis une plinthe d\'au moins quatre-vingt-dix millimètres.'],
+      [1, 'Étape quinze : plus de douze pouces de haut pis un vide, des garde-corps selon l\'article douze du RSST. La lisse du haut entre un mètre pis un mètre vingt, une lisse à mi-hauteur, pis une plinthe d\'au moins quatre-vingt-dix millimètres.'],
       [2, 'Pis ça doit tenir combien ?'],
       [1, 'Neuf cents newtons de côté, quatre cent cinquante vers le bas, sur la lisse du haut.'],
     ],

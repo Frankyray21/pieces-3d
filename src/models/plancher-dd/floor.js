@@ -18,6 +18,8 @@ function soil(api, opts, x0, x1, z0, z1) {
 const PLANKS = Math.round(L / P8); // 48 planches de 3 × 8 sur 32 pi
 const PER_SEC = PLANKS / 2;
 const plankX = (i) => (i + 0.5) * P8;
+// Planche vissée devant les coins de serrage (étape 7), vers la moitié de la section.
+const TIGHT = 11;
 const screwZ = W / 2 - B66 / 2; // tire-fonds dans les madriers de rive
 
 // ------------------------------------------------------------------ section 1
@@ -49,15 +51,19 @@ export function P07(api, opts = {}) {
   const S = api.S;
   soil(api, opts, -0.4, SEC + 0.4, -W / 2 - 0.3, W / 2 + 0.3);
   const put = labeler(api);
-  const screws = [];
   for (let i = 0; i < PER_SEC; i++) {
     const join = i >= PER_SEC - 2; // deux planches laissées libres puis vissées à la fin (étape 8)
     const p = lumber(S, [P8, P3, W], [plankX(i), B66 + P3 / 2, 0]);
     p.userData.order = i;
     put(join ? '2' : '1', p, [0, join ? 0.75 : 0.45, 0], join ? 12 : 6, { seq: join ? 1 : 0 });
-    for (const s of [-1, 1]) screws.push([plankX(i), DECK, s * screwZ]);
   }
-  put('3', lagScrews(S, screws), [0, 1.05, 0], 6, { seq: 1 });
+  // Tire-fonds de la procédure seulement : première planche à chaque extrémité
+  // (étape 6), planche vissée devant les coins pour retenir la tension (étape 7),
+  // planches de jonction des deux sections, de chaque côté (étape 8).
+  const ends = (i) => [-1, 1].map((s) => [plankX(i), DECK, s * screwZ]);
+  put('3', lagScrews(S, ends(0)), [0, 1.05, 0], 6, { seq: 0 });
+  put('4', lagScrews(S, ends(TIGHT)), [0, 1.05, 0], 7);
+  put('5', lagScrews(S, [...ends(PER_SEC - 2), ...ends(PER_SEC - 1)]), [0, 1.2, 0], 12, { seq: 2 });
   return { view: { dir: [0.75, 1.0, 1.1] } };
 }
 
@@ -96,12 +102,13 @@ export function P13(api, opts = {}) {
   const S = api.S;
   soil(api, opts, SEC - 0.4, L + 0.4, -W / 2 - 0.3, W / 2 + 0.3);
   const put = labeler(api);
-  const screws = [];
   for (let i = PER_SEC; i < PLANKS; i++) {
     put('1', lumber(S, [P8, P3, W], [plankX(i), B66 + P3 / 2, 0]), [0, 0.45, 0], 12);
-    for (const s of [-1, 1]) screws.push([plankX(i), DECK, s * screwZ]);
   }
-  put('2', lagScrews(S, screws), [0, 1.05, 0], 12, { seq: 2 });
+  // Étapes 6 et 7 répétées : première planche de la section, planche devant les coins.
+  const ends = (i) => [-1, 1].map((s) => [plankX(i), DECK, s * screwZ]);
+  put('2', lagScrews(S, ends(PER_SEC)), [0, 1.05, 0], 12);
+  put('3', lagScrews(S, ends(PER_SEC + TIGHT)), [0, 1.05, 0], 12);
   return { view: { dir: [-0.75, 1.0, 1.1] } };
 }
 
@@ -179,14 +186,20 @@ function postsAlong(a, b) {
   return Array.from({ length: n + 1 }, (_, i) => a + ((b - a) * i) / n);
 }
 
-/** Tronçons de garde-corps : bords où le plancher dépasse 12 po de haut. */
+/**
+ * Tronçons de garde-corps : bords du plancher de plus de 12 po de haut qui
+ * donnent sur un vide. Le long des parois rocheuses (écart de 12 po ou moins),
+ * il n'y a pas de vide : le grillage au bas du mur ferme l'écart (étape 17).
+ * Reste le bout du plancher, côté galerie, de part et d'autre de l'escalier.
+ */
 export function guardSegments() {
   const segs = [];
+  const sideGap = GAL - W / 2; // écart plancher-paroi
   for (const s of [-1, 1]) {
     const x0 = over12(s * W / 2);
-    if (x0 != null) segs.push({ axis: 'x', side: s, a: Math.max(0, Math.floor(x0 / FT) * FT), b: L });
+    if (x0 != null && sideGap > 12 * IN + 0.005) segs.push({ axis: 'x', side: s, a: Math.max(0, Math.floor(x0 / FT) * FT), b: L });
   }
-  segs.push({ axis: 'z', side: 1, a: -W / 2, b: STAIR.z0 }, { axis: 'z', side: 1, a: STAIR.z0 + STAIR.w, b: W / 2 });
+  if (deckHeight(L, 0) > 12 * IN) segs.push({ axis: 'z', side: 1, a: -W / 2, b: STAIR.z0 }, { axis: 'z', side: 1, a: STAIR.z0 + STAIR.w, b: W / 2 });
   return segs;
 }
 

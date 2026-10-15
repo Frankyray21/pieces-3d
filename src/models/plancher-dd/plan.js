@@ -168,7 +168,7 @@ export function over12(z) {
 
 /** Étapes de la procédure (page où elles sont décrites), pour le montage par étapes et la vidéo. */
 export const STEPS = [
-  { n: 0, cam: { pos: [L + 3.3, 1.6, 4.6], tgt: [L + 2.6, 0.4, -0.2] }, page: 'P02', title: 'Inspection des lieux par le superviseur', text: 'Plancher exempt de débris, plat, fonds de trous trouvés et marqués.' },
+  { n: 0, cam: { pos: [L + 6.6, 1.45, 1.1], tgt: [L + 4.0, 1.1, 0.3] }, page: 'P02', title: 'Inspection des lieux par le superviseur', text: 'Plancher exempt de débris, plat, fonds de trous trouvés et marqués.' },
   { n: 1, cam: { pos: [-2.6, 2.0, 0.9], tgt: [3.2, -0.15, -2.35] }, page: 'P02', title: 'Marquer la position du plancher', text: "Avec le plan de forage, tracer à la peinture la ligne de référence du plancher (16 × 32 pi)." },
   { n: 2, cam: { pos: [-1.9, 1.45, 1.4], tgt: [0.9, -0.05, -1.7] }, page: 'P03', title: 'Trouver le point le plus haut', text: 'Niveau au laser Bosch : le premier madrier repose directement sur le sol au point le plus haut.' },
   { n: 3, cam: { pos: [SEC / 2 + 4.0, 3.1, 5.8], tgt: [SEC / 2, -0.05, -0.2] }, page: 'P03', title: 'Placer la structure de base', text: 'Madriers 6 × 6 dans le sens contraire du forage : les patins de la foreuse croisent les 6 × 6.' },

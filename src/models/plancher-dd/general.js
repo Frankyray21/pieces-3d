@@ -20,8 +20,8 @@ export function P02(api) {
   put('7', api.sub('P16', IN_PLACE), [1.2, 2.2, 0], 17);
   put('8', api.sub('P17', IN_PLACE), [0, 2.4, -0.4], 18);
   put('9', drill(S), [0, 3.4, 0], 18, { seq: 0 });
-  const bar = barricade(S);
-  bar.position.set(L + 4.3, ground(L + 4.3, -0.9), -0.9);
+  // Barricade de panneaux suspendus en travers de la galerie, à l'entrée du chantier.
+  const bar = barricade(S, L + 4.3);
   put('10', bar, [1.2, 0, 0], 0, { seq: 0 });
   // Armoire et extincteur au sol, à l'entrée du chantier (en place avant le plancher).
   const cab = cabinet(S);

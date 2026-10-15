@@ -243,8 +243,8 @@
   "passage": "e15",
   "etape": "15",
   "orateur": 1,
-  "texte": "Étape quinze : plus de douze pouces de haut, des garde-corps selon l'article douze du R-S-S-T. La lisse du haut entre un mètre pis un mètre vingt, une lisse à mi-hauteur, pis une plinthe d'au moins quatre-vingt-dix millimètres.",
-  "mots": 38,
+  "texte": "Étape quinze : plus de douze pouces de haut pis un vide, des garde-corps selon l'article douze du R-S-S-T. La lisse du haut entre un mètre pis un mètre vingt, une lisse à mi-hauteur, pis une plinthe d'au moins quatre-vingt-dix millimètres.",
+  "mots": 41,
   "debut": 317.2
  },
  {
@@ -253,7 +253,7 @@
   "orateur": 2,
   "texte": "Pis ça doit tenir combien ?",
   "mots": 6,
-  "debut": 333.2
+  "debut": 334.4
  },
  {
   "passage": "e15",
@@ -261,7 +261,7 @@
   "orateur": 1,
   "texte": "Neuf cents newtons de côté, quatre cent cinquante vers le bas, sur la lisse du haut.",
   "mots": 16,
-  "debut": 336
+  "debut": 337.2
  },
  {
   "passage": "e16",
@@ -269,7 +269,7 @@
   "orateur": 1,
   "texte": "Étape seize : plus d'une marche, des mains courantes des deux bords.",
   "mots": 12,
-  "debut": 343.5
+  "debut": 344.7
  },
  {
   "passage": "e17",
@@ -277,7 +277,7 @@
   "orateur": 1,
   "texte": "Étape dix-sept : entre le plancher pis le mur, douze pouces ou moins ? Un grillage de vingt-quatre pouces au bas du mur. Le pied passe pas dans le trou.",
   "mots": 30,
-  "debut": 350.5
+  "debut": 351.7
  },
  {
   "passage": "sec",
@@ -285,7 +285,7 @@
   "orateur": 1,
   "texte": "La foreuse s'installe. À côté de la tour, le plancher secondaire : au moins trente-deux par soixante-douze pouces, douze pouces de haut au maximum, rien en porte-à-faux.",
   "mots": 27,
-  "debut": 364.1
+  "debut": 365.3
  },
  {
   "passage": "sec",
@@ -293,7 +293,7 @@
   "orateur": 1,
   "texte": "Les deux planches les plus proches sont vissées, la dernière arrive à trois pouces de la tour. À chaque changement d'angle, on les ajuste. Pis pas de bois plané sur les planchers.",
   "mots": 32,
-  "debut": 375.4
+  "debut": 376.6
  },
  {
   "passage": "demont",
@@ -301,7 +301,7 @@
   "orateur": 1,
   "texte": "Au démantèlement, c'est l'inverse : le plancher secondaire d'abord, le principal en commençant par les planches du fond, les tire-fonds enlevés à mesure.",
   "mots": 23,
-  "debut": 389.6
+  "debut": 390.8
  },
  {
   "passage": "demont",
@@ -309,7 +309,7 @@
   "orateur": 1,
   "texte": "À la fin : clôture orange pis carte de ruban rouge. Trou non arpenté et non cimenté, la date, le nom du superviseur.",
   "mots": 23,
-  "debut": 399.3
+  "debut": 400.5
  },
  {
   "passage": "fin",
@@ -317,7 +317,7 @@
   "orateur": 1,
   "texte": "À retenir : le premier madrier au point le plus haut, six appuis minimum par six par six, enlignés aux croisements.",
   "mots": 21,
-  "debut": 409.9
+  "debut": 411.1
  },
  {
   "passage": "fin",
@@ -325,7 +325,7 @@
   "orateur": 1,
   "texte": "Plus de douze pouces : marches, garde-corps pis mains courantes. Pis le gros bois, toujours à deux.",
   "mots": 17,
-  "debut": 419
+  "debut": 420.2
  },
  {
   "passage": "fin",
@@ -333,6 +333,6 @@
   "orateur": 2,
   "texte": "Compris. On est prêts à bâtir.",
   "mots": 6,
-  "debut": 426.5
+  "debut": 427.7
  }
 ]

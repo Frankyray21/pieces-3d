@@ -196,18 +196,118 @@ export function drill(S) {
 
 // ------------------------------------------------------------------ sécurité
 
-/** Barricade « travaux en cours » avec flasher orange. */
-export function barricade(S) {
-  const g = S.group();
-  const w = 1.2, h = 1.0;
-  for (const s of [-1, 1]) {
-    for (const t of [-1, 1]) g.add(between(S, [0, h, s * (w / 2 - 0.05)], [t * 0.28, 0, s * (w / 2 - 0.05)], 0.05, 0.035, 'white'));
+// Panneaux de la barricade, d'après les photos du chantier : jaune-vert à
+// bordure blanche réfléchissante, texte noir bilingue ; panneaux muraux blancs
+// à bandeau rouge. Texture dessinée sur un canevas (gris uni hors navigateur).
+const SIGN_YELLOW = '#d8df2a';
+function signTexture(wPx, hPx, draw) {
+  if (typeof document === 'undefined') return null;
+  const c = document.createElement('canvas');
+  c.width = wPx; c.height = hPx;
+  const x = c.getContext('2d');
+  draw(x, wPx, hPx);
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
+  t.anisotropy = 4;
+  return t;
+}
+function lines(x, w, rows) {
+  // rows : [texte, taille (px), graisse, y]
+  x.fillStyle = '#111';
+  x.textAlign = 'center';
+  x.textBaseline = 'middle';
+  for (const [txt, size, weight, y] of rows) {
+    x.font = `${weight} ${size}px "Arial Black", Arial, Helvetica, sans-serif`;
+    // Texte tassé pour tenir dans la largeur, comme sur les vrais panneaux.
+    const m = x.measureText(txt).width;
+    const k = Math.min(1, (w * 0.9) / m);
+    x.save(); x.translate(w / 2, y); x.scale(k, 1); x.fillText(txt, 0, 0); x.restore();
   }
-  // Planche rayée orange et blanc.
-  const n = 8;
-  for (let i = 0; i < n; i++) g.add(S.box(0.025, 0.2, w / n, i % 2 ? 'white' : 'fluoOrange', { pos: [0.03, h - 0.12, -w / 2 + (i + 0.5) * (w / n)] }));
-  g.add(S.cyl(0.055, 0.1, 'lampAmber', { pos: [0, h + 0.07, 0] }));
-  g.add(S.cyl(0.06, 0.04, 'black', { pos: [0, h + 0.005, 0] }));
+}
+const yellowSign = (rows) => signTexture(512, Math.round(512 * rows.ratio), (x, w, h) => {
+  x.fillStyle = SIGN_YELLOW; x.fillRect(0, 0, w, h);
+  x.strokeStyle = '#f4f6f0'; x.lineWidth = w * 0.035; x.strokeRect(x.lineWidth / 2, x.lineWidth / 2, w - x.lineWidth, h - x.lineWidth);
+  lines(x, w, rows.text.map(([t, s, g, y]) => [t, s, g, y * h]));
+});
+
+/** Panneau suspendu (larg. w, haut. h) : plaque mince, image recto (vers l'entrée) et verso. */
+function hangingSign(S, w, h, tex) {
+  const g = S.group(S.box(0.006, h, w, 'yellow'));
+  if (tex) {
+    const m = new THREE.MeshStandardMaterial({ map: tex, roughness: 0.55, metalness: 0 });
+    for (const s of [1, -1]) {
+      const p = new THREE.Mesh(new THREE.PlaneGeometry(w, h), m);
+      p.position.x = s * 0.0035;
+      p.rotation.y = s * Math.PI / 2;
+      g.add(p);
+    }
+  }
+  return g;
+}
+
+const SIGNS = {
+  forage: { w: 0.62, h: 0.3, ratio: 0.48, text: [['FORAGE EN COURS', 50, 700, 0.3], ['DRILLING IN PROGRESS', 44, 700, 0.56], ['MACHINES ROGER', 30, 900, 0.8]] },
+  attention: { w: 0.62, h: 0.3, ratio: 0.48, text: [['ATTENTION', 66, 900, 0.28], ['PERSONNE AU TRAVAIL', 42, 700, 0.56], ['PERSONNEL AT WORK', 42, 700, 0.78]] },
+  fumer: { w: 0.56, h: 0.28, ratio: 0.5, text: [['DÉFENSE DE FUMER', 54, 900, 0.36], ['NO SMOKING', 54, 900, 0.7]] },
+  autorise: { w: 0.66, h: 0.92, ratio: 1.39, text: [
+    ['PERSONNE', 74, 900, 0.09], ['AUTORISÉE', 74, 900, 0.17], ['SEULEMENT', 74, 900, 0.25],
+    ['VOUS DEVEZ AVOIR', 26, 400, 0.32], ['L\u2019AUTORISATION DE L\u2019OPÉRATEUR', 26, 400, 0.36], ['AVANT DE FRANCHIR LA BARRICADE', 26, 400, 0.40],
+    ['AUTHORIZED', 74, 900, 0.5], ['PERSONNEL', 74, 900, 0.58], ['ONLY', 74, 900, 0.66],
+    ['YOU MUST HAVE AUTHORIZATION', 26, 400, 0.74], ['FROM OPERATOR BEFORE', 26, 400, 0.78], ['CROSSING BARRICADE', 26, 400, 0.82]] },
+};
+
+function wallSign(S) {
+  const tex = signTexture(512, 336, (x, w, h) => {
+    x.fillStyle = '#f2f2ef'; x.fillRect(0, 0, w, h);
+    x.fillStyle = '#c8141c'; x.fillRect(0, 0, w, h * 0.3);
+    x.strokeStyle = '#c8141c'; x.lineWidth = 10; x.strokeRect(5, 5, w - 10, h - 10);
+    x.fillStyle = '#fff'; x.textAlign = 'center'; x.textBaseline = 'middle';
+    x.font = '900 64px "Arial Black", Arial, sans-serif'; x.fillText('ATTENTION', w / 2, h * 0.16);
+    x.fillStyle = '#111'; x.font = '700 62px Arial, sans-serif';
+    x.fillText('HOMMES', w / 2, h * 0.5); x.fillText('AU TRAVAIL', w / 2, h * 0.76);
+  });
+  const g = S.group(S.box(0.006, 0.36, 0.55, 'white'));
+  if (tex) {
+    const p = new THREE.Mesh(new THREE.PlaneGeometry(0.55, 0.36), new THREE.MeshStandardMaterial({ map: tex, roughness: 0.5 }));
+    p.position.x = 0.0035; p.rotation.y = Math.PI / 2;
+    g.add(p);
+  }
+  // Feu rouge clignotant sur le panneau.
+  g.add(S.cyl(0.03, 0.05, 'lampRed', { pos: [0, 0.21, 0.2] }), S.cyl(0.034, 0.015, 'black', { pos: [0, 0.18, 0.2] }));
+  return g;
+}
+
+/**
+ * Barricade de forage, d'après les photos du chantier : câble tendu d'un mur à
+ * l'autre, rangée de panneaux suspendus (forage en cours, personne au travail,
+ * défense de fumer) et grand panneau « Personne autorisée seulement » au centre,
+ * plus un panneau « Attention hommes au travail » avec feu rouge sur chaque mur.
+ * Posée à l'abscisse x (repère de la galerie), panneaux tournés vers l'entrée.
+ */
+export function barricade(S, x) {
+  const g = S.group();
+  const g0 = ground(x, 0);
+  const yc = g0 + 2.15;
+  const zA = wallZ(-1, x, yc) + 0.05, zB = wallZ(1, x, yc) - 0.05;
+  g.add(S.cyl(0.006, zB - zA, 'black', { axis: 'z', pos: [x, yc, (zA + zB) / 2] }));
+  for (const z of [zA, zB]) g.add(S.cyl(0.02, 0.08, 'steel', { axis: 'z', pos: [x, yc, z] }));
+  // De gauche à droite vu de l'entrée (Z décroissant).
+  const order = ['forage', 'attention', 'fumer', 'autorise', 'attention', 'forage'];
+  const total = order.reduce((n, k) => n + SIGNS[k].w, 0) + 0.04 * (order.length - 1);
+  let z = total / 2;
+  for (const k of order) {
+    const sp = SIGNS[k];
+    const sign = hangingSign(S, sp.w, sp.h, yellowSign(sp));
+    sign.position.set(x, yc - 0.02 - sp.h / 2, z - sp.w / 2);
+    g.add(sign);
+    z -= sp.w + 0.04;
+  }
+  for (const s of [-1, 1]) {
+    const xs = x + 1.1, ys = ground(xs, s * GAL) + 1.55;
+    const w = wallSign(S);
+    w.position.set(xs, ys, wallZ(s, xs, ys) - s * 0.34);
+    g.add(w);
+  }
   return g;
 }
 
