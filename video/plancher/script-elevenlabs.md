@@ -43,7 +43,7 @@ Le minutage est celui de la vidéo actuelle. Une fois l’audio enregistré, la 
 | 5:37 | Étape 15 | Formateur | Neuf cents newtons de côté, quatre cent cinquante vers le bas, sur la lisse du haut. |
 | 5:44 | Étape 16 | Formateur | Étape seize : plus d'une marche, des mains courantes des deux bords. |
 | 5:51 | Étape 17 | Formateur | Étape dix-sept : entre le plancher pis le mur, douze pouces ou moins ? Un grillage de vingt-quatre pouces au bas du mur. Le pied passe pas dans le trou. |
-| 6:05 | Plancher secondaire | Formateur | La foreuse s'installe. À côté de la tour, le plancher secondaire : au moins trente-deux par soixante-douze pouces, douze pouces de haut au maximum, rien en porte-à-faux. |
+| 6:05 | Plancher secondaire | Formateur | À côté de la tour de la foreuse, le plancher secondaire : au moins trente-deux par soixante-douze pouces, douze pouces de haut au maximum, rien en porte-à-faux. |
 | 6:16 | Plancher secondaire | Formateur | Les deux planches les plus proches sont vissées, la dernière arrive à trois pouces de la tour. À chaque changement d'angle, on les ajuste. Pis pas de bois plané sur les planchers. |
 | 6:30 | Démantèlement | Formateur | Au démantèlement, c'est l'inverse : le plancher secondaire d'abord, le principal en commençant par les planches du fond, les tire-fonds enlevés à mesure. |
 | 6:40 | Démantèlement | Formateur | À la fin : clôture orange pis carte de ruban rouge. Trou non arpenté et non cimenté, la date, le nom du superviseur. |

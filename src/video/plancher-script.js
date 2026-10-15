@@ -252,10 +252,10 @@ export const SEGMENTS = [
     id: 'sec', min: 16,
     band: { n: '18', title: 'Plancher secondaire', text: 'Minimum de 32\'\' de largeur par 72\'\' de long et maximum de 12\'\' de hauteur. Aucun morceau en porte-à-faux. Les 2 dernières planches les plus près de la foreuse vissées à l’aide de tire-fonds ; la dernière planche à au moins 3 pouces de la tour.', detail: 'À chaque changement d’azimut, de degrés ou d’angle de forage, les 2 dernières planches et les garde-corps sont ajustés · l’ajout de bois plané sur les planchers n’est pas toléré' },
     lines: [
-      [1, 'La foreuse s\'installe. À côté de la tour, le plancher secondaire : au moins trente-deux par soixante-douze pouces, douze pouces de haut au maximum, rien en porte-à-faux.'],
+      [1, 'À côté de la tour de la foreuse, le plancher secondaire : au moins trente-deux par soixante-douze pouces, douze pouces de haut au maximum, rien en porte-à-faux.'],
       [1, 'Les deux planches les plus proches sont vissées, la dernière arrive à trois pouces de la tour. À chaque changement d\'angle, on les ajuste. Pis pas de bois plané sur les planchers.'],
     ],
-    reveal: [{ cue: 'drill', at: 0.05, span: 0.08 }, { cue: 'secondary', at: 0.3, span: 0.35 }],
+    reveal: [{ cue: 'secondary', at: 0.15, span: 0.45 }],
     cams: [{ t: 0.2, ...C.ov }, { t: 0.5, ...C.second }, { t: 1, pos: [4.6, 2.0, -0.6], tgt: [3.2, 0.5, -2.0] }],
   },
   {

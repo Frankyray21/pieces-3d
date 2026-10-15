@@ -78,7 +78,7 @@
     "P02",
     "P01"
    ],
-   "note": "Reconstitution 3D d'après la procédure PRO-DD-ST-003 (révision juillet 2026). Sol de galerie fictif : il descend vers le bout de la galerie pour montrer les blocages, les soutiens, la cage, les marches et les garde-corps que la procédure exige. La foreuse est une silhouette (position, patins croisant les 6 × 6), pas un modèle de pièces. Chaque pièce porte son numéro d'étape pour l'animation du montage.",
+   "note": "Reconstitution 3D d'après la procédure PRO-DD-ST-003 (révision juillet 2026). Sol de galerie fictif : il descend vers le bout de la galerie pour montrer les blocages, les soutiens, la cage, les marches et les garde-corps que la procédure exige. Chaque pièce porte son numéro d'étape pour l'animation du montage.",
    "parts": [
     [
      "1",
@@ -157,16 +157,6 @@
      "Plancher secondaire à côté de la tour",
      {
       "link": "P17",
-      "pseudo": true
-     }
-    ],
-    [
-     "9",
-     "",
-     1,
-     "Foreuse aux diamants (silhouette, repère de position)",
-     {
-      "note": "Patins dans le sens du forage : ils croisent les madriers 6 × 6 (étape 3).",
       "pseudo": true
      }
     ],

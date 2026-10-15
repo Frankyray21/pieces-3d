@@ -1,9 +1,9 @@
 // Vue d'ensemble (P02) : plancher complet de 16 × 32 pi dans sa galerie, avec
-// la foreuse en silhouette et le matériel de sécurité de la procédure. Les
+// le matériel de sécurité de la procédure (sans la foreuse). Les
 // sous-assemblages sont construits dans le même repère et insérés tels quels.
 import { L, W, DECK, ground, STEPS, NOTES } from './plan.js';
 import { labeler } from './lumber.js';
-import { gallery, paintLine, drill, barricade, cabinet, extinguisher, guides, highPoint } from './site.js';
+import { gallery, paintLine, barricade, cabinet, extinguisher, guides, highPoint } from './site.js';
 
 const IN_PLACE = { inPlace: true };
 
@@ -19,7 +19,6 @@ export function P02(api) {
   put('6', api.sub('P14', IN_PLACE), [2.6, 0.6, 0], 14);
   put('7', api.sub('P16', IN_PLACE), [1.2, 2.2, 0], 17);
   put('8', api.sub('P17', IN_PLACE), [0, 2.4, -0.4], 18);
-  put('9', drill(S), [0, 3.4, 0], 18, { seq: 0 });
   // Barricade de panneaux suspendus en travers de la galerie, à l'entrée du chantier.
   const bar = barricade(S, L + 4.3);
   put('10', bar, [1.2, 0, 0], 0, { seq: 0 });
