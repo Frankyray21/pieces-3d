@@ -6,6 +6,11 @@
 // reproductible. Format : 1280 × 720, 3D 1280 × 540, bandeau de 180 px.
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
+import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
+import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader.js';
 import '@fontsource/barlow-condensed/600.css';
 import '@fontsource/barlow-condensed/700.css';
 import '@fontsource/ibm-plex-sans/400.css';
@@ -26,9 +31,13 @@ export const DURATION = SEGS.at(-1).start + SEGS.at(-1).dur;
 
 // ------------------------------------------------------------------ scène
 
-const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
-// ?scale=0.5 : aperçu rapide (rendu en demi-résolution, agrandi au montage).
-const SCALE = Number(new URLSearchParams(location.search).get('scale')) || 1;
+// ?scale=0.5 : aperçu rapide (rendu en demi-résolution, agrandi au montage) ;
+// ?aa=0 : sans anticrénelage matériel (plus rapide en rendu logiciel).
+const QS = new URLSearchParams(location.search);
+const SCALE = Number(QS.get('scale')) || 1;
+// ?fxaa=1 : anticrénelage FXAA en post-traitement (bien moins coûteux que le MSAA en rendu logiciel).
+const FXAA = QS.get('fxaa') === '1';
+const renderer = new THREE.WebGLRenderer({ antialias: !FXAA && QS.get('aa') !== '0', preserveDrawingBuffer: true });
 renderer.setPixelRatio(SCALE);
 renderer.setSize(VW, VH);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -56,6 +65,16 @@ for (const x of [1.5, 5, 8.5]) {
 }
 
 const camera = new THREE.PerspectiveCamera(40, VW / VH, 0.05, 80);
+
+let composer = null;
+if (FXAA) {
+  composer = new EffectComposer(renderer);
+  composer.addPass(new RenderPass(scene, camera));
+  composer.addPass(new OutputPass());
+  const fx = new ShaderPass(FXAAShader);
+  fx.material.uniforms.resolution.value.set(1 / (VW * SCALE), 1 / (VH * SCALE));
+  composer.addPass(fx);
+}
 
 const model = buildProcedural(models, 'P02');
 scene.add(model.root);
@@ -337,7 +356,7 @@ function render(t) {
   cameraAt(t);
   annotate(t, s);
   overlays(t, s);
-  renderer.render(scene, camera);
+  if (composer) composer.render(); else renderer.render(scene, camera);
 }
 
 window.__video = { duration: DURATION, fps: 24, segments: SEGS.map(({ id, start, dur, band, lines }) => ({ id, start, dur, band, lines })) };

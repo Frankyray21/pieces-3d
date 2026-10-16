@@ -11,7 +11,7 @@
 // Serveur de développement lancé (npm run dev), Playwright installé à part :
 //   PW=$(npm root -g)/playwright node scripts/video-plancher.mjs --out scratch/video
 //   options : --jobs 2 · --stills 12.5,40 (images composées isolées) · --encode-only
-//             aperçu rapide : --fps 12 --scale 0.5
+//             aperçu rapide : --fps 12 --scale 0.5 · --fxaa (anticrénelage FXAA, plus rapide)
 import { createRequire } from 'node:module';
 import { mkdirSync, existsSync, writeFileSync, readFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
@@ -32,7 +32,7 @@ for (const d of ['3d', 'layers']) mkdirSync(join(out, d), { recursive: true });
 async function open(browser) {
   const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
   page.on('pageerror', (e) => console.error('page:', e.message));
-  await page.goto(`${base}/video-plancher.html?capture&scale=${SCALE}`, { waitUntil: 'networkidle' });
+  await page.goto(`${base}/video-plancher.html?capture&scale=${SCALE}${flag('fxaa') ? '&fxaa=1' : ''}`, { waitUntil: 'networkidle' });
   await page.waitForFunction(() => window.__ready === true, null, { timeout: 120000 });
   return page;
 }
