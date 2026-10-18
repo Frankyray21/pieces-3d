@@ -191,7 +191,7 @@ export class Annotator {
     for (const s of segs) {
       const list = (ANNOTATIONS[s.id] || []).map((a) => ({ ...a, seg: s, t0: vt(s, a.v) }));
       list.sort((a, b) => a.t0 - b.t0);
-      const end = s.start + s.dur - 0.25;
+      const end = s.start + s.dur - 0.5; // effacée avant la partie suivante
       list.forEach((a, i) => {
         a.t1 = Math.min(end, a.until != null ? vt(s, a.until) : Infinity, list[i + MAX_ON] ? list[i + MAX_ON].t0 : Infinity);
         this.items.push(a);

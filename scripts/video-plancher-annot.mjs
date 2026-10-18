@@ -21,13 +21,16 @@ const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
 page.on('pageerror', (e) => console.error('page:', e.message));
 await page.goto(`${base}/video-plancher.html?capture&scale=0.25`, { waitUntil: 'networkidle' });
 await page.waitForFunction(() => window.__ready === true, null, { timeout: 200000 });
+// Repère : si la page se recharge (serveur de dév.), l'état de lissage est perdu ; on arrête.
+await page.evaluate(() => { window.__annotRun = 1; });
 const info = await page.evaluate(() => window.__video);
 const total = Math.round(info.duration * FPS);
 const blank = resolve(out, 'vide.png');
 let blankUrl = null;
 const t0 = Date.now();
 for (let f = 0; f < total; f++) {
-  const url = await page.evaluate((t) => window.__annot(t), f / FPS);
+  const url = await page.evaluate((t) => (window.__annotRun === 1 ? window.__annot(t) : null), f / FPS);
+  if (url === null) throw new Error(`page rechargée à l'image ${f} : relancer le calque`);
   const file = join(out, `a_${String(f).padStart(5, '0')}.png`);
   if (existsSync(file)) unlinkSync(file);
   if (blankUrl === null && f === 0) { blankUrl = url; writeFileSync(blank, Buffer.from(url.split(',')[1], 'base64')); }
