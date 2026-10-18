@@ -31,6 +31,9 @@ const C = {
   s2: { pos: [SEC * 1.5 + 4.6, 2.7, 5.6], tgt: [SEC * 1.5, -0.2, 0] },
   s2low: { pos: [L + 1.7, 0.45, 4.1], tgt: [L - 1.6, -0.25, 1.0] },
   crib: { pos: [10.7, 0.55, 3.7], tgt: [8.8, -0.35, 1.55] },
+  cageA: { pos: [7.05, 0.35, 0.75], tgt: [8.81, -0.45, 1.57] },
+  cageB: { pos: [7.25, 0.55, 2.85], tgt: [8.81, -0.45, 1.6] },
+  cageC: { pos: [7.7, 0.8, 3.35], tgt: [8.85, -0.42, 1.62] },
   deck2: { pos: [L + 3.0, 3.4, 4.8], tgt: [SEC * 1.45, 0, 0] },
   edge: { pos: [4.6, 0.8, 3.9], tgt: [6.4, 0.16, 2.44] },
   stairs: { pos: [L + 3.4, 1.45, 2.15], tgt: [L + 0.3, 0.02, 0.96] },
@@ -190,8 +193,10 @@ export const SEGMENTS = [
       [1, 'Étape onze : les madriers à trente-deux pouces centre, à la même hauteur que la première section. Les soutiens, toujours vis-à-vis le croisement des six par six.'],
       [1, 'Dans un creux comme celui-là, on monte une cage : des bouts de vingt-quatre à trente-six pouces, empilés croisés.'],
     ],
-    reveal: [{ cue: 'joists2', at: 0.05, span: 0.35 }, { cue: 'crib', at: 0.6, span: 0.1 }],
-    cams: [{ t: 0.25, ...C.s2 }, { t: 0.55, ...C.crib }, { t: 1, pos: [10.3, 0.75, 3.3], tgt: [8.8, -0.3, 1.4] }],
+    // Cage (cas spécial) : gros plan, plancher en transparence, montée couche par couche.
+    reveal: [{ cue: 'joists2', v: 194.4, vspan: 3.6 }, { cue: 'cribFocus', v: 204.0, vspan: 9.6 }, { cue: 'cribOther', v: 214.4, vspan: 1.6 }],
+    ghost: { vfrom: 203.2, vto: 230 },
+    cams: [{ v: 194.0, ...C.s2 }, { v: 202.6, pos: [SEC * 1.5 + 3.4, 1.5, 4.4], tgt: [SEC * 1.5 + 0.6, -0.3, 0.9] }, { v: 205.2, ...C.cageA }, { v: 212.5, ...C.cageB }, { v: 217.6, ...C.cageC }],
   },
   {
     id: 'e12', min: 10,
@@ -224,8 +229,6 @@ export const SEGMENTS = [
     band: { n: '15', title: 'Garde-corps (RSST, art. 12)', text: 'Si le plancher est plus haut que 12 pouces, des garde-corps devront être installés et respecter l’article 12 du RSST. Une lisse inférieure doit être ajoutée pour les endroits sur le plancher où les travailleurs ont accès.', detail: 'Ici : au bout du plancher, côté galerie (vide) ; le long des parois, le grillage ferme l’écart · lisse supérieure 1 m à 1,2 m · lisse intermédiaire · plinthe d’au moins 90 mm' },
     lines: [
       [1, 'Étape quinze : plus de douze pouces de haut pis un vide, des garde-corps selon l\'article douze du RSST. La lisse du haut entre un mètre pis un mètre vingt, une lisse à mi-hauteur, pis une plinthe d\'au moins quatre-vingt-dix millimètres.'],
-      [2, 'Pis ça doit tenir combien ?'],
-      [1, 'Neuf cents newtons de côté, quatre cent cinquante vers le bas, sur la lisse du haut.'],
     ],
     reveal: [{ cue: 'guards', at: 0.08, span: 0.6 }],
     cams: [{ t: 0.3, ...C.guards }, { t: 1, pos: [L + 3.4, 1.9, 4.4], tgt: [L - 1.4, 0.7, 1.0] }],
@@ -287,17 +290,65 @@ export const RETENIR = [
   'Grosses pièces de bois : toujours à deux',
 ];
 
-const WORDS_PER_S = 2.5;
-const words = (s) => s.split(/\s+/).filter(Boolean).length;
+// ------------------------------------------------------------------ cartons d'étape
 
-/** Durées (s) et instants de début, calculés d'après la narration. */
+/** Carton affiché au début d'une partie (grand titre au centre), ou null. */
+export const STEP_CARD = { dur: 2.0, rect: { x: 250, y: 185, w: 780, h: 170 } };
+export function stepCard(seg) {
+  const b = seg.band;
+  if (seg.card || seg.id === 'e5b') return null;
+  if (seg.id === 'materiel') return { big: 'Avant de commencer', small: 'Matériel et ÉPI' };
+  if (seg.id === 'inspection') return { big: 'Inspection', small: 'Inspection des lieux par le superviseur' };
+  if (seg.id === 'demont') return { big: 'Démantèlement', small: '' };
+  if (b.n === '18') return { big: 'Plancher secondaire', small: 'À côté de la foreuse' };
+  if (b.n === '') return null;
+  return { big: `Étape ${b.n}`, small: b.title };
+}
+
+// ------------------------------------------------------------------ voix
+
+/** Narration enregistrée (ElevenLabs, voix « Germain »), lue d'un trait. */
+export const VOICE_FILE = 'video/plancher/voix-germain.mp3';
+// Début de chaque partie dans l'enregistrement (s), repéré par transcription.
+const VOICE_AT = {
+  titre: 0, materiel: 17.92, inspection: 38.93, e1: 47.68, e2: 59.43, e3: 70.84, e4: 87.22, e5: 97.54,
+  e5b: 113.77, e6: 122.36, e7: 141.46, e8: 158.22, e9: 168.02, e10: 178.88, e11: 192.82, e12: 211.2,
+  e13: 220.36, e14: 231.79, e15: 246.25, e16: 260.6, e17: 265.34, sec: 274.97, demont: 296.75, fin: 315.48,
+};
+const VOICE_END = 332.59;
+// Silences ajoutés dans la voix : [instant dans l'enregistrement, durée] (ex. cage, étape 11).
+const GAPS = { e11: [[203.45, 2.4]] };
+// Temps laissé après la voix (s) ; par défaut 0,4.
+const TAIL = { e11: 7.5, titre: 0.2, fin: 1.2, e15: 0.2 };
+const LEAD = 0.3; // la voix démarre 0,3 s après le début de la partie
+const r24 = (x) => Math.round(x * 24) / 24;
+
+/** Instant de la vidéo (s) où l'on entend l'instant v de l'enregistrement, dans la partie seg. */
+export function vt(seg, v) {
+  let t = seg.start + LEAD + (v - seg.voice.a);
+  for (const [at, d] of seg.voice.gaps) if (v >= at) t += d;
+  return t;
+}
+
+/**
+ * Durées (s) et instants de début, calés sur la voix. Les repères donnés en
+ * temps de l'enregistrement (v, vspan, vfrom, vto) sont convertis en fractions
+ * de la partie (at, span, from, to, t) pour la vidéo.
+ */
 export function timeline() {
+  const ids = SEGMENTS.map((s) => s.id);
   let t = 0;
-  return SEGMENTS.map((s) => {
-    const w = s.lines.reduce((n, [, x]) => n + words(x), 0);
-    const pauses = (s.lines.length - 1) * 0.35;
-    const dur = Math.max(s.min, Math.round((w / WORDS_PER_S + pauses + 1.6) * 24) / 24);
-    const seg = { ...s, words: w, start: t, dur };
+  return SEGMENTS.map((s, i) => {
+    const a = VOICE_AT[s.id], b = i + 1 < ids.length ? VOICE_AT[ids[i + 1]] : VOICE_END;
+    const gaps = GAPS[s.id] || [];
+    const dur = r24(LEAD + (b - a) + gaps.reduce((n, g) => n + g[1], 0) + (TAIL[s.id] ?? 0.4));
+    const seg = { ...s, start: t, dur, voice: { a, b, gaps } };
+    const f = (v) => (vt(seg, v) - seg.start) / dur;
+    const fs = (v, d) => (vt(seg, v + d) - vt(seg, v)) / dur;
+    seg.reveal = (s.reveal || []).map((r) => (r.v != null ? { ...r, at: f(r.v), span: r.vspan ? fs(r.v, r.vspan) : 0 } : r));
+    seg.show = (s.show || []).map((r) => (r.vfrom != null ? { ...r, from: f(r.vfrom), to: r.vto != null ? f(r.vto) : 1 } : r));
+    seg.cams = s.cams.map((k) => (k.v != null ? { ...k, t: Math.min(1, f(k.v)) } : k));
+    if (s.ghost) seg.ghost = { from: f(s.ghost.vfrom), to: Math.min(1, s.ghost.vto != null ? f(s.ghost.vto) : 1) };
     t += dur;
     return seg;
   });

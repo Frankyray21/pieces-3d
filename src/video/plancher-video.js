@@ -21,9 +21,8 @@ import { buildProcedural } from '../viewer/assembly.js';
 import * as S from '../viewer/shapes.js';
 import models from '../models/plancher-dd/index.js';
 import { IN, P3, P8, B66, W, L, SEC, ground } from '../models/plancher-dd/plan.js';
-import { timeline, RETENIR } from './plancher-script.js';
-import { NOTES } from '../models/plancher-dd/plan.js';
-import { tag, redrawLabels, setLabelScale } from '../models/plancher-dd/dims.js';
+import { timeline, RETENIR, stepCard, STEP_CARD } from './plancher-script.js';
+import { Annotator } from './plancher-annot.js';
 
 const VW = 1280, VH = 540;
 const SEGS = timeline();
@@ -84,14 +83,24 @@ model.root.updateMatrixWorld(true);
 
 /** Feuilles : pièces des sous-assemblages et pièces directes de la vue d'ensemble. */
 const leaves = [];
+// Cage de bois focalisée (étape 11) : montée pièce par pièce, en gros plan.
+const CRIB_FOCUS = new THREE.Vector3(8.809, -0.4, 1.575);
 for (const p of model.root.userData.parts) {
   if (p.userData.isAssembly) {
-    for (const c of p.userData.parts) leaves.push({ obj: c, asm: p.userData.assemblyId, ref: c.userData.partRef });
+    for (const c of p.userData.parts) {
+      if (p.userData.assemblyId === 'P10' && c.userData.partRef === '6') {
+        // Cages : chaque pièce devient une « feuille » (couche par couche).
+        c.updateMatrixWorld(true);
+        const near = new THREE.Box3().setFromObject(c).distanceToPoint(CRIB_FOCUS) < 0.05;
+        for (const k of c.children) leaves.push({ obj: k, asm: 'P10', ref: '6', crib: near ? 'cribFocus' : 'cribOther' });
+      } else leaves.push({ obj: c, asm: p.userData.assemblyId, ref: c.userData.partRef });
+    }
   } else leaves.push({ obj: p, asm: 'P02', ref: p.userData.partRef });
 }
 
 const joistFarZ = W / 2 - B66 / 2;
-function cueOf({ asm, ref, obj }) {
+function cueOf({ asm, ref, obj, crib }) {
+  if (crib) return crib;
   const R = {
     P02: { G: 'always', 1: 'line', 9: 'drill', 10: 'barricade', 11: 'cabinet', 12: 'ext' },
     P04: { 1: 'joist1', 2: 'joists1', 3: 'support1', 5: 'support1', 6: 'joint1' },
@@ -115,7 +124,7 @@ for (const lf of leaves) {
   box.setFromObject(lf.obj).getCenter(ctr);
   lf.c = ctr.clone();
   lf.t0 = lf.cue === 'always' ? -Infinity : Infinity;
-  lf.drop = ['line', 'grille'].includes(lf.cue) ? 0 : lf.cue === 'drill' ? 0.9 : ['deck1', 'deck2', 'joinPlanks', 'secondary'].includes(lf.cue) ? 0.35 : 0.5;
+  lf.drop = lf.cue.startsWith('crib') ? 0.35 : ['line', 'grille'].includes(lf.cue) ? 0 : lf.cue === 'drill' ? 0.9 : ['deck1', 'deck2', 'joinPlanks', 'secondary'].includes(lf.cue) ? 0.35 : 0.5;
   if (!cues.has(lf.cue)) cues.set(lf.cue, []);
   cues.get(lf.cue).push(lf);
 }
@@ -125,6 +134,7 @@ for (const [name, list] of cues) {
   list.sort((a, b) => {
     if (name === 'guards' && REF_ORDER(a) !== REF_ORDER(b)) return REF_ORDER(a) - REF_ORDER(b);
     if (name.startsWith('joists')) return a.c.z - b.c.z;
+    if (name.startsWith('crib')) return a.c.y - b.c.y || a.c.x - b.c.x || a.c.z - b.c.z;
     return a.c.x - b.c.x || a.c.z - b.c.z || a.c.y - b.c.y;
   });
 }
@@ -204,31 +214,33 @@ for (const o of Object.values(extras)) { o.visible = false; scene.add(o); }
 const shows = [];
 for (const s of SEGS) for (const sh of s.show || []) shows.push({ obj: extras[sh.obj], name: sh.obj, a: s.start + s.dur * sh.from, b: s.start + s.dur * sh.to });
 
-// ------------------------------------------------------------------ cotes et annotations
+// ------------------------------------------------------------------ transparence (cage)
 
-// Cotes du modèle (userData.dimSteps) et annotations du montage (NOTES), montrées
-// pendant les segments de leur étape, en fondu.
-setLabelScale(1);
-const notes = [];
-model.root.traverse((o) => { if (o.userData.dimSteps) notes.push({ obj: o, steps: o.userData.dimSteps }); });
-for (const nt of NOTES) {
-  const o = tag(nt.pos, nt.text, { h: 0.048, color: '#ffffff' });
-  o.visible = false;
-  scene.add(o);
-  notes.push({ obj: o, steps: [].concat(nt.steps) });
+// Pendant le gros plan sur la cage, le bois autour devient transparent :
+// matériaux propres aux pièces concernées (les cages gardent les leurs).
+const ghostMats = new Map(), nearMats = new Map();
+for (const lf of leaves) {
+  if (lf.cue.startsWith('crib') || ['always', 'line', 'barricade', 'cabinet', 'ext', 'grille'].includes(lf.cue)) continue;
+  // Le soutien et le madrier portés par la cage restent visibles en transparence.
+  const near = (lf.cue === 'sleepers' && Math.abs(lf.c.x - CRIB_FOCUS.x) < 0.2) || (lf.cue === 'joists2' && Math.abs(lf.c.z - CRIB_FOCUS.z) < 0.2);
+  const map = near ? nearMats : ghostMats;
+  lf.obj.traverse((o) => {
+    if (!o.isMesh) return;
+    const swap = (m) => { if (!map.has(m)) map.set(m, m.clone()); return map.get(m); };
+    o.material = Array.isArray(o.material) ? o.material.map(swap) : swap(o.material);
+  });
 }
-for (const n of notes) {
-  n.mats = [];
-  n.obj.traverse((c) => { if (c.material) { n.mats.push(c.material); c.material.transparent = true; } });
-}
-function annotate(t, s) {
-  const step = s.band.n === '' ? null : Number(s.band.n);
-  const u = t - s.start;
-  const k = Math.min(1, Math.max(0, (u - 0.9) / 0.5)) * Math.min(1, Math.max(0, (s.dur - u) / 0.35));
-  for (const n of notes) {
-    const on = step != null && n.steps.includes(step) && k > 0;
-    n.obj.visible = on;
-    if (on) for (const m of n.mats) m.opacity = k;
+const ghosts = SEGS.filter((s) => s.ghost).map((s) => ({ a: s.start + s.dur * s.ghost.from, b: s.start + s.dur * s.ghost.to }));
+function ghost(t) {
+  let k = 0;
+  for (const g of ghosts) k = Math.max(k, Math.min(1, Math.max(0, (t - g.a) / 0.8)) * Math.min(1, Math.max(0, (g.b - t) / 0.8)));
+  for (const [map, min] of [[ghostMats, 0], [nearMats, 0.3]]) {
+    for (const m of map.values()) {
+      m.transparent = k > 0;
+      m.opacity = 1 - (1 - min) * k;
+      m.depthWrite = k < 0.5;
+      m.visible = m.opacity > 0.01;
+    }
   }
 }
 
@@ -323,6 +335,32 @@ function segAt(t) {
   return SEGS.find((s) => t < s.start + s.dur) || SEGS.at(-1);
 }
 
+// Calque d'annotations 2D (cotes, notes), au-dessus de la 3D.
+const annotCanvas = document.createElement('canvas');
+annotCanvas.width = VW;
+annotCanvas.height = VH;
+annotCanvas.style.cssText = 'position:absolute;left:0;top:0;pointer-events:none';
+document.getElementById('stage').appendChild(annotCanvas);
+const annot = new Annotator(annotCanvas, camera, SEGS, [VW, VH]);
+window.__annotObj = annot;
+// Zones interdites aux étiquettes : étiquette PRO-DD-ST-003, encadré « Pourquoi »,
+// carton d'étape (début de partie).
+function avoidAt(t, s, lv) {
+  const r = [{ x: 1090, y: 6, w: 190, h: 46 }];
+  if (lv.why > 0.01) {
+    const el = $('why');
+    r.push({ x: 10, y: 8, w: el.offsetWidth + 16, h: el.offsetHeight + 16 });
+  }
+  if (stepCard(s) && t - s.start < STEP_CARD.dur + 0.3) r.push(STEP_CARD.rect);
+  if (s.card) r.push({ x: 0, y: 0, w: VW, h: VH });
+  return r;
+}
+function drawAnnotations(t) {
+  const s = segAt(t);
+  const lv = overlays(t, s);
+  annot.draw(t, avoidAt(t, s, lv));
+}
+
 function render(t) {
   const s = segAt(t);
   for (const lf of leaves) {
@@ -354,7 +392,7 @@ function render(t) {
     }
   }
   cameraAt(t);
-  annotate(t, s);
+  ghost(t);
   overlays(t, s);
   if (composer) composer.render(); else renderer.render(scene, camera);
 }
@@ -367,6 +405,14 @@ window.__frame = (t) => {
   render(t);
   const s = segAt(t);
   return { seg: SEGS.indexOf(s), ...levels(t, s), img: renderer.domElement.toDataURL('image/jpeg', 0.96) };
+};
+// Calque d'annotations à l'instant t (PNG transparent), sans rendu 3D : la
+// caméra suffit. À appeler dans l'ordre des images (lissage des positions).
+window.__annot = (t) => {
+  cameraAt(t);
+  camera.updateMatrixWorld(true);
+  drawAnnotations(t);
+  return annotCanvas.toDataURL('image/png');
 };
 window.__layer = (i, which) => {
   const s = SEGS[i];
@@ -385,10 +431,10 @@ window.__layer = (i, which) => {
 };
 // Aperçu dans le navigateur : lecture en temps réel (ou ?t=12.5 pour une image).
 const q = new URLSearchParams(location.search);
-if (q.has('t')) render(Number(q.get('t')));
+if (q.has('t')) { render(Number(q.get('t'))); drawAnnotations(Number(q.get('t'))); }
 else if (!q.has('capture')) {
   const t0 = performance.now() - (Number(q.get('from')) || 0) * 1000;
-  const loop = (now) => { render(((now - t0) / 1000) % DURATION); requestAnimationFrame(loop); };
+  const loop = (now) => { const t = ((now - t0) / 1000) % DURATION; render(t); drawAnnotations(t); requestAnimationFrame(loop); };
   requestAnimationFrame(loop);
 }
-document.fonts.ready.then(() => { redrawLabels(); window.__ready = true; });
+Promise.all([document.fonts.load('700 30px "Barlow Condensed"'), document.fonts.load('600 19px "IBM Plex Sans"')]).then(() => document.fonts.ready).then(() => { window.__ready = true; });

@@ -19,7 +19,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 import { spawnSync } from 'node:child_process';
-import { timeline, RETENIR } from '../src/video/plancher-script.js';
+import { timeline, RETENIR, stepCard, STEP_CARD } from '../src/video/plancher-script.js';
 
 const args = process.argv.slice(2);
 const opt = (n, d) => { const i = args.indexOf(`--${n}`); return i >= 0 ? args[i + 1] : d; };
@@ -116,6 +116,12 @@ SEGS.forEach((s, i) => {
     + `<div class="bar">${bar(s)}</div><div class="head" style="${anim('fadein', 0, 0.35)}"><span class="num">${esc(label(b))}</span><span class="title">${b.n === '18' ? '' : esc(b.title)}</span></div>`
     + `<div class="text" style="font-size:${FITS[i]?.text ?? fit(b.text, 22, 15, 150)}px;${anim('fadein', 0, 0.35)}">${esc(b.text)}</div>`
     + `<div class="detail" style="font-size:${FITS[i]?.detail ?? fit(b.detail, 17, 13, 130)}px;${anim('fadein', 0, 0.35)}">${esc(b.detail)}</div></div>`);
+  // Carton d'étape : grand titre au centre de la 3D pendant 2 s.
+  const sc = stepCard(s);
+  if (sc) {
+    const d = STEP_CARD.dur;
+    sub(`k${id}`, s.start, d, 4, `<div class="stepcard" style="${anim('kcard', 0, d)}"><div class="sc-n">${esc(sc.big)}</div>${sc.small ? `<div class="sc-t">${esc(sc.small)}</div>` : ''}</div>`);
+  }
   if (s.why) {
     const at = s.start + 0.8, d = s.dur - 0.8;
     L.push(`<div id="w${id}" class="clip why" data-start="${S(at)}" data-duration="${S(d)}" data-track-index="2" style="${inOut(0, d)}"><b>Pourquoi</b><span>${esc(s.why)}</span></div>`);
@@ -168,6 +174,10 @@ html, body { margin: 0; width: ${W}px; height: ${H}px; overflow: hidden; backgro
 .card.end li::marker { color: #f2c230; font-weight: 600; }
 .card.end p { margin: 0; font-size: 17px; color: #a9b3ba; }
 @keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
+@keyframes kcard { 0% { opacity: 0; transform: translateY(14px) scale(.96); } 14% { opacity: 1; transform: none; } 78% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateY(-8px); } }
+.stepcard { position: absolute; left: ${STEP_CARD.rect.x}px; top: ${STEP_CARD.rect.y}px; width: ${STEP_CARD.rect.w}px; height: ${STEP_CARD.rect.h}px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; background: rgba(12,14,16,.9); border-top: 5px solid #f2c230; border-radius: 6px; z-index: 6; }
+.sc-n { font: 700 76px/1 "Barlow Condensed", sans-serif; color: #f2c230; text-transform: uppercase; letter-spacing: .03em; }
+.sc-t { font: 600 34px/1.1 "Barlow Condensed", sans-serif; color: #f4f6f7; text-align: center; padding: 0 24px; }
 ${keys.join('\n')}
 </style>
 </head>
