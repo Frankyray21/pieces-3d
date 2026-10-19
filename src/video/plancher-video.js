@@ -435,6 +435,21 @@ function drawAnnotations(t) {
   annot.draw(t, avoidAt(t, s, lv));
 }
 
+// Carte d'ombres recalculée seulement quand une pièce bouge, apparaît ou
+// disparaît (la lumière ne bouge pas) : même image, moins de calcul.
+const SHADOW_CACHE = SHADOWS && QS.get('shadowcache') !== '0';
+let shadowSig = '';
+function shadowSignature() {
+  let n = 0, s = 0;
+  for (const lf of leaves) {
+    if (!lf.obj.visible) continue;
+    const p = lf.obj.position;
+    n++;
+    s += n * (p.x * 1.31 + p.y * 7.13 + p.z * 3.77 + lf.obj.scale.x * 0.53);
+  }
+  return `${n}|${s.toFixed(6)}`;
+}
+
 function render(t) {
   const s = segAt(t);
   for (const lf of leaves) {
@@ -469,6 +484,11 @@ function render(t) {
   cameraAt(t);
   ghost(t);
   overlays(t, s);
+  if (SHADOW_CACHE) {
+    renderer.shadowMap.autoUpdate = false;
+    const sig = shadowSignature();
+    if (sig !== shadowSig) { renderer.shadowMap.needsUpdate = true; shadowSig = sig; }
+  }
   if (composer) composer.render(); else renderer.render(scene, camera);
 }
 
