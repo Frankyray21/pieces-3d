@@ -6,7 +6,7 @@
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { mat } from '../../viewer/materials.js';
-import { IN, FT, B66, P3, P8, W, L, DECK, GAL, GAL_X0, GAL_X1, WALL_H, ground, joistZ, DRILL } from './plan.js';
+import { IN, FT, B66, P3, P8, W, L, DECK, GAL, GAL_X0, GAL_X1, FACE_X, WALL_H, ground, joistX, DRILL, plankZ, TIGHT } from './plan.js';
 import { lumber, between, labeler } from './lumber.js';
 
 // Petit générateur pseudo-aléatoire reproductible.
@@ -104,30 +104,48 @@ export function groundPatch(S, x0, x1, z0, z1) {
   return S.group(meshOf(geo, 'rockFloor'));
 }
 
-/** Cible peinte d'un fond de trou sur le mur du côté s. */
-function target(S, x, y, s) {
-  const z = wallZ(s, x, y) - s * 0.012;
+/** Position X du front de taille (fond de la galerie) au point (z, y). */
+export const faceX = (z, y) => FACE_X - bulge(z * 1.3, y, 5);
+
+/** Front de taille : paroi rocheuse du fond de la galerie, vue de l'intérieur seulement. */
+function faceMesh() {
+  const nz = 60, ny = 30;
+  const geo = new THREE.PlaneGeometry(2 * GAL + 0.3, 1, nz, ny);
+  const p = geo.attributes.position;
+  for (let i = 0; i < p.count; i++) {
+    const z = p.getX(i);
+    const t = p.getY(i) + 0.5;
+    const g = ground(FACE_X, z) - 0.02;
+    const y = g + t * (WALL_H - g);
+    p.setXYZ(i, faceX(z, y) - 0.04 * (1 - t) ** 3, y, z);
+  }
+  geo.index.array.reverse();
+  geo.computeVertexNormals();
+  return meshOf(geo, 'rock');
+}
+
+/** Cible peinte d'un fond de trou sur le front de taille. */
+function target(S, z, y) {
   const g = S.group(
-    S.ring(0.17, 0.145, 0.006, 'fluoRed', { axis: 'z' }),
-    S.ring(0.095, 0.07, 0.006, 'fluoRed', { axis: 'z' }),
-    S.cyl(0.025, 0.006, 'fluoRed', { axis: 'z' }),
+    S.ring(0.17, 0.145, 0.006, 'fluoRed', { axis: 'x' }),
+    S.ring(0.095, 0.07, 0.006, 'fluoRed', { axis: 'x' }),
+    S.cyl(0.025, 0.006, 'fluoRed', { axis: 'x' }),
   );
-  g.position.set(x, y, z);
+  g.position.set(faceX(z, y) + 0.012, y, z);
   return g;
 }
 
-/** Galerie (contexte) : sol, murs coupés, roches, cibles. */
+/** Galerie (contexte) : sol, murs coupés, front de taille, roches, cibles des fonds de trous. */
 export function gallery(S) {
-  const g = S.group(groundMesh(), wallMesh(-1), wallMesh(1), rocks());
-  g.add(target(S, DRILL.x, DRILL.frontY + 0.18, -1));
-  g.add(target(S, DRILL.x + 1.6, DRILL.frontY + 0.35, -1));
+  const g = S.group(groundMesh(), wallMesh(-1), wallMesh(1), faceMesh(), rocks());
+  g.add(target(S, DRILL.z, DRILL.frontY + 0.25));
+  g.add(target(S, DRILL.z + 1.3, DRILL.frontY + 0.45));
   return g;
 }
 
-/** Ligne de référence en peinture (étape 1) : rive du premier madrier et repères de 16 et 32 pi. */
+/** Ligne de référence en peinture (étape 1) : rive du premier madrier (en travers, X = 0), rive du plancher et repères de 16 et 32 pi. */
 export function paintLine(S) {
   const geos = [];
-  const z = joistZ[0];
   const seg = (xa, za, xb, zb, w) => {
     const a = new THREE.Vector3(xa, 0, za), b = new THREE.Vector3(xb, 0, zb);
     const n = Math.max(2, Math.ceil(a.distanceTo(b) / 0.08));
@@ -140,10 +158,11 @@ export function paintLine(S) {
       geos.push(box);
     }
   };
-  seg(-0.4, z, L + 0.4, z, 0.05);
-  for (const x of [0, L / 2, L]) seg(x, z - 0.35, x, z + 0.35, 0.04);
-  // Fond de plancher côté opposé (cadrage à 16 pi).
-  seg(-0.25, W / 2 - B66 / 2, 0.6, W / 2 - B66 / 2, 0.04);
+  // Ligne du premier madrier, en travers de la galerie.
+  seg(0, -W / 2 - 0.4, 0, W / 2 + 0.4, 0.05);
+  // Rive du plancher le long de la galerie, avec repères à 16 et 32 pi.
+  seg(-0.3, -W / 2, L + 0.3, -W / 2, 0.035);
+  for (const x of [16 * FT, L]) seg(x, -W / 2 - 0.35, x, -W / 2 + 0.35, 0.04);
   return S.group(meshOf(mergeGeometries(geos, false), 'fluoRed'));
 }
 
@@ -480,11 +499,14 @@ export function guides(S, high) {
   );
   level.position.set(2.3, B66, -0.4);
   only(level, [5]);
+  // Coins de serrage entre la planche vissée devant les coins et la suivante (planches selon X).
   const wedges = S.group();
-  for (const z of [-1.6, -0.4, 0.8, 2.0]) {
+  for (const x of [0.8, 1.9, 3.0, 4.1]) {
     const w = S.extrude([[0, 0], [0.025, 0], [0.012, -0.2]], 0.09, 'woodWedge');
-    w.position.set(11 * P8, B66 + P3 + 0.03, z);
-    wedges.add(w);
+    const r = S.group(w);
+    r.rotation.y = Math.PI / 2;
+    r.position.set(x - 0.045, B66 + P3 + 0.03, plankZ(TIGHT) + P8 / 2 + 0.0125);
+    wedges.add(r);
   }
   only(wedges, [7]);
   return out;

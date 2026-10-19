@@ -8,7 +8,7 @@
 // toujours entières dans le cadre. Une annotation dont le point est hors champ
 // s'efface au lieu d'être coupée.
 import * as THREE from 'three';
-import { IN, FT, B66, P3, P8, W, L, SEC, DECK, joistZ, GAL, STAIR, SUPPORTS_S1, SUPPORTS_S2, ground, deckHeight } from '../models/plancher-dd/plan.js';
+import { IN, FT, B66, P3, P8, W, L, SEC, DECK, joistX, joistX2, GAL, STAIR, SUPPORTS_Z, DIP, DRILL, FACE_X, ground, deckHeight, plankZ, TIGHT } from '../models/plancher-dd/plan.js';
 import { stairPlan, secondaryPlan } from '../models/plancher-dd/floor.js';
 import { vt } from './plancher-script.js';
 
@@ -33,10 +33,12 @@ const HIGH = (() => {
 const gEnd = ground(L - 0.05, zP - 0.05);
 const zg = -1.5;
 const t1 = DECK - rise;
-const CRIB = { x: 8.809, z: 1.575, g: -0.682, top: -0.152 };
+const CRIB = { x: DIP.x, z: DIP.z, g: -0.818, top: -0.152 };
+const ANCHOR_Z = plankZ(TIGHT + 1) + TIGHT * 0.015 + 0.05; // dernier 3 × 8 posé plus loin (étape 7)
 
 // dim : cote entre a et b décalée de off (m) ; note : texte relié au point at ;
 // arrow : flèche épaisse de a vers b. dir : côté préféré de l'étiquette d'une note.
+// until : instant (voix) où l'annotation s'efface avant la fin de la partie.
 export const ANNOTATIONS = {
   materiel: [
     { v: 19.6, type: 'note', at: [L + 4.3, 2.0, -0.4], text: 'Barricade « travaux en cours » et flasher orange', dir: 'down' },
@@ -44,72 +46,75 @@ export const ANNOTATIONS = {
     { v: 25.6, type: 'note', at: [L + 3.65, 0.5, 2.35], text: 'Extincteur', dir: 'right' },
   ],
   inspection: [
-    { v: 41.0, type: 'note', at: [3.6, 0.02, -0.6], text: 'Sol sans débris et plat', dir: 'down' },
-    { v: 44.8, type: 'note', at: [2.7, 1.61, -2.62], text: 'Fonds de trous trouvés et marqués', dir: 'right' },
+    { v: 41.0, type: 'note', at: [2.6, 0.02, 0.6], text: 'Sol sans débris et plat', dir: 'down' },
+    { v: 44.8, type: 'note', at: [FACE_X + 0.02, DRILL.frontY + 0.25, DRILL.z], text: 'Fonds de trous trouvés et marqués au front', dir: 'right' },
   ],
   e1: [
-    { v: 50.2, type: 'note', at: [3.0, 0.02, zN], text: 'Ligne de référence en peinture', dir: 'up' },
+    { v: 50.2, type: 'note', at: [0, 0.02, -1.0], text: 'Ligne de référence en peinture', dir: 'up' },
     { v: 55.0, type: 'dim', a: [0, 0.02, zP], b: [L, 0.02, zP], off: [0, 0, 0.45], text: '32 pi', sub: 'longueur' },
     { v: 57.4, type: 'dim', a: [0, 0.02, zN], b: [0, 0.02, zP], off: [-0.45, 0, 0], text: '16 pi', sub: 'largeur' },
   ],
   e2: [
     { v: 60.8, type: 'note', at: [-0.35, 0.15, -W / 2 + 0.6], text: 'Niveau au laser Bosch', dir: 'up' },
     { v: 62.6, type: 'note', at: [HIGH.x, HIGH.y + 0.05, HIGH.z], text: 'Point le plus haut du sol', dir: 'up' },
-    { v: 65.2, type: 'note', at: [HIGH.x + 0.4, HIGH.y + 0.02, zN + 0.1], text: 'Le 1er madrier repose ici, sur le sol', dir: 'down' },
+    { v: 65.2, type: 'note', at: [0.08, ground(0.08, 0.6) + 0.02, 0.6], text: 'Le 1er madrier repose ici, sur le sol', dir: 'down' },
   ],
   e3: [
-    { v: 72.6, type: 'arrow', a: [SEC * 0.55, B66 + 0.05, 1.3], b: [SEC * 0.55, B66 + 0.05, -1.9], text: 'Sens du forage' },
-    { v: 74.0, type: 'dim', a: [-0.02, 0, zN], b: [-0.02, B66, zN], off: [-0.3, 0, 0], text: '6 po', sub: 'madrier 6 × 6' },
-    { v: 76.8, type: 'note', at: [SEC * 0.3, B66, zN], text: 'Les patins de la foreuse croisent les 6 × 6', dir: 'up' },
+    { v: 72.6, type: 'arrow', a: [2.6, B66 + 0.05, 0.9], b: [-0.6, B66 + 0.05, 0.9], text: 'Sens du forage : vers le front' },
+    { v: 74.0, type: 'dim', a: [0, 0, zN], b: [0, B66, zN], off: [-0.3, 0, -0.1], text: '6 po', sub: 'madrier 6 × 6' },
+    { v: 76.8, type: 'note', at: [joistX[0], B66, -1.2], text: 'Les patins de la foreuse croisent les 6 × 6', dir: 'up' },
   ],
   e4: [
-    { v: 89.0, type: 'dim', a: [0, B66, zN], b: [0, B66, zP], off: [-0.45, 0, 0], text: '16 pi', sub: '1er madrier → dernier' },
-    { v: 91.6, type: 'dim', a: [0, B66, zP], b: [SEC, B66, zP], off: [0, 0, 0.45], text: '16 pi', sub: 'cadrage 16 × 16' },
-    { v: 94.6, type: 'dim', a: [SEC * 0.5, B66 + 0.02, joistZ[2]], b: [SEC * 0.5, B66 + 0.02, joistZ[3]], off: [0, 0.1, 0], text: '32 po', sub: 'centre à centre' },
+    { v: 89.0, type: 'dim', a: [0, B66, zP], b: [SEC, B66, zP], off: [0, 0, 0.45], text: '16 pi', sub: '1er madrier → dernier' },
+    { v: 91.6, type: 'dim', a: [0, B66, zN], b: [0, B66, zP], off: [-0.45, 0, 0], text: '16 pi', sub: 'cadrage 16 × 16' },
+    { v: 94.6, type: 'dim', a: [joistX[2], B66 + 0.02, 0.4], b: [joistX[3], B66 + 0.02, 0.4], off: [0, 0.1, 0], text: '32 po', sub: 'centre à centre' },
   ],
   e5: [
-    { v: 100.4, type: 'dim', a: [2.3, B66 + P3 + 0.08, -0.4 - 24 * IN], b: [2.3, B66 + P3 + 0.08, -0.4 + 24 * IN], off: [0, 0.14, 0], text: '48 po', sub: 'niveau' },
-    { v: 102.8, type: 'dim', a: [2.3, B66 + P3, -0.4 - 4 * FT], b: [2.3, B66 + P3, -0.4 + 4 * FT], off: [0.3, 0, 0], text: '8 pi min.', sub: '3 × 8 de portée' },
-    { v: 106.4, type: 'note', at: [SUPPORTS_S1[1], 0.02, joistZ[JOISTSN() - 1] + 0.2], text: 'Blocages et coins dans le sens contraire', dir: 'down' },
-    { v: 111.0, type: 'note', at: [SUPPORTS_S1[3], B66, zP - B66 / 2], text: 'Au moins 6 appuis par madrier', dir: 'up' },
+    { v: 100.4, type: 'dim', a: [2.3 - 24 * IN, B66 + P3 + 0.08, -0.4], b: [2.3 + 24 * IN, B66 + P3 + 0.08, -0.4], off: [0, 0.14, 0], text: '48 po', sub: 'niveau' },
+    { v: 102.8, type: 'dim', a: [2.3 - 4 * FT, B66 + P3, -0.4], b: [2.3 + 4 * FT, B66 + P3, -0.4], off: [0, 0, 0.3], text: '8 pi min.', sub: '3 × 8 de portée' },
+    { v: 106.4, type: 'note', at: [joistX[2], 0.02, SUPPORTS_Z[4]], text: 'Blocages et coins dans le sens contraire', dir: 'down' },
+    { v: 111.0, type: 'note', at: [joistX[4], B66, 0.2], text: 'Au moins 6 appuis par madrier', dir: 'up' },
   ],
   e5b: [
-    { v: 114.6, type: 'note', at: [SEC, 0.0, joistZ[3]], text: 'Blocage de jonction : porte les 2 sections', dir: 'up' },
+    { v: 114.6, type: 'note', at: [SEC, 0.0, SUPPORTS_Z[4]], text: 'Blocage de jonction : porte les 2 sections', dir: 'up' },
   ],
   e6: [
-    { v: 124.6, type: 'dim', a: [0, 0, zP], b: [0, DECK, zP], off: [-0.4, 0, 0.1], text: '9 po', sub: '6 × 6 + 3 × 8' },
-    { v: 128.8, type: 'note', at: [P8 / 2, DECK, zP - B66 / 2], text: '1re planche : tire-fonds aux 2 bouts', dir: 'right' },
-    { v: 133.6, type: 'note', at: [0.9, DECK, 0], text: 'Avancer sur la surface déjà couverte', dir: 'up' },
+    { v: 124.6, type: 'dim', a: [0, 0, zN], b: [0, DECK, zN], off: [-0.35, 0, -0.1], text: '9 po', sub: '6 × 6 + 3 × 8' },
+    { v: 128.8, type: 'note', at: [B66 / 2, DECK, plankZ(0)], text: '1re planche : tire-fonds aux 2 bouts', dir: 'left' },
+    { v: 133.6, type: 'note', at: [2.4, DECK, plankZ(4)], text: 'Avancer sur la surface déjà couverte', dir: 'up' },
   ],
   e7: [
-    { v: 143.6, type: 'dim', a: [0, DECK, zP], b: [11 * P8, DECK, zP], off: [0, 0, 0.4], text: '≈ 50 %', sub: 'de la section' },
-    { v: 147.2, type: 'note', at: [11 * P8, DECK + 0.08, 0.8], text: 'Coins enfoncés : planches en tension', dir: 'up' },
-    { v: 151.0, type: 'note', at: [11 * P8 - P8 / 2, DECK, -1.6], text: 'Planche vissée devant les coins', dir: 'left' },
+    { v: 143.6, type: 'dim', a: [SEC, DECK, zN], b: [SEC, DECK, plankZ(TIGHT) + P8 / 2], off: [0.3, 0, 0], text: '≈ 50 %', sub: 'de la section', until: 146.6 },
+    { v: 145.8, type: 'note', at: [SEC - B66 / 2, DECK, ANCHOR_Z], text: 'Dernier 3 × 8 vissé (temporaire)', dir: 'right', until: 152.8 },
+    { v: 147.6, type: 'note', at: [4.05, DECK + 0.06, plankZ(TIGHT) + P8 / 2 + 0.05], text: 'Coins enfoncés entre les planches', dir: 'up', until: 151.6 },
+    { v: 149.0, type: 'arrow', a: [SEC + 0.12, DECK + 0.1, plankZ(10)], b: [SEC + 0.12, DECK + 0.1, plankZ(1)], text: 'Tension : les écarts se ferment', until: 153.0 },
+    { v: 151.2, type: 'note', at: [SEC - B66 / 2, DECK, plankZ(TIGHT)], text: 'Planche devant les coins vissée', dir: 'right' },
+    { v: 153.4, type: 'note', at: [B66 / 2, DECK + 0.05, ANCHOR_Z], text: 'Tire-fonds du dernier 3 × 8 retirés', dir: 'up' },
   ],
   e8: [
-    { v: 159.8, type: 'dim', a: [SEC - 2 * P8, B66, zP], b: [SEC, B66, zP], off: [0, 0, 0.4], text: '16 po', sub: '2 planches libres' },
+    { v: 159.8, type: 'dim', a: [SEC - 0.4, B66, zP - 2 * P8], b: [SEC - 0.4, B66, zP], off: [0.5, 0, 0], text: '16 po', sub: '2 planches libres' },
   ],
   e9: [
     { v: 171.6, type: 'dim', a: [L - 0.05, gEnd, zP], b: [L - 0.05, 0, zP], off: [0.35, 0, 0.25], text: `≈ ${po(-gEnd)}`, sub: 'hauteur à soutenir' },
     { v: 175.4, type: 'note', at: [SEC * 1.5, ground(SEC * 1.5, 0) + 0.02, 0], text: 'Le sol descend : il faut monter', dir: 'up' },
   ],
   e10: [
-    { v: 180.8, type: 'dim', a: [SEC, 0, zN], b: [L, 0, zN], off: [0, 0, -0.45], text: '16 pi', sub: 'madrier guide' },
-    { v: 186.2, type: 'note', at: [SUPPORTS_S2[2], -B66 / 2, zN + 0.3], text: 'Soutiens 6 × 6 de 16 pi, sens contraire', dir: 'down' },
+    { v: 181.4, type: 'dim', a: [SEC, 0, zN], b: [L, 0, zN], off: [0, 0, -0.45], text: '16 pi', sub: 'madrier guide' },
+    { v: 186.6, type: 'note', at: [SEC * 1.5, -B66 / 2, SUPPORTS_Z[0]], text: 'Soutiens 6 × 6 de 16 pi, sens contraire', dir: 'down' },
   ],
   e11: [
-    { v: 195.0, type: 'dim', a: [SEC * 1.5, B66 + 0.02, joistZ[2]], b: [SEC * 1.5, B66 + 0.02, joistZ[3]], off: [0, 0.1, 0], text: '32 po', sub: 'centre à centre' },
-    { v: 199.4, type: 'note', at: [SUPPORTS_S2[1], 0, joistZ[3]], text: 'Soutiens vis-à-vis les croisements', dir: 'up' },
+    { v: 195.0, type: 'dim', a: [joistX2[2], B66 + 0.02, 0.4], b: [joistX2[3], B66 + 0.02, 0.4], off: [0, 0.1, 0], text: '32 po', sub: 'centre à centre' },
+    { v: 199.4, type: 'note', at: [joistX2[2], -B66, SUPPORTS_Z[2]], text: 'Soutiens vis-à-vis les croisements', dir: 'up' },
     // Cage, montée couche par couche.
-    { v: 204.8, type: 'note', at: [8.504, -0.6, 1.25], text: 'Couche 1 : deux 6 × 6 parallèles', dir: 'down', until: 210.6 },
-    { v: 207.8, type: 'note', at: [CRIB.x, -0.45, 1.88], text: 'Couche 2 : croisée', dir: 'right', until: 213.2 },
-    { v: 210.8, type: 'dim', a: [CRIB.x - 0.381, -0.225, 1.575 + 0.38], b: [CRIB.x + 0.381, -0.225, 1.575 + 0.38], off: [0, 0.3, 0.18], text: '30 po', sub: 'pièces de 24 à 36 po' },
-    { v: 213.8, type: 'note', at: [CRIB.x, -0.2, 1.575], text: 'Coin de bois : ajuste le niveau', dir: 'up' },
-    { v: 215.4, type: 'dim', a: [CRIB.x + 0.4, CRIB.g, 1.96], b: [CRIB.x + 0.4, CRIB.top, 1.96], off: [0.18, 0, 0.12], text: '21 po', sub: 'plus de 18 po : cage' },
+    { v: 204.8, type: 'note', at: [CRIB.x - 0.305, -0.74, CRIB.z - 0.3], text: 'Couche 1 : deux 6 × 6 parallèles', dir: 'down', until: 209.6 },
+    { v: 207.4, type: 'note', at: [CRIB.x, -0.59, CRIB.z + 0.38], text: 'Couche 2 : croisée', dir: 'right', until: 212.4 },
+    { v: 211.0, type: 'dim', a: [CRIB.x - 0.381, -0.209, CRIB.z + 0.305], b: [CRIB.x + 0.381, -0.209, CRIB.z + 0.305], off: [0, 0.28, 0.18], text: '30 po', sub: 'pièces de 24 à 36 po' },
+    { v: 213.8, type: 'note', at: [CRIB.x, -0.2, CRIB.z], text: 'Coin de bois : ajuste le niveau', dir: 'up' },
+    { v: 215.4, type: 'dim', a: [CRIB.x + 0.42, CRIB.g, CRIB.z + 0.4], b: [CRIB.x + 0.42, CRIB.top, CRIB.z + 0.4], off: [0.15, 0, 0.12], text: '26 po', sub: 'plus de 18 po : cage' },
   ],
   e12: [
     { v: 213.4, type: 'note', at: [SEC * 1.5, DECK, 0.6], text: 'Étapes 6 et 7 répétées', dir: 'up' },
-    { v: 217.4, type: 'note', at: [SEC - P8, DECK, 0.9], text: 'Planches de jonction vissées', dir: 'up' },
+    { v: 217.4, type: 'note', at: [SEC - B66 / 2, DECK, plankZ(22)], text: 'Planches de jonction vissées', dir: 'up' },
   ],
   e13: [
     { v: 223.8, type: 'note', at: [6.4, DECK, zP], text: 'Bouts coupés carrés, au ras du plancher', dir: 'up' },
@@ -134,14 +139,13 @@ export const ANNOTATIONS = {
     { v: 270.4, type: 'dim', a: [6.8, DECK - 0.3, -GAL + 0.06], b: [6.8, DECK - 0.3 + 24 * IN, -GAL + 0.06], off: [0, 0, 0.25], text: '24 po', sub: 'grillage' },
   ],
   sec: [
-    { v: 279.6, type: 'dim', a: [sp.x0, DECK + B66 + P3, sp.z1], b: [sp.x1, DECK + B66 + P3, sp.z1], off: [0, 0, 0.3], text: '32 po', sub: 'largeur min.' },
-    { v: 281.0, type: 'dim', a: [sp.x1, DECK + B66 + P3, sp.z0], b: [sp.x1, DECK + B66 + P3, sp.z1], off: [0.3, 0, 0], text: '72 po', sub: 'longueur min.' },
-    { v: 283.0, type: 'dim', a: [sp.x0, DECK, sp.z0 - 0.02], b: [sp.x0, DECK + B66 + P3, sp.z0 - 0.02], off: [0, 0, -0.3], text: '9 po', sub: '12 po max.' },
+    { v: 279.6, type: 'dim', a: [sp.x1, DECK + B66 + P3, sp.z0], b: [sp.x1, DECK + B66 + P3, sp.z1], off: [0.3, 0, 0], text: '32 po', sub: 'largeur min.' },
+    { v: 281.0, type: 'dim', a: [sp.x0, DECK + B66 + P3, sp.z1], b: [sp.x1, DECK + B66 + P3, sp.z1], off: [0, 0, 0.3], text: '72 po', sub: 'longueur min.' },
+    { v: 283.0, type: 'dim', a: [sp.x1 + 0.02, DECK, sp.z1], b: [sp.x1 + 0.02, DECK + B66 + P3, sp.z1], off: [0.25, 0, 0.2], text: '9 po', sub: '12 po max.' },
     { v: 284.8, type: 'note', at: [(sp.x0 + sp.x1) / 2, DECK + B66 + P3, sp.z1], text: 'Aucun morceau en porte-à-faux', dir: 'down' },
-    { v: 287.2, type: 'note', at: [sp.x0 + P8, DECK + B66 + P3, sp.z0 + 0.2], text: '2 planches vissées près de la foreuse', dir: 'up' },
+    { v: 287.2, type: 'note', at: [sp.x0 + B66 / 2, DECK + B66 + P3, sp.z0 + P8 / 2], text: '2 planches vissées près de la foreuse', dir: 'up' },
   ],
 };
-function JOISTSN() { return joistZ.length; }
 
 // ------------------------------------------------------------------ dessin
 
@@ -289,7 +293,8 @@ export class Annotator {
       }
     } else {
       const nx = -(g.Q.y - g.P.y) / g.len, ny = (g.Q.x - g.P.x) / g.len;
-      for (const s of [0.5, 0.36, 0.64, 0.24, 0.76]) {
+      // Flèche : étiquette près de la queue, la pointe reste visible.
+      for (const s of a.type === 'arrow' ? [0.06, 0.18, 0.3] : [0.5, 0.36, 0.64, 0.24, 0.76]) {
         const cx = g.P.x + (g.Q.x - g.P.x) * s, cy = g.P.y + (g.Q.y - g.P.y) * s;
         cands.push({ x: cx - box.w / 2, y: cy - box.h / 2 });
       }

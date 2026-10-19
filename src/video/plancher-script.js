@@ -20,26 +20,27 @@ const L = 9.7536, SEC = 4.8768, W = 4.8768, DECK = 0.2286;
 const C = {
   ov: { pos: [L / 2 + 6.2, 5.0, 8.4], tgt: [L / 2, -0.15, -0.4] },
   entr: { pos: [L + 6.6, 1.45, 1.1], tgt: [L + 4.3, 1.3, 0] },
-  wall: { pos: [4.2, 1.7, 1.6], tgt: [3.1, 1.25, -2.7] },
+  wall: { pos: [3.4, 1.65, 0.9], tgt: [-0.95, 1.5, 0.1] },
   line: { pos: [-2.6, 2.0, 0.9], tgt: [3.2, -0.15, -2.35] },
   high: { pos: [-1.9, 1.45, 1.4], tgt: [0.9, -0.05, -1.7] },
   s1: { pos: [SEC / 2 + 4.0, 3.1, 5.8], tgt: [SEC / 2, -0.05, -0.2] },
   s1low: { pos: [SEC * 0.78, 0.6, 3.9], tgt: [SEC * 0.42, -0.02, 0.8] },
   joint: { pos: [SEC + 1.5, 0.75, 3.5], tgt: [SEC, -0.05, 1.5] },
   deck1: { pos: [-1.9, 3.5, 4.6], tgt: [SEC * 0.62, 0, 0] },
-  tight: { pos: [3.95, 1.45, 3.3], tgt: [2.55, 0.2, 1.1] },
+  tight: { pos: [SEC + 1.9, 2.25, 1.0], tgt: [SEC - 1.2, 0.1, -1.05] },
+  tight2: { pos: [SEC + 1.55, 1.85, 0.75], tgt: [SEC - 1.2, 0.12, -1.0] },
   s2: { pos: [SEC * 1.5 + 4.6, 2.7, 5.6], tgt: [SEC * 1.5, -0.2, 0] },
   s2low: { pos: [L + 1.7, 0.45, 4.1], tgt: [L - 1.6, -0.25, 1.0] },
   crib: { pos: [10.7, 0.55, 3.7], tgt: [8.8, -0.35, 1.55] },
-  cageA: { pos: [7.05, 0.35, 0.75], tgt: [8.81, -0.45, 1.57] },
-  cageB: { pos: [7.25, 0.55, 2.85], tgt: [8.81, -0.45, 1.6] },
-  cageC: { pos: [7.7, 0.8, 3.35], tgt: [8.85, -0.42, 1.62] },
+  cageA: { pos: [7.15, 0.25, 0.45], tgt: [8.89, -0.52, 1.37] },
+  cageB: { pos: [7.3, 0.45, 2.75], tgt: [8.89, -0.54, 1.4] },
+  cageC: { pos: [7.85, 0.75, 3.15], tgt: [8.93, -0.5, 1.42] },
   deck2: { pos: [L + 3.0, 3.4, 4.8], tgt: [SEC * 1.45, 0, 0] },
   edge: { pos: [4.6, 0.8, 3.9], tgt: [6.4, 0.16, 2.44] },
   stairs: { pos: [L + 3.4, 1.45, 2.15], tgt: [L + 0.3, 0.02, 0.96] },
   guards: { pos: [L + 4.6, 2.7, 5.2], tgt: [L - 2.2, 0.6, 0.4] },
   grille: { pos: [6.3, 1.9, -1.2], tgt: [6.6, 0.0, -2.75] },
-  second: { pos: [5.6, 2.9, 0.2], tgt: [3.3, 0.45, -1.7] },
+  second: { pos: [3.3, 1.9, 2.5], tgt: [0.9, 0.35, 0.3] },
   end: { pos: [-3.6, 4.3, 6.7], tgt: [L / 2, 0, 0] },
 };
 
@@ -72,7 +73,7 @@ export const SEGMENTS = [
     lines: [
       [1, 'Le superviseur inspecte les lieux avant d\'amener l\'équipement : un sol sans débris, plat, pis les fonds de trous trouvés et marqués sur le mur.'],
     ],
-    cams: [{ t: 0.35, ...C.wall }, { t: 1, pos: [2.2, 1.5, 1.4], tgt: [3.4, 1.25, -2.7] }],
+    cams: [{ t: 0.35, ...C.wall }, { t: 1, pos: [2.4, 1.55, 0.3], tgt: [-0.95, 1.55, 0.2] }],
   },
   {
     id: 'e1', min: 9,
@@ -143,7 +144,8 @@ export const SEGMENTS = [
       [2, 'On part de quel bord ?'],
       [1, 'Du bord où tu peux marcher sur ce qui est déjà couvert. On enjambe jamais les six par six : c\'est là qu\'on trébuche.'],
     ],
-    reveal: [{ cue: 'deck1', from: 0, to: 1, at: 0.08, span: 0 }, { cue: 'screws1', at: 0.16, span: 0 }, { cue: 'deck1', from: 1, to: 12, at: 0.25, span: 0.7 }],
+    // Planches posées une à une, sans serrage : de petits écarts restent entre elles.
+    reveal: [{ cue: 'deck1', from: 0, to: 1, at: 0.08, span: 0 }, { cue: 'screws1', at: 0.16, span: 0 }, { cue: 'deck1', from: 1, to: 11, at: 0.25, span: 0.7 }],
     cams: [{ t: 0.25, ...C.deck1 }, { t: 1, pos: [-0.8, 2.6, 4.0], tgt: [SEC * 0.5, 0, 0] }],
   },
   {
@@ -153,9 +155,12 @@ export const SEGMENTS = [
       [1, 'Étape sept : rendu à la moitié, on resserre. On visse la dernière planche, on enfonce des coins pour mettre les planches en tension, on visse la planche devant les coins, pis on retire les tire-fonds pour libérer les coins.'],
       [2, 'Sinon, à la longue, ça ouvre.'],
     ],
-    show: [{ obj: 'tightWedges', from: 0.12, to: 0.62 }],
-    reveal: [{ cue: 'screwsT', at: 0.4, span: 0 }, { cue: 'deck1', from: 12, to: 22, at: 0.62, span: 0.33 }],
-    cams: [{ t: 0.2, ...C.tight }, { t: 0.6, ...C.tight }, { t: 1, ...C.deck1 }],
+    // Serrage : dernier 3 × 8 vissé (temporaire), coins enfoncés entre lui et les
+    // planches posées, écarts qui se ferment, planche devant les coins vissée,
+    // tire-fonds du dernier 3 × 8 retirés, coins enlevés.
+    tighten: { anchor: 145.0, anchorScrews: 146.4, wedgesIn: 147.4, drive: [148.2, 150.6], frontScrews: 151.0, unscrew: 153.2, wedgesOut: 154.2, back: [154.6, 155.4] },
+    reveal: [{ cue: 'anchor', v: 145.0, vspan: 0 }, { cue: 'screwsT', v: 151.0, vspan: 0 }, { cue: 'deck1b', v: 155.8, vspan: 2.4 }],
+    cams: [{ v: 143.0, ...C.tight }, { v: 150.8, ...C.tight2 }, { v: 155.6, ...C.tight2 }, { v: 158.6, ...C.deck1 }],
   },
   {
     id: 'e8', min: 8,
@@ -182,7 +187,7 @@ export const SEGMENTS = [
       [2, 'Ça fait une base stable pour poser les madriers dessus.'],
     ],
     show: [{ obj: 'laser2', from: 0, to: 0.4 }],
-    reveal: [{ cue: 'support2', at: 0.08, span: 0.5 }, { cue: 'sleepers', at: 0.55, span: 0.35 }],
+    reveal: [{ cue: 'support2', v: 179.6, vspan: 2.0 }, { cue: 'guide', v: 181.2, vspan: 0 }, { cue: 'sleepers', v: 186.0, vspan: 2.6 }],
     cams: [{ t: 0.3, ...C.s2 }, { t: 1, pos: [SEC * 1.5 + 3.6, 1.6, 5.2], tgt: [SEC * 1.5, -0.25, 0.3] }],
   },
   {
@@ -259,7 +264,7 @@ export const SEGMENTS = [
       [1, 'Les deux planches les plus proches sont vissées, la dernière arrive à trois pouces de la tour. À chaque changement d\'angle, on les ajuste. Pis pas de bois plané sur les planchers.'],
     ],
     reveal: [{ cue: 'secondary', at: 0.15, span: 0.45 }],
-    cams: [{ t: 0.2, ...C.ov }, { t: 0.5, ...C.second }, { t: 1, pos: [4.6, 2.0, -0.6], tgt: [3.2, 0.5, -2.0] }],
+    cams: [{ t: 0.2, ...C.ov }, { t: 0.5, ...C.second }, { t: 1, pos: [2.9, 1.5, 1.9], tgt: [0.8, 0.4, 0.2] }],
   },
   {
     id: 'demont', min: 12,
@@ -319,7 +324,7 @@ const VOICE_END = 332.59;
 // Silences ajoutés dans la voix : [instant dans l'enregistrement, durée] (ex. cage, étape 11).
 const GAPS = { e11: [[203.45, 2.4]] };
 // Temps laissé après la voix (s) ; par défaut 0,4.
-const TAIL = { e11: 7.5, titre: 0.2, fin: 1.2, e15: 0.2 };
+const TAIL = { e11: 7.5, titre: 0.2, fin: 1.2, e15: 0.2, e7: 1.6 };
 const LEAD = 0.3; // la voix démarre 0,3 s après le début de la partie
 const r24 = (x) => Math.round(x * 24) / 24;
 

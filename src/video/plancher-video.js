@@ -20,8 +20,9 @@ import './plancher-video.css';
 import { buildProcedural } from '../viewer/assembly.js';
 import * as S from '../viewer/shapes.js';
 import models from '../models/plancher-dd/index.js';
-import { IN, P3, P8, B66, W, L, SEC, ground } from '../models/plancher-dd/plan.js';
-import { timeline, RETENIR, stepCard, STEP_CARD } from './plancher-script.js';
+import { IN, FT, P3, P8, B66, W, L, SEC, DECK, ground, plankZ, TIGHT, joistX, joistX2, DIP } from '../models/plancher-dd/plan.js';
+import { lagScrews } from '../models/plancher-dd/lumber.js';
+import { timeline, RETENIR, stepCard, STEP_CARD, vt } from './plancher-script.js';
 import { Annotator } from './plancher-annot.js';
 
 const VW = 1280, VH = 540;
@@ -100,7 +101,7 @@ if (SHADOWS) model.root.traverse((o) => { if (o.isMesh) { o.castShadow = !o.mate
 /** Feuilles : pièces des sous-assemblages et pièces directes de la vue d'ensemble. */
 const leaves = [];
 // Cage de bois focalisée (étape 11) : montée pièce par pièce, en gros plan.
-const CRIB_FOCUS = new THREE.Vector3(8.809, -0.4, 1.575);
+const CRIB_FOCUS = new THREE.Vector3(DIP.x, -0.45, DIP.z);
 for (const p of model.root.userData.parts) {
   if (p.userData.isAssembly) {
     for (const c of p.userData.parts) {
@@ -114,7 +115,7 @@ for (const p of model.root.userData.parts) {
   } else leaves.push({ obj: p, asm: 'P02', ref: p.userData.partRef });
 }
 
-const joistFarZ = W / 2 - B66 / 2;
+const ANCHOR = TIGHT + 1; // dernier 3 × 8, vissé le temps du serrage (étape 7)
 function cueOf({ asm, ref, obj, crib }) {
   if (crib) return crib;
   const R = {
@@ -128,7 +129,9 @@ function cueOf({ asm, ref, obj, crib }) {
   };
   if (asm === 'P17') return 'secondary';
   let c = R[asm]?.[ref];
-  if (c === 'joists1' && Math.abs(obj.position.z - joistFarZ) < 0.01) c = 'joistFar';
+  if (c === 'joists1' && Math.abs(obj.position.x - joistX.at(-1)) < 0.01) c = 'joistFar';
+  if (c === 'joists2' && Math.abs(obj.position.x - joistX2.at(-1)) < 0.01) c = 'guide';
+  if (c === 'deck1') { const i = obj.userData.order; c = i === ANCHOR ? 'anchor' : i > ANCHOR ? 'deck1b' : 'deck1'; }
   return c || 'always';
 }
 
@@ -140,7 +143,7 @@ for (const lf of leaves) {
   box.setFromObject(lf.obj).getCenter(ctr);
   lf.c = ctr.clone();
   lf.t0 = lf.cue === 'always' ? -Infinity : Infinity;
-  lf.drop = lf.cue.startsWith('crib') ? 0.35 : ['line', 'grille'].includes(lf.cue) ? 0 : lf.cue === 'drill' ? 0.9 : ['deck1', 'deck2', 'joinPlanks', 'secondary'].includes(lf.cue) ? 0.35 : 0.5;
+  lf.drop = lf.cue.startsWith('crib') ? 0.35 : ['line', 'grille'].includes(lf.cue) ? 0 : lf.cue === 'drill' ? 0.9 : ['deck1', 'deck1b', 'anchor', 'deck2', 'joinPlanks', 'secondary'].includes(lf.cue) ? 0.35 : 0.5;
   if (!cues.has(lf.cue)) cues.set(lf.cue, []);
   cues.get(lf.cue).push(lf);
 }
@@ -149,7 +152,8 @@ const REF_ORDER = (lf) => ({ 1: 0, 2: 2, 3: 3, 4: 4, 5: 1 })[lf.ref] ?? 0;
 for (const [name, list] of cues) {
   list.sort((a, b) => {
     if (name === 'guards' && REF_ORDER(a) !== REF_ORDER(b)) return REF_ORDER(a) - REF_ORDER(b);
-    if (name.startsWith('joists')) return a.c.z - b.c.z;
+    if (name.startsWith('joists')) return a.c.x - b.c.x;
+    if (name.startsWith('deck')) return (a.obj.userData.order ?? 0) - (b.obj.userData.order ?? 0) || a.c.x - b.c.x;
     if (name.startsWith('crib')) return a.c.y - b.c.y || a.c.x - b.c.x || a.c.z - b.c.z;
     return a.c.x - b.c.x || a.c.z - b.c.z || a.c.y - b.c.y;
   });
@@ -210,23 +214,77 @@ const extras = {
     S.cyl(0.05, 0.12, 'fluoRed', { r2: 0.001, pos: [0, 0.18, 0] }),
     S.cyl(0.012, 0.25, 'fluoRed', { pos: [0, 0.36, 0] }),
   ),
+  // Niveau de 48 po sur un 3 × 8 de 8 pi posé en travers des madriers (selon X).
   level: S.group(
-    S.box(P3 * 0 + 0.2, P3, 8 * 12 * IN, 'woodLight', { pos: [0, P3 / 2, 0] }),
-    S.box(0.045, 0.07, 48 * IN, 'blue', { pos: [0, P3 + 0.035, 0] }),
-    S.box(0.047, 0.02, 0.07, 'lampAmber', { pos: [0, P3 + 0.06, 0] }),
+    S.box(8 * FT, P3, 0.2, 'woodLight', { pos: [0, P3 / 2, 0] }),
+    S.box(48 * IN, 0.07, 0.045, 'blue', { pos: [0, P3 + 0.035, 0] }),
+    S.box(0.07, 0.02, 0.047, 'lampAmber', { pos: [0, P3 + 0.06, 0] }),
   ),
-  tightWedges: S.group(),
 };
 extras.highMark.position.set(high.x, high.y + 0.004, high.z);
 extras.highMark.children[2].rotation.x = Math.PI; // pointe vers le sol
 extras.level.position.set(2.3, B66, -0.4);
-// Coins de serrage enfoncés entre deux planches (étape 7), pointe en bas.
-for (const z of [-1.6, -0.4, 0.8, 2.0]) {
-  const w = S.extrude([[0, 0], [0.025, 0], [0.012, -0.2]], 0.09, 'woodWedge');
-  w.position.set(11 * P8, B66 + P3 + 0.12, z);
-  extras.tightWedges.add(w);
-}
 for (const o of Object.values(extras)) { o.visible = false; scene.add(o); }
+
+// ------------------------------------------------------------------ serrage des planches (étape 7)
+
+// Les planches 1 à TIGHT sont posées sans serrage : un petit écart (exagéré pour
+// la vidéo) reste entre chacune. À environ 50 %, le dernier 3 × 8 (ANCHOR) est posé
+// plus loin et vissé ; des coins enfoncés entre lui et la planche TIGHT poussent
+// les planches posées vers la première (vissée) : les écarts se ferment. La
+// planche devant les coins est vissée, puis les tire-fonds du dernier 3 × 8 sont
+// retirés, les coins enlevés, et le dernier 3 × 8 reprend sa place.
+const GAP = 0.015; // écart entre deux planches non serrées (exagéré pour être visible)
+const WG = 0.05; // espace pour les coins
+const TSEG = SEGS.find((x) => x.tighten);
+const TT = Object.fromEntries(Object.entries(TSEG.tighten).map(([k, v]) => [k, Array.isArray(v) ? v.map((x) => vt(TSEG, x)) : vt(TSEG, v)]));
+const span01 = (t, a, b) => Math.min(1, Math.max(0, (t - a) / (b - a)));
+const anchorZ0 = plankZ(ANCHOR);
+const anchorScrews = lagScrews(S, [B66 / 2, SEC - B66 / 2].map((x) => [x, DECK, 0]));
+const wedgeXs = [0.75, 1.85, 2.95, 4.05];
+const tightWedges = S.group();
+for (const x of wedgeXs) {
+  // Coin pointe en bas, épaisseur selon Z (mise à l'échelle selon l'écart à combler).
+  const w = S.extrude([[0, 0], [1, 0], [0.62, -0.26], [0.38, -0.26]], 0.1, 'woodWedge');
+  w.position.set(-0.5, 0, -0.05);
+  const holder = S.group(w);
+  holder.rotation.y = -Math.PI / 2;
+  const g = S.group(holder);
+  g.position.x = x;
+  tightWedges.add(g);
+}
+scene.add(anchorScrews, tightWedges);
+anchorScrews.visible = tightWedges.visible = false;
+const deckLeaves = leaves.filter((lf) => ['deck1', 'anchor'].includes(lf.cue));
+/** Décalage (selon Z) des planches non serrées et du dernier 3 × 8 à l'instant t. */
+function tighten(t) {
+  const drive = span01(t, TT.drive[0], TT.drive[1]);
+  const k = drive * drive * (3 - 2 * drive);
+  const loose = (i) => i * GAP * (1 - k);
+  const back = span01(t, TT.back[0], TT.back[1]);
+  const anchorOff = (TIGHT * GAP + WG) * (1 - back * back * (3 - 2 * back));
+  for (const lf of deckLeaves) {
+    const i = lf.obj.userData.order;
+    if (i === 0) continue;
+    lf.obj.position.z = lf.base.z + (i === ANCHOR ? anchorOff : loose(i));
+  }
+  // Tire-fonds temporaires du dernier 3 × 8 : posés, puis retirés (ils remontent).
+  const up = span01(t, TT.unscrew, TT.unscrew + 0.6);
+  anchorScrews.visible = t >= TT.anchorScrews && up < 1;
+  anchorScrews.position.set(0, 0.25 * (1 - span01(t, TT.anchorScrews, TT.anchorScrews + 0.4)) + 0.12 * up, anchorZ0 + anchorOff);
+  // Coins : insérés au-dessus de l'écart, enfoncés, puis enlevés.
+  const out = span01(t, TT.wedgesOut, TT.wedgesOut + 0.5);
+  tightWedges.visible = t >= TT.wedgesIn && out < 1;
+  const zFront = plankZ(TIGHT) + loose(TIGHT) + P8 / 2; // face de la planche devant les coins
+  const zBack = anchorZ0 + anchorOff - P8 / 2; // face du dernier 3 × 8
+  const gap = Math.max(0.004, zBack - zFront);
+  const ins = span01(t, TT.wedgesIn, TT.wedgesIn + 0.5);
+  for (const g of tightWedges.children) {
+    g.position.z = (zFront + zBack) / 2;
+    g.position.y = DECK + 0.14 + 0.25 * (1 - ins) - 0.1 * k + 0.35 * out;
+    g.children[0].scale.x = gap; // épaisseur du coin = écart comblé (axe X local du profil)
+  }
+}
 const shows = [];
 for (const s of SEGS) for (const sh of s.show || []) shows.push({ obj: extras[sh.obj], name: sh.obj, a: s.start + s.dur * sh.from, b: s.start + s.dur * sh.to });
 
@@ -238,7 +296,7 @@ const ghostMats = new Map(), nearMats = new Map();
 for (const lf of leaves) {
   if (lf.cue.startsWith('crib') || ['always', 'line', 'barricade', 'cabinet', 'ext', 'grille'].includes(lf.cue)) continue;
   // Le soutien et le madrier portés par la cage restent visibles en transparence.
-  const near = (lf.cue === 'sleepers' && Math.abs(lf.c.x - CRIB_FOCUS.x) < 0.2) || (lf.cue === 'joists2' && Math.abs(lf.c.z - CRIB_FOCUS.z) < 0.2);
+  const near = (lf.cue === 'sleepers' && Math.abs(lf.c.z - CRIB_FOCUS.z) < 0.2) || (['joists2', 'guide'].includes(lf.cue) && Math.abs(lf.c.x - CRIB_FOCUS.x) < 0.2);
   const map = near ? nearMats : ghostMats;
   lf.obj.traverse((o) => {
     if (!o.isMesh) return;
@@ -407,6 +465,7 @@ function render(t) {
       sh.obj.position.y = 0.2 * (1 - k);
     }
   }
+  tighten(t);
   cameraAt(t);
   ghost(t);
   overlays(t, s);

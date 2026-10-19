@@ -78,13 +78,13 @@
     "P02",
     "P01"
    ],
-   "note": "Reconstitution 3D d'après la procédure PRO-DD-ST-003 (révision juillet 2026). Sol de galerie fictif : il descend vers le bout de la galerie pour montrer les blocages, les soutiens, la cage, les marches et les garde-corps que la procédure exige. Chaque pièce porte son numéro d'étape pour l'animation du montage.",
+   "note": "Reconstitution 3D d'après la procédure PRO-DD-ST-003 (révision juillet 2026). La foreuse fore vers le fond de la galerie (front de taille où sont marqués les fonds de trous) : ses patins suivent la galerie et croisent les madriers 6 × 6, posés en travers ; les planches 3 × 8 suivent la galerie. Sol de galerie fictif : il descend vers l'entrée pour montrer les blocages, les soutiens, la cage, les marches et les garde-corps que la procédure exige. Chaque pièce porte son numéro d'étape pour l'animation du montage.",
    "parts": [
     [
      "1",
      "",
      1,
-     "Ligne de référence en peinture (rive du premier madrier, repères à 16 et 32 pi)",
+     "Ligne de référence en peinture (premier madrier en travers, rive du plancher, repères à 16 et 32 pi)",
      {
       "note": "Étape 1 : tracée avec le plan de forage en main.",
       "pnText": "Peinture fluo"
@@ -191,7 +191,7 @@
      "G",
      "",
      null,
-     "Galerie (contexte : sol de roche concassée, murs coupés, cibles des fonds de trous)",
+     "Galerie (contexte : sol de roche concassée, murs coupés, front de taille avec les fonds de trous)",
      {
       "pseudo": true
      }
@@ -223,7 +223,7 @@
      "2",
      "",
      6,
-     "Madrier 6 × 6 × 16 pi (structure de base)",
+     "Madrier 6 × 6 × 16 pi en travers de la galerie (structure de base)",
      {
       "pnText": "6 × 6 brut × 16 pi"
      }
@@ -240,7 +240,7 @@
     [
      "5",
      "",
-     30,
+     32,
      "Coin de bois (mise de niveau)",
      {
       "note": "Au moins 6 appuis par madrier (étape 5) ; aux appuis où le sol touche le madrier, pas de coin.",
@@ -250,7 +250,7 @@
     [
      "6",
      "",
-     7,
+     6,
      "Blocage de jonction (porte aussi les madriers de la section 2)",
      {
       "note": "Étape 5 : placé en mettant de niveau le bout des 6 × 6 de la section 1.",
@@ -276,13 +276,13 @@
     "P08",
     "P09"
    ],
-   "note": "Planches posées dans le sens contraire des 6 × 6, la première vissée avec des tire-fonds à chaque extrémité, en avançant sur la surface déjà couverte (ne pas enjamber les 6 × 6). Resserrage aux coins à environ 50 % (étape 7) : coins enfoncés, planche vissée devant, coins libérés. Deux planches laissées libres puis vissées à la fin pour joindre les sections (étape 8).",
+   "note": "Planches posées dans le sens contraire des 6 × 6 (donc dans le sens de la galerie), la première vissée avec des tire-fonds à chaque extrémité, en avançant sur la surface déjà couverte (ne pas enjamber les 6 × 6). Resserrage à environ 50 % (étape 7) : le dernier 3 × 8 vissé temporairement, coins enfoncés entre lui et les planches posées pour les mettre en tension, planche devant les coins vissée, puis tire-fonds du dernier 3 × 8 retirés. Deux planches laissées libres puis vissées à la fin pour joindre les sections (étape 8).",
    "parts": [
     [
      "1",
      "",
      22,
-     "Planche 3 × 8 × 16 pi",
+     "Planche 3 × 8 × 16 pi, dans le sens de la galerie",
      {
       "pnText": "3 × 8 brut × 16 pi"
      }
@@ -344,13 +344,13 @@
     "P10",
     "P11"
    ],
-   "note": "Étapes 9 à 11 : hauteur au laser, madrier guide à 16 pi de la section 1, soutiens 6 × 6 de 16 pi dans le sens contraire là où la hauteur le permet (ici sur les cinq lignes d'appui, le sol descend vers le bout), blocages alignés vis-à-vis des croisements, cage de bois dans le creux du coin.",
+   "note": "Étapes 9 à 11 : hauteur au laser, madrier guide à 16 pi de la section 1, soutiens 6 × 6 de 16 pi dans le sens contraire des madriers (selon la galerie) là où la hauteur le permet, blocages alignés vis-à-vis des croisements, cage de bois dans le creux.",
    "parts": [
     [
      "1",
      "",
      7,
-     "Madrier 6 × 6 × 16 pi",
+     "Madrier 6 × 6 × 16 pi en travers (le dernier sert de madrier guide)",
      {
       "pnText": "6 × 6 brut × 16 pi"
      }
@@ -358,8 +358,8 @@
     [
      "2",
      "",
-     5,
-     "Soutien 6 × 6 × 16 pi dans le sens contraire (le plus éloigné sert de madrier guide)",
+     6,
+     "Soutien 6 × 6 × 16 pi dans le sens contraire, sous les madriers",
      {
       "pnText": "6 × 6 brut × 16 pi"
      }
@@ -367,7 +367,7 @@
     [
      "3",
      "",
-     21,
+     23,
      "Blocage 3 × 8 (24 po)",
      {
       "pnText": "3 × 8 brut × 24 po"
@@ -376,7 +376,7 @@
     [
      "4",
      "",
-     28,
+     29,
      "Blocage 6 × 6 (18 po)",
      {
       "pnText": "6 × 6 brut × 18 po"
@@ -385,7 +385,7 @@
     [
      "5",
      "",
-     34,
+     35,
      "Coin de bois ou paire de coins opposés",
      {
       "pnText": "Coin de bois"
