@@ -27,6 +27,8 @@ const base = opt('url', 'http://localhost:5173');
 const jobs = Number(opt('jobs', '2'));
 const FPS = Number(opt('fps', '24'));
 const SCALE = opt('scale', '1'); // 0.5 : aperçu rapide
+// --range a:b : seulement les images a à b-1 (rendu partagé entre plusieurs machines).
+const RANGE = opt('range') ? opt('range').split(':').map(Number) : null;
 for (const d of ['3d', 'layers']) mkdirSync(join(out, d), { recursive: true });
 
 async function open(browser) {
@@ -68,7 +70,7 @@ if (!flag('encode-only')) {
   writeFileSync(join(out, 'fits.json'), JSON.stringify(fits));
 
   const todo = [];
-  for (let f = 0; f < total; f++) if ((!stills || stills.includes(f)) && (!existsSync(frameFile(f)) || !levels[f])) todo.push(f);
+  for (let f = 0; f < total; f++) if ((!RANGE || (f >= RANGE[0] && f < RANGE[1])) && (!stills || stills.includes(f)) && (!existsSync(frameFile(f)) || !levels[f])) todo.push(f);
   console.log(`${info.duration.toFixed(1)} s, ${total} images ; ${todo.length} à rendre (${jobs} onglets)`);
   const pages = [probe];
   for (let i = 1; i < jobs; i++) pages.push(await open(browser));
@@ -91,6 +93,7 @@ if (!flag('encode-only')) {
 }
 await browser.close();
 
+if (flag('no-compose') || RANGE) process.exit(0);
 const compose = ['scripts/video-plancher-compose.py', out, String(FPS)];
 if (stills) {
   execFileSync('python3', [...compose, '--stills', stills.join(',')], { stdio: 'inherit' });
