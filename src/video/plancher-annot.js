@@ -182,7 +182,9 @@ function wrap(ctx, text, max) {
 
 export class Annotator {
   constructor(canvas, camera, segs, size) {
-    this.ctx = canvas.getContext('2d');
+    // Canevas logiciel : avec l'accélération, un canevas vidé pouvait renvoyer
+    // (toDataURL) une ancienne image, d'où des étiquettes qui restaient et clignotaient.
+    this.ctx = canvas.getContext('2d', { willReadFrequently: true });
     this.canvas = canvas;
     this.camera = camera;
     this.W = size[0];

@@ -3,4 +3,4 @@
 import { defineConfig, mergeConfig } from 'vite';
 import base from './vite.config.js';
 
-export default mergeConfig(base, defineConfig({ server: { hmr: false, watch: null } }));
+export default mergeConfig(base, defineConfig({ server: { hmr: false, watch: { ignored: ['**/scratch/**', '**/video/**', '**/dist/**', '**/.git/**'] } } }));
