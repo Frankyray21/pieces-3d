@@ -17,6 +17,7 @@ const FRAMES = path.resolve(opt('frames', 'scratch/video'));
 const OUT = path.resolve(opt('out', 'scratch/video24'));
 const RENDER = path.resolve(opt('render', 'plancher.mp4'));
 const HFPROJ = opt('project', path.join(os.homedir(), 'hf-plancher', 'final'));
+const FPS3D = Number(opt('fps3d', '12')); // 24 : 3D déjà à 24 i/s, sans interpolation
 const SEGS = timeline();
 const DUR = SEGS.at(-1).start + SEGS.at(-1).dur;
 const total = Math.round(DUR * 24);
@@ -27,8 +28,9 @@ const dir3 = path.join(OUT, '3d');
 fs.mkdirSync(dir3, { recursive: true });
 const have = fs.readdirSync(dir3).length;
 if (have < total) {
-  run('ffmpeg', ['-v', 'error', '-y', '-framerate', '12', '-i', path.join(FRAMES, '3d', 'f_%05d.jpg'), '-framerate', '24', '-i', path.join(FRAMES, 'annot', 'a_%05d.png'),
-    '-filter_complex', '[0:v]minterpolate=fps=24:mi_mode=mci:mc_mode=aobmc:me_mode=bidir:vsbmc=1,format=rgba[b];[b][1:v]overlay=0:0:eof_action=repeat,format=rgb24',
+  const interp = FPS3D === 24 ? '' : 'minterpolate=fps=24:mi_mode=mci:mc_mode=aobmc:me_mode=bidir:vsbmc=1,';
+  run('ffmpeg', ['-v', 'error', '-y', '-framerate', String(FPS3D), '-i', path.join(FRAMES, '3d', 'f_%05d.jpg'), '-framerate', '24', '-i', path.join(FRAMES, 'annot', 'a_%05d.png'),
+    '-filter_complex', `[0:v]${interp}format=rgba[b];[b][1:v]overlay=0:0:eof_action=repeat,format=rgb24`,
     '-q:v', '2', '-start_number', '0', path.join(dir3, 'f_%05d.jpg')]);
 }
 // Dernières images manquantes (interpolation) : copie de la dernière.

@@ -55,6 +55,21 @@ const key = new THREE.DirectionalLight(0xfff1df, 1.7);
 key.position.set(6, 9, 7);
 const fill = new THREE.DirectionalLight(0xdfe8ff, 0.7);
 fill.position.set(-6, 4, 5);
+// Ombres douces de la lumière principale (?shadows=0 pour les couper).
+const SHADOWS = QS.get('shadows') !== '0';
+if (SHADOWS) {
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  key.castShadow = true;
+  key.shadow.mapSize.set(2048, 2048);
+  key.target.position.set(L / 2, 0, 0);
+  key.position.set(L / 2 + 3.5, 9, 6);
+  Object.assign(key.shadow.camera, { left: -11, right: 11, top: 8, bottom: -8, near: 1, far: 26 });
+  key.shadow.bias = -0.0004;
+  key.shadow.normalBias = 0.02;
+  key.shadow.radius = 3;
+  scene.add(key.target);
+}
 scene.add(key, fill);
 // Lampes de galerie (lumière chaude au-dessus du plancher).
 for (const x of [1.5, 5, 8.5]) {
@@ -78,6 +93,7 @@ if (FXAA) {
 const model = buildProcedural(models, 'P02');
 scene.add(model.root);
 model.root.updateMatrixWorld(true);
+if (SHADOWS) model.root.traverse((o) => { if (o.isMesh) { o.castShadow = !o.material?.transparent; o.receiveShadow = true; } });
 
 // ------------------------------------------------------------------ pièces et repères de montage
 
