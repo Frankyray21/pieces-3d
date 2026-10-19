@@ -40,7 +40,7 @@ export function P04(api, opts = {}) {
   });
   // Blocage de jonction : sous le dernier madrier, il porte aussi le premier madrier de la section 2.
   for (const z of SUPPORTS_Z) {
-    placeStack(api, stack(JOINT_X, z, 0, 'x', { forceTop38: true }), { labeled, step: 5, group: { ref: '6', explode: [0.25, 0.12, 0] } });
+    placeStack(api, stack(JOINT_X, z, 0, 'x'), { labeled, step: 5, group: { ref: '6', explode: [0.25, 0.12, 0] } });
   }
   return { view: { dir: [0.9, 0.75, 1.15] } };
 }

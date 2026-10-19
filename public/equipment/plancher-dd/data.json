@@ -78,7 +78,7 @@
     "P02",
     "P01"
    ],
-   "note": "Reconstitution 3D d'après la procédure PRO-DD-ST-003 (révision juillet 2026). La foreuse fore vers le fond de la galerie (front de taille où sont marqués les fonds de trous) : ses patins suivent la galerie et croisent les madriers 6 × 6, posés en travers ; les planches 3 × 8 suivent la galerie. Sol de galerie fictif : il descend vers l'entrée pour montrer les blocages, les soutiens, la cage, les marches et les garde-corps que la procédure exige. Chaque pièce porte son numéro d'étape pour l'animation du montage.",
+   "note": "Reconstitution 3D d'après la procédure PRO-DD-ST-003 (révision juillet 2026). La foreuse fore vers le fond de la galerie (front de taille où sont marqués les fonds de trous) : ses patins suivent la galerie et croisent les madriers 6 × 6, posés en travers ; les planches 3 × 8 suivent la galerie. Sol de galerie fictif : il descend vers l'entrée pour montrer les blocages, les soutiens, la cage, les marches et les garde-corps que la procédure exige. Chaque pièce porte son numéro d'étape pour l'animation du montage. Règle appliquée partout : jamais de bois simplement empilé ; un seul blocage et ses coins, sinon une cage (couches de deux pièces croisées).",
    "parts": [
     [
      "1",
@@ -231,7 +231,7 @@
     [
      "3",
      "",
-     7,
+     4,
      "Blocage 3 × 8 (24 po), dans le sens contraire des madriers",
      {
       "pnText": "3 × 8 brut × 24 po"
@@ -243,7 +243,7 @@
      32,
      "Coin de bois (mise de niveau)",
      {
-      "note": "Au moins 6 appuis par madrier (étape 5) ; aux appuis où le sol touche le madrier, pas de coin.",
+      "note": "Au moins 6 appuis par madrier (étape 5). Jamais de bois simplement empilé : un seul blocage (3 × 8 ou 6 × 6) et des coins ; là où le sol touche presque le madrier, des coins seulement.",
       "pnText": "Coin de bois"
      }
     ],
@@ -367,7 +367,7 @@
     [
      "3",
      "",
-     23,
+     12,
      "Blocage 3 × 8 (24 po)",
      {
       "pnText": "3 × 8 brut × 24 po"
@@ -376,7 +376,7 @@
     [
      "4",
      "",
-     29,
+     15,
      "Blocage 6 × 6 (18 po)",
      {
       "pnText": "6 × 6 brut × 18 po"
@@ -395,7 +395,7 @@
      "6",
      "",
      1,
-     "Cage de bois (cas spécial)",
+     "Cage de bois (cas spécial : plus haut qu’un blocage et ses coins)",
      {
       "link": "P12",
       "pseudo": true

@@ -8,7 +8,7 @@
 // toujours entières dans le cadre. Une annotation dont le point est hors champ
 // s'efface au lieu d'être coupée.
 import * as THREE from 'three';
-import { IN, FT, B66, P3, P8, W, L, SEC, DECK, joistX, joistX2, GAL, STAIR, SUPPORTS_Z, DIP, DRILL, FACE_X, ground, deckHeight, plankZ, TIGHT } from '../models/plancher-dd/plan.js';
+import { IN, FT, B66, P3, P8, W, L, SEC, DECK, joistX, joistX2, GAL, STAIR, SUPPORTS_Z, DIP, DRILL, FACE_X, ground, deckHeight, plankZ, TIGHT, stack } from '../models/plancher-dd/plan.js';
 import { stairPlan, secondaryPlan } from '../models/plancher-dd/floor.js';
 import { vt } from './plancher-script.js';
 
@@ -33,7 +33,8 @@ const HIGH = (() => {
 const gEnd = ground(L - 0.05, zP - 0.05);
 const zg = -1.5;
 const t1 = DECK - rise;
-const CRIB = { x: DIP.x, z: DIP.z, g: -0.818, top: -0.152 };
+// Cage de l'étape 11 (sous le soutien, au croisement du creux), calculée comme dans le modèle.
+const CRIB = (() => { const st = stack(joistX2[5], DIP.z, -B66, 'z'); const lay = (k) => st.pieces.filter((p) => p.kind === 'crib')[k]; return { x: joistX2[5], z: DIP.z, g: st.ground, top: -B66, y1: lay(0).pos[1], y2: lay(2).pos[1], h2: lay(2).size[1] }; })();
 const ANCHOR_Z = plankZ(TIGHT + 1) + TIGHT * 0.015 + 0.05; // dernier 3 × 8 posé plus loin (étape 7)
 
 // dim : cote entre a et b décalée de off (m) ; note : texte relié au point at ;
@@ -106,11 +107,11 @@ export const ANNOTATIONS = {
     { v: 195.0, type: 'dim', a: [joistX2[2], B66 + 0.02, 0.4], b: [joistX2[3], B66 + 0.02, 0.4], off: [0, 0.1, 0], text: '32 po', sub: 'centre à centre' },
     { v: 199.4, type: 'note', at: [joistX2[2], -B66, SUPPORTS_Z[2]], text: 'Soutiens vis-à-vis les croisements', dir: 'up' },
     // Cage, montée couche par couche.
-    { v: 204.8, type: 'note', at: [CRIB.x - 0.305, -0.74, CRIB.z - 0.3], text: 'Couche 1 : deux 6 × 6 parallèles', dir: 'down', until: 209.6 },
-    { v: 207.4, type: 'note', at: [CRIB.x, -0.59, CRIB.z + 0.38], text: 'Couche 2 : croisée', dir: 'right', until: 212.4 },
-    { v: 211.0, type: 'dim', a: [CRIB.x - 0.381, -0.209, CRIB.z + 0.305], b: [CRIB.x + 0.381, -0.209, CRIB.z + 0.305], off: [0, 0.28, 0.18], text: '30 po', sub: 'pièces de 24 à 36 po' },
-    { v: 213.8, type: 'note', at: [CRIB.x, -0.2, CRIB.z], text: 'Coin de bois : ajuste le niveau', dir: 'up' },
-    { v: 215.4, type: 'dim', a: [CRIB.x + 0.42, CRIB.g, CRIB.z + 0.4], b: [CRIB.x + 0.42, CRIB.top, CRIB.z + 0.4], off: [0.15, 0, 0.12], text: '26 po', sub: 'plus de 18 po : cage' },
+    { v: 204.8, type: 'note', at: [CRIB.x - 0.305, CRIB.y1, CRIB.z - 0.3], text: 'Couche 1 : deux 6 × 6 parallèles', dir: 'down', until: 209.6 },
+    { v: 207.4, type: 'note', at: [CRIB.x, CRIB.y2, CRIB.z + 0.38], text: 'Couche 2 : croisée', dir: 'right', until: 212.4 },
+    { v: 211.0, type: 'dim', a: [CRIB.x - 0.381, CRIB.y2 + CRIB.h2 / 2, CRIB.z + 0.385], b: [CRIB.x + 0.381, CRIB.y2 + CRIB.h2 / 2, CRIB.z + 0.385], off: [0, 0.3, 0.15], text: '30 po', sub: 'pièces de 24 à 36 po' },
+    { v: 213.8, type: 'note', at: [CRIB.x, CRIB.top - 0.05, CRIB.z], text: 'Coin de bois : ajuste le niveau', dir: 'up' },
+    { v: 215.4, type: 'dim', a: [CRIB.x + 0.42, CRIB.g, CRIB.z + 0.4], b: [CRIB.x + 0.42, CRIB.top, CRIB.z + 0.4], off: [0.15, 0, 0.12], text: po(CRIB.top - CRIB.g), sub: 'trop haut pour un blocage : cage' },
   ],
   e12: [
     { v: 213.4, type: 'note', at: [SEC * 1.5, DECK, 0.6], text: 'Étapes 6 et 7 répétées', dir: 'up' },

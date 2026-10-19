@@ -69,9 +69,9 @@ const smooth = (t) => { t = Math.min(1, Math.max(0, t)); return t * t * (3 - 2 *
 // plus haute que le sol, d'où les soutiens 6 × 6 et l'escalier), léger dévers,
 // ondulations de roche concassée et un creux sous un coin (cage de bois).
 function rawGround(x, z) {
-  const drop = -0.42 * smooth((x - 1.2) / 8.2);
+  const drop = -0.33 * smooth((x - 1.2) / 8.2);
   const cross = -0.035 * (z + W / 2) / W;
-  const dip = -0.5 * Math.exp(-((x - DIP.x) ** 2 + (z - DIP.z) ** 2) / (2 * 0.42 ** 2));
+  const dip = -0.5 * Math.exp(-((x - DIP.x) ** 2 + (z - DIP.z) ** 2) / (2 * 0.33 ** 2));
   const n = 0.012 * Math.sin(2.3 * x + 1.1 * z) * Math.cos(2.9 * z - 0.8 * x) + 0.006 * Math.sin(5.7 * x + 0.4) * Math.sin(4.3 * z + 1.2);
   // Au-delà du plancher, le sol remonte doucement vers l'entrée de la galerie.
   const beyond = 0.08 * smooth((x - (L + 1.5)) / 4);
@@ -103,52 +103,60 @@ const CRIB = 30 * IN; // pièces de cage (24 à 36 po)
 const MIN = 0.006; // jeu sous lequel le madrier repose directement
 
 /**
- * Empilement de soutien sous un appui (dessous de l'appui à Y = top) :
- * blocages 6 × 6 et 3 × 8 posés dans le sens contraire de l'appui, puis coin
- * de bois (ou paire de coins opposés) pour mettre de niveau. Au-delà de 18 po
- * de blocage, une cage (pièces croisées, étape 11). along : 'z' sous un madrier
- * (qui suit X), 'x' sous un soutien de 16 pi (qui suit Z).
+ * Soutien sous un appui (dessous de l'appui à Y = top). Règle de chantier :
+ * jamais de bois simplement empilé. Un seul blocage (3 × 8 ou 6 × 6), posé
+ * dans le sens contraire de l'appui, puis un coin de bois (ou une paire de
+ * coins opposés) pour mettre de niveau ; au-delà, une cage : couches de deux
+ * pièces parallèles, croisées d'une couche à l'autre (étape 11, cas spéciaux).
+ * along : 'z' sous un appui qui suit X, 'x' sous un appui qui suit Z.
  *
  * Retourne des pièces { kind, size: [sx, sy, sz], pos: [x, y, z] } et des coins
- * { kind: 'wedge', pos, dir, flip, thick } ; kind : 'b38', 'b66', 'crib', 'wedge'.
+ * { kind: 'wedge', pos, along, pair, thick } ; kind : 'b38', 'b66', 'crib', 'wedge'.
  */
-export function stack(x, z, top, along = 'z', { forceTop38 = false, len38 = BLOCK38 } = {}) {
+export const WEDGE_MAX = WEDGE.t * 1.75; // paire de coins opposés au plus serré
+export function stack(x, z, top, along = 'z', { len38 = BLOCK38 } = {}) {
   const lz = along === 'z';
   const foot = lz ? [P8 / 2, len38 / 2] : [len38 / 2, P8 / 2];
   const g = groundUnder(x, z, ...foot);
   const G = top - g;
   const out = [];
   if (G < MIN) return { pieces: out, gap: G, ground: g };
-  let n66 = Math.max(0, Math.floor((G - MIN) / B66));
-  let rem = G - n66 * B66;
-  let n38 = Math.max(0, Math.floor((rem - MIN) / P3));
-  // Jonction des sections : le dessus est un 3 × 8 à plat, assez large pour les deux bouts.
-  if (forceTop38 && n38 === 0 && n66 > 0) { n66 -= 1; n38 = Math.floor((G - n66 * B66 - MIN) / P3); }
-  const r = G - n66 * B66 - n38 * P3;
-  const crib = n66 * B66 + n38 * P3 >= 17.9 * IN;
-  let y = g;
-  const piece = (kind, sAlong, sh, sAcross, px = x, pz = z) => {
+  const piece = (kind, sAlong, sh, sAcross, y) => {
     const size = lz ? [sAcross, sh, sAlong] : [sAlong, sh, sAcross];
-    out.push({ kind, size, pos: [px, y + sh / 2, pz] });
+    out.push({ kind, size, pos: [x, y + sh / 2, z] });
   };
-  if (crib) {
-    // Cage : couches de deux 6 × 6 parallèles, sens alterné d'une couche à l'autre.
-    for (let i = 0; i < n66; i++) {
+  let y = g;
+  if (G <= WEDGE_MAX) {
+    // Coins seulement.
+  } else if (G <= P3 + WEDGE_MAX) {
+    piece('b38', len38, P3, P8, y); y += P3;
+  } else if (G <= B66 + WEDGE_MAX) {
+    piece('b66', BLOCK66, B66, B66, y); y += B66;
+  } else {
+    // Cage : couches de deux 6 × 6 parallèles, sens alterné ; couche de 3 × 8 au besoin.
+    const off = CRIB / 2 - B66 / 2;
+    let i = 0;
+    while (top - y - B66 > WEDGE_MAX - 1e-6 || i < 2) {
+      if (top - y - B66 < MIN) break;
       const alongZ = i % 2 === 0;
-      const off = CRIB / 2 - B66 / 2;
       for (const s of [-1, 1]) {
         const size = alongZ ? [B66, B66, CRIB] : [CRIB, B66, B66];
         out.push({ kind: 'crib', size, pos: [x + (alongZ ? s * off : 0), y + B66 / 2, z + (alongZ ? 0 : s * off)] });
       }
       y += B66;
+      i++;
     }
-  } else {
-    for (let i = 0; i < n66; i++) { piece('b66', BLOCK66, B66, B66); y += B66; }
+    if (top - y > WEDGE_MAX) {
+      const alongZ = i % 2 === 0;
+      for (const s of [-1, 1]) {
+        const size = alongZ ? [P8, P3, CRIB] : [CRIB, P3, P8];
+        out.push({ kind: 'crib', size, pos: [x + (alongZ ? s * (CRIB / 2 - P8 / 2) : 0), y + P3 / 2, z + (alongZ ? 0 : s * (CRIB / 2 - P8 / 2))] });
+      }
+      y += P3;
+    }
   }
-  for (let i = 0; i < n38; i++) { piece('b38', len38, P3, P8); y += P3; }
-  // Coins : enfoncés en travers de l'appui (le long de « along »).
-  const single = r <= WEDGE.t;
-  out.push({ kind: 'wedge', pos: [x, y, z], along, pair: !single, thick: r });
+  const r = top - y;
+  out.push({ kind: 'wedge', pos: [x, y, z], along, pair: r > WEDGE.t, thick: r });
   return { pieces: out, gap: G, ground: g };
 }
 
