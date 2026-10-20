@@ -212,7 +212,7 @@
      }
     ]
    ],
-   "note": "Le manuel n'a pas de vue d'ensemble : la foreuse, le groupe hydraulique et la console sont posés comme sur la page 3.0 (console accrochée au groupe) et la page de couverture. Couleurs d'après la photo de couverture (foreuse bleue sur traîneau noir, console blanche) ; groupe hydraulique et tête en rouge comme sur leurs dessins."
+   "note": "Disposition du chantier d'après le plan de l'atelier : foreuse à gauche, inclinée vers le trou, isolée par la porte et les grillages (trousse de premiers soins et extincteur côté opérateur) ; console STM à droite des grillages, commandes face à la foreuse ; groupe hydraulique en haut à droite, interrupteur principal accessible sur le côté. Couleurs : foreuse et groupe hydraulique en rouge, console blanche."
   },
   "P010": {
    "title": "Drill parts",
@@ -377,11 +377,12 @@
     [
      "19",
      "UM-064-1200GG",
-     1,
+     null,
      "UNDERGROUND GUARD COMPLETE ASSEMBLY (page 1.13)",
      {
       "link": "P023",
-      "pseudo": true
+      "pseudo": true,
+      "no3d": true
      }
     ],
     [
@@ -406,7 +407,7 @@
      }
     ]
    ],
-   "note": "Avance à 0° (horizontale) comme sur la page 1.01. Les sous-ensembles qui ont leur liste ouvrent leur page (dessins du manuel)."
+   "note": "Avance à 0° (horizontale) comme sur la page 1.01, sans le garde-corps grillagé (la foreuse est isolée par la porte et les grillages du site). Les sous-ensembles qui ont leur liste ouvrent leur page (dessins du manuel)."
   },
   "P011": {
    "title": "Frame",

@@ -119,13 +119,17 @@ export function P068(api) {
   ));
 
   // 30 — Boîte électrique Hoffman (600 V, 125 HP) au-dessus du moteur, 18 — transformateur, 12 — plaque support, 13 — adaptateur.
-  P('A30HS2412GQRLP', at(enclosure(0.61, 0.61, 0.3, 'grey'), [x0 + 0.42, H - t - 0.33, 0.12], [0, -Math.PI / 2, 0]), [-0.5, 0.3, 0]);
-  api.add(group(at(box(0.28, 0.12, 0.004, 'white', { r: 0.01 }), [x0 + 0.26, H - t - 0.2, 0.12], [0, -Math.PI / 2, 0])));
-  P('FMC-036-203P', at(plate(0.36, 0.3, 0.008, 'red'), [-0.1, 0.9, z1 - t - 0.004], [Math.PI / 2, 0, 0]), [0, 0, 0.3]);
-  P('FMC-036-205P', at(box(0.26, 0.04, 0.03, 'red', { r: 0.004 }), [-0.1, 0.78, z1 - t - 0.025]), [0, 0, 0.35]);
-  P('DX3000', group(at(box(0.24, 0.26, 0.2, 'lightGrey', { r: 0.01 }), [-0.1, 0.92, z1 - t - 0.11]), at(box(0.26, 0.04, 0.22, 'grey'), [-0.1, 1.07, z1 - t - 0.11])), [0, 0, 0.5]);
-  each(P, 'B375-1250', [-1, 1].flatMap((s) => [-1, 1].map((u) => at(bolt(0.0095, 0.032, 'steel', { axis: 'z' }), [-0.1 + s * 0.14, 0.9 + u * 0.11, z1 - t - 0.01]))), [0, 0, 0.6]);
-  each(P, 'W375', Array.from({ length: 12 }, (_, i) => at(api.S.washer(0.011, 0.005, 0.002, 'steel', { axis: 'z' }), [-0.25 + (i % 6) * 0.06, 0.72 + Math.floor(i / 6) * 0.36, z1 - t + 0.002])), [0, 0, 0.55]);
+  // Porte de la boîte (interrupteur principal) sur le côté droit, accessible.
+  P('A30HS2412GQRLP', at(enclosure(0.61, 0.61, 0.3, 'grey'), [x0 + 0.45, H - t - 0.33, z1 - 0.17]), [0, 0.3, 0.5]);
+  api.add(group(
+    at(box(0.06, 0.16, 0.05, 'black', { r: 0.008 }), [x0 + 0.62, H - t - 0.33, z1 + 0.005]),
+    at(box(0.02, 0.1, 0.03, 'lampRed', { r: 0.004 }), [x0 + 0.62, H - t - 0.3, z1 + 0.04]),
+  ));
+  P('FMC-036-203P', at(plate(0.36, 0.3, 0.008, 'red'), [0.4, 0.9, z1 - t - 0.004], [Math.PI / 2, 0, 0]), [0, 0, 0.3]);
+  P('FMC-036-205P', at(box(0.26, 0.04, 0.03, 'red', { r: 0.004 }), [0.4, 0.78, z1 - t - 0.025]), [0, 0, 0.35]);
+  P('DX3000', group(at(box(0.24, 0.26, 0.2, 'lightGrey', { r: 0.01 }), [0.4, 0.92, z1 - t - 0.11]), at(box(0.26, 0.04, 0.22, 'grey'), [0.4, 1.07, z1 - t - 0.11])), [0, 0, 0.5]);
+  each(P, 'B375-1250', [-1, 1].flatMap((s) => [-1, 1].map((u) => at(bolt(0.0095, 0.032, 'steel', { axis: 'z' }), [0.4 + s * 0.14, 0.9 + u * 0.11, z1 - t - 0.01]))), [0, 0, 0.6]);
+  each(P, 'W375', Array.from({ length: 12 }, (_, i) => at(api.S.washer(0.011, 0.005, 0.002, 'steel', { axis: 'z' }), [0.25 + (i % 6) * 0.06, 0.72 + Math.floor(i / 6) * 0.36, z1 - t + 0.002])), [0, 0, 0.55]);
 
   // 27 — Refroidisseurs AB-1202 (2) sur leur support (28), en bas à l'avant.
   for (const s of [-1, 1]) P('AB-1202', group(

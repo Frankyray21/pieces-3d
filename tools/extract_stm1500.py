@@ -127,7 +127,7 @@ PSEUDO = {
     'P002': [['FBRA-002-100AS', 1, 'COMPLETE DRILL (FOREUSE)', 'P010'],
              ['UM-064-FMX-005-100PPP', 1, 'POWER PACK 125HP-600V-60H', 'P068'],
              ['UM-051-300P-FMC-036', 1, 'HYDRAULIC CONTROL CONSOLE', 'P078']],
-    'P010': [['UM-064-1200GG', 1, 'UNDERGROUND GUARD COMPLETE ASSEMBLY (page 1.13)', 'P023'],
+    'P010': [['UM-064-1200GG', None, 'UNDERGROUND GUARD COMPLETE ASSEMBLY (page 1.13)', 'P023'],
              ['UM-106-100AA', 1, 'WATER SWIVEL ASSEMBLY (page 1.16)', 'P029'],
              ['UM-064-1601RM', None, 'WHEEL & HUB — OPTION (page 1.02)', 'P030']],
     'P042': [['STEP 1', None, 'HANDWHEELS AND CHAIN GUARDS (page 8.1)', 'P039'],
@@ -139,8 +139,8 @@ PSEUDO = {
              ['UM-051-FMC-036-7', None, 'HYDRAULIC COMPONENTS DETAILS (page 4.4.1)', 'P081']],
 }
 NOTES = {
-    'P002': "Le manuel n'a pas de vue d'ensemble : la foreuse, le groupe hydraulique et la console sont posés comme sur la page 3.0 (console accrochée au groupe) et la page de couverture. Couleurs d'après la photo de couverture (foreuse bleue sur traîneau noir, console blanche) ; groupe hydraulique et tête en rouge comme sur leurs dessins.",
-    'P010': "Avance à 0° (horizontale) comme sur la page 1.01. Les sous-ensembles qui ont leur liste ouvrent leur page (dessins du manuel).",
+    'P002': "Disposition du chantier d'après le plan de l'atelier : foreuse à gauche, inclinée vers le trou, isolée par la porte et les grillages (trousse de premiers soins et extincteur côté opérateur) ; console STM à droite des grillages, commandes face à la foreuse ; groupe hydraulique en haut à droite, interrupteur principal accessible sur le côté. Couleurs : foreuse et groupe hydraulique en rouge, console blanche.",
+    'P010': "Avance à 0° (horizontale) comme sur la page 1.01, sans le garde-corps grillagé (la foreuse est isolée par la porte et les grillages du site). Les sous-ensembles qui ont leur liste ouvrent leur page (dessins du manuel).",
     'P068': "Groupe posé sur ses patins : roues, moyeux et timon (options, pages 3.01 et 3.2) ne sont pas montés en 3D.",
     'P012': "Liste de débit (matériaux et longueurs en pouces) ; quantités illisibles pour trois lignes.",
 }
