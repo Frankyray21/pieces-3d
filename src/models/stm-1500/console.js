@@ -9,12 +9,18 @@
 import { lister, each, IN } from './layout.js';
 
 export const CON = { w: 31.125 * IN, d: 30.625 * IN, h: 58.906 * IN };
-// Raccords rapides (repère de la console) : arrière bas vers le groupe (pression, retour, drain),
-// flanc gauche bas vers la foreuse (rotation A et B, avance, vérins), flanc droit : eau (bloc 3 voies).
-export const CON_PACK = [-0.16, 0, 0.16].map((x) => [x, 0.14, -CON.d / 2 - 0.05]);
-export const CON_DRILL = [[0.2, 0.12], [0.08, 0.12], [-0.04, 0.12], [-0.16, 0.12], [0.2, 0.24], [0.08, 0.24]].map(([z, y]) => [-CON.w / 2 - 0.05, y, z]);
-export const CON_WATER = [CON.w / 2 + 0.05, 0.22, CON.d / 2 - 0.12];
-export const CON_CABLE = [0.1, CON.h + 0.02, CON.d / 2 - 0.25];
+// Raccords rapides (repère de la console, chaque orifice avec sa normale de sortie) :
+// - arrière (côté foreuse, l'opérateur se tient devant les commandes et regarde la
+//   foreuse par-dessus la console) : rotation A et B, avance, vérins, eau ;
+// - flanc droit (+X) : boyaux du groupe hydraulique (pression, retour, drain) et
+//   câble de commande, qui entre en haut du flanc vers le contrôleur de sécurité.
+const BACK = -CON.d / 2 - 0.05;
+export const CON_DRILL = [[0.2, 0.12], [0.08, 0.12], [-0.04, 0.12], [-0.16, 0.12], [0.2, 0.26], [0.08, 0.26]].map(([x, y]) => [x, y, BACK]);
+export const CON_WATER = [-0.1, 0.27, BACK];
+export const CON_BACK_N = [0, 0, -1];
+export const CON_PACK = [-0.25, -0.13, -0.01].map((z) => [CON.w / 2 + 0.05, 0.14, z]);
+export const CON_CABLE = [CON.w / 2 + 0.03, CON.h - 0.25, -0.2];
+export const CON_SIDE_N = [1, 0, 0];
 
 export function P078(api) {
   const { box, cyl, ring, tube, hose, rod, plate, extrude, bolt, group, at, gauge, valveBank, enclosure, ballValve, torus, lathe, merged, washer } = api.S;
@@ -121,12 +127,16 @@ export function P078(api) {
   each(P, 'BS25-750', pts.map((p) => at(bolt(0.0064, 0.019, 'zinc', { axis: p[0] > 0 ? 'x' : '-x' }), [p[0] + Math.sign(p[0]) * 0.002, p[1], p[2]])), (i) => [i < 20 ? -0.15 : 0.15, 0, 0]);
   each(P, 'WS25', pts.map((p) => at(washer(0.008, 0.0035, 0.0015, 'zinc', { axis: 'x' }), p)), (i) => [i < 20 ? -0.12 : 0.12, 0, 0]);
 
-  // Raccords rapides des boyaux (laiton) : arrière vers le groupe, flanc gauche vers la foreuse.
+  // Traversées des boyaux (laiton) : plaque arrière côté foreuse, plaque du flanc droit côté groupe,
+  // presse-étoupe du câble de commande en haut du flanc et câble intérieur jusqu'au contrôleur.
   api.add(group(
-    at(box(0.5, 0.1, 0.01, 'lightGrey'), [0, 0.14, z0 - 0.005]),
-    at(box(0.01, 0.24, 0.5, 'lightGrey'), [-w / 2 - 0.005, 0.18, 0.02]),
-    ...CON_PACK.map(([x, y, z], i) => at(cyl(i === 0 ? 0.024 : 0.019, 0.05, 'brass', { axis: 'z', seg: 18 }), [x, y, z + 0.025])),
-    ...CON_DRILL.map(([x, y, z], i) => at(cyl(i < 2 ? 0.024 : 0.017, 0.05, 'brass', { axis: 'x', seg: 18 }), [x + 0.025, y, z])),
+    at(box(0.56, 0.26, 0.01, 'lightGrey'), [0.02, 0.19, z0 - 0.005]),
+    at(box(0.01, 0.1, 0.36, 'lightGrey'), [w / 2 + 0.005, 0.14, -0.13]),
+    ...CON_DRILL.map(([x, y, z], i) => at(cyl(i < 2 ? 0.024 : 0.017, 0.05, 'brass', { axis: 'z', seg: 18 }), [x, y, z + 0.025])),
+    at(cyl(0.02, 0.05, 'brass', { axis: 'z', seg: 18 }), [CON_WATER[0], CON_WATER[1], CON_WATER[2] + 0.025]),
+    ...CON_PACK.map(([x, y, z], i) => at(cyl(i === 0 ? 0.024 : 0.019, 0.05, 'brass', { axis: 'x', seg: 18 }), [x - 0.025, y, z])),
+    at(cyl(0.016, 0.03, 'black', { axis: 'x', seg: 14 }), [CON_CABLE[0] - 0.015, CON_CABLE[1], CON_CABLE[2]]),
+    tube([[w / 2 - 0.02, CON_CABLE[1], CON_CABLE[2]], [w / 2 - 0.1, h - 0.15, -0.1], [0.1, h - 0.1, slope.z - 0.1]], 0.008, 'black', { seg: 16 }),
   ));
   return { view: { dir: [0.6, 0.45, 1.2] } };
 }

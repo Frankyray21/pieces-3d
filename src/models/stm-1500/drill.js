@@ -199,8 +199,7 @@ export function P010(api) {
   const swX = HEAD_X - 0.62;
   P('UM-106-100AA', group(
     at(lathe([[0.02, 0], [0.055, 0], [0.065, 0.03], [0.065, 0.15], [0.045, 0.19], [0.02, 0.19]], 'red', { axis: 'x', seg: 28 }), [swX - 0.19, AXIS_Y, 0]),
-    at(cyl(0.018, 0.1, 'brass', { axis: 'y', seg: 14 }), [swX - 0.1, AXIS_Y + 0.1, 0]),
-    at(cyl(0.02, 0.06, 'brass', { axis: 'z', seg: 14 }), [swX - 0.1, AXIS_Y + 0.15, 0.03]),
+    at(cyl(0.02, 0.07, 'brass', { axis: 'z', seg: 14 }), [swX - 0.1, AXIS_Y, -0.09]),
   ), [-0.4, 0.2, 0]);
 
   // 4 — Treuil de câble 10 000 pi (bleu) posé à côté du traîneau, côté droit : bâti tubulaire, deux tambours, carters de chaîne, moteurs White.

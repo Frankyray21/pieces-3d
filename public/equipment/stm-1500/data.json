@@ -212,7 +212,7 @@
      }
     ]
    ],
-   "note": "Prêt à forer, disposé d'après le plan de l'atelier : foreuse à gauche, inclinée vers le trou ; console STM à sa droite, commandes tournées vers elle ; groupe hydraulique en haut à droite, interrupteur principal accessible sur le côté. Boyaux branchés au sol : groupe → console (pression, retour, drain), console → tête (rotation A et B) et bloc du traîneau (avance, vérins), eau de la console à l'émerillon, câble de commande du groupe à la console. Seul le matériel du manuel est en 3D."
+   "note": "Prêt à forer, disposé d'après le plan de l'atelier : foreuse à gauche, inclinée vers le trou ; console STM à droite de la foreuse, à plus de 3 m (3,2 m), commandes tournées vers l'opérateur qui se tient entre la console et le groupe et regarde la foreuse par-dessus la console ; groupe hydraulique en haut à droite, à plus de 3 m (5,4 m), interrupteur principal accessible du côté bas. Boyaux branchés au sol : groupe → console (pression, retour, drain) et câble de commande ; console → tête (rotation A et B), bloc du traîneau (avance, vérins) et eau vers l'émerillon. Seul le matériel du manuel est en 3D."
   },
   "P010": {
    "title": "Drill parts",

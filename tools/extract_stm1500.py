@@ -139,7 +139,7 @@ PSEUDO = {
              ['UM-051-FMC-036-7', None, 'HYDRAULIC COMPONENTS DETAILS (page 4.4.1)', 'P081']],
 }
 NOTES = {
-    'P002': "Prêt à forer, disposé d'après le plan de l'atelier : foreuse à gauche, inclinée vers le trou ; console STM à sa droite, commandes tournées vers elle ; groupe hydraulique en haut à droite, interrupteur principal accessible sur le côté. Boyaux branchés au sol : groupe → console (pression, retour, drain), console → tête (rotation A et B) et bloc du traîneau (avance, vérins), eau de la console à l'émerillon, câble de commande du groupe à la console. Seul le matériel du manuel est en 3D.",
+    'P002': "Prêt à forer, disposé d'après le plan de l'atelier : foreuse à gauche, inclinée vers le trou ; console STM à droite de la foreuse, à plus de 3 m (3,2 m), commandes tournées vers l'opérateur qui se tient entre la console et le groupe et regarde la foreuse par-dessus la console ; groupe hydraulique en haut à droite, à plus de 3 m (5,4 m), interrupteur principal accessible du côté bas. Boyaux branchés au sol : groupe → console (pression, retour, drain) et câble de commande ; console → tête (rotation A et B), bloc du traîneau (avance, vérins) et eau vers l'émerillon. Seul le matériel du manuel est en 3D.",
     'P010': "Avance à 0° (horizontale) comme sur la page 1.01, sans le garde-corps grillagé ni le vérin supérieur ; le vérin d'avance double est logé dans la poutre. Les sous-ensembles qui ont leur liste ouvrent leur page (dessins du manuel).",
     'P068': "Groupe posé sur ses patins : roues, moyeux et timon (options, pages 3.01 et 3.2) ne sont pas montés en 3D.",
     'P012': "Liste de débit (matériaux et longueurs en pouces) ; quantités illisibles pour trois lignes.",
