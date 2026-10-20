@@ -1,7 +1,7 @@
-import { P010 } from './drill.js';
+import { P010, SLED_PORTS, HEAD_PORTS, SWIVEL_PORT } from './drill.js';
 import { P048 } from './head.js';
 import { P068, PP_PORTS, PP_CABLE, PP_N } from './powerpack.js';
-import { P078, CON_PACK, CON_DRILL, CON_WATER, CON_CABLE, CON_BACK_N, CON_SIDE_N } from './console.js';
+import { P078, CON_PACK, CON_ROT, CON_WATER, CON_SLED, CON_CABLE, CON_BACK_N, CON_SIDE_N } from './console.js';
 
 // Usinage Marcotte STM-1500 s/n STM-1500-128 (manuel de pièces de Machines
 // Roger, 96 pages). En 3D : l'ensemble (P002), la foreuse (P010) et sa tête
@@ -14,22 +14,17 @@ import { P078, CON_PACK, CON_DRILL, CON_WATER, CON_CABLE, CON_BACK_N, CON_SIDE_N
 // foreuse, à plus de 3 m, commandes tournées vers la droite : l'opérateur se tient
 // entre la console et le groupe et regarde la foreuse par-dessus la console.
 // Groupe hydraulique en haut à droite, en long, à plus de 3 m de la foreuse,
-// interrupteur principal (porte de la boîte électrique) accessible du côté bas du
-// plan, vers la gauche. Boyaux posés au sol et branchés : groupe → console
-// (pression, retour, drain) et câble de commande, console → foreuse (rotation A et
-// B vers le moteur de la tête, avance et vérins vers le bloc du traîneau, eau vers
-// l'émerillon). Seul le matériel du manuel est modélisé.
-// Distances contrôlées par node scripts/check-layout.mjs --eq stm-1500 P002 --min 3 --ref 1.
+// raccords au bout tourné vers la console, interrupteur principal (porte de la
+// boîte électrique) accessible du côté bas du plan, vers la gauche. Boyaux posés
+// au sol, chacun dans sa voie, et branchés : groupe → console (pression, retour,
+// drain) et câble de commande ; console → foreuse (rotation A et B vers le moteur
+// de la tête, boyaux du bloc du traîneau, eau vers l'émerillon par-dessus le
+// moteur). Seul le matériel du manuel est modélisé.
+// Contrôles : node scripts/check-layout.mjs --eq stm-1500 P002 --min 3 --ref 1.
 const DRILL = { pos: [-3.0, 0, 0.6], yaw: -1.84 }; // avance vers (−0,27 ; 0,96) dans le plan
-const CONSOLE = { pos: [1.65, 0, -0.9], yaw: Math.PI / 2 }; // commandes vers +X (opérateur à droite)
-const PACK = { pos: [4.75, 0, -1.1], yaw: 0 }; // bout des raccords (−X) vers la console
-// Orifices de la foreuse (repère de la foreuse, normale −Z : côté console) : bloc du
-// traîneau, moteur de la tête (rotation A et B), entrée d'eau de l'émerillon.
-const RAIL_Z = 0.864 / 2 - 0.051;
-const DRILL_PORTS = [-0.4, -0.55, -0.75, -0.9].map((x) => [x, 0.2, -RAIL_Z - 0.15]);
-const HEAD_PORTS = [[-1.33, 1.355, -0.67], [-1.33, 1.115, -0.67]];
-const SWIVEL_PORT = [-1.04, 1.235, -0.125];
-const DRILL_N = [0, 0, -1];
+const CONSOLE = { pos: [1.75, 0, -0.9], yaw: Math.PI / 2 }; // commandes vers +X (opérateur à droite)
+const PACK = { pos: [4.85, 0, -1.1], yaw: 0 }; // bout des raccords (−X) vers la console
+const FLOOR = 0.025; // boyaux posés au sol (garde sous la courbe)
 
 function P002(api) {
   const { at, hose, cable, group } = api.S;
@@ -41,28 +36,44 @@ function P002(api) {
   const W = (obj, p) => obj.localToWorld(V(p));
   const D = (obj, d) => V(d).transformDirection(obj.matrixWorld);
 
-  // Boyau posé au sol entre deux orifices : sortie dans l'axe de l'orifice (outA, outB),
-  // descente au sol, parcours au sol (décalé de k fois l'écart dans le faisceau),
-  // remontée vers l'orifice d'arrivée.
-  const run = (a, na, b, nb, r, k, { outA = 0.4, outB = 0.4, mat = 'hose' } = {}) => {
-    const floor = 0.025 + r;
-    const side = V([b.z - a.z, 0, a.x - b.x]).normalize().multiplyScalar(k * 0.05);
-    const a1 = a.clone().addScaledVector(na, Math.min(0.18, outA * 0.45));
-    const b1 = b.clone().addScaledVector(nb, Math.min(0.18, outB * 0.45));
-    const a2 = a.clone().addScaledVector(na, outA).add(side).setY(floor);
-    const b2 = b.clone().addScaledVector(nb, outB).add(side).setY(floor);
-    const pts = [a, a1, a2, a2.clone().lerp(b2, 0.5), b2, b1, b].map((p) => p.toArray());
+  // Côté d'un boyau : sortie dans l'axe du raccord, point haut puis descente quasi verticale
+  // jusqu'au sol (ou tracé imposé « via », du sol jusqu'au raccord, pour contourner une pièce).
+  const end = (p, n, r, out, shift) => {
+    const floor = FLOOR + r;
+    const g = p.clone().addScaledVector(n, out).add(shift || V([0, 0, 0])).setY(floor);
+    const pts = [p, p.clone().addScaledVector(n, Math.min(0.18, out * 0.45))];
+    if (pts[1].y > floor + 0.3) pts.push(g.clone().setY(floor + 0.2));
+    pts.push(g);
+    return pts;
+  };
+  // Boyau entre deux raccords : les deux côtés, deux points au sol à 0,3 m des descentes
+  // (le parcours reste posé au sol, sans plonger dessous), câble ou boyau.
+  const run = (A, B, r, mat = 'hose') => {
+    const a = A.via ? A.via.slice().reverse() : end(A.p, A.n, r, A.out ?? 0.4, A.shift);
+    const b = B.via ? B.via : end(B.p, B.n, r, B.out ?? 0.4, B.shift).reverse();
+    const ga = a[a.length - 1], gb = b[0];
+    const u = gb.clone().sub(ga).setY(0);
+    const len = u.length();
+    u.normalize().multiplyScalar(Math.min(0.3, len * 0.3));
+    const pts = [...a, ga.clone().add(u), gb.clone().sub(u), ...b].map((q) => q.toArray());
     return mat === 'hose' ? hose(pts, r) : cable(pts, r);
   };
   const hoses = [];
-  const cBack = D(cons, CON_BACK_N), cSide = D(cons, CON_SIDE_N), pEnd = D(pack, PP_N), dSide = D(drill, DRILL_N);
-  // Groupe → console : pression (1 po), retour, drain ; câble de commande à côté.
-  PP_PORTS.forEach((p, i) => hoses.push(run(W(cons, CON_PACK[i]), cSide, W(pack, p), pEnd, i === 0 ? 0.022 : 0.017, 1 - i)));
-  hoses.push(run(W(cons, CON_CABLE), cSide, W(pack, PP_CABLE), pEnd, 0.012, 2, { mat: 'cable' }));
-  // Console → tête : rotation A et B (1 po) ; console → bloc du traîneau : avance et vérins ; eau → émerillon.
-  HEAD_PORTS.forEach((p, i) => hoses.push(run(W(cons, CON_DRILL[i]), cBack, W(drill, p), dSide, 0.022, i - 3)));
-  DRILL_PORTS.forEach((p, i) => hoses.push(run(W(cons, CON_DRILL[2 + i]), cBack, W(drill, p), dSide, 0.016, i - 1)));
-  hoses.push(run(W(cons, CON_WATER), cBack, W(drill, SWIVEL_PORT), dSide, 0.02, 3, { outB: 0.8 }));
+  const cBack = D(cons, CON_BACK_N), cSide = D(cons, CON_SIDE_N), pEnd = D(pack, PP_N), dSide = D(drill, [0, 0, -1]);
+  const along = D(drill, [1, 0, 0]);
+  // Groupe → console : pression (1 po), retour, drain, chacun sur son raccord, et câble de commande.
+  // Le boyau du raccord le plus à l'arrière de la console s'écarte le plus du flanc : les voies
+  // restent parallèles et ne se croisent pas (câble à l'extérieur du faisceau).
+  PP_PORTS.forEach((p, i) => hoses.push(run({ p: W(cons, CON_PACK[i]), n: cSide, out: 0.44 - i * 0.07 }, { p: W(pack, p), n: pEnd }, i === 0 ? 0.022 : 0.017)));
+  hoses.push(run({ p: W(cons, CON_CABLE), n: cSide, out: 0.55 }, { p: W(pack, PP_CABLE), n: pEnd }, 0.012, 'cable'));
+  // Console → tête : rotation A et B (1 po), descentes écartées le long de l'avance.
+  HEAD_PORTS.forEach((p, i) => hoses.push(run({ p: W(cons, CON_ROT[i]), n: cBack }, { p: W(drill, p), n: dSide, shift: along.clone().multiplyScalar(i ? 0.06 : -0.06) }, 0.022)));
+  // Console → bloc du traîneau.
+  SLED_PORTS.forEach((p, i) => hoses.push(run({ p: W(cons, CON_SLED[3 - i]), n: cBack }, { p: W(drill, p), n: dSide }, 0.016)));
+  // Eau : traversée de la console → entrée sur le dessus de l'émerillon, par-dessus le moteur de la tête.
+  const [sx, sy, sz] = SWIVEL_PORT, wr = 0.02;
+  const swivel = [[sx, FLOOR + wr, -0.94], [sx, 0.2, -0.92], [sx, 0.9, -0.86], [sx, 1.45, -0.62], [sx, sy + 0.16, -0.3], [sx, sy + 0.12, sz], [sx, sy + 0.04, sz], [sx, sy, sz]];
+  hoses.push(run({ p: W(cons, CON_WATER), n: cBack }, { via: swivel.map((q) => W(drill, q)) }, wr));
 
   api.part('1', drill, [-1.2, 0, 0]);
   api.part('3', cons, [0, 0.6, 0]);

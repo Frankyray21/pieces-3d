@@ -13,6 +13,8 @@ import { lister, each, IN } from './layout.js';
 export const SPY = 0.29; // hauteur de l'axe de la broche au-dessus de la table
 const BOX = { x0: -0.17, x1: 0.13, z0: -0.5, z1: 0.17, y0: 0.03, y1: 0.5 };
 const TZ = -0.33; // axe de la transmission et du moteur
+// Bouts des raccords laiton du moteur (rotation A en haut, B en bas), sortie vers −Z : branchement des boyaux de la console.
+export const HEAD_PORTS = [1, -1].map((s) => [BOX.x0 - 0.4 - 0.44, SPY + s * 0.12, TZ - 0.31]);
 
 export function P048(api) {
   const { box, cyl, ring, shell, lathe, bolt, boltCircle, gear, filterCanister, hose, tube, plate, group, at, washer, torus } = api.S;

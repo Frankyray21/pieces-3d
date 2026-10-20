@@ -10,9 +10,17 @@
 // les grillages du site (voir P002). Tout en rouge comme le groupe
 // hydraulique, vérins noirs. Repère : layout.js.
 import { lister, SLED, AXIS_Y, BEAM, PIVOT, IN } from './layout.js';
-import { SPY } from './head.js';
+import { SPY, HEAD_PORTS as HEAD_LOCAL } from './head.js';
 
 const HEAD_X = -0.32; // table (centre de la tête) le long de l'avance
+const RAIL_Z = SLED.w / 2 - SLED.railW / 2;
+const SW_X = HEAD_X - 0.62; // bout arrière de l'émerillon d'eau
+// Orifices de branchement (repère de la foreuse) : bouts des raccords laiton du bloc du
+// traîneau (sortie −Z, côté console), du moteur de la tête (rotation A et B, sortie −Z) et
+// de l'entrée d'eau de l'émerillon (sortie +Y, sur le dessus).
+export const SLED_PORTS = [-0.4, -0.55, -0.75, -0.9].map((x) => [x, 0.2, -RAIL_Z - 0.161]);
+export const HEAD_PORTS = HEAD_LOCAL.map(([x, y, z]) => [HEAD_X + x, AXIS_Y - SPY + y, z]);
+export const SWIVEL_PORT = [SW_X - 0.1, AXIS_Y + 0.135, 0];
 const TABLE_T = AXIS_Y - BEAM.top - SPY; // épaisseur de la table sous la tête
 
 export function P010(api) {
@@ -34,9 +42,9 @@ export function P010(api) {
     sled.push(at(ring(0.05, 0.026, 0.025, 'red', { axis: 'z' }), [x, 0.2, z + Math.sign(z) * 0.065]));
   }
   // Vannes à bille et sélecteur mât / treuil sur le flanc gauche.
-  sled.push(at(ballValve(0.05, 'brass', { axis: 'x' }), [-0.9, 0.2, -railZ - 0.09]));
-  sled.push(at(ballValve(0.05, 'brass', { axis: 'x' }), [-0.75, 0.2, -railZ - 0.09]));
-  sled.push(at(box(0.1, 0.08, 0.06, 'darkSteel', { r: 0.006 }), [-0.55, 0.2, -railZ - 0.09]));
+  sled.push(at(ballValve(0.05, 'brass', { axis: 'x' }), [-0.85, 0.29, -railZ - 0.062]));
+  sled.push(at(ballValve(0.05, 'brass', { axis: 'x' }), [-0.7, 0.29, -railZ - 0.062]));
+  sled.push(at(box(0.1, 0.08, 0.06, 'darkSteel', { r: 0.006 }), [-0.5, 0.28, -railZ - 0.062]));
   P('FBRA-002-150BM', group(sled), [0, -0.35, 0]);
 
   // 5 — Support d'avance : deux chevalets en HSS 5 × 3 po et axe de bascule Ø 3 po (tube sch. 80).
@@ -199,7 +207,7 @@ export function P010(api) {
   const swX = HEAD_X - 0.62;
   P('UM-106-100AA', group(
     at(lathe([[0.02, 0], [0.055, 0], [0.065, 0.03], [0.065, 0.15], [0.045, 0.19], [0.02, 0.19]], 'red', { axis: 'x', seg: 28 }), [swX - 0.19, AXIS_Y, 0]),
-    at(cyl(0.02, 0.07, 'brass', { axis: 'z', seg: 14 }), [swX - 0.1, AXIS_Y, -0.09]),
+    at(cyl(0.02, 0.07, 'brass', { axis: 'y', seg: 14 }), [SWIVEL_PORT[0], SWIVEL_PORT[1] - 0.035, 0]),
   ), [-0.4, 0.2, 0]);
 
   // 4 — Treuil de câble 10 000 pi (bleu) posé à côté du traîneau, côté droit : bâti tubulaire, deux tambours, carters de chaîne, moteurs White.
@@ -225,11 +233,20 @@ export function P010(api) {
   P('FBRA-002-400HH', group(w, hose([[wx - 0.18, 0.35, wz - 0.52], [wx - 0.3, 0.3, wz - 0.8], [-0.95, 0.25, railZ + 0.08]], 0.014),
     hose([[wx + 0.18, 0.35, wz - 0.52], [wx + 0.1, 0.3, wz - 0.8], [-0.8, 0.25, railZ + 0.08]], 0.014)), [0, 0, 0.7]);
 
-  // Boyaux du traîneau : bloc de raccords (côté console) vers les vérins et la tête, le long du flanc gauche.
+  // Boyaux du traîneau : bloc de raccords plaqué au longeron gauche (côté console), raccords laiton
+  // vers la console, deux boyaux du bloc aux orifices du vérin de bascule gauche (fond et tige).
+  const tiltA = [-1.15, 0.2, -0.34], tiltB = [-1.0, BEAM.top - BEAM.h - 0.03, -0.34];
+  const tl = Math.hypot(tiltB[0] - tiltA[0], tiltB[1] - tiltA[1]), ta = Math.atan2(tiltB[1] - tiltA[1], tiltB[0] - tiltA[0]);
+  const tiltPort = (u) => { // orifice sur le fût du vérin HBU-3010 (alésage 0,09, sorti à 40 %) : u le long de l'axe, au sommet du raccord
+    const r = 0.045, h = r * 1.38;
+    return [tiltA[0] + u * Math.cos(ta) - h * Math.sin(ta), tiltA[1] + u * Math.sin(ta) + h * Math.cos(ta), tiltA[2]];
+  };
+  const tl6 = tl * 0.6;
   api.add(group(
-    at(box(0.62, 0.08, 0.06, 'castAlu', { r: 0.006 }), [-0.65, 0.2, -railZ - 0.12]),
-    hose([[-0.6, 0.24, -railZ - 0.12], [-1.4, 0.45, -0.3], [-1.9, BEAM.top - 0.05, -BEAM.w / 2 - 0.04], [-1.0, BEAM.top + 0.08, -0.38]], 0.016),
-    hose([[-0.75, 0.24, -railZ - 0.12], [-1.45, 0.42, -0.34], [-1.95, BEAM.top - 0.08, -BEAM.w / 2 - 0.06], [-1.1, BEAM.top + 0.04, -0.42]], 0.016),
+    at(box(0.62, 0.08, 0.06, 'castAlu', { r: 0.006 }), [-0.65, 0.2, -RAIL_Z - 0.081]),
+    ...SLED_PORTS.map(([x, y, z]) => at(cyl(0.017, 0.05, 'brass', { axis: 'z', seg: 16 }), [x, y, z + 0.025])),
+    hose([[-0.88, 0.24, -RAIL_Z - 0.07], [-0.95, 0.32, -0.42], tiltPort(0.045 * 1.05)], 0.012),
+    hose([[-0.8, 0.24, -RAIL_Z - 0.07], [-0.95, 0.45, -0.44], tiltPort(tl6 - 0.045 * 1.1)], 0.012),
   ));
   return { view: { dir: [0.75, 0.5, 1.0] } };
 }

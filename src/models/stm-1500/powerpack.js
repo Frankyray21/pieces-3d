@@ -7,16 +7,18 @@
 // planchers grillagés rabattables à l'avant. Roues, moyeux et timon : options
 // non montées (demande du client). Couleurs : dessins du manuel (rouge).
 // Repère : origine au sol au centre du cadre, X vers l'avant (côté pompes et
-// console), Y vers le haut, Z vers la droite.
+// refroidisseurs) ; raccords et câble vers la console au bout arrière (−X, côté
+// moteur et boîte électrique) ; Y vers le haut, Z vers la droite.
 import { lister, each, grid, IN } from './layout.js';
 
 export const PP = { L: 96.875 * IN, W: 48.25 * IN, H: 60.9375 * IN, skid: 3.5 * IN, t: 3 * IN };
 const MOTOR = { x: -0.52, y: 0.43, r: 0.29, len: 0.86 }; // axe du moteur et des pompes
-// Raccords rapides au bout gauche du cadre (−X, côté moteur, vers la console) :
-// pression, retour, drain, chacun avec sa normale de sortie ; sortie du câble de
-// commande (vers la console) sous la boîte électrique, au même bout.
-export const PP_PORTS = [-0.42, -0.3, -0.18].map((z) => [-PP.L / 2 - 0.07, 0.3, z]);
-export const PP_CABLE = [-PP.L / 2 - 0.04, 0.95, -0.05];
+// Raccords rapides au bout arrière du cadre (−X, côté moteur, vers la console), sur
+// le poteau d'angle gauche, hors du capot de ventilateur du moteur : pression,
+// retour, drain ; presse-étoupe du câble de commande sur le même poteau. Bouts des
+// raccords, sortie vers −X.
+export const PP_PORTS = [-0.5, -0.42, -0.34].map((z) => [-PP.L / 2 - 0.07, 0.3, z]);
+export const PP_CABLE = [-PP.L / 2 - 0.04, 0.95, -PP.W / 2 + PP.t / 2];
 export const PP_N = [-1, 0, 0];
 
 export function P068(api) {
@@ -181,17 +183,20 @@ export function P068(api) {
   each(P, 'NC375', [0, 1].map((i) => at(nut(0.015, 0.009, 'steel', { axis: 'z' }), [0.5 + i * 0.1, 0.62, z0 + t / 2 + 0.04])), [0, 0, -0.2]);
   each(P, 'LN375NC', [0, 1].map((i) => at(nut(0.015, 0.01, 'steel', { axis: 'y' }), [bx + 0.95 + (i ? 0.04 : -0.04), skid + t - 0.01, 0.05])), [0, -0.3, 0.6]);
 
-  // Plaque de raccords rapides (laiton) au bout gauche, boyaux intérieurs vers les pompes et le retour
-  // (le long du plancher, côté arrière du moteur), câble de commande de la boîte électrique au presse-étoupe.
+  // Plaque de raccords rapides (laiton) sur le poteau d'angle arrière gauche, boyaux intérieurs
+  // le long du plancher jusque sous les pompes ; câble de commande de la boîte électrique au
+  // presse-étoupe du poteau.
+  const pumpBottom = [[bx + 0.42, MOTOR.y - 0.1235], [bx + 0.72, MOTOR.y - 0.095], [bx + 0.95, MOTOR.y - 0.095]];
   api.add(group(
-    at(box(0.012, 0.12, 0.36, 'red', { r: 0.004 }), [x0 - 0.006, 0.3, -0.3]),
+    at(box(0.012, 0.12, 0.27, 'red', { r: 0.004 }), [x0 - 0.006, 0.3, -0.435]),
     ...PP_PORTS.map(([x, y, z], i) => group(
-      at(cyl(i === 0 ? 0.024 : 0.019, 0.05, 'brass', { axis: 'x', seg: 18 }), [x + 0.04, y, z]),
+      at(cyl(i === 0 ? 0.024 : 0.019, 0.05, 'brass', { axis: 'x', seg: 18 }), [x + 0.025, y, z]),
       at(nut(i === 0 ? 0.05 : 0.042, 0.014, 'brass', { axis: 'x' }), [x + 0.055, y, z]),
     )),
-    ...PP_PORTS.map(([, y, z], i) => hose([[x0 + 0.01, y, z], [x0 + 0.25, 0.2, z - 0.05], [bx + 0.2, 0.2, -0.45 + i * 0.04], [bx + 0.42 + i * 0.25, MOTOR.y - 0.15, -0.12]], i === 0 ? 0.02 : 0.016)),
-    at(cyl(0.016, 0.03, 'black', { axis: 'x', seg: 14 }), [PP_CABLE[0] + 0.015, PP_CABLE[1], PP_CABLE[2]]),
-    api.S.cable([[x0 + 0.45, H - t - 0.64, z1 - 0.17], [x0 + 0.3, 1.0, 0.25], [x0 + 0.05, PP_CABLE[1], PP_CABLE[2]], [PP_CABLE[0] + 0.03, PP_CABLE[1], PP_CABLE[2]]], 0.012),
+    ...PP_PORTS.map(([, y, z], i) => hose([[x0 + 0.01, y, z], [x0 + 0.25, 0.2, z], [bx + 0.2, 0.2, -0.45 + i * 0.04],
+      [pumpBottom[i][0], 0.2, -0.2], [pumpBottom[i][0], pumpBottom[i][1] - 0.04, -0.07], [pumpBottom[i][0], pumpBottom[i][1], -0.06]], i === 0 ? 0.02 : 0.016)),
+    at(cyl(0.016, 0.04, 'black', { axis: 'x', seg: 14 }), [PP_CABLE[0] + 0.02, PP_CABLE[1], PP_CABLE[2]]),
+    api.S.cable([[x0 + 0.45, H - t - 0.63, z1 - 0.17], [x0 + 0.3, 1.0, 0.1], [x0 + 0.08, 0.97, -0.5], [x0 + 0.04, PP_CABLE[1], PP_CABLE[2]]], 0.012),
   ));
 
   // Plaque UM sur le côté.

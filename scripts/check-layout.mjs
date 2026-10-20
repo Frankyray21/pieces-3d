@@ -18,18 +18,29 @@ const model = buildProcedural(builders, id);
 model.root.updateMatrixWorld(true);
 const rows = new Map(data.assemblies[id].parts.map((r) => [String(r[0]), r[3]]));
 
-// Points au sol (XZ) de chaque pièce, sous-échantillonnés sur une grille de 2 cm.
+// Points au sol (XZ) de chaque pièce : sommets et points le long des arêtes des
+// triangles tous les 2 cm (une grande face plane compte aussi), un point par case de 1 cm.
 const pts = new Map();
 for (const [ref, objs] of model.refs) {
   const set = new Map();
-  const v = new THREE.Vector3();
+  const a = new THREE.Vector3(), b = new THREE.Vector3(), q = new THREE.Vector3();
+  const add = (v) => {
+    const k = `${Math.round(v.x / 0.01)},${Math.round(v.z / 0.01)}`;
+    if (!set.has(k)) set.set(k, [v.x, v.z]);
+  };
   for (const o of objs) o.traverse((m) => {
     if (!m.isMesh) return;
     const p = m.geometry.attributes.position;
-    for (let i = 0; i < p.count; i++) {
-      v.fromBufferAttribute(p, i).applyMatrix4(m.matrixWorld);
-      const k = `${Math.round(v.x / 0.02)},${Math.round(v.z / 0.02)}`;
-      if (!set.has(k)) set.set(k, [v.x, v.z]);
+    const idx = m.geometry.index;
+    const n = idx ? idx.count : p.count;
+    const at = (i) => (idx ? idx.getX(i) : i);
+    for (let t = 0; t + 2 < n; t += 3) {
+      for (let e = 0; e < 3; e++) {
+        a.fromBufferAttribute(p, at(t + e)).applyMatrix4(m.matrixWorld);
+        b.fromBufferAttribute(p, at(t + ((e + 1) % 3))).applyMatrix4(m.matrixWorld);
+        const steps = Math.max(1, Math.ceil(Math.hypot(b.x - a.x, b.z - a.z) / 0.02));
+        for (let s = 0; s <= steps; s++) add(q.lerpVectors(a, b, s / steps));
+      }
     }
   });
   pts.set(ref, [...set.values()]);
