@@ -139,7 +139,7 @@ PSEUDO = {
              ['UM-051-FMC-036-7', None, 'HYDRAULIC COMPONENTS DETAILS (page 4.4.1)', 'P081']],
 }
 NOTES = {
-    'P002': "Disposition du chantier d'après le plan de l'atelier : foreuse à gauche, inclinée vers le trou, isolée par la porte et les grillages (trousse de premiers soins et extincteur côté opérateur) ; console STM à droite des grillages, commandes face à la foreuse ; groupe hydraulique en haut à droite, interrupteur principal accessible sur le côté. Couleurs : foreuse et groupe hydraulique en rouge, console blanche.",
+    'P002': "Disposition d'après le plan de l'atelier : foreuse à gauche, inclinée vers le trou ; console STM au centre, commandes tournées vers la foreuse ; groupe hydraulique en haut à droite, interrupteur principal accessible sur le côté. Seul le matériel du manuel est en 3D. Couleurs : foreuse et groupe hydraulique en rouge, console blanche.",
     'P010': "Avance à 0° (horizontale) comme sur la page 1.01, sans le garde-corps grillagé (la foreuse est isolée par la porte et les grillages du site). Les sous-ensembles qui ont leur liste ouvrent leur page (dessins du manuel).",
     'P068': "Groupe posé sur ses patins : roues, moyeux et timon (options, pages 3.01 et 3.2) ne sont pas montés en 3D.",
     'P012': "Liste de débit (matériaux et longueurs en pouces) ; quantités illisibles pour trois lignes.",
