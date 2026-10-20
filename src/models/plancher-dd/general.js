@@ -25,10 +25,10 @@ export function P02(api) {
   put('10', bar, [1.2, 0, 0], 0, { seq: 0 });
   // Armoire et extincteur au sol, à l'entrée du chantier (en place avant le plancher).
   const cab = cabinet(S);
-  cab.position.set(L + 3.0, ground(L + 3.0, 2.25), 2.25);
+  cab.position.set(L + 3.0, ground(L + 3.0, -3.6), -3.6);
   put('11', cab, [0.6, 0, 0], 0, { seq: 1 });
   const ext = extinguisher(S);
-  ext.position.set(L + 3.65, ground(L + 3.65, 2.35), 2.35);
+  ext.position.set(L + 3.65, ground(L + 3.65, -3.5), -3.5);
   put('12', ext, [0.6, 0, 0], 0, { seq: 2 });
   // Outils montrés seulement à leurs étapes (laser, niveau, coins de serrage).
   for (const g of guides(S, highPoint())) api.add(g);

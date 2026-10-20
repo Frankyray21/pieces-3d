@@ -143,7 +143,7 @@ export function gallery(S) {
   return g;
 }
 
-/** Ligne de référence en peinture (étape 1) : rive du premier madrier (en travers, X = 0), rive du plancher et repères de 16 et 32 pi. */
+/** Ligne de référence en peinture (étape 1) : rive du premier madrier (en travers, X = 0, repères à 16 et 32 pi), rive du plancher le long de la galerie (16 pi). */
 export function paintLine(S) {
   const geos = [];
   const seg = (xa, za, xb, zb, w) => {
@@ -158,11 +158,12 @@ export function paintLine(S) {
       geos.push(box);
     }
   };
-  // Ligne du premier madrier, en travers de la galerie.
+  // Ligne du premier madrier, en travers de la galerie, avec repères à 16 et 32 pi.
   seg(0, -W / 2 - 0.4, 0, W / 2 + 0.4, 0.05);
-  // Rive du plancher le long de la galerie, avec repères à 16 et 32 pi.
+  for (const z of [-W / 2, -W / 2 + 16 * FT, W / 2]) seg(-0.35, z, 0.35, z, 0.04);
+  // Rive du plancher le long de la galerie (16 pi), avec repère au bout.
   seg(-0.3, -W / 2, L + 0.3, -W / 2, 0.035);
-  for (const x of [16 * FT, L]) seg(x, -W / 2 - 0.35, x, -W / 2 + 0.35, 0.04);
+  seg(L, -W / 2 - 0.35, L, -W / 2 + 0.35, 0.04);
   return S.group(meshOf(mergeGeometries(geos, false), 'fluoRed'));
 }
 
@@ -464,12 +465,13 @@ export function guides(S, high) {
   const out = [];
   const only = (o, steps) => { o.userData.stepOnly = steps; o.visible = false; out.push(o); return o; };
   const laserMat = new THREE.MeshBasicMaterial({ color: 0xff2a1a, transparent: true, opacity: 0.16, side: THREE.DoubleSide, depthWrite: false });
-  const plane = (x0, x1) => {
+  // Plan du laser au-dessus d'une section (emprise z0 à z1 en travers).
+  const plane = (z0, z1) => {
     const g = S.group();
-    const geo = new THREE.PlaneGeometry(x1 - x0, W + 0.4);
+    const geo = new THREE.PlaneGeometry(L + 0.7, z1 - z0);
     const p = new THREE.Mesh(geo, laserMat);
     const e = new THREE.LineSegments(new THREE.EdgesGeometry(geo), new THREE.LineBasicMaterial({ color: 0xff3020 }));
-    for (const m of [p, e]) { m.rotation.x = -Math.PI / 2; m.position.set((x0 + x1) / 2, 0.003, 0); g.add(m); }
+    for (const m of [p, e]) { m.rotation.x = -Math.PI / 2; m.position.set(L / 2 - 0.05, 0.003, (z0 + z1) / 2); g.add(m); }
     return g;
   };
   const tool = (x, z) => {
@@ -481,8 +483,8 @@ export function guides(S, high) {
     g.position.set(x, ground(x, z), z);
     return g;
   };
-  only(S.group(plane(-0.4, 16 * FT + 0.3), tool(-0.35, -W / 2 + 0.6)), [2, 3]);
-  only(S.group(plane(16 * FT - 0.1, L + 0.3), tool(16 * FT - 0.05, W / 2 + 0.05)), [9, 10]);
+  only(S.group(plane(-W / 2 - 0.3, 0.3), tool(-0.35, -W / 2 + 0.6)), [2, 3]);
+  only(S.group(plane(-0.1, W / 2 + 0.3), tool(L + 0.12, 0.05)), [9, 10]);
   const mark = S.group(
     S.box(0.36, 0.006, 0.04, 'fluoRed'),
     S.box(0.04, 0.006, 0.36, 'fluoRed'),
@@ -497,7 +499,8 @@ export function guides(S, high) {
     S.box(0.045, 0.07, 48 * IN, 'blue', { pos: [0, P3 + 0.035, 0] }),
     S.box(0.047, 0.02, 0.07, 'lampAmber', { pos: [0, P3 + 0.06, 0] }),
   );
-  level.position.set(2.3, B66, -0.4);
+  level.rotation.y = Math.PI / 2; // en travers des madriers (selon X)
+  level.position.set(2.3, B66, -2.0);
   only(level, [5]);
   // Coins de serrage entre la planche vissée devant les coins et la suivante (planches selon X).
   const wedges = S.group();
@@ -515,7 +518,7 @@ export function guides(S, high) {
 /** Point le plus haut du sol sous la section 1 (étape 2). */
 export function highPoint() {
   let best = { y: -Infinity };
-  for (let x = 0; x <= 16 * FT; x += 0.05) for (let z = -W / 2; z <= W / 2; z += 0.05) {
+  for (let x = 0; x <= 16 * FT; x += 0.05) for (let z = -W / 2; z <= 0; z += 0.05) {
     const y = ground(x, z);
     if (y > best.y) best = { x, z, y };
   }

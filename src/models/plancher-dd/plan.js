@@ -1,14 +1,19 @@
 // Plan du plancher pour foreuse aux diamants sous terre, d'après la procédure
 // PRO-DD-ST-003 de Machines Roger International (révision juillet 2026).
 //
-// Repère (mètres) : X le long de la galerie (longueur du plancher, 32 pi),
-// Z en travers de la galerie (largeur du plancher, 16 pi), Y vers le haut.
+// Repère (mètres) : X le long de la galerie (profondeur du plancher, 16 pi),
+// Z en travers de la galerie (largeur du plancher, 32 pi), Y vers le haut.
 // La foreuse fore vers le fond de la galerie (X négatif, front de taille où
 // sont marqués les fonds de trous) : ses patins suivent X et croisent les
 // madriers 6 × 6, posés en travers de la galerie (selon Z) ; les planches
-// 3 × 8 suivent la galerie (selon X). Le dessous des madriers 6 × 6 est à Y = 0 : c'est le point
-// le plus haut du sol (étape 2, le premier madrier repose directement sur le
-// sol), le dessus du plancher est donc à 9 po (6 × 6 + 3 × 8).
+// 3 × 8 suivent la galerie (selon X). Les deux sections de 16 × 16 pi sont
+// côte à côte en travers de la galerie : section 1 du côté Z négatif, section 2
+// du côté Z positif. Les madriers de la section 2 prolongent ceux de la
+// section 1 (ils se rejoignent sur le blocage de jonction, Z = 0), et les deux
+// planches laissées libres à la fin de la section 1 sont à cette jonction.
+// Le dessous des madriers 6 × 6 est à Y = 0 : c'est le point le plus haut du
+// sol (étape 2, le premier madrier repose directement sur le sol), le dessus
+// du plancher est donc à 9 po (6 × 6 + 3 × 8).
 //
 // Les pièces calculées ici portent leur numéro d'étape de la procédure
 // (step), pour animer le montage dans l'ordre (vidéo de formation).
@@ -24,53 +29,66 @@ export const S24 = { t: 1.5 * IN, w: 3.5 * IN }; // 2 × 4 raboté
 export const R24 = { t: 2 * IN, w: 4 * IN }; // 2 × 4 brut
 
 // Plancher complet (étape 1 et critère 4 : 500 m et plus).
-export const W = 16 * FT; // largeur (Z)
-export const L = 32 * FT; // longueur (X), deux sections de 16 × 16 pi
-export const SEC = 16 * FT;
+export const SEC = 16 * FT; // section de 16 × 16 pi
+export const W = 2 * SEC; // largeur (Z) : deux sections côte à côte, 32 pi
+export const L = SEC; // profondeur (X), 16 pi
 export const DECK = B66 + P3; // dessus du plancher : 9 po
+/** Centre (Z) de la section s (0 : section 1, 1 : section 2). */
+export const secZ = (s) => (s - 0.5) * SEC;
+export const JOINT_Z = 0; // jonction des deux sections
 
 // Madriers 6 × 6 de 16 pi, en travers de la galerie (selon Z). Section 1 :
 // le premier sur la ligne de peinture (X = 0), un autre à 16 pi (cadrage
 // 16 × 16), les autres entre les deux. La procédure en donne « à 32 po
 // centre » : 7 madriers par section respectent les 16 pi et l'entraxe
-// d'environ 32 po (31 po). Section 2 : son premier madrier est collé au
-// dernier de la section 1 (ils partagent le blocage de jonction).
+// d'environ 32 po (31 po). Section 2 : ses madriers prolongent ceux de la
+// section 1, bout à bout sur le blocage de jonction.
 export const JOISTS = 7;
 const pitch = (SEC - B66) / (JOISTS - 1);
 export const joistX = Array.from({ length: JOISTS }, (_, k) => B66 / 2 + k * pitch);
-export const joistX2 = Array.from({ length: JOISTS }, (_, k) => SEC + B66 / 2 + k * pitch);
-// Ancien nom (annotations) : positions en travers non utilisées par les madriers.
-export const joistZ = Array.from({ length: JOISTS }, (_, k) => -W / 2 + B66 / 2 + (k * (W - B66)) / (JOISTS - 1));
+export const joistX2 = joistX;
 
-// Galerie : 18 pi de large, l'écart plancher-mur est de 12 po de chaque côté
-// (étape 17 : grillage de 24 po au bas du mur). Front de taille (fond de la
-// galerie) à FACE_X, devant le bout X = 0 du plancher.
-export const GAL = 9 * FT; // demi-largeur
+// Appuis de la section 1 (étape 5) : lignes en travers des madriers (Z), au
+// moins 6 par madrier, plus le blocage de jonction (Z = 0).
+export const SUPPORTS_Z = Array.from({ length: 6 }, (_, k) => -SEC + 0.16 + k * 0.8);
+// Section 2 (étape 10) : soutiens 6 × 6 de 16 pi selon X, à environ 32 po
+// centre de la jonction jusqu'au madrier guide, posé à 16 pi de la section 1.
+export const SLEEPERS_Z = Array.from({ length: 6 }, (_, k) => ((k + 1) * (SEC - B66 / 2)) / 6);
+export const GUIDE_Z = SLEEPERS_Z[5];
+export const SLEEPER = { x0: 0, x1: L };
+
+// Galerie élargie au fond (chambre de forage) : 34 pi de large, l'écart
+// plancher-mur est de 12 po de chaque côté (étape 17 : grillage de 24 po au
+// bas du mur). Front de taille (fond de la galerie) à FACE_X, devant le bout
+// X = 0 du plancher.
+export const GAL = 17 * FT; // demi-largeur
 export const FACE_X = -0.95;
 export const GAL_X0 = FACE_X - 0.1;
-export const GAL_X1 = L + 6.5;
+export const GAL_X1 = L + 7.5;
 export const WALL_H = 2.7; // murs coupés à cette hauteur (vue en écorché)
 
-// Foreuse : au bout de la section 1, tour tournée vers le front de taille
+// Foreuse : sur la section 1, tour tournée vers le front de taille
 // (X négatif). x : avant de la tour ; z : axe de la tour.
-export const DRILL = { x: 0.3, z: -0.35, tilt: (12 * Math.PI) / 180, len: 3.0, frontY: DECK + 1.2 };
+export const DRILL = { x: 0.3, z: secZ(0) - 0.35, tilt: (12 * Math.PI) / 180, len: 3.0, frontY: DECK + 1.2 };
 
-// Escalier : au bout du plancher (X = L), du côté Z positif de l'axe.
-export const STAIR = { z0: 0.35, w: 48 * IN, tread: 16 * IN };
+// Escalier : au bout du plancher côté galerie (X = L), sur la section 2 (la plus haute).
+export const STAIR = { z0: 2.3, w: 48 * IN, tread: 16 * IN };
 
 // ------------------------------------------------------------------ sol
 
 // Creux sous un croisement de la section 2 (cage de bois, étape 11).
-export const DIP = { x: 8.894, z: 1.37 };
+export const DIP = { x: joistX[4], z: SLEEPERS_Z[4] };
 
 const smooth = (t) => { t = Math.min(1, Math.max(0, t)); return t * t * (3 - 2 * t); };
 
-// Sol brut de la galerie : pente vers le bout de la galerie (la section 2 est
-// plus haute que le sol, d'où les soutiens 6 × 6 et l'escalier), léger dévers,
-// ondulations de roche concassée et un creux sous un coin (cage de bois).
+// Sol brut de la galerie : pente en travers de la galerie, de la section 1
+// vers la section 2 (la section 2 est plus haute que le sol, d'où les soutiens
+// 6 × 6 et l'escalier), léger dévers vers l'entrée, ondulations de roche
+// concassée et un creux sous un croisement (cage de bois).
 function rawGround(x, z) {
-  const drop = -0.33 * smooth((x - 1.2) / 8.2);
-  const cross = -0.035 * (z + W / 2) / W;
+  const u = z + W / 2;
+  const drop = -0.33 * smooth((u - 1.2) / 8.2);
+  const cross = -0.035 * x / L;
   const dip = -0.5 * Math.exp(-((x - DIP.x) ** 2 + (z - DIP.z) ** 2) / (2 * 0.33 ** 2));
   const n = 0.012 * Math.sin(2.3 * x + 1.1 * z) * Math.cos(2.9 * z - 0.8 * x) + 0.006 * Math.sin(5.7 * x + 0.4) * Math.sin(4.3 * z + 1.2);
   // Au-delà du plancher, le sol remonte doucement vers l'entrée de la galerie.
@@ -162,21 +180,12 @@ export function stack(x, z, top, along = 'z', { len38 = BLOCK38 } = {}) {
 
 // ------------------------------------------------------------------ appuis
 
-// Six appuis par madrier (étape 5), répartis en travers de la galerie ; ils
-// forment aussi les lignes de soutien de la section 2 (étape 10), vis-à-vis
-// les croisements (étape 11).
-export const SUPPORTS_Z = [-2.28, -1.37, -0.46, 0.46, DIP.z, 2.28];
-export const JOINT_X = SEC;
-// Soutiens 6 × 6 de la section 2 : sous les madriers, dans le sens contraire
-// (selon X), du madrier de jonction au madrier guide.
-export const SLEEPER = { x0: SEC + B66 + 0.02, x1: L };
-
 /** Hauteur du dessus du plancher au-dessus du sol au bord (x, z). */
 export const deckHeight = (x, z) => DECK - ground(x, z);
 
-/** Plus petite abscisse à partir de laquelle le bord (z) dépasse 12 po de haut. */
-export function over12(z) {
-  for (let x = 0; x <= L; x += 0.05) if (deckHeight(x, z) > 12 * IN) return x;
+/** Plus petite position Z à partir de laquelle le bord (x) dépasse 12 po de haut. */
+export function over12(x) {
+  for (let z = -W / 2; z <= W / 2; z += 0.05) if (deckHeight(x, z) > 12 * IN) return z;
   return null;
 }
 
@@ -208,12 +217,13 @@ export const STEPS = [
 // Point le plus haut du sol sous la section 1 (étape 2).
 const HIGH = (() => {
   let b = { y: -Infinity };
-  for (let x = 0; x <= SEC; x += 0.05) for (let z = -W / 2; z <= W / 2; z += 0.05) { const y = ground(x, z); if (y > b.y) b = { x, z, y }; }
+  for (let x = 0; x <= SEC; x += 0.05) for (let z = -W / 2; z <= 0; z += 0.05) { const y = ground(x, z); if (y > b.y) b = { x, z, y }; }
   return b;
 })();
 
 // Planches 3 × 8 (selon X), posées côte à côte en travers de la galerie,
-// de la rive Z négative vers la rive Z positive.
+// de la rive Z négative vers la jonction (section 1, 0 à 23), puis de la
+// jonction vers la rive Z positive (section 2, 24 à 47).
 export const plankZ = (i) => -W / 2 + (i + 0.5) * P8;
 export const TIGHT = 10; // planche vissée devant les coins de serrage (étape 7)
 

@@ -20,7 +20,7 @@ import './plancher-video.css';
 import { buildProcedural } from '../viewer/assembly.js';
 import * as S from '../viewer/shapes.js';
 import models from '../models/plancher-dd/index.js';
-import { IN, FT, P3, P8, B66, W, L, SEC, DECK, ground, plankZ, TIGHT, joistX, joistX2, DIP } from '../models/plancher-dd/plan.js';
+import { IN, FT, P3, P8, B66, W, L, SEC, DECK, ground, plankZ, TIGHT, joistX, GUIDE_Z, DIP } from '../models/plancher-dd/plan.js';
 import { lagScrews } from '../models/plancher-dd/lumber.js';
 import { timeline, RETENIR, stepCard, STEP_CARD, vt } from './plancher-script.js';
 import { Annotator } from './plancher-annot.js';
@@ -130,7 +130,7 @@ function cueOf({ asm, ref, obj, crib }) {
   if (asm === 'P17') return 'secondary';
   let c = R[asm]?.[ref];
   if (c === 'joists1' && Math.abs(obj.position.x - joistX.at(-1)) < 0.01) c = 'joistFar';
-  if (c === 'joists2' && Math.abs(obj.position.x - joistX2.at(-1)) < 0.01) c = 'guide';
+  if (c === 'sleepers' && Math.abs(obj.position.z - GUIDE_Z) < 0.01) c = 'guide';
   if (c === 'deck1') { const i = obj.userData.order; c = i === ANCHOR ? 'anchor' : i > ANCHOR ? 'deck1b' : 'deck1'; }
   return c || 'always';
 }
@@ -155,6 +155,7 @@ for (const [name, list] of cues) {
     if (name.startsWith('joists')) return a.c.x - b.c.x;
     if (name.startsWith('deck')) return (a.obj.userData.order ?? 0) - (b.obj.userData.order ?? 0) || a.c.x - b.c.x;
     if (name.startsWith('crib')) return a.c.y - b.c.y || a.c.x - b.c.x || a.c.z - b.c.z;
+    if (name === 'support2' || name === 'sleepers') return a.c.z - b.c.z || a.c.x - b.c.x || a.c.y - b.c.y;
     return a.c.x - b.c.x || a.c.z - b.c.z || a.c.y - b.c.y;
   });
 }
@@ -167,7 +168,7 @@ for (const s of SEGS) {
   }
 }
 // Armoire et extincteur : au sol à l'entrée du chantier (la vidéo les montre avant le plancher).
-for (const [name, x, z, ry] of [['cabinet', L + 3.0, 2.25, 0], ['ext', L + 3.65, 2.35, 0]]) {
+for (const [name, x, z, ry] of [['cabinet', L + 3.0, -3.6, 0], ['ext', L + 3.65, -3.5, 0]]) {
   for (const lf of cues.get(name) || []) { lf.base.set(x, ground(x, z), z); lf.obj.rotation.y = ry; }
 }
 const unused = [...cues].filter(([n, l]) => n !== 'always' && l.some((lf) => lf.t0 === Infinity)).map(([n]) => n);
@@ -177,7 +178,7 @@ if (unused.length) console.warn('Pièces jamais montrées :', unused.join(', '))
 
 const high = (() => {
   let best = { y: -Infinity };
-  for (let x = 0; x <= SEC; x += 0.05) for (let z = -W / 2; z <= W / 2; z += 0.05) {
+  for (let x = 0; x <= SEC; x += 0.05) for (let z = -W / 2; z <= 0; z += 0.05) {
     const y = ground(x, z);
     if (y > best.y) best = { x, z, y };
   }
@@ -185,12 +186,13 @@ const high = (() => {
 })();
 
 const laserMat = new THREE.MeshBasicMaterial({ color: 0xff2a1a, transparent: true, opacity: 0.16, side: THREE.DoubleSide, depthWrite: false });
-function laserPlane(x0, x1) {
+// Plan du laser au-dessus d'une section (emprise z0 à z1 en travers de la galerie).
+function laserPlane(z0, z1) {
   const g = new THREE.Group();
-  const p = new THREE.Mesh(new THREE.PlaneGeometry(x1 - x0, W + 0.4), laserMat);
+  const p = new THREE.Mesh(new THREE.PlaneGeometry(L + 0.7, z1 - z0), laserMat);
   p.rotation.x = -Math.PI / 2;
-  p.position.set((x0 + x1) / 2, 0.003, 0);
-  const edge = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.PlaneGeometry(x1 - x0, W + 0.4)), new THREE.LineBasicMaterial({ color: 0xff3020 }));
+  p.position.set(L / 2 - 0.05, 0.003, (z0 + z1) / 2);
+  const edge = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.PlaneGeometry(L + 0.7, z1 - z0)), new THREE.LineBasicMaterial({ color: 0xff3020 }));
   edge.rotation.x = -Math.PI / 2;
   edge.position.copy(p.position);
   g.add(p, edge);
@@ -206,8 +208,8 @@ function laserTool(x, z) {
   return g;
 }
 const extras = {
-  laser: S.group(laserPlane(-0.4, SEC + 0.3), laserTool(-0.35, -W / 2 + 0.6)),
-  laser2: S.group(laserPlane(SEC - 0.1, L + 0.3), laserTool(SEC - 0.05, W / 2 + 0.05)),
+  laser: S.group(laserPlane(-W / 2 - 0.3, 0.3), laserTool(-0.35, -W / 2 + 0.6)),
+  laser2: S.group(laserPlane(-0.1, W / 2 + 0.3), laserTool(L + 0.12, 0.05)),
   highMark: S.group(
     S.box(0.36, 0.006, 0.04, 'fluoRed', { pos: [0, 0, 0] }),
     S.box(0.04, 0.006, 0.36, 'fluoRed', { pos: [0, 0, 0] }),
@@ -223,7 +225,7 @@ const extras = {
 };
 extras.highMark.position.set(high.x, high.y + 0.004, high.z);
 extras.highMark.children[2].rotation.x = Math.PI; // pointe vers le sol
-extras.level.position.set(2.3, B66, -0.4);
+extras.level.position.set(2.3, B66, -2.0);
 for (const o of Object.values(extras)) { o.visible = false; scene.add(o); }
 
 // ------------------------------------------------------------------ serrage des planches (étape 7)
@@ -494,6 +496,16 @@ function render(t) {
 
 window.__video = { duration: DURATION, fps: 24, segments: SEGS.map(({ id, start, dur, band, lines }) => ({ id, start, dur, band, lines })) };
 window.__render = (t) => { render(t); return true; };
+// Image fixe (validation) : l'état de l'instant t, vu d'une caméra donnée.
+window.__still = (t, pos, tgt, fov) => {
+  render(t);
+  camera.position.set(...pos);
+  if (fov) { camera.fov = fov; camera.updateProjectionMatrix(); }
+  camera.lookAt(...tgt);
+  camera.updateMatrixWorld(true);
+  if (composer) composer.render(); else renderer.render(scene, camera);
+  return renderer.domElement.toDataURL('image/jpeg', 0.95);
+};
 // Capture rapide : la 3D seule (JPEG) et les opacités des calques ; les calques
 // eux-mêmes sont capturés une fois par segment (__layer), puis composés à part.
 window.__frame = (t) => {

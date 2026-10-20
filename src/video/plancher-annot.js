@@ -34,7 +34,7 @@ const gEnd = ground(L - 0.05, zP - 0.05);
 const zg = -1.5;
 const t1 = DECK - rise;
 // Cage de l'étape 11 (sous le soutien, au croisement du creux), calculée comme dans le modèle.
-const CRIB = (() => { const st = stack(joistX2[5], DIP.z, -B66, 'z'); const lay = (k) => st.pieces.filter((p) => p.kind === 'crib')[k]; return { x: joistX2[5], z: DIP.z, g: st.ground, top: -B66, y1: lay(0).pos[1], y2: lay(2).pos[1], h2: lay(2).size[1] }; })();
+const CRIB = (() => { const st = stack(DIP.x, DIP.z, -B66, 'z'); const lay = (k) => st.pieces.filter((p) => p.kind === 'crib')[k]; return { x: DIP.x, z: DIP.z, g: st.ground, top: -B66, y1: lay(0).pos[1], y2: lay(2).pos[1], h2: lay(2).size[1] }; })();
 const ANCHOR_Z = plankZ(TIGHT + 1) + TIGHT * 0.015 + 0.05; // dernier 3 × 8 posé plus loin (étape 7)
 
 // dim : cote entre a et b décalée de off (m) ; note : texte relié au point at ;
