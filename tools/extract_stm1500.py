@@ -139,8 +139,8 @@ PSEUDO = {
              ['UM-051-FMC-036-7', None, 'HYDRAULIC COMPONENTS DETAILS (page 4.4.1)', 'P081']],
 }
 NOTES = {
-    'P002': "Disposition d'après le plan de l'atelier : foreuse à gauche, inclinée vers le trou ; console STM au centre, commandes tournées vers la foreuse ; groupe hydraulique en haut à droite, interrupteur principal accessible sur le côté. Seul le matériel du manuel est en 3D. Couleurs : foreuse et groupe hydraulique en rouge, console blanche.",
-    'P010': "Avance à 0° (horizontale) comme sur la page 1.01, sans le garde-corps grillagé (la foreuse est isolée par la porte et les grillages du site). Les sous-ensembles qui ont leur liste ouvrent leur page (dessins du manuel).",
+    'P002': "Prêt à forer, disposé d'après le plan de l'atelier : foreuse à gauche, inclinée vers le trou ; console STM à sa droite, commandes tournées vers elle ; groupe hydraulique en haut à droite, interrupteur principal accessible sur le côté. Boyaux branchés au sol : groupe → console (pression, retour, drain), console → tête (rotation A et B) et bloc du traîneau (avance, vérins), eau de la console à l'émerillon, câble de commande du groupe à la console. Seul le matériel du manuel est en 3D.",
+    'P010': "Avance à 0° (horizontale) comme sur la page 1.01, sans le garde-corps grillagé ni le vérin supérieur ; le vérin d'avance double est logé dans la poutre. Les sous-ensembles qui ont leur liste ouvrent leur page (dessins du manuel).",
     'P068': "Groupe posé sur ses patins : roues, moyeux et timon (options, pages 3.01 et 3.2) ne sont pas montés en 3D.",
     'P012': "Liste de débit (matériaux et longueurs en pouces) ; quantités illisibles pour trois lignes.",
 }
@@ -324,6 +324,9 @@ for aid, (title, fr, pn, sheets) in ASM.items():
             extra['note'] = f'Repère {r["hyd"]} du schéma hydraulique.'
         if r['qty'] is None and 'KIT' in r['desc'].upper():
             extra['kit'] = True
+        if aid == 'P010' and r['pn'] in ('FTD-030-100ZZ', 'FTD-148-800K'):
+            extra['note'] = 'Non monté en 3D : l\'avance se fait par le vérin double logé dans la poutre (UM-064-100Z).'
+            extra['no3d'] = True
         if aid == 'P068' and r['pn'] in ('UM-064-1601RM', 'UM-064-1605RM', 'UM-064-195TB', 'UM-064-TD41'):
             extra['note'] = 'Option non montée (groupe posé sur ses patins).'
             extra['no3d'] = True

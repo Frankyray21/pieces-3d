@@ -16,7 +16,7 @@ const HEAD_X = -0.32; // table (centre de la tête) le long de l'avance
 const TABLE_T = AXIS_Y - BEAM.top - SPY; // épaisseur de la table sous la tête
 
 export function P010(api) {
-  const { box, cyl, ring, shell, tube, hose, rod, plate, hydCylinder, bolt, boltSet, group, at, lathe, torus, nut, gear, merged, ballValve } = api.S;
+  const { box, cyl, ring, shell, tube, hose, rod, plate, extrude, hydCylinder, bolt, boltSet, group, at, lathe, torus, nut, gear, merged, ballValve } = api.S;
   const P = lister(api, 'P010');
   const railZ = SLED.w / 2 - SLED.railW / 2;
   const ry = SLED.railH / 2;
@@ -108,23 +108,9 @@ export function P010(api) {
   // Entretoises (braces) du pied vers la poutre.
   api.add(group(...[-1, 1].map((s) => rod([fx - 0.03, 1.5, s * 0.28], [bx1 - 0.7, BEAM.top, s * (BEAM.w / 2 - 0.02)], 0.016, 'red', 10))));
 
-  // 6 — Vérin d'avance supérieur « bazooka » (FTD-030-100ZZ) : fût noir à bagues d'usure, œil à rotule sur la console de la table.
-  const tfY = AXIS_Y + 0.42, tfZ = 0.22;
-  const rodEnd = HEAD_X + 0.42, rear = bx0 + 0.1;
-  const tf = hydCylinder(rodEnd - rear, 0.075, { material: 'black', rodR: 0.022, ext: 0.12 });
-  for (let k = 0; k < 5; k++) tf.add(at(ring(0.041, 0.0375, 0.03, 'steel', { axis: 'x' }), [(rodEnd - rear) * (0.1 + k * 0.17), 0, 0]));
-  P('FTD-030-100ZZ', at(tf, [rear, tfY, tfZ]), [0, 0.5, 0.2]);
-  // 8 — Console du vérin supérieur sur la table, rallonge arrière (support du fût).
-  P('FTD-148-800K', group(
-    at(box(0.06, tfY - (BEAM.top + TABLE_T) + 0.05, 0.12, 'red', { r: 0.005 }), [rodEnd + 0.04, (tfY + BEAM.top + TABLE_T) / 2, tfZ]),
-    at(box(0.12, 0.03, 0.14, 'red', { r: 0.004 }), [rodEnd + 0.04, BEAM.top + TABLE_T + 0.015, tfZ - 0.02]),
-  ), [0.2, 0.4, 0.3]);
-  api.add(group(
-    at(box(0.06, tfY - BEAM.top + 0.05, 0.12, 'red', { r: 0.005 }), [rear - 0.04, (tfY + BEAM.top) / 2, tfZ]),
-  ));
-
-  // 17 — Vérin d'avance double (tube central, deux tiges opposées) sous la poutre.
-  const fcY = by0 - 0.07;
+  // 17 — Vérin d'avance double (tube central, deux tiges opposées), logé dans la poutre entre ses flancs.
+  // Le vérin supérieur « bazooka » (6) et sa console (8) ne sont pas montés sur cette foreuse.
+  const fcY = by0 + 0.12;
   P('UM-064-100Z', group(
     at(shell(0.06, 0.045, 1.5, 'black', { axis: 'x' }), [-0.55, fcY, 0]),
     at(cyl(0.068, 0.06, 'black', { axis: 'x' }), [-1.3, fcY, 0]),
@@ -133,6 +119,8 @@ export function P010(api) {
     at(cyl(0.025, 0.55, 'chrome', { axis: 'x' }), [0.5, fcY, 0]),
     at(box(0.06, 0.08, 0.1, 'black', { r: 0.008 }), [-1.88, fcY + 0.02, 0]),
     at(box(0.06, 0.08, 0.1, 'black', { r: 0.008 }), [0.78, fcY + 0.02, 0]),
+    // Patte du tube central sous la table : le tube entraîne la table, les tiges sont fixées aux bouts de la poutre.
+    at(box(0.1, BEAM.top + 0.012 - fcY - 0.05, 0.06, 'black', { r: 0.006 }), [HEAD_X, (fcY + 0.05 + BEAM.top + 0.012) / 2, 0]),
   ), [0, -0.45, 0]);
 
   // 18 — Vérins de bascule HBU-3010 (2) : du traîneau à la poutre, côté arrière.
@@ -173,17 +161,38 @@ export function P010(api) {
     ...[-1, 1].map((s) => at(box(0.08, 0.1, 0.12, 'red', { r: 0.005 }), [hx0 + 0.02, 0.1, s * railZ])),
   ), [-0.4, 0, 0]);
 
-  // 10 — Rallonge à l'arrière de l'avance (tube carré réglable) avec la poulie double et le guide de tiges.
-  const ex1 = bx0 - 0.62;
+  // 10 — Rallonge à l'arrière de l'avance (P013) : tube carré réglable qui coulisse dans la plaque
+  // d'extrémité, montant, pivot à ressort (P015), poulie double pivotante (P017 : deux flasques, deux
+  // réas à gorge sur roulements, axes et entretoises) et guide de tiges à rouleau diabolo (P016).
+  const ex1 = bx0 - 0.62, ey = AXIS_Y + 0.3, py = AXIS_Y + 0.62;
+  const sheave = (x) => group(
+    at(lathe([[0.03, -0.022], [0.122, -0.022], [0.132, -0.016], [0.132, -0.01], [0.1, 0], [0.132, 0.01], [0.132, 0.016], [0.122, 0.022], [0.03, 0.022]], 'red', { axis: 'z', seg: 48 }), [x, py, 0]),
+    at(ring(0.045, 0.02, 0.05, 'steel', { axis: 'z', seg: 24 }), [x, py, 0]),
+    ...[0, 1, 2, 3, 4].map((k) => at(cyl(0.012, 0.012, 'red', { axis: 'z', seg: 12 }), [x + Math.cos(k * 1.257) * 0.07, py + Math.sin(k * 1.257) * 0.07, 0.022])),
+  );
+  const flasque = (z) => at(extrude([[-0.13, -0.035], [0.13, -0.035], [0.16, 0], [0.13, 0.035], [-0.13, 0.035], [-0.16, 0]], 0.012, 'red', { holes: [[-0.13, 0, 0.0125], [0.13, 0, 0.0125]] }), [ex1, py, z]);
   P('UM-064-200C', group(
-    at(box(0.62, 0.1, 0.1, 'red', { r: 0.006 }), [(bx0 + ex1) / 2, AXIS_Y + 0.25, 0]),
-    at(box(0.06, 0.32, 0.1, 'red', { r: 0.006 }), [ex1 + 0.03, AXIS_Y + 0.38, 0]),
-    ...[-1, 1].map((s) => at(gear(0.13, 0.135, 36, 0.035, 'red', { axis: 'z', hole: 0.03 }), [ex1 + 0.03, AXIS_Y + 0.55, s * 0.08])),
-    ...[-1, 1].map((s) => at(torus(0.132, 0.01, 'black', { axis: 'z' }), [ex1 + 0.03, AXIS_Y + 0.55, s * 0.08])),
-    at(cyl(0.02, 0.24, 'steel', { axis: 'z', seg: 16 }), [ex1 + 0.03, AXIS_Y + 0.55, 0]),
-    // Guide de tiges : flasques en U et rouleau diabolo.
-    ...[-1, 1].map((s) => at(box(0.14, 0.16, 0.012, 'red', { r: 0.004 }), [bx0 - 0.05, AXIS_Y, s * 0.08])),
-    at(lathe([[0.012, -0.075], [0.05, -0.075], [0.03, 0], [0.05, 0.075], [0.012, 0.075]], 'rubber', { axis: 'z', seg: 24 }), [bx0 - 0.05, AXIS_Y - 0.06, 0]),
+    at(box(0.72, 0.1, 0.1, 'red', { r: 0.008 }), [ex1 + 0.36, ey, 0]),
+    ...[-1, 1].map((s) => at(box(0.14, 0.02, 0.1, 'red', { r: 0.004 }), [bx0 + 0.07, ey + s * 0.06, 0])),
+    boltSet([[bx0 + 0.04, ey + 0.071, 0], [bx0 + 0.1, ey + 0.071, 0]], 0.016, 0.05, 'steel'),
+    at(box(0.1, py - ey - 0.12, 0.1, 'red', { r: 0.008 }), [ex1 + 0.05, (py + ey) / 2 - 0.06, 0]),
+    // Pivot à ressort : plaque de base, plaque mobile sur son axe, vis de réglage et ressort.
+    at(box(0.16, 0.02, 0.14, 'red', { r: 0.004 }), [ex1 + 0.05, py - 0.12, 0]),
+    at(cyl(0.016, 0.16, 'steel', { axis: 'z', seg: 16 }), [ex1 - 0.02, py - 0.1, 0]),
+    at(api.S.spring(0.018, 0.004, 0.08, 7, 'red'), [ex1 + 0.1, py - 0.19, 0.05]),
+    at(cyl(0.008, 0.12, 'steel', { axis: 'y', seg: 10 }), [ex1 + 0.1, py - 0.15, 0.05]),
+    // Poulie double : deux flasques, deux réas, axes, écrous et entretoises.
+    flasque(-0.036), flasque(0.036),
+    sheave(ex1 - 0.13), sheave(ex1 + 0.13),
+    ...[-0.13, 0.13].map((dx) => at(cyl(0.0125, 0.1, 'steel', { axis: 'z', seg: 16 }), [ex1 + dx, py, 0])),
+    ...[-0.13, 0.13].flatMap((dx) => [-1, 1].map((sz) => at(nut(0.032, 0.014, 'steel', { axis: 'z' }), [ex1 + dx, py, sz * 0.05]))),
+    // Câble du treuil sur les réas.
+    tube([[ex1 - 0.27, py - 0.25, 0], [ex1 - 0.245, py - 0.03, 0], [ex1 - 0.13, py + 0.1, 0], [ex1 + 0.13, py + 0.1, 0], [ex1 + 0.245, py + 0.02, 0], [ex1 + 0.4, py - 0.2, 0]], 0.004, 'darkSteel', { seg: 40 }),
+    // Guide de tiges : cadre en U à boutonnières, axe et rouleau diabolo en caoutchouc.
+    ...[-1, 1].map((s) => at(box(0.14, 0.2, 0.012, 'red', { r: 0.004 }), [bx0 - 0.07, AXIS_Y, s * 0.085])),
+    at(box(0.14, 0.012, 0.18, 'red', { r: 0.003 }), [bx0 - 0.07, AXIS_Y - 0.1, 0]),
+    at(cyl(0.012, 0.2, 'steel', { axis: 'z', seg: 14 }), [bx0 - 0.07, AXIS_Y - 0.06, 0]),
+    at(lathe([[0.014, -0.075], [0.052, -0.075], [0.056, -0.06], [0.032, 0], [0.056, 0.06], [0.052, 0.075], [0.014, 0.075]], 'rubber', { axis: 'z', seg: 32 }), [bx0 - 0.07, AXIS_Y - 0.06, 0]),
   ), [-0.6, 0.3, 0]);
 
   // 20 — Émerillon d'eau (bleu) au bout arrière de la broche.
@@ -191,7 +200,7 @@ export function P010(api) {
   P('UM-106-100AA', group(
     at(lathe([[0.02, 0], [0.055, 0], [0.065, 0.03], [0.065, 0.15], [0.045, 0.19], [0.02, 0.19]], 'red', { axis: 'x', seg: 28 }), [swX - 0.19, AXIS_Y, 0]),
     at(cyl(0.018, 0.1, 'brass', { axis: 'y', seg: 14 }), [swX - 0.1, AXIS_Y + 0.1, 0]),
-    hose([[swX - 0.1, AXIS_Y + 0.15, 0], [swX - 0.25, AXIS_Y + 0.4, 0.1], [swX - 0.7, AXIS_Y + 0.35, 0.3]], 0.016),
+    at(cyl(0.02, 0.06, 'brass', { axis: 'z', seg: 14 }), [swX - 0.1, AXIS_Y + 0.15, 0.03]),
   ), [-0.4, 0.2, 0]);
 
   // 4 — Treuil de câble 10 000 pi (bleu) posé à côté du traîneau, côté droit : bâti tubulaire, deux tambours, carters de chaîne, moteurs White.
@@ -217,10 +226,11 @@ export function P010(api) {
   P('FBRA-002-400HH', group(w, hose([[wx - 0.18, 0.35, wz - 0.52], [wx - 0.3, 0.3, wz - 0.8], [-0.95, 0.25, railZ + 0.08]], 0.014),
     hose([[wx + 0.18, 0.35, wz - 0.52], [wx + 0.1, 0.3, wz - 0.8], [-0.8, 0.25, railZ + 0.08]], 0.014)), [0, 0, 0.7]);
 
-  // Boyaux de l'avance (vérins et tête) le long du flanc gauche.
+  // Boyaux du traîneau : bloc de raccords (côté console) vers les vérins et la tête, le long du flanc gauche.
   api.add(group(
-    hose([[-0.6, 0.2, -railZ - 0.09], [-1.4, 0.45, -0.3], [-1.9, BEAM.top - 0.05, -BEAM.w / 2 - 0.04], [HEAD_X - 0.4, BEAM.top + 0.1, -0.4]], 0.016),
-    hose([[-0.75, 0.2, -railZ - 0.09], [-1.45, 0.42, -0.34], [-1.95, BEAM.top - 0.08, -BEAM.w / 2 - 0.06], [HEAD_X - 0.5, BEAM.top + 0.05, -0.45]], 0.016),
+    at(box(0.62, 0.08, 0.06, 'castAlu', { r: 0.006 }), [-0.65, 0.2, -railZ - 0.12]),
+    hose([[-0.6, 0.24, -railZ - 0.12], [-1.4, 0.45, -0.3], [-1.9, BEAM.top - 0.05, -BEAM.w / 2 - 0.04], [-1.0, BEAM.top + 0.08, -0.38]], 0.016),
+    hose([[-0.75, 0.24, -railZ - 0.12], [-1.45, 0.42, -0.34], [-1.95, BEAM.top - 0.08, -BEAM.w / 2 - 0.06], [-1.1, BEAM.top + 0.04, -0.42]], 0.016),
   ));
   return { view: { dir: [0.75, 0.5, 1.0] } };
 }
