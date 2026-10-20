@@ -48,6 +48,8 @@ const defs = {
   yellow: { ...PAINT, color: 0xe0c812 },
   safety: { ...PAINT, color: 0xf0b400 },
   blue: { ...PAINT, color: 0x1b7096 },
+  // Bleu Usinage Marcotte (STM-1500, photo de couverture du manuel).
+  umBlue: { ...PAINT, color: 0x2a7cc4 },
   // Acier usiné / brossé (axes, tôles nues, visserie brute).
   steel: { color: 0xb9bdc2, metalness: 1, roughness: 0.3, fin: 'machined' },
   // Chrome dur des tiges de vérin : reflets nets.

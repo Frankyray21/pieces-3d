@@ -7,10 +7,11 @@ import du311Models from './models/du311/index.js';
 import du311StdModels, { overview as du311StdOverview } from './models/du311-std/index.js';
 import epirocModels from './models/epiroc-ith/index.js';
 import plancherModels from './models/plancher-dd/index.js';
+import stmModels from './models/stm-1500/index.js';
 import './ui/resize.js';
 
 // Modèles 3D disponibles par équipement (builders procéduraux).
-const MODELS = { 'cubex-mri-5200': cubexModels, du311: du311Models, 'du311-std': du311StdModels, 'epiroc-ith': epirocModels, 'plancher-dd': plancherModels };
+const MODELS = { 'cubex-mri-5200': cubexModels, du311: du311Models, 'du311-std': du311StdModels, 'epiroc-ith': epirocModels, 'plancher-dd': plancherModels, 'stm-1500': stmModels };
 // Vue d'ensemble légère : sous-assemblages simplifiés affichés d'abord, remplacés
 // un à un par leur version détaillée (facettes allégées) une fois la vue montrée.
 const OVERVIEW = { 'du311-std': du311StdOverview };

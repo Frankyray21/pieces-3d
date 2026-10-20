@@ -87,6 +87,33 @@ pièces (numéro, quantité, page du manuel).
   porte son numéro d'étape (`userData.step`) pour animer le montage
   (vidéo de formation).
 
+- **Usinage Marcotte STM-1500** (`stm-1500`, foreuse aux diamants souterraine
+  s/n STM-1500-128, manuel de pièces de Machines Roger, 96 pages) : 42
+  assemblages et 7 documents (transmission Funk, refroidisseur, accumulateur,
+  contrôleur de sécurité, schéma électrique). En 3D : l'ensemble (P002 :
+  foreuse, groupe hydraulique et console accrochée à l'avant du groupe), la
+  foreuse avec l'avance à 0° (P010 : traîneau, support d'avance, poutre, pied,
+  boîte et serre-tiges Boyles 12HH, table, vérins de bascule, de relevage,
+  d'avance et « bazooka », jambes, attelage, rallonge et poulie double,
+  garde-corps grillagé, émerillon d'eau, treuil de câble posé à côté), la tête
+  Boyles (P048 : boîte à chaîne triple, broche, roulements, joints, mandrin
+  Boyles H, transmission Funk 4 vitesses, moteur A6VM, pompe de lubrification,
+  filtre, visserie), le groupe hydraulique 125 HP posé sur ses patins, sans
+  roues ni timon (P068 : cadre, moteur WEG, pompes Rexroth en tandem,
+  réservoir 110 gal, filtres, boîte électrique, transformateur,
+  refroidisseurs, planchers grillagés) et la console (P078 : panneaux,
+  pupitre, manomètres, distributeurs, contrôleur de sécurité). Les autres
+  assemblages s'affichent avec les dessins du manuel. Le manuel désigne les
+  pièces par leur numéro (bulles des dessins) : les repères 1, 2, 3… sont les
+  rangs des lignes de la liste. Couleurs d'après la photo de couverture
+  (foreuse bleue sur traîneau noir, console blanche), groupe et tête en rouge
+  comme sur leurs dessins. Le PDF d'origine (116 Mo) est dans la release
+  GitHub `STM1500`. Listes : `tools/extract_stm1500_lists.py` (brouillon par
+  position des mots, gardé dans `tools/data/stm1500-listes.json`) puis
+  `tools/extract_stm1500.py` (nettoyage, pages scannées transcrites, liens,
+  `src/models/stm-1500/refs.js`). Rendus photoréalistes Blender dans
+  `public/equipment/stm-1500/renders/`.
+
 La page d'accueil (adresse sans « # », ou le logo en haut à gauche) liste
 les équipements et permet de passer de l'un à l'autre. Les adresses du premier équipement restent `#F05` ; celles des autres
 sont préfixées : `#du311.P032`, `#du311-std.P050`, `#epiroc-ith.P019`.
@@ -133,6 +160,23 @@ npm run build:artifact # page autonome dans dist-artifact/ (publication claude.a
 npm run check:3d       # contrôle des modèles Epiroc (repères, quantités, triangles)
 ```
 
+## Rendus réalistes (Blender)
+
+Un assemblage s'exporte en glTF binaire, puis Blender (module Python `bpy`,
+sans interface) le rend en Cycles : sol de béton, réflecteurs doux,
+contre-jour, ombres et occlusion par lancer de rayons, débruitage.
+
+```bash
+node scripts/export-glb.mjs --eq stm-1500 P002 /tmp/P002.glb
+python3 -m venv venv && ./venv/bin/pip install bpy==5.2.2
+./venv/bin/python tools/blender_render.py /tmp/P002.glb rendu.png --res 1600x1000 --samples 96 --dir 0.85,0.55,1
+```
+
+`--dir` est la direction de vue dans le repère du site (comme `view.dir` des
+builders). Le .glb garde les matériaux PBR de la palette et le repère de
+chaque pièce dans son nom (`ref-12`), utilisable aussi dans Blender pour
+retoucher ou animer.
+
 Captures de non-régression (Playwright installé à part, serveur lancé) :
 `PW=$(npm root -g)/playwright node scripts/shots.mjs --eq epiroc-ith --out
 scratch/shots/ref P074 P080`, puis la même commande avec `--out
@@ -155,6 +199,8 @@ src/main.js, src/ui/                        interface
 tools/extract_parts.py                      extraction des listes depuis le PDF
 tools/extract_sandvik.py                    extraction complète d'un manuel Sandvik
 tools/extract_epiroc.py                     extraction du catalogue Epiroc (tableaux, pages)
+tools/extract_stm1500*.py                   listes du manuel STM-1500 (brouillon, nettoyage, liens)
+tools/blender_render.py                     rendu Cycles d'un .glb (scripts/export-glb.mjs)
 ```
 
 ## Simulation mécanique (développement, hors site)
