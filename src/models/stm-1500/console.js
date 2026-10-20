@@ -9,6 +9,12 @@
 import { lister, each, IN } from './layout.js';
 
 export const CON = { w: 31.125 * IN, d: 30.625 * IN, h: 58.906 * IN };
+// Raccords rapides (repère de la console) : arrière bas vers le groupe (pression, retour, drain),
+// flanc gauche bas vers la foreuse (rotation A et B, avance, vérins), flanc droit : eau (bloc 3 voies).
+export const CON_PACK = [-0.16, 0, 0.16].map((x) => [x, 0.14, -CON.d / 2 - 0.05]);
+export const CON_DRILL = [[0.2, 0.12], [0.08, 0.12], [-0.04, 0.12], [-0.16, 0.12], [0.2, 0.24], [0.08, 0.24]].map(([z, y]) => [-CON.w / 2 - 0.05, y, z]);
+export const CON_WATER = [CON.w / 2 + 0.05, 0.22, CON.d / 2 - 0.12];
+export const CON_CABLE = [0.1, CON.h + 0.02, CON.d / 2 - 0.25];
 
 export function P078(api) {
   const { box, cyl, ring, tube, hose, rod, plate, extrude, bolt, group, at, gauge, valveBank, enclosure, ballValve, torus, lathe, merged, washer } = api.S;
@@ -115,11 +121,12 @@ export function P078(api) {
   each(P, 'BS25-750', pts.map((p) => at(bolt(0.0064, 0.019, 'zinc', { axis: p[0] > 0 ? 'x' : '-x' }), [p[0] + Math.sign(p[0]) * 0.002, p[1], p[2]])), (i) => [i < 20 ? -0.15 : 0.15, 0, 0]);
   each(P, 'WS25', pts.map((p) => at(washer(0.008, 0.0035, 0.0015, 'zinc', { axis: 'x' }), p)), (i) => [i < 20 ? -0.12 : 0.12, 0, 0]);
 
-  // Boyaux qui sortent par le bas arrière vers la foreuse et le groupe.
+  // Raccords rapides des boyaux (laiton) : arrière vers le groupe, flanc gauche vers la foreuse.
   api.add(group(
-    hose([[-0.1, 0.12, z0 + 0.05], [-0.15, 0.06, z0 - 0.2], [-0.3, 0.05, z0 - 0.6]], 0.016),
-    hose([[0.0, 0.12, z0 + 0.05], [0.02, 0.06, z0 - 0.2], [0.05, 0.05, z0 - 0.6]], 0.016),
-    hose([[0.1, 0.12, z0 + 0.05], [0.18, 0.06, z0 - 0.2], [0.35, 0.05, z0 - 0.6]], 0.02),
+    at(box(0.5, 0.1, 0.01, 'lightGrey'), [0, 0.14, z0 - 0.005]),
+    at(box(0.01, 0.24, 0.5, 'lightGrey'), [-w / 2 - 0.005, 0.18, 0.02]),
+    ...CON_PACK.map(([x, y, z], i) => at(cyl(i === 0 ? 0.024 : 0.019, 0.05, 'brass', { axis: 'z', seg: 18 }), [x, y, z + 0.025])),
+    ...CON_DRILL.map(([x, y, z], i) => at(cyl(i < 2 ? 0.024 : 0.017, 0.05, 'brass', { axis: 'x', seg: 18 }), [x + 0.025, y, z])),
   ));
   return { view: { dir: [0.6, 0.45, 1.2] } };
 }

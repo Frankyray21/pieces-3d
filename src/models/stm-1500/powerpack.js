@@ -12,6 +12,11 @@ import { lister, each, grid, IN } from './layout.js';
 
 export const PP = { L: 96.875 * IN, W: 48.25 * IN, H: 60.9375 * IN, skid: 3.5 * IN, t: 3 * IN };
 const MOTOR = { x: -0.52, y: 0.43, r: 0.29, len: 0.86 }; // axe du moteur et des pompes
+// Plaque de raccords rapides sur le côté droit (+Z), vers l'avant : pression, retour, drain, eau
+// (repère du groupe ; les boyaux vers la console partent de là, voir P002).
+export const PP_PORTS = [0, 1, 2].map((i) => [0.0 + i * 0.13, 0.3, PP.W / 2 + 0.07]);
+// Sortie du câble de commande (vers la console) sous la boîte électrique.
+export const PP_CABLE = [-PP.L / 2 + 0.45, 0.8, PP.W / 2 - 0.05];
 
 export function P068(api) {
   const { box, cyl, ring, shell, tube, hose, rod, plate, bolt, boltSet, group, at, lathe, torus, nut, merged, enclosure, filterCanister, ballValve, gauge, fitting } = api.S;
@@ -174,6 +179,16 @@ export function P068(api) {
   each(P, 'B375-1000', [0, 1].map((i) => at(bolt(0.0095, 0.025, 'steel', { axis: 'z' }), [0.5 + i * 0.1, 0.62, z0 + t / 2 - 0.04])), [0, 0, -0.3]);
   each(P, 'NC375', [0, 1].map((i) => at(nut(0.015, 0.009, 'steel', { axis: 'z' }), [0.5 + i * 0.1, 0.62, z0 + t / 2 + 0.04])), [0, 0, -0.2]);
   each(P, 'LN375NC', [0, 1].map((i) => at(nut(0.015, 0.01, 'steel', { axis: 'y' }), [bx + 0.95 + (i ? 0.04 : -0.04), skid + t - 0.01, 0.05])), [0, -0.3, 0.6]);
+
+  // Plaque de raccords rapides (laiton) reliée aux pompes et au retour.
+  api.add(group(
+    at(box(0.44, 0.12, 0.012, 'red', { r: 0.004 }), [0.13, 0.3, z1 + 0.006]),
+    ...PP_PORTS.map(([x, y, z], i) => group(
+      at(cyl(i === 0 ? 0.024 : 0.019, 0.05, 'brass', { axis: 'z', seg: 18 }), [x, y, z - 0.04]),
+      at(nut(i === 0 ? 0.05 : 0.042, 0.014, 'brass', { axis: 'z' }), [x, y, z - 0.055]),
+    )),
+    ...PP_PORTS.map(([x, y], i) => hose([[x, y, z1 - 0.01], [x, y + 0.05, z1 - 0.25], [bx + 0.42 + (i % 3) * 0.25, MOTOR.y - 0.15, 0.15]], i === 0 ? 0.02 : 0.016)),
+  ));
 
   // Plaque UM sur le côté.
   api.add(at(box(0.26, 0.1, 0.004, 'white', { r: 0.01 }), [0.5, H - 0.25, z1 + 0.002]));

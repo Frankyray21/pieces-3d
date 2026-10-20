@@ -149,8 +149,8 @@ export function P048(api) {
 
   // Boyaux de la tête (page 2.3, détail à part) : pression, retour, drain, lubrification.
   api.add(group(
-    hose([[mx - 0.44, SPY + 0.12, TZ - 0.25], [mx - 0.6, SPY + 0.3, TZ - 0.3], [mx - 0.8, SPY + 0.35, TZ - 0.2]], 0.016),
-    hose([[mx - 0.44, SPY - 0.12, TZ - 0.25], [mx - 0.62, SPY - 0.05, TZ - 0.32], [mx - 0.8, SPY - 0.02, TZ - 0.2]], 0.016),
+    at(cyl(0.024, 0.06, 'brass', { axis: 'z', seg: 16 }), [mx - 0.44, SPY + 0.12, TZ - 0.28]),
+    at(cyl(0.024, 0.06, 'brass', { axis: 'z', seg: 16 }), [mx - 0.44, SPY - 0.12, TZ - 0.28]),
     tube([[BOX.x0 - 0.12, py, -0.16], [BOX.x0 - 0.15, BOX.y1, -0.2], [bx, BOX.y1 + 0.05, BOX.z0 + 0.0]], 0.006, 'steel', { seg: 24 }),
     tube([[bx + 0.04, BOX.y1, BOX.z0 - 0.045], [bx + 0.1, BOX.y1 + 0.08, -0.1], [BOX.x1 + 0.02, BOX.y1 - 0.02, 0.05]], 0.006, 'steel', { seg: 24 }),
   ));
