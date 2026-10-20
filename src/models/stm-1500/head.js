@@ -2,9 +2,9 @@
 // chaîne triple (pignon menant sur la sortie de la transmission, pignon mené
 // sur la broche creuse), transmission Funk 4 vitesses HMD-2355, moteur
 // hydraulique Rexroth A6VM160 à l'arrière de la transmission, mandrin Boyles
-// H (bleu) à l'avant de la broche, pompe de lubrification, filtre, levier de
-// vitesses à boule rouge. Cotes : page 2.1 (770 × 725 mm de face, 742 mm
-// boîte et mandrin, 1 182 mm avec le moteur).
+// H à l'avant de la broche (rouge comme le reste de la foreuse), pompe de
+// lubrification, filtre, levier de vitesses à boule rouge. Cotes : page 2.1
+// (770 × 725 mm de face, 742 mm boîte et mandrin, 1 182 mm avec le moteur).
 // Repère : origine sur la table (face d'appui), à l'aplomb de l'axe de la
 // broche ; X le long de la broche vers l'avant (mandrin), Y vers le haut,
 // axe de la broche à y = SPY ; la transmission et le moteur sont côté −Z.
@@ -13,11 +13,14 @@ import { lister, each, IN } from './layout.js';
 export const SPY = 0.29; // hauteur de l'axe de la broche au-dessus de la table
 const BOX = { x0: -0.17, x1: 0.13, z0: -0.5, z1: 0.17, y0: 0.03, y1: 0.5 };
 const TZ = -0.33; // axe de la transmission et du moteur
+// Orifices A et B du moteur sur la face −Z de son bloc arrière, à ± PORT_DY de l'axe (brides SAE à plat
+// sur la face) ; les coudes à bride s'écartent ensuite à ± PORT_OUT, où sont les raccords des boyaux.
+const PORT_DY = 0.06, PORT_OUT = 0.12;
 // Bouts des raccords laiton du moteur (rotation A en haut, B en bas), sortie vers −Z : branchement des boyaux de la console.
-export const HEAD_PORTS = [1, -1].map((s) => [BOX.x0 - 0.4 - 0.44, SPY + s * 0.12, TZ - 0.31]);
+export const HEAD_PORTS = [1, -1].map((s) => [BOX.x0 - 0.4 - 0.44, SPY + s * PORT_OUT, TZ - 0.31]);
 
 export function P048(api) {
-  const { box, cyl, ring, shell, lathe, bolt, boltCircle, gear, filterCanister, hose, tube, plate, group, at, washer, torus } = api.S;
+  const { box, cyl, ring, shell, lathe, bolt, boltCircle, gear, filterCanister, hose, tube, plate, group, at, washer, torus, merged } = api.S;
   const P = lister(api, 'P048');
   const bx = (BOX.x0 + BOX.x1) / 2, bz = (BOX.z0 + BOX.z1) / 2, by = (BOX.y0 + BOX.y1) / 2;
   const L = BOX.x1 - BOX.x0, W = BOX.z1 - BOX.z0, H = BOX.y1 - BOX.y0;
@@ -62,17 +65,18 @@ export function P048(api) {
     return at(cyl(0.0095, 0.03, 'darkSteel', { axis: 'x', seg: 10 }), [BOX.x1 + 0.13, SPY + Math.cos(a) * 0.105, Math.sin(a) * 0.105]);
   }), [0.7, 0, 0.2]);
 
-  // Mandrin Boyles H (page 2.5–2.7) : tambour bleu Ø 12 1/8 po × 13 5/16 po, passage Ø 3 7/8 po.
+  // Mandrin Boyles H (page 2.5–2.7) : tambour Ø 12 1/8 po × 13 5/16 po, passage Ø 3 7/8 po, rouge comme la foreuse.
   const chuckX = BOX.x1 + 0.15;
   P('UM-012-142', group(
-    at(lathe([[0.049, 0], [0.13, 0], [0.154, 0.02], [0.154, 0.3], [0.13, 0.338], [0.049, 0.338]], 'umBlue', { axis: 'x', seg: 40 }), [chuckX, SPY, 0]),
+    at(lathe([[0.049, 0], [0.13, 0], [0.154, 0.02], [0.154, 0.3], [0.13, 0.338], [0.049, 0.338]], 'red', { axis: 'x', seg: 40 }), [chuckX, SPY, 0]),
     at(ring(0.158, 0.12, 0.02, 'steel', { axis: 'x', seg: 40 }), [chuckX + 0.12, SPY, 0]),
     at(ring(0.158, 0.12, 0.02, 'steel', { axis: 'x', seg: 40 }), [chuckX + 0.2, SPY, 0]),
     boltCircle(12, 0.12, 0.012, 0.03, 'blackOxide', { axis: 'x', pos: [chuckX + 0.338, SPY, 0], washer: false }),
     at(ring(0.06, 0.049, 0.01, 'steel', { axis: 'x' }), [chuckX + 0.342, SPY, 0]),
   ), [0.95, 0, 0]);
   each(P, 'UM-012-189', [0, 1, 2].map((i) => at(box(0.05, 0.012, 0.012, 'darkSteel'), [chuckX + 0.36, SPY + Math.cos(i * 2.1) * 0.08, Math.sin(i * 2.1) * 0.08])), [1.2, 0, 0]);
-  P('UM-012-192', at(torus(0.05, 0.0025, 'darkSteel', { axis: 'x' }), [chuckX + 0.36, SPY, 0]), [1.3, 0, 0]);
+  // Anneau de retenue intérieur dans sa gorge, dans l'alésage de la bague avant du mandrin.
+  P('UM-012-192', at(torus(0.047, 0.0025, 'darkSteel', { axis: 'x' }), [chuckX + 0.342, SPY, 0]), [1.3, 0, 0]);
 
   // Chaîne triple sur les pignons (menant sur la transmission, mené sur la broche).
   P('UM-012-103', at(gear(0.06, 0.075, 21, 0.07, 'darkSteel', { axis: 'x', hole: 0.03 }), [bx, SPY, TZ]), [0, 0.6, -0.2]);
@@ -97,7 +101,7 @@ export function P048(api) {
     at(box(0.16, 0.08, 0.16, 'red', { r: 0.02 }), [tx0 - 0.15, SPY + 0.16, TZ]),
     at(cyl(0.012, 0.32, 'red', { axis: 'y' }), [tx0 - 0.15, SPY + 0.36, TZ + 0.03]),
     at(api.S.ball ? api.S.ball(0.035, 'red') : cyl(0.035, 0.05, 'red'), [tx0 - 0.15, SPY + 0.53, TZ + 0.03]),
-    at(box(0.03, 0.26, 0.26, 'blackCast', { r: 0.01 }), [tx0 - 0.275, SPY - 0.02, TZ]),
+    at(box(0.034, 0.26, 0.26, 'blackCast', { r: 0.01 }), [tx0 - 0.273, SPY - 0.02, TZ]), // plaque d'adaptation, engagée dans la transmission
     at(box(0.12, 0.03, 0.26, 'red'), [tx0 - 0.13, SPY - 0.185, TZ]),
   ), [-0.3, 0.2, -0.3]);
   P('UM-012-170', at(cyl(0.05, 0.08, 'steel', { axis: 'x' }), [tx0 - 0.33, SPY, TZ]), [-0.55, 0, -0.3]);
@@ -113,11 +117,13 @@ export function P048(api) {
   ), [-0.8, 0, -0.3]);
   each(P, 'B750-2000', [-1, 1].flatMap((s) => [-1, 1].map((t) => at(bolt(0.019, 0.05, 'steel', { axis: 'x', washer: false }), [mx + 0.025, SPY + s * 0.09, TZ + t * 0.09]))), [-0.65, 0, -0.3]);
   each(P, 'W750', [-1, 1].flatMap((s) => [-1, 1].flatMap((t) => [0, 1].map((k) => at(washer(0.02, 0.01, 0.003, 'steel', { axis: 'x' }), [mx + 0.018 - k * 0.004, SPY + s * 0.09, TZ + t * 0.09])))), [-0.6, 0, -0.3]);
-  each(P, 'UM-063-289T', [-1, 1].flatMap((s) => [-1, 1].map((u) => at(box(0.03, 0.05, 0.045, 'blackOxide', { r: 0.006 }), [mx - 0.37 + u * 0.025, SPY + s * 0.12, TZ - 0.13]))), [-0.9, 0, -0.5]);
-  each(P, 'UM-063-290T', [-1, 1].map((s) => tube([[mx - 0.37, SPY + s * 0.12, TZ - 0.15], [mx - 0.37, SPY + s * 0.12, TZ - 0.22], [mx - 0.44, SPY + s * 0.12, TZ - 0.24]], 0.022, 'brass', { seg: 12 })), [-1.0, 0, -0.6]);
+  // Demi-brides SAE à plat sur la face −Z du bloc arrière du moteur (face en TZ − 0,11), de part et d'autre des orifices A et B.
+  each(P, 'UM-063-289T', [-1, 1].flatMap((s) => [-1, 1].map((u) => at(box(0.03, 0.05, 0.045, 'blackOxide', { r: 0.006 }), [mx - 0.37 + u * 0.025, SPY + s * PORT_DY, TZ - 0.11 - 0.0225]))), [-0.9, 0, -0.5]);
+  each(P, 'UM-063-290T', [-1, 1].map((s) => tube([[mx - 0.37, SPY + s * PORT_DY, TZ - 0.15], [mx - 0.37, SPY + s * PORT_DY, TZ - 0.19], [mx - 0.405, SPY + s * (PORT_DY + PORT_OUT) / 2, TZ - 0.228], [mx - 0.44, SPY + s * PORT_OUT, TZ - 0.24]], 0.022, 'brass', { seg: 16 })), [-1.0, 0, -0.6]);
   each(P, 'B437-1500', Array.from({ length: 13 }, (_, i) => at(bolt(0.011, 0.038, 'steel', { axis: 'x', washer: false }), [tx0 - 0.003, SPY + Math.cos(i * 0.48) * 0.115, TZ + Math.sin(i * 0.48) * 0.115])), [-0.25, 0, -0.45]);
   each(P, 'W437', Array.from({ length: 12 }, (_, i) => at(washer(0.012, 0.006, 0.002, 'steel', { axis: 'x' }), [tx0, SPY + Math.cos(i * 0.48) * 0.115, TZ + Math.sin(i * 0.48) * 0.115])), [-0.22, 0, -0.45]);
-  each(P, 'UM-012-208', [0, 1].map((i) => at(torus(0.03, 0.003, 'rubber'), [mx - 0.37, SPY + (i ? 0.12 : -0.12), TZ - 0.115])), [-0.9, 0, -0.4]);
+  // Joints toriques des orifices, pincés entre la face du bloc et les brides.
+  each(P, 'UM-012-208', [0, 1].map((i) => at(torus(0.03, 0.003, 'rubber', { axis: 'z' }), [mx - 0.37, SPY + (i ? PORT_DY : -PORT_DY), TZ - 0.112])), [-0.9, 0, -0.4]);
 
   // Pompe de lubrification sur la face arrière de la boîte (moteur hydraulique 139, couvercle 111, clavette 169).
   const pz = 0.0, py = SPY - 0.15;
@@ -151,11 +157,17 @@ export function P048(api) {
 
   // Boyaux de la tête (page 2.3, détail à part) : pression, retour, drain, lubrification.
   api.add(group(
-    at(cyl(0.024, 0.06, 'brass', { axis: 'z', seg: 16 }), [mx - 0.44, SPY + 0.12, TZ - 0.28]),
-    at(cyl(0.024, 0.06, 'brass', { axis: 'z', seg: 16 }), [mx - 0.44, SPY - 0.12, TZ - 0.28]),
-    // Graissage : pompe → filtre de tête (par l'arrière du couvercle) → avant de la boîte (par le côté).
+    at(cyl(0.024, 0.06, 'brass', { axis: 'z', seg: 16 }), [mx - 0.44, SPY + PORT_OUT, TZ - 0.28]),
+    at(cyl(0.024, 0.06, 'brass', { axis: 'z', seg: 16 }), [mx - 0.44, SPY - PORT_OUT, TZ - 0.28]),
+    // Graissage : pompe → filtre de tête (par l'arrière du couvercle) → avant de la boîte (par le côté),
+    // où le tube descend sur la face avant et entre dans un coude laiton (2501) vissé dans la boîte.
     tube([[BOX.x0 - 0.12, py, -0.16], [BOX.x0 - 0.16, BOX.y1 - 0.02, -0.2], [BOX.x0 - 0.06, BOX.y1 + 0.06, BOX.z0 - 0.06], [bx - 0.02, BOX.y1 + 0.05, BOX.z0 - 0.05], [bx - 0.02, BOX.y1 + 0.005, BOX.z0 - 0.045]], 0.006, 'steel', { seg: 32 }),
-    tube([[bx + 0.03, BOX.y1 + 0.005, BOX.z0 - 0.045], [bx + 0.05, BOX.y1 + 0.06, BOX.z0 - 0.06], [BOX.x1 + 0.035, BOX.y1 + 0.05, -0.3], [BOX.x1 + 0.035, BOX.y1 - 0.02, 0.05]], 0.006, 'steel', { seg: 32 }),
+    tube([[bx + 0.03, BOX.y1 + 0.005, BOX.z0 - 0.045], [bx + 0.05, BOX.y1 + 0.06, BOX.z0 - 0.06], [BOX.x1 + 0.035, BOX.y1 + 0.05, -0.3], [BOX.x1 + 0.035, BOX.y1 - 0.01, -0.262], [BOX.x1 + 0.035, BOX.y1 - 0.058, -0.25]], 0.006, 'steel', { seg: 32 }),
+    merged([
+      at(cyl(0.009, 0.022, 'brass', { axis: 'y', seg: 14 }), [BOX.x1 + 0.035, BOX.y1 - 0.069, -0.25]),
+      at(box(0.022, 0.022, 0.022, 'brass', { r: 0.004 }), [BOX.x1 + 0.035, BOX.y1 - 0.085, -0.25]),
+      at(cyl(0.008, 0.03, 'brass', { axis: 'x', seg: 14 }), [BOX.x1 + 0.01, BOX.y1 - 0.085, -0.25]),
+    ], 'brass'),
   ));
   return { view: { dir: [0.9, 0.55, 1.1] } };
 }

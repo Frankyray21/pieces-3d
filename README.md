@@ -99,22 +99,28 @@ pièces (numéro, quantité, page du manuel).
   foreuse avec l'avance à 0° (P010 : traîneau, support d'avance, poutre, pied,
   boîte et serre-tiges Boyles 12HH, table, vérins de bascule, de relevage,
   d'avance double logé dans la poutre, jambes, attelage, plaque d'extrémité
-  portant la rallonge, la poulie double et le guide de tiges, émerillon d'eau,
-  treuil de câble posé à côté, boyaux des vérins et du treuil sur les blocs de
-  raccords des longerons ; sans le garde-corps ni le vérin supérieur), la tête
+  portant la rallonge, la poulie double et le guide de tiges, émerillon d'eau
+  au bout de la broche, treuil de câble posé à côté avec son câble passé sur la
+  poulie jusqu'au guide de tiges, boyaux des vérins (avance, bascule,
+  relevage) et des moteurs du treuil sur les blocs de raccords des longerons ;
+  sans le garde-corps ni le vérin supérieur ; mandrin rouge), la tête
   Boyles (P048 : boîte à chaîne triple, broche, roulements, joints, mandrin
   Boyles H, transmission Funk 4 vitesses, moteur A6VM, pompe de lubrification,
   filtre, visserie), le groupe hydraulique 125 HP posé sur ses patins, sans
-  roues ni timon (P068 : cadre, moteur WEG, pompes Rexroth en tandem,
-  réservoir 110 gal, filtres, boîte électrique, transformateur,
-  refroidisseurs, planchers grillagés) et la console (P078 : panneaux,
-  pupitre, manomètres, distributeurs, contrôleur de sécurité). Les autres
+  roues ni timon (P068 : cadre, moteur WEG, pompes Rexroth accolées en tandem
+  avec leurs aspirations sous le réservoir, réservoir 110 gal posé sur les
+  longerons du haut, collecteur de retour, filtres, boîte électrique,
+  transformateur, refroidisseurs, planchers grillagés ; boyaux intérieurs
+  chacun sur son orifice) et la console (P078, 58 29/32 po hors tout comme au
+  manuel : panneaux, pupitre, manomètres, distributeurs, contrôleur de
+  sécurité). Les autres
   assemblages s'affichent avec les dessins du manuel. Le manuel désigne les
   pièces par leur numéro (bulles des dessins) : les repères 1, 2, 3… sont les
   rangs des lignes de la liste. Couleurs : foreuse, tête et groupe en rouge
   (dessins du manuel), vérins noirs, console blanche (photo de couverture). Le
-  PDF d'origine (116 Mo) est dans la release GitHub `STM1500`. Listes : `tools/extract_stm1500_lists.py` (brouillon par
-  position des mots, gardé dans `tools/data/stm1500-listes.json`) puis
+  PDF d'origine (116 Mo) est dans la release GitHub `STM1500`. Listes :
+  `tools/extract_stm1500_lists.py` (brouillon par position des mots, gardé
+  dans `tools/data/stm1500-listes.json`) puis
   `tools/extract_stm1500.py` (nettoyage, pages scannées transcrites, liens,
   `src/models/stm-1500/refs.js`). Rendus photoréalistes Blender dans
   `public/equipment/stm-1500/renders/`.
