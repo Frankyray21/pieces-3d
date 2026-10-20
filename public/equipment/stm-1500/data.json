@@ -1,0 +1,6198 @@
+{
+ "id": "stm-1500",
+ "name": "Usinage Marcotte STM-1500",
+ "manufacturer": "Usinage Marcotte",
+ "category": "Foreuse aux diamants souterraine",
+ "serial": "STM-1500-128",
+ "document": {
+  "title": "Part book for STM-1500",
+  "reference": "FBRA-002 (client Machines Roger)",
+  "preparedBy": "Usinage Marcotte inc., Val-d'Or (M. S. Gignac)",
+  "date": "2013-11-26",
+  "sheets": 96,
+  "pagePattern": "pages/{sheet}.webp"
+ },
+ "specs": [
+  [
+   "Modèle",
+   "STM-1500 (foreuse aux diamants souterraine, avance à vérin « top feed »)"
+  ],
+  [
+   "Moteur électrique",
+   "WEG 125 HP, 575 V, 60 Hz, 1 780 tr/min, 184 A (CT125504NPBBW22)"
+  ],
+  [
+   "Pompes",
+   "Rexroth A11VO130 + A10VO45 + A10VO45 en tandem"
+  ],
+  [
+   "Tête de forage",
+   "UM-012-100UG Boyles, transmission Funk HMD-2355 4 vitesses, moteur A6VM160, 1 200 tr/min max"
+  ],
+  [
+   "Mandrin",
+   "Boyles H, passage Ø 3 7/8 po"
+  ],
+  [
+   "Serre-tiges de pied",
+   "Boyles 12HH"
+  ],
+  [
+   "Treuil de câble",
+   "10 000 pi (UM-032-100A), 2 moteurs White RE12"
+  ],
+  [
+   "Réservoir",
+   "110 gal US"
+  ],
+  [
+   "Foreuse à 0°",
+   "4 202 × 864 × 1 731 mm, axe à 1 235 mm"
+  ],
+  [
+   "Groupe hydraulique",
+   "2 460 × 1 225 × 1 548 mm"
+  ],
+  [
+   "Console",
+   "791 × 778 × 1 496 mm"
+  ]
+ ],
+ "weights": [
+  [
+   "Foreuse sans câble",
+   "6 000 lb"
+  ],
+  [
+   "Groupe hydraulique",
+   "5 800 lb"
+  ],
+  [
+   "Console",
+   "800 lb"
+  ]
+ ],
+ "sheetTitles": {
+  "P001": "Couverture (photo STM-1500)",
+  "P002": "Fiche de la machine",
+  "P003": "Section foreuse",
+  "P004": "Index de la foreuse",
+  "P005": "Dimensions hors-tout (1.01)",
+  "P006": "Dimensions avec roues et timon (1.02)",
+  "P007": "Dimensions avec plateforme rotative (1.03)",
+  "P008": "Points de graissage (1.04)",
+  "P009": "Numéros de série (1.05)",
+  "P010": "Pièces de la foreuse (1.0)",
+  "P011": "Traîneau (1.1)",
+  "P012": "Support d'avance — débit (1.2)",
+  "P013": "Avance et pied (1.3)",
+  "P014": "Base du serre-tiges de pied (1.4)",
+  "P015": "Pivot de poulie (1.5)",
+  "P016": "Guide de tiges (1.6)",
+  "P017": "Poulie pivotante (1.7)",
+  "P018": "Table de la tête (1.8)",
+  "P019": "Vérins de bascule et de relevage (1.9)",
+  "P020": "Jambes et attelage (1.10)",
+  "P021": "Vérin d'avance (1.11)",
+  "P022": "Vérin d'avance supérieur « bazooka » (1.12)",
+  "P023": "Garde-corps (1.13)",
+  "P024": "Boîte de commande de l'interrupteur (1.13.1)",
+  "P025": "Interrupteur de sécurité et câble (1.13.2)",
+  "P026": "Supports de l'arrêt d'urgence (1.13.3)",
+  "P027": "Plateforme rotative (1.14)",
+  "P028": "Réglage de l'œil du vérin supérieur (1.15)",
+  "P029": "Émerillon d'eau (1.16)",
+  "P030": "Roue et moyeu",
+  "P031": "Serre-tiges Boyles 12HH — éclaté",
+  "P032": "Serre-tiges Boyles 12HH — liste",
+  "P033": "Malaxeur à boue — dimensions",
+  "P034": "Malaxeur à boue — liste",
+  "P035": "Malaxeur à boue — hélices",
+  "P036": "Pompe à eau FMC 435",
+  "P037": "Treuil de câble 10 000 pi — couverture",
+  "P038": "Treuil — dimensions (8.0)",
+  "P039": "Treuil — étape 1 (8.1)",
+  "P040": "Treuil — étape 2 (8.2)",
+  "P041": "Treuil — étape 3 (8.3)",
+  "P042": "Treuil — étape 4 (8.4)",
+  "P043": "Treuil — réglage des bras (10° à 40°)",
+  "P044": "Treuil — réglage des bras (50° à 70°)",
+  "P045": "Tête de forage — couverture",
+  "P046": "Index de la tête",
+  "P047": "Tête — dimensions (2.1)",
+  "P048": "Tête — éclaté (2.2)",
+  "P049": "Tête — raccords et boyaux (2.3)",
+  "P050": "Tête — spécifications (2.4)",
+  "P051": "Mandrin Boyles H — éclaté",
+  "P052": "Mandrin Boyles H — liste",
+  "P053": "Transmission Funk HMD-2355 — couverture",
+  "P054": "Transmission Funk — liste (1)",
+  "P055": "Transmission Funk — liste (2)",
+  "P056": "Transmission Funk — liste (3)",
+  "P057": "Transmission Funk — groupe 1",
+  "P058": "Transmission Funk — groupe 2",
+  "P059": "Transmission Funk — groupe 3",
+  "P060": "Transmission Funk — groupe 4",
+  "P061": "Transmission Funk — coupe",
+  "P062": "Transmission Funk — cotes",
+  "P063": "Section groupe hydraulique",
+  "P064": "Index du groupe hydraulique",
+  "P065": "Groupe — dimensions avec roues (3.01)",
+  "P066": "Groupe avec console verrouillée (3.0)",
+  "P067": "Groupe — dimensions (3.1)",
+  "P068": "Groupe hydraulique 125 HP (3.2)",
+  "P069": "Moteur et pompes (3.3)",
+  "P070": "Groupe moteur-pompes — description (3.4)",
+  "P071": "Support de pompe et collecteur (3.5)",
+  "P072": "Réservoir hydraulique (3.6)",
+  "P073": "Filtre de retour (3.7)",
+  "P074": "Refroidisseur AOCHM-30 (option)",
+  "P075": "Section console",
+  "P076": "Index de la console",
+  "P077": "Console — dimensions (4.1)",
+  "P078": "Console — panneaux (4.2)",
+  "P079": "Console — composants hydrauliques (4.3)",
+  "P080": "Console — détails des composants (4.4)",
+  "P081": "Console — blocs pompe à eau et avance (4.4.1)",
+  "P082": "Console — plaques d'identification",
+  "P083": "Accumulateur AM-45-250 (4.4.2)",
+  "P084": "Contrôleur de sécurité (4.6)",
+  "P085": "Boîte de sécurité",
+  "P086": "Contrôleur SECFOR CAT3 (1)",
+  "P087": "Contrôleur SECFOR CAT3 (2)",
+  "P088": "Contrôleur SECFOR CAT3 (3)",
+  "P089": "Contrôleur SECFOR CAT3 (4)",
+  "P090": "Contrôleur SECFOR CAT3 (5)",
+  "P091": "Contrôleur SECFOR CAT3 (6)",
+  "P092": "Contrôleur SECFOR CAT3 (7)",
+  "P093": "Contrôleur SECFOR CAT3 (8)",
+  "P094": "Contrôleur SECFOR CAT3 (9)",
+  "P095": "Schéma du panneau 600 V 125 HP",
+  "P096": "Contrôleur SECFOR CAT3 — couverture"
+ },
+ "root": "P002",
+ "assemblies": {
+  "P002": {
+   "title": "STM-1500 drill rig",
+   "titleFr": "STM-1500 : foreuse, groupe hydraulique et console",
+   "pn": "STM-1500-128",
+   "sheets": [
+    "P002",
+    "P001"
+   ],
+   "parts": [
+    [
+     "1",
+     "FBRA-002-100AS",
+     1,
+     "COMPLETE DRILL (FOREUSE)",
+     {
+      "link": "P010",
+      "pseudo": true
+     }
+    ],
+    [
+     "2",
+     "UM-064-FMX-005-100PPP",
+     1,
+     "POWER PACK 125HP-600V-60H",
+     {
+      "link": "P068",
+      "pseudo": true
+     }
+    ],
+    [
+     "3",
+     "UM-051-300P-FMC-036",
+     1,
+     "HYDRAULIC CONTROL CONSOLE",
+     {
+      "link": "P078",
+      "pseudo": true
+     }
+    ]
+   ],
+   "note": "Le manuel n'a pas de vue d'ensemble : la foreuse, le groupe hydraulique et la console sont posés comme sur la page 3.0 (console accrochée au groupe) et la page de couverture. Couleurs d'après la photo de couverture (foreuse bleue sur traîneau noir, console blanche) ; groupe hydraulique et tête en rouge comme sur leurs dessins."
+  },
+  "P010": {
+   "title": "Drill parts",
+   "titleFr": "Foreuse complète",
+   "pn": "FBRA-002-100AS",
+   "sheets": [
+    "P010",
+    "P005",
+    "P006",
+    "P007",
+    "P008",
+    "P009"
+   ],
+   "parts": [
+    [
+     "1",
+     "FBRA-002-150BM",
+     1,
+     "DRILL FRAME",
+     {
+      "link": "P011"
+     }
+    ],
+    [
+     "2",
+     "FBRA-002-300BB",
+     1,
+     "FEED FRAME",
+     {
+      "link": "P013"
+     }
+    ],
+    [
+     "3",
+     "FBRA-002-305BB",
+     1,
+     "FOOT PLATE"
+    ],
+    [
+     "4",
+     "FBRA-002-400HH",
+     1,
+     "WIRE LINE",
+     {
+      "link": "P042"
+     }
+    ],
+    [
+     "5",
+     "FBRA-002-600BB",
+     1,
+     "FEED FRAME SUPPORT",
+     {
+      "link": "P012"
+     }
+    ],
+    [
+     "6",
+     "FTD-030-100ZZ",
+     1,
+     "TOP FEED CYLINDER",
+     {
+      "link": "P022"
+     }
+    ],
+    [
+     "7",
+     "FTD-148-300TF",
+     1,
+     "FOOT CLAMP HOUSING (BOYLE)"
+    ],
+    [
+     "8",
+     "FTD-148-800K",
+     1,
+     "TOP FEED CYLINDER BRAKET",
+     {
+      "link": "P028"
+     }
+    ],
+    [
+     "9",
+     "UM-012-100UG",
+     1,
+     "DRILL HEAD ASSEMBLY UM-012",
+     {
+      "link": "P048"
+     }
+    ],
+    [
+     "10",
+     "UM-064-200C",
+     1,
+     "EXTENSION ASSEMBLY"
+    ],
+    [
+     "11",
+     "UM-064-200DS",
+     1,
+     "DRILL TABLE",
+     {
+      "link": "P018"
+     }
+    ],
+    [
+     "12",
+     "UM-064-300Z",
+     1,
+     "DUMP CYLINDER",
+     {
+      "link": "P019"
+     }
+    ],
+    [
+     "13",
+     "UM-064-351D",
+     1,
+     "REMOVABLE HITCH",
+     {
+      "link": "P020"
+     }
+    ],
+    [
+     "14",
+     "UM-064-400D",
+     2,
+     "LEGS"
+    ],
+    [
+     "15",
+     "UM-064-800B",
+     1,
+     "SWIVEL",
+     {
+      "link": "P014"
+     }
+    ],
+    [
+     "16",
+     "UM-079-100A-12",
+     1,
+     "HH FOOT CLAMP BOYLES",
+     {
+      "link": "P032"
+     }
+    ],
+    [
+     "17",
+     "UM-064-100Z",
+     1,
+     "FEED CYLINDER",
+     {
+      "link": "P021"
+     }
+    ],
+    [
+     "18",
+     "FBRA-002-515ZZ",
+     2,
+     "TILT CYLINDER"
+    ],
+    [
+     "19",
+     "UM-064-1200GG",
+     1,
+     "UNDERGROUND GUARD COMPLETE ASSEMBLY (page 1.13)",
+     {
+      "link": "P023",
+      "pseudo": true
+     }
+    ],
+    [
+     "20",
+     "UM-106-100AA",
+     1,
+     "WATER SWIVEL ASSEMBLY (page 1.16)",
+     {
+      "link": "P029",
+      "pseudo": true
+     }
+    ],
+    [
+     "21",
+     "UM-064-1601RM",
+     null,
+     "WHEEL & HUB — OPTION (page 1.02)",
+     {
+      "link": "P030",
+      "pseudo": true,
+      "no3d": true
+     }
+    ]
+   ],
+   "note": "Avance à 0° (horizontale) comme sur la page 1.01. Les sous-ensembles qui ont leur liste ouvrent leur page (dessins du manuel)."
+  },
+  "P011": {
+   "title": "Frame",
+   "titleFr": "Traîneau",
+   "pn": "FBRA-002-150BM",
+   "sheets": [
+    "P011"
+   ],
+   "parts": [
+    [
+     "1",
+     "6400-8-8",
+     12,
+     "MJIC x MORB"
+    ],
+    [
+     "2",
+     "6505-8-8",
+     2,
+     "6505-8-8"
+    ],
+    [
+     "3",
+     "B625-2750",
+     4,
+     "BOLT 5/8-UNC x 2 3/4\""
+    ],
+    [
+     "4",
+     "B750-3000",
+     8,
+     "BOLT 3/4\"-UNC x 3\""
+    ],
+    [
+     "5",
+     "BKH-12NPT",
+     2,
+     "BALL VALVE 1/2 NPT"
+    ],
+    [
+     "6",
+     "DF10-6B-12L",
+     2,
+     "SWITCH VALVE MAST TO WIRE LINE"
+    ],
+    [
+     "7",
+     "FMC-014-303D",
+     4,
+     "CRAPEAU/CLAMP"
+    ],
+    [
+     "8",
+     "LC750",
+     8,
+     "LOCK WASHER 3/4''"
+    ],
+    [
+     "9",
+     "UM-064-108B",
+     4,
+     "TOP FLANGE"
+    ],
+    [
+     "10",
+     "W625",
+     4,
+     "FLAT WASHER 5/8\""
+    ],
+    [
+     "11",
+     "Z250NF",
+     4,
+     "GREASE FITTING 1/4-UNF"
+    ]
+   ]
+  },
+  "P012": {
+   "title": "Feed frame support — parts list",
+   "titleFr": "Support d'avance",
+   "pn": "FBRA-002-600BB",
+   "sheets": [
+    "P012"
+   ],
+   "parts": [
+    [
+     "1",
+     "3-16 LINK",
+     24,
+     "CHAIN 3/16 LINK"
+    ],
+    [
+     "2",
+     "FBRA-001-101B",
+     null,
+     "P.L. 1/2\" 44W — 2 1/2 in"
+    ],
+    [
+     "3",
+     "FBRA-001-201B",
+     null,
+     "PL 3/4 in, 44W — 23 in"
+    ],
+    [
+     "4",
+     "FBRA-001-202B",
+     4,
+     "F.B. 1/2 in X 2 1/2 — 10 3/4 in"
+    ],
+    [
+     "5",
+     "FBRA-001-203B",
+     8,
+     "PL 1/2 in, 44W — 5 1/2 x 3 in"
+    ],
+    [
+     "6",
+     "FBRA-001-204B",
+     null,
+     "PL 1/4 in 44W — 6 in"
+    ],
+    [
+     "7",
+     "UM-064-200B",
+     2,
+     "B.P.SHC 80 3 in (PIVOT TUBE) — 33 3/8 in"
+    ],
+    [
+     "8",
+     "UM-064-204B",
+     4,
+     "FB3 in X 1 in — 9 1/2 in"
+    ],
+    [
+     "9",
+     "UM-064-207B",
+     4,
+     "FA 2 1/2 in X 2 1/2 in X 1/2 in — 27 1/2 in"
+    ],
+    [
+     "10",
+     "UM-064-210B",
+     2,
+     "HSS 5 in X 3 in X 1/4 in — 47 in"
+    ],
+    [
+     "11",
+     "UM-064-211B",
+     4,
+     "ACIER À CLÉ 4 1/2 x 1 1/2 (CLAMP) — 9 1/2 in"
+    ],
+    [
+     "12",
+     "UM-064-213B",
+     2,
+     "PL 3/4 in, 44W — 2 x 2 1/8 in"
+    ],
+    [
+     "13",
+     "UM-064-218B",
+     2,
+     "FB1 1/2 in X 5/8 in — 47 in"
+    ],
+    [
+     "14",
+     "UM-064-220B",
+     1,
+     "PL 1/2 in, 44W — 8 3/4 x 8 1/2 in"
+    ]
+   ],
+   "note": "Liste de débit (matériaux et longueurs en pouces) ; quantités illisibles pour trois lignes."
+  },
+  "P013": {
+   "title": "Feed frame assembly",
+   "titleFr": "Avance (poutre, pied, poulies)",
+   "pn": "FBRA-002-300BB",
+   "sheets": [
+    "P013"
+   ],
+   "parts": [
+    [
+     "1",
+     "UM-064-120C",
+     1,
+     "MAST END PLATE"
+    ],
+    [
+     "2",
+     "B625-1750",
+     6,
+     "BOLT 5/8-UNC x 1 3/4"
+    ],
+    [
+     "3",
+     "W625",
+     12,
+     "FLAT WASHER 5/8\""
+    ],
+    [
+     "4",
+     "B625-4000",
+     2,
+     "BOLT 5/8-UNC x 4\""
+    ],
+    [
+     "5",
+     "UM-064-317B",
+     1,
+     "GSM GUIDE BUSHING"
+    ],
+    [
+     "6",
+     "UM-064-160C",
+     1,
+     "MAST CONNECTION"
+    ],
+    [
+     "7",
+     "UM-064-150C_R1",
+     1,
+     "CONNECTOR"
+    ],
+    [
+     "8",
+     "B750-2000",
+     20,
+     "BOLT 3/4-UNC X 2"
+    ],
+    [
+     "9",
+     "LC750",
+     20,
+     "LOCK WASHER 3/4''"
+    ],
+    [
+     "10",
+     "HP1000",
+     1,
+     "HAIR PIN 1''"
+    ],
+    [
+     "11",
+     "UM-064-317B",
+     1,
+     "GSM GUIDE BUSHING"
+    ],
+    [
+     "12",
+     "FTD-148-300TF",
+     1,
+     "FOOT CLAMP HOUSING (BOYLE)"
+    ],
+    [
+     "13",
+     "FBRA-002-300BB",
+     1,
+     "FEED FRAME"
+    ],
+    [
+     "14",
+     "W625",
+     6,
+     "FLAT WASHER 5/8"
+    ],
+    [
+     "15",
+     "UM-079-100A-12",
+     1,
+     "HH FOOT CLAMP BOYLES"
+    ],
+    [
+     "16",
+     "B750-5000",
+     4,
+     "BOLT 3/4-UNC x 5\""
+    ],
+    [
+     "17",
+     "B750-2500",
+     6,
+     "BOLT 3/4-UNC x 2 1/2"
+    ],
+    [
+     "18",
+     "UM-064-800BB",
+     2,
+     "FOOT CLAM BASE"
+    ],
+    [
+     "19",
+     "NC750",
+     4,
+     "NUT 3/4-UNC"
+    ],
+    [
+     "20",
+     "FBRA-002-305BB",
+     1,
+     "FOOT PLATE"
+    ],
+    [
+     "21",
+     "FBRA-002-310BB",
+     2,
+     "BRACE"
+    ],
+    [
+     "22",
+     "UM-064-200C",
+     1,
+     "ROD GUIDE",
+     {
+      "link": "P016"
+     }
+    ],
+    [
+     "23",
+     "UM-064-195C",
+     2,
+     "GUIDE"
+    ],
+    [
+     "24",
+     "UM-064-125C",
+     1,
+     "PIN"
+    ],
+    [
+     "25",
+     "UM-064-1000DD",
+     1,
+     "PULLEY PIVOT",
+     {
+      "link": "P015"
+     }
+    ],
+    [
+     "26",
+     "UM-064-180C_R1",
+     1,
+     "SWIVEL PULLEY",
+     {
+      "link": "P017"
+     }
+    ],
+    [
+     "27",
+     "UM-064-116C",
+     1,
+     "ADJUSTABLE EXTENSION"
+    ],
+    [
+     "28",
+     "FTD-148-301TF",
+     1,
+     "TOP PLATE"
+    ],
+    [
+     "29",
+     "FTD-148-302TF",
+     1,
+     "FRONT PLATE"
+    ],
+    [
+     "30",
+     "FTD-148-303TF",
+     1,
+     "BACK PLATE"
+    ],
+    [
+     "31",
+     "B375-1500",
+     8,
+     "BOLT 3/8 -16 NC X 1 1/2"
+    ],
+    [
+     "32",
+     "B500-3000",
+     9,
+     "BOLT 1/2 - 13 NC X 3"
+    ],
+    [
+     "33",
+     "W500",
+     18,
+     "FLAT WASHER 1/2\""
+    ],
+    [
+     "34",
+     "B500-2750",
+     9,
+     "BOLT 1/2-UNC x 2 3/4''"
+    ]
+   ]
+  },
+  "P014": {
+   "title": "Foot clamp base",
+   "titleFr": "Base du serre-tiges de pied",
+   "pn": "UM-064-800B",
+   "sheets": [
+    "P014"
+   ],
+   "parts": [
+    [
+     "1",
+     "UM-020-656B",
+     2,
+     "EYE BOLT 5/8\" - NC"
+    ],
+    [
+     "2",
+     "HP1000",
+     1,
+     "HAIR PIN 1''"
+    ],
+    [
+     "3",
+     "UM-064-807B",
+     1,
+     "FOOT CLAMP TABLE"
+    ],
+    [
+     "4",
+     "UM-020-657B",
+     2,
+     "FLANGE NUT 5/8-UNC"
+    ],
+    [
+     "5",
+     "UM-064-850B",
+     1,
+     "PIN FOOT CLAMP"
+    ],
+    [
+     "6",
+     "UM-020-806B",
+     2,
+     "BUSHING TREMPER (UM020 806B)"
+    ],
+    [
+     "7",
+     "B625-7000GR8",
+     1,
+     "BOLT 5/8-UNC x 7\" GR8"
+    ],
+    [
+     "8",
+     "NC625",
+     1,
+     "NUT 5/8\"-UNC"
+    ]
+   ]
+  },
+  "P015": {
+   "title": "Pulley pivot",
+   "titleFr": "Pivot de poulie",
+   "pn": "UM-064-1000DD",
+   "sheets": [
+    "P015"
+   ],
+   "parts": [
+    [
+     "1",
+     "UM-064-1002DD",
+     1,
+     "BASE PLATE"
+    ],
+    [
+     "2",
+     "UM-064-1001DD",
+     1,
+     "MOBILE PLATE"
+    ],
+    [
+     "3",
+     "UM-064-1003DD",
+     1,
+     "ADJUSTING ROD"
+    ],
+    [
+     "4",
+     "CS750-1500",
+     4,
+     "COUNTERSUNK 3/4-UNC x 1 1/2\""
+    ],
+    [
+     "5",
+     "UM-064-1004DD",
+     1,
+     "PIN"
+    ],
+    [
+     "6",
+     "UM-064-1014D",
+     1,
+     "GREASE FITTING 1/4-UNF"
+    ],
+    [
+     "7",
+     "UM-064-1017D",
+     1,
+     "HAIRPIN"
+    ],
+    [
+     "8",
+     "UM-064-1009D",
+     1,
+     "SPRING"
+    ],
+    [
+     "9",
+     "UM-064-1015D",
+     1,
+     "SPRING PIN 3/16 x 1"
+    ]
+   ]
+  },
+  "P016": {
+   "title": "Rod guide",
+   "titleFr": "Guide de tiges",
+   "pn": "UM-064-155C",
+   "sheets": [
+    "P016"
+   ],
+   "parts": [
+    [
+     "1",
+     "UM-064-100C",
+     1,
+     "ROD GUIDE FRAME"
+    ],
+    [
+     "2",
+     "UM-064-102C",
+     1,
+     "HAIR PIN"
+    ],
+    [
+     "3",
+     "UM-064-130C",
+     1,
+     "ROD"
+    ],
+    [
+     "4",
+     "UM-064-140C",
+     1,
+     "GREASE FITTING 1/8 NPT"
+    ],
+    [
+     "5",
+     "UM-066-500GR",
+     1,
+     "ROLLER"
+    ]
+   ]
+  },
+  "P017": {
+   "title": "Swivel pulley",
+   "titleFr": "Poulie pivotante",
+   "pn": "UM-064-180C",
+   "sheets": [
+    "P017"
+   ],
+   "parts": [
+    [
+     "1",
+     "UM-064-124C",
+     2,
+     "FRAME PULLEY"
+    ],
+    [
+     "2",
+     "UM-064-119C",
+     2,
+     "PULLEY"
+    ],
+    [
+     "3",
+     "UM-064-128C",
+     2,
+     "SPECIAL WASHER"
+    ],
+    [
+     "4",
+     "UM-064-118C",
+     4,
+     "BEARING 6209 2RS"
+    ],
+    [
+     "5",
+     "UM-064-127C",
+     2,
+     "PIN"
+    ],
+    [
+     "6",
+     "UM-064-131C",
+     4,
+     "SPACER"
+    ],
+    [
+     "7",
+     "B750-2250",
+     2,
+     "BOLT 3/4-UNC X 2 1/4''"
+    ],
+    [
+     "8",
+     "B500-4000",
+     4,
+     "BOLT 1/2\"-UNC x 4\""
+    ],
+    [
+     "9",
+     "LC500",
+     4,
+     "LOCK WHASHER 1/2\""
+    ],
+    [
+     "10",
+     "NC500",
+     4,
+     "NUT 1/2-UNC"
+    ]
+   ]
+  },
+  "P018": {
+   "title": "Head table",
+   "titleFr": "Table de la tête",
+   "pn": "UM-064-200DS",
+   "sheets": [
+    "P018"
+   ],
+   "parts": [
+    [
+     "1",
+     "2501L-4-2",
+     4,
+     "90° JIC#4 (1/4) x 1/8 NPT"
+    ],
+    [
+     "2",
+     "B625-2250",
+     4,
+     "BOLT 5/8 - 11 NC X 2 1/4"
+    ],
+    [
+     "3",
+     "B625-2500",
+     16,
+     "BOLT 5/8-UNC x 2 1/2\""
+    ],
+    [
+     "4",
+     "B625-2750",
+     2,
+     "BOLT 5/8-UNC x 2 3/4\""
+    ],
+    [
+     "5",
+     "B750-6000",
+     8,
+     "BOLT 3/4-UNC x 6\""
+    ],
+    [
+     "6",
+     "HP1000",
+     1,
+     "HAIR PIN 1''"
+    ],
+    [
+     "7",
+     "LC625",
+     20,
+     "LOCK WASHER 5/8\""
+    ],
+    [
+     "8",
+     "LN625NC",
+     2,
+     "LOCK NUT 5/8\"-NC"
+    ],
+    [
+     "9",
+     "LN750NC",
+     8,
+     "LOCK NUT 3/4-UNC"
+    ],
+    [
+     "10",
+     "NC750",
+     6,
+     "NUT 3/4 - 10 NC"
+    ],
+    [
+     "11",
+     "SS750-2500",
+     6,
+     "SET SCREW 3/4-UNC x 2 1/2\""
+    ],
+    [
+     "12",
+     "UM-020-613BA",
+     4,
+     "END PLATE RETAINER GUIDE"
+    ],
+    [
+     "13",
+     "UM-020-616BA",
+     2,
+     "HARDENED BUSHING"
+    ],
+    [
+     "14",
+     "UM-020-656B",
+     2,
+     "EYE BOLT 5/8\" - NC"
+    ],
+    [
+     "15",
+     "UM-020-657B",
+     2,
+     "FLANGE NUT 5/8-UNC"
+    ],
+    [
+     "16",
+     "UM-064-204DS",
+     2,
+     "BLOCK"
+    ],
+    [
+     "17",
+     "UM-064-205DS",
+     2,
+     "TABLE BOTTOM CLAMP"
+    ],
+    [
+     "18",
+     "UM-064-210DS",
+     2,
+     "GREASE HOSE"
+    ],
+    [
+     "19",
+     "UM-064-219D",
+     2,
+     "GUIDE TABLE"
+    ],
+    [
+     "20",
+     "UM-064-224D",
+     2,
+     "BOTTOM PLATE RETAINER GUIDE"
+    ],
+    [
+     "21",
+     "UM-064-225D",
+     2,
+     "PUSH PLATE"
+    ],
+    [
+     "22",
+     "UM-064-250D",
+     1,
+     "SWING PIN"
+    ],
+    [
+     "23",
+     "Z125",
+     2,
+     "1/8 NPT ST Zerk ASSEMBLY"
+    ]
+   ]
+  },
+  "P019": {
+   "title": "Feed frame and tilt cylinders",
+   "titleFr": "Vérins de bascule et de relevage",
+   "pn": "FBRA-002-515ZZ",
+   "sheets": [
+    "P019"
+   ],
+   "parts": [
+    [
+     "1",
+     "UM-064-553D",
+     1,
+     "PIN"
+    ],
+    [
+     "2",
+     "HP1000",
+     1,
+     "HAIR PIN 1''"
+    ],
+    [
+     "3",
+     "NFC375",
+     2,
+     "FLANGE NUT 3/8''"
+    ],
+    [
+     "4",
+     "J000228-1",
+     1,
+     "CLAMP"
+    ],
+    [
+     "5",
+     "J000228-2",
+     1,
+     "MUFFLER CLAMP 3 1/2''"
+    ],
+    [
+     "6",
+     "W312",
+     2,
+     "FLAT WASHER 5/16"
+    ],
+    [
+     "7",
+     "2404-8-8",
+     1,
+     "MJIC x MP"
+    ],
+    [
+     "8",
+     "6801F-8-8",
+     3,
+     "MJIC X MORB 90 DEG."
+    ],
+    [
+     "9",
+     "LN312NC",
+     2,
+     "LOCK NUT 5/16\"-NC"
+    ],
+    [
+     "10",
+     "6402-8-8",
+     1,
+     "ORB x FJIC SWIVEL"
+    ],
+    [
+     "11",
+     "FBRA-002-507Z",
+     1,
+     "HYDRAULIC TUBE"
+    ],
+    [
+     "12",
+     "YEJ",
+     1,
+     "YEJ BLOC"
+    ],
+    [
+     "13",
+     "CBCA-LHN",
+     2,
+     "COUNTERBALANCE VALVE"
+    ],
+    [
+     "14",
+     "2501F-08-08",
+     1,
+     "MJIC x MP"
+    ],
+    [
+     "15",
+     "FBRA-002-505Z",
+     1,
+     "CYLINDER BRACKET"
+    ],
+    [
+     "16",
+     "B312-2500",
+     2,
+     "BOLT 5/16-UNC x 2 1/2"
+    ],
+    [
+     "17",
+     "Z125-S",
+     1,
+     "1/8 NPT ST Zerk"
+    ],
+    [
+     "18",
+     "FBRA-002-530ZZ",
+     1,
+     "CYLINDER HBU-3010"
+    ],
+    [
+     "19",
+     "YEJ",
+     1,
+     "YEJ BLOC"
+    ],
+    [
+     "20",
+     "CBCA-LHN",
+     2,
+     "COUNTERBALANCE VALVE"
+    ],
+    [
+     "21",
+     "2501F-08-08",
+     1,
+     "MJIC x MP"
+    ],
+    [
+     "22",
+     "UM-064-300Z",
+     1,
+     "FEED FRAME CYLINDER(HBU 2536)"
+    ],
+    [
+     "23",
+     "UM-064-575D",
+     1,
+     "PIN 1\" x 4 3/4\" Lg."
+    ],
+    [
+     "24",
+     "UM-064-550D",
+     1,
+     "PIN"
+    ],
+    [
+     "25",
+     "HP1000",
+     2,
+     "HAIR PIN 1''"
+    ],
+    [
+     "26",
+     "2404-8-8",
+     1,
+     "MJIC x MP"
+    ],
+    [
+     "27",
+     "6402-8-8",
+     1,
+     "MORB x FJ"
+    ],
+    [
+     "28",
+     "6801F-8-8",
+     3,
+     "MJIC x MORB"
+    ]
+   ]
+  },
+  "P020": {
+   "title": "Legs & removable hitch",
+   "titleFr": "Jambes et attelage amovible",
+   "pn": "UM-064-400D",
+   "sheets": [
+    "P020"
+   ],
+   "parts": [
+    [
+     "1",
+     "01503",
+     3,
+     "PIN 3/4 x 4 1/2\" Lg."
+    ],
+    [
+     "2",
+     "HP750",
+     3,
+     "HAIR PIN 3/4''"
+    ],
+    [
+     "3",
+     "UM-064-415D",
+     1,
+     "CENTRAL SECTION"
+    ],
+    [
+     "4",
+     "UM-064-420D",
+     1,
+     "BUTTOM SECTION"
+    ],
+    [
+     "5",
+     "UM-064-425D",
+     1,
+     "AJUSTABLE SECTION"
+    ],
+    [
+     "6",
+     "UM-064-555D",
+     2,
+     "HAIRPIN"
+    ],
+    [
+     "7",
+     "UM-064-352D",
+     1,
+     "HITCH FRAME"
+    ],
+    [
+     "8",
+     "UM-064-354D",
+     2,
+     "CLAMP"
+    ],
+    [
+     "9",
+     "B750-3000",
+     2,
+     "BOLT 3/4\"-UNC x 3\""
+    ]
+   ]
+  },
+  "P021": {
+   "title": "Feed cylinder",
+   "titleFr": "Vérin d'avance",
+   "pn": "UM-064-100Z",
+   "sheets": [
+    "P021"
+   ],
+   "parts": [
+    [
+     "1",
+     "UM-064-122Z",
+     1,
+     "CENTER TUBE"
+    ],
+    [
+     "2",
+     "UM-064-150Z",
+     1,
+     "MAIN CYLINDER TUBE"
+    ],
+    [
+     "3",
+     "UM-064-127Z",
+     2,
+     "JAM NUT"
+    ],
+    [
+     "4",
+     "UM-064-128Z",
+     2,
+     "PRIMARY NUT"
+    ],
+    [
+     "5",
+     "UM-064-317B",
+     2,
+     "GSM GUIDE BUSHING"
+    ],
+    [
+     "6",
+     "12HP5ON-S",
+     4,
+     "6408HHP-12 (SOCKET PLUG #12)"
+    ],
+    [
+     "7",
+     "B500-1500",
+     2,
+     "BOLT 1/2-UNC x 1 1/2"
+    ],
+    [
+     "8",
+     "B375-1000",
+     4,
+     "BOLT 3/8-UNC X 1\""
+    ],
+    [
+     "9",
+     "612-225-100",
+     2,
+     "WEAR RING"
+    ],
+    [
+     "10",
+     "612-350-025",
+     2,
+     "WEAR RING"
+    ],
+    [
+     "11",
+     "612-425-150P",
+     2,
+     "WEAR RING"
+    ],
+    [
+     "12",
+     "612-500-050",
+     2,
+     "WEAR RING"
+    ],
+    [
+     "13",
+     "6801-12-12",
+     4,
+     "90° MJIC 3/4\" x MORB 3/4\""
+    ],
+    [
+     "14",
+     "DPU25-3.00-37",
+     2,
+     "U-SEAL"
+    ],
+    [
+     "15",
+     "DPU25-5.00-37",
+     2,
+     "U-SEAL"
+    ],
+    [
+     "16",
+     "DRU25-2.00-37",
+     2,
+     "U-SEAL"
+    ],
+    [
+     "17",
+     "DRU25-4.00-37",
+     2,
+     "U-SEAL"
+    ],
+    [
+     "18",
+     "PS914-3500-282",
+     1,
+     "PISTON SEAL"
+    ],
+    [
+     "19",
+     "PS914-5000-282",
+     1,
+     "PISTON SEAL"
+    ],
+    [
+     "20",
+     "RBL-GEZ34ES",
+     2,
+     "BALL BUSHING 1 3/8\""
+    ],
+    [
+     "21",
+     "ST-200-X",
+     2,
+     "WIPER SEAL"
+    ],
+    [
+     "22",
+     "ST-400-XL",
+     2,
+     "WIPER SEAL"
+    ],
+    [
+     "23",
+     "UM-064-116Z",
+     2,
+     "GLAND"
+    ],
+    [
+     "24",
+     "UM-064-119Z",
+     2,
+     "ROD CYLINDER"
+    ],
+    [
+     "25",
+     "UM-064-120Z",
+     1,
+     "ROD CENTER PISTON"
+    ],
+    [
+     "26",
+     "UM-064-121Z",
+     2,
+     "CENTER TUBE GLAND"
+    ]
+   ]
+  },
+  "P022": {
+   "title": "Top feed cylinder (bazooka)",
+   "titleFr": "Vérin d'avance supérieur",
+   "pn": "FTD-030-100ZZ",
+   "sheets": [
+    "P022"
+   ],
+   "parts": [
+    [
+     "1",
+     "PREMM-16-1",
+     1,
+     "ROD END 1\""
+    ],
+    [
+     "2",
+     "SK-01",
+     1,
+     "O-RING (#568-214)"
+    ],
+    [
+     "3",
+     "SK-03",
+     1,
+     "O-RING (#568-232)"
+    ],
+    [
+     "4",
+     "SK-04",
+     1,
+     "WEAR RING (#612-200-050)"
+    ],
+    [
+     "5",
+     "SK-05",
+     1,
+     "WEAR RING (#612-250-100)"
+    ],
+    [
+     "6",
+     "SK-06",
+     1,
+     "SEAL (#P250-01.750-375B)"
+    ],
+    [
+     "7",
+     "SK-07",
+     1,
+     "PISTON SEAL(#PS914-2500-312)"
+    ],
+    [
+     "8",
+     "SK-08",
+     1,
+     "WIPER SEAL (#ST175)"
+    ],
+    [
+     "9",
+     "568-230-90D",
+     1,
+     "O-RING (#568-230-90D)"
+    ],
+    [
+     "10",
+     "6400-8-8",
+     2,
+     "MJIC x MORB"
+    ],
+    [
+     "11",
+     "FTD-030-101Z",
+     1,
+     "CYLINDER HEAD"
+    ],
+    [
+     "12",
+     "FTD-030-102Z",
+     1,
+     "CYLINDER BORE"
+    ],
+    [
+     "13",
+     "FTD-030-105Z",
+     1,
+     "CYLINDER ROD"
+    ],
+    [
+     "14",
+     "FTD-030-106Z",
+     1,
+     "PISTON"
+    ],
+    [
+     "15",
+     "JN1",
+     1,
+     "JAM NUT 1-14 UNF"
+    ],
+    [
+     "16",
+     "FTD-030-KP100Z",
+     null,
+     "SEAL KIT FTD-030-KP100Z",
+     {
+      "kit": true
+     }
+    ]
+   ]
+  },
+  "P023": {
+   "title": "Drill guards",
+   "titleFr": "Garde-corps",
+   "pn": "UM-064-1200GG",
+   "sheets": [
+    "P023",
+    "P026"
+   ],
+   "parts": [
+    [
+     "1",
+     "UM-102-1860AA",
+     1,
+     "SAFETY SWITCH"
+    ],
+    [
+     "2",
+     "UM-064-1201GG",
+     1,
+     "GUARD"
+    ],
+    [
+     "3",
+     "UM-064-1202GG",
+     1,
+     "FRONT BRACKET"
+    ],
+    [
+     "4",
+     "UM-064-1203GG",
+     1,
+     "REAR BRACKET"
+    ],
+    [
+     "5",
+     "UM-064-1204GG",
+     1,
+     "MAIN TUBE"
+    ],
+    [
+     "6",
+     "UM-064-1206GG",
+     1,
+     "ADJUSTMENT BOLT"
+    ],
+    [
+     "7",
+     "UM-064-1219G",
+     1,
+     "SPACER"
+    ],
+    [
+     "8",
+     "W750",
+     6,
+     "FLAT WASHER 3/4"
+    ],
+    [
+     "9",
+     "B750-6000",
+     2,
+     "BOLT 3/4-UNC x 6\""
+    ],
+    [
+     "10",
+     "UM-064-1202G",
+     1,
+     "SIDE BRACKET"
+    ],
+    [
+     "11",
+     "UM-064-1223G",
+     1,
+     "SPECIAL WASHER"
+    ],
+    [
+     "12",
+     "UM-038-101A",
+     1,
+     "SPRING"
+    ],
+    [
+     "13",
+     "UM-064-960G",
+     1,
+     "HOLDING PULLCORD PLATE"
+    ],
+    [
+     "14",
+     "UM-064-1300SS",
+     1,
+     "ASSEMBLY FOR EMERGENCY STOP CONTROL BOX AND SWITCH, PULL CORD"
+    ],
+    [
+     "15",
+     "LN750NC",
+     2,
+     "LOCK NUT 3/4-UNC"
+    ],
+    [
+     "16",
+     "B750-3000",
+     2,
+     "BOLT 3/4\"-UNC x 3\""
+    ],
+    [
+     "17",
+     "UM-064-1350S",
+     1,
+     "CHAIN 3-16"
+    ]
+   ]
+  },
+  "P024": {
+   "title": "Control box for safety switch",
+   "titleFr": "Boîte de commande de l'interrupteur",
+   "pn": "UM-064-1310S",
+   "sheets": [
+    "P024"
+   ],
+   "parts": [
+    [
+     "1",
+     "2700-12-12",
+     3,
+     "MJIC 12 x MJIC 12"
+    ],
+    [
+     "2",
+     "2700-08-08",
+     1,
+     "MJIC 8 x MJIC 8"
+    ],
+    [
+     "3",
+     "0306-12",
+     3,
+     "BULKHEAD JAM NUT 12"
+    ],
+    [
+     "4",
+     "0306-08",
+     1,
+     "BULKHEAD JAM NUT 08"
+    ]
+   ]
+  },
+  "P025": {
+   "title": "Safety switch and Telemecanique",
+   "titleFr": "Interrupteur de sécurité et câble",
+   "pn": "UM-064-1300SS",
+   "sheets": [
+    "P025"
+   ],
+   "parts": [
+    [
+     "1",
+     "XY2-CH",
+     1,
+     "TELEMACANIQUE XY2-CH EMERGENCY STOP SWITCH"
+    ],
+    [
+     "2",
+     "UM-064-925G",
+     1,
+     "PULL CORD CABLE"
+    ],
+    [
+     "3",
+     "TSRC10",
+     1,
+     "STRAIN RELIEF CONNECTOR (8)"
+    ],
+    [
+     "4",
+     "2404-8-8",
+     1,
+     "MJIC 8 x MP 8"
+    ],
+    [
+     "5",
+     "5406-12-8",
+     1,
+     "MP 12 x FP 8"
+    ],
+    [
+     "6",
+     "UM-064-960G",
+     1,
+     "PLATE TO ATTACH PULL SORD"
+    ],
+    [
+     "7",
+     "UM-064-907GG",
+     1,
+     "BRACKET FOR SAFETY SWITCH"
+    ],
+    [
+     "8",
+     "2404-12-12",
+     1,
+     "MJIC 12 x MP 12"
+    ],
+    [
+     "9",
+     "UM-102-1862A",
+     1,
+     "SAFETY SWITCH HANDLE"
+    ],
+    [
+     "10",
+     "XCS-ZR5902",
+     2,
+     "NUT SAFETY SWITCH NUT"
+    ],
+    [
+     "11",
+     "XCS-ZR5902",
+     1,
+     "SAFETY SWITCH (EMITTER)"
+    ],
+    [
+     "12",
+     "UM-102-1861A",
+     1,
+     "SAFETY SWITCH SOCKET"
+    ],
+    [
+     "13",
+     "XCS-ZR1",
+     1,
+     "SAFETY SWITCH (RECEPTOR)"
+    ],
+    [
+     "14",
+     "NC375",
+     1,
+     "NUT 3/8-UNC"
+    ],
+    [
+     "15",
+     "B375-1500",
+     1,
+     "BOLT 3/8 -16 NC X 1 1/2"
+    ],
+    [
+     "16",
+     "8487A15",
+     1,
+     "SPRING PLUNGER 1/4\""
+    ],
+    [
+     "17",
+     "3-16",
+     9,
+     "link CHAIN 3/16 LINK"
+    ]
+   ]
+  },
+  "P027": {
+   "title": "Drill rotative platform",
+   "titleFr": "Plateforme rotative (option)",
+   "pn": "UM-064-800AA",
+   "sheets": [
+    "P027"
+   ],
+   "parts": [
+    [
+     "1",
+     "B750-2000",
+     4,
+     "BOLT 3/4 - 10 NC X 2"
+    ],
+    [
+     "2",
+     "B750-3000",
+     16,
+     "BOLT 3/4\"-UNC x 3\""
+    ],
+    [
+     "3",
+     "B750-3500",
+     16,
+     "BOLT 3/4 - 10 NC X 3 1/2"
+    ],
+    [
+     "4",
+     "LC750",
+     16,
+     "LOCK WASHER 3/4''"
+    ],
+    [
+     "5",
+     "LN750NC",
+     16,
+     "LOCK NUT 3/4-UNC"
+    ],
+    [
+     "6",
+     "SH750-2000",
+     12,
+     "SQUARE HEAD BOLT 3/4 - NC x 2\""
+    ],
+    [
+     "7",
+     "UM-064-804A",
+     4,
+     "DRILL FRAME CLAMP"
+    ],
+    [
+     "8",
+     "UM-064-810A",
+     4,
+     "CENTER CLAMP"
+    ],
+    [
+     "9",
+     "UM-064-810AA",
+     1,
+     "UPPER PLATE"
+    ],
+    [
+     "10",
+     "UM-064-812A",
+     8,
+     "OUTSIDE CLAMP"
+    ],
+    [
+     "11",
+     "UM-064-815AA",
+     1,
+     "BASE"
+    ],
+    [
+     "12",
+     "W750",
+     12,
+     "FLAT WASHER 3/4"
+    ],
+    [
+     "13",
+     "Z125",
+     8,
+     "1/8 NPT ST Zerk"
+    ],
+    [
+     "14",
+     "UM-064-805AA",
+     2,
+     "PIVOT"
+    ]
+   ]
+  },
+  "P028": {
+   "title": "Top feed cylinder rod end adjustment",
+   "titleFr": "Réglage de l'œil du vérin supérieur",
+   "pn": "FTD-148-800K",
+   "sheets": [
+    "P028"
+   ],
+   "parts": [
+    [
+     "1",
+     "FTD-148-595D",
+     1,
+     "BRACKET PIN"
+    ],
+    [
+     "2",
+     "FTD-148-800K",
+     1,
+     "TOP FEED CYLINDER BRAKET"
+    ],
+    [
+     "3",
+     "HP1000",
+     1,
+     "*Varies*"
+    ],
+    [
+     "4",
+     "JN1",
+     1,
+     "JAM NUT 1-14 UNF"
+    ],
+    [
+     "5",
+     "PREMM-16-1",
+     1,
+     "ROD END 1-14 UNF"
+    ]
+   ]
+  },
+  "P029": {
+   "title": "Water swivel assembly",
+   "titleFr": "Émerillon d'eau",
+   "pn": "UM-106-100AA",
+   "sheets": [
+    "P029"
+   ],
+   "parts": [
+    [
+     "1",
+     "3206",
+     1,
+     "A-2RS1_MT33 SKF-ANGULAR CONTACT BALL BEARING, DOUBLE ROW"
+    ],
+    [
+     "2",
+     "UM-106-100A",
+     1,
+     "SWIVEL CAP"
+    ],
+    [
+     "3",
+     "UM-106-101A",
+     1,
+     "PACKING CAGE"
+    ],
+    [
+     "4",
+     "UM-106-103A",
+     1,
+     "CARBIDE"
+    ],
+    [
+     "5",
+     "UM-106-104A",
+     1,
+     "SPINDLE EXTENSION"
+    ],
+    [
+     "6",
+     "UM-106-105A",
+     1,
+     "SWIVEL BODY"
+    ],
+    [
+     "7",
+     "UM-106-100A-UG",
+     1,
+     "SWIVEL CAP FOR UNDERGROUND DRILLING"
+    ],
+    [
+     "8",
+     "UM-106-16RK",
+     1,
+     "REPAIR KIT (O-RINGS, SPINDLE, PACKING)"
+    ]
+   ]
+  },
+  "P030": {
+   "title": "Wheel & hub",
+   "titleFr": "Roue et moyeu (option)",
+   "pn": "UM-064-1601RM",
+   "sheets": [
+    "P030"
+   ],
+   "parts": [
+    [
+     "1",
+     "RT-1750",
+     1,
+     "SPINDLE KIT"
+    ],
+    [
+     "2",
+     "27-290-IIC",
+     1,
+     "HUB AND BEARING KIT"
+    ],
+    [
+     "3",
+     "235-85R162",
+     1,
+     "WHELL"
+    ],
+    [
+     "4",
+     "FBRA-002-1605RM",
+     1,
+     "WHEEL HUB"
+    ],
+    [
+     "5",
+     "FBRA-002-240P",
+     1,
+     "AXEL PIN"
+    ],
+    [
+     "6",
+     "UM-064-1603RM",
+     1,
+     "RIM"
+    ]
+   ]
+  },
+  "P032": {
+   "title": "Rod clamp 12 HH",
+   "titleFr": "Serre-tiges de pied Boyles 12HH",
+   "pn": "UM-079-100AA",
+   "sheets": [
+    "P032",
+    "P031"
+   ],
+   "parts": [
+    [
+     "1",
+     "UM-021-04-03-H",
+     1,
+     "JAWS SET CLAMP HH"
+    ],
+    [
+     "2",
+     "UM-021-04-04-P",
+     1,
+     "JAWS SET CLAMP HH"
+    ],
+    [
+     "3",
+     "UM-021-06HH-02C-B",
+     1,
+     "BUSHING GUIDE ROD"
+    ],
+    [
+     "4",
+     "UM-021-06HH-03C-N",
+     1,
+     "BUSHING GUIDE ROD"
+    ],
+    [
+     "5",
+     "UM-021-06HH-04C-H",
+     1,
+     "BUSHING GUIDE ROD"
+    ],
+    [
+     "6",
+     "UM-021-06HH-06C-BW",
+     1,
+     "BUSHING GUIDE ROD"
+    ],
+    [
+     "7",
+     "UM-021-06HH-22C-B",
+     1,
+     "BUSHING GUIDE SHELL"
+    ],
+    [
+     "8",
+     "UM-021-06HH-33C-N",
+     1,
+     "BUSHING GUIDE SHELL"
+    ],
+    [
+     "9",
+     "UM-021-06HH-44C-H",
+     1,
+     "BUSHING GUIDE SHELL"
+    ],
+    [
+     "10",
+     "UM-021-15-GB01",
+     1,
+     "COVER PLATE"
+    ],
+    [
+     "11",
+     "UM-021-15-GB02",
+     1,
+     "BEARING GUIDE BUSHING"
+    ],
+    [
+     "12",
+     "UM-021-15-GB03N",
+     1,
+     "BUSHING GUIDE"
+    ],
+    [
+     "13",
+     "UM-021-15-GB03N+",
+     1,
+     "BUSHING GUIDE"
+    ],
+    [
+     "14",
+     "UM-021-15-GB04B",
+     1,
+     "BUSHING GUIDE"
+    ],
+    [
+     "15",
+     "UM-021-15-GB04B+",
+     1,
+     "BUSHING GUIDE"
+    ],
+    [
+     "16",
+     "WH-525",
+     8,
+     "RING JAWS CLAMP HH"
+    ],
+    [
+     "17",
+     "ZNPT250",
+     1,
+     "1/4 NPT ST Zerk"
+    ],
+    [
+     "18",
+     "2920241",
+     null,
+     "SEAL KIT 2920241 FOR CLAMP HH",
+     {
+      "kit": true
+     }
+    ],
+    [
+     "19",
+     "2920331",
+     1,
+     "PISTON"
+    ],
+    [
+     "20",
+     "2920332",
+     1,
+     "CYLINDRER"
+    ],
+    [
+     "21",
+     "2920333",
+     1,
+     "CYLINDER CAP"
+    ],
+    [
+     "22",
+     "2920390",
+     1,
+     "CLAMP BOWL SLOTTED-12.5°"
+    ],
+    [
+     "23",
+     "2920452",
+     4,
+     "BUSHING RETAINER"
+    ],
+    [
+     "24",
+     "2920455",
+     1,
+     "HOUSING CLAMP 12HH"
+    ],
+    [
+     "25",
+     "321620",
+     1,
+     "BREETER PLUG"
+    ],
+    [
+     "26",
+     "3506878",
+     3,
+     "TOP SPACER"
+    ],
+    [
+     "27",
+     "3506880",
+     9,
+     "BOTTOM SPACER"
+    ],
+    [
+     "28",
+     "3506906",
+     1,
+     "TOP CAP HOLDER"
+    ],
+    [
+     "29",
+     "3506907",
+     1,
+     "TOP CAP ADAPTER"
+    ],
+    [
+     "30",
+     "5020126",
+     2,
+     "TREMPERED BUSHING"
+    ],
+    [
+     "31",
+     "5030250",
+     1,
+     "O RING"
+    ],
+    [
+     "32",
+     "5030269",
+     1,
+     "O RING"
+    ],
+    [
+     "33",
+     "5030274",
+     1,
+     "O-RING"
+    ],
+    [
+     "34",
+     "5035015",
+     1,
+     "U CUP SEAL"
+    ],
+    [
+     "35",
+     "5035016",
+     1,
+     "U CUP SEAL"
+    ],
+    [
+     "36",
+     "5035017",
+     1,
+     "WEAR RING"
+    ],
+    [
+     "37",
+     "5035018",
+     1,
+     "WEAR RING"
+    ],
+    [
+     "38",
+     "5040192",
+     9,
+     "OIL SEAL"
+    ],
+    [
+     "39",
+     "5200517",
+     18,
+     "SPRING"
+    ],
+    [
+     "40",
+     "B312-1000",
+     4,
+     "BOLT 5/16-UNC x 1\""
+    ],
+    [
+     "41",
+     "B500-2000",
+     9,
+     "BOLT 1/2 -UNC X 2"
+    ],
+    [
+     "42",
+     "B500-2250",
+     9,
+     "BOLT 1/2-UNC x 2 1/4"
+    ],
+    [
+     "43",
+     "B500-6500",
+     6,
+     "GRADE 8 BOLT 1/2-UNC x 6 1/2"
+    ],
+    [
+     "44",
+     "B500-8000",
+     3,
+     "GRADE 8 BOLT 1/2-UNC x 8"
+    ],
+    [
+     "45",
+     "B750-1500",
+     3,
+     "BOLT 3/4-UNC x 1 1/2"
+    ],
+    [
+     "46",
+     "R3100-354",
+     1,
+     "EXTERNAL RETAINING RING"
+    ],
+    [
+     "47",
+     "SHCS500-4000",
+     9,
+     "BOLT 1/2 UNC x 4\""
+    ],
+    [
+     "48",
+     "SP250",
+     1,
+     "SQUARE PLUG 1/4"
+    ],
+    [
+     "49",
+     "UM-021-04-01-N",
+     1,
+     "JAWS SET CLAMP HH"
+    ],
+    [
+     "50",
+     "UM-021-04-02-B",
+     1,
+     "JAWS SET CLAMP HH"
+    ]
+   ]
+  },
+  "P034": {
+   "title": "Mud mixer",
+   "titleFr": "Malaxeur à boue",
+   "pn": "UM-024-100A",
+   "sheets": [
+    "P034",
+    "P033",
+    "P035"
+   ],
+   "parts": [
+    [
+     "1",
+     "100B",
+     1,
+     "STANDARD PROPELER"
+    ],
+    [
+     "2",
+     "100D",
+     1,
+     "BENTONITE PROPELER"
+    ],
+    [
+     "3",
+     "104A",
+     1,
+     "HYDRAULIC MOTOR MGG10BB1E3"
+    ],
+    [
+     "4",
+     "105A",
+     1,
+     "HEXAGONAL BOX"
+    ],
+    [
+     "5",
+     "107A",
+     1,
+     "SUPPORT"
+    ],
+    [
+     "6",
+     "109A",
+     1,
+     "HEART"
+    ],
+    [
+     "7",
+     "117A",
+     1,
+     "SQUARE KEY 1/8\""
+    ],
+    [
+     "8",
+     "B250-1000",
+     4,
+     "BOLT 1/4-UNC x 1\""
+    ],
+    [
+     "9",
+     "B500-1000",
+     4,
+     "BOLT 1/2-UNC x 1\""
+    ],
+    [
+     "10",
+     "B500-750",
+     7,
+     "BOLT 1/2-UNC x 3/4''"
+    ],
+    [
+     "11",
+     "W500",
+     4,
+     "FLAT WASHER 1/2\""
+    ]
+   ]
+  },
+  "P036": {
+   "title": "Water pump FMC 435",
+   "titleFr": "Pompe à eau FMC 435",
+   "pn": "UM-058-800PP",
+   "sheets": [
+    "P036"
+   ],
+   "parts": [
+    [
+     "1",
+     "UM-020-308C",
+     1,
+     "PUMP MOUNTING PLATE"
+    ],
+    [
+     "2",
+     "UM-058-801P",
+     2,
+     "CHANNEL C4 X 5.4"
+    ],
+    [
+     "3",
+     "UMV-03-2",
+     1,
+     "PUMP BEAN 435"
+    ],
+    [
+     "4",
+     "UMV-05",
+     1,
+     "HOUSING ADAPTER"
+    ],
+    [
+     "5",
+     "2307 E-2RS1",
+     2,
+     "SKF 2307 E-2RS1 BEARING"
+    ],
+    [
+     "6",
+     "W11-CM",
+     1,
+     "MODIFIED CAP FOR PUMP BEAN 435"
+    ],
+    [
+     "7",
+     "UMV-08",
+     1,
+     "WHITE MOTOR No 500375A5120AAAA"
+    ],
+    [
+     "8",
+     "CR14832",
+     1,
+     "SEAL"
+    ],
+    [
+     "9",
+     "202S",
+     1,
+     "COUPLING"
+    ],
+    [
+     "10",
+     "B500-1250",
+     3,
+     "BOLT 1/2-UNC x 1 1/4\""
+    ],
+    [
+     "11",
+     "B625-1750",
+     4,
+     "BOLT 5/8-UNC x 1 3/4\""
+    ],
+    [
+     "12",
+     "W625",
+     4,
+     "FLAT WASHER 5/8\""
+    ],
+    [
+     "13",
+     "UMV-03-4",
+     1,
+     "KEY"
+    ],
+    [
+     "14",
+     "A91675",
+     2,
+     "GASKET"
+    ],
+    [
+     "15",
+     "UMV-03-3",
+     1,
+     "KEY 5/16 x 5/16 x 1 3/8\""
+    ],
+    [
+     "16",
+     "SHCS500-1500",
+     4,
+     "SHCS 1/2-UNC X 1 1/2\""
+    ],
+    [
+     "17",
+     "SHCS500-1250",
+     3,
+     "SHCS 1/2-UNC X 1 1/4\""
+    ]
+   ]
+  },
+  "P042": {
+   "title": "Hoist wire line 10 000' — step 4",
+   "titleFr": "Treuil de câble 10 000 pi",
+   "pn": "UM-032-100A",
+   "sheets": [
+    "P042",
+    "P037",
+    "P038"
+   ],
+   "parts": [
+    [
+     "1",
+     "6400-12-12",
+     4,
+     "6400-12-12"
+    ],
+    [
+     "2",
+     "B375-1000",
+     2,
+     "BOLT 3/8-UNC X 1\""
+    ],
+    [
+     "3",
+     "B437-1500",
+     8,
+     "BOLT 7/16-UNC x 1 1/2''"
+    ],
+    [
+     "4",
+     "B500-1750",
+     4,
+     "BOLT 1/2 - 13 NC X 1 3/4"
+    ],
+    [
+     "5",
+     "B750-2500",
+     4,
+     "BOLT 3/4-UNC x 2 1/2\""
+    ],
+    [
+     "6",
+     "F436-500",
+     4,
+     "FLAT TENSION MECANIC WASHER 1/2\""
+    ],
+    [
+     "7",
+     "HCPE211-32",
+     2,
+     "PILLOWS BLOCK HCPE211-32"
+    ],
+    [
+     "8",
+     "UM-032-101A",
+     1,
+     "BASE FRAME"
+    ],
+    [
+     "9",
+     "UM-032-102A",
+     2,
+     "DRUM ASSEMBLY W/O SPROCKET"
+    ],
+    [
+     "10",
+     "UM-032-104B",
+     2,
+     "CHAIN GUARD 80 ASSEMBLY"
+    ],
+    [
+     "11",
+     "UM-032-111F",
+     2,
+     "SPROCKET LEADING 80B14"
+    ],
+    [
+     "12",
+     "UM-032-112F",
+     2,
+     "SPROCKET LEAD 80B28"
+    ],
+    [
+     "13",
+     "UM-032-131FB",
+     2,
+     "TOP BACK SHIELD FRAME SWIVEL"
+    ],
+    [
+     "14",
+     "UM-032-225F",
+     2,
+     "KEY 1/2 X 1/2 X 2 Lg"
+    ],
+    [
+     "15",
+     "UM-032-241F",
+     2,
+     "KEY 5/16 in X 5/16 in X 1 3/8 Lg"
+    ],
+    [
+     "16",
+     "UM-032-C2",
+     2,
+     "CHAIN 80 (50 Lg)"
+    ],
+    [
+     "17",
+     "UM-041-208F",
+     2,
+     "HYDRAULIC MOTOR BRACKET"
+    ],
+    [
+     "18",
+     "UMV-10MW-12",
+     2,
+     "MOTEUR WHITE RE12"
+    ],
+    [
+     "19",
+     "W375",
+     25,
+     "FLAT WASHER 3/8"
+    ],
+    [
+     "20",
+     "W750",
+     4,
+     "FLAT WASHER 3/4"
+    ],
+    [
+     "21",
+     "SS375-500",
+     2,
+     "SET SCREW 3/8-16 UNC X 1/2\""
+    ],
+    [
+     "22",
+     "SS313-375",
+     2,
+     "SET SCREW 5/16 X 3/8"
+    ],
+    [
+     "23",
+     "STEP 1",
+     null,
+     "HANDWHEELS AND CHAIN GUARDS (page 8.1)",
+     {
+      "link": "P039",
+      "pseudo": true,
+      "no3d": true
+     }
+    ],
+    [
+     "24",
+     "STEP 2",
+     null,
+     "SPROCKETS AND CHAIN 35 (page 8.2)",
+     {
+      "link": "P040",
+      "pseudo": true,
+      "no3d": true
+     }
+    ],
+    [
+     "25",
+     "STEP 3",
+     null,
+     "ARMS AND WIRE GUIDE (page 8.3)",
+     {
+      "link": "P041",
+      "pseudo": true,
+      "no3d": true
+     }
+    ]
+   ]
+  },
+  "P039": {
+   "title": "Hoist — step 1",
+   "titleFr": "Treuil — volants et carters",
+   "pn": "UM-032-100A",
+   "sheets": [
+    "P039"
+   ],
+   "parts": [
+    [
+     "1",
+     "B375-1250",
+     10,
+     "BOLT 3/8 - 16 NC X 1 1/4"
+    ],
+    [
+     "2",
+     "B375-3500",
+     6,
+     "BOLT 3/8-UNC x 3 1/2\""
+    ],
+    [
+     "3",
+     "SP250-1250",
+     4,
+     "SP250-1250"
+    ],
+    [
+     "4",
+     "SP375-3000",
+     2,
+     "SP375-3000"
+    ],
+    [
+     "5",
+     "UM-032-102F",
+     2,
+     "SPRING HANDWHEEL"
+    ],
+    [
+     "6",
+     "UM-032-103A",
+     2,
+     "CHAINE GUARD (STRINGER CABLE)"
+    ],
+    [
+     "7",
+     "UM-032-163F",
+     2,
+     "SPECIAL WASHER"
+    ],
+    [
+     "8",
+     "UM-032-169F",
+     2,
+     "HANDWHEEL"
+    ],
+    [
+     "9",
+     "W375",
+     25,
+     "FLAT WASHER 3/8"
+    ]
+   ]
+  },
+  "P040": {
+   "title": "Hoist — step 2",
+   "titleFr": "Treuil — pignons et chaîne 35",
+   "pn": "UM-032-100A",
+   "sheets": [
+    "P040"
+   ],
+   "parts": [
+    [
+     "1",
+     "SPN-R3000-X237",
+     1,
+     "SPN-R3000-X237"
+    ],
+    [
+     "2",
+     "UM-032-109F",
+     2,
+     "SPROCKET LEADING 35B11"
+    ],
+    [
+     "3",
+     "UM-032-110F",
+     2,
+     "SPROCKET LEAD 35B70"
+    ],
+    [
+     "4",
+     "UM-032-162F",
+     2,
+     "SPROCKET ADAPTOR 35"
+    ],
+    [
+     "5",
+     "UM-032-165F",
+     2,
+     "BUSHING BRASS"
+    ],
+    [
+     "6",
+     "UM-032-224F",
+     2,
+     "KEY 3/16 x 3/4 X 3/4 Lg"
+    ],
+    [
+     "7",
+     "UM-032-236F",
+     1,
+     "DRUM GUIDE"
+    ],
+    [
+     "8",
+     "UM-032-C1",
+     2,
+     "CHAINE 35 (46 1/2 Lg)"
+    ]
+   ]
+  },
+  "P041": {
+   "title": "Hoist — step 3",
+   "titleFr": "Treuil — bras et guide-câble",
+   "pn": "UM-032-100A",
+   "sheets": [
+    "P041"
+   ],
+   "parts": [
+    [
+     "1",
+     "UM-032-105A",
+     1,
+     "TOP BACK SHIELD"
+    ],
+    [
+     "2",
+     "UM-032-108A",
+     1,
+     "TOP FRONT SHIELD"
+    ],
+    [
+     "3",
+     "UM-032-115F",
+     2,
+     "LOWER ARM"
+    ],
+    [
+     "4",
+     "UM-032-116F",
+     2,
+     "UPPER ARM"
+    ],
+    [
+     "5",
+     "UM-032-226F",
+     2,
+     "10 000' LEAD SCREW"
+    ],
+    [
+     "6",
+     "UM-041-014F",
+     1,
+     "WIRE GUIDE ASSEMBLY"
+    ],
+    [
+     "7",
+     "W375",
+     8,
+     "FLAT WASHER 3/8"
+    ],
+    [
+     "8",
+     "W500",
+     8,
+     "FLAT WASHER 1/2\""
+    ],
+    [
+     "9",
+     "B375-1250",
+     10,
+     "BOLT 3/8 - 16 NC X 1 1/4"
+    ],
+    [
+     "10",
+     "B500-1500",
+     2,
+     "BOLT 1/2-UNC x 1 1/2"
+    ],
+    [
+     "11",
+     "LN375NF",
+     4,
+     "LOCK NUT 3/8\"-NF"
+    ],
+    [
+     "12",
+     "NC500",
+     2,
+     "NUT 1/2-UNC"
+    ],
+    [
+     "13",
+     "PFL206",
+     4,
+     "HOUSING BEARING"
+    ],
+    [
+     "14",
+     "SB206-20",
+     2,
+     "SB206-20"
+    ],
+    [
+     "15",
+     "SPN-R3100-300",
+     2,
+     "SPN-R3100-300"
+    ],
+    [
+     "16",
+     "UM-041-164F",
+     2,
+     "BRASS BUSHING 1 3/4\""
+    ],
+    [
+     "17",
+     "UM-041-106F",
+     1,
+     "BLOCK BUSHING LEAD SCREW"
+    ],
+    [
+     "18",
+     "UM-041-155F",
+     1,
+     "LEAD SCREW PIN"
+    ],
+    [
+     "19",
+     "B375-1500",
+     4,
+     "BOLT 3/8 -16 NC X 1 1/2"
+    ],
+    [
+     "20",
+     "UM-041-020F",
+     1,
+     "ROLLER FRAME ASSEMBLY"
+    ],
+    [
+     "21",
+     "",
+     1,
+     "Grease Zerk"
+    ],
+    [
+     "22",
+     "UM-041-176F",
+     4,
+     "ROLLER CABLE GUIDE"
+    ],
+    [
+     "23",
+     "UM-041-174F",
+     4,
+     "ROLLER PIN ASSEMBLY"
+    ],
+    [
+     "24",
+     "CTP-125-2250",
+     2,
+     "CUTTER PIN 1/8\" X 2 1/4\""
+    ]
+   ]
+  },
+  "P048": {
+   "title": "Underground drill head Boyles assembly",
+   "titleFr": "Tête de forage Boyles",
+   "pn": "UM-012-100UG",
+   "sheets": [
+    "P048",
+    "P045",
+    "P047",
+    "P050"
+   ],
+   "parts": [
+    [
+     "1",
+     "UM-012-167",
+     1,
+     "O-RING COVER BLIDDER"
+    ],
+    [
+     "2",
+     "UM-012-143",
+     1,
+     "4 SPEED TRANSMISSION FUNK"
+    ],
+    [
+     "3",
+     "UM-012-170",
+     1,
+     "COPPLING TRANMISSION - HYDRAULIC MOTOR"
+    ],
+    [
+     "4",
+     "UM-012-113A",
+     1,
+     "DRILLHEAD COVER"
+    ],
+    [
+     "5",
+     "UM-012-131",
+     2,
+     "PLUG 1\" NPT"
+    ],
+    [
+     "6",
+     "UM-012-130",
+     3,
+     "TRIPPLE CHAIN"
+    ],
+    [
+     "7",
+     "UM-012-177",
+     1,
+     "HEAD FILTER"
+    ],
+    [
+     "8",
+     "UM-012-178",
+     1,
+     "FILTER"
+    ],
+    [
+     "9",
+     "UM-012-105A",
+     1,
+     "SWIVEL PIN"
+    ],
+    [
+     "10",
+     "HP1000",
+     1,
+     "COTTERS, HAIRPIN 1 in"
+    ],
+    [
+     "11",
+     "UM-012-171",
+     4,
+     "HARDENESS BUSHING"
+    ],
+    [
+     "12",
+     "UM-102-132",
+     2,
+     "PLUG 3/8'' NPT"
+    ],
+    [
+     "13",
+     "UM-012-114",
+     1,
+     "SPINDLE COVER 114"
+    ],
+    [
+     "14",
+     "UM-012-189",
+     3,
+     "CHUCK KEY"
+    ],
+    [
+     "15",
+     "UM-012-192",
+     1,
+     "RETAINING RING INTERNAL 1 1/2''"
+    ],
+    [
+     "16",
+     "UM-1214-121P",
+     1,
+     "BLIDDER COVER"
+    ],
+    [
+     "17",
+     "AA6VM",
+     1,
+     "MOTOR (AA6VM160HD2-63W-VSD520B)"
+    ],
+    [
+     "18",
+     "B437-1500",
+     13,
+     "BOLT 7/16-UNC"
+    ],
+    [
+     "19",
+     "W437",
+     12,
+     "LOCK WASHER 7/16"
+    ],
+    [
+     "20",
+     "UM-012-208",
+     2,
+     "O-RING"
+    ],
+    [
+     "21",
+     "SHCS312-1500",
+     6,
+     "SHCS 5/16-UNC X 2 1/2''"
+    ],
+    [
+     "22",
+     "SS75-1250",
+     9,
+     "SET SCREW3/4-10 UNC X 1 1/4"
+    ],
+    [
+     "23",
+     "B500-1750",
+     10,
+     "BOLT 1/2 - 13 NC X 1 3/4"
+    ],
+    [
+     "24",
+     "W500",
+     20,
+     "FLAT WASHER 1/2\""
+    ],
+    [
+     "25",
+     "B375-1000",
+     16,
+     "BOLT 3/8-UNC X 1\""
+    ],
+    [
+     "26",
+     "W375",
+     16,
+     "FLAT WASHER 3/8"
+    ],
+    [
+     "27",
+     "W312",
+     6,
+     "FLAT WASHER 5/16"
+    ],
+    [
+     "28",
+     "B312-1000",
+     6,
+     "BOLT 5/16-UNC x 1\""
+    ],
+    [
+     "29",
+     "SHC500-4000",
+     10,
+     "SHCS 1/2-UNC x 4 ''"
+    ],
+    [
+     "30",
+     "W250",
+     6,
+     "FLAT WASHER 1/4\""
+    ],
+    [
+     "31",
+     "B250-750",
+     6,
+     "BOLT 1/4 - NC X 3/4"
+    ],
+    [
+     "32",
+     "W750",
+     8,
+     "FLAT WASHER 3/4"
+    ],
+    [
+     "33",
+     "B750-2000",
+     4,
+     "BOLT 3/4 - 10 NC X 2"
+    ],
+    [
+     "34",
+     "UM-063-289T",
+     4,
+     "SPLIT FLANGE"
+    ],
+    [
+     "35",
+     "UM-063-290T",
+     2,
+     "1704-16-20 FLANGE 90°"
+    ],
+    [
+     "36",
+     "UM-012-104A",
+     1,
+     "DRILLHEAD BOX"
+    ],
+    [
+     "37",
+     "UM-012-101",
+     1,
+     "SPINDLE BOYLES"
+    ],
+    [
+     "38",
+     "UM-012-122",
+     2,
+     "SPINDLE KEY"
+    ],
+    [
+     "39",
+     "UM-012-102",
+     1,
+     "DRIVEN SPROCKET"
+    ],
+    [
+     "40",
+     "UM-012-128",
+     1,
+     "UPPER BEARING"
+    ],
+    [
+     "41",
+     "UM-012-129",
+     1,
+     "LOWER BEARING"
+    ],
+    [
+     "42",
+     "UM-012-107",
+     1,
+     "HEAT TRAITMENT SLEEVE"
+    ],
+    [
+     "43",
+     "UM-012-124",
+     2,
+     "UPPER SEAL"
+    ],
+    [
+     "44",
+     "UM-012-121",
+     1,
+     "SIDE TRANSMISSION SPINDLE COVER"
+    ],
+    [
+     "45",
+     "UM-012-120",
+     1,
+     "ADAPTOR CHUCK COVER"
+    ],
+    [
+     "46",
+     "UM-012-106",
+     1,
+     "AJUST CHUCK SLEEVE"
+    ],
+    [
+     "47",
+     "UM-012-142",
+     1,
+     "CHUCK BOYLES",
+     {
+      "link": "P052"
+     }
+    ],
+    [
+     "48",
+     "UM-012-119",
+     1,
+     "SEAL SLEEVE"
+    ],
+    [
+     "49",
+     "UM-012-126",
+     2,
+     "LOWER SEAL"
+    ],
+    [
+     "50",
+     "UM-012-117",
+     1,
+     "SIT SCREW"
+    ],
+    [
+     "51",
+     "UM-012-118",
+     1,
+     "TIGHT NUT SPINDLE"
+    ],
+    [
+     "52",
+     "UM-012-115",
+     1,
+     "LOCK NUT SPINDLE"
+    ],
+    [
+     "53",
+     "UM-012-108",
+     1,
+     "Sleeve-BQ"
+    ],
+    [
+     "54",
+     "UM-012-110",
+     1,
+     "Sleeve-NQ"
+    ],
+    [
+     "55",
+     "UM-012-116",
+     1,
+     "WEAR SLEEVE COVER"
+    ],
+    [
+     "56",
+     "UM-012-111",
+     1,
+     "HYDRAULIC PUMP COVER"
+    ],
+    [
+     "57",
+     "UM-012-127",
+     2,
+     "DRIVE SPROCKET BEARING"
+    ],
+    [
+     "58",
+     "UM-012-139",
+     1,
+     "HYDRAULIC MOTOR"
+    ],
+    [
+     "59",
+     "UM-012-103",
+     1,
+     "SPROCKET DRIVE"
+    ],
+    [
+     "60",
+     "UM-012-169",
+     1,
+     "HYDRAULIC PUMP KEY"
+    ],
+    [
+     "61",
+     "UM-012-125",
+     1,
+     "TRANSMISSION SEAL"
+    ],
+    [
+     "62",
+     "UM-012-123",
+     1,
+     "SIT OF SEAL"
+    ],
+    [
+     "63",
+     "UM-012-100UG-HC-04",
+     null,
+     "DRILLING HEAD FITTING DETAILS (page 2.3)",
+     {
+      "link": "P049",
+      "pseudo": true,
+      "no3d": true
+     }
+    ]
+   ]
+  },
+  "P049": {
+   "title": "Drilling head fitting details",
+   "titleFr": "Tête — raccords et boyaux",
+   "pn": "UM-012-100UG-HC-04",
+   "sheets": [
+    "P049"
+   ],
+   "parts": [
+    [
+     "1",
+     "2404-6-4",
+     3,
+     "MJIC x MP"
+    ],
+    [
+     "2",
+     "2404-8-6",
+     1,
+     "MJIC x MP"
+    ],
+    [
+     "3",
+     "2501-06-04",
+     1,
+     "MJIC x MP 90 DEG."
+    ],
+    [
+     "4",
+     "2501-6-6",
+     3,
+     "MJIC x MP 90 DEG."
+    ],
+    [
+     "5",
+     "2501-6-8",
+     4,
+     "MJIC x MP 90 DEG."
+    ],
+    [
+     "6",
+     "2501-8-8",
+     1,
+     "MJIC x MP 90 DEG."
+    ],
+    [
+     "7",
+     "2501LL-8-8",
+     1,
+     "MJIC x MP 90 DEG."
+    ],
+    [
+     "8",
+     "2601-06-06-08",
+     1,
+     "MJIC x MJIC x MP TEE"
+    ],
+    [
+     "9",
+     "5000-6-6",
+     1,
+     "FP x FP COUPLING"
+    ],
+    [
+     "10",
+     "6402-8-8",
+     1,
+     "ORB x FJIC SWIVEL"
+    ],
+    [
+     "11",
+     "6500-06-06",
+     4,
+     "MJIC x FJIC SWIVEL"
+    ],
+    [
+     "12",
+     "6600-06-06-06",
+     2,
+     "MJIC x MJIC x FJIC SWIVEL BRANCH TEE"
+    ],
+    [
+     "13",
+     "6600-8-8-8",
+     1,
+     "MJIC x MJIC x FJIC SWIVEL BRANCH TEE"
+    ],
+    [
+     "14",
+     "6602-06-06-06",
+     1,
+     "MJIC x FJIC x MJIC SWIVEL RUN TEE"
+    ],
+    [
+     "15",
+     "6801-6-8",
+     1,
+     "MJIC x MORB 90 DEG."
+    ],
+    [
+     "16",
+     "A-1199-R-4048",
+     1,
+     "BREATHER"
+    ],
+    [
+     "17",
+     "UM-012-H08C",
+     1,
+     "HOSE 3/8 Ø FOR BREATHER 24\" lg"
+    ],
+    [
+     "18",
+     "UM-012-H10C",
+     1,
+     "HOSE 3/8 Ø-BED HOUSING/TRANSMIS. 3 3/4\" lg"
+    ],
+    [
+     "19",
+     "UM-012-H11C",
+     1,
+     "HOSE 1/2 Ø-TRANSMISSION/CASING 5\""
+    ],
+    [
+     "20",
+     "UM-012-H15C-UG",
+     1,
+     "HOSE 3/8 Ø-CASING/SUCCION 9 3/4\" lg"
+    ],
+    [
+     "21",
+     "UM-012-H16C-UG",
+     1,
+     "HOSE 3/8 Ø-CASING/SUCCION 21\""
+    ],
+    [
+     "22",
+     "UM-012-H17C-UG",
+     1,
+     "HOSE 3/8 Ø FILTER OUT/COOLER DOWN 10\" lg"
+    ],
+    [
+     "23",
+     "UM-012-H18C-UG",
+     1,
+     "HOSE 3/8 Ø-COOLER UP/REGULATOR 12\" lg"
+    ],
+    [
+     "24",
+     "UM-012-H20C-UG",
+     1,
+     "HOSE 3/8 Ø-PRESSION IN/FILTER 6 3/4\" lg"
+    ],
+    [
+     "25",
+     "UM-012-H21C-UG",
+     1,
+     "HOSE 3/8 Ø-REGULATOR/TRANSMISSION IN 5\" lg"
+    ],
+    [
+     "26",
+     "UM-012-H22C-UG",
+     1,
+     "HOSE 3/8 Ø-TRANSMISSION/BED HOUSING 8\" lg"
+    ],
+    [
+     "27",
+     "UM-012-H23C-UG",
+     1,
+     "HOSE 3/8 Ø-TRANSMISSION/COVER 10\" lg"
+    ],
+    [
+     "28",
+     "UM-012-H24C-UG",
+     1,
+     "HOSE 3/8 Ø-REGULATOR/LOWER BEARING 9\" lg"
+    ],
+    [
+     "29",
+     "UM-012-H25C-UG",
+     1,
+     "HOSE 3/8 Ø-REGULATOR/UPPER BEARING 7\" lg"
+    ],
+    [
+     "30",
+     "NDV-10-N",
+     1,
+     "REGULATOR"
+    ],
+    [
+     "31",
+     "UM-10B-TR#6",
+     1,
+     "BKH - 3/8 NPT"
+    ]
+   ]
+  },
+  "P052": {
+   "title": "Chuck Boyle H",
+   "titleFr": "Mandrin Boyles H",
+   "pn": "UM-070-142AA",
+   "sheets": [
+    "P052",
+    "P051"
+   ],
+   "parts": [
+    [
+     "1",
+     "ZNPT250",
+     1,
+     "1/8 NPT ST Zerk"
+    ],
+    [
+     "2",
+     "UM-021-01-01",
+     1,
+     "B JAWS SET BOYLE H"
+    ],
+    [
+     "3",
+     "UM-021-01-02",
+     1,
+     "N JAWS SET BOYLE H"
+    ],
+    [
+     "4",
+     "UM-021-01-03",
+     1,
+     "H JAWS SET BOYLE H"
+    ],
+    [
+     "5",
+     "UM-021-01-04",
+     1,
+     "BW JAWS SET BOYLE H"
+    ],
+    [
+     "6",
+     "UM-021-06HH-06C",
+     1,
+     "BUSHING GUIDE ROD -BW"
+    ],
+    [
+     "7",
+     "UM-021-06HH-04C",
+     1,
+     "BUSHING GUIDE ROD AND AND 44C-H SHELL"
+    ],
+    [
+     "8",
+     "UM-021-06HH-03C",
+     1,
+     "BUSHING GUIDE ROD AND AND 33C-N SHELL"
+    ],
+    [
+     "9",
+     "UM-021-06HH-02C",
+     1,
+     "BUSHING GUIDE ROD AND AND 22C-B SHELL"
+    ],
+    [
+     "10",
+     "3506577",
+     null,
+     "SEAL KIT 3506577 FOR BOYLE H",
+     {
+      "kit": true
+     }
+    ],
+    [
+     "11",
+     "2501-8-6",
+     1,
+     "MJIC 6 X MP 8 90°"
+    ],
+    [
+     "12",
+     "2920390",
+     1,
+     "CHUCK BOWL-12 1/2 L"
+    ],
+    [
+     "13",
+     "3506870",
+     1,
+     "CHUCK HOUSING"
+    ],
+    [
+     "14",
+     "3506878",
+     3,
+     "TOP SPACER"
+    ],
+    [
+     "15",
+     "3506879",
+     1,
+     "KEY LOCKING SPRING"
+    ],
+    [
+     "16",
+     "3506880",
+     9,
+     "BOTTOM SPACER"
+    ],
+    [
+     "17",
+     "3506881",
+     3,
+     "CLE BOYLE 12HH"
+    ],
+    [
+     "18",
+     "3506882",
+     1,
+     "BACK UP RING"
+    ],
+    [
+     "19",
+     "3506906",
+     1,
+     "TOP CAP HOLDER"
+    ],
+    [
+     "20",
+     "3506907",
+     1,
+     "TOP CAP ADAPTOR"
+    ],
+    [
+     "21",
+     "3506908",
+     1,
+     "PISTON"
+    ],
+    [
+     "22",
+     "3506909",
+     1,
+     "CYLINDRE"
+    ],
+    [
+     "23",
+     "3506910",
+     1,
+     "CHUCK ADAPTEUR"
+    ],
+    [
+     "24",
+     "3506928",
+     1,
+     "ACTUATOR SLEEVE/USE RR 50"
+    ],
+    [
+     "25",
+     "5000199",
+     1,
+     "BEARING"
+    ],
+    [
+     "26",
+     "5035015",
+     1,
+     "U CUP SEAL"
+    ],
+    [
+     "27",
+     "5035016",
+     1,
+     "U CUP SEAL"
+    ],
+    [
+     "28",
+     "5035017",
+     1,
+     "WEAR RING"
+    ],
+    [
+     "29",
+     "5035018",
+     1,
+     "WEAR RING"
+    ],
+    [
+     "30",
+     "5040192",
+     9,
+     "OIL SEAL"
+    ],
+    [
+     "31",
+     "5041022",
+     1,
+     "V-RING"
+    ],
+    [
+     "32",
+     "5054078",
+     1,
+     "RETAINING RING"
+    ],
+    [
+     "33",
+     "5200517",
+     18,
+     "SPRING"
+    ],
+    [
+     "34",
+     "5222624",
+     4,
+     "SPRING PIN"
+    ],
+    [
+     "35",
+     "B500-1500",
+     8,
+     "BOLT 1/2-UNC x 1 1/2"
+    ],
+    [
+     "36",
+     "B500-2250",
+     9,
+     "BOLT 1/2-UNC x 2 1/4"
+    ],
+    [
+     "37",
+     "B500-4500",
+     10,
+     "BOLT 1/2-UNC x 4 1/2"
+    ],
+    [
+     "38",
+     "B500-6500",
+     6,
+     "BOLT 1/2-UNC x 6 1/2"
+    ],
+    [
+     "39",
+     "B500-8000",
+     3,
+     "BOLT 1/2-UNC x8"
+    ],
+    [
+     "40",
+     "B750-1500",
+     3,
+     "BOLT 3/4-UNC x 1 1/2"
+    ],
+    [
+     "41",
+     "NC500",
+     10,
+     "NUT 1/2-UNC"
+    ],
+    [
+     "42",
+     "UM-070-608A",
+     1,
+     "CHUCK ADAPTEUR"
+    ],
+    [
+     "43",
+     "W500",
+     8,
+     "FLAT WASHER 1/2\""
+    ]
+   ]
+  },
+  "P068": {
+   "title": "Power pack for 125HP-600V-60H",
+   "titleFr": "Groupe hydraulique 125 HP",
+   "pn": "UM-064-FMX-005-100PPP",
+   "sheets": [
+    "P068",
+    "P065",
+    "P066",
+    "P067"
+   ],
+   "parts": [
+    [
+     "1",
+     "FMX-005-300TD",
+     1,
+     "OIL TANK 110 GAL/ US",
+     {
+      "link": "P072"
+     }
+    ],
+    [
+     "2",
+     "FR150",
+     1,
+     "HAND PUMP FILL RITE"
+    ],
+    [
+     "3",
+     "UM-064-165TD",
+     1,
+     "LOWER FRONT PANEL"
+    ],
+    [
+     "4",
+     "UM-064-TD29",
+     8,
+     "LOCK PIN"
+    ],
+    [
+     "5",
+     "FMX-005-200PP",
+     1,
+     "POWER PACK FRAME"
+    ],
+    [
+     "6",
+     "UM-064-195TB",
+     1,
+     "TONGUE",
+     {
+      "note": "Option non montée (groupe posé sur ses patins).",
+      "no3d": true
+     }
+    ],
+    [
+     "7",
+     "UM-064-235TD",
+     1,
+     "UPPER FRONT PANEL"
+    ],
+    [
+     "8",
+     "UM-064-TD76",
+     2,
+     "PIN"
+    ],
+    [
+     "9",
+     "CTP187-1250",
+     8,
+     "COTTER PIN 3/16\" x 1 1/4\""
+    ],
+    [
+     "10",
+     "UM-064-TD77",
+     2,
+     "PIN"
+    ],
+    [
+     "11",
+     "W375",
+     12,
+     "FLAT WASHER 3/8"
+    ],
+    [
+     "12",
+     "FMC-036-203P",
+     1,
+     "SUPPORT PLATE"
+    ],
+    [
+     "13",
+     "FMC-036-205P",
+     1,
+     "TRANSFORMATOR ADAPTOR"
+    ],
+    [
+     "14",
+     "B375-1250",
+     4,
+     "BOLT 3/8 - 16 NC X 1 1/4"
+    ],
+    [
+     "15",
+     "UM-064-600PP",
+     1,
+     "OIL RETURN HEADER"
+    ],
+    [
+     "16",
+     "W312",
+     18,
+     "FLAT WASHER 5/16"
+    ],
+    [
+     "17",
+     "LN312NC",
+     10,
+     "LOCK NUT 5/16\"-NC"
+    ],
+    [
+     "18",
+     "DX3000",
+     1,
+     "TRANSFORMATOR"
+    ],
+    [
+     "19",
+     "5404-8-12",
+     1,
+     "5404-8-12"
+    ],
+    [
+     "20",
+     "HSP-1000-4-5",
+     1,
+     "CHECK VALVE"
+    ],
+    [
+     "21",
+     "2404-8-8",
+     1,
+     "2404-8-8"
+    ],
+    [
+     "22",
+     "DTDA-MHN-GAI",
+     1,
+     "STARTING VALVE"
+    ],
+    [
+     "23",
+     "6400-6-6",
+     2,
+     "6400-MJIC 6 X MORB 6"
+    ],
+    [
+     "24",
+     "6500-06-06",
+     1,
+     "90° JIC (3/8\") x FJIC SWIVEL (3/8\")"
+    ],
+    [
+     "25",
+     "UM-064-1601RM",
+     2,
+     "TIRE MOUNTED ON WHEEL",
+     {
+      "note": "Option non montée (groupe posé sur ses patins).",
+      "no3d": true
+     }
+    ],
+    [
+     "26",
+     "UM-064-1605RM",
+     2,
+     "WHEEL HUB",
+     {
+      "note": "Option non montée (groupe posé sur ses patins).",
+      "no3d": true
+     }
+    ],
+    [
+     "27",
+     "AB-1202",
+     2,
+     "COOLER AB-1002-BA-TP (0908)"
+    ],
+    [
+     "28",
+     "FMX-005-203PP",
+     1,
+     "COOLER AB SUPPORT"
+    ],
+    [
+     "29",
+     "UM-064-STM-1500-600V",
+     1,
+     "PUMP UNIT",
+     {
+      "link": "P069"
+     }
+    ],
+    [
+     "30",
+     "A30HS2412GQRLP",
+     1,
+     "ELECTRICAL BOX HOFFMAN FOR 600v-60hz-125hp"
+    ],
+    [
+     "31",
+     "W500",
+     8,
+     "FLAT WASHER 1/2\""
+    ],
+    [
+     "32",
+     "B500-3000",
+     2,
+     "BOLT 1/2 - 13 NC X 3"
+    ],
+    [
+     "33",
+     "B500-1250",
+     2,
+     "BOLT 1/2-UNC x 1 1/4\""
+    ],
+    [
+     "34",
+     "B312-1250",
+     8,
+     "BOLT 5/16-UNC x 1 1/4\""
+    ],
+    [
+     "35",
+     "B375-1000",
+     2,
+     "BOLT 3/8-UNC X 1\""
+    ],
+    [
+     "36",
+     "NC375",
+     2,
+     "NUT 3/8-UNC"
+    ],
+    [
+     "37",
+     "UM-064-TD41",
+     4,
+     "TONGUE PIN",
+     {
+      "note": "Option non montée (groupe posé sur ses patins).",
+      "no3d": true
+     }
+    ],
+    [
+     "38",
+     "UM-064-102P-N",
+     1,
+     "PUMP SUPPORT",
+     {
+      "link": "P071"
+     }
+    ],
+    [
+     "39",
+     "FBRA-002-204PP",
+     1,
+     "HAND PUMP BRACKET"
+    ],
+    [
+     "40",
+     "FBRA-002-213P",
+     1,
+     "U-BOLT"
+    ],
+    [
+     "41",
+     "LN375NC",
+     2,
+     "LOCK NUT 3/8''"
+    ]
+   ],
+   "note": "Groupe posé sur ses patins : roues, moyeux et timon (options, pages 3.01 et 3.2) ne sont pas montés en 3D."
+  },
+  "P069": {
+   "title": "Power pack 125HP-600V-60HZ",
+   "titleFr": "Moteur et pompes",
+   "pn": "UM-064-STM-1500-600V",
+   "sheets": [
+    "P069",
+    "P070"
+   ],
+   "parts": [
+    [
+     "1",
+     "OR-219",
+     1,
+     "O-RING I.D. 1 5/16 O.D. 1 7/16"
+    ],
+    [
+     "2",
+     "SF-COD61-16",
+     2,
+     "SPLIT FLANGE #16 (1\") CODE 61"
+    ],
+    [
+     "3",
+     "LC375",
+     4,
+     "LOCK WASHER 3/8\""
+    ],
+    [
+     "4",
+     "B375-1250",
+     4,
+     "BOLT 3/8 - 16 NC X 1 1/4"
+    ],
+    [
+     "5",
+     "6400-12-12",
+     1,
+     "6400-12-12"
+    ],
+    [
+     "6",
+     "W750",
+     4,
+     "FLAT WASHER 3/4"
+    ],
+    [
+     "7",
+     "LC625",
+     4,
+     "LOCK WASHER 5/8\""
+    ],
+    [
+     "8",
+     "B625-1750",
+     4,
+     "BOLT 5/8-UNC x 1 3/4\""
+    ],
+    [
+     "9",
+     "UM-F81-31228",
+     1,
+     "COUPLING F-81-31228"
+    ],
+    [
+     "10",
+     "F87U",
+     1,
+     "INSERTS (F87U)"
+    ],
+    [
+     "11",
+     "218P",
+     1,
+     "LOCK PINE"
+    ],
+    [
+     "12",
+     "UM-F81-B1308C-1",
+     1,
+     "COUPLING (F81)"
+    ],
+    [
+     "13",
+     "BH447-SAED-1",
+     1,
+     "HOUSING"
+    ],
+    [
+     "14",
+     "BH447-SAED-4",
+     1,
+     "HOUSING CAP"
+    ],
+    [
+     "15",
+     "B375-750",
+     2,
+     "BOLT 3/8-UNC X 3/4\""
+    ],
+    [
+     "16",
+     "W375",
+     2,
+     "FLAT WASHER 3/8"
+    ],
+    [
+     "17",
+     "CT125504NPBBW22",
+     1,
+     "WEG MOTOR 125 HP (444/5TC, 1780 RPM, 575 V, 184 A)"
+    ],
+    [
+     "18",
+     "SP43-24-24",
+     1,
+     "FLANGE -code-61 NPT-1 1/2"
+    ],
+    [
+     "19",
+     "UM-064-250P",
+     1,
+     "FLANGE KIT-code-61"
+    ],
+    [
+     "20",
+     "UM-064-318TD",
+     1,
+     "KING NIPPLE 3\""
+    ],
+    [
+     "21",
+     "A11VO130",
+     1,
+     "PUMP A11VO130DSF10LNSD62K04"
+    ],
+    [
+     "22",
+     "A10VO45K",
+     1,
+     "PUMP A10VO45DFR52LPUC62K68"
+    ],
+    [
+     "23",
+     "6801F-06-06",
+     1,
+     "MJIC 6 x MORB 6"
+    ],
+    [
+     "24",
+     "568-237",
+     1,
+     "O-RING I.D. 3 3/8 O.D 3 5/8"
+    ],
+    [
+     "25",
+     "568-225",
+     1,
+     "O-RING I.D. 1 7/8 O.D. 2 1/8"
+    ],
+    [
+     "26",
+     "UM-064-276P",
+     1,
+     "STREET ELBOW 3\""
+    ],
+    [
+     "27",
+     "A10VO45N",
+     1,
+     "PUMP A10VO45DFR52LPUC64N00"
+    ],
+    [
+     "28",
+     "6400-8-8",
+     2,
+     "MJIC x MORB"
+    ],
+    [
+     "29",
+     "6500-08-08",
+     1,
+     "MJIC 08 x FJIC 08 SWIVEL"
+    ],
+    [
+     "30",
+     "6801-24-24",
+     1,
+     "MJIC 24 x MORB 24"
+    ],
+    [
+     "31",
+     "6400-12-16",
+     1,
+     "MJIC 12 x MP 16"
+    ],
+    [
+     "32",
+     "2501-24-24",
+     1,
+     "MJIC 24 x MP 24"
+    ],
+    [
+     "33",
+     "SHCS500-1500",
+     4,
+     "SHCS 1/2-UNC X 1 1/2\""
+    ],
+    [
+     "34",
+     "SHCS625-2000",
+     4,
+     "SHCS 5/8-UNC X 2\""
+    ],
+    [
+     "35",
+     "B750-2500",
+     4,
+     "BOLT 3/4-UNC x 2 1/2\""
+    ],
+    [
+     "36",
+     "OR-222",
+     1,
+     "O-RING #222"
+    ],
+    [
+     "37",
+     "449-74446-20",
+     2,
+     "SPLIT FLANGE #20 CODE 62"
+    ],
+    [
+     "38",
+     "LC500",
+     4,
+     "LOCK WASHER 1/2\""
+    ],
+    [
+     "39",
+     "B437-1000",
+     4,
+     "BOLT 7/16-UNC x 1\""
+    ],
+    [
+     "40",
+     "02436083",
+     1,
+     "COUPLING FOR A11VO130 (K04)"
+    ],
+    [
+     "41",
+     "02436084",
+     1,
+     "COUPLING FOR A10VO45 (K68)"
+    ]
+   ]
+  },
+  "P071": {
+   "title": "Pump support & manifold",
+   "titleFr": "Support de pompe et collecteur",
+   "pn": "UM-064-102P-N",
+   "sheets": [
+    "P071"
+   ],
+   "parts": [
+    [
+     "1",
+     "UM-064-138P-N",
+     1,
+     "ADJUSTING SCREW"
+    ],
+    [
+     "2",
+     "UM-064-140P-N",
+     1,
+     "LOCK NUT"
+    ],
+    [
+     "3",
+     "UM-22",
+     1,
+     "SEAT PUMP"
+    ],
+    [
+     "4",
+     "UM-064-TD70",
+     2,
+     "BOLT 1/2-NC COUNTERSUNK"
+    ],
+    [
+     "5",
+     "FBRA-002-213P",
+     2,
+     "U-BOLT"
+    ],
+    [
+     "6",
+     "LN375NC",
+     4,
+     "LOCK NUT 3/8\"-NC"
+    ],
+    [
+     "7",
+     "W375",
+     4,
+     "FLAT WASHER 3/8"
+    ],
+    [
+     "8",
+     "H2505H09003SF",
+     1,
+     "MANIFOLD LYNCH U"
+    ],
+    [
+     "9",
+     "UM-064-601P",
+     2,
+     "FITTING 6400-0812"
+    ],
+    [
+     "10",
+     "UM-064-603P",
+     1,
+     "FITTING 6400-1616"
+    ],
+    [
+     "11",
+     "UM-064-605P",
+     2,
+     "FITTING 6408-16"
+    ],
+    [
+     "12",
+     "UM-064-607P",
+     2,
+     "BOLT 3/8-16 UNC X 3.5\""
+    ],
+    [
+     "13",
+     "UM-064-609P",
+     2,
+     "WASHER 3/8\""
+    ],
+    [
+     "14",
+     "UM-064-608P",
+     2,
+     "NUT 3/8-16 UNC"
+    ],
+    [
+     "15",
+     "UM-064-604P",
+     1,
+     "FITTING 6400-0812"
+    ],
+    [
+     "16",
+     "UM-064-602P",
+     1,
+     "FITTING 6400-1212"
+    ],
+    [
+     "17",
+     "UM-064-610P",
+     1,
+     "CAP PLUG JIC"
+    ],
+    [
+     "18",
+     "UM-064-611P",
+     1,
+     "FITTING 6400-08-16"
+    ]
+   ]
+  },
+  "P072": {
+   "title": "Hydraulic tank",
+   "titleFr": "Réservoir hydraulique 110 gal",
+   "pn": "UM-064-300TD",
+   "sheets": [
+    "P072"
+   ],
+   "parts": [
+    [
+     "1",
+     "2404-24-24",
+     2,
+     "MJIC x MP"
+    ],
+    [
+     "2",
+     "5404-24-24",
+     3,
+     "MP x MP"
+    ],
+    [
+     "3",
+     "5406-32-12",
+     1,
+     "MP x FP"
+    ],
+    [
+     "4",
+     "5406-32-20",
+     1,
+     "MP x FP"
+    ],
+    [
+     "5",
+     "B312-1000",
+     8,
+     "BOLT 3/8-UNC-1 '' Lg"
+    ],
+    [
+     "6",
+     "B312-1250",
+     8,
+     "BOLT 3/8-UNC- 1 1/4 '' Lg"
+    ],
+    [
+     "7",
+     "LC312",
+     8,
+     "LOCK NUT 3/8-UNC"
+    ],
+    [
+     "8",
+     "2501-16-20",
+     1,
+     "MJIC x MP"
+    ],
+    [
+     "9",
+     "RTF47",
+     2,
+     "7 RETURN LINE FILTER",
+     {
+      "link": "P073"
+     }
+    ],
+    [
+     "10",
+     "UM-064-301TD",
+     1,
+     "1 TANK (110 GAL U.S)"
+    ],
+    [
+     "11",
+     "UM-064-302P",
+     2,
+     "CAP SUPPORT"
+    ],
+    [
+     "12",
+     "UM-064-304TD",
+     2,
+     "FILTER CAP"
+    ],
+    [
+     "13",
+     "UM-064-306TD",
+     1,
+     "BALL VALVE 3\""
+    ],
+    [
+     "14",
+     "UM-064-307TD",
+     3,
+     "BALL VALVE 1 1/2\""
+    ],
+    [
+     "15",
+     "UM-064-308TD",
+     1,
+     "BALL VALVE 1\""
+    ],
+    [
+     "16",
+     "UM-064-311TD",
+     2,
+     "BOLT 1/2-13 UNC X 3.5 in"
+    ],
+    [
+     "17",
+     "UM-064-312A",
+     2,
+     "9 FILTER"
+    ],
+    [
+     "18",
+     "UM-064-314A",
+     2,
+     "CAP INSPECTION"
+    ],
+    [
+     "19",
+     "UM-064-317TD",
+     2,
+     "KING NIPPLE 1 1/2\""
+    ],
+    [
+     "20",
+     "UM-064-318TD",
+     1,
+     "KING NIPPLE 3\""
+    ],
+    [
+     "21",
+     "UM-064-323TD",
+     2,
+     "NIPPLE 2\""
+    ],
+    [
+     "22",
+     "UM-064-324TD",
+     1,
+     "NIPPLE 3\""
+    ],
+    [
+     "23",
+     "UM-064-334TD",
+     1,
+     "THERMOMETER"
+    ],
+    [
+     "24",
+     "UM-064-335TD",
+     2,
+     "CAP WASHER"
+    ],
+    [
+     "25",
+     "UMV-10SM-N12",
+     1,
+     "BREATHER"
+    ],
+    [
+     "26",
+     "W312",
+     16,
+     "WASHER 3/8-UNC"
+    ]
+   ]
+  },
+  "P073": {
+   "title": "Filter unit",
+   "titleFr": "Filtre de retour RTF-47",
+   "pn": "RTF-47",
+   "sheets": [
+    "P073"
+   ],
+   "parts": [
+    [
+     "1",
+     "RTF-40-11",
+     4,
+     "BOLT HOSING COVER"
+    ],
+    [
+     "2",
+     "RTF-40-10",
+     4,
+     "WASHER"
+    ],
+    [
+     "3",
+     "RTF-47-04",
+     1,
+     "CHECK VALVE"
+    ],
+    [
+     "4",
+     "2404-24-24",
+     1,
+     "2404-24-24 (1 1/2\")"
+    ],
+    [
+     "5",
+     "RTF-47-01",
+     1,
+     "HOSING FILTER"
+    ],
+    [
+     "6",
+     "RTF-47-09",
+     1,
+     "FILTER BOWL"
+    ],
+    [
+     "7",
+     "RTF-47-15",
+     1,
+     "TOP COVER"
+    ],
+    [
+     "8",
+     "RTF-47-08",
+     1,
+     "TOP SPRING"
+    ],
+    [
+     "9",
+     "RTF-47-07",
+     1,
+     "ELEMENT FILTER"
+    ],
+    [
+     "10",
+     "RTF-47-13",
+     1,
+     "\"O\"-RING SEAL HOSING COVER"
+    ],
+    [
+     "11",
+     "RTF-47-12",
+     1,
+     "\"O\"-RING SEAL FLANGE"
+    ],
+    [
+     "12",
+     "RTF-47-16",
+     1,
+     "gasket rubber 1/8\""
+    ]
+   ]
+  },
+  "P078": {
+   "title": "Control panels",
+   "titleFr": "Console de commande",
+   "pn": "UM-051-300P-FMC-036",
+   "sheets": [
+    "P078",
+    "P077"
+   ],
+   "parts": [
+    [
+     "1",
+     "BS25-750",
+     40,
+     "BOLT 1/4-UNC x 3/4"
+    ],
+    [
+     "2",
+     "UM-020-643P",
+     1,
+     "BLOC 3 WAYS 3/4 NPT"
+    ],
+    [
+     "3",
+     "UM-051-327P",
+     1,
+     "BACK PANEL"
+    ],
+    [
+     "4",
+     "UM-051-714P",
+     1,
+     "BACK PANEL"
+    ],
+    [
+     "5",
+     "UM-051-397P",
+     1,
+     "LEFT SIDE PANEL"
+    ],
+    [
+     "6",
+     "UM-051-702P",
+     1,
+     "SIDE PANEL"
+    ],
+    [
+     "7",
+     "UM-051-706P",
+     1,
+     "TOP PANEL"
+    ],
+    [
+     "8",
+     "UM-051-708P",
+     1,
+     "FRONT PANEL"
+    ],
+    [
+     "9",
+     "UM-051-710P",
+     1,
+     "FRONT PANEL"
+    ],
+    [
+     "10",
+     "WS25",
+     40,
+     "FLAT WASHER 1/4\" STAINLESS"
+    ],
+    [
+     "11",
+     "UM-051-713P",
+     1,
+     "PANEL FOR SWITCH"
+    ],
+    [
+     "12",
+     "UM-051-703P",
+     1,
+     "PANEL FOR UM- CIT-SC-ST"
+    ],
+    [
+     "13",
+     "UM-051-716P",
+     1,
+     "BRACKET FOR SWITCH SLIDING PART"
+    ],
+    [
+     "14",
+     "UM-051-717P",
+     1,
+     "BULKHEAD BRACKET"
+    ],
+    [
+     "15",
+     "10250H",
+     1,
+     "SPECIAL PURPOSE CONTROL STATION"
+    ],
+    [
+     "16",
+     "UM-CIT-SC-UG",
+     1,
+     "SAFETY CONTROLLER",
+     {
+      "link": "P084"
+     }
+    ],
+    [
+     "17",
+     "UM-051-FMC-036-5",
+     null,
+     "CONSOLE HYDRAULIC COMPONENTS (page 4.3)",
+     {
+      "link": "P079",
+      "pseudo": true,
+      "no3d": true
+     }
+    ]
+   ]
+  },
+  "P079": {
+   "title": "Console hydraulic components",
+   "titleFr": "Console — composants hydrauliques",
+   "pn": "UM-051-FMC-036-5",
+   "sheets": [
+    "P079"
+   ],
+   "parts": [
+    [
+     "1",
+     "UM-020-643P",
+     1,
+     "WATER BLOCK"
+    ],
+    [
+     "2",
+     "UM-10B-TR#16",
+     2,
+     "BALL VALVE BKH-1-NPT-1125 (5000 PSI)"
+    ],
+    [
+     "3",
+     "5406-P-12",
+     2,
+     "HEX 12-MP PLUG"
+    ],
+    [
+     "4",
+     "6602-16-16-16",
+     1,
+     "MJIC 16 x FJIC 16 x MJIC 16 SWIVEL RUN TEE"
+    ],
+    [
+     "5",
+     "UM-020-CE7",
+     1,
+     "STICKER FOR WATER BLOCK"
+    ],
+    [
+     "6",
+     "2404-16-16",
+     2,
+     "MJIC 16 X MP 16"
+    ],
+    [
+     "7",
+     "6400-16-16",
+     1,
+     "6400-16-16"
+    ],
+    [
+     "8",
+     "2406-16-04",
+     1,
+     "FEM. JIC X 16 X MJIC 04"
+    ],
+    [
+     "9",
+     "6806-16-16",
+     2,
+     "MJIC 12 x FJIC 12 x MJIC 12"
+    ],
+    [
+     "10",
+     "M02-03-B-2",
+     2,
+     "M02-03-B-2"
+    ],
+    [
+     "11",
+     "10250H",
+     1,
+     "SPECIAL PURPOSE CONTROL STATION"
+    ],
+    [
+     "12",
+     "2011F03-06744-51",
+     1,
+     "BLOC FOR WATER PUMP AND MUD MIXER",
+     {
+      "note": "Repère 66 du schéma hydraulique."
+     }
+    ],
+    [
+     "13",
+     "2404-8-8",
+     1,
+     "MJIC 8 x MP 8"
+    ],
+    [
+     "14",
+     "6505-8-8",
+     1,
+     "MP 8 x FJIC 8 SWIVEL STRAIGHT"
+    ],
+    [
+     "15",
+     "6600-8-8-8",
+     1,
+     "MJIC 8 x MJIC 8 x FJIC 8 TEE"
+    ],
+    [
+     "16",
+     "AM3051003",
+     1,
+     "ACCUMULATOR 1 gal.",
+     {
+      "note": "Repère 39 du schéma hydraulique."
+     }
+    ],
+    [
+     "17",
+     "AM-45-250",
+     1,
+     "ACCUMULATOR 1/2 gal."
+    ],
+    [
+     "18",
+     "HA250SH9003SFU",
+     1,
+     "RETURN BLOCK HA250",
+     {
+      "note": "Repère 43 du schéma hydraulique."
+     }
+    ],
+    [
+     "19",
+     "PBDB-LNN-ECI",
+     2,
+     "PRESSURE REDUCER",
+     {
+      "note": "Repère 25 du schéma hydraulique."
+     }
+    ],
+    [
+     "20",
+     "PBDB-LNN-ECI_S",
+     1,
+     "PRESSURE REDUCER",
+     {
+      "note": "Repère 5 du schéma hydraulique."
+     }
+    ],
+    [
+     "21",
+     "RPGC-LCN-CAL_S",
+     2,
+     "PILOT OPERATED, BALANCED PISTON RELIEF VALVE",
+     {
+      "note": "Repère 23 du schéma hydraulique."
+     }
+    ],
+    [
+     "22",
+     "SD25",
+     1,
+     "VALVE (ROTATION, SCREW-UNSCREW, FAST FEED)",
+     {
+      "note": "Repère 12 du schéma hydraulique."
+     }
+    ],
+    [
+     "23",
+     "SDS150",
+     1,
+     "VALVE CHUCK, CLAMP, LOW FEED, WIRE LINE",
+     {
+      "note": "Repère 13 du schéma hydraulique."
+     }
+    ],
+    [
+     "24",
+     "SWH-G02-C2D12-20",
+     1,
+     "ELEC. VALVE D03 12 V c/f DIN",
+     {
+      "note": "Repère 28 du schéma hydraulique."
+     }
+    ],
+    [
+     "25",
+     "UM-10B-TR#8",
+     3,
+     "BKH-1/2-NPT",
+     {
+      "note": "Repère 27 du schéma hydraulique."
+     }
+    ],
+    [
+     "26",
+     "UM-CE-BDJ",
+     1,
+     "JUNCTION BOX"
+    ],
+    [
+     "27",
+     "UM-CIT-SC-UG",
+     1,
+     "UNDERGROUND SAFETY CONTROLLER"
+    ],
+    [
+     "28",
+     "UMV-10-C2",
+     4,
+     "STAUFF SPG-063-5000S (GAUGE)",
+     {
+      "note": "Repère 38 du schéma hydraulique."
+     }
+    ],
+    [
+     "29",
+     "UMV-10-C4",
+     1,
+     "PITANCO 250LFSS22W 1500Psi (GAUGE)"
+    ],
+    [
+     "30",
+     "UMV-10B-#12",
+     1,
+     "BKH-34-NPT-1125"
+    ],
+    [
+     "31",
+     "UMV-10BS-01",
+     1,
+     "BLOCK FEED SET MANIFOLD",
+     {
+      "note": "Repère 64 du schéma hydraulique."
+     }
+    ],
+    [
+     "32",
+     "UMV-10BS-105",
+     1,
+     "BLOCK SYNCHRO",
+     {
+      "note": "Repère 65 du schéma hydraulique."
+     }
+    ],
+    [
+     "33",
+     "UMV-10V-NDRV-10-N",
+     2,
+     "FLOW CONTROL"
+    ],
+    [
+     "34",
+     "UMV-10VS-2009F03",
+     1,
+     "SECURITY BLOCK #2",
+     {
+      "note": "Repère 45 du schéma hydraulique."
+     }
+    ],
+    [
+     "35",
+     "UM-051-300P-001-3",
+     null,
+     "HYDRAULIC COMPONENTS DETAILS (page 4.4)",
+     {
+      "link": "P080",
+      "pseudo": true,
+      "no3d": true
+     }
+    ],
+    [
+     "36",
+     "UM-051-FMC-036-7",
+     null,
+     "HYDRAULIC COMPONENTS DETAILS (page 4.4.1)",
+     {
+      "link": "P081",
+      "pseudo": true,
+      "no3d": true
+     }
+    ]
+   ]
+  },
+  "P080": {
+   "title": "Hydraulic components details",
+   "titleFr": "Console — blocs et distributeurs",
+   "pn": "UM-051-300P-001-3",
+   "sheets": [
+    "P080"
+   ],
+   "parts": [
+    [
+     "1",
+     "UMV-10VS-2009F03",
+     1,
+     "SECURITY BLOCK #2"
+    ],
+    [
+     "2",
+     "LOHD-8DN",
+     4,
+     "VENT-TO-OPEN, WITH PILOT SOURCE FROM PORT 1 AND 2"
+    ],
+    [
+     "3",
+     "CXAA-XBN",
+     2,
+     "FREE FLOW NOSE TO SIDE"
+    ],
+    [
+     "4",
+     "DMDA-MAN",
+     1,
+     "3 WAYS, SELENOID-OPERATED SPOOL VALVE"
+    ],
+    [
+     "5",
+     "DTDA-MCN",
+     1,
+     "2 WAYS, DIRECT ACTING SELENOID OPERATED VALVE"
+    ],
+    [
+     "6",
+     "XAOA-XXN",
+     2,
+     "ALL PORT OPEN CAVITY PLUG"
+    ],
+    [
+     "7",
+     "FDCB-LAN",
+     2,
+     "ADJ. PRESSURE COMPENSATED FLOW CONTROL VALVE"
+    ],
+    [
+     "8",
+     "770-214",
+     2,
+     "SELENOID 14 V"
+    ],
+    [
+     "9",
+     "S18211TC411",
+     2,
+     "DIN CONNECTOR"
+    ],
+    [
+     "10",
+     "SDS150_RC-SAE",
+     1,
+     "OUTLET COVER"
+    ],
+    [
+     "11",
+     "SDS150_AC(YG3)",
+     1,
+     "INLET COVER"
+    ],
+    [
+     "12",
+     "VMD10_1(YG3)",
+     1,
+     "RELIEF SDS150"
+    ],
+    [
+     "13",
+     "SDS150_P-SAE",
+     3,
+     "SECTION"
+    ],
+    [
+     "14",
+     "AL01_M10X200",
+     3,
+     "SDS150 ARM"
+    ],
+    [
+     "15",
+     "V11.SD10-11-16",
+     2,
+     "DETENT KIT"
+    ],
+    [
+     "16",
+     "V8-MDS10-11-16",
+     1,
+     "SPRING RETURN KIT LOW FEED V11.SD10-11-16 (DETENT) V11.SD10-11-16"
+    ],
+    [
+     "17",
+     "FE-SD25",
+     1,
+     "INLET C COVER WITH RELIEF"
+    ],
+    [
+     "18",
+     "FS-SD25",
+     1,
+     "OUTLET COVER"
+    ],
+    [
+     "19",
+     "VMP25_1(XG)",
+     1,
+     "RELIEF"
+    ],
+    [
+     "20",
+     "AL17/M12X250",
+     1,
+     "JOYSTICK"
+    ],
+    [
+     "21",
+     "SD25_P-SEA",
+     3,
+     "SD25 SECTION"
+    ],
+    [
+     "22",
+     "V11.SD18-20-25",
+     1,
+     "DETENT KIT SD25 V11 IN-OUT"
+    ],
+    [
+     "23",
+     "V8.SD18-20-25",
+     2,
+     "SPRING RETURN KIT"
+    ],
+    [
+     "24",
+     "AL01_M12X250",
+     2,
+     "SD25 ARM SCREW AND"
+    ],
+    [
+     "25",
+     "UMV-10BS-03",
+     1,
+     "BLOCK SYNCHRO"
+    ],
+    [
+     "26",
+     "4WMM10D03XF",
+     1,
+     "2 POSITIONS VALVE"
+    ],
+    [
+     "27",
+     "PRDB-LAN",
+     2,
+     "P.RED/REL-3000PSI-10G-T11A"
+    ],
+    [
+     "28",
+     "DBAM-LCN",
+     1,
+     "MANUAL-OPERATED VALVE"
+    ],
+    [
+     "29",
+     "DODS-XHN",
+     2,
+     "BALANCED POPPET, DIRECT OPERATED, NORM. OPEN"
+    ],
+    [
+     "30",
+     "CXDA-XCN",
+     2,
+     "FREE FLOW NOSE TO SIDE CHECK VALVE"
+    ],
+    [
+     "31",
+     "DKDS-XHN",
+     2,
+     "BALANCED POPPET, DIRECT OPERATED, NORM. CLOSE"
+    ],
+    [
+     "32",
+     "SWH-G02-C2",
+     1,
+     "MODEL SWH-G02-C2-D12-20"
+    ],
+    [
+     "33",
+     "S18211TC411",
+     2,
+     "DIN CONNECTOR"
+    ],
+    [
+     "34",
+     "770-212",
+     2,
+     "COIL 12V"
+    ]
+   ]
+  },
+  "P081": {
+   "title": "Hydraulic components details",
+   "titleFr": "Console — blocs pompe à eau et avance",
+   "pn": "UM-051-FMC-036-7",
+   "sheets": [
+    "P081"
+   ],
+   "parts": [
+    [
+     "1",
+     "UMV-10BS-01",
+     1,
+     "BLOCK FEED SET MANIFOLD"
+    ],
+    [
+     "2",
+     "CBIB-LHN",
+     2,
+     "PILOT RATIO, STANDARD CAPACITY COUNTERBALANCE VALVE"
+    ],
+    [
+     "3",
+     "654512-06744-51",
+     1,
+     "PLUGGED BODY"
+    ],
+    [
+     "4",
+     "CXFA-XCN",
+     2,
+     "FREE FLOW NOSE TO SIDE CHECK VALVE"
+    ],
+    [
+     "5",
+     "PRDB-LEN",
+     1,
+     "REDUCING/RELIEVING VALVE"
+    ],
+    [
+     "6",
+     "PRDB-CEN",
+     1,
+     "DIRECT-ACTING PRESSURE REDUCING/RELIEVING VALVE"
+    ],
+    [
+     "7",
+     "FDBA-LAN",
+     1,
+     "FLOW CONTROL VALVE WITH REVERSE FLOW CHECK"
+    ],
+    [
+     "8",
+     "FTDA-XCN",
+     1,
+     "PROPORTIONAL THROTTLE"
+    ],
+    [
+     "9",
+     "CSAB-XXN",
+     1,
+     "SINGLE BALL SHUTTLE VALVE"
+    ],
+    [
+     "10",
+     "6801-12-12",
+     2,
+     "90° MJIC 3/4\" x MORB 3/4\""
+    ],
+    [
+     "11",
+     "6408-12",
+     1,
+     "MORB PLUG 3/4"
+    ],
+    [
+     "12",
+     "UM-051-500P",
+     2,
+     "KNOB"
+    ],
+    [
+     "13",
+     "DMDM-LAN",
+     2,
+     "MANUALLY OPERATED DIRECTIONAL VALVE"
+    ],
+    [
+     "14",
+     "SNK-20-1/4-NPT",
+     3,
+     "CHECK POINT"
+    ]
+   ]
+  },
+  "P084": {
+   "title": "Safety controller details",
+   "titleFr": "Contrôleur de sécurité",
+   "pn": "UM-CIT-SC-UG",
+   "sheets": [
+    "P084"
+   ],
+   "parts": [
+    [
+     "1",
+     "UM-CIT-SC-UG",
+     1,
+     "UNDERGROUND SECURITY BOX",
+     {
+      "link": "P085"
+     }
+    ],
+    [
+     "2",
+     "HDC-1205000000",
+     1,
+     "HDC 10B ABU (HOUSING)"
+    ],
+    [
+     "3",
+     "HDC-1665230000",
+     1,
+     "HDC 10B DODQ 4BO (COVER)"
+    ],
+    [
+     "4",
+     "C016",
+     1,
+     "10D003 806 12 FEMALE CABLE CONNECTOR STRAIGHT WITH CLAMPING RING"
+    ],
+    [
+     "5",
+     "C016",
+     1,
+     "20C003 100 12 MALE RECEPTACLE, SCREW TERMINATION"
+    ],
+    [
+     "6",
+     "MS3106A-14S",
+     2,
+     "PLUG WITH SOLID SHELL"
+    ]
+   ]
+  },
+  "P085": {
+   "title": "Security box assembly",
+   "titleFr": "Boîte de sécurité",
+   "pn": "UM-CIT-SC-UG",
+   "sheets": [
+    "P085"
+   ],
+   "parts": [
+    [
+     "1",
+     "C016",
+     1,
+     "20C003 100 12 MALE RECEPTACLE, SCREW TERMINATION"
+    ],
+    [
+     "2",
+     "C016",
+     1,
+     "20F003 100 12 FEMALE CABLE CONNECTOR RIGHT ANGLED"
+    ],
+    [
+     "3",
+     "C016",
+     2,
+     "20G003 100 12 FEMALE RECEPTACLE, SCREW TERMINATION"
+    ],
+    [
+     "4",
+     "C016",
+     2,
+     "20H003 110 12 MALE CABLE CONNECTOR STRAIGHT"
+    ],
+    [
+     "5",
+     "G2R-1-S",
+     1,
+     "ELECTROMECHANICAL RELAY SPDT 10A 12VC 2780hm SOCKET"
+    ],
+    [
+     "6",
+     "HDC-1204100000",
+     1,
+     "HDC- INSERT FEMALE, NO. OF POLE: 10"
+    ],
+    [
+     "7",
+     "HDC-1205000000",
+     1,
+     "HDC ROCKSTAR HOUSING IP 65"
+    ],
+    [
+     "8",
+     "HDC-1665230000",
+     1,
+     "HDC ROCKSTAR HOUSING CAP IP 65"
+    ],
+    [
+     "9",
+     "P2R-05A",
+     1,
+     "RELAY SOCKET SKT 5 POS"
+    ],
+    [
+     "10",
+     "UM-CIT-SC-UG-CA1",
+     1,
+     "ENGLISH STICKER"
+    ],
+    [
+     "11",
+     "ZB4BA9",
+     1,
+     "FLUSH PUSH YELLOW COLOR CAP"
+    ],
+    [
+     "12",
+     "ZB4BT4",
+     1,
+     "PUSH PULL E-STOP"
+    ],
+    [
+     "13",
+     "ZB4BZ101",
+     1,
+     "CONTACT BLOCK + MOUNTING COLLAR"
+    ],
+    [
+     "14",
+     "ZB4BZ102",
+     1,
+     "BASE AND CONTACT BLOCK BOÎTE DE SÉCURITÉ (SOUS-TERRE) SECURITY BOX (UNDERGROUND) ASSEMBLY: UM-CIT-SC-UG"
+    ]
+   ]
+  }
+ },
+ "documents": [
+  {
+   "id": "P043",
+   "title": "Hoist — arm positions",
+   "titleFr": "Treuil — réglage des bras",
+   "sheets": [
+    "P043",
+    "P044"
+   ],
+   "columns": [
+    "ref",
+    "pn",
+    "qty",
+    "desc"
+   ],
+   "parts": [
+    [
+     "1",
+     "UM-032-115F",
+     2,
+     "LOWER ARM"
+    ],
+    [
+     "2",
+     "UM-032-116F",
+     2,
+     "UPPER ARM"
+    ]
+   ]
+  },
+  {
+   "id": "P053",
+   "title": "Transmission Funk HMD-2355",
+   "titleFr": "Transmission Funk HMD-2355 (4 vitesses)",
+   "sheets": [
+    "P053",
+    "P054",
+    "P055",
+    "P056",
+    "P057",
+    "P058",
+    "P059",
+    "P060",
+    "P061",
+    "P062"
+   ],
+   "columns": [
+    "ref",
+    "pn",
+    "qty",
+    "desc"
+   ],
+   "parts": [
+    [
+     "1",
+     "YZ4023882",
+     1,
+     "ASM CASE & GEAR — TRANS 4 SPD W/4023381 FLG"
+    ],
+    [
+     "2",
+     "4023824",
+     1,
+     "SHIFT CAP ASM"
+    ],
+    [
+     "3",
+     "4023208",
+     1,
+     "ADAPTER GROUP (HYD MOTOR SAE D)"
+    ],
+    [
+     "4",
+     "4HMD147",
+     1,
+     "ASM COUPLING 13T 8/16P SPLINE"
+    ],
+    [
+     "201",
+     "F23309",
+     1,
+     "PLUG, SHIPPING SAE 'D', 6\" DIA PLASTIC COVER"
+    ]
+   ]
+  },
+  {
+   "id": "P074",
+   "title": "AOCHM-30 parts list (option)",
+   "titleFr": "Refroidisseur air-huile AOCHM-30 (option)",
+   "sheets": [
+    "P074"
+   ],
+   "columns": [
+    "ref",
+    "pn",
+    "qty",
+    "desc"
+   ],
+   "parts": [
+    [
+     "1",
+     "106-2020",
+     null,
+     "CORE"
+    ],
+    [
+     "2",
+     "199-0015",
+     null,
+     "GASKET KIT"
+    ],
+    [
+     "3",
+     "306-3002",
+     null,
+     "MOTOR"
+    ],
+    [
+     "4",
+     "107-0006",
+     null,
+     "TOP PANEL"
+    ],
+    [
+     "5",
+     "107-0006",
+     null,
+     "BOTTOM PANEL"
+    ],
+    [
+     "6",
+     "107-0047",
+     null,
+     "RIGHT TANK"
+    ],
+    [
+     "7",
+     "107-0046",
+     null,
+     "LEFT TANK"
+    ],
+    [
+     "8",
+     "107-0009",
+     null,
+     "MOTOR BRACKET"
+    ],
+    [
+     "9",
+     "107-0004",
+     null,
+     "LOUVER"
+    ],
+    [
+     "10",
+     "307-0010",
+     null,
+     "FAN"
+    ],
+    [
+     "11",
+     "308-0005",
+     null,
+     "FAN GUARD"
+    ],
+    [
+     "12",
+     "107-0002",
+     null,
+     "RIGHT PANEL"
+    ],
+    [
+     "13",
+     "107-0002",
+     null,
+     "LEFT PANEL"
+    ],
+    [
+     "14",
+     "107-0008",
+     null,
+     "BACK PANEL"
+    ],
+    [
+     "15",
+     "312-1002",
+     null,
+     "SHAFT ADAPTER"
+    ]
+   ]
+  },
+  {
+   "id": "P082",
+   "title": "Riveted panels identification",
+   "titleFr": "Console — plaques d'identification rivetées",
+   "sheets": [
+    "P082"
+   ],
+   "columns": [
+    "ref",
+    "pn",
+    "qty",
+    "desc"
+   ],
+   "parts": [
+    [
+     "1",
+     "UM-064-CA1",
+     1,
+     "WATER PUMP, MUD MIXER"
+    ],
+    [
+     "2",
+     "UM-064-CA10",
+     1,
+     "HOSES IDENTIFICATIONS ( WIRE LINE/MUD MIX./WATER PUMP)"
+    ],
+    [
+     "3",
+     "UM-064-CA11",
+     1,
+     "HOSES IDENTIFICATIONS ( ROTATION A & B)"
+    ],
+    [
+     "4",
+     "UM-064-CA12",
+     1,
+     "HOSE IDENTIFICATION: PRESSION #1"
+    ],
+    [
+     "5",
+     "UM-064-CA13",
+     1,
+     "WATER PRESSURE GAGE"
+    ],
+    [
+     "6",
+     "UM-064-CA14",
+     1,
+     "ALWAYS OPEN BALL VALVE..."
+    ],
+    [
+     "7",
+     "UM-064-CA2",
+     1,
+     "SCREW ROD, TORQUE ROTATION, DIALS IDENTIFICATIONS"
+    ],
+    [
+     "8",
+     "UM-064-CA3",
+     1,
+     "MAST FUNCTIONS, CHUCK/CLAMP"
+    ],
+    [
+     "9",
+     "UM-064-CA4",
+     1,
+     "TRIGGER FUNCTION, PUMP SPEED CONTROL, FEED CONTROL"
+    ],
+    [
+     "10",
+     "UM-064-CA5",
+     1,
+     "CHUCK LOCK, SYNCHRO CONTROL"
+    ],
+    [
+     "11",
+     "UM-064-CA7",
+     1,
+     "FEED SET, LOCK/UNLOCK WIRELINE"
+    ],
+    [
+     "12",
+     "UM-064-CA9",
+     1,
+     "HOSES IDENTIFICATIONS ( RETURN BLOC, FEED,"
+    ]
+   ]
+  },
+  {
+   "id": "P083",
+   "title": "Accumulator AM-45-250 details",
+   "titleFr": "Accumulateur AM-45-250",
+   "sheets": [
+    "P083"
+   ],
+   "columns": [
+    "ref",
+    "pn",
+    "qty",
+    "desc"
+   ],
+   "parts": [
+    [
+     "1",
+     "AI-1QT-308",
+     1,
+     "SAFETY CAP"
+    ],
+    [
+     "1",
+     "AI-1QT-309",
+     1,
+     "SAFETY CAP O-RING"
+    ],
+    [
+     "2",
+     "AI-1QT-306",
+     1,
+     "PROTECTIVE CAP"
+    ],
+    [
+     "3",
+     "AI-1QT-303",
+     1,
+     "VALVE CAP"
+    ],
+    [
+     "4",
+     "AI-S-304",
+     1,
+     "VALVE CORE"
+    ],
+    [
+     "5",
+     "AM-309",
+     1,
+     "ACCUMIGHT GAS VALVE"
+    ],
+    [
+     "6",
+     "AM-310",
+     1,
+     "GAS VALVE O-RING"
+    ],
+    [
+     "7",
+     "",
+     1,
+     "SHELL (NOT FOR SALE)"
+    ],
+    [
+     "8",
+     "AM-413",
+     1,
+     "LABEL"
+    ],
+    [
+     "9",
+     "AM-411",
+     1,
+     "TEFLON RING"
+    ],
+    [
+     "10",
+     "AM-45-3KT",
+     1,
+     "BLADDER KIT (BUNA-NITRILE)"
+    ],
+    [
+     "11",
+     "AM-412",
+     1,
+     "METAL RING"
+    ],
+    [
+     "12",
+     "AM-410-L",
+     1,
+     "O-RING"
+    ]
+   ]
+  },
+  {
+   "id": "P086",
+   "title": "Safety controller SECFOR CAT3",
+   "titleFr": "Contrôleur de sécurité SECFOR CAT3 — documentation",
+   "sheets": [
+    "P086",
+    "P087",
+    "P088",
+    "P089",
+    "P090",
+    "P091",
+    "P092",
+    "P093",
+    "P094",
+    "P096"
+   ],
+   "columns": [
+    "ref",
+    "pn",
+    "qty",
+    "desc"
+   ],
+   "parts": []
+  },
+  {
+   "id": "P095",
+   "title": "600VAC 125HP drill control panel — schematic",
+   "titleFr": "Schéma du panneau de commande 600 V, 125 HP",
+   "sheets": [
+    "P095"
+   ],
+   "columns": [
+    "ref",
+    "pn",
+    "qty",
+    "desc"
+   ],
+   "parts": []
+  }
+ ]
+}

@@ -1,0 +1,4309 @@
+{
+ "10": [
+  {
+   "x": 876,
+   "y": 62,
+   "rows": [
+    [
+     "FBRA-002-150BM DRILL FRAME",
+     "",
+     "1"
+    ],
+    [
+     "FBRA-002-300BB FEED FRAME",
+     "",
+     "1"
+    ],
+    [
+     "FBRA-002-305BB FOOT PLATE",
+     "",
+     "1"
+    ],
+    [
+     "FBRA-002-400HH----- WIRE LINE",
+     "",
+     "1"
+    ],
+    [
+     "FBRA-002-600BB FEED FRAME",
+     "SUPPORT",
+     "1"
+    ],
+    [
+     "FTD-030-100ZZ TOP FEED",
+     "CYLINDER",
+     "1"
+    ],
+    [
+     "FTD-148-300TF FOOT CLAMP",
+     "HOUSING (BOYLE)",
+     "1"
+    ],
+    [
+     "FTD-148-800K TOP FEED",
+     "CYLINDER BRAKET",
+     "1"
+    ],
+    [
+     "UM-012-100UG DRILL HEAD",
+     "ASSEMBLY UM-012",
+     "1"
+    ],
+    [
+     "UM-064-200C EXTENSION",
+     "ASSEMBLY",
+     "1"
+    ],
+    [
+     "UM-064-200DS DRILL TABLE",
+     "",
+     "1"
+    ],
+    [
+     "UM-064-300Z DUMP CYLINDER",
+     "",
+     "1"
+    ],
+    [
+     "UM-064-351D REMOVABLE",
+     "HITCH",
+     "1"
+    ],
+    [
+     "UM-064-400D LEGS",
+     "",
+     "2"
+    ],
+    [
+     "UM-064-800B SWIVEL",
+     "",
+     "1"
+    ],
+    [
+     "UM-079-100A-12 HH FOOT CLAMP",
+     "BOYLES",
+     "1"
+    ],
+    [
+     "UM-064-100Z FEED CYLINDER",
+     "",
+     "1"
+    ],
+    [
+     "FBRA-002-515ZZ TILT CYLINDER",
+     " COMPLETE DRILL FBRA-002-100AS",
+     "2"
+    ]
+   ]
+  }
+ ],
+ "11": [
+  {
+   "x": 839,
+   "y": 62,
+   "rows": [
+    [
+     "6400-8-8 MJIC x MORB",
+     "",
+     "12"
+    ],
+    [
+     "6505-8-8 6505-8-8",
+     "",
+     "2"
+    ],
+    [
+     "B625-2750 BOLT 5/8-UNC",
+     "x 2 3/4\"",
+     "4"
+    ],
+    [
+     "B750-3000 BOLT 3/4\"-UNC",
+     "x 3\"",
+     "8"
+    ],
+    [
+     "BKH-12NPT BALL VALVE 1/2",
+     "NPT",
+     "2"
+    ],
+    [
+     "DF10-6B-12L SWITCH VALVE",
+     "MAST TO WIRE LINE",
+     "2"
+    ],
+    [
+     "FMC-014-303D CRAPEAU/CLAMP",
+     "",
+     "4"
+    ],
+    [
+     "LC750 LOCK WASHER 3/4''",
+     "",
+     "8"
+    ],
+    [
+     "UM-064-108B TOP FLANGE",
+     "",
+     "4"
+    ],
+    [
+     "W625 FLAT WASHER 5/8\"",
+     "",
+     "4"
+    ],
+    [
+     "Z250NF GREASE FITTING",
+     "1/4-UNF",
+     "4"
+    ],
+    [
+     "COMPLETE ASSEMBLY",
+     "W/O SELECTOR",
+     ""
+    ],
+    [
+     "VALVE",
+     "",
+     ""
+    ],
+    [
+     "FBRA-002-150BM",
+     "",
+     ""
+    ]
+   ]
+  }
+ ],
+ "13": [
+  {
+   "x": 539,
+   "y": 62,
+   "rows": [
+    [
+     "UM-064-120C MAST END",
+     "PLATE",
+     "1"
+    ],
+    [
+     "B625-1750 BOLT 5/8-UNC",
+     "x 1 3/4",
+     "6"
+    ],
+    [
+     "W625 FLAT WASHER",
+     "5/8\"",
+     "12"
+    ],
+    [
+     "B625-4000 BOLT 5/8-UNC",
+     "x 4\"",
+     "2"
+    ],
+    [
+     "UM-064-317B GSM GUIDE",
+     "BUSHING",
+     "1"
+    ]
+   ]
+  },
+  {
+   "x": 882,
+   "y": 62,
+   "rows": [
+    [
+     "UM-064-160C MAST CONNECTION",
+     "",
+     "1"
+    ],
+    [
+     "UM-064-150C_R1 CONNECTOR",
+     "",
+     "1"
+    ],
+    [
+     "B750-2000 BOLT 3/4-UNC",
+     "X 2",
+     "20"
+    ],
+    [
+     "LC750 LOCK WASHER",
+     "3/4''",
+     "20"
+    ],
+    [
+     "HP1000 HAIR PIN",
+     "1''",
+     "1"
+    ],
+    [
+     "UM-064-317B GSM GUIDE",
+     "BUSHING",
+     "1"
+    ]
+   ]
+  },
+  {
+   "x": 1226,
+   "y": 62,
+   "rows": [
+    [
+     "FTD-148-300TF FOOT CLAMP",
+     "HOUSING",
+     "1"
+    ],
+    [
+     "(BOYLE)",
+     "",
+     ""
+    ],
+    [
+     "FBRA-002-300BB FEED FRAME",
+     "",
+     "1"
+    ],
+    [
+     "W625 FLAT WASHER",
+     "5/8",
+     "6"
+    ],
+    [
+     "UM-079-100A-12 HH FOOT CLAMP",
+     "BOYLES",
+     "1"
+    ],
+    [
+     "B750-5000 BOLT 3/4-UNC",
+     "x 5\"",
+     "4"
+    ],
+    [
+     "B750-2500 BOLT 3/4-UNC",
+     "x 2 1/2",
+     "6"
+    ],
+    [
+     "UM-064-800BB FOOT CLAM",
+     "BASE",
+     "2"
+    ],
+    [
+     "NC750 NUT 3/4-UNC",
+     "",
+     "4"
+    ],
+    [
+     "FBRA-002-305BB FOOT PLATE",
+     "",
+     "1"
+    ],
+    [
+     "FBRA-002-310BB BRACE",
+     "",
+     "2"
+    ],
+    [
+     "UM-064-200C ROD GUIDE",
+     "",
+     "1"
+    ],
+    [
+     "UM-064-195C GUIDE",
+     "",
+     "2"
+    ],
+    [
+     "UM-064-125C PIN",
+     "",
+     "1"
+    ],
+    [
+     "UM-064-1000DD PULLEY",
+     "PIVOT",
+     "1"
+    ],
+    [
+     "UM-064-180C_R1 SWIVEL",
+     "PULLEY",
+     "1"
+    ],
+    [
+     "UM-064-116C ADJUSTABLE",
+     "EXTENSION",
+     "1"
+    ],
+    [
+     "COMPLETE",
+     "ASSEMBLY FBRA-002-300BB",
+     ""
+    ]
+   ]
+  },
+  {
+   "x": 467,
+   "y": 1063,
+   "rows": [
+    [
+     "FTD-148-301TF TOP PLATE",
+     "",
+     "1"
+    ],
+    [
+     "FTD-148-302TF FRONT",
+     "PLATE",
+     "1"
+    ],
+    [
+     "FTD-148-303TF BACK PLATE",
+     "",
+     "1"
+    ],
+    [
+     "B375-1500 BOLT 3/8",
+     "-16 NC X 1 1/2",
+     "8"
+    ],
+    [
+     "B500-3000 BOLT 1/2",
+     "- 13 NC X 3",
+     "9"
+    ],
+    [
+     "W500 FLAT WASHER",
+     "1/2\"",
+     "18"
+    ],
+    [
+     "B500-2750 BOLT 1/2-UNC",
+     "x 2 3/4''",
+     "9"
+    ]
+   ]
+  }
+ ],
+ "14": [
+  {
+   "x": 927,
+   "y": 62,
+   "rows": [
+    [
+     "UM-020-656B EYE BOLT",
+     "5/8\" - NC",
+     "2"
+    ],
+    [
+     "HP1000 HAIR PIN",
+     "1''",
+     "1"
+    ],
+    [
+     "UM-064-807B FOOT CLAMP",
+     "TABLE",
+     "1"
+    ],
+    [
+     "UM-020-657B FLANGE",
+     "NUT 5/8-UNC",
+     "2"
+    ],
+    [
+     "UM-064-850B PIN FOOT",
+     "CLAMP",
+     "1"
+    ],
+    [
+     "UM-020-806B BUSHING",
+     "TREMPER",
+     "2"
+    ],
+    [
+     "(UM020",
+     "806B)",
+     ""
+    ],
+    [
+     "B625-7000GR8 BOLT 5/8-UNC",
+     "x 7\" GR8",
+     "1"
+    ],
+    [
+     "NC625 NUT 5/8\"-UNC",
+     "",
+     "1"
+    ],
+    [
+     "COMPLETE ASSEMBLY",
+     "",
+     ""
+    ],
+    [
+     "UM-064-800B",
+     "",
+     ""
+    ]
+   ]
+  }
+ ],
+ "15": [
+  {
+   "x": 890,
+   "y": 62,
+   "rows": [
+    [
+     "UM-064-1002DD BASE PLATE",
+     "",
+     "1"
+    ],
+    [
+     "UM-064-1001DD MOBILE PLATE",
+     "",
+     "1"
+    ],
+    [
+     "UM-064-1003DD ADJUSTING",
+     "ROD",
+     "1"
+    ],
+    [
+     "CS750-1500 COUNTERSUNK",
+     "3/4-UNC x 1 1/2\"",
+     "4"
+    ],
+    [
+     "UM-064-1004DD PIN",
+     "",
+     "1"
+    ],
+    [
+     "UM-064-1014D GREASE FITTING",
+     "1/4-UNF",
+     "1"
+    ],
+    [
+     "UM-064-1017D HAIRPIN",
+     "",
+     "1"
+    ],
+    [
+     "UM-064-1009D SPRING",
+     "",
+     "1"
+    ],
+    [
+     "UM-064-1015D SPRING PIN",
+     "3/16 x 1",
+     "1"
+    ]
+   ]
+  }
+ ],
+ "16": [
+  {
+   "x": 915,
+   "y": 62,
+   "rows": [
+    [
+     "UM-064-100C ROD GUIDE",
+     "FRAME",
+     "1"
+    ],
+    [
+     "UM-064-102C HAIR PIN",
+     "",
+     "1"
+    ],
+    [
+     "UM-064-130C ROD",
+     "",
+     "1"
+    ],
+    [
+     "UM-064-140C GREASE",
+     "FITTING 1/8 NPT",
+     "1"
+    ],
+    [
+     "UM-066-500GR ROLLER",
+     "",
+     "1"
+    ]
+   ]
+  }
+ ],
+ "17": [
+  {
+   "x": 861,
+   "y": 62,
+   "rows": [
+    [
+     "UM-064-124C FRAME PULLEY",
+     "",
+     "2"
+    ],
+    [
+     "UM-064-119C PULLEY",
+     "",
+     "2"
+    ],
+    [
+     "UM-064-128C SPECIAL WASHER",
+     "",
+     "2"
+    ],
+    [
+     "UM-064-118C BEARING 6209",
+     "2RS",
+     "4"
+    ],
+    [
+     "UM-064-127C PIN",
+     "",
+     "2"
+    ],
+    [
+     "UM-064-131C SPACER",
+     "",
+     "4"
+    ],
+    [
+     "B750-2250 BOLT 3/4-UNC",
+     "X 2 1/4''",
+     "2"
+    ],
+    [
+     "B500-4000 BOLT 1/2\"-UNC",
+     "x 4\"",
+     "4"
+    ],
+    [
+     "LC500 LOCK WHASHER",
+     "1/2\"",
+     "4"
+    ],
+    [
+     "NC500 NUT 1/2-UNC",
+     "",
+     "4"
+    ]
+   ]
+  }
+ ],
+ "18": [
+  {
+   "x": 877,
+   "y": 62,
+   "rows": [
+    [
+     "2501L-4-2 90° JIC#4 (1/4)",
+     "x 1/8 NPT",
+     "4"
+    ],
+    [
+     "B625-2250 BOLT 5/8 - 11",
+     "NC X 2 1/4",
+     "4"
+    ],
+    [
+     "B625-2500 BOLT 5/8-UNC",
+     "x 2 1/2\"",
+     "16"
+    ],
+    [
+     "B625-2750 BOLT 5/8-UNC",
+     "x 2 3/4\"",
+     "2"
+    ],
+    [
+     "B750-6000 BOLT 3/4-UNC",
+     "x 6\"",
+     "8"
+    ],
+    [
+     "HP1000 HAIR PIN 1''",
+     "",
+     "1"
+    ],
+    [
+     "LC625 LOCK WASHER",
+     "5/8\"",
+     "20"
+    ],
+    [
+     "LN625NC LOCK NUT",
+     "5/8\"-NC",
+     "2"
+    ],
+    [
+     "LN750NC LOCK NUT",
+     "3/4-UNC",
+     "8"
+    ],
+    [
+     "NC750 NUT 3/4 - 10",
+     "NC",
+     "6"
+    ],
+    [
+     "SS750-2500 SET SCREW",
+     "3/4-UNC x 2 1/2\"",
+     "6"
+    ],
+    [
+     "UM-020-613BA END PLATE",
+     "RETAINER GUIDE",
+     "4"
+    ],
+    [
+     "UM-020-616BA HARDENED",
+     "BUSHING",
+     "2"
+    ],
+    [
+     "UM-020-656B EYE BOLT 5/8\"",
+     "- NC",
+     "2"
+    ],
+    [
+     "UM-020-657B FLANGE NUT",
+     "5/8-UNC",
+     "2"
+    ],
+    [
+     "UM-064-204DS BLOCK",
+     "",
+     "2"
+    ],
+    [
+     "UM-064-205DS TABLE BOTTOM",
+     "CLAMP",
+     "2"
+    ],
+    [
+     "UM-064-210DS GREASE HOSE",
+     "",
+     "2"
+    ],
+    [
+     "UM-064-219D GUIDE TABLE",
+     "",
+     "2"
+    ],
+    [
+     "UM-064-224D BOTTOM PLATE",
+     "RETAINER GUIDE",
+     "2"
+    ],
+    [
+     "UM-064-225D PUSH PLATE",
+     "",
+     "2"
+    ],
+    [
+     "UM-064-250D SWING PIN",
+     "",
+     "1"
+    ],
+    [
+     "Z125 1/8 NPT ST Zerk",
+     "",
+     "2"
+    ],
+    [
+     "ASSEMBLY",
+     "",
+     ""
+    ]
+   ]
+  }
+ ],
+ "19": [
+  {
+   "x": 18,
+   "y": 62,
+   "rows": [
+    [
+     "UM-064-553D PIN",
+     "",
+     "1"
+    ],
+    [
+     "HP1000 HAIR",
+     "PIN 1''",
+     "1"
+    ],
+    [
+     "NFC375 FLANGE",
+     "NUT 3/8''",
+     "2"
+    ],
+    [
+     "J000228-1 CLAMP",
+     "",
+     "1"
+    ],
+    [
+     "J000228-2 MUFFLER",
+     "CLAMP 3",
+     "1"
+    ],
+    [
+     "1/2''",
+     "",
+     ""
+    ],
+    [
+     "W312 FLAT",
+     "WASHER 5/16",
+     "2"
+    ],
+    [
+     "2404-8-8 MJIC",
+     "x MP",
+     "1"
+    ],
+    [
+     "6801F-8-8 MJIC",
+     "X MORB 90 DEG.",
+     "3"
+    ],
+    [
+     "LN312NC LOCK",
+     "NUT 5/16\"-NC",
+     "2"
+    ],
+    [
+     "6402-8-8 ORB",
+     "x FJIC SWIVEL",
+     "1"
+    ],
+    [
+     "FBRA-002-507Z HYDRAULIC",
+     "TUBE",
+     "1"
+    ],
+    [
+     "YEJ BLOC",
+     "",
+     "1"
+    ],
+    [
+     "CBCA-LHN COUNTERBALANCE",
+     "",
+     "2"
+    ],
+    [
+     "VALVE",
+     "",
+     ""
+    ],
+    [
+     "2501F-08-08 MJIC",
+     "x MP",
+     "1"
+    ],
+    [
+     "FBRA-002-505Z CYLINDER",
+     "BRACKET",
+     "1"
+    ],
+    [
+     "B312-2500 BOLT",
+     "5/16-UNC x 2 1/2",
+     "2"
+    ],
+    [
+     "Z125-S 1/8 NPT",
+     "ST Zerk",
+     "1"
+    ],
+    [
+     "(MODIFIED)",
+     "",
+     ""
+    ],
+    [
+     "FBRA-002-530ZZ CYLINDER",
+     "HBU-3010",
+     "1"
+    ],
+    [
+     "COMPLETE PACKING KIT",
+     "#K-CHV-30MEC/WLD",
+     ""
+    ]
+   ]
+  },
+  {
+   "x": 560,
+   "y": 62,
+   "rows": [
+    [
+     "YEJ BLOC",
+     "",
+     "1 UM-064-300Z"
+    ],
+    [
+     "CBCA-LHN COUNTERBALANCE",
+     "VALVE",
+     "2 UM-064-575D"
+    ],
+    [
+     "2501F-08-08 MJIC x MP",
+     "",
+     "1 UM-064-550D"
+    ],
+    [
+     "COMPLETE PACKING KIT #",
+     "HERSK-HBU-CL251500",
+     ""
+    ]
+   ]
+  },
+  {
+   "x": 869,
+   "y": 62,
+   "rows": [
+    [
+     "1 UM-064-300Z FEED FRAME",
+     "CYLINDER(HBU 2536)",
+     "1"
+    ],
+    [
+     "2 UM-064-575D PIN 1\" x 4 3/4\"",
+     "Lg.",
+     "1"
+    ],
+    [
+     "1 UM-064-550D PIN",
+     "",
+     "1"
+    ],
+    [
+     "HP1000 HAIR PIN 1''",
+     "",
+     "2"
+    ],
+    [
+     "2404-8-8 MJIC x MP",
+     "",
+     "1"
+    ],
+    [
+     "6402-8-8 MORB x FJ",
+     "",
+     "1"
+    ],
+    [
+     "6801F-8-8 MJIC x MORB",
+     "",
+     "3"
+    ],
+    [
+     "HP1000",
+     "",
+     ""
+    ]
+   ]
+  }
+ ],
+ "20": [
+  {
+   "x": 9,
+   "y": 62,
+   "rows": [
+    [
+     "01503 PIN 3/4",
+     "x 4 1/2\" Lg.",
+     "3"
+    ],
+    [
+     "HP750 HAIR PIN",
+     "3/4''",
+     "3"
+    ],
+    [
+     "UM-064-415D CENTRAL",
+     "SECTION",
+     "1"
+    ],
+    [
+     "UM-064-420D BUTTOM",
+     "SECTION",
+     "1"
+    ],
+    [
+     "UM-064-425D AJUSTABLE",
+     "SECTION",
+     "1"
+    ],
+    [
+     "UM-064-555D HAIRPIN",
+     "",
+     "2"
+    ]
+   ]
+  },
+  {
+   "x": 927,
+   "y": 62,
+   "rows": [
+    [
+     "UM-064-352D HITCH",
+     "FRAME",
+     "1"
+    ],
+    [
+     "UM-064-354D CLAMP",
+     "",
+     "2"
+    ],
+    [
+     "B750-3000 BOLT 3/4\"-UNC",
+     "x 3\"",
+     "2"
+    ]
+   ]
+  }
+ ],
+ "21": [
+  {
+   "x": 657,
+   "y": 62,
+   "rows": [
+    [
+     "UM-064-122Z CENTER",
+     "TUBE",
+     "1 612-225-100"
+    ],
+    [
+     "UM-064-150Z MAIN CYLINDER",
+     "TUBE",
+     "1 612-350-025"
+    ],
+    [
+     "UM-064-127Z JAM NUT",
+     "",
+     "2 612-425-150P"
+    ],
+    [
+     "UM-064-128Z PRIMARY",
+     "NUT",
+     "2 612-500-050"
+    ],
+    [
+     "UM-064-317B GSM GUIDE",
+     "BUSHING",
+     "2 6801-12-12"
+    ],
+    [
+     "12HP5ON-S 6408HHP-12",
+     "(SOCKET PLUG",
+     "4 DPU25-3.00-37"
+    ],
+    [
+     "#12)",
+     "",
+     "DPU25-5.00-37"
+    ],
+    [
+     "B500-1500 BOLT 1/2-UNC",
+     "x 1 1/2",
+     "2 DRU25-2.00-37"
+    ],
+    [
+     "B375-1000 BOLT 3/8-UNC",
+     "X 1\"",
+     "4 DRU25-4.00-37"
+    ],
+    [
+     "",
+     "",
+     "PS914-3500-282"
+    ],
+    [
+     "612-350-025",
+     "",
+     ""
+    ],
+    [
+     "",
+     "",
+     "PS914-5000-282"
+    ],
+    [
+     "",
+     " PS914-3500-282",
+     "RBL-GEZ34ES"
+    ],
+    [
+     "",
+     "",
+     "ST-400-XL"
+    ],
+    [
+     "",
+     "",
+     "UM-064-116Z"
+    ],
+    [
+     "",
+     "",
+     "UM-064-119Z"
+    ],
+    [
+     "",
+     "",
+     "UM-064-120Z"
+    ],
+    [
+     "",
+     " UM-196CZ",
+     "UM-064-121Z"
+    ]
+   ]
+  },
+  {
+   "x": 917,
+   "y": 62,
+   "rows": [
+    [
+     "1 612-225-100 WEAR RING",
+     "",
+     "2"
+    ],
+    [
+     "1 612-350-025 WEAR RING",
+     "",
+     "2"
+    ],
+    [
+     "2 612-425-150P WEAR RING",
+     "",
+     "2"
+    ],
+    [
+     "2 612-500-050 WEAR RING",
+     "",
+     "2"
+    ],
+    [
+     "2 6801-12-12 90° MJIC",
+     "3/4\" x MORB 3/4\"",
+     "4"
+    ],
+    [
+     "4 DPU25-3.00-37 U-SEAL",
+     "",
+     "2"
+    ],
+    [
+     "DPU25-5.00-37 U-SEAL",
+     "",
+     "2"
+    ],
+    [
+     "2 DRU25-2.00-37 U-SEAL",
+     "",
+     "2"
+    ],
+    [
+     "4 DRU25-4.00-37 U-SEAL",
+     "",
+     "2"
+    ],
+    [
+     "PS914-3500-282 PISTON",
+     "SEAL",
+     "1"
+    ],
+    [
+     "PS914-5000-282 PISTON",
+     "SEAL",
+     "1"
+    ],
+    [
+     "RBL-GEZ34ES BALL BUSHING",
+     "1 3/8\"",
+     "2"
+    ],
+    [
+     "ST-200-X WIPER SEAL",
+     "",
+     "2"
+    ],
+    [
+     "ST-400-XL WIPER SEAL",
+     "",
+     "2"
+    ],
+    [
+     "UM-064-116Z GLAND",
+     "",
+     "2"
+    ],
+    [
+     "UM-064-119Z ROD CYLINDER",
+     "",
+     "2"
+    ],
+    [
+     "UM-064-120Z ROD CENTER",
+     "PISTON",
+     "1"
+    ],
+    [
+     "UM-064-121Z CENTER",
+     "TUBE GLAND",
+     "2"
+    ]
+   ]
+  }
+ ],
+ "22": [
+  {
+   "x": 606,
+   "y": 62,
+   "rows": [
+    [
+     "PREMM-16-1 ROD END 1\"",
+     "",
+     "1 568-230-90D"
+    ],
+    [
+     "SK-01 O-RING (#568-214)",
+     "",
+     "1 6400-8-8"
+    ],
+    [
+     "SK-03 O-RING (#568-232)",
+     "",
+     "1 FTD-030-101Z"
+    ],
+    [
+     "SK-04 WEAR RING",
+     "(#612-200-050)",
+     "1 FTD-030-102Z"
+    ],
+    [
+     "SK-05 WEAR RING",
+     "(#612-250-100)",
+     "1 FTD-030-105Z"
+    ],
+    [
+     "SK-06 SEAL (#P250-01.750-375B)",
+     "",
+     "1 FTD-030-106Z"
+    ],
+    [
+     "SK-07 PISTON SEAL(#PS914-2500-312)",
+     "",
+     "1"
+    ],
+    [
+     "SK-08 WIPER SEAL",
+     "(#ST175)",
+     "1"
+    ]
+   ]
+  },
+  {
+   "x": 888,
+   "y": 62,
+   "rows": [
+    [
+     "1 568-230-90D O-RING (#568-230-90D)",
+     "",
+     "1"
+    ],
+    [
+     "1 6400-8-8 MJIC x MORB",
+     "",
+     "2"
+    ],
+    [
+     "1 FTD-030-101Z CYLINDER",
+     "HEAD",
+     "1"
+    ],
+    [
+     "1 FTD-030-102Z CYLINDER",
+     "BORE",
+     "1"
+    ],
+    [
+     "1 FTD-030-105Z CYLINDER",
+     "ROD",
+     "1"
+    ],
+    [
+     "1 FTD-030-106Z PISTON",
+     "",
+     "1"
+    ],
+    [
+     "1 JN1 JAM NUT 1-14",
+     "UNF",
+     "1"
+    ],
+    [
+     "1",
+     "",
+     ""
+    ],
+    [
+     "SEAL KIT FTD-030-KP100Z",
+     "",
+     ""
+    ],
+    [
+     "SK-01",
+     "",
+     ""
+    ]
+   ]
+  }
+ ],
+ "23": [
+  {
+   "x": 800,
+   "y": 62,
+   "rows": [
+    [
+     "UM-102-1860AA SAFETY SWITCH",
+     "",
+     "1"
+    ],
+    [
+     "UM-064-1201GG GUARD",
+     "",
+     "1"
+    ],
+    [
+     "UM-064-1202GG FRONT BRACKET",
+     "",
+     "1"
+    ],
+    [
+     "UM-064-1203GG REAR BRACKET",
+     "",
+     "1"
+    ],
+    [
+     "UM-064-1204GG MAIN TUBE",
+     "",
+     "1"
+    ],
+    [
+     "UM-064-1206GG ADJUSTMENT BOLT",
+     "",
+     "1"
+    ],
+    [
+     "UM-064-1219G SPACER",
+     "",
+     "1"
+    ],
+    [
+     "W750 FLAT WASHER 3/4",
+     "",
+     "6"
+    ],
+    [
+     "B750-6000 BOLT 3/4-UNC x",
+     "6\"",
+     "2"
+    ],
+    [
+     "UM-064-1202G SIDE BRACKET",
+     "",
+     "1"
+    ],
+    [
+     "UM-064-1223G SPECIAL WASHER",
+     "",
+     "1"
+    ],
+    [
+     "UM-038-101A SPRING",
+     "",
+     "1"
+    ],
+    [
+     "UM-064-960G HOLDING PULLCORD",
+     "PLATE",
+     "1"
+    ],
+    [
+     "UM-064-1300SS ASSEMBLY FOR EMERGENCY",
+     "STOP CONTROL",
+     "1"
+    ],
+    [
+     "BOX AND SWITCH,",
+     "PULL CORD",
+     ""
+    ],
+    [
+     "LN750NC LOCK NUT 3/4-UNC",
+     "",
+     "2"
+    ],
+    [
+     "B750-3000 BOLT 3/4\"-UNC x",
+     "3\"",
+     "2"
+    ],
+    [
+     "UM-064-1350S CHAIN 3-16",
+     " UNDERGROUND GUARD COMPLETE ASSEMBLY UM-064-1200GG",
+     "1"
+    ]
+   ]
+  }
+ ],
+ "24": [
+  {
+   "x": 901,
+   "y": 62,
+   "rows": [
+    [
+     "2700-12-12 MJIC 12 x",
+     "MJIC 12",
+     "3"
+    ],
+    [
+     "2700-08-08 MJIC 8 x",
+     "MJIC 8",
+     "1"
+    ],
+    [
+     "0306-12 BULKHEAD",
+     "JAM NUT 12",
+     "3"
+    ],
+    [
+     "0306-08 BULKHEAD",
+     "JAM NUT 08",
+     "1"
+    ]
+   ]
+  }
+ ],
+ "25": [
+  {
+   "x": 801,
+   "y": 62,
+   "rows": [
+    [
+     "TELEMACANIQUE XY2-CH EMERGENCY STOP",
+     "SWITCH",
+     "1"
+    ],
+    [
+     "UM-064-925G PULL CORD CABLE",
+     "",
+     "1"
+    ],
+    [
+     "TSRC10 STRAIN RELIEF CONNECTOR",
+     "(8)",
+     "1"
+    ],
+    [
+     "2404-8-8 MJIC 8 x MP 8",
+     "",
+     "1"
+    ],
+    [
+     "5406-12-8 MP 12 x FP 8",
+     "",
+     "1"
+    ],
+    [
+     "UM-064-960G PLATE TO ATTACH",
+     "PULL SORD",
+     "1"
+    ],
+    [
+     "UM-064-907GG BRACKET FOR SAFETY",
+     "SWITCH",
+     "1"
+    ],
+    [
+     "2404-12-12 MJIC 12 x MP 12",
+     "",
+     "1"
+    ]
+   ]
+  },
+  {
+   "x": 339,
+   "y": 605,
+   "rows": [
+    [
+     "UM-102-1862A SAFETY SWITCH",
+     "HANDLE",
+     "1"
+    ],
+    [
+     "XCS-ZR5902 NUT SAFETY SWITCH",
+     "NUT",
+     "2"
+    ],
+    [
+     "XCS-ZR5902 SAFETY SWITCH",
+     "(EMITTER)",
+     "1"
+    ],
+    [
+     "UM-102-1861A SAFETY SWITCH",
+     "SOCKET",
+     "1"
+    ],
+    [
+     "XCS-ZR1 SAFETY SWITCH",
+     "(RECEPTOR)",
+     "1"
+    ],
+    [
+     "NC375 NUT 3/8-UNC",
+     "",
+     "1"
+    ],
+    [
+     "B375-1500 BOLT 3/8",
+     "-16 NC X 1 1/2",
+     "1"
+    ],
+    [
+     "8487A15 SPRING PLUNGER",
+     "1/4\"",
+     "1"
+    ],
+    [
+     "3-16 link CHAIN 3/16",
+     "LINK",
+     "9"
+    ],
+    [
+     "DE PIÈCES\\IDW\\UM-064-1300SSS.idw",
+     "",
+     ""
+    ]
+   ]
+  }
+ ],
+ "27": [
+  {
+   "x": 884,
+   "y": 62,
+   "rows": [
+    [
+     "B750-2000 BOLT 3/4 -",
+     "10 NC X 2",
+     "4"
+    ],
+    [
+     "B750-3000 BOLT 3/4\"-UNC",
+     "x 3\"",
+     "16"
+    ],
+    [
+     "B750-3500 BOLT 3/4 -",
+     "10 NC X 3 1/2",
+     "16"
+    ],
+    [
+     "LC750 LOCK WASHER",
+     "3/4''",
+     "16"
+    ],
+    [
+     "LN750NC LOCK NUT",
+     "3/4-UNC",
+     "16"
+    ],
+    [
+     "SH750-2000 SQUARE HEAD",
+     "BOLT 3/4 - NC x 2\"",
+     "12"
+    ],
+    [
+     "UM-064-804A DRILL FRAME",
+     "CLAMP",
+     "4"
+    ],
+    [
+     "UM-064-810A CENTER CLAMP",
+     "",
+     "4"
+    ],
+    [
+     "UM-064-810AA UPPER PLATE",
+     "",
+     "1"
+    ],
+    [
+     "UM-064-812A OUTSIDE CLAMP",
+     "",
+     "8"
+    ],
+    [
+     "UM-064-815AA BASE",
+     "",
+     "1"
+    ],
+    [
+     "W750 FLAT WASHER",
+     "3/4",
+     "12"
+    ],
+    [
+     "Z125 1/8 NPT ST",
+     "Zerk",
+     "8"
+    ],
+    [
+     "UM-064-805AA PIVOT",
+     "",
+     "2"
+    ]
+   ]
+  }
+ ],
+ "28": [
+  {
+   "x": 899,
+   "y": 62,
+   "rows": [
+    [
+     "FTD-148-595D BRACKET",
+     "PIN",
+     "1"
+    ],
+    [
+     "FTD-148-800K TOP FEED",
+     "CYLINDER BRAKET",
+     "1"
+    ],
+    [
+     "HP1000 *Varies*",
+     "",
+     "1"
+    ],
+    [
+     "JN1 JAM NUT",
+     "1-14 UNF",
+     "1"
+    ],
+    [
+     "PREMM-16-1 ROD END",
+     "1-14 UNF",
+     "1"
+    ],
+    [
+     "JN1",
+     "",
+     ""
+    ]
+   ]
+  }
+ ],
+ "29": [
+  {
+   "x": 1123,
+   "y": 81,
+   "rows": [
+    [
+     "3206 A-2RS1_MT33 SKF-ANGULAR CONTACT",
+     "BALL BEARING, DOUBLE ROW",
+     "1"
+    ],
+    [
+     "UM-106-100A SWIVEL CAP",
+     "",
+     "1"
+    ],
+    [
+     "UM-106-101A PACKING CAGE",
+     "",
+     "1"
+    ],
+    [
+     "UM-106-103A CARBIDE",
+     "",
+     "1"
+    ],
+    [
+     "UM-106-104A SPINDLE EXTENSION",
+     "",
+     "1"
+    ],
+    [
+     "UM-106-105A SWIVEL BODY",
+     "",
+     "1"
+    ],
+    [
+     "UM-106-100A-UG SWIVEL CAP FOR UNDERGROUND",
+     "DRILLING",
+     "1"
+    ],
+    [
+     "UM-106-16RK REPAIR KIT (O-RINGS,",
+     "SPINDLE, PACKING)",
+     "1"
+    ]
+   ]
+  }
+ ],
+ "30": [
+  {
+   "x": 895,
+   "y": 62,
+   "rows": [
+    [
+     "RT-1750 SPINDLE",
+     "KIT",
+     "1"
+    ],
+    [
+     "27-290-IIC HUB AND",
+     "BEARING KIT",
+     "1"
+    ],
+    [
+     "235-85R162 WHELL",
+     "",
+     "1"
+    ],
+    [
+     "FBRA-002-1605RM WHEEL HUB",
+     "",
+     "1"
+    ],
+    [
+     "FBRA-002-240P AXEL PIN",
+     "",
+     "1"
+    ],
+    [
+     "UM-064-1603RM RIM",
+     "",
+     "1"
+    ]
+   ]
+  }
+ ],
+ "32": [
+  {
+   "x": 637,
+   "y": 62,
+   "rows": [
+    [
+     "UM-021-04-03-H JAWS SET",
+     "CLAMP HH",
+     "1"
+    ],
+    [
+     "UM-021-04-04-P JAWS SET",
+     "CLAMP HH",
+     "1"
+    ],
+    [
+     "UM-021-06HH-02C-B BUSHING",
+     "GUIDE ROD",
+     "1"
+    ],
+    [
+     "UM-021-06HH-03C-N BUSHING",
+     "GUIDE ROD",
+     "1"
+    ],
+    [
+     "UM-021-06HH-04C-H BUSHING",
+     "GUIDE ROD",
+     "1"
+    ],
+    [
+     "UM-021-06HH-06C-BW BUSHING",
+     "GUIDE ROD",
+     "1"
+    ],
+    [
+     "UM-021-06HH-22C-B BUSHING",
+     "GUIDE SHELL",
+     "1"
+    ],
+    [
+     "UM-021-06HH-33C-N BUSHING",
+     "GUIDE SHELL",
+     "1"
+    ],
+    [
+     "UM-021-06HH-44C-H BUSHING",
+     "GUIDE SHELL",
+     "1"
+    ],
+    [
+     "UM-021-15-GB01 COVER",
+     "PLATE",
+     "1"
+    ],
+    [
+     "UM-021-15-GB02 BEARING",
+     "GUIDE BUSHING",
+     "1"
+    ],
+    [
+     "UM-021-15-GB03N BUSHING",
+     "GUIDE",
+     "1"
+    ],
+    [
+     "UM-021-15-GB03N+ BUSHING",
+     "GUIDE",
+     "1"
+    ],
+    [
+     "UM-021-15-GB04B BUSHING",
+     "GUIDE",
+     "1"
+    ],
+    [
+     "UM-021-15-GB04B+ BUSHING",
+     "GUIDE",
+     "1"
+    ],
+    [
+     "WH-525 RING JAWS",
+     "CLAMP HH",
+     "8"
+    ],
+    [
+     "ZNPT250 1/4 NPT",
+     "ST Zerk",
+     "1"
+    ],
+    [
+     "SEAL KIT 2920241",
+     "",
+     ""
+    ],
+    [
+     "FOR CLAMP",
+     "HH",
+     ""
+    ]
+   ]
+  },
+  {
+   "x": 919,
+   "y": 62,
+   "rows": [
+    [
+     "2920331 PISTON",
+     "",
+     "1"
+    ],
+    [
+     "2920332 CYLINDRER",
+     "",
+     "1"
+    ],
+    [
+     "2920333 CYLINDER",
+     "CAP",
+     "1"
+    ],
+    [
+     "2920390 CLAMP",
+     "BOWL",
+     "1"
+    ],
+    [
+     "SLOTTED-12.5°",
+     "",
+     ""
+    ],
+    [
+     "2920452 BUSHING",
+     "RETAINER",
+     "4"
+    ],
+    [
+     "2920455 HOUSING",
+     "CLAMP 12HH",
+     "1"
+    ],
+    [
+     "321620 BREETER",
+     "PLUG",
+     "1"
+    ],
+    [
+     "3506878 TOP SPACER",
+     "",
+     "3"
+    ],
+    [
+     "3506880 BOTTOM",
+     "SPACER",
+     "9"
+    ],
+    [
+     "3506906 TOP CAP",
+     "HOLDER",
+     "1"
+    ],
+    [
+     "3506907 TOP CAP",
+     "ADAPTER",
+     "1"
+    ],
+    [
+     "5020126 TREMPERED",
+     "BUSHING",
+     "2"
+    ],
+    [
+     "5030250 O RING",
+     "",
+     "1"
+    ],
+    [
+     "5030269 O RING",
+     "",
+     "1"
+    ],
+    [
+     "5030274 O-RING",
+     "",
+     "1"
+    ],
+    [
+     "5035015 U CUP SEAL",
+     "",
+     "1"
+    ],
+    [
+     "5035016 U CUP SEAL",
+     "",
+     "1"
+    ],
+    [
+     "5035017 WEAR RING",
+     "",
+     "1"
+    ],
+    [
+     "5035018 WEAR RING",
+     "",
+     "1"
+    ],
+    [
+     "5040192 OIL SEAL",
+     "",
+     "9"
+    ],
+    [
+     "5200517 SPRING",
+     "",
+     "18"
+    ],
+    [
+     "B312-1000 BOLT 5/16-UNC",
+     "x 1\"",
+     "4"
+    ],
+    [
+     "B500-2000 BOLT 1/2",
+     "-UNC X 2",
+     "9"
+    ],
+    [
+     "B500-2250 BOLT 1/2-UNC",
+     "x 2 1/4",
+     "9"
+    ],
+    [
+     "B500-6500 GRADE 8 BOLT 1/2-UNC",
+     "x 6 1/2",
+     "6"
+    ],
+    [
+     "B500-8000 GRADE 8 BOLT 1/2-UNC",
+     "x 8",
+     "3"
+    ],
+    [
+     "B750-1500 BOLT 3/4-UNC",
+     "x 1 1/2",
+     "3"
+    ],
+    [
+     "R3100-354 EXTERNAL",
+     "RETAINING",
+     "1"
+    ],
+    [
+     "RING",
+     "",
+     ""
+    ],
+    [
+     "SHCS500-4000 BOLT 1/2",
+     "UNC x 4\"",
+     "9"
+    ],
+    [
+     "SP250 SQUARE",
+     "PLUG 1/4",
+     "1"
+    ],
+    [
+     "UM-021-04-01-N JAWS SET",
+     "CLAMP HH",
+     "1"
+    ],
+    [
+     "UM-021-04-02-B JAWS SET",
+     "CLAMP HH",
+     "1"
+    ]
+   ]
+  }
+ ],
+ "34": [
+  {
+   "x": 863,
+   "y": 62,
+   "rows": [
+    [
+     "100B STANDARD PROPELER",
+     "",
+     "1"
+    ],
+    [
+     "100D BENTONITE",
+     "PROPELER",
+     "1"
+    ],
+    [
+     "104A HYDRAULIC",
+     "MOTOR MGG10BB1E3",
+     "1"
+    ],
+    [
+     "105A HEXAGONAL",
+     "BOX",
+     "1"
+    ],
+    [
+     "107A SUPPORT",
+     "",
+     "1"
+    ],
+    [
+     "109A HEART",
+     "",
+     "1"
+    ],
+    [
+     "117A SQUARE KEY",
+     "1/8\"",
+     "1"
+    ],
+    [
+     "B250-1000 BOLT 1/4-UNC",
+     "x 1\"",
+     "4"
+    ],
+    [
+     "B500-1000 BOLT 1/2-UNC",
+     "x 1\"",
+     "4"
+    ],
+    [
+     "B500-750 BOLT 1/2-UNC",
+     "x 3/4''",
+     "7"
+    ],
+    [
+     "W500 FLAT WASHER",
+     "1/2\"",
+     "4"
+    ],
+    [
+     "OVERALL DIMENSION",
+     "",
+     ""
+    ],
+    [
+     "HEIGHT:17\"",
+     "",
+     ""
+    ],
+    [
+     "WIDTH:12",
+     "1/2\"",
+     ""
+    ],
+    [
+     "LENGTH:13",
+     "7/8\"",
+     ""
+    ]
+   ]
+  }
+ ],
+ "36": [
+  {
+   "x": 850,
+   "y": 62,
+   "rows": [
+    [
+     "UM-020-308C PUMP MOUNTING",
+     "PLATE",
+     "1"
+    ],
+    [
+     "UM-058-801P CHANNEL C4 X",
+     "5.4",
+     "2"
+    ],
+    [
+     "UMV-03-2 PUMP BEAN 435",
+     "",
+     "1"
+    ],
+    [
+     "UMV-05 HOUSING ADAPTER",
+     "",
+     "1"
+    ],
+    [
+     "SKF 2307 E-2RS1 BEARING",
+     "",
+     "2"
+    ],
+    [
+     "W11-CM MODIFIED CAP",
+     "FOR PUMP BEAN 435",
+     "1"
+    ],
+    [
+     "UMV-08 WHITE MOTOR",
+     "No 500375A5120AAAA",
+     "1"
+    ],
+    [
+     "CR14832 SEAL",
+     "",
+     "1"
+    ],
+    [
+     "202S COUPLING",
+     "",
+     "1"
+    ],
+    [
+     "B500-1250 BOLT 1/2-UNC",
+     "x 1 1/4\"",
+     "3"
+    ],
+    [
+     "B625-1750 BOLT 5/8-UNC",
+     "x 1 3/4\"",
+     "4"
+    ],
+    [
+     "W625 FLAT WASHER",
+     "5/8\"",
+     "4"
+    ],
+    [
+     "UMV-03-4 KEY",
+     "",
+     "1"
+    ],
+    [
+     "A91675 GASKET",
+     "",
+     "2"
+    ],
+    [
+     "UMV-03-3 KEY 5/16 x 5/16",
+     "x 1 3/8\"",
+     "1"
+    ],
+    [
+     "SHCS500-1500 SHCS 1/2-UNC",
+     "X 1 1/2\"",
+     "4"
+    ],
+    [
+     "SHCS500-1250 SHCS 1/2-UNC",
+     "X 1 1/4\"",
+     "3"
+    ],
+    [
+     "COMPLETE",
+     "ASSEMBLY",
+     ""
+    ],
+    [
+     "UM-058-800PP",
+     "",
+     ""
+    ]
+   ]
+  }
+ ],
+ "39": [
+  {
+   "x": 875,
+   "y": 62,
+   "rows": [
+    [
+     "B375-1250 BOLT 3/8 - 16",
+     "NC X 1 1/4",
+     "10"
+    ],
+    [
+     "B375-3500 BOLT 3/8-UNC",
+     "x 3 1/2\"",
+     "6"
+    ],
+    [
+     "SP250-1250",
+     "",
+     "4"
+    ],
+    [
+     "SP375-3000",
+     "",
+     "2"
+    ],
+    [
+     "UM-032-102F SPRING HANDWHEEL",
+     "",
+     "2"
+    ],
+    [
+     "UM-032-103A CHAINE GUARD",
+     "(STRINGER CABLE)",
+     "2"
+    ],
+    [
+     "UM-032-163F SPECIAL WASHER",
+     "",
+     "2"
+    ],
+    [
+     "UM-032-169F HANDWHEEL",
+     "",
+     "2"
+    ],
+    [
+     "W375 FLAT WASHER",
+     "3/8",
+     "25"
+    ]
+   ]
+  }
+ ],
+ "40": [
+  {
+   "x": 808,
+   "y": 62,
+   "rows": [
+    [
+     "SPN-R3000-X237",
+     "",
+     "1"
+    ],
+    [
+     "UM-032-109F SPROCKET LEADING",
+     "35B11",
+     "2"
+    ],
+    [
+     "UM-032-110F SPROCKET LEAD 35B70",
+     "",
+     "2"
+    ],
+    [
+     "UM-032-162F SPROCKET ADAPTOR",
+     "35",
+     "2"
+    ],
+    [
+     "UM-032-165F BUSHING BRASS",
+     "",
+     "2"
+    ],
+    [
+     "UM-032-224F KEY 3/16 x 3/4 X 3/4",
+     "Lg",
+     "2"
+    ],
+    [
+     "UM-032-236F DRUM GUIDE",
+     "",
+     "1"
+    ],
+    [
+     "UM-032-C1 CHAINE 35 (46 1/2",
+     "Lg)",
+     "2"
+    ]
+   ]
+  }
+ ],
+ "41": [
+  {
+   "x": 592,
+   "y": 62,
+   "rows": [
+    [
+     "UM-032-105A TOP BACK",
+     "SHIELD",
+     "1"
+    ],
+    [
+     "UM-032-108A TOP FRONT",
+     "SHIELD",
+     "1"
+    ],
+    [
+     "UM-032-115F LOWER",
+     "ARM",
+     "2"
+    ],
+    [
+     "UM-032-116F UPPER",
+     "ARM",
+     "2"
+    ],
+    [
+     "UM-032-226F 10 000'",
+     "LEAD SCREW",
+     "2"
+    ],
+    [
+     "UM-041-014F WIRE GUIDE",
+     "ASSEMBLY",
+     "1"
+    ],
+    [
+     "W375 FLAT WASHER",
+     "3/8",
+     "8"
+    ],
+    [
+     "W500 FLAT WASHER",
+     "1/2\"",
+     "8"
+    ],
+    [
+     "UM-041-014F",
+     "",
+     ""
+    ]
+   ]
+  },
+  {
+   "x": 917,
+   "y": 62,
+   "rows": [
+    [
+     "B375-1250 BOLT 3/8",
+     "- 16 NC X 1 1/4",
+     "10"
+    ],
+    [
+     "B500-1500 BOLT 1/2-UNC",
+     "x 1 1/2",
+     "2"
+    ],
+    [
+     "LN375NF LOCK NUT",
+     "3/8\"-NF",
+     "4"
+    ],
+    [
+     "NC500 NUT 1/2-UNC",
+     "",
+     "2"
+    ],
+    [
+     "PFL206 HOUSING",
+     "BEARING",
+     "4"
+    ],
+    [
+     "SB206-20",
+     "",
+     "2"
+    ],
+    [
+     "SPN-R3100-300",
+     "",
+     "2"
+    ]
+   ]
+  },
+  {
+   "x": 78,
+   "y": 297,
+   "rows": [
+    [
+     "UM-041-164F BRASS BUSHING",
+     "1 3/4\"",
+     "2"
+    ],
+    [
+     "UM-041-106F BLOCK BUSHING",
+     "LEAD SCREW",
+     "1"
+    ],
+    [
+     "UM-041-155F LEAD SCREW",
+     "PIN",
+     "1"
+    ],
+    [
+     "B375-1500 BOLT 3/8",
+     "-16 NC X 1 1/2",
+     "4"
+    ],
+    [
+     "",
+     "",
+     "UM-032-108A"
+    ],
+    [
+     "UM-041-020F ROLLER FRAME",
+     "ASSEMBLY",
+     "1"
+    ],
+    [
+     "Grease Zerk",
+     "",
+     "1"
+    ],
+    [
+     "UM-041-176F ROLLER CABLE",
+     "GUIDE",
+     "4"
+    ],
+    [
+     "UM-041-174F ROLLER PIN",
+     "ASSEMBLY",
+     "4"
+    ],
+    [
+     "CTP-125-2250 CUTTER PIN",
+     "1/8\" X 2 1/4\"",
+     "2"
+    ]
+   ]
+  }
+ ],
+ "42": [
+  {
+   "x": 861,
+   "y": 62,
+   "rows": [
+    [
+     "6400-12-12 6400-12-12",
+     "",
+     "4"
+    ],
+    [
+     "B375-1000 BOLT 3/8-UNC",
+     "X 1\"",
+     "2"
+    ],
+    [
+     "B437-1500 BOLT 7/16-UNC",
+     "x 1 1/2''",
+     "8"
+    ],
+    [
+     "B500-1750 BOLT 1/2 - 13",
+     "NC X 1 3/4",
+     "4"
+    ],
+    [
+     "B750-2500 BOLT 3/4-UNC",
+     "x 2 1/2\"",
+     "4"
+    ],
+    [
+     "F436-500 FLAT TENSION",
+     "MECANIC WASHER 1/2\"",
+     "4"
+    ],
+    [
+     "HCPE211-32 PILLOWS BLOCK",
+     "HCPE211-32",
+     "2"
+    ],
+    [
+     "UM-032-101A BASE FRAME",
+     "",
+     "1"
+    ],
+    [
+     "UM-032-102A DRUM ASSEMBLY",
+     "W/O SPROCKET",
+     "2"
+    ],
+    [
+     "UM-032-104B CHAIN GUARD",
+     "80 ASSEMBLY",
+     "2"
+    ],
+    [
+     "UM-032-111F SPROCKET LEADING",
+     "80B14",
+     "2"
+    ],
+    [
+     "UM-032-112F SPROCKET LEAD",
+     "80B28",
+     "2"
+    ],
+    [
+     "UM-032-131FB TOP BACK SHIELD",
+     "FRAME SWIVEL",
+     "2"
+    ],
+    [
+     "UM-032-225F KEY 1/2 X 1/2",
+     "X 2 Lg",
+     "2"
+    ],
+    [
+     "UM-032-241F KEY 5/16 in X",
+     "5/16 in X 1 3/8 Lg",
+     "2"
+    ],
+    [
+     "UM-032-C2 CHAIN 80 (50",
+     "Lg)",
+     "2"
+    ],
+    [
+     "UM-041-208F HYDRAULIC MOTOR",
+     "BRACKET",
+     "2"
+    ],
+    [
+     "UMV-10MW-12 MOTEUR WHITE",
+     "RE12",
+     "2"
+    ],
+    [
+     "W375 FLAT WASHER",
+     "3/8",
+     "25"
+    ],
+    [
+     "W750 FLAT WASHER",
+     "3/4",
+     "4"
+    ],
+    [
+     "SS375-500 SET SCREW 3/8-16",
+     "UNC X 1/2\"",
+     "2"
+    ],
+    [
+     "SS313-375 SET SCREW 5/16",
+     "X 3/8",
+     "2"
+    ]
+   ]
+  }
+ ],
+ "48": [
+  {
+   "x": 7,
+   "y": 62,
+   "rows": [
+    [
+     "UM-012-167 O-RING COVER BLIDDER",
+     "",
+     "1 UM-012-104A"
+    ],
+    [
+     "UM-012-143 4 SPEED TRANSMISSION",
+     "FUNK",
+     "1"
+    ],
+    [
+     "UM-012-170 COPPLING TRANMISSION",
+     "- HYDRAULIC",
+     "1"
+    ],
+    [
+     "MOTOR",
+     "",
+     ""
+    ],
+    [
+     "UM-012-113A DRILLHEAD COVER",
+     "",
+     "1"
+    ],
+    [
+     "UM-012-131 PLUG 1\" NPT",
+     "",
+     "2"
+    ],
+    [
+     "UM-012-130 TRIPPLE CHAIN",
+     "",
+     "3"
+    ],
+    [
+     "UM-012-177 HEAD FILTER",
+     "",
+     "1"
+    ],
+    [
+     "UM-012-178 FILTER",
+     "",
+     "1"
+    ],
+    [
+     "UM-012-105A SWIVEL PIN",
+     "",
+     "1"
+    ],
+    [
+     "HP1000 COTTERS, HAIRPIN",
+     "1 in",
+     "1"
+    ],
+    [
+     "UM-012-171 HARDENESS BUSHING",
+     "",
+     "4"
+    ],
+    [
+     "UM-102-132 PLUG 3/8'' NPT",
+     "",
+     "2"
+    ],
+    [
+     "UM-012-114 SPINDLE COVER",
+     "114",
+     "1"
+    ],
+    [
+     "UM-012-189 CHUCK KEY",
+     "",
+     "3"
+    ],
+    [
+     "UM-012-192 RETAINING RING",
+     "INTERNAL 1 1/2''",
+     "1"
+    ],
+    [
+     "UM-1214-121P BLIDDER COVER",
+     "",
+     "1"
+    ],
+    [
+     "AA6VM MOTOR (AA6VM160HD2-63W-VSD520B)",
+     "",
+     "1"
+    ],
+    [
+     "B437-1500 BOLT 7/16-UNC",
+     "",
+     "13"
+    ],
+    [
+     "W437 LOCK WASHER 7/16",
+     "",
+     "12"
+    ],
+    [
+     "UM-012-208 O-RING",
+     "",
+     "2"
+    ],
+    [
+     "SHCS312-1500 SHCS 5/16-UNC X",
+     "2 1/2''",
+     "6"
+    ],
+    [
+     "SS75-1250 SET SCREW3/4-10",
+     "UNC X 1 1/4",
+     "9"
+    ],
+    [
+     "B500-1750 BOLT 1/2 - 13 NC",
+     "X 1 3/4",
+     "10"
+    ],
+    [
+     "W500 FLAT WASHER 1/2\"",
+     "",
+     "20"
+    ],
+    [
+     "B375-1000 BOLT 3/8-UNC X",
+     "1\"",
+     "16"
+    ],
+    [
+     "W375 FLAT WASHER 3/8",
+     "",
+     "16"
+    ],
+    [
+     "W312 FLAT WASHER 5/16",
+     "",
+     "6"
+    ],
+    [
+     "B312-1000 BOLT 5/16-UNC x",
+     "1\"",
+     "6"
+    ],
+    [
+     "SHC500-4000 SHCS 1/2-UNC x",
+     "4 ''",
+     "10"
+    ],
+    [
+     "W250 FLAT WASHER 1/4\"",
+     "",
+     "6"
+    ],
+    [
+     "B250-750 BOLT 1/4 - NC X",
+     "3/4",
+     "6"
+    ],
+    [
+     "W750 FLAT WASHER 3/4",
+     "",
+     "8"
+    ],
+    [
+     "B750-2000 BOLT 3/4 - 10 NC",
+     "X 2",
+     "4"
+    ],
+    [
+     "UM-063-289T SPLIT FLANGE",
+     "",
+     "4"
+    ],
+    [
+     "UM-063-290T 1704-16-20 FLANGE",
+     "90°",
+     "2"
+    ]
+   ]
+  },
+  {
+   "x": 340,
+   "y": 62,
+   "rows": [
+    [
+     "UM-012-104A DRILLHEAD BOX",
+     "",
+     "1"
+    ],
+    [
+     "UM-012-101 SPINDLE BOYLES",
+     "",
+     "1"
+    ],
+    [
+     "UM-012-122 SPINDLE KEY",
+     "",
+     "2"
+    ],
+    [
+     "UM-012-102 DRIVEN SPROCKET",
+     "",
+     "1"
+    ],
+    [
+     "UM-012-128 UPPER BEARING",
+     "",
+     "1"
+    ],
+    [
+     "UM-012-129 LOWER BEARING",
+     "",
+     "1"
+    ],
+    [
+     "UM-012-107 HEAT TRAITMENT",
+     "SLEEVE",
+     "1"
+    ],
+    [
+     "UM-012-124 UPPER SEAL",
+     "",
+     "2"
+    ],
+    [
+     "UM-012-121 SIDE TRANSMISSION",
+     "SPINDLE COVER",
+     "1"
+    ],
+    [
+     "UM-012-120 ADAPTOR CHUCK",
+     "COVER",
+     "1"
+    ],
+    [
+     "UM-012-106 AJUST CHUCK SLEEVE",
+     "",
+     "1"
+    ],
+    [
+     "UM-012-142 CHUCK BOYLES",
+     "",
+     "1"
+    ],
+    [
+     "UM-012-119 SEAL SLEEVE",
+     "",
+     "1"
+    ],
+    [
+     "UM-012-126 LOWER SEAL",
+     "",
+     "2"
+    ],
+    [
+     "UM-012-117 SIT SCREW",
+     "",
+     "1"
+    ],
+    [
+     "UM-012-118 TIGHT NUT SPINDLE",
+     "",
+     "1"
+    ],
+    [
+     "UM-012-115 LOCK NUT SPINDLE",
+     "",
+     "1"
+    ],
+    [
+     "UM-012-108 Sleeve-BQ",
+     "",
+     "1"
+    ],
+    [
+     "UM-012-110 Sleeve-NQ",
+     "",
+     "1"
+    ],
+    [
+     "UM-012-116 WEAR SLEEVE COVER",
+     "",
+     "1"
+    ],
+    [
+     "UM-012-111 HYDRAULIC PUMP",
+     "COVER",
+     "1"
+    ],
+    [
+     "UM-012-127 DRIVE SPROCKET",
+     "BEARING",
+     "2"
+    ],
+    [
+     "UM-012-139 HYDRAULIC MOTOR",
+     "",
+     "1"
+    ],
+    [
+     "UM-012-103 SPROCKET DRIVE",
+     "",
+     "1"
+    ],
+    [
+     "UM-012-169 HYDRAULIC PUMP",
+     "KEY",
+     "1"
+    ],
+    [
+     "UM-012-125 TRANSMISSION SEAL",
+     "",
+     "1"
+    ],
+    [
+     "UM-012-123 SIT OF SEAL",
+     " UM-012-104A",
+     "1"
+    ]
+   ]
+  }
+ ],
+ "52": [
+  {
+   "x": 655,
+   "y": 62,
+   "rows": [
+    [
+     "ZNPT250 1/8 NPT ST",
+     "Zerk",
+     "1"
+    ],
+    [
+     "UM-021-01-01 B JAWS SET",
+     "BOYLE H",
+     "1"
+    ],
+    [
+     "UM-021-01-02 N JAWS SET",
+     "BOYLE H",
+     "1"
+    ],
+    [
+     "UM-021-01-03 H JAWS SET",
+     "BOYLE H",
+     "1"
+    ],
+    [
+     "UM-021-01-04 BW JAWS SET",
+     "BOYLE H",
+     "1"
+    ],
+    [
+     "UM-021-06HH-06C BUSHING",
+     "GUIDE ROD",
+     "1"
+    ],
+    [
+     "-BW",
+     "",
+     ""
+    ],
+    [
+     "UM-021-06HH-04C BUSHING",
+     "GUIDE ROD AND",
+     "1"
+    ],
+    [
+     "AND 44C-H SHELL",
+     "",
+     ""
+    ],
+    [
+     "UM-021-06HH-03C BUSHING",
+     "GUIDE ROD AND",
+     "1"
+    ],
+    [
+     "AND 33C-N SHELL",
+     "",
+     ""
+    ],
+    [
+     "UM-021-06HH-02C BUSHING",
+     "GUIDE ROD AND",
+     "1"
+    ],
+    [
+     "AND 22C-B SHELL",
+     "",
+     ""
+    ],
+    [
+     "SEAL KIT",
+     "3506577",
+     ""
+    ],
+    [
+     "FOR BOYLE",
+     "H",
+     ""
+    ]
+   ]
+  },
+  {
+   "x": 918,
+   "y": 62,
+   "rows": [
+    [
+     "2501-8-6 MJIC 6 X",
+     "MP 8 90°",
+     "1"
+    ],
+    [
+     "2920390 CHUCK BOWL-12",
+     "1/2 L",
+     "1"
+    ],
+    [
+     "3506870 CHUCK HOUSING",
+     "",
+     "1"
+    ],
+    [
+     "3506878 TOP SPACER",
+     "",
+     "3"
+    ],
+    [
+     "3506879 KEY LOCKING",
+     "SPRING",
+     "1"
+    ],
+    [
+     "3506880 BOTTOM",
+     "SPACER",
+     "9"
+    ],
+    [
+     "3506881 CLE BOYLE",
+     "12HH",
+     "3"
+    ],
+    [
+     "3506882 BACK UP",
+     "RING",
+     "1"
+    ],
+    [
+     "3506906 TOP CAP",
+     "HOLDER",
+     "1"
+    ],
+    [
+     "3506907 TOP CAP",
+     "ADAPTOR",
+     "1"
+    ],
+    [
+     "3506908 PISTON",
+     "",
+     "1"
+    ],
+    [
+     "3506909 CYLINDRE",
+     "",
+     "1"
+    ],
+    [
+     "3506910 CHUCK ADAPTEUR",
+     "",
+     "1"
+    ],
+    [
+     "3506928 ACTUATOR",
+     "SLEEVE/USE RR 50",
+     "1"
+    ],
+    [
+     "5000199 BEARING",
+     "",
+     "1"
+    ],
+    [
+     "5035015 U CUP SEAL",
+     "",
+     "1"
+    ],
+    [
+     "5035016 U CUP SEAL",
+     "",
+     "1"
+    ],
+    [
+     "5035017 WEAR RING",
+     "",
+     "1"
+    ],
+    [
+     "5035018 WEAR RING",
+     "",
+     "1"
+    ],
+    [
+     "5040192 OIL SEAL",
+     "",
+     "9"
+    ],
+    [
+     "5041022 V-RING",
+     "",
+     "1"
+    ],
+    [
+     "5054078 RETAINING",
+     "RING",
+     "1"
+    ],
+    [
+     "5200517 SPRING",
+     "",
+     "18"
+    ],
+    [
+     "5222624 SPRING PIN",
+     "",
+     "4"
+    ],
+    [
+     "B500-1500 BOLT 1/2-UNC",
+     "x 1 1/2",
+     "8"
+    ],
+    [
+     "B500-2250 BOLT 1/2-UNC",
+     "x 2 1/4",
+     "9"
+    ],
+    [
+     "B500-4500 BOLT 1/2-UNC",
+     "x 4 1/2",
+     "10"
+    ],
+    [
+     "B500-6500 BOLT 1/2-UNC",
+     "x 6 1/2",
+     "6"
+    ],
+    [
+     "B500-8000 BOLT 1/2-UNC",
+     "x8",
+     "3"
+    ],
+    [
+     "B750-1500 BOLT 3/4-UNC",
+     "x 1 1/2",
+     "3"
+    ],
+    [
+     "NC500 NUT 1/2-UNC",
+     "",
+     "10"
+    ],
+    [
+     "UM-070-608A CHUCK ADAPTEUR",
+     "",
+     "1"
+    ],
+    [
+     "W500 FLAT WASHER",
+     "1/2\"",
+     "8"
+    ]
+   ]
+  }
+ ],
+ "66": [
+  {
+   "x": 811,
+   "y": 62,
+   "rows": [
+    [
+     "UM-064-TD29 LOCK PIN",
+     "",
+     "8"
+    ]
+   ]
+  }
+ ],
+ "68": [
+  {
+   "x": 1209,
+   "y": 62,
+   "rows": [
+    [
+     "FMX-005-300TD OIL TANK 110",
+     "GAL/ US",
+     "1"
+    ],
+    [
+     "FR150 HAND PUMP",
+     "FILL RITE",
+     "1"
+    ],
+    [
+     "UM-064-165TD LOWER FRONT",
+     "PANEL",
+     "1"
+    ],
+    [
+     "UM-064-TD29 LOCK PIN",
+     "",
+     "8"
+    ],
+    [
+     "FMX-005-200PP POWER PACK",
+     "FRAME",
+     "1"
+    ],
+    [
+     "UM-064-195TB TONGUE",
+     "",
+     "1"
+    ],
+    [
+     "UM-064-235TD UPPER FRONT",
+     "PANEL",
+     "1"
+    ],
+    [
+     "UM-064-TD76 PIN",
+     "",
+     "2"
+    ],
+    [
+     "CTP187-1250 COTTER PIN",
+     "3/16\" x 1 1/4\"",
+     "8"
+    ],
+    [
+     "UM-064-TD77 PIN",
+     "",
+     "2"
+    ],
+    [
+     "W375 FLAT WASHER",
+     "3/8",
+     "12"
+    ],
+    [
+     "FMC-036-203P SUPPORT PLATE",
+     "",
+     "1"
+    ],
+    [
+     "FMC-036-205P TRANSFORMATOR",
+     "ADAPTOR",
+     "1"
+    ],
+    [
+     "B375-1250 BOLT 3/8 - 16",
+     "NC X 1 1/4",
+     "4"
+    ],
+    [
+     "UM-064-600PP OIL RETURN",
+     "HEADER",
+     "1"
+    ],
+    [
+     "W312 FLAT WASHER",
+     "5/16",
+     "18"
+    ],
+    [
+     "LN312NC LOCK NUT 5/16\"-NC",
+     "",
+     "10"
+    ],
+    [
+     "DX3000 TRANSFORMATOR",
+     "",
+     "1"
+    ],
+    [
+     "5404-8-12 5404-8-12",
+     "",
+     "1"
+    ],
+    [
+     "HSP-1000-4-5 CHECK VALVE",
+     "",
+     "1"
+    ],
+    [
+     "2404-8-8 2404-8-8",
+     "",
+     "1"
+    ],
+    [
+     "DTDA-MHN-GAI STARTING VALVE",
+     "",
+     "1"
+    ],
+    [
+     "6400-6-6 6400-MJIC 6",
+     "X MORB 6",
+     "2"
+    ],
+    [
+     "6500-06-06 90° JIC (3/8\")",
+     "x FJIC SWIVEL (3/8\")",
+     "1"
+    ],
+    [
+     "UM-064-1601RM TIRE MOUNTED",
+     "ON WHEEL",
+     "2"
+    ],
+    [
+     "UM-064-1605RM WHEEL HUB",
+     "",
+     "2"
+    ],
+    [
+     "AB-1202 COOLER AB-1002-BA-TP",
+     "(0908)",
+     "2"
+    ],
+    [
+     "FMX-005-203PP COOLER AB SUPPORT",
+     "",
+     "1"
+    ],
+    [
+     "UM-064-STM-1500-600V PUMP UNIT",
+     "",
+     "1"
+    ],
+    [
+     "A30HS2412GQRLP ELECTRICAL",
+     "BOX HOFFMAN FOR",
+     "1"
+    ],
+    [
+     "600v-60hz-125hp",
+     "",
+     ""
+    ],
+    [
+     "W500 FLAT WASHER",
+     "1/2\"",
+     "8"
+    ],
+    [
+     "B500-3000 BOLT 1/2 - 13",
+     "NC X 3",
+     "2"
+    ],
+    [
+     "B500-1250 BOLT 1/2-UNC",
+     "x 1 1/4\"",
+     "2"
+    ],
+    [
+     "B312-1250 BOLT 5/16-UNC",
+     "x 1 1/4\"",
+     "8"
+    ],
+    [
+     "B375-1000 BOLT 3/8-UNC",
+     "X 1\"",
+     "2"
+    ],
+    [
+     "NC3 75 N UT 3/8-UNC",
+     "",
+     "2"
+    ],
+    [
+     "UM-064-TD41 TONGUE PIN",
+     "",
+     "4"
+    ],
+    [
+     "UM-064-102P-N PUMP SUPPORT",
+     "",
+     "1"
+    ],
+    [
+     "FBRA-002-204PP HAND PUMP",
+     "BRACKET",
+     "1"
+    ],
+    [
+     "FBRA-002-213P U-BOLT",
+     "",
+     "1"
+    ],
+    [
+     "LN375NC LOCK NUT 3/8''",
+     "",
+     "2"
+    ]
+   ]
+  }
+ ],
+ "71": [
+  {
+   "x": 7,
+   "y": 62,
+   "rows": [
+    [
+     "UM-064-138P-N ADJUSTING SCREW",
+     "",
+     "1"
+    ],
+    [
+     "UM-064-140P-N LOCK NUT",
+     "",
+     "1"
+    ],
+    [
+     "UM-22 SEAT PUMP",
+     "",
+     "1"
+    ],
+    [
+     "UM-064-TD70 BOLT 1/2-NC COUNTERSUNK",
+     "",
+     "2"
+    ],
+    [
+     "FBRA-002-213P U-BOLT",
+     "",
+     "2"
+    ],
+    [
+     "LN375NC LOCK NUT 3/8\"-NC",
+     "",
+     "4"
+    ],
+    [
+     "W375 FLAT WASHER 3/8",
+     "",
+     "4"
+    ]
+   ]
+  },
+  {
+   "x": 914,
+   "y": 62,
+   "rows": [
+    [
+     "H2505H09003SF MANIFOLD",
+     "LYNCH",
+     "1"
+    ],
+    [
+     "U",
+     "",
+     ""
+    ],
+    [
+     "UM-064-601P FITTING",
+     "6400-0812",
+     "2"
+    ],
+    [
+     "UM-064-603P FITTING",
+     "6400-1616",
+     "1"
+    ],
+    [
+     "UM-064-605P FITTING",
+     "6408-16",
+     "2"
+    ],
+    [
+     "UM-064-607P BOLT 3/8-16",
+     "UNC X 3.5\"",
+     "2"
+    ],
+    [
+     "UM-064-609P WASHER",
+     "3/8\"",
+     "2"
+    ],
+    [
+     "UM-064-608P NUT 3/8-16",
+     "UNC",
+     "2"
+    ],
+    [
+     "UM-064-604P FITTING",
+     "6400-0812",
+     "1"
+    ],
+    [
+     "UM-064-602P FITTING",
+     "6400-1212",
+     "1"
+    ],
+    [
+     "UM-064-610P CAP PLUG",
+     "JIC",
+     "1"
+    ],
+    [
+     "UM-064-611P FITTING",
+     "6400-08-16",
+     "1"
+    ]
+   ]
+  }
+ ],
+ "72": [
+  {
+   "x": 913,
+   "y": 61,
+   "rows": [
+    [
+     "2404-24-24",
+     "MJIC x MP",
+     "2"
+    ],
+    [
+     "5404-24-24",
+     "MP x MP",
+     "3"
+    ],
+    [
+     "5406-32-12",
+     "MP x FP",
+     "1"
+    ],
+    [
+     "5406-32-20",
+     "MP x FP",
+     "1"
+    ],
+    [
+     "B312-1000",
+     "BOLT 3/8-UNC-1 '' Lg",
+     "8"
+    ],
+    [
+     "B312-1250",
+     "BOLT 3/8-UNC- 1 1/4 '' Lg",
+     "8"
+    ],
+    [
+     "LC312",
+     "LOCK NUT 3/8-UNC",
+     "8"
+    ],
+    [
+     "2501-16-20",
+     "MJIC x MP",
+     "1"
+    ],
+    [
+     "RTF47",
+     "7 RETURN LINE FILTER",
+     "2"
+    ],
+    [
+     "UM-064-301TD",
+     "1 TANK (110 GAL U.S)",
+     "1"
+    ],
+    [
+     "UM-064-302P",
+     "CAP SUPPORT",
+     "2"
+    ],
+    [
+     "UM-064-304TD",
+     "FILTER CAP",
+     "2"
+    ],
+    [
+     "UM-064-306TD",
+     "BALL VALVE 3\"",
+     "1"
+    ],
+    [
+     "UM-064-307TD",
+     "BALL VALVE 1 1/2\"",
+     "3"
+    ],
+    [
+     "UM-064-308TD",
+     "BALL VALVE 1\"",
+     "1"
+    ],
+    [
+     "UM-064-311TD",
+     "BOLT 1/2-13 UNC X 3.5 in",
+     "2"
+    ],
+    [
+     "UM-064-312A",
+     "9 FILTER",
+     "2"
+    ],
+    [
+     "UM-064-314A",
+     "CAP INSPECTION",
+     "2"
+    ],
+    [
+     "UM-064-317TD",
+     "KING NIPPLE 1 1/2\"",
+     "2"
+    ],
+    [
+     "UM-064-318TD",
+     "KING NIPPLE 3\"",
+     "1"
+    ],
+    [
+     "UM-064-323TD",
+     "NIPPLE 2\"",
+     "2"
+    ],
+    [
+     "UM-064-324TD",
+     "NIPPLE 3\"",
+     "1"
+    ],
+    [
+     "UM-064-334TD",
+     "THERMOMETER",
+     "1"
+    ],
+    [
+     "UM-064-335TD",
+     "CAP WASHER",
+     "2"
+    ],
+    [
+     "UMV-10SM-N12",
+     "BREATHER",
+     "1"
+    ],
+    [
+     "W312",
+     "WASHER 3/8-UNC",
+     "16"
+    ]
+   ]
+  }
+ ],
+ "73": [
+  {
+   "x": 263,
+   "y": 58,
+   "rows": [
+    [
+     "RTF-40-11 BOLT HOSING",
+     "COVER",
+     "4"
+    ],
+    [
+     "RTF-40-10 WASHER",
+     "",
+     "4"
+    ],
+    [
+     "RTF-47-04 CHECK VALVE",
+     "",
+     "1"
+    ],
+    [
+     "2404-24-24 2404-24-24",
+     "(1 1/2\")",
+     "1"
+    ],
+    [
+     "RTF-47-01 HOSING FILTER",
+     "",
+     "1"
+    ],
+    [
+     "RTF-47-09 FILTER BOWL",
+     "",
+     "1"
+    ],
+    [
+     "RTF-47-15 TOP COVER",
+     "",
+     "1"
+    ],
+    [
+     "RTF-47-08 TOP SPRING",
+     "",
+     "1"
+    ],
+    [
+     "RTF-47-07 ELEMENT",
+     "FILTER",
+     "1"
+    ],
+    [
+     "RTF-47-13 \"O\"-RING",
+     "SEAL HOSING COVER",
+     "1"
+    ],
+    [
+     "RTF-47-12 \"O\"-RING",
+     "SEAL FLANGE",
+     "1"
+    ],
+    [
+     "RTF-47-16 gasket rubber",
+     "1/8\"",
+     "1"
+    ]
+   ]
+  }
+ ],
+ "78": [
+  {
+   "x": 864,
+   "y": 62,
+   "rows": [
+    [
+     "BS25-750 BOLT 1/4-UNC",
+     "x 3/4",
+     "40"
+    ],
+    [
+     "UM-020-643P BLOC 3 WAYS",
+     "3/4 NPT",
+     "1"
+    ],
+    [
+     "UM-051-327P BACK PANEL",
+     "",
+     "1"
+    ],
+    [
+     "UM-051-714P BACK PANEL",
+     "",
+     "1"
+    ],
+    [
+     "UM-051-397P LEFT SIDE PANEL",
+     "",
+     "1"
+    ],
+    [
+     "UM-051-702P SIDE PANEL",
+     "",
+     "1"
+    ],
+    [
+     "UM-051-706P TOP PANEL",
+     "",
+     "1"
+    ],
+    [
+     "UM-051-708P FRONT PANEL",
+     "",
+     "1"
+    ],
+    [
+     "UM-051-710P FRONT PANEL",
+     "",
+     "1"
+    ],
+    [
+     "WS25 FLAT WASHER",
+     "1/4\" STAINLESS",
+     "40"
+    ],
+    [
+     "UM-051-713P PANEL FOR SWITCH",
+     "",
+     "1"
+    ],
+    [
+     "UM-051-703P PANEL FOR UM-",
+     "CIT-SC-ST",
+     "1"
+    ],
+    [
+     "UM-051-716P BRACKET FOR",
+     "SWITCH SLIDING PART",
+     "1"
+    ],
+    [
+     "UM-051-717P BULKHEAD BRACKET",
+     "",
+     "1"
+    ],
+    [
+     "10250H SPECIAL PURPOSE",
+     "CONTROL STATION",
+     "1"
+    ],
+    [
+     "UM-CIT-SC-UG SAFETY CONTROLLER",
+     "",
+     "1"
+    ]
+   ]
+  }
+ ],
+ "80": [
+  {
+   "x": 21,
+   "y": 62,
+   "rows": [
+    [
+     "UMV-10VS-2009F03 SECURITY BLOCK #2",
+     "",
+     "1"
+    ],
+    [
+     "LOHD-8DN VENT-TO-OPEN, WITH PILOT",
+     "SOURCE FROM PORT 1 AND 2",
+     "4"
+    ],
+    [
+     "CXAA-XBN FREE FLOW NOSE TO SIDE",
+     "",
+     "2"
+    ],
+    [
+     "DMDA-MAN 3 WAYS, SELENOID-OPERATED",
+     "SPOOL VALVE",
+     "1"
+    ],
+    [
+     "DTDA-MCN 2 WAYS, DIRECT ACTING",
+     "SELENOID OPERATED VALVE",
+     "1"
+    ],
+    [
+     "XAOA-XXN ALL PORT OPEN CAVITY",
+     "PLUG",
+     "2"
+    ],
+    [
+     "FDCB-LAN ADJ. PRESSURE COMPENSATED",
+     "FLOW CONTROL VALVE",
+     "2"
+    ],
+    [
+     "770-214 SELENOID 14 V",
+     "",
+     "2"
+    ],
+    [
+     "S18211TC411 DIN CONNECTOR",
+     "",
+     "2"
+    ]
+   ]
+  },
+  {
+   "x": 552,
+   "y": 62,
+   "rows": [
+    [
+     "SDS150_RC-SAE OUTLET COVER",
+     "",
+     "1"
+    ],
+    [
+     "SDS150_AC(YG3) INLET COVER",
+     "",
+     "1"
+    ],
+    [
+     "VMD10_1(YG3) RELIEF SDS150",
+     "",
+     "1"
+    ],
+    [
+     "SDS150_P-SAE SECTION",
+     "",
+     "3"
+    ],
+    [
+     "AL01_M10X200 SDS150 ARM",
+     "",
+     "3"
+    ],
+    [
+     "V11.SD10-11-16 DETENT KIT",
+     "",
+     "2"
+    ],
+    [
+     "V8-MDS10-11-16 SPRING RETURN KIT",
+     " O-RONG KIT: SDS150-OR-KIT",
+     "1"
+    ],
+    [
+     "WIRE LINE",
+     "",
+     ""
+    ],
+    [
+     "SPOOL: T2SDS150 (SPRING)",
+     "",
+     ""
+    ],
+    [
+     "CHUCK/CLAMP",
+     "SDS150_P-SAE",
+     ""
+    ],
+    [
+     "T2SDS150 (DETENT)",
+     "",
+     ""
+    ],
+    [
+     "LOW FEED",
+     " V11.SD10-11-16",
+     ""
+    ],
+    [
+     "(DETENT)",
+     " V11.SD10-11-16",
+     ""
+    ]
+   ]
+  },
+  {
+   "x": 1090,
+   "y": 62,
+   "rows": [
+    [
+     "FE-SD25 INLET C COVER WITH RELIEF",
+     "",
+     "1"
+    ],
+    [
+     "FS-SD25 OUTLET COVER",
+     "",
+     "1"
+    ],
+    [
+     "VMP25_1(XG) RELIEF",
+     "",
+     "1"
+    ],
+    [
+     "AL17/M12X250 JOYSTICK",
+     "",
+     "1"
+    ],
+    [
+     "SD25_P-SEA SD25 SECTION",
+     "",
+     "3"
+    ],
+    [
+     "V11.SD18-20-25 DETENT KIT SD25 V11",
+     "IN-OUT",
+     "1"
+    ],
+    [
+     "V8.SD18-20-25 SPRING RETURN KIT",
+     "",
+     "2"
+    ],
+    [
+     "AL01_M12X250 SD25 ARM",
+     " O-RONG KIT: SD25-OR-KIT",
+     "2"
+    ],
+    [
+     "SCREW AND",
+     "",
+     ""
+    ],
+    [
+     "ROD",
+     "",
+     ""
+    ],
+    [
+     "FAST",
+     "FEED",
+     ""
+    ],
+    [
+     "SPOOL:",
+     "T.2 SD25 (DETENT)",
+     ""
+    ]
+   ]
+  },
+  {
+   "x": 1147,
+   "y": 785,
+   "rows": [
+    [
+     "UMV-10BS-03 BLOCK SYNCHRO",
+     "",
+     "1"
+    ],
+    [
+     "4WMM10D03XF 2 POSITIONS VALVE",
+     "",
+     "1"
+    ],
+    [
+     "PRDB-LAN P.RED/REL-3000PSI-10G-T11A",
+     "",
+     "2"
+    ],
+    [
+     "DBAM-LCN MANUAL-OPERATED VALVE",
+     "",
+     "1"
+    ],
+    [
+     "DODS-XHN BALANCED POPPET, DIRECT",
+     "OPERATED, NORM. OPEN",
+     "2"
+    ],
+    [
+     "CXDA-XCN FREE FLOW NOSE TO SIDE",
+     "CHECK VALVE",
+     "2"
+    ],
+    [
+     "DKDS-XHN BALANCED POPPET, DIRECT",
+     "OPERATED, NORM. CLOSE",
+     "2"
+    ]
+   ]
+  },
+  {
+   "x": 9,
+   "y": 1124,
+   "rows": [
+    [
+     "SWH-G02-C2 MODEL SWH-G02-C2-D12-20",
+     "",
+     "1"
+    ],
+    [
+     "S18211TC411 DIN CONNECTOR",
+     "",
+     "2"
+    ],
+    [
+     "770-212 COIL 12V",
+     "",
+     "2"
+    ]
+   ]
+  }
+ ],
+ "81": [
+  {
+   "x": 804,
+   "y": 62,
+   "rows": [
+    [
+     "UMV-10BS-01 BLOCK FEED SET MANIFOLD",
+     "",
+     "1"
+    ],
+    [
+     "CBIB-LHN PILOT RATIO, STANDARD",
+     "CAPACITY",
+     "2"
+    ],
+    [
+     "COUNTERBALANCE VALVE",
+     "",
+     ""
+    ]
+   ]
+  },
+  {
+   "x": 26,
+   "y": 560,
+   "rows": [
+    [
+     "654512-06744-51 PLUGGED BODY",
+     "",
+     "1"
+    ],
+    [
+     "CXFA-XCN FREE FLOW NOSE TO SIDE",
+     "CHECK VALVE",
+     "2"
+    ],
+    [
+     "PRDB-LEN REDUCING/RELIEVING VALVE",
+     "",
+     "1"
+    ],
+    [
+     "PRDB-CEN DIRECT-ACTING PRESSURE",
+     "REDUCING/RELIEVING VALVE",
+     "1"
+    ],
+    [
+     "FDBA-LAN FLOW CONTROL VALVE WITH",
+     "REVERSE FLOW CHECK",
+     "1"
+    ],
+    [
+     "FTDA-XCN PROPORTIONAL THROTTLE",
+     "",
+     "1"
+    ],
+    [
+     "CSAB-XXN SINGLE BALL SHUTTLE VALVE",
+     "",
+     "1"
+    ],
+    [
+     "6801-12-12 90° MJIC 3/4\" x MORB 3/4\"",
+     "",
+     "2"
+    ],
+    [
+     "6408-12 MORB PLUG 3/4",
+     "",
+     "1"
+    ],
+    [
+     "UM-051-500P KNOB",
+     "",
+     "2"
+    ],
+    [
+     "DMDM-LAN MANUALLY OPERATED DIRECTIONAL",
+     "VALVE",
+     "2"
+    ],
+    [
+     "SNK-20-1/4-NPT CHECK POINT",
+     "",
+     "3"
+    ],
+    [
+     "C:\\VaultUM\\Designs\\Usinage Marcotte(UM)\\UM-051(CONSOLE",
+     "HELI-PORTABLE)\\LIVRE DE PIÈCE\\UM-051-300P-FMC-036\\UM-051-300P-FMC-036-7.idw",
+     ""
+    ]
+   ]
+  }
+ ],
+ "82": [
+  {
+   "x": 755,
+   "y": 56,
+   "rows": [
+    [
+     "1 UM-064-CA1 WATER PUMP, MUD MIXER",
+     "",
+     "1"
+    ],
+    [
+     "2 UM-064-CA10 HOSES IDENTIFICATIONS (",
+     "WIRE LINE/MUD MIX./WATER PUMP)",
+     "1"
+    ],
+    [
+     "3 UM-064-CA11 HOSES IDENTIFICATIONS (",
+     "ROTATION A & B)",
+     "1"
+    ],
+    [
+     "4 UM-064-CA12 HOSE IDENTIFICATION: PRESSION",
+     "#1",
+     "1"
+    ],
+    [
+     "5 UM-064-CA13 WATER PRESSURE GAGE",
+     "",
+     "1"
+    ],
+    [
+     "6 UM-064-CA14 ALWAYS OPEN BALL VALVE...",
+     "",
+     "1"
+    ],
+    [
+     "7 UM-064-CA2 SCREW ROD, TORQUE ROTATION,",
+     "DIALS IDENTIFICATIONS",
+     "1"
+    ],
+    [
+     "8 UM-064-CA3 MAST FUNCTIONS, CHUCK/CLAMP",
+     "",
+     "1"
+    ],
+    [
+     "9 UM-064-CA4 TRIGGER FUNCTION, PUMP",
+     "SPEED CONTROL, FEED CONTROL",
+     "1"
+    ],
+    [
+     "10 UM-064-CA5 CHUCK LOCK, SYNCHRO CONTROL",
+     "",
+     "1"
+    ],
+    [
+     "11 UM-064-CA7 FEED SET, LOCK/UNLOCK WIRELINE",
+     "",
+     "1"
+    ],
+    [
+     "12 UM-064-CA9 HOSES IDENTIFICATIONS (",
+     "RETURN BLOC, FEED,",
+     "1"
+    ]
+   ]
+  }
+ ],
+ "84": [
+  {
+   "x": 766,
+   "y": 62,
+   "rows": [
+    [
+     "UM-CIT-SC-UG UNDERGROUND SECURITY",
+     "BOX",
+     "1"
+    ],
+    [
+     "HDC-1205000000 HDC 10B ABU (HOUSING)",
+     "",
+     "1"
+    ],
+    [
+     "HDC-1665230000 HDC 10B DODQ 4BO",
+     "(COVER)",
+     "1"
+    ],
+    [
+     "C016 10D003 806 12 FEMALE CABLE CONNECTOR",
+     "STRAIGHT WITH",
+     "1"
+    ],
+    [
+     "CLAMPING RING",
+     "",
+     ""
+    ],
+    [
+     "C016 20C003 100 12 MALE RECEPTACLE,",
+     "SCREW TERMINATION",
+     "1"
+    ],
+    [
+     "MS3106A-14S PLUG WITH SOLID SHELL",
+     "",
+     "2"
+    ]
+   ]
+  }
+ ],
+ "85": [
+  {
+   "x": 821,
+   "y": 62,
+   "rows": [
+    [
+     "C016 20C003 100 12 MALE RECEPTACLE,",
+     "SCREW TERMINATION",
+     "1"
+    ],
+    [
+     "C016 20F003 100 12 FEMALE CABLE CONNECTOR",
+     "RIGHT ANGLED",
+     "1"
+    ],
+    [
+     "C016 20G003 100 12 FEMALE RECEPTACLE,",
+     "SCREW TERMINATION",
+     "2"
+    ],
+    [
+     "C016 20H003 110 12 MALE CABLE CONNECTOR",
+     "STRAIGHT",
+     "2"
+    ],
+    [
+     "G2R-1-S ELECTROMECHANICAL",
+     "RELAY SPDT 10A",
+     "1"
+    ],
+    [
+     "12VC 2780hm SOCKET",
+     "",
+     ""
+    ],
+    [
+     "HDC-1204100000 HDC- INSERT FEMALE,",
+     "NO. OF POLE: 10",
+     "1"
+    ],
+    [
+     "HDC-1205000000 HDC ROCKSTAR",
+     "HOUSING IP 65",
+     "1"
+    ],
+    [
+     "HDC-1665230000 HDC ROCKSTAR",
+     "HOUSING CAP IP 65",
+     "1"
+    ],
+    [
+     "P2R-05A RELAY SOCKET SKT",
+     "5 POS",
+     "1"
+    ],
+    [
+     "UM-CIT-SC-UG-CA1 ENGLISH STICKER",
+     "",
+     "1"
+    ],
+    [
+     "ZB4BA9 FLUSH PUSH YELLOW",
+     "COLOR CAP",
+     "1"
+    ],
+    [
+     "ZB4BT4 PUSH PULL E-STOP",
+     "",
+     "1"
+    ],
+    [
+     "ZB4BZ101 CONTACT BLOCK",
+     "+ MOUNTING COLLAR",
+     "1"
+    ],
+    [
+     "ZB4BZ102 BASE AND CONTACT",
+     "BLOCK",
+     "1"
+    ],
+    [
+     "BOÎTE DE SÉCURITÉ (SOUS-TERRE)",
+     "",
+     ""
+    ],
+    [
+     "SECURITY BOX (UNDERGROUND)",
+     "",
+     ""
+    ],
+    [
+     "ASSEMBLAGE COMPLE/COMPLETE",
+     "",
+     ""
+    ],
+    [
+     "ASSEMBLY: UM-CIT-SC-UG",
+     "",
+     ""
+    ]
+   ]
+  }
+ ]
+}

@@ -39,6 +39,14 @@
       "category": "Procédure PRO-DD-ST-003",
       "thumbnail": "equipment/plancher-dd/thumbnail.webp",
       "status": "3D de la procédure (juillet 2026) : plancher 16 × 32 pi pièce par pièce, blocages, cage, marches, garde-corps, plancher secondaire, démantèlement et critères de choix"
+    },
+    {
+      "id": "stm-1500",
+      "name": "Usinage Marcotte STM-1500",
+      "manufacturer": "Usinage Marcotte",
+      "category": "Foreuse aux diamants souterraine",
+      "thumbnail": "equipment/stm-1500/thumbnail.webp",
+      "status": "Manuel de pièces s/n STM-1500-128 (96 pages) : 42 assemblages et 7 documents ; 3D réaliste de la foreuse (traîneau, avance à 0°, tête Boyles, serre-tiges, vérins, treuil), du groupe hydraulique 125 HP et de la console ; rendus Blender"
     }
   ]
 }
