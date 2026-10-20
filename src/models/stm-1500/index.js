@@ -27,7 +27,7 @@ const PACK = { pos: [4.85, 0, -1.1], yaw: 0 }; // bout des raccords (−X) vers 
 const FLOOR = 0.025; // boyaux posés au sol (garde sous la courbe)
 
 function P002(api) {
-  const { at, hose, cable, group } = api.S;
+  const { at, tube, group } = api.S;
   const V = (a) => new api.THREE.Vector3(...a);
   const drill = at(api.sub('P010'), DRILL.pos, [0, DRILL.yaw, 0]);
   const cons = at(api.sub('P078'), CONSOLE.pos, [0, CONSOLE.yaw, 0]);
@@ -55,8 +55,12 @@ function P002(api) {
     const u = gb.clone().sub(ga).setY(0);
     const len = u.length();
     u.normalize().multiplyScalar(Math.min(0.3, len * 0.3));
-    const pts = [...a, ga.clone().add(u), gb.clone().sub(u), ...b].map((q) => q.toArray());
-    return mat === 'hose' ? hose(pts, r) : cable(pts, r);
+    const pts = [...a, ga.clone().add(u), gb.clone().sub(u), ...b];
+    let L = 0;
+    for (let k = 1; k < pts.length; k++) L += pts[k].distanceTo(pts[k - 1]);
+    const seg = Math.ceil(L / 0.025); // un segment tous les 2,5 cm : coudes lisses
+    const arr = pts.map((q) => q.toArray());
+    return mat === 'hose' ? tube(arr, r, 'hose', { seg }) : tube(arr, r, 'black', { seg, ends: 'gland', endMaterial: 'black', radial: 8, tension: 0.4 });
   };
   const hoses = [];
   const cBack = D(cons, CON_BACK_N), cSide = D(cons, CON_SIDE_N), pEnd = D(pack, PP_N), dSide = D(drill, [0, 0, -1]);
@@ -64,8 +68,8 @@ function P002(api) {
   // Groupe → console : pression (1 po), retour, drain, chacun sur son raccord, et câble de commande.
   // Le boyau du raccord le plus à l'arrière de la console s'écarte le plus du flanc : les voies
   // restent parallèles et ne se croisent pas (câble à l'extérieur du faisceau).
-  PP_PORTS.forEach((p, i) => hoses.push(run({ p: W(cons, CON_PACK[i]), n: cSide, out: 0.44 - i * 0.07 }, { p: W(pack, p), n: pEnd }, i === 0 ? 0.022 : 0.017)));
-  hoses.push(run({ p: W(cons, CON_CABLE), n: cSide, out: 0.55 }, { p: W(pack, PP_CABLE), n: pEnd }, 0.012, 'cable'));
+  PP_PORTS.forEach((p, i) => hoses.push(run({ p: W(cons, CON_PACK[2 - i]), n: cSide, out: 0.3 + i * 0.07 }, { p: W(pack, p), n: pEnd }, i === 0 ? 0.022 : 0.017)));
+  hoses.push(run({ p: W(cons, CON_CABLE), n: cSide, out: 0.55 }, { p: W(pack, PP_CABLE), n: pEnd, shift: D(pack, [0, 0, -1]).multiplyScalar(0.1) }, 0.012, 'cable'));
   // Console → tête : rotation A et B (1 po), descentes écartées le long de l'avance.
   HEAD_PORTS.forEach((p, i) => hoses.push(run({ p: W(cons, CON_ROT[i]), n: cBack }, { p: W(drill, p), n: dSide, shift: along.clone().multiplyScalar(i ? 0.06 : -0.06) }, 0.022)));
   // Console → bloc du traîneau.

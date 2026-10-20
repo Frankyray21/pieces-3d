@@ -14,11 +14,11 @@ import { lister, each, grid, IN } from './layout.js';
 export const PP = { L: 96.875 * IN, W: 48.25 * IN, H: 60.9375 * IN, skid: 3.5 * IN, t: 3 * IN };
 const MOTOR = { x: -0.52, y: 0.43, r: 0.29, len: 0.86 }; // axe du moteur et des pompes
 // Raccords rapides au bout arrière du cadre (−X, côté moteur, vers la console), sur
-// le poteau d'angle gauche, hors du capot de ventilateur du moteur : pression,
-// retour, drain ; presse-étoupe du câble de commande sur le même poteau. Bouts des
-// raccords, sortie vers −X.
-export const PP_PORTS = [-0.5, -0.42, -0.34].map((z) => [-PP.L / 2 - 0.07, 0.3, z]);
-export const PP_CABLE = [-PP.L / 2 - 0.04, 0.95, -PP.W / 2 + PP.t / 2];
+// une plaque posée sur la traverse basse et soudée au poteau d'angle gauche, hors du
+// capot de ventilateur du moteur : pression, retour, drain ; presse-étoupe du câble
+// de commande sur une patte soudée au poteau. Bouts des raccords, sortie vers −X.
+export const PP_PORTS = [-0.34, -0.42, -0.5].map((z) => [-PP.L / 2 - 0.07, 0.3, z]);
+export const PP_CABLE = [-PP.L / 2 - 0.04, 0.95, -PP.W / 2 + PP.t + 0.035];
 export const PP_N = [-1, 0, 0];
 
 export function P068(api) {
@@ -90,7 +90,7 @@ export function P068(api) {
     at(box(0.12, 0.03, 0.06, 'yellow', { r: 0.004 }), [bx + 0.95, MOTOR.y - 0.105, 0]),
   ), [0, -0.3, 0.4]);
   P('FBRA-002-213P', group(
-    tube([[bx + 0.95 - 0.04, skid + t, 0.05], [bx + 0.95 - 0.04, MOTOR.y - 0.06, 0.05], [bx + 0.95 + 0.04, MOTOR.y - 0.06, 0.05], [bx + 0.95 + 0.04, skid + t, 0.05]], 0.006, 'steel', { sharp: true, seg: 3 }),
+    tube([[bx + 0.95 - 0.05, skid + t, 0.05], [bx + 0.95 - 0.05, MOTOR.y - 0.13, 0.05], [bx + 0.95 + 0.05, MOTOR.y - 0.13, 0.05], [bx + 0.95 + 0.05, skid + t, 0.05]], 0.006, 'steel', { sharp: true, seg: 3 }),
   ), [0, -0.3, 0.6]);
 
   // 1 — Réservoir 110 gal US sur le dessus, côté avant, avec trappes d'inspection, filtres de retour et reniflard.
@@ -119,11 +119,10 @@ export function P068(api) {
   each(P, '6400-6-6', [-0.06, 0.06].map((dx) => at(fitting(0.016, 0.04, 'steel', { axis: 'z' }), [mfx + dx, mfy, 0.26])), [0, 0, 0.4]);
   P('6500-06-06', at(fitting(0.016, 0.05, 'steel', { axis: 'z', elbow: true }), [mfx - 0.25, mfy, 0.26]), [0, 0, 0.4]);
   api.add(group(
-    hose([[mfx + 0.18, mfy, 0.2], [mfx + 0.3, mfy - 0.2, 0.3], [bx + 0.5, MOTOR.y + 0.16, 0.2]], 0.022),
-    hose([[mfx - 0.18, mfy, 0.2], [mfx - 0.4, mfy - 0.15, 0.3], [bx + 0.72, MOTOR.y + 0.16, 0.1]], 0.016),
-    hose([[mfx - 0.1, mfy, 0.16], [mfx, mfy - 0.3, -0.1], [bx + 0.95, MOTOR.y + 0.15, -0.05]], 0.016),
-    hose([[bx + 0.42, MOTOR.y + 0.16, 0.04], [bx + 0.6, MOTOR.y + 0.5, -0.3], [x1 + 0.05, H * 0.55, z0 + 0.15]], 0.02),
-    hose([[bx + 0.72, MOTOR.y + 0.14, 0.04], [bx + 0.8, MOTOR.y + 0.45, -0.25], [x1 + 0.05, H * 0.5, z0 + 0.25]], 0.016),
+    // Collecteur → raccords du dessus des pompes (bout du raccord 5404 côté +X, dessous du collecteur).
+    hose([[mfx + 0.345, mfy, 0.2], [mfx + 0.39, mfy - 0.03, 0.18], [bx + 0.78, 0.75, 0.1], [bx + 0.72, MOTOR.y + 0.25, 0.04], [bx + 0.72, MOTOR.y + 0.17, 0.04]], 0.016),
+    hose([[mfx - 0.16, mfy - 0.04, 0.18], [mfx - 0.16, mfy - 0.08, 0.15], [bx + 0.36, 0.75, 0.08], [bx + 0.42, MOTOR.y + 0.27, 0.04], [bx + 0.42, MOTOR.y + 0.2, 0.04]], 0.02),
+    hose([[mfx + 0.09, mfy - 0.04, 0.18], [mfx + 0.09, mfy - 0.08, 0.15], [bx + 0.76, 0.75, 0.05], [bx + 0.95, MOTOR.y + 0.25, 0.04], [bx + 0.95, MOTOR.y + 0.17, 0.04]], 0.016),
   ));
 
   // 30 — Boîte électrique Hoffman (600 V, 125 HP) au-dessus du moteur, 18 — transformateur, 12 — plaque support, 13 — adaptateur.
@@ -141,11 +140,11 @@ export function P068(api) {
 
   // 27 — Refroidisseurs AB-1202 (2) sur leur support (28), en bas à l'avant.
   for (const s of [-1, 1]) P('AB-1202', group(
-    at(cyl(0.085, 0.72, 'black', { axis: 'z', seg: 28 }), [x1 - 0.22, 0.25 + (s > 0 ? 0.2 : 0), 0]),
-    ...[-1, 1].map((u) => at(cyl(0.1, 0.04, 'black', { axis: 'z', seg: 28 }), [x1 - 0.22, 0.25 + (s > 0 ? 0.2 : 0), u * 0.36])),
-    at(cyl(0.025, 0.08, 'steel', { axis: 'y' }), [x1 - 0.22, 0.25 + (s > 0 ? 0.2 : 0) + 0.1, 0.3]),
+    at(cyl(0.085, 0.72, 'black', { axis: 'z', seg: 28 }), [x1 - 0.13, 0.28 + (s > 0 ? 0.2 : 0), 0]),
+    ...[-1, 1].map((u) => at(cyl(0.1, 0.04, 'black', { axis: 'z', seg: 28 }), [x1 - 0.13, 0.28 + (s > 0 ? 0.2 : 0), u * 0.36])),
+    at(cyl(0.025, 0.08, 'steel', { axis: 'y' }), [x1 - 0.13, 0.28 + (s > 0 ? 0.2 : 0) + 0.1, 0.3]),
   ), [0.3, 0, s * 0.3]);
-  P('FMX-005-203PP', group(...[-1, 1].map((u) => at(box(0.05, 0.42, 0.06, 'red', { r: 0.004 }), [x1 - 0.22, 0.3, u * 0.42]))), [0.3, -0.2, 0]);
+  P('FMX-005-203PP', group(...[-1, 1].map((u) => at(box(0.05, 0.42, 0.06, 'red', { r: 0.004 }), [x1 - 0.13, 0.38, u * 0.42]))), [0.3, -0.2, 0]);
 
   // 2 — Pompe de remplissage à main Fill-Rite (39 — support), sur le flanc gauche.
   P('FR150', group(
@@ -183,20 +182,28 @@ export function P068(api) {
   each(P, 'NC375', [0, 1].map((i) => at(nut(0.015, 0.009, 'steel', { axis: 'z' }), [0.5 + i * 0.1, 0.62, z0 + t / 2 + 0.04])), [0, 0, -0.2]);
   each(P, 'LN375NC', [0, 1].map((i) => at(nut(0.015, 0.01, 'steel', { axis: 'y' }), [bx + 0.95 + (i ? 0.04 : -0.04), skid + t - 0.01, 0.05])), [0, -0.3, 0.6]);
 
-  // Plaque de raccords rapides (laiton) sur le poteau d'angle arrière gauche, boyaux intérieurs
-  // le long du plancher jusque sous les pompes ; câble de commande de la boîte électrique au
-  // presse-étoupe du poteau.
+  // Plaque de raccords rapides (laiton) posée sur la traverse basse et soudée au poteau d'angle arrière
+  // gauche. Boyaux intérieurs : chacun dans sa voie (la pression, la plus proche de l'axe, va à la pompe
+  // la plus proche), au-dessus du plancher et des passages de fourche, jusque sous l'orifice de sa pompe.
+  // Câble de commande : du presse-étoupe sous la boîte électrique, au-dessus du moteur, à la patte du poteau.
   const pumpBottom = [[bx + 0.42, MOTOR.y - 0.1235], [bx + 0.72, MOTOR.y - 0.095], [bx + 0.95, MOTOR.y - 0.095]];
+  const fork = 41 * IN / 2; // passages de fourche à x = ±fork, sommet ≈ 0,224
+  const lane = (i, x0h, hr) => {
+    const [, y, z] = PP_PORTS[i], [px, py] = pumpBottom[i], low = 0.171 + hr + 0.012;
+    return [[x0, y, z], [x0 + 0.12, 0.24, z], [-fork - 0.14, low, z], [-fork, 0.224 + hr + 0.012, z], [-fork + 0.14, low, z],
+      [px - 0.18, low, z], [px - 0.04, 0.25, (z - 0.07) / 2], [px, py - 0.04, -0.07], [px, py, -0.06]];
+  };
   api.add(group(
-    at(box(0.012, 0.12, 0.27, 'red', { r: 0.004 }), [x0 - 0.006, 0.3, -0.435]),
+    at(box(0.012, 0.2, 0.27, 'red', { r: 0.004 }), [x0 - 0.006, 0.265, -0.435]),
     ...PP_PORTS.map(([x, y, z], i) => group(
       at(cyl(i === 0 ? 0.024 : 0.019, 0.05, 'brass', { axis: 'x', seg: 18 }), [x + 0.025, y, z]),
       at(nut(i === 0 ? 0.05 : 0.042, 0.014, 'brass', { axis: 'x' }), [x + 0.055, y, z]),
     )),
-    ...PP_PORTS.map(([, y, z], i) => hose([[x0 + 0.01, y, z], [x0 + 0.25, 0.2, z], [bx + 0.2, 0.2, -0.45 + i * 0.04],
-      [pumpBottom[i][0], 0.2, -0.2], [pumpBottom[i][0], pumpBottom[i][1] - 0.04, -0.07], [pumpBottom[i][0], pumpBottom[i][1], -0.06]], i === 0 ? 0.02 : 0.016)),
+    ...PP_PORTS.map((_, i) => hose(lane(i, x0, i === 0 ? 0.02 : 0.016), i === 0 ? 0.02 : 0.016)),
+    at(box(0.012, 0.1, 0.12, 'red', { r: 0.003 }), [x0 - 0.0055, PP_CABLE[1], z0 + t + 0.02]),
     at(cyl(0.016, 0.04, 'black', { axis: 'x', seg: 14 }), [PP_CABLE[0] + 0.02, PP_CABLE[1], PP_CABLE[2]]),
-    api.S.cable([[x0 + 0.45, H - t - 0.63, z1 - 0.17], [x0 + 0.3, 1.0, 0.1], [x0 + 0.08, 0.97, -0.5], [x0 + 0.04, PP_CABLE[1], PP_CABLE[2]]], 0.012),
+    api.S.cable([[x0 + 0.45, H - t - 0.64, z1 - 0.17], [x0 + 0.45, 0.82, z1 - 0.17], [x0 + 0.45, 0.78, 0.4], [x0 + 0.3, 0.79, 0.1],
+      [x0 + 0.1, 0.9, PP_CABLE[2] + 0.02], [x0 + 0.01, PP_CABLE[1], PP_CABLE[2]]], 0.012),
   ));
 
   // Plaque UM sur le côté.

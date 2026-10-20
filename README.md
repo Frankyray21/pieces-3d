@@ -98,8 +98,10 @@ pièces (numéro, quantité, page du manuel).
   stm-1500 P002 --min 3 --ref 1`), la
   foreuse avec l'avance à 0° (P010 : traîneau, support d'avance, poutre, pied,
   boîte et serre-tiges Boyles 12HH, table, vérins de bascule, de relevage,
-  d'avance et « bazooka », jambes, attelage, rallonge et poulie double,
-  garde-corps grillagé, émerillon d'eau, treuil de câble posé à côté), la tête
+  d'avance double logé dans la poutre, jambes, attelage, plaque d'extrémité
+  portant la rallonge, la poulie double et le guide de tiges, émerillon d'eau,
+  treuil de câble posé à côté, boyaux des vérins et du treuil sur les blocs de
+  raccords des longerons ; sans le garde-corps ni le vérin supérieur), la tête
   Boyles (P048 : boîte à chaîne triple, broche, roulements, joints, mandrin
   Boyles H, transmission Funk 4 vitesses, moteur A6VM, pompe de lubrification,
   filtre, visserie), le groupe hydraulique 125 HP posé sur ses patins, sans
@@ -109,10 +111,9 @@ pièces (numéro, quantité, page du manuel).
   pupitre, manomètres, distributeurs, contrôleur de sécurité). Les autres
   assemblages s'affichent avec les dessins du manuel. Le manuel désigne les
   pièces par leur numéro (bulles des dessins) : les repères 1, 2, 3… sont les
-  rangs des lignes de la liste. Couleurs d'après la photo de couverture
-  (foreuse bleue sur traîneau noir, console blanche), groupe et tête en rouge
-  comme sur leurs dessins. Le PDF d'origine (116 Mo) est dans la release
-  GitHub `STM1500`. Listes : `tools/extract_stm1500_lists.py` (brouillon par
+  rangs des lignes de la liste. Couleurs : foreuse, tête et groupe en rouge
+  (dessins du manuel), vérins noirs, console blanche (photo de couverture). Le
+  PDF d'origine (116 Mo) est dans la release GitHub `STM1500`. Listes : `tools/extract_stm1500_lists.py` (brouillon par
   position des mots, gardé dans `tools/data/stm1500-listes.json`) puis
   `tools/extract_stm1500.py` (nettoyage, pages scannées transcrites, liens,
   `src/models/stm-1500/refs.js`). Rendus photoréalistes Blender dans

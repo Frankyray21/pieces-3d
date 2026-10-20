@@ -69,7 +69,7 @@ export function P078(api) {
   deco.push(at(gauge(0.065, { axis: 'z' }), [-w / 2 + 0.15, h - 0.3, fz + 0.03]));
   for (let i = 0; i < 4; i++) deco.push(at(gauge(0.045, { axis: 'z' }), [-0.08 + i * 0.1, h - 0.3, fz + 0.025]));
   for (let i = 0; i < 3; i++) deco.push(at(cyl(0.022, 0.03, 'black', { axis: 'z', seg: 18 }), [0.02 + i * 0.12, h - 0.48, fz + 0.015]));
-  deco.push(at(box(0.18, 0.18, 0.05, 'umBlue', { r: 0.006 }), [-w / 2 + 0.17, h - 0.5, fz + 0.025]));
+  deco.push(at(box(0.18, 0.12, 0.05, 'umBlue', { r: 0.006 }), [-w / 2 + 0.17, h - 0.44, fz + 0.025]));
   deco.push(at(box(0.16, 0.05, 0.05, 'black', { r: 0.006 }), [0.0, h - 0.62, fz + 0.03]));
   deco.push(at(cyl(0.03, 0.02, 'umBlue', { axis: 'z' }), [0.0, h - 0.62, fz + 0.06]));
   // Normale du pupitre (vers l'opérateur) : les distributeurs sont posés dessus, leviers perpendiculaires.
@@ -97,9 +97,9 @@ export function P078(api) {
 
   // 2 — Bloc 3 voies 3/4 NPT (eau) sur le flanc droit, vannes à bille.
   P('UM-020-643P', group(
-    at(box(0.08, 0.16, 0.06, 'umBlue', { r: 0.005 }), [w / 2 + 0.05, 0.42, z1 - 0.12]),
-    at(ballValve(0.04, 'brass', { axis: 'y' }), [w / 2 + 0.05, 0.55, z1 - 0.12]),
-    at(ballValve(0.04, 'brass', { axis: 'y' }), [w / 2 + 0.05, 0.29, z1 - 0.12]),
+    at(box(0.08, 0.16, 0.06, 'umBlue', { r: 0.005 }), [w / 2 + 0.04, 0.42, z1 - 0.12]),
+    at(ballValve(0.04, 'brass', { axis: 'y' }), [w / 2 + 0.04, 0.55, z1 - 0.12]),
+    at(ballValve(0.04, 'brass', { axis: 'y' }), [w / 2 + 0.04, 0.29, z1 - 0.12]),
   ), [0.3, 0, 0]);
 
   // 11 — Panneau de l'interrupteur, 12 — panneau du contrôleur, 13 — support coulissant, 14 — support de traversée.
@@ -118,7 +118,8 @@ export function P078(api) {
     at(enclosure(0.3, 0.2, 0.12, 'lightGrey'), [0.1, ty + 0.17, slope.z - 0.05]),
     at(cyl(0.026, 0.03, 'red', { axis: 'z' }), [0.18, ty + 0.17, slope.z + 0.03]),
     at(cyl(0.02, 0.02, 'yellow', { axis: 'z' }), [0.0, ty + 0.15, slope.z + 0.025]),
-    tube([[-0.06, ty + 0.12, slope.z - 0.08], [-0.25, ty + 0.05, slope.z - 0.15], [-w / 2 + 0.1, ty - 0.05, z0 + 0.2]], 0.01, 'black', { seg: 16 }),
+    // Câble du contrôleur vers le poste de commande 10250H (arrêt d'urgence), au-dessus du panneau.
+    tube([[-0.05, ty + 0.12, slope.z - 0.06], [-0.2, ty + 0.12, slope.z - 0.06], [-w / 2 + 0.18, ty + 0.1, slope.z - 0.03]], 0.008, 'black', { seg: 16 }),
   ), [0, 0.6, 0.1]);
 
   // 1 — Vis 1/4-20 × 3/4 et 10 — rondelles inox (40) au pourtour des panneaux latéraux.
@@ -142,6 +143,7 @@ export function P078(api) {
     tube([[w / 2 + 0.01, 0.42, z1 - 0.12], [w / 2 - 0.1, 0.36, z1 - 0.14], [w / 2 - 0.12, 0.3, 0.05], [CON_WATER[0], CON_WATER[1], z0 + 0.06], [CON_WATER[0], CON_WATER[1], z0 + 0.005]], 0.01, 'steel', { seg: 24 }),
     at(cyl(0.016, 0.03, 'black', { axis: 'x', seg: 14 }), [CON_CABLE[0] - 0.015, CON_CABLE[1], CON_CABLE[2]]),
     tube([[w / 2 - 0.02, CON_CABLE[1], CON_CABLE[2]], [0.15, h - 0.2, -0.1], [0.1, h - 0.14, slope.z - 0.05], [0.1, h - 0.05, slope.z - 0.05]], 0.008, 'black', { seg: 16 }),
+    at(ring(0.018, 0.009, 0.012, 'rubber', { seg: 16 }), [0.1, h - 0.12, slope.z - 0.05]), // passe-fil du panneau du dessus
   ));
   return { view: { dir: [0.6, 0.45, 1.2] } };
 }

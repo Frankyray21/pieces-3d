@@ -153,8 +153,9 @@ export function P048(api) {
   api.add(group(
     at(cyl(0.024, 0.06, 'brass', { axis: 'z', seg: 16 }), [mx - 0.44, SPY + 0.12, TZ - 0.28]),
     at(cyl(0.024, 0.06, 'brass', { axis: 'z', seg: 16 }), [mx - 0.44, SPY - 0.12, TZ - 0.28]),
-    tube([[BOX.x0 - 0.12, py, -0.16], [BOX.x0 - 0.15, BOX.y1, -0.2], [bx, BOX.y1 + 0.05, BOX.z0 + 0.0]], 0.006, 'steel', { seg: 24 }),
-    tube([[bx + 0.04, BOX.y1, BOX.z0 - 0.045], [bx + 0.1, BOX.y1 + 0.08, -0.1], [BOX.x1 + 0.02, BOX.y1 - 0.02, 0.05]], 0.006, 'steel', { seg: 24 }),
+    // Graissage : pompe → filtre de tête (par l'arrière du couvercle) → avant de la boîte (par le côté).
+    tube([[BOX.x0 - 0.12, py, -0.16], [BOX.x0 - 0.16, BOX.y1 - 0.02, -0.2], [BOX.x0 - 0.06, BOX.y1 + 0.06, BOX.z0 - 0.06], [bx - 0.02, BOX.y1 + 0.05, BOX.z0 - 0.05], [bx - 0.02, BOX.y1 + 0.005, BOX.z0 - 0.045]], 0.006, 'steel', { seg: 32 }),
+    tube([[bx + 0.03, BOX.y1 + 0.005, BOX.z0 - 0.045], [bx + 0.05, BOX.y1 + 0.06, BOX.z0 - 0.06], [BOX.x1 + 0.035, BOX.y1 + 0.05, -0.3], [BOX.x1 + 0.035, BOX.y1 - 0.02, 0.05]], 0.006, 'steel', { seg: 32 }),
   ));
   return { view: { dir: [0.9, 0.55, 1.1] } };
 }
