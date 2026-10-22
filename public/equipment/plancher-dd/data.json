@@ -260,7 +260,7 @@
      "6",
      "",
      7,
-     "Blocage sous le bout de 6 × 6 de jonction",
+     "Blocage sous le 6 × 6 de jonction, vis-à-vis chaque madrier",
      {
       "note": "Étape 5 : placé en mettant de niveau le bout des 6 × 6 de la section 1.",
       "pnText": "3 × 8 / 6 × 6 brut"
@@ -269,8 +269,8 @@
     [
      "7",
      "",
-     7,
-     "Bout de 6 × 6 de jonction (24 po), en travers sous le bout des madriers, sous les planches",
+     1,
+     "6 × 6 × 16 pi de jonction, d’un seul bout, en travers sous le bout des madriers (sous les planches)",
      {
       "pnText": "6 × 6 brut"
      }
