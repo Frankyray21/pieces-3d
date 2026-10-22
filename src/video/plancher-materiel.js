@@ -3,7 +3,8 @@
 // (6 × 6 brut, 3 × 8 brut, 2 × 4 planés ou bruts), coins de bois, tire-fonds
 // de 6 po, outils (pied de biche, masse, marteau, sciotte, pinces à billots,
 // niveau au laser Bosch, niveau de 48 po, barres d'écaillage de 6, 8 et 10 pi,
-// scie va-et-vient et lames à bois) et ÉPI de base. Silhouettes simples : ce
+// pingouin (gratte minière de 32 po, sert de pelle), scie va-et-vient et
+// lames à bois) et ÉPI de base. Silhouettes simples : ce
 // sont des repères pour la formation, pas des modèles de pièces.
 import { IN, FT, B66, P3, P8, S24, L, ground, WEDGE } from '../models/plancher-dd/plan.js';
 import { lumber, between, lagScrews, wedge } from '../models/plancher-dd/lumber.js';
@@ -32,6 +33,7 @@ export const MAT = {
   pinces: { at: [X0 + 1.8, 0, 1.5], text: 'Pinces à billots' },
   scie: { at: [X0 + 1.8, 0, 2.25], text: 'Scie va-et-vient et lames à bois' },
   barres: { at: [BARS_X, 0, 0.3], text: 'Barres d’écaillage 6, 8 et 10 pi' },
+  pingouin: { at: [X0 + 2.25, 0, 0.55], text: 'Pingouin (gratte minière 32 po)' },
   epi: { at: [X0 + 0.1, 0, 1.85], text: 'ÉPI : équipement de base' },
 };
 for (const m of Object.values(MAT)) m.at[1] = g0(m.at[0], m.at[2]) + 0.12;
@@ -113,6 +115,21 @@ export function materielGroup(S) {
     const bar = S.group(S.cyl(0.017, len - 0.12, 'castAlu', { axis: 'z', pos: [0, 0.02, (len - 0.12) / 2] }), S.cyl(0.017, 0.12, 'darkSteel', { axis: 'z', r2: 0.006, pos: [0, 0.02, len - 0.06] }));
     g.add(onGround(S, bar, x, z0));
   });
+  // Pingouin : gratte minière de 32 po (manche de bois, lame d'acier jaune
+  // recourbée, embout jaune), couchée selon Z, lame vers le fond de l'aire.
+  {
+    const len = 32 * IN;
+    const p = S.group(
+      S.cyl(0.019, len, 'woodLight', { axis: 'z', pos: [0, 0.022, 0] }),
+      S.box(0.045, 0.04, 0.12, 'yellow', { r: 0.008, pos: [0, 0.022, len / 2 - 0.05] }),
+      S.box(0.07, 0.07, 0.09, 'yellow', { r: 0.008, pos: [0, 0.035, -len / 2 + 0.03] }),
+      S.tube([[0, 0.03, -len / 2 + 0.02], [-0.12, 0.03, -len / 2 + 0.06], [-0.26, 0.03, -len / 2 + 0.14], [-0.36, 0.03, -len / 2 + 0.26]], 0.012, 'yellow'),
+      S.extrude([[0, 0], [-0.12, 0.035], [-0.26, 0.07], [-0.37, 0.15], [-0.25, 0.04], [-0.1, -0.01]], 0.012, 'yellow'),
+    );
+    p.children[4].rotation.x = Math.PI / 2;
+    p.children[4].position.set(0, 0.035, -len / 2 + 0.04);
+    g.add(onGround(S, p, MAT.pingouin.at[0], MAT.pingouin.at[2]));
+  }
   // ÉPI de base : casque avec lampe, lunettes et gants.
   const casque = S.group(
     S.lathe([[0, -0.008], [0.16, -0.008], [0.16, 0.0], [0.135, 0.02], [0.13, 0.07], [0.11, 0.13], [0.07, 0.165], [0, 0.17]], 'yellow', { pos: [0, 0.01, 0] }),

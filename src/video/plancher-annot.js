@@ -57,6 +57,7 @@ export const ANNOTATIONS = {
     { v: 40.8, type: 'note', at: MAT.niveau.at, text: MAT.niveau.text, dir: 'down', until: 43.8 },
     { v: 42.8, type: 'note', at: MAT.masse.at, text: MAT.masse.text, dir: 'right', until: 45.6 },
     { v: 43.4, type: 'note', at: MAT.marteau.at, text: MAT.marteau.text, dir: 'right', until: 46.2 },
+    { v: 44.8, type: 'note', at: MAT.pingouin.at, text: MAT.pingouin.text, dir: 'down', until: 47.6 },
     { v: 46.4, type: 'note', at: MAT.sciotte.at, text: MAT.sciotte.text, dir: 'up', until: 49.0 },
     { v: 46.9, type: 'note', at: MAT.pinces.at, text: MAT.pinces.text, dir: 'up', until: 49.5 },
     { v: 47.4, type: 'note', at: MAT.scie.at, text: MAT.scie.text, dir: 'down', until: 50.0 },
@@ -88,8 +89,8 @@ export const ANNOTATIONS = {
     { v: 94.6, type: 'dim', a: [2.0, B66 + 0.02, joistZ[2]], b: [2.0, B66 + 0.02, joistZ[3]], off: [0, 0.1, 0], text: '32 po', sub: 'centre à centre' },
   ],
   e5: [
-    { v: 100.4, type: 'dim', a: [2.3, B66 + P3 + 0.08, -0.4 - 24 * IN], b: [2.3, B66 + P3 + 0.08, -0.4 + 24 * IN], off: [0, 0.14, 0], text: '48 po', sub: 'niveau' },
-    { v: 102.8, type: 'dim', a: [2.3, B66 + P3, -0.4 - 4 * FT], b: [2.3, B66 + P3, -0.4 + 4 * FT], off: [0.3, 0, 0], text: '8 pi min.', sub: '3 × 8 de portée' },
+    { v: 100.4, type: 'dim', a: [2.3, B66 + P3 + 0.08, -0.4 - 24 * IN], b: [2.3, B66 + P3 + 0.08, -0.4 + 24 * IN], off: [0, 0.14, 0], text: '48 po', sub: 'niveau', until: 105.0 },
+    { v: 102.8, type: 'dim', a: [2.3, B66 + P3, -0.4 - 4 * FT], b: [2.3, B66 + P3, -0.4 + 4 * FT], off: [0.3, 0, 0], text: '8 pi min.', sub: '3 × 8 de portée', until: 106.0 },
     { v: 106.4, type: 'note', at: [SUPPORTS_X[2], 0.02, joistZ[4]], text: 'Blocages et coins dans le sens contraire', dir: 'down' },
     { v: 111.0, type: 'note', at: [2.8, B66, joistZ[5]], text: 'Au moins 6 appuis par madrier', dir: 'up' },
   ],
