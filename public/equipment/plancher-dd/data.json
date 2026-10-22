@@ -78,7 +78,7 @@
     "P02",
     "P01"
    ],
-   "note": "Reconstitution 3D d'après la procédure PRO-DD-ST-003 (révision juillet 2026). La foreuse fore vers le fond de la galerie (front de taille où sont marqués les fonds de trous) : ses patins suivent la galerie et croisent les madriers 6 × 6, posés en travers ; les planches 3 × 8 suivent la galerie. Les deux sections de 16 × 16 pi sont côte à côte en travers de la galerie (plancher de 16 pi de profond sur 32 pi de large, galerie élargie à 34 pi au fond) : les madriers de la section 2 prolongent ceux de la section 1. Sol de galerie fictif : il descend de la section 1 vers la section 2 pour montrer les blocages, les soutiens, la cage, les marches et les garde-corps que la procédure exige. Chaque pièce porte son numéro d'étape pour l'animation du montage. Règle appliquée partout : jamais de bois simplement empilé ; un seul blocage et ses coins, sinon une cage (couches de deux pièces croisées).",
+   "note": "Reconstitution 3D d'après la procédure PRO-DD-ST-003 (révision juillet 2026). La foreuse fore vers le fond de la galerie (front de taille où sont marqués les fonds de trous). Le plancher prend toute la largeur de la galerie : planches 3 × 8 en travers de la galerie, dans le sens contraire du forage, madriers 6 × 6 le long de la galerie (les patins de la foreuse les suivent). Section 1 au fond, section 2 vers l'entrée, dans le prolongement ; les 2 planches libres de l'étape 8 sont à la jonction, au centre du plancher. Sol de galerie fictif : il descend vers l'entrée pour montrer les blocages, les soutiens, la cage, les marches et les garde-corps que la procédure exige. Chaque pièce porte son numéro d'étape pour l'animation du montage. Règle appliquée partout : jamais de bois simplement empilé ; un seul blocage et ses coins, sinon une cage (couches de deux pièces croisées).",
    "parts": [
     [
      "1",
@@ -231,7 +231,7 @@
     [
      "3",
      "",
-     10,
+     7,
      "Blocage 3 × 8 (24 po), dans le sens contraire des madriers",
      {
       "pnText": "3 × 8 brut × 24 po"
@@ -240,7 +240,7 @@
     [
      "5",
      "",
-     42,
+     36,
      "Coin de bois (mise de niveau)",
      {
       "note": "Au moins 6 appuis par madrier (étape 5). Jamais de bois simplement empilé : un seul blocage (3 × 8 ou 6 × 6) et des coins ; là où le sol touche presque le madrier, des coins seulement.",
@@ -276,7 +276,7 @@
     "P08",
     "P09"
    ],
-   "note": "Planches posées dans le sens contraire des 6 × 6 (donc dans le sens de la galerie), la première vissée avec des tire-fonds à chaque extrémité, en avançant sur la surface déjà couverte (ne pas enjamber les 6 × 6). Resserrage à environ 50 % (étape 7) : le dernier 3 × 8 vissé temporairement, coins enfoncés entre lui et les planches posées pour les mettre en tension, planche devant les coins vissée, puis tire-fonds du dernier 3 × 8 retirés. Deux planches laissées libres à la jonction avec la section 2, puis vissées à la fin pour joindre les sections (étape 8).",
+   "note": "Planches posées en travers de la galerie, dans le sens contraire des 6 × 6, du fond vers la jonction, la première vissée avec des tire-fonds à chaque extrémité, en avançant sur la surface déjà couverte (ne pas enjamber les 6 × 6). Resserrage à environ 50 % (étape 7) : le dernier 3 × 8 vissé temporairement, coins enfoncés entre lui et les planches posées pour les mettre en tension, planche devant les coins vissée, puis tire-fonds du dernier 3 × 8 retirés. Deux planches laissées libres à la jonction avec la section 2, puis vissées à la fin pour joindre les sections (étape 8).",
    "parts": [
     [
      "1",
@@ -344,7 +344,7 @@
     "P10",
     "P11"
    ],
-   "note": "Étapes 9 à 11 : hauteur au laser, madrier guide à 16 pi de la section 1, soutiens 6 × 6 de 16 pi dans le sens contraire des madriers (selon la galerie), de la jonction jusqu'au madrier guide, blocages alignés vis-à-vis des croisements, cage de bois dans le creux. Les madriers de la section 2 sont posés sur les soutiens, dans le prolongement de ceux de la section 1 (bout à bout sur le blocage de jonction).",
+   "note": "Étapes 9 à 11 : hauteur au laser, madrier guide à 16 pi de la section 1, soutiens 6 × 6 de 16 pi en travers (sens contraire des madriers), de la jonction jusqu'au madrier guide, blocages alignés vis-à-vis des croisements, cage de bois dans le creux. Les madriers de la section 2 sont posés sur les soutiens, dans le prolongement de ceux de la section 1 (bout à bout sur le blocage de jonction).",
    "parts": [
     [
      "1",
@@ -367,7 +367,7 @@
     [
      "3",
      "",
-     14,
+     13,
      "Blocage 3 × 8 (24 po)",
      {
       "pnText": "3 × 8 brut × 24 po"
@@ -376,7 +376,7 @@
     [
      "4",
      "",
-     18,
+     17,
      "Blocage 6 × 6 (18 po)",
      {
       "pnText": "6 × 6 brut × 18 po"
@@ -573,7 +573,7 @@
     [
      "1",
      "",
-     11,
+     5,
      "Poteau 2 × 4",
      {
       "pnText": "2 × 4 raboté"
@@ -582,7 +582,7 @@
     [
      "2",
      "",
-     3,
+     2,
      "Lisse supérieure 2 × 4 (1,07 m du plancher)",
      {
       "pnText": "2 × 4 raboté"
@@ -591,7 +591,7 @@
     [
      "3",
      "",
-     3,
+     2,
      "Lisse intermédiaire 2 × 4 (mi-hauteur)",
      {
       "pnText": "2 × 4 raboté"
@@ -600,7 +600,7 @@
     [
      "4",
      "",
-     3,
+     2,
      "Lisse inférieure (plinthe) 2 × 4 sur chant, 90 mm au moins",
      {
       "pnText": "2 × 4 brut"

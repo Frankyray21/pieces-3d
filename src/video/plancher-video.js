@@ -20,7 +20,7 @@ import './plancher-video.css';
 import { buildProcedural } from '../viewer/assembly.js';
 import * as S from '../viewer/shapes.js';
 import models from '../models/plancher-dd/index.js';
-import { IN, FT, P3, P8, B66, W, L, SEC, DECK, ground, plankZ, TIGHT, joistX, GUIDE_Z, DIP } from '../models/plancher-dd/plan.js';
+import { IN, FT, P3, P8, B66, W, L, SEC, DECK, ground, plankX, TIGHT, joistZ, GUIDE_X, DIP } from '../models/plancher-dd/plan.js';
 import { lagScrews } from '../models/plancher-dd/lumber.js';
 import { timeline, RETENIR, stepCard, STEP_CARD, vt } from './plancher-script.js';
 import { Annotator } from './plancher-annot.js';
@@ -130,8 +130,8 @@ function cueOf({ asm, ref, obj, crib }) {
   };
   if (asm === 'P17') return 'secondary';
   let c = R[asm]?.[ref];
-  if (c === 'joists1' && Math.abs(obj.position.x - joistX.at(-1)) < 0.01) c = 'joistFar';
-  if (c === 'sleepers' && Math.abs(obj.position.z - GUIDE_Z) < 0.01) c = 'guide';
+  if (c === 'joists1' && Math.abs(obj.position.z - joistZ.at(-1)) < 0.01) c = 'joistFar';
+  if (c === 'sleepers' && Math.abs(obj.position.x - GUIDE_X) < 0.01) c = 'guide';
   if (c === 'deck1') { const i = obj.userData.order; c = i === ANCHOR ? 'anchor' : i > ANCHOR ? 'deck1b' : 'deck1'; }
   return c || 'always';
 }
@@ -153,10 +153,9 @@ const REF_ORDER = (lf) => ({ 1: 0, 2: 2, 3: 3, 4: 4, 5: 1 })[lf.ref] ?? 0;
 for (const [name, list] of cues) {
   list.sort((a, b) => {
     if (name === 'guards' && REF_ORDER(a) !== REF_ORDER(b)) return REF_ORDER(a) - REF_ORDER(b);
-    if (name.startsWith('joists')) return a.c.x - b.c.x;
+    if (name.startsWith('joists')) return a.c.z - b.c.z;
     if (name.startsWith('deck')) return (a.obj.userData.order ?? 0) - (b.obj.userData.order ?? 0) || a.c.x - b.c.x;
     if (name.startsWith('crib')) return a.c.y - b.c.y || a.c.x - b.c.x || a.c.z - b.c.z;
-    if (name === 'support2' || name === 'sleepers') return a.c.z - b.c.z || a.c.x - b.c.x || a.c.y - b.c.y;
     return a.c.x - b.c.x || a.c.z - b.c.z || a.c.y - b.c.y;
   });
 }
@@ -169,7 +168,7 @@ for (const s of SEGS) {
   }
 }
 // Armoire et extincteur : au sol à l'entrée du chantier (la vidéo les montre avant le plancher).
-for (const [name, x, z, ry] of [['cabinet', L + 3.0, -3.6, 0], ['ext', L + 3.65, -3.5, 0]]) {
+for (const [name, x, z, ry] of [['cabinet', L + 3.0, 2.25, 0], ['ext', L + 3.65, 2.35, 0]]) {
   for (const lf of cues.get(name) || []) { lf.base.set(x, ground(x, z), z); lf.obj.rotation.y = ry; }
 }
 const unused = [...cues].filter(([n, l]) => n !== 'always' && l.some((lf) => lf.t0 === Infinity)).map(([n]) => n);
@@ -179,7 +178,7 @@ if (unused.length) console.warn('Pièces jamais montrées :', unused.join(', '))
 
 const high = (() => {
   let best = { y: -Infinity };
-  for (let x = 0; x <= SEC; x += 0.05) for (let z = -W / 2; z <= 0; z += 0.05) {
+  for (let x = 0; x <= SEC; x += 0.05) for (let z = -W / 2; z <= W / 2; z += 0.05) {
     const y = ground(x, z);
     if (y > best.y) best = { x, z, y };
   }
@@ -187,13 +186,12 @@ const high = (() => {
 })();
 
 const laserMat = new THREE.MeshBasicMaterial({ color: 0xff2a1a, transparent: true, opacity: 0.16, side: THREE.DoubleSide, depthWrite: false });
-// Plan du laser au-dessus d'une section (emprise z0 à z1 en travers de la galerie).
-function laserPlane(z0, z1) {
+function laserPlane(x0, x1) {
   const g = new THREE.Group();
-  const p = new THREE.Mesh(new THREE.PlaneGeometry(L + 0.7, z1 - z0), laserMat);
+  const p = new THREE.Mesh(new THREE.PlaneGeometry(x1 - x0, W + 0.4), laserMat);
   p.rotation.x = -Math.PI / 2;
-  p.position.set(L / 2 - 0.05, 0.003, (z0 + z1) / 2);
-  const edge = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.PlaneGeometry(L + 0.7, z1 - z0)), new THREE.LineBasicMaterial({ color: 0xff3020 }));
+  p.position.set((x0 + x1) / 2, 0.003, 0);
+  const edge = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.PlaneGeometry(x1 - x0, W + 0.4)), new THREE.LineBasicMaterial({ color: 0xff3020 }));
   edge.rotation.x = -Math.PI / 2;
   edge.position.copy(p.position);
   g.add(p, edge);
@@ -209,26 +207,26 @@ function laserTool(x, z) {
   return g;
 }
 const extras = {
-  laser: S.group(laserPlane(-W / 2 - 0.3, 0.3), laserTool(-0.35, -W / 2 + 0.6)),
-  laser2: S.group(laserPlane(-0.1, W / 2 + 0.3), laserTool(L + 0.12, 0.05)),
+  laser: S.group(laserPlane(-0.4, SEC + 0.3), laserTool(-0.35, -W / 2 + 0.6)),
+  laser2: S.group(laserPlane(SEC - 0.1, L + 0.3), laserTool(SEC - 0.05, W / 2 + 0.05)),
   highMark: S.group(
     S.box(0.36, 0.006, 0.04, 'fluoRed', { pos: [0, 0, 0] }),
     S.box(0.04, 0.006, 0.36, 'fluoRed', { pos: [0, 0, 0] }),
     S.cyl(0.05, 0.12, 'fluoRed', { r2: 0.001, pos: [0, 0.18, 0] }),
     S.cyl(0.012, 0.25, 'fluoRed', { pos: [0, 0.36, 0] }),
   ),
-  // Niveau de 48 po sur un 3 × 8 de 8 pi posé en travers des madriers (selon X).
+  // Niveau de 48 po sur un 3 × 8 de 8 pi posé en travers des madriers (selon Z).
   level: S.group(
-    S.box(8 * FT, P3, 0.2, 'woodLight', { pos: [0, P3 / 2, 0] }),
-    S.box(48 * IN, 0.07, 0.045, 'blue', { pos: [0, P3 + 0.035, 0] }),
-    S.box(0.07, 0.02, 0.047, 'lampAmber', { pos: [0, P3 + 0.06, 0] }),
+    S.box(0.2, P3, 8 * FT, 'woodLight', { pos: [0, P3 / 2, 0] }),
+    S.box(0.045, 0.07, 48 * IN, 'blue', { pos: [0, P3 + 0.035, 0] }),
+    S.box(0.047, 0.02, 0.07, 'lampAmber', { pos: [0, P3 + 0.06, 0] }),
   ),
   // Matériel et outils de la procédure, étalés derrière la barricade (présentation du début).
   materiel: materielGroup(S),
 };
 extras.highMark.position.set(high.x, high.y + 0.004, high.z);
 extras.highMark.children[2].rotation.x = Math.PI; // pointe vers le sol
-extras.level.position.set(2.3, B66, -2.84);
+extras.level.position.set(2.3, B66, -0.4);
 for (const o of Object.values(extras)) { o.visible = false; scene.add(o); }
 
 // ------------------------------------------------------------------ serrage des planches (étape 7)
@@ -244,24 +242,23 @@ const WG = 0.05; // espace pour les coins
 const TSEG = SEGS.find((x) => x.tighten);
 const TT = Object.fromEntries(Object.entries(TSEG.tighten).map(([k, v]) => [k, Array.isArray(v) ? v.map((x) => vt(TSEG, x)) : vt(TSEG, v)]));
 const span01 = (t, a, b) => Math.min(1, Math.max(0, (t - a) / (b - a)));
-const anchorZ0 = plankZ(ANCHOR);
-const anchorScrews = lagScrews(S, [B66 / 2, SEC - B66 / 2].map((x) => [x, DECK, 0]));
-const wedgeXs = [0.75, 1.85, 2.95, 4.05];
+const anchorX0 = plankX(ANCHOR);
+const anchorScrews = lagScrews(S, [joistZ[0], joistZ.at(-1)].map((z) => [0, DECK, z]));
+const wedgeZs = [-1.65, -0.55, 0.55, 1.65];
 const tightWedges = S.group();
-for (const x of wedgeXs) {
-  // Coin pointe en bas, épaisseur selon Z (mise à l'échelle selon l'écart à combler).
+for (const z of wedgeZs) {
+  // Coin pointe en bas, épaisseur selon X (mise à l'échelle selon l'écart à combler).
   const w = S.extrude([[0, 0], [1, 0], [0.62, -0.26], [0.38, -0.26]], 0.1, 'woodWedge');
   w.position.set(-0.5, 0, -0.05);
   const holder = S.group(w);
-  holder.rotation.y = -Math.PI / 2;
   const g = S.group(holder);
-  g.position.x = x;
+  g.position.z = z;
   tightWedges.add(g);
 }
 scene.add(anchorScrews, tightWedges);
 anchorScrews.visible = tightWedges.visible = false;
 const deckLeaves = leaves.filter((lf) => ['deck1', 'anchor'].includes(lf.cue));
-/** Décalage (selon Z) des planches non serrées et du dernier 3 × 8 à l'instant t. */
+/** Décalage (selon X) des planches non serrées et du dernier 3 × 8 à l'instant t. */
 function tighten(t) {
   const drive = span01(t, TT.drive[0], TT.drive[1]);
   const k = drive * drive * (3 - 2 * drive);
@@ -271,21 +268,21 @@ function tighten(t) {
   for (const lf of deckLeaves) {
     const i = lf.obj.userData.order;
     if (i === 0) continue;
-    lf.obj.position.z = lf.base.z + (i === ANCHOR ? anchorOff : loose(i));
+    lf.obj.position.x = lf.base.x + (i === ANCHOR ? anchorOff : loose(i));
   }
   // Tire-fonds temporaires du dernier 3 × 8 : posés, puis retirés (ils remontent).
   const up = span01(t, TT.unscrew, TT.unscrew + 0.6);
   anchorScrews.visible = t >= TT.anchorScrews && up < 1;
-  anchorScrews.position.set(0, 0.25 * (1 - span01(t, TT.anchorScrews, TT.anchorScrews + 0.4)) + 0.12 * up, anchorZ0 + anchorOff);
+  anchorScrews.position.set(anchorX0 + anchorOff, 0.25 * (1 - span01(t, TT.anchorScrews, TT.anchorScrews + 0.4)) + 0.12 * up, 0);
   // Coins : insérés au-dessus de l'écart, enfoncés, puis enlevés.
   const out = span01(t, TT.wedgesOut, TT.wedgesOut + 0.5);
   tightWedges.visible = t >= TT.wedgesIn && out < 1;
-  const zFront = plankZ(TIGHT) + loose(TIGHT) + P8 / 2; // face de la planche devant les coins
-  const zBack = anchorZ0 + anchorOff - P8 / 2; // face du dernier 3 × 8
-  const gap = Math.max(0.004, zBack - zFront);
+  const xFront = plankX(TIGHT) + loose(TIGHT) + P8 / 2; // face de la planche devant les coins
+  const xBack = anchorX0 + anchorOff - P8 / 2; // face du dernier 3 × 8
+  const gap = Math.max(0.004, xBack - xFront);
   const ins = span01(t, TT.wedgesIn, TT.wedgesIn + 0.5);
   for (const g of tightWedges.children) {
-    g.position.z = (zFront + zBack) / 2;
+    g.position.x = (xFront + xBack) / 2;
     g.position.y = DECK + 0.14 + 0.25 * (1 - ins) - 0.1 * k + 0.35 * out;
     g.children[0].scale.x = gap; // épaisseur du coin = écart comblé (axe X local du profil)
   }
@@ -301,7 +298,7 @@ const ghostMats = new Map(), nearMats = new Map();
 for (const lf of leaves) {
   if (lf.cue.startsWith('crib') || ['always', 'line', 'barricade', 'cabinet', 'ext', 'grille'].includes(lf.cue)) continue;
   // Le soutien et le madrier portés par la cage restent visibles en transparence.
-  const near = (lf.cue === 'sleepers' && Math.abs(lf.c.z - CRIB_FOCUS.z) < 0.2) || (['joists2', 'guide'].includes(lf.cue) && Math.abs(lf.c.x - CRIB_FOCUS.x) < 0.2);
+  const near = (['sleepers', 'guide'].includes(lf.cue) && Math.abs(lf.c.x - CRIB_FOCUS.x) < 0.2) || (lf.cue === 'joists2' && Math.abs(lf.c.z - CRIB_FOCUS.z) < 0.2);
   const map = near ? nearMats : ghostMats;
   lf.obj.traverse((o) => {
     if (!o.isMesh) return;
@@ -503,7 +500,8 @@ window.__render = (t) => { render(t); return true; };
 window.__still = (t, pos, tgt, fov) => {
   render(t);
   camera.position.set(...pos);
-  if (fov) { camera.fov = fov; camera.updateProjectionMatrix(); }
+  camera.fov = fov || 40;
+  camera.updateProjectionMatrix();
   camera.lookAt(...tgt);
   camera.updateMatrixWorld(true);
   if (composer) composer.render(); else renderer.render(scene, camera);

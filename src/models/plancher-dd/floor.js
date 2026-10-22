@@ -4,8 +4,8 @@
 // plan.js, si bien qu'un sous-assemblage s'insère tel quel dans la vue
 // d'ensemble. Chaque objet porte userData.step (étape de la procédure).
 import {
-  IN, FT, B66, P3, P8, S24, R24, W, L, SEC, DECK, joistX, GAL, JOINT_Z, SUPPORTS_Z, SLEEPERS_Z, SLEEPER,
-  stack, ground, deckHeight, STAIR, DRILL, WEDGE, plankZ, TIGHT, secZ, FACE_X,
+  IN, FT, B66, P3, P8, S24, R24, W, L, SEC, DECK, joistZ, GAL, JOINT_X, SUPPORTS_X, SLEEPERS_X,
+  stack, ground, over12, deckHeight, STAIR, DRILL, WEDGE, plankX, TIGHT,
 } from './plan.js';
 import { lumber, between, wedge, lagScrews, placeStack, labeler } from './lumber.js';
 import { wireMesh, groundPatch } from './site.js';
@@ -17,44 +17,43 @@ function soil(api, opts, x0, x1, z0, z1) {
 
 export const PER_SEC = Math.round(SEC / P8); // 24 planches de 3 × 8 sur 16 pi, par section
 // Tire-fonds au-dessus du premier et du dernier madrier, planche i (numérotation des deux sections).
-const ends = (i) => [B66 / 2, SEC - B66 / 2].map((x) => [x, DECK, plankZ(i)]);
-const Z1 = [-W / 2, JOINT_Z], Z2 = [JOINT_Z, W / 2]; // emprises des sections en travers
+const ends = (i) => [joistZ[0], joistZ[joistZ.length - 1]].map((z) => [plankX(i), DECK, z]);
 
 // ------------------------------------------------------------------ section 1
 
-/** Structure de base, section 1 (16 × 16 pi), étapes 2 à 5 : madriers en travers de la galerie. */
+/** Structure de base, section 1 (16 × 16 pi), étapes 2 à 5 : madriers le long de la galerie. */
 export function P04(api, opts = {}) {
   const S = api.S;
-  soil(api, opts, -0.4, SEC + 0.4, Z1[0] - 0.3, Z1[1] + 0.3);
+  soil(api, opts, -0.4, SEC + 0.4, -W / 2 - 0.3, W / 2 + 0.3);
   const put = labeler(api);
   const labeled = new Set();
-  // Madriers 6 × 6 de 16 pi : le premier sur la ligne de peinture (X = 0).
-  joistX.forEach((x, k) => {
-    const j = lumber(S, [B66, B66, SEC], [x, B66 / 2, secZ(0)]);
+  // Madriers 6 × 6 de 16 pi : le premier sur la ligne de peinture (rive Z négative).
+  joistZ.forEach((z, k) => {
+    const j = lumber(S, [SEC, B66, B66], [SEC / 2, B66 / 2, z]);
     put(k === 0 ? '1' : '2', j, [0, 0.55, 0], k === 0 ? 3 : 4);
   });
   // Blocages et coins sous chaque madrier (au moins 6 par madrier), en sens contraire.
-  joistX.forEach((x) => {
-    for (const z of SUPPORTS_Z) {
-      placeStack(api, stack(x, z, 0, 'x'), { refs: { b38: '3', b66: '4', crib: '4', wedge: '5' }, labeled, step: 5, explode: { wedge: [0, 0.28, 0], b38: [0, 0.12, 0] } });
+  for (const x of SUPPORTS_X) {
+    for (const z of joistZ) {
+      placeStack(api, stack(x, z, 0, 'z'), { refs: { b38: '3', b66: '4', crib: '4', wedge: '5' }, labeled, step: 5, explode: { wedge: [0, 0.28, 0], b38: [0, 0.12, 0] } });
     }
-  });
+  }
   // Blocage de jonction : à l'extrémité de chaque madrier, il portera aussi le
   // madrier de la section 2 qui le prolonge.
-  for (const x of joistX) {
-    placeStack(api, stack(x, JOINT_Z, 0, 'x'), { labeled, step: 5, group: { ref: '6', explode: [0, 0.12, 0.25] } });
+  for (const z of joistZ) {
+    placeStack(api, stack(JOINT_X, z, 0, 'z'), { labeled, step: 5, group: { ref: '6', explode: [0.25, 0.12, 0] } });
   }
   return { view: { dir: [0.9, 0.75, 1.15] } };
 }
 
-/** Recouvrement en 3 × 8 de la section 1 (planches selon la galerie), étapes 6 à 8. */
+/** Recouvrement en 3 × 8 de la section 1 (planches en travers de la galerie), étapes 6 à 8. */
 export function P07(api, opts = {}) {
   const S = api.S;
-  soil(api, opts, -0.4, SEC + 0.4, Z1[0] - 0.3, Z1[1] + 0.3);
+  soil(api, opts, -0.4, SEC + 0.4, -W / 2 - 0.3, W / 2 + 0.3);
   const put = labeler(api);
   for (let i = 0; i < PER_SEC; i++) {
-    const join = i >= PER_SEC - 2; // deux planches laissées libres puis vissées à la fin (étape 8)
-    const p = lumber(S, [SEC, P3, P8], [SEC / 2, B66 + P3 / 2, plankZ(i)]);
+    const join = i >= PER_SEC - 2; // deux planches laissées libres à la jonction, vissées à la fin (étape 8)
+    const p = lumber(S, [P8, P3, W], [plankX(i), B66 + P3 / 2, 0]);
     p.userData.order = i;
     put(join ? '2' : '1', p, [0, join ? 0.75 : 0.45, 0], join ? 12 : 6, { seq: join ? 1 : 0 });
   }
@@ -71,27 +70,27 @@ export function P07(api, opts = {}) {
 
 /**
  * Structure de base, section 2, étapes 9 à 11 : madrier guide à 16 pi de la
- * section 1, soutiens 6 × 6 de 16 pi selon la galerie (sens contraire des
- * madriers) jusqu'à lui, puis madriers par-dessus, dans le prolongement de
- * ceux de la section 1.
+ * section 1, soutiens 6 × 6 de 16 pi en travers (sens contraire des madriers)
+ * jusqu'à lui, puis madriers par-dessus, dans le prolongement de ceux de la
+ * section 1.
  */
 export function P10(api, opts = {}) {
   const S = api.S;
-  soil(api, opts, -0.4, L + 0.4, Z2[0] - 0.3, Z2[1] + 0.3);
+  soil(api, opts, SEC - 0.4, L + 0.4, -W / 2 - 0.3, W / 2 + 0.3);
   const put = labeler(api);
   const labeled = new Set();
   // Madriers de la section 2 : bout à bout avec ceux de la section 1 (blocage de jonction).
-  joistX.forEach((x) => put('1', lumber(S, [B66, B66, SEC], [x, B66 / 2, secZ(1)]), [0, 0.75, 0], 11));
-  // Soutiens 6 × 6 de 16 pi (selon X) ; le dernier, à 16 pi de la section 1, est le madrier guide.
-  SLEEPERS_Z.forEach((z, k) => {
-    const guide = k === SLEEPERS_Z.length - 1;
-    put('2', lumber(S, [SLEEPER.x1 - SLEEPER.x0, B66, B66], [(SLEEPER.x0 + SLEEPER.x1) / 2, -B66 / 2, z]), [0, 0.4, 0], 10, { seq: guide ? 0 : 2 });
+  joistZ.forEach((z) => put('1', lumber(S, [SEC, B66, B66], [SEC * 1.5, B66 / 2, z]), [0, 0.75, 0], 11));
+  // Soutiens 6 × 6 de 16 pi (selon Z) ; le dernier, à 16 pi de la section 1, est le madrier guide.
+  SLEEPERS_X.forEach((x, k) => {
+    const guide = k === SLEEPERS_X.length - 1;
+    put('2', lumber(S, [B66, B66, W], [x, -B66 / 2, 0]), [0, 0.4, 0], 10, { seq: guide ? 0 : 2 });
   });
   // Blocages sous les soutiens, vis-à-vis chaque croisement de madrier (étape 11) ;
   // cage de bois dans le creux (cas spécial).
-  for (const z of SLEEPERS_Z) {
-    for (const x of joistX) {
-      const st = stack(x, z, -B66, 'z');
+  for (const x of SLEEPERS_X) {
+    for (const z of joistZ) {
+      const st = stack(x, z, -B66, 'x');
       const crib = st.pieces.some((p) => p.kind === 'crib');
       if (crib) placeStack(api, st, { labeled, step: 11, group: { ref: '6', explode: [0, 0.1, 0.35] } });
       else placeStack(api, st, { refs: { b38: '3', b66: '4', wedge: '5' }, labeled, step: 10, seq: 1, explode: { wedge: [0, 0.22, 0], b38: [0, 0.1, 0] } });
@@ -100,13 +99,13 @@ export function P10(api, opts = {}) {
   return { view: { dir: [-0.85, 0.7, 1.2] } };
 }
 
-/** Recouvrement de la section 2 (étape 12), de la jonction vers la rive, bouts au ras (étape 13). */
+/** Recouvrement de la section 2 (étape 12), de la jonction vers l'entrée, bouts au ras (étape 13). */
 export function P13(api, opts = {}) {
   const S = api.S;
-  soil(api, opts, -0.4, L + 0.4, Z2[0] - 0.3, Z2[1] + 0.3);
+  soil(api, opts, SEC - 0.4, L + 0.4, -W / 2 - 0.3, W / 2 + 0.3);
   const put = labeler(api);
   for (let i = 0; i < PER_SEC; i++) {
-    const p = lumber(S, [SEC, P3, P8], [SEC / 2, B66 + P3 / 2, plankZ(PER_SEC + i)]);
+    const p = lumber(S, [P8, P3, W], [plankX(PER_SEC + i), B66 + P3 / 2, 0]);
     p.userData.order = i;
     put('1', p, [0, 0.45, 0], 12);
   }
@@ -190,48 +189,41 @@ function postsAlong(a, b) {
   return Array.from({ length: n + 1 }, (_, i) => a + ((b - a) * i) / n);
 }
 
-/** Positions Z (le long d'un bord x) où le plancher dépasse 12 po de haut : intervalle [a, W / 2]. */
-function highFrom(x) {
-  for (let z = -W / 2; z <= W / 2; z += 0.05) if (deckHeight(x, z) > 12 * IN) return Math.floor(z / FT) * FT;
-  return null;
-}
-
 /**
  * Tronçons de garde-corps : bords du plancher de plus de 12 po de haut qui
  * donnent sur un vide. Le long des parois rocheuses (écart de 12 po ou moins),
  * il n'y a pas de vide : le grillage au bas du mur ferme l'écart (étape 17).
- * Restent les deux bouts du plancher sur la section 2 (côté front de taille et
- * côté galerie, de part et d'autre de l'escalier).
+ * Reste le bout du plancher, côté galerie, de part et d'autre de l'escalier.
  */
 export function guardSegments() {
   const segs = [];
-  for (const [x, side] of [[0, -1], [L, 1]]) {
-    const a = highFrom(x);
-    if (a == null) continue;
-    if (side > 0 && a < STAIR.z0 + STAIR.w) {
-      if (a < STAIR.z0) segs.push({ edge: x, side, a, b: STAIR.z0 });
-      segs.push({ edge: x, side, a: STAIR.z0 + STAIR.w, b: W / 2 });
-    } else segs.push({ edge: x, side, a, b: W / 2 });
+  const sideGap = GAL - W / 2; // écart plancher-paroi
+  for (const s of [-1, 1]) {
+    const x0 = over12(s * W / 2);
+    if (x0 != null && sideGap > 12 * IN + 0.005) segs.push({ axis: 'x', side: s, a: Math.max(0, Math.floor(x0 / FT) * FT), b: L });
   }
+  if (deckHeight(L, 0) > 12 * IN) segs.push({ axis: 'z', side: 1, a: -W / 2, b: STAIR.z0 }, { axis: 'z', side: 1, a: STAIR.z0 + STAIR.w, b: W / 2 });
   return segs;
 }
 
 /** Garde-corps (RSST art. 12), lisse inférieure et grillage au bas du mur, étapes 15 et 17. */
 export function P16(api, opts = {}) {
   const S = api.S;
-  soil(api, opts, -0.8, L + 1.2, -W / 2 - 0.3, W / 2 + 0.3);
+  soil(api, opts, -0.3, L + 1.2, -W / 2 - 0.3, W / 2 + 0.3);
   const put = labeler(api);
   for (const seg of guardSegments()) {
-    // Bord en travers de la galerie (X = edge) : poteaux à l'extérieur, lisses sur leur face intérieure.
-    const sd = seg.side;
-    const postC = seg.edge + sd * S24.t / 2;
-    const railC = seg.edge - sd * S24.t / 2;
-    const plinthC = seg.edge - sd * R24.t / 2;
-    const P = (u, c, y) => [c, y, u];
+    const alongX = seg.axis === 'x';
+    // Poteaux à l'extérieur du plancher, lisses sur leur face intérieure.
+    const edge = alongX ? seg.side * W / 2 : L;
+    const out = alongX ? [0, 0, seg.side] : [1, 0, 0];
+    const postC = edge + (alongX ? seg.side : 1) * S24.t / 2;
+    const railC = edge - (alongX ? seg.side : 1) * S24.t / 2;
+    const plinthC = edge - (alongX ? seg.side : 1) * R24.t / 2;
+    const P = (u, c, y) => (alongX ? [u, y, c] : [c, y, u]);
     const len = seg.b - seg.a;
     const mid = (seg.a + seg.b) / 2;
-    const ex = (k) => [sd * 0.35 * k, 0.15 * k, 0];
-    const sz = (lu, h, t) => [t, h, lu];
+    const ex = (k) => out.map((v, i) => v * 0.35 * k + (i === 1 ? 0.15 * k : 0));
+    const sz = (lu, h, t) => (alongX ? [lu, h, t] : [t, h, lu]);
     for (const u of postsAlong(seg.a, seg.b)) {
       const top = DECK + RAIL_TOP + 0.03;
       put('1', lumber(S, sz(S24.w, top, S24.t), P(u, postC, top / 2), 'woodPlaned'), ex(1), 15, { seq: 0 });
