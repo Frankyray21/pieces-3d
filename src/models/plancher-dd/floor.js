@@ -235,9 +235,6 @@ export function P16(api, opts = {}) {
     for (const u of postsAlong(seg.a, seg.b)) {
       const top = DECK + RAIL_TOP + 0.03;
       put('1', lumber(S, sz(S24.w, top, S24.t), P(u, postC, top / 2), 'woodPlaned'), ex(1), 15, { seq: 0 });
-      // Jambe de force vers le sol (dégagé).
-      const xg = seg.edge + sd * 0.7;
-      put('5', between(S, [seg.edge + sd * S24.t, DECK + 0.75, u], [xg, ground(xg, u) + 0.02, u], S24.w, S24.t), ex(1.4), 15, { seq: 1 });
     }
     put('2', lumber(S, sz(len, S24.w, S24.t), P(mid, railC, DECK + RAIL_TOP - S24.w / 2), 'woodPlaned'), ex(2), 15, { seq: 2 });
     put('3', lumber(S, sz(len, S24.w, S24.t), P(mid, railC, DECK + RAIL_TOP / 2), 'woodPlaned'), ex(1.6), 15, { seq: 3 });
