@@ -35,13 +35,13 @@ export function P04(api, opts = {}) {
   // Blocages et coins sous chaque madrier (au moins 6 par madrier), en sens contraire.
   for (const x of SUPPORTS_X) {
     for (const z of joistZ) {
-      placeStack(api, stack(x, z, 0, 'z'), { refs: { b38: '3', b66: '4', crib: '4', wedge: '5' }, labeled, step: 5, explode: { wedge: [0, 0.28, 0], b38: [0, 0.12, 0] } });
+      placeStack(api, stack(x, z, 0, 'z', { inFloor: true }), { refs: { b38: '3', b66: '4', crib: '4', wedge: '5' }, labeled, step: 5, explode: { wedge: [0, 0.28, 0], b38: [0, 0.12, 0] } });
     }
   }
   // Blocage de jonction : à l'extrémité de chaque madrier, il portera aussi le
   // madrier de la section 2 qui le prolonge.
   for (const z of joistZ) {
-    placeStack(api, stack(JOINT_X, z, 0, 'z'), { labeled, step: 5, group: { ref: '6', explode: [0.25, 0.12, 0] } });
+    placeStack(api, stack(JOINT_X, z, 0, 'z', { inFloor: true }), { labeled, step: 5, group: { ref: '6', explode: [0.25, 0.12, 0] } });
   }
   return { view: { dir: [0.9, 0.75, 1.15] } };
 }
@@ -90,7 +90,7 @@ export function P10(api, opts = {}) {
   // cage de bois dans le creux (cas spécial).
   for (const x of SLEEPERS_X) {
     for (const z of joistZ) {
-      const st = stack(x, z, -B66, 'x');
+      const st = stack(x, z, -B66, 'x', { inFloor: true });
       const crib = st.pieces.some((p) => p.kind === 'crib');
       if (crib) placeStack(api, st, { labeled, step: 11, group: { ref: '6', explode: [0, 0.1, 0.35] } });
       else placeStack(api, st, { refs: { b38: '3', b66: '4', wedge: '5' }, labeled, step: 10, seq: 1, explode: { wedge: [0, 0.22, 0], b38: [0, 0.1, 0] } });

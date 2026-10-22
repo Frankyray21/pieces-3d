@@ -124,16 +124,25 @@ const MIN = 0.006; // jeu sous lequel le madrier repose directement
  * { kind: 'wedge', pos, along, pair, thick } ; kind : 'b38', 'b66', 'crib', 'wedge'.
  */
 export const WEDGE_MAX = WEDGE.t * 1.75; // paire de coins opposés au plus serré
-export function stack(x, z, top, along = 'z', { len38 = BLOCK38 } = {}) {
+export function stack(x, z, top, along = 'z', { len38 = BLOCK38, inFloor = false } = {}) {
   const lz = along === 'z';
+  // Sous le plancher, un blocage ne dépasse pas la rive (étape 13) : sous un
+  // madrier de rive, il est décalé vers l'intérieur (il porte toujours le madrier).
+  const shift = (len) => {
+    if (!inFloor) return 0;
+    const c = lz ? z : x, lo = lz ? -W / 2 : 0, hi = lz ? W / 2 : L;
+    return Math.min(Math.max(c, lo + len / 2), hi - len / 2) - c;
+  };
+  const d38 = shift(len38);
   const foot = lz ? [P8 / 2, len38 / 2] : [len38 / 2, P8 / 2];
-  const g = groundUnder(x, z, ...foot);
+  const g = lz ? groundUnder(x, z + d38, ...foot) : groundUnder(x + d38, z, ...foot);
   const G = top - g;
   const out = [];
   if (G < MIN) return { pieces: out, gap: G, ground: g };
   const piece = (kind, sAlong, sh, sAcross, y) => {
     const size = lz ? [sAcross, sh, sAlong] : [sAlong, sh, sAcross];
-    out.push({ kind, size, pos: [x, y + sh / 2, z] });
+    const d = shift(sAlong);
+    out.push({ kind, size, pos: [x + (lz ? 0 : d), y + sh / 2, z + (lz ? d : 0)] });
   };
   let y = g;
   if (G <= WEDGE_MAX) {
