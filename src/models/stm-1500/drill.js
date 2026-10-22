@@ -2,18 +2,20 @@
 // comme sur la page 1.01 : traîneau (P011) à longerons 6 × 3 po sur patins
 // relevés, crapauds du treuil, support d'avance à chevalets (P012) et axe de
 // bascule, poutre d'avance (P013) avec pied, boîte et serre-tiges Boyles 12HH,
-// plaque d'extrémité (mast end plate) portant la rallonge, la poulie double
-// (P015 à P017) et le guide de tiges, table (P018) et tête Boyles (P048), vérin
-// d'avance double logé dans la poutre (P021), vérins de bascule (P019) dans le
-// support d'avance, à l'extérieur des longerons, vérin de relevage entre le
-// support et le treuil, jambes et attelage (P020), émerillon d'eau (P029).
-// Treuil de câble 10 000 pi (P042) posé sur le traîneau au bout arrière, sous
-// la poutre : bâti entre les longerons, appuyé dessus par ses longerons
-// supérieurs et tenu par les crapauds, capot en position haute (42°, bras
-// boulonnés dans un trou du 115F, pages 8.3 et P043), volant juste sous la
-// poutre comme à la page 1.01 ; transmission, carters et volant du côté console
-// (−Z). Câble : couche extérieure du tambour, rouleaux du guide-câble, à côté
-// de la plaque d'extrémité, poulie double, rouleau du guide de tiges. Blocs de raccords sur les deux
+// plaque d'extrémité (mast end plate) portant la rallonge rentrée : connecteur,
+// raccord de mât, pivot de poulie et poulie pivotante (P015, P017), guide de
+// tiges (P016) ; table (P018) et tête Boyles (P048), vérin d'avance double logé
+// dans la poutre (P021), vérins de bascule (P019) dans le support d'avance, à
+// l'extérieur des longerons, vérin de relevage entre le support et le treuil,
+// jambes et attelage (P020), émerillon d'eau (P029).
+// Treuil de câble 10 000 pi (P042) posé sur le traîneau au bout arrière, sous le
+// dernier mètre de la poutre : bâti entre les longerons, appuyé dessus par ses
+// longerons supérieurs et tenu par les crapauds, capot en position haute (42°,
+// bras boulonnés dans le trou n° 4 du 115F, pages 8.3 et P043), volant juste
+// sous la poutre comme à la page 1.01 ; transmission, carters et volant du côté
+// console (−Z). Câble : couche extérieure du tambour, rouleaux du guide-câble,
+// presque à plat sous la poutre jusqu'au réa bas de la poulie, réa haut, rouleau
+// du guide de tiges. Blocs de raccords sur les deux
 // longerons : côté console, les boyaux de la console, les deux vannes à bille
 // de l'avance (boyaux d'avance et de recul vers les tiges creuses du vérin
 // d'avance, dans la poutre), le sélecteur mât / treuil avec les deux boyaux du
@@ -24,7 +26,7 @@
 // moteurs hydrauliques noirs. Repère : layout.js.
 import { lister, SLED, AXIS_Y, BEAM, PIVOT, IN } from './layout.js';
 import { SPY, HEAD_PORTS as HEAD_LOCAL } from './head.js';
-import { BASE as WB, UP_TOP as W_UP, MOTOR_PORTS, CAPOT_HAUT, guideCable, tangente, arcPts } from './winch.js';
+import { BASE as WB, UP_TOP as W_UP, MOTOR_PORTS, CAPOT_HAUT, cableGuide, tangente, arcPts, hull, circle } from './winch.js';
 
 const HEAD_X = -0.32; // table (centre de la tête) le long de l'avance
 const RAIL_Z = SLED.w / 2 - SLED.railW / 2;
@@ -43,9 +45,9 @@ export const SWIVEL_PORT = [SW_X - 0.1, AXIS_Y + 0.135, 0];
 // Treuil de câble (P042) sur le traîneau, au bout arrière (pages 1.00 et 1.01) : bâti entre les
 // longerons, longerons supérieurs posés sur la tôle du dessus des longerons du traîneau, arrière du bâti
 // à 1,13 m du centre (avant la remontée des patins) ; capot en position haute comme à la page 1.01 (bras
-// boulonnés dans un trou du 115F, volant juste sous la poutre), guide-câble vers +Z (le câble longe la
-// poutre, passe à côté de la plaque d'extrémité puis revient dans le plan des réas).
-const WINCH = { x: -1.13 + WB.L / 2, y: SLED.railH + 0.012 - WB.h, capot: CAPOT_HAUT, guide: 0.25 };
+// boulonnés dans le trou n° 4 du 115F, volant juste sous la poutre), guide-câble au milieu de la vis, dans
+// le plan des réas de la poulie (z = 0).
+const WINCH = { x: -1.13 + WB.L / 2, y: SLED.railH + 0.012 - WB.h, capot: CAPOT_HAUT, guide: 0 };
 const by0 = BEAM.top - BEAM.h;
 // Vérins de bascule (P019, page 1.01) dans l'emprise du support d'avance, à l'extérieur des longerons et
 // inclinés vers l'avant : axe du pied (chape sur le longeron) au milieu du support, axe de la tige (oreille
@@ -58,13 +60,25 @@ const TILT = (() => {
 })();
 // Vérin de relevage (P019) entre le support d'avance et le treuil : fût en bas, orifices vers +Z.
 const DUMP = { a: [-0.05, 0.2], b: [-0.45, by0 - 0.05], bore: 0.065, ext: 0.35 };
-// Rallonge (P013) : poulie double au bout, réas dans le plan z = 0 ; tube, montant et pivot
-// décalés vers −Z pour laisser descendre le câble jusqu'au guide de tiges.
-const EX1 = BEAM.x0 - 0.62, PY = AXIS_Y + 0.62, EXT_DZ = -0.075;
-const SHEAVE_R = 0.112; // rayon du centre du câble posé dans la gorge en V des réas (fond 0,1)
-const ROLLER = [BEAM.x0 - 0.07, AXIS_Y - 0.06]; // axe du rouleau diabolo du guide de tiges
-const RR = 0.0365; // centre du câble posé dans la gorge du rouleau (fond 0,032)
-const Z_PLAQUE = 0.195; // écart du câble en z au droit de la plaque d'extrémité (demi-largeur 0,18)
+// Rallonge (P013), rentrée comme à la page 1.01 (4 202 mm hors tout ; la rallonge réglable UM-064-116C et sa
+// broche ne servent qu'à la cote « with extension » de 5 608 mm) : connecteur UM-064-150C boulonné sur la plaque
+// d'extrémité, douille dans l'axe de la poutre, joues du guide de tiges ; raccord de mât UM-064-160C (tube
+// carré rentré à fond dans la douille, plaque du bout contre les joues) ; pivot de poulie UM-064-1000DD (P015) et
+// poulie pivotante UM-064-180C (P017) : cadre long incliné à 64°, réa haut à l'arrière (3,91 m du pied), réa bas
+// 0,52 m plus bas et plus en avant ; guide de tiges UM-064-200C (P016) serré entre les joues du connecteur et
+// les guides UM-064-195C, rouleau diabolo sous l'axe des tiges. Cotes relevées sur la vue à 0° de la page 1.01.
+const EXT_Y = 0.85; // axe de la douille et du tube carré (page 1.01 : 0,78 à 0,92)
+const CON = { x0: BEAM.x0 - 0.15, xg: BEAM.x0 - 0.257 }; // bout de la douille, bout des joues du connecteur
+const ROLLER = [BEAM.x0 - 0.206, 1.177]; // axe du rouleau diabolo du guide de tiges
+const RR = 0.034; // centre du câble posé sur le col du rouleau (rayon 0,03)
+const PIN = [BEAM.x0 - 0.296, 0.637]; // axe de la charnière du pivot de poulie (plaque mobile)
+const A64 = (64 * Math.PI) / 180;
+const D64 = [-Math.cos(A64), Math.sin(A64)], N64 = [D64[1], -D64[0]]; // le long du cadre de poulie, normale côté pivot
+const SHEAVE_R = 0.079; // rayon du centre du câble posé au fond de la gorge des réas (fond 0,075, jante 0,1)
+const SHEAVE_E = 0.52; // entraxe des réas
+/** Point (s le long du cadre depuis le réa bas, n vers le pivot) → repère de la foreuse. */
+const fr = (s, n) => [PIN[0] + 0.0085 * D64[0] - 0.129 * N64[0] + s * D64[0] + n * N64[0], PIN[1] + 0.0085 * D64[1] - 0.129 * N64[1] + s * D64[1] + n * N64[1]];
+const SHEAVES = [fr(0, 0), fr(SHEAVE_E, 0)]; // réa bas, réa haut
 
 /** Rééchantillonne une ligne brisée 3D tous les `step` m (courbe lisse sans boucle). */
 function resample(poly, step) {
@@ -82,50 +96,27 @@ function resample(poly, step) {
 }
 
 /**
- * Câble du treuil (repère de la foreuse) : départ tangent sur la couche extérieure du tambour
- * (côté arrière), passage entre les rouleaux du guide-câble (il enveloppe le rouleau du dedans),
- * brin montant le long de la poutre (côté +Z), à côté de la plaque d'extrémité (|z| ≥ Z_PLAQUE
- * jusqu'à 4 cm derrière elle), puis retour dans le plan des réas jusqu'au réa gauche (déport latéral
- * d'environ 16°, il entre dans la gorge en douceur : l'écart en z croît comme le carré de la distance
- * sur les 15 derniers cm), enroulement par-dessus les deux réas, brin de sortie jusqu'au rouleau
- * diabolo du guide de tiges, où il repose dans la gorge et retombe d'un doigt avant l'embout serti.
- * Renvoie la courbe et le bout (centre de l'embout).
+ * Câble du treuil (repère de la foreuse, plan z = 0 du guide-câble et des réas) : départ tangent sur la
+ * couche extérieure du tambour (côté arrière), derrière le rouleau de retenue du guide-câble, autour du
+ * rouleau d'enroulement, puis presque à plat sous la poutre jusqu'au dessous du réa bas de la poulie, par
+ * l'arrière des deux réas jusqu'au-dessus du réa haut, et vers l'avant jusqu'au rouleau diabolo du guide de
+ * tiges, où il repose sur le col et retombe d'un doigt avant l'embout serti. Renvoie la courbe et le bout
+ * (centre de l'embout).
  */
 function wirePath() {
-  const g = guideCable(WINCH.capot);
   const off = ([x, y]) => [x + WINCH.x, y + WINCH.y];
-  const pack = off(g.pack), roll = off(g.roller), zg = WINCH.guide;
-  const L = [EX1 - 0.13, PY], R = [EX1 + 0.13, PY];
-  const t1 = tangente(pack, g.rPack, -1, roll, g.rRoller, 1); // couche extérieure → rouleau du guide
-  const t2 = tangente(roll, g.rRoller, 1, L, SHEAVE_R, -1); // rouleau → réa gauche, par le bas et l'arrière
-  const t3 = tangente(L, SHEAVE_R, -1, R, SHEAVE_R, -1); // par-dessus les deux réas
-  const t4 = tangente(R, SHEAVE_R, -1, ROLLER, RR, -1); // réa droit → rouleau du guide de tiges
-  // Brin montant (s : distance au réa) : dans le plan du guide jusqu'à la sortie du rouleau (Sv), z décroît
-  // ensuite lentement de zg à Z_PLAQUE au droit de x = BEAM.x0 − 0,04 (s1), puis jusqu'à 0 au réa, en
-  // douceur sur les 15 derniers cm.
-  const S = Math.hypot(t2.q[0] - t2.p[0], t2.q[1] - t2.p[1]);
-  const vr = off(g.vroll), Sv = S - ((vr[0] - t2.p[0]) * (t2.q[0] - t2.p[0]) + (vr[1] - t2.p[1]) * (t2.q[1] - t2.p[1])) / S;
-  const s1 = (S * (BEAM.x0 - 0.04 - t2.q[0])) / (t2.p[0] - t2.q[0]);
-  const s0 = 0.15, k = Z_PLAQUE / (s0 * (2 * s1 - s0));
-  const zAt = (s) => (s >= Sv ? zg
-    : s >= s1 ? Z_PLAQUE + ((zg - Z_PLAQUE) * (s - s1)) / (Sv - s1)
-      : s <= s0 ? k * s * s : k * s0 * s0 + 2 * k * s0 * (s - s0));
-  const rise = [];
-  for (let i = 0; i <= 80; i++) {
-    const s = S * (1 - i / 80) ** 2; // points resserrés près du réa
-    rise.push([t2.q[0] + (t2.p[0] - t2.q[0]) * (s / S), t2.q[1] + (t2.p[1] - t2.q[1]) * (s / S), zAt(s)]);
-  }
-  const z0 = (pts, z) => pts.map(([x, y]) => [x, y, z]);
+  const [L, H] = SHEAVES;
+  const c = cableGuide(WINCH.capot, [L[0] - WINCH.x, L[1] - WINCH.y], SHEAVE_R, -1); // tambour → guide → réa bas
+  const t2 = tangente(L, SHEAVE_R, -1, H, SHEAVE_R, -1); // réa bas → réa haut, côté arrière
+  const t3 = tangente(H, SHEAVE_R, -1, ROLLER, RR, -1); // par-dessus le réa haut → rouleau du guide de tiges
   const tip = [ROLLER[0] + RR, ROLLER[1] - 0.018, 0];
   const poly = [
-    [...t1.p, zg],
-    ...z0(arcPts(roll, g.rRoller, t1.q, t2.p, 1, 0.004), zg),
-    ...rise.slice(1),
-    ...z0(arcPts(L, SHEAVE_R, t2.q, t3.p, -1), 0).slice(1),
-    ...z0(arcPts(R, SHEAVE_R, t3.q, t4.p, -1), 0),
-    ...z0(arcPts(ROLLER, RR, t4.q, [ROLLER[0] + RR, ROLLER[1]], -1, 0.006), 0),
-    tip,
-  ];
+    ...c.pts.map(off),
+    ...arcPts(L, SHEAVE_R, off(c.q), t2.p, -1),
+    ...arcPts(H, SHEAVE_R, t2.q, t3.p, -1),
+    ...arcPts(ROLLER, RR, t3.q, [ROLLER[0] + RR, ROLLER[1]], -1, 0.006),
+  ].map(([x, y]) => [x, y, 0]);
+  poly.push(tip);
   return { pts: resample(poly, 0.01), tip };
 }
 
@@ -229,7 +220,8 @@ export function P010(api) {
 
   // 2 — Poutre d'avance (caisson ouvert) : semelle, deux flancs, glissières de la table, plaque d'extrémité.
   // La semelle est percée au passage des boyaux d'avance et de recul (côté −Z, devant l'axe de bascule).
-  const bx0 = BEAM.x0, bx1 = BEAM.x1, bl = bx1 - bx0, bxc = (bx0 + bx1) / 2;
+  // Le caisson s'arrête contre la plaque d'extrémité (30 mm, face arrière en BEAM.x0).
+  const bx0 = BEAM.x0, EP_T = 0.03, bx1 = BEAM.x1, bl = bx1 - bx0 - EP_T, bxc = (bx0 + EP_T + bx1) / 2;
   const FEED_EXIT = [0.2, 0.27], FEED_Z = -0.1; // passages des boyaux du vérin d'avance dans la semelle
   const beam = [];
   beam.push(at(plate(bl, BEAM.w, 0.016, 'red', { r: 0.004, cutouts: FEED_EXIT.map((x) => [x - bxc, FEED_Z, 0.045, 0.045]) }), [bxc, by0 + 0.008, 0]));
@@ -242,17 +234,9 @@ export function P010(api) {
   }
   // Paliers de bascule sous la poutre.
   for (const z of [-0.26, 0.26]) beam.push(at(box(0.18, by0 - PIVOT.y + 0.1, 0.05, 'red', { r: 0.006 }), [PIVOT.x, (by0 + PIVOT.y) / 2, z]));
-  // Plaque d'extrémité (mast end plate UM-064-120C) : du dessous de la poutre jusqu'au-dessus du tube
-  // de rallonge, percée au passage des tiges et du tube ; le câble du treuil passe à côté (côté +Z).
-  {
-    const top = AXIS_Y + 0.38, hw = (BEAM.w + 0.06) / 2;
-    // Profil dans le plan XY local, tourné de 90° autour de Y : x local = −z.
-    const ep = extrude([[-hw, by0], [hw, by0], [hw, top - 0.04], [hw - 0.04, top], [-hw + 0.04, top], [-hw, top - 0.04]], 0.04, 'red',
-      { holes: [[0, AXIS_Y, 0.07], [-EXT_DZ, AXIS_Y + 0.3, 0.075]] });
-    ep.rotation.y = Math.PI / 2;
-    ep.position.x = bx0 + 0.02;
-    beam.push(ep);
-  }
+  // Plaque d'extrémité (mast end plate UM-064-120C, page 1.01 : de 0,74 à 1,02 m du sol) : plaque
+  // rectangulaire au bout du caisson, portant le connecteur de la rallonge.
+  beam.push(at(box(EP_T, 1.02 - by0, BEAM.w + 0.06, 'red', { r: 0.004 }), [bx0 + EP_T / 2, (1.02 + by0) / 2, 0]));
   P('FBRA-002-300BB', group(beam), [0, 0.35, 0]);
 
   // 11 — Table de la tête : plaque coulissante sur les glissières, blocs et serres de dessous.
@@ -303,7 +287,7 @@ export function P010(api) {
   // sur le bloc d'extrémité de chaque tige (recul à l'arrière, avance à l'avant), sortie côté −Z.
   // Le vérin supérieur « bazooka » (6) et sa console (8) ne sont pas montés sur cette foreuse.
   const fcY = by0 + 0.1, endY = fcY + 0.02; // tube central au milieu de la hauteur de la poutre
-  const ROD_END = [-1.88, 0.78];
+  const ROD_END = [bx0 + EP_T + 0.04, 0.78]; // blocs des tiges, contre les bouts de la poutre
   const coude = (x, sx) => merged([
     at(cyl(0.013, 0.04, 'brass', { axis: 'z', seg: 14 }), [x, endY, -0.065]),
     at(nut(0.03, 0.01, 'brass', { axis: 'z' }), [x, endY, -0.055]),
@@ -311,10 +295,10 @@ export function P010(api) {
     at(cyl(0.013, 0.035, 'brass', { axis: 'x', seg: 14 }), [x + sx * 0.0175, endY, FEED_Z]),
   ], 'brass');
   P('UM-064-100Z', group(
-    at(shell(0.06, 0.045, 1.5, 'black', { axis: 'x' }), [-0.55, fcY, 0]),
-    at(cyl(0.068, 0.06, 'black', { axis: 'x' }), [-1.3, fcY, 0]),
+    at(shell(0.06, 0.045, 1.2, 'black', { axis: 'x' }), [-0.4, fcY, 0]),
+    at(cyl(0.068, 0.06, 'black', { axis: 'x' }), [-1.0, fcY, 0]),
     at(cyl(0.068, 0.06, 'black', { axis: 'x' }), [0.2, fcY, 0]),
-    at(cyl(0.025, 0.55, 'chrome', { axis: 'x' }), [-1.6, fcY, 0]),
+    at(cyl(0.025, -1.0 - ROD_END[0], 'chrome', { axis: 'x' }), [(ROD_END[0] - 1.0) / 2, fcY, 0]),
     at(cyl(0.025, 0.55, 'chrome', { axis: 'x' }), [0.5, fcY, 0]),
     ...ROD_END.map((x) => at(box(0.06, 0.08, 0.1, 'black', { r: 0.008 }), [x, endY, 0])),
     coude(ROD_END[0], 1), coude(ROD_END[1], -1),
@@ -348,15 +332,16 @@ export function P010(api) {
     P('UM-064-300Z', group(c, clevis), [0, -0.3, 0]);
   }
 
-  // 14 — Jambes télescopiques (2) sous l'arrière de la poutre : section centrale, inférieure, vis de réglage
-  // (du patin à la section inférieure) et patin.
+  // 14 — Jambes télescopiques (2) sous le bout arrière de la poutre, derrière le treuil (de part et d'autre du
+  // câble) : section centrale, inférieure, vis de réglage (du patin à la section inférieure) et patin, posé au sol
+  // derrière la traverse arrière du traîneau.
   for (const z of [-0.1, 0.1]) {
-    const x = bx0 + 0.3;
+    const x = bx0 + 0.04;
     P('UM-064-400D', group(
       at(box(0.076, 0.32, 0.076, 'red', { r: 0.004 }), [x, by0 - 0.16, z]),
       at(box(0.064, 0.22, 0.064, 'red', { r: 0.004 }), [x, by0 - 0.38, z]),
       at(cyl(0.02, by0 - 0.49 - 0.02, 'steel', { axis: 'y', seg: 14 }), [x, (by0 - 0.49 + 0.02) / 2, z]),
-      at(box(0.14, 0.02, 0.14, 'red', { r: 0.004 }), [x, 0.01, z]),
+      at(box(0.1, 0.02, 0.12, 'red', { r: 0.004 }), [x - 0.02, 0.01, z]),
       at(cyl(0.0095, 0.12, 'steel', { axis: 'z', seg: 10 }), [x, by0 - 0.3, z]),
     ), [0, -0.2, z > 0 ? 0.25 : -0.25]);
   }
@@ -370,45 +355,72 @@ export function P010(api) {
     ...[-1, 1].map((s) => at(box(0.08, 0.1, 0.12, 'red', { r: 0.005 }), [hx0 + 0.02, 0.1, s * railZ])),
   ), [-0.4, 0, 0]);
 
-  // 10 — Rallonge à l'arrière de l'avance (P013) : tube carré réglable qui coulisse dans la plaque
-  // d'extrémité, montant, pivot à ressort (P015), poulie double (P017 : deux flasques boulonnés sur la
-  // plaque du pivot, deux réas à gorge sur roulements, axes et écrous) et guide de tiges à rouleau
-  // diabolo (P016, joues basses : le brin montant du câble passe au-dessus). Tube, montant et pivot
-  // sont décalés vers −Z : le brin de sortie du câble descend à côté du tube jusqu'au rouleau.
-  const ex1 = EX1, ey = AXIS_Y + 0.3, py = PY, dz = EXT_DZ;
-  const plY = py - 0.145; // plaque du pivot (dessus en py − 0,135, sous la jante du réa droit)
-  const sheave = (x) => group(
-    at(lathe([[0.03, -0.022], [0.118, -0.022], [0.128, -0.016], [0.128, -0.01], [0.1, 0], [0.128, 0.01], [0.128, 0.016], [0.118, 0.022], [0.03, 0.022]], 'red', { axis: 'z', seg: 48 }), [x, py, 0]),
-    at(ring(0.045, 0.02, 0.05, 'steel', { axis: 'z', seg: 24 }), [x, py, 0]),
-    ...[0, 1, 2, 3, 4].map((k) => at(cyl(0.012, 0.012, 'red', { axis: 'z', seg: 12 }), [x + Math.cos(k * 1.257) * 0.07, py + Math.sin(k * 1.257) * 0.07, 0.022])),
+  // 10 — Rallonge rentrée (P013, page 1.01) : connecteur UM-064-150C (plaque boulonnée sur la plaque
+  // d'extrémité, douille dans l'axe de la poutre, deux joues à l'arrière), raccord de mât UM-064-160C (tube carré
+  // de 4 po dans la douille, plaque du bout contre les joues) ; guide de tiges UM-064-200C (P016 : deux montants
+  // à bout arrondi serrés entre les joues et les guides UM-064-195C par les boulons B750-2000, traverse, axe à
+  // graisseur et goupille, rouleau diabolo) ; pivot de poulie UM-064-1000DD (P015 : plaque de base vissée sur la
+  // plaque du raccord de mât, tube du ressort et tige de réglage vers l'avant sous la douille, charnière en bas,
+  // plaque mobile inclinée à 64°) ; poulie pivotante UM-064-180C (P017 : deux flasques longs sur la plaque
+  // mobile, deux réas à gorge sur axes boulonnés, quatre entretoises qui retiennent le câble dans les gorges).
+  const ang = Math.atan2(D64[1], D64[0]);
+  const yg = [0.78, 1.05]; // joues du connecteur et guides 195C (page 1.01)
+  const xm = (CON.xg + CON.x0) / 2; // milieu des joues (et des montants du guide de tiges)
+  const legPts = [[-0.037, 0.775], [0.037, 0.775], [0.037, 1.325],
+    ...Array.from({ length: 7 }, (_, k) => [0.037 * Math.cos(((k + 1) * Math.PI) / 8), 1.325 + 0.037 * Math.sin(((k + 1) * Math.PI) / 8)]), [-0.037, 1.325]];
+  const SPC = [[-0.11, -0.016], [-0.004, -0.113], [SHEAVE_E + 0.004, -0.113], [SHEAVE_E + 0.11, -0.016]]; // entretoises (s, n)
+  const flasque = hull([...circle([0, 0], 0.06, 24), ...circle([SHEAVE_E, 0], 0.06, 24), ...SPC.flatMap((c) => circle(c, 0.022, 12)), [0.06, 0.092], [0.28, 0.092]]).map(([s, n]) => fr(s, n));
+  const trous = [...[0, SHEAVE_E].map((s) => [...fr(s, 0), 0.0225]), ...SPC.map((c) => [...fr(...c), 0.0065])];
+  const sheave = ([x, y]) => group(
+    at(lathe([[0.0425, -0.025], [0.09, -0.025], [0.1, -0.02], [0.1, -0.012], [0.075, 0], [0.1, 0.012], [0.1, 0.02], [0.09, 0.025], [0.0425, 0.025]], 'red', { axis: 'z', seg: 48 }), [x, y, 0]),
+    at(ring(0.0425, 0.0225, 0.038, 'steel', { axis: 'z', seg: 24 }), [x, y, 0]),
+    at(cyl(0.0225, 0.088, 'steel', { axis: 'z', seg: 16 }), [x, y, 0]),
+    at(cyl(0.03, 0.006, 'steel', { axis: 'z', seg: 20 }), [x, y, 0.047]),
+    at(washer(0.035, 0.01, 0.004, 'steel', { axis: 'z' }), [x, y, -0.046]),
+    at(bolt(0.019, 0.057, 'steel', { axis: '-z' }), [x, y, -0.048]),
   );
-  // Flasques de la poulie avec leur patte d'appui sur la plaque du pivot.
-  const flasque = (z) => at(extrude([[-0.13, -0.035], [-0.01, -0.035], [0.0, plY + 0.01 - py], [0.11, plY + 0.01 - py], [0.13, -0.035], [0.16, 0], [0.13, 0.035], [-0.13, 0.035], [-0.16, 0]], 0.012, 'red', { holes: [[-0.13, 0, 0.0125], [0.13, 0, 0.0125]] }), [ex1, py, z]);
-  const springTop = plY - 0.01, springLen = 0.075, springY = springTop - springLen / 2 - 0.004;
-  const seatY = springTop - springLen - 0.008 - 0.0015; // rondelle d'appui sous le ressort
   P('UM-064-200C', group(
-    at(box(0.72, 0.1, 0.1, 'red', { r: 0.008 }), [ex1 + 0.36, ey, dz]),
-    ...[-1, 1].map((s) => at(box(0.14, 0.02, 0.1, 'red', { r: 0.004 }), [bx0 + 0.11, ey + s * 0.06, dz])),
-    boltSet([[bx0 + 0.08, ey + 0.071, dz], [bx0 + 0.14, ey + 0.071, dz]], 0.016, 0.05, 'steel'),
-    at(box(0.1, plY - 0.01 - ey, 0.1, 'red', { r: 0.008 }), [ex1 + 0.05, (plY - 0.01 + ey) / 2, dz]),
-    // Pivot à ressort : plaque du pivot (sous les flasques), axe, tige de réglage, ressort entre la plaque
-    // et une rondelle tenue par un écrou au bout de la tige.
-    at(box(0.16, 0.02, 0.218, 'red', { r: 0.004 }), [ex1 + 0.05, plY, dz + 0.009]),
-    at(cyl(0.016, 0.22, 'steel', { axis: 'z', seg: 16 }), [ex1 - 0.02, plY + 0.01 + 0.016, dz]),
-    at(api.S.spring(0.018, 0.004, springLen, 7, 'red'), [ex1 + 0.05, springY, dz - 0.077]),
-    at(cyl(0.011, plY + 0.01 - (seatY - 0.025), 'steel', { axis: 'y', seg: 12 }), [ex1 + 0.05, (plY + 0.01 + seatY - 0.025) / 2, dz - 0.077]),
-    at(washer(0.024, 0.0115, 0.003), [ex1 + 0.05, seatY, dz - 0.077]),
-    at(nut(0.028, 0.012, 'steel'), [ex1 + 0.05, seatY - 0.0075, dz - 0.077]),
-    // Poulie double : deux flasques, deux réas, axes et écrous.
-    flasque(-0.036), flasque(0.036),
-    sheave(ex1 - 0.13), sheave(ex1 + 0.13),
-    ...[-0.13, 0.13].map((dx) => at(cyl(0.0125, 0.1, 'steel', { axis: 'z', seg: 16 }), [ex1 + dx, py, 0])),
-    ...[-0.13, 0.13].flatMap((dx) => [-1, 1].map((sz) => at(nut(0.032, 0.014, 'steel', { axis: 'z' }), [ex1 + dx, py, sz * 0.05]))),
-    // Guide de tiges : cadre en U à boutonnières, axe et rouleau diabolo en caoutchouc.
-    ...[-1, 1].map((s) => at(box(0.14, 0.12, 0.012, 'red', { r: 0.004 }), [bx0 - 0.07, AXIS_Y - 0.04, s * 0.085])),
-    at(box(0.14, 0.012, 0.18, 'red', { r: 0.003 }), [bx0 - 0.07, AXIS_Y - 0.1, 0]),
-    at(cyl(0.012, 0.2, 'steel', { axis: 'z', seg: 14 }), [ROLLER[0], ROLLER[1], 0]),
-    at(lathe([[0.014, -0.075], [0.052, -0.075], [0.056, -0.06], [0.032, 0], [0.056, 0.06], [0.052, 0.075], [0.014, 0.075]], 'rubber', { axis: 'z', seg: 32 }), [ROLLER[0], ROLLER[1], 0]),
+    // Connecteur : plaque, douille, joues, boulons sur la plaque d'extrémité.
+    at(box(0.016, 0.18, 0.25, 'red', { r: 0.003 }), [bx0 - 0.008, EXT_Y, 0]),
+    at(box(bx0 - 0.016 - CON.x0, 0.14, 0.174, 'red', { r: 0.004 }), [(CON.x0 + bx0 - 0.016) / 2, EXT_Y, 0]),
+    ...[-1, 1].map((s) => at(box(CON.x0 - CON.xg, yg[1] - yg[0], 0.012, 'red', { r: 0.002 }), [xm, (yg[0] + yg[1]) / 2, s * 0.081])),
+    boltSet([0.785, 0.915].flatMap((y) => [-0.106, 0.106].map((z) => [bx0 - 0.016, y, z])), 0.019, 0.05, 'steel', { axis: '-x' }),
+    // Raccord de mât rentré : tube carré et plaque du bout.
+    at(box(CON.x0 + 0.03 - CON.xg + 0.001, 0.1016, 0.1016, 'red', { r: 0.004 }), [(CON.x0 + 0.03 + CON.xg - 0.001) / 2, EXT_Y, 0]),
+    at(box(0.02, 0.18, 0.2, 'red', { r: 0.003 }), [CON.xg - 0.011, EXT_Y, 0]),
+    // Guide de tiges : guides 195C et boulons, montants, traverse, axe, goupille, graisseur, rouleau diabolo.
+    ...[-1, 1].map((s) => at(box(CON.x0 - CON.xg - 0.003, yg[1] - yg[0], 0.012, 'red', { r: 0.002 }), [xm, (yg[0] + yg[1]) / 2, s * 0.106])),
+    ...[0.806, 0.896].flatMap((y) => [-1, 1].map((s) => at(bolt(0.019, 0.05, 'steel', { axis: s > 0 ? 'z' : '-z', washer: true }), [ROLLER[0], y, s * 0.112]))),
+    ...[-1, 1].map((s) => at(extrude(legPts, 0.013, 'red', { holes: [[0, ROLLER[1], 0.0127]] }), [ROLLER[0], 0, s * 0.0935])),
+    at(box(0.074, 0.013, 0.174, 'red', { r: 0.002 }), [ROLLER[0], 1.066, 0]),
+    at(cyl(0.0125, 0.232, 'steel', { axis: 'z', seg: 14 }), [ROLLER[0], ROLLER[1], 0]),
+    at(torus(0.011, 0.0015, 'steel', { axis: 'x' }), [ROLLER[0], ROLLER[1], -0.112]),
+    at(cyl(0.004, 0.01, 'zinc', { axis: 'z', seg: 8 }), [ROLLER[0], ROLLER[1], 0.121]),
+    at(lathe([[0.0125, -0.084], [0.048, -0.084], [0.052, -0.076], [0.03, 0], [0.052, 0.076], [0.048, 0.084], [0.0125, 0.084]], 'rubber', { axis: 'z', seg: 32 }), [ROLLER[0], ROLLER[1], 0]),
+    // Pivot de poulie : plaque de base et ses vis, tube du ressort, tige de réglage et écrous, oreilles de
+    // la charnière, axe (graisseur, goupille), plaque mobile et ses charnons.
+    at(box(0.02, 0.94 - 0.655, 0.2, 'red', { r: 0.003 }), [CON.xg - 0.031, (0.94 + 0.655) / 2, 0]),
+    ...[0.79, 0.91].flatMap((y) => [-0.07, 0.07].map((z) => at(cyl(0.0125, 0.002, 'darkSteel', { axis: 'x', seg: 16 }), [CON.xg - 0.0415, y, z]))),
+    at(cyl(0.03, 0.106, 'red', { axis: 'x', seg: 24 }), [CON.xg + 0.032, 0.72, 0]),
+    at(nut(0.06, 0.037, 'red', { axis: 'x' }), [CON.xg + 0.1035, 0.72, 0]),
+    at(cyl(0.012, 0.256, 'steel', { axis: 'x', seg: 14 }), [CON.xg + 0.047, 0.72, 0]),
+    at(nut(0.03, 0.012, 'steel', { axis: 'x' }), [CON.xg + 0.167, 0.72, 0]),
+    ...[-1, 1].map((s) => at(cyl(0.022, 0.03, 'red', { axis: 'z', seg: 20 }), [PIN[0], PIN[1], s * 0.08])),
+    at(cyl(0.0095, 0.21, 'steel', { axis: 'z', seg: 14 }), [PIN[0], PIN[1], 0]),
+    at(cyl(0.016, 0.006, 'steel', { axis: 'z', seg: 16 }), [PIN[0], PIN[1], 0.108]),
+    at(cyl(0.004, 0.01, 'zinc', { axis: 'z', seg: 8 }), [PIN[0], PIN[1], 0.116]),
+    at(torus(0.012, 0.0015, 'steel', { axis: 'x' }), [PIN[0], PIN[1], -0.11]),
+    at(box(0.2985, 0.02, 0.2, 'red', { r: 0.003 }), [...fr(0.1408, 0.117), 0], [0, 0, ang]),
+    ...[-1, 1].map((s) => at(cyl(0.022, 0.04, 'red', { axis: 'z', seg: 20 }), [PIN[0], PIN[1], s * 0.04])),
+    // Poulie pivotante : semelle sur la plaque mobile, deux flasques, réas sur axes boulonnés, entretoises.
+    at(box(0.22, 0.015, 0.2, 'red', { r: 0.003 }), [...fr(0.17, 0.0995), 0], [0, 0, ang]),
+    ...[-1, 1].map((s) => at(extrude(flasque, 0.012, 'red', { holes: trous }), [0, 0, s * 0.038])),
+    ...SHEAVES.map(sheave),
+    ...SPC.flatMap((c) => [
+      at(ring(0.0125, 0.0068, 0.064, 'red', { axis: 'z', seg: 16 }), [...fr(...c), 0]),
+      at(bolt(0.0127, 0.1016, 'steel', { axis: 'z' }), [...fr(...c), 0.044]),
+      at(nut(0.019, 0.011, 'steel', { axis: 'z' }), [...fr(...c), -0.0495]),
+    ]),
   ), [-0.6, 0.3, 0]);
 
   // 20 — Émerillon d'eau au bout arrière de la broche : nez abouté contre la broche (rayon 0,049 à 0,07).
@@ -457,7 +469,7 @@ export function P010(api) {
   // sortie par la semelle devant l'axe de bascule, puis derrière le support d'avance, à côté du vérin de
   // relevage, vers l'extérieur et le long du treuil jusqu'au-dessus des vannes.
   const vTop = BLOCK.y1 + 0.115, vz = VALVE_Z;
-  const feedRecul = hose([[ROD_END[0] + 0.035, endY, FEED_Z], [-1.7, endY, FEED_Z], [-1.2, endY - 0.01, FEED_Z], [-0.6, endY - 0.025, FEED_Z], [-0.1, by0 + 0.075, FEED_Z],
+  const feedRecul = hose([[ROD_END[0] + 0.035, endY, FEED_Z], [ROD_END[0] + 0.12, endY, FEED_Z], [-0.9, endY - 0.012, FEED_Z], [-0.6, endY - 0.025, FEED_Z], [-0.1, by0 + 0.075, FEED_Z],
     [0.13, by0 + 0.05, FEED_Z], [FEED_EXIT[0], by0 + 0.025, FEED_Z], [FEED_EXIT[0], by0 - 0.055, FEED_Z - 0.005], [0.15, by0 - 0.15, -0.15], [-0.05, 0.5, -0.18], [-0.24, 0.49, -0.2],
     [-0.34, 0.49, -0.31], [-0.42, 0.485, -0.43], [-0.6, 0.48, -0.47], [-0.7, 0.45, vz], [VALVE_X[0], 0.38, vz], [VALVE_X[0], 0.3, vz], [VALVE_X[0], vTop, vz]], 0.014);
   const feedAvance = hose([[ROD_END[1] - 0.035, endY, FEED_Z], [0.62, endY, FEED_Z], [0.4, by0 + 0.075, FEED_Z], [0.31, by0 + 0.05, FEED_Z], [FEED_EXIT[1], by0 + 0.025, FEED_Z],

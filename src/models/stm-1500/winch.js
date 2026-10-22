@@ -54,13 +54,11 @@ const POST = { x: [0.304, 0.355], z: [0.247, 0.298], h: 0.228 }; // montants ava
 const PIV = [0.155, 0.188]; // axe bas des bras (sur le bâti)
 const BAR = [0.115, 0.19]; // barre transversale à goupilles (oreilles sur les longerons supérieurs)
 const ARM_TOP = [0.286, 0.15]; // axe haut des bras (cadre pivotant)
-const ARM_L = 0.36; // longueur des bras inférieur et supérieur
-const TROUS_115F = Array.from({ length: 10 }, (_, k) => 0.1202 + k * 0.024); // trous de réglage (distance à l'axe bas)
-// Guide-câble : milieu du passage du câble entre les rouleaux horizontaux (cadre), normale au
-// passage, demi-écart des axes, rayon des rouleaux.
-const GUIDE = { m: [0.36, 0.115], n: [-0.53, 0.848], gap: 0.024, r: 0.018 };
-const ROLL_IN = [GUIDE.m[0] - GUIDE.gap * GUIDE.n[0], GUIDE.m[1] - GUIDE.gap * GUIDE.n[1]]; // rouleau du dedans de la courbe
-const ROLL_OUT = [GUIDE.m[0] + GUIDE.gap * GUIDE.n[0], GUIDE.m[1] + GUIDE.gap * GUIDE.n[1]];
+const ARM_L = 0.36; // longueur du bras supérieur 116F (trou de réglage à 0,33 de l'axe haut)
+// Bras inférieur 115F (page 8.3, détail B) : dix trous de réglage au pas de 1 po, du n° 10 (64 mm de l'axe bas)
+// au n° 1 (293 mm) ; longueur propre au 115F.
+const L_115F = 0.32;
+const TROUS_115F = Array.from({ length: 10 }, (_, k) => 0.0638 + k * 0.0254); // distance à l'axe bas
 // Repère « position haute » (capot à CAPOT_HAUT) : origine sur l'axe de la vis-mère, X vers l'avant, Y vers
 // le haut. La tôle de dessus du capot arrière et le guide-câble y sont dessinés, puis tournent avec le cadre.
 const H0 = (CAPOT_HAUT * Math.PI) / 180;
@@ -69,9 +67,17 @@ const fromHaut = ([x, y]) => [VIS - x * Math.cos(H0) + y * Math.sin(H0), x * Mat
 // Tôle de dessus du capot arrière (page 8.0, vue de dessus) : horizontale en position haute, de 495 à 376 mm
 // derrière le centre du bâti, dessus à 584 mm (sous le rebord du capot avant, vue de face), 5 mm.
 const TOLE = { x: [-0.064, 0.055], y: 0.0755, t: 0.005 };
-// Rouleaux verticaux du guide-câble (repère « position haute ») : à l'entrée, sous le rouleau du dedans, au droit
-// du brin qui monte du tambour (le capot pivote autour de l'axe du tambour : ce brin est fixe dans le cadre) ;
-// axes selon X, paliers à ± half.
+// Guide-câble UM-041-014F (repère « position haute ») : semelle du cadre à rouleaux posée sur le dessus du bloc
+// (lumière au passage du câble) ; dessus, devant le bord de la tôle, deux joues triangulaires portant les
+// rouleaux d'axe Z (page 8.0, vues de côté, de face et de dessus) : rouleau d'enroulement au sommet, côté bloc
+// (642 mm hors tout), rouleau de retenue au pied, en avant ; rayon des rouleaux.
+const SEMELLE = { x: [-0.035, 0.142], y: [0.035, 0.045], z: 0.05 };
+const ROUL_HAUT = { enroulement: [0.081, 0.1155], retenue: [0.116, 0.0765], r: 0.018 };
+const ROLL_IN = fromHaut(ROUL_HAUT.enroulement); // (a, b) du cadre pivotant
+const ROLL_OUT = fromHaut(ROUL_HAUT.retenue);
+// Rouleaux d'axe X du guide-câble (repère « position haute ») : sous la semelle, à l'entrée du câble qui monte du
+// tambour (le capot pivote autour de l'axe du tambour : ce brin est fixe dans le cadre), de part et d'autre du
+// câble ; joues de dessous (paliers) à ± half.
 const VR = { x: 0.0964, y: -0.008, half: 0.036 };
 
 const rad = (deg) => (deg * Math.PI) / 180;
@@ -87,18 +93,32 @@ export function cadre(th, a, b) {
 
 /**
  * Passage du câble (repère du treuil, plan XY) pour un angle de capot donné (degrés) : couche
- * extérieure du tambour (cercle, enroulement horaire vu de +Z), rouleau du dedans du guide-câble
- * (le câble l'enveloppe dans le sens trigonométrique), point de sortie (vroll : au-delà du rouleau du
- * dedans, le câble peut quitter le plan du guide ; les rouleaux verticaux sont à l'entrée), direction
- * nominale de sortie.
+ * extérieure du tambour (cercle, enroulement horaire vu de +Z), rouleau de retenue du guide-câble (le
+ * câble passe derrière, sens horaire), rouleau d'enroulement (le câble l'enveloppe dans le sens
+ * trigonométrique avant de partir vers l'arrière), direction nominale de sortie (horizontale vers
+ * l'arrière en position haute, elle tourne avec le capot).
  */
 export function guideCable(capot = CAPOT_HAUT) {
-  const th = rad(capot);
-  const c = Math.cos(th), s = Math.sin(th);
-  const out = [Math.cos(rad(15)), Math.sin(rad(15))];
+  const d = H0 - rad(capot);
   return {
-    pack: AXE.slice(), rPack: R_PACK, roller: cadre(th, ...ROLL_IN), rRoller: GUIDE.r + R_CABLE,
-    vroll: cadre(th, ...ROLL_IN), out: [-out[0] * c + out[1] * s, out[0] * s + out[1] * c],
+    pack: AXE.slice(), rPack: R_PACK, retenue: cadre(rad(capot), ...ROLL_OUT), roller: cadre(rad(capot), ...ROLL_IN),
+    rRoller: ROUL_HAUT.r + R_CABLE, out: [-Math.cos(d), -Math.sin(d)],
+  };
+}
+
+/**
+ * Câble du tambour jusqu'au départ du rouleau d'enroulement (repère du treuil, plan XY), tangent au
+ * cercle suivant (centre c, rayon r, sens s ; r = 0 et s = 0 pour un point) : renvoie les points et le
+ * point de tangence q sur le cercle suivant.
+ */
+export function cableGuide(capot, c, r, s) {
+  const g = guideCable(capot);
+  const t1 = tangente(g.pack, g.rPack, -1, g.retenue, g.rRoller, -1); // couche extérieure → derrière la retenue
+  const t2 = tangente(g.retenue, g.rRoller, -1, g.roller, g.rRoller, 1); // retenue → rouleau d'enroulement
+  const t3 = tangente(g.roller, g.rRoller, 1, c, r, s);
+  return {
+    pts: [t1.p, ...arcPts(g.retenue, g.rRoller, t1.q, t2.p, -1, 0.004), ...arcPts(g.roller, g.rRoller, t2.q, t3.p, 1, 0.004)],
+    q: t3.q,
   };
 }
 
@@ -133,7 +153,7 @@ function chainLoop(A, ra, B, rb, z) {
 }
 
 /** Enveloppe convexe (chaîne monotone) d'une liste de points 2D. */
-function hull(pts) {
+export function hull(pts) {
   const p = pts.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1]);
   const cross = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
   const lo = [], up = [];
@@ -141,7 +161,7 @@ function hull(pts) {
   for (const q of p.reverse()) { while (up.length >= 2 && cross(up[up.length - 2], up[up.length - 1], q) <= 0) up.pop(); up.push(q); }
   return lo.slice(0, -1).concat(up.slice(0, -1));
 }
-const circle = (c, r, n = 28) => Array.from({ length: n }, (_, k) => [c[0] + r * Math.cos((k / n) * 2 * Math.PI), c[1] + r * Math.sin((k / n) * 2 * Math.PI)]);
+export const circle = (c, r, n = 28) => Array.from({ length: n }, (_, k) => [c[0] + r * Math.cos((k / n) * 2 * Math.PI), c[1] + r * Math.sin((k / n) * 2 * Math.PI)]);
 /** Contour décalé vers l'intérieur (polygone convexe) : chaque sommet recule de d le long de sa bissectrice. */
 function inset(poly, d) {
   const c = poly.reduce((s, p) => [s[0] + p[0] / poly.length, s[1] + p[1] / poly.length], [0, 0]);
@@ -195,13 +215,14 @@ function kit(api, th) {
       m.rotation.z = Math.atan2(q[1] - p[1], q[0] - p[0]);
       return m;
     },
-    // Carter creux : deux tôles (contour, trous) et une ceinture, de z0 à z1 (z0 > z1 ou non).
-    guard(outline, holesIn, holesOut, z0, z1, mat = 'red', t = 0.004) {
+    // Carter creux : deux tôles (contour, trous) et une ceinture (sauf ceinture = false : chants ouverts),
+    // de z0 à z1 (z0 > z1 ou non).
+    guard(outline, holesIn, holesOut, z0, z1, mat = 'red', t = 0.004, ceinture = true) {
       const lo = Math.min(z0, z1), hi = Math.max(z0, z1), s = Math.sign(z1 - z0) || 1;
       return S.group(
         this.sheet(outline, holesIn, t, mat, z0 + (s * t) / 2),
         this.sheet(outline, holesOut, t, mat, z1 - (s * t) / 2),
-        this.sheet(outline, [inset(outline, t)], hi - lo - 2 * t, mat, (lo + hi) / 2),
+        ...(ceinture ? [this.sheet(outline, [inset(outline, t)], hi - lo - 2 * t, mat, (lo + hi) / 2)] : []),
       );
     },
   };
@@ -230,8 +251,8 @@ export function P042(api, opts = {}) {
     // Oreilles de la barre (bord intérieur des longerons supérieurs) et des axes bas des bras (face extérieure).
     frame.push(at(box(0.04, 0.05, 0.008, 'red', { r: 0.002 }), [BAR[0], UP_TOP + 0.022, s * 0.305]));
     frame.push(at(box(0.06, 0.09, 0.008, 'red', { r: 0.003 }), [PIV[0], 0.16, s * 0.393]));
-    frame.push(at(cyl(0.0063, 0.039, 'steel', { axis: 'z', seg: 14 }), [PIV[0], PIV[1], s * 0.4085]));
-    frame.push(at(cyl(0.013, 0.008, 'darkSteel', { axis: 'z', seg: 6 }), [PIV[0], PIV[1], s * 0.401]));
+    frame.push(at(cyl(0.0063, 0.045, 'steel', { axis: 'z', seg: 14 }), [PIV[0], PIV[1], s * 0.4115]));
+    frame.push(at(cyl(0.013, 0.018, 'darkSteel', { axis: 'z', seg: 6 }), [PIV[0], PIV[1], s * 0.406]));
     frame.push(at(api.S.torus(0.008, 0.0015, 'steel', { axis: 'x' }), [BAR[0], BAR[1], s * 0.322]));
   }
   frame.push(at(cyl(0.009, 0.66, 'black', { axis: 'z', seg: 14 }), [BAR[0], BAR[1], 0]));
@@ -309,22 +330,36 @@ export function P042(api, opts = {}) {
     at(gear(0.05, 0.064, 14, 0.018, 'darkSteel', { axis: 'z', hole: 0.0127 }), [MOT[0], MOT[1], Z80]),
     at(ring(0.03, 0.0127, 0.007, 'darkSteel', { axis: 'z', seg: 24 }), [MOT[0], MOT[1], Z80 - 0.0125]),
   ), [0.25, 0, -0.35]);
-  P('UM-032-241F', at(box(0.03, 0.008, 0.008, 'steel'), [MOT[0], MOT[1] + 0.0127, Z80 - 0.005], [0, Math.PI / 2, 0]), [0.25, 0.08, -0.38]);
+  P('UM-032-241F', at(box(0.03, 0.008, 0.008, 'steel'), [MOT[0], MOT[1] + 0.0127, Z80 - 0.002], [0, Math.PI / 2, 0]), [0.25, 0.08, -0.38]);
   P('SS313-375', at(cyl(0.004, 0.01, 'blackOxide', { seg: 8 }), [MOT[0], MOT[1] + 0.033, Z80 - 0.0125]), [0.25, 0.15, -0.36]);
   P('UM-032-112F', group(
     at(gear(0.107, 0.122, 28, 0.018, 'darkSteel', { axis: 'z', hole: 0.0254 }), [AXE[0], AXE[1], Z80]),
     at(ring(0.045, 0.0254, 0.007, 'darkSteel', { axis: 'z', seg: 28 }), [AXE[0], AXE[1], Z80 - 0.0125]),
   ), [-0.1, 0.1, -0.38]);
-  P('UM-032-225F', at(box(0.03, 0.0127, 0.0127, 'steel'), [AXE[0], AXE[1] + 0.0254, Z80 - 0.005], [0, Math.PI / 2, 0]), [-0.1, 0.2, -0.42]);
+  P('UM-032-225F', at(box(0.03, 0.0127, 0.0127, 'steel'), [AXE[0], AXE[1] + 0.0254, Z80 - 0.002], [0, Math.PI / 2, 0]), [-0.1, 0.2, -0.42]);
   P('SS375-500', at(cyl(0.0048, 0.012, 'blackOxide', { seg: 8 }), [AXE[0], AXE[1] + 0.048, Z80 - 0.0125]), [-0.1, 0.3, -0.4]);
   P('UM-032-C2', merged([tube(chainLoop(MOT, 0.0571, AXE, 0.1134, Z80), 0.008, 'darkSteel', { closed: true, seg: 220, radial: 8 })], 'darkSteel'), [0.1, 0.1, -0.45]);
-  // Carter de la chaîne 80 (creux : deux tôles et une ceinture), pattes boulonnées sur le longeron supérieur ;
-  // ses deux tôles sont percées au passage de la barre transversale du bâti (Ø 22 mm, page 8.4).
-  const g80 = hull([...circle(MOT, 0.08), ...circle(AXE, 0.14, 36)]);
+  // Carter de la chaîne 80 (page 8.4) : deux tôles, chants ouverts, reliées par quatre entretoises tubulaires
+  // boulonnées à 15 mm du bord supérieur (page 8.0, vue de côté : têtes en (0,27 ; 0,25), (0,10 ; 0,31) et
+  // (−0,07 ; 0,37), la dernière sur le bout arrondi, au-dessus de l'axe du tambour) ; bout côté moteur coupé
+  // droit, pattes boulonnées sur le longeron supérieur ; les deux tôles sont percées au passage de la barre
+  // transversale du bâti (Ø 22 mm).
+  const N80 = [0.333, 0.943], U80 = [N80[1], -N80[0]], E80 = 0.3406; // bord supérieur : N80 · p = E80
+  const bord = (t, d) => [(E80 - d) * N80[0] + t * U80[0], (E80 - d) * N80[1] + t * U80[1]]; // à d sous le bord
+  const R80 = E80 - (N80[0] * AXE[0] + N80[1] * AXE[1]); // bout arrondi, tangent au bord supérieur
+  const g80 = hull([...circle(AXE, R80, 40), bord(0.196, 0), bord(0.196, 0.2)]);
   const barHole = [BAR[0], BAR[1], 0.011];
+  const zs = [-0.252, -0.296]; // faces extérieures des deux tôles (4 mm)
+  const ent = [...[0.1714, -0.0089, -0.1892].map((t) => bord(t, 0.015)), [AXE[0] + (R80 - 0.015) * Math.cos(rad(112)), AXE[1] + (R80 - 0.015) * Math.sin(rad(112))]];
   P('UM-032-104B', group(
-    K.guard(g80, [[MOT[0], MOT[1], 0.016], [AXE[0], AXE[1], 0.03], barHole], [[AXE[0], AXE[1], 0.03], barHole], -0.252, -0.296),
+    K.guard(g80, [[MOT[0], MOT[1], 0.016], [AXE[0], AXE[1], 0.03], barHole], [[AXE[0], AXE[1], 0.03], barHole], zs[0], zs[1], 'red', 0.004, false),
     ...[0.06, 0.16].map((x) => at(box(0.03, 0.004, 0.04, 'red', { r: 0.001 }), [x, UP_TOP + 0.002, -0.316])),
+    // Entretoises (tube Ø 16 mm entre les tôles), boulons 5/16 po (tête dehors) et écrous dedans.
+    ...ent.flatMap(([x, y]) => [
+      at(ring(0.008, 0.0045, zs[0] - zs[1] - 0.008, 'darkSteel', { axis: 'z', seg: 16 }), [x, y, (zs[0] + zs[1]) / 2]),
+      at(bolt(0.0079, 0.054, 'steel', { axis: '-z' }), [x, y, zs[1]]),
+      at(nut(0.0127, 0.007, 'steel', { axis: 'z' }), [x, y, zs[0] + 0.0035]),
+    ]),
   ), [0.05, 0.05, -0.6]);
   each(P, 'B375-1000', [0.06, 0.16].map((x) => at(bolt(0.0095, 0.025, 'steel'), [x, UP_TOP + 0.0055, -0.32])), [0.05, 0.15, -0.6]);
   each(P, 'W375', [0.06, 0.16].map((x) => at(washer(0.011, 0.005, 0.0015), [x, UP_TOP + 0.0047, -0.32])), [0.05, 0.12, -0.6]);
@@ -335,15 +370,15 @@ export function P042(api, opts = {}) {
   P('STEP 2', api.sub('P040', sub), [-0.15, 0.1, -0.35]);
   P('STEP 3', api.sub('P041', sub), [-0.2, 0.45, 0]);
 
-  // Bout de câble sorti du guide (page du treuil seule) : couche extérieure → rouleau du dedans → 7,5 cm.
+  // Bout de câble sorti du guide (page du treuil seule) : couche extérieure → derrière le rouleau de retenue →
+  // rouleau d'enroulement → 9 cm vers l'arrière, embout serti.
   if (opts.cable !== false) {
     const g = guideCable(o.capot);
-    const t1 = tangente(g.pack, g.rPack, -1, g.roller, g.rRoller, 1);
-    const far = [g.roller[0] + g.out[0] * 0.075, g.roller[1] + g.out[1] * 0.075];
-    const t2 = tangente(g.roller, g.rRoller, 1, far, 0, 0);
-    const pts = [t1.p, ...arcPts(g.roller, g.rRoller, t1.q, t2.p, 1, 0.004), far].map(([x, y]) => [x, y, o.zg]);
-    api.add(tube(pts, R_CABLE, 'darkSteel', { seg: 160, tension: 0.2 }));
-    api.add(at(cyl(0.007, 0.02, 'darkSteel', { axis: 'x', seg: 12 }), [far[0], far[1], o.zg], [0, 0, Math.atan2(g.out[1], g.out[0])]));
+    const far = [g.roller[0] + g.out[0] * 0.09 + g.out[1] * g.rRoller, g.roller[1] + g.out[1] * 0.09 - g.out[0] * g.rRoller];
+    const c = cableGuide(o.capot, far, 0, 0);
+    const pts = [...c.pts, far].map(([x, y]) => [x, y, o.zg]);
+    api.add(tube(pts, R_CABLE, 'darkSteel', { seg: 200, tension: 0.2 }));
+    api.add(at(cyl(0.007, 0.02, 'darkSteel', { axis: 'x', seg: 12 }), [far[0] + g.out[0] * 0.01, far[1] + g.out[1] * 0.01, o.zg], [0, 0, Math.atan2(g.out[1], g.out[0])]));
   }
   return { view: { dir: [0.9, 0.75, 0.45] } };
 }
@@ -517,8 +552,10 @@ export function P041(api, opts = {}) {
 
   // 3/4 — Bras inférieurs UM-032-115F (axe bas sur le bâti, dix trous de réglage) et supérieurs 116F
   // (axe haut sur le flanc) ; 10, 12, 8 — boulon de réglage (trou fixe du 116F dans un trou du 115F,
-  // page 8.3, détail B), écrou et rondelles. Trous du 115F au pas de 24 mm : le boulon tombe dans un trou
-  // pour les angles de capot 20°, 32°, 42° (position haute, 5e trou depuis l'axe bas), 50°, 58°, 65° et 72°.
+  // page 8.3, détail B), écrou et rondelles ; le 115F passe à l'extérieur du 116F (détail B de la page P043 et
+  // page 1.01 : tous ses trous restent visibles). Trous du 115F au pas de 1 po : le boulon tombe dans un trou
+  // pour les angles de capot 18°, 32°, 42° (position haute : trou n° 4, le 7e depuis l'axe bas, comme à la
+  // page 1.01), 51°, 59°, 66° et 73°.
   const P1 = cadre(o.th, ...ARM_TOP);
   const D = Math.hypot(P1[0] - PIV[0], P1[1] - PIV[1]);
   const u = [(P1[0] - PIV[0]) / D, (P1[1] - PIV[1]) / D];
@@ -526,15 +563,15 @@ export function P041(api, opts = {}) {
   const dB = D - (ARM_L - 0.03); // boulon de réglage : trou bas du bras supérieur
   const lower = [], upper = [], w500 = [], adj = [], nuts = [];
   for (const s of [-1, 1]) {
-    lower.push(K.bar(PIV, at0(ARM_L), 0.038, 0.01, s * 0.41, 'red', [0, ...TROUS_115F]));
-    upper.push(K.bar(P1, at0(D - ARM_L), 0.038, 0.01, s * 0.42, 'red', [0, ARM_L - 0.03]));
+    lower.push(K.bar(PIV, at0(L_115F), 0.038, 0.01, s * 0.42, 'red', [0, ...TROUS_115F]));
+    upper.push(K.bar(P1, at0(D - ARM_L), 0.038, 0.01, s * 0.41, 'red', [0, ARM_L - 0.03]));
     const pB = at0(dB);
     adj.push(at(bolt(0.0127, 0.038, 'steel', { axis: s > 0 ? 'z' : '-z' }), [pB[0], pB[1], s * 0.4275]));
     nuts.push(at(nut(0.019, 0.011, 'steel', { axis: 'z' }), [pB[0], pB[1], s * 0.3955]));
     w500.push(at(washer(0.014, 0.0068, 0.0025, 'steel', { axis: 'z' }), [pB[0], pB[1], s * 0.4262]));
     w500.push(at(washer(0.014, 0.0068, 0.0025, 'steel', { axis: 'z' }), [pB[0], pB[1], s * 0.4025]));
-    w500.push(at(washer(0.014, 0.0068, 0.0025, 'steel', { axis: 'z' }), [PIV[0], PIV[1], s * 0.4163]));
-    w500.push(at(washer(0.014, 0.0068, 0.0025, 'steel', { axis: 'z' }), [P1[0], P1[1], s * 0.4263]));
+    w500.push(at(washer(0.014, 0.0068, 0.0025, 'steel', { axis: 'z' }), [PIV[0], PIV[1], s * 0.4263]));
+    w500.push(at(washer(0.014, 0.0068, 0.0025, 'steel', { axis: 'z' }), [P1[0], P1[1], s * 0.4163]));
   }
   each(P, 'UM-032-115F', lower, (i) => [0.15, 0.1, i ? 0.3 : -0.3]);
   each(P, 'UM-032-116F', upper, (i) => [0.15, 0.25, i ? 0.35 : -0.35]);
@@ -542,36 +579,44 @@ export function P041(api, opts = {}) {
   each(P, 'NC500', nuts, (i) => [0.15, 0.2, i ? 0.2 : -0.2]);
   each(P, 'W500', w500, (i) => [0.15, 0.2, i < 4 ? -0.4 : 0.4]);
   // Axes hauts des bras supérieurs (dans le flanc).
-  api.add(group(...[-1, 1].map((s) => at(cyl(0.0065, 0.035, 'steel', { axis: 'z', seg: 12 }), [P1[0], P1[1], s * 0.4135]))));
+  api.add(group(...[-1, 1].map((s) => at(cyl(0.0065, 0.024, 'steel', { axis: 'z', seg: 12 }), [P1[0], P1[1], s * 0.408]))));
 
   // 6 — Guide-câble UM-041-014F (détail de la page 8.3), à la position zg de la vis, dessiné en position
   // haute (faces du bloc d'aplomb) : 17 — bloc alésé, bagues de laiton (16) affleurantes dans l'alésage ;
-  // 18 — goupille engagée dans la double hélice, sur le dessus du bloc, et son graisseur (21), au droit du
-  // trou de la tôle de dessus du capot arrière ; 20 — cadre à rouleaux boulonné sur la face avant du bloc
-  // (19), devant la tôle de dessus : deux rouleaux horizontaux en haut et deux verticaux à l'entrée du câble
-  // (22, page 8.3 : deux en haut, deux en bas), sur leurs axes (23), goupilles fendues (24). Le câble monte
-  // du tambour entre les rouleaux verticaux, enveloppe le rouleau horizontal du dedans et sort par l'arrière.
+  // 18 — goupille engagée dans la double hélice par le dessus du bloc, tête logée dans la semelle du cadre ;
+  // graisseur (21) au-dessus, à travers la semelle, au droit du trou de la tôle de dessus du capot arrière ;
+  // 20 — cadre à rouleaux : semelle posée sur le dessus du bloc, vissée par quatre boulons verticaux (19) ;
+  // dessus, devant le bord avant de la tôle, deux joues triangulaires portant les rouleaux d'axe Z (22 :
+  // enroulement au sommet, côté bloc ; retenue au pied, en avant) ; dessous, deux joues portant les rouleaux
+  // d'axe X à l'entrée du câble ; axes (23), goupilles fendues (24). Le câble monte du tambour entre les
+  // rouleaux d'axe X, par la lumière de la semelle, passe derrière le rouleau de retenue, enveloppe le
+  // rouleau d'enroulement et part vers l'arrière, au-dessus de la tôle.
   P('UM-041-106F', K.frame(K.haut(K.sheet([[-0.03, -0.035], [0.03, -0.035], [0.03, 0.035], [-0.03, 0.035]], [[0, 0, 0.0224]], 0.09, 'red', zg))), [-0.1, 0.4, 0]);
   each(P, 'UM-041-164F', [-1, 1].map((s) => K.frame(at(ring(0.0222, 0.019, 0.008, 'brass', { axis: 'z', seg: 24 }), F(VIS, 0, zg + s * 0.041)))), (i) => [-0.1, 0.4, i ? 0.15 : -0.15]);
+  const [sy0, sy1] = SEMELLE.y;
   P('UM-041-155F', K.frame(K.haut(
-    at(cyl(0.008, 0.034, 'steel', { seg: 14 }), [0, 0.033, zg]),
-    at(nut(0.022, 0.01, 'steel'), [0, 0.04, zg]),
+    at(cyl(0.008, sy1 - 0.016, 'steel', { seg: 14 }), [0, (sy1 + 0.016) / 2, zg]),
+    at(nut(0.022, sy1 - sy0, 'steel'), [0, (sy0 + sy1) / 2, zg]),
   )), [-0.2, 0.3, 0]);
-  P('', K.frame(K.haut(at(cyl(0.004, 0.012, 'zinc', { seg: 8 }), [0, 0.056, zg]))), [-0.25, 0.3, 0]);
-  // Joues du cadre à rouleaux (repère « position haute ») : de la plaque d'appui vissée sur la face avant du
-  // bloc jusqu'aux rouleaux, échancrées sous le bord avant de la tôle de dessus du capot arrière.
-  const cheek = [[0.038, -0.035], [0.038, 0.062], [0.0595, 0.062], [0.0595, 0.112], [0.08, 0.128], [0.14, 0.13], [0.158, 0.118], [0.158, 0.0], [0.142, -0.035]];
-  const vx = [-1, 1].map((k) => VR.x + k * VR.half); // paliers des rouleaux verticaux
+  P('', K.frame(K.haut(at(cyl(0.004, 0.012, 'zinc', { seg: 8 }), [0, sy1 + 0.006, zg]))), [-0.25, 0.3, 0]);
+  // Cadre à rouleaux (repère « position haute ») : semelle percée au passage de la tête de la goupille et de la
+  // lumière du câble ; joues triangulaires (pied sur la semelle, sommet arrondi autour de l'axe du rouleau
+  // d'enroulement) ; joues de dessous, paliers des rouleaux d'axe X.
+  const [ex, ey] = ROUL_HAUT.enroulement;
+  const apex = Array.from({ length: 9 }, (_, k) => rad(35 + (k * 130) / 8)).map((a) => [ex + 0.0185 * Math.cos(a), ey + 0.0185 * Math.sin(a)]);
+  const cheek = [[0.058, sy1], [0.138, sy1], [0.138, 0.07], ...apex, [0.058, 0.1]]; // devant la tôle, derrière la bande des charnières
+  const sx = (SEMELLE.x[0] + SEMELLE.x[1]) / 2, xc = VR.x - 0.0014; // lumière du câble (centre)
+  const vx = [-1, 1].map((k) => VR.x + k * VR.half); // joues de dessous (paliers des rouleaux d'axe X)
   P('UM-041-020F', K.frame(K.haut(
-    at(box(0.008, 0.07, 0.1, 'red', { r: 0.002 }), [0.034, 0, zg]),
+    at(plate(SEMELLE.x[1] - SEMELLE.x[0], 2 * SEMELLE.z, sy1 - sy0, 'red', { holes: [[-sx, 0, 0.0135]], cutouts: [[xc - sx, 0, 0.032, 0.03]] }), [sx, (sy0 + sy1) / 2, zg]),
     ...[-1, 1].map((s) => K.sheet(cheek, [], 0.006, 'red', zg + s * 0.046)),
-    ...vx.map((x) => at(box(0.006, 0.018, 0.086, 'red', { r: 0.001 }), [x, VR.y, zg])),
+    ...vx.map((x) => at(box(0.006, sy0 - (VR.y - 0.02), 2 * 0.045, 'red', { r: 0.001 }), [x, (sy0 + VR.y - 0.02) / 2, zg])),
   )), [-0.1, 0.55, 0]);
-  each(P, 'B375-1500', [-1, 1].flatMap((uy) => [-1, 1].map((uz) => K.frame(K.haut(at(bolt(0.0095, 0.038, 'steel', { axis: 'x' }), [0.038, uy * 0.027, zg + uz * 0.025]))))), [-0.1, 0.6, 0]);
-  const zv = GUIDE.r + 0.006; // rouleaux verticaux de part et d'autre du câble
+  each(P, 'B375-1500', [-1, 1].flatMap((ux) => [-1, 1].map((uz) => K.frame(K.haut(at(bolt(0.0095, 0.038, 'steel'), [ux * 0.022, sy1, zg + uz * 0.03]))))), [-0.1, 0.6, 0]);
+  const zv = ROUL_HAUT.r + 0.006; // rouleaux d'axe X de part et d'autre du câble
   each(P, 'UM-041-176F', [
-    ...[ROLL_IN, ROLL_OUT].map(([a, b]) => K.frame(at(cyl(GUIDE.r, 0.08, 'white', { axis: 'z', seg: 24 }), F(a, b, zg)))),
-    ...[-1, 1].map((s) => K.frame(K.haut(at(cyl(GUIDE.r, 0.05, 'white', { axis: 'x', seg: 24 }), [VR.x, VR.y, zg + s * zv])))),
+    ...[ROLL_IN, ROLL_OUT].map(([a, b]) => K.frame(at(cyl(ROUL_HAUT.r, 0.08, 'white', { axis: 'z', seg: 24 }), F(a, b, zg)))),
+    ...[-1, 1].map((s) => K.frame(K.haut(at(cyl(ROUL_HAUT.r, 0.05, 'white', { axis: 'x', seg: 24 }), [VR.x, VR.y, zg + s * zv])))),
   ], [-0.1, 0.65, 0]);
   each(P, 'UM-041-174F', [
     ...[ROLL_IN, ROLL_OUT].map(([a, b]) => K.frame(at(cyl(0.006, 0.098, 'steel', { axis: 'z', seg: 12 }), F(a, b, zg)))),
