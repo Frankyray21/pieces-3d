@@ -36,7 +36,7 @@ export const UP_TOP = BASE.h + BASE.upH; // dessus des longerons supérieurs (ap
 export const AXE = [-0.1415, 0.2475]; // axe du tambour : 548 mm de l'avant, 247 mm du sol (page 8.0)
 export const R_PACK = 0.2, R_CABLE = 0.004; // axe du câble de la couche extérieure ; câble Ø 8 mm
 export const CAPOT_HAUT = 42; // position haute de la page 8.0 (642 mm hors tout)
-const PAD = 0.184; // dessus des plaques d'appui des paliers
+export const PAD = 0.184; // dessus des plaques d'appui des paliers (crapauds arrière de la foreuse)
 const FL = { r: 0.245, t: 0.025, z: [-0.208, 0.263] }; // flasques Ø 490, faces intérieures
 const R_FUT = 0.089; // fût Ø 7 po
 const VIS = 0.39; // entraxe tambour → vis-mère (chaîne 35 de 46 1/2 po, pages 8.0 et 1.01)

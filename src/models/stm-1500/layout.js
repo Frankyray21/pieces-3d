@@ -2,23 +2,30 @@
 //
 // Repère foreuse (P010) : origine au sol sous le centre du traîneau, X vers
 // l'avant (pied de l'avance, côté trou), Y vers le haut, Z vers la droite.
-// Avance à 0° (horizontale) comme sur la page 1.01 : longueur 4 202 mm,
-// hauteur 1 731 mm, axe de la broche à 1 235 mm du sol, traîneau de 864 mm.
+// Avance à 0° (horizontale) comme sur la page 1.01 : longueur 4 202 mm (de la
+// pointe de l'oreille avant du traîneau au dos de la poulie rentrée), hauteur
+// 1 731 mm, axe de la broche à 1 235 mm du sol, traîneau de 3 321 mm sur
+// 1 067 mm (la cote de 34 po, 864 mm, est celle des poteaux et des paliers).
 // Le manuel identifie les pièces par leur numéro (bulles des dessins) : les
 // repères 1, 2, 3… sont les rangs des lignes dans la liste (refs.js, généré).
 import REFS from './refs.js';
 
 export const IN = 0.0254;
 
-// Traîneau : longerons en tube 6 × 3 po (largeur hors tout 864 mm) ; le bâti du treuil (699 mm,
-// page 8.0) se loge entre eux et s'appuie dessus par ses longerons supérieurs (page 1.01).
-export const SLED = { len: 2.9, w: 0.864, railW: 0.076, railH: 0.152 };
+// Traîneau (page 1.01, vues à 0° et de bout ; page 1.1) : 3,32 m entre les pointes des oreilles avant et arrière,
+// longerons en tube 7 × 5 po sur une semelle de 11 mm (178 × 137 mm), axés à ±0,444 m (1 067 mm hors tout, vide de
+// 711 mm entre eux : le bâti du treuil, 699 mm, page 8.0, s'y loge et s'appuie sur les bandes de roulement par ses
+// longerons supérieurs).
+export const SLED = { len: 3.32, w: 1.067, railW: 0.178, railH: 0.137 };
 export const AXIS_Y = 1.235; // axe de la broche (avance à 0°)
-// Poutre d'avance (feed frame) : dessous à 715 mm du sol (page 1.01 : le volant du treuil, capot en position
-// haute, passe juste dessous) ; plaque d'extrémité (face arrière en x0) à 3,26 m de la face avant du pied, 0,2 m
-// derrière le volant du treuil (page 1.01, vue à 0° : le treuil occupe le dernier mètre sous la poutre).
-export const BEAM = { x0: -1.37, x1: 1.86, w: 0.3, h: 0.19, top: 0.905 };
-export const PIVOT = { x: 0.45, y: 0.62 }; // axe de bascule sur le support d'avance
+// Poutre d'avance (feed frame) : semelle posée sur les plats d'usure du support d'avance, à 715 mm du sol (page 1.01),
+// 554 mm de large (vue de bout : elle repose sur le bord intérieur des HSS du support) ; face avant de la plaque de pied
+// (BEAM.x1 + 0,03) 181 mm derrière la pointe de l'oreille avant du traîneau (page 1.01, vue à 0°).
+export const BEAM = { x0: -1.781, x1: 1.449, w: 0.554, h: 0.19, top: 0.905 };
+// Axes de bascule : tubes de pivot du support d'avance dans les paliers fendus des poteaux avant et arrière du
+// traîneau (page 1.01 : 700 et 1 665 mm de la pointe avant, 598 mm du sol). La poutre bascule sur l'un ou l'autre
+// (45° vers le bas sur l'avant, 45° vers le haut sur l'arrière).
+export const PIVOT = { x: [0.961, -0.004], y: 0.598 };
 
 /** Groupe de pose des pièces d'une liste : P(n° de pièce, objet, éclaté) → repère de la ligne. */
 export function lister(api, id) {

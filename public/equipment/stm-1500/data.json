@@ -336,14 +336,21 @@
      1,
      "REMOVABLE HITCH",
      {
-      "link": "P020"
+      "link": "P020",
+      "note": "Non monté en 3D : la page 1.01 ne le montre posé dans aucune vue (voir 1.10).",
+      "no3d": true
      }
     ],
     [
      "14",
      "UM-064-400D",
      2,
-     "LEGS"
+     "LEGS",
+     {
+      "link": "P020",
+      "note": "Non montées en 3D : à 0° (page 1.01) les jambes ne sont pas posées ; aux inclinaisons de 45° et 90°, elles se posent entre l'oreille d'un poteau du traîneau (à 455 mm du sol) et une patte sous la poutre (voir 1.01 et 1.10).",
+      "no3d": true
+     }
     ],
     [
      "15",
@@ -411,7 +418,7 @@
      }
     ]
    ],
-   "note": "Avance à 0° (horizontale) comme sur la page 1.01, sans le garde-corps grillagé ni le vérin supérieur ; le vérin d'avance double est logé dans la poutre. Treuil de câble posé sur le traîneau, au bout arrière, capot en position haute comme à la page 1.01 (volant sous la poutre) ; vérins de bascule dans le support d'avance, à l'extérieur des longerons, vérin de relevage entre le support et le treuil. Les sous-ensembles qui ont leur liste ouvrent leur page (dessins du manuel)."
+   "note": "Avance à 0° (horizontale) comme sur la page 1.01, sans le garde-corps grillagé ni le vérin supérieur ; le vérin d'avance double est logé dans la poutre. Treuil de câble posé sur l'arrière du traîneau, capot en position haute comme à la page 1.01 (volant sous la poutre) ; vérins de bascule de la chape des longerons à la patte avant du support d'avance, vérin de relevage couché dans le support, sous la poutre ; jambes et attelage non posés (page 1.01). Les sous-ensembles qui ont leur liste ouvrent leur page (dessins du manuel)."
   },
   "P011": {
    "title": "Frame",

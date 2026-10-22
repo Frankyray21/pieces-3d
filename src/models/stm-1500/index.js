@@ -1,4 +1,4 @@
-import { P010, SLED_PORTS, HEAD_PORTS, SWIVEL_PORT } from './drill.js';
+import { P010, SLED_VIA, HEAD_PORTS, SWIVEL_PORT } from './drill.js';
 import { P048 } from './head.js';
 import { P042, P039, P040, P041 } from './winch.js';
 import { P068, PP_PORTS, PP_CABLE, PP_N } from './powerpack.js';
@@ -20,7 +20,7 @@ import { P078, CON_PACK, CON_ROT, CON_WATER, CON_SLED, CON_CABLE, CON_BACK_N, CO
 // boîte électrique) accessible du côté bas du plan, vers la gauche. Boyaux posés
 // au sol, chacun dans sa voie, et branchés : groupe → console (pression, retour,
 // drain) et câble de commande ; console → foreuse (rotation A et B vers le moteur
-// de la tête, boyaux du bloc du traîneau, eau vers l'émerillon par-dessus le
+// de la tête, boyaux des sélecteurs du traîneau, eau vers l'émerillon par-dessus le
 // moteur). Seul le matériel du manuel est modélisé.
 // Contrôles : node scripts/check-layout.mjs --eq stm-1500 P002 --min 3 --ref 1.
 const DRILL = { pos: [-3.0, 0, 0.6], yaw: -1.84 }; // avance vers (−0,27 ; 0,96) dans le plan
@@ -74,8 +74,9 @@ function P002(api) {
   hoses.push(run({ p: W(cons, CON_CABLE), n: cSide, out: 0.55 }, { p: W(pack, PP_CABLE), n: pEnd, shift: D(pack, [0, 0, -1]).multiplyScalar(0.1) }, 0.012, 'cable'));
   // Console → tête : rotation A et B (1 po), descentes écartées le long de l'avance.
   HEAD_PORTS.forEach((p, i) => hoses.push(run({ p: W(cons, CON_ROT[i]), n: cBack }, { p: W(drill, p), n: dSide, shift: along.clone().multiplyScalar(i ? 0.06 : -0.06) }, 0.022)));
-  // Console → bloc du traîneau.
-  SLED_PORTS.forEach((p, i) => hoses.push(run({ p: W(cons, CON_SLED[3 - i]), n: cBack }, { p: W(drill, p), n: dSide }, 0.016)));
+  // Console → raccords avant des deux sélecteurs mât / treuil du traîneau (tracés imposés : par-dessus le longeron
+  // gauche, devant les poteaux avant).
+  SLED_VIA.forEach((via, i) => hoses.push(run({ p: W(cons, CON_SLED[i]), n: cBack }, { via: via.map((q) => W(drill, q)) }, 0.016)));
   // Eau : traversée de la console → entrée sur le dessus de l'émerillon, par-dessus le moteur de la tête.
   const [sx, sy, sz] = SWIVEL_PORT, wr = 0.02;
   const swivel = [[sx, FLOOR + wr, -0.94], [sx, 0.2, -0.92], [sx, 0.9, -0.86], [sx, 1.45, -0.62], [sx, sy + 0.16, -0.3], [sx, sy + 0.12, sz], [sx, sy + 0.04, sz], [sx, sy, sz]];
