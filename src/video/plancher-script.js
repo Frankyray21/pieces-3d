@@ -20,21 +20,25 @@ const L = 9.7536, SEC = 4.8768, W = 4.8768, DECK = 0.2286;
 const C = {
   ov: { pos: [L / 2 + 6.2, 5.0, 8.4], tgt: [L / 2, -0.15, -0.4] },
   entr: { pos: [L + 6.6, 1.45, 1.1], tgt: [L + 4.3, 1.3, 0] },
+  cab: { pos: [L + 5.9, 1.6, 0.5], tgt: [L + 3.3, 0.5, 2.2] },
+  mat: { pos: [L + 8.3, 2.5, 0.9], tgt: [L + 6.0, 0.0, -0.5] },
+  tools1: { pos: [L + 8.1, 1.6, -0.2], tgt: [L + 5.9, 0.0, 0.6] },
+  tools2: { pos: [L + 8.1, 1.7, 0.6], tgt: [L + 6.0, 0.0, 1.6] },
   wall: { pos: [3.4, 1.65, 0.9], tgt: [-0.95, 1.5, 0.1] },
   line: { pos: [-2.6, 2.0, 0.9], tgt: [3.2, -0.15, -2.35] },
   high: { pos: [-1.9, 1.45, 1.4], tgt: [0.9, -0.05, -1.7] },
   s1: { pos: [SEC / 2 + 4.0, 3.1, 5.8], tgt: [SEC / 2, -0.05, -0.2] },
-  s1low: { pos: [SEC * 0.78, 0.6, 3.9], tgt: [SEC * 0.42, -0.02, 0.8] },
+  s1low: { pos: [2.4, 1.35, 3.7], tgt: [2.2, -0.05, 0.0] },
   joint: { pos: [SEC + 1.5, 0.75, 3.5], tgt: [SEC, -0.05, 1.5] },
   deck1: { pos: [-1.9, 3.5, 4.6], tgt: [SEC * 0.62, 0, 0] },
-  tight: { pos: [SEC + 1.9, 2.25, 1.0], tgt: [SEC - 1.2, 0.1, -1.05] },
-  tight2: { pos: [SEC + 1.55, 1.85, 0.75], tgt: [SEC - 1.2, 0.12, -1.0] },
+  tight: { pos: [2.3, 2.1, W / 2 + 1.7], tgt: [1.5, 0.1, 0.5] },
+  tight2: { pos: [2.1, 1.6, W / 2 + 1.2], tgt: [1.5, 0.12, 0.8] },
   s2: { pos: [SEC * 1.5 + 4.6, 2.7, 5.6], tgt: [SEC * 1.5, -0.2, 0] },
   s2low: { pos: [L + 1.7, 0.45, 4.1], tgt: [L - 1.6, -0.25, 1.0] },
   crib: { pos: [10.7, 0.55, 3.7], tgt: [8.8, -0.35, 1.55] },
-  cageA: { pos: [7.15, 0.25, 0.45], tgt: [8.89, -0.52, 1.37] },
-  cageB: { pos: [7.3, 0.45, 2.75], tgt: [8.89, -0.54, 1.4] },
-  cageC: { pos: [7.85, 0.75, 3.15], tgt: [8.93, -0.5, 1.42] },
+  cageA: { pos: [7.15, 0.25, 0.65], tgt: [8.88, -0.52, 1.57] },
+  cageB: { pos: [7.3, 0.45, 2.95], tgt: [8.88, -0.54, 1.6] },
+  cageC: { pos: [7.85, 0.75, 3.35], tgt: [8.92, -0.5, 1.62] },
   deck2: { pos: [L + 3.0, 3.4, 4.8], tgt: [SEC * 1.45, 0, 0] },
   edge: { pos: [4.6, 0.8, 3.9], tgt: [6.4, 0.16, 2.44] },
   stairs: { pos: [L + 3.4, 1.45, 2.15], tgt: [L + 0.3, 0.02, 0.96] },
@@ -57,15 +61,18 @@ export const SEGMENTS = [
   },
   {
     id: 'materiel', min: 10,
-    band: { n: '', title: 'Matériel nécessaire et ÉPI', text: 'Barricade travaux en cours avec flasher orange · Armoire (trousse de premier soin et lave-yeux 2x) · Extincteur · Bois brut de 6\'\'X 6\'\' et de 3\'\'X 8\'\' · Coin de bois · Tire fond 6\'\'', detail: 'ÉPI : équipement de base obligatoire · Le travailleur applique la procédure, le superviseur voit au bon déroulement' },
+    band: { n: '', title: 'Matériel nécessaire et ÉPI', text: 'Barricade travaux en cours avec flasher orange · Armoire (trousse de premier soin et lave-yeux 2x) · Extincteur · Bois 2\'\'X4\'\' planés (ou bruts) · Bois brut de 6\'\'X6\'\' et de 3\'\'X8\'\' · Coins de bois · Tire-fonds 6\'\' · Lame à bois pour scie', detail: 'Outils : pied de biche, masse, marteau, sciotte, pinces à billots, niveau au laser Bosch, niveau de 48\'\', barres d’écaillage de 6\', 8\' et 10\', pingouin, scie va-et-vient · ÉPI : équipement de base obligatoire' },
     why: 'TOUJOURS TRANSPORTER LES GROSSES PIÈCES DE BOIS À DEUX.',
     lines: [
       [1, 'Avant de commencer : la barricade travaux en cours avec son flasher orange, l\'armoire avec la trousse de premiers soins pis les deux lave-yeux, l\'extincteur.'],
       [2, 'Pis le bois : du six par six brut, du trois par huit brut, des coins pis des tire-fonds de six pouces.'],
       [1, 'Une règle qui change pas : les grosses pièces de bois, on les transporte toujours à deux.'],
     ],
-    reveal: [{ cue: 'barricade', at: 0.05, span: 0.1 }, { cue: 'cabinet', at: 0.25, span: 0.1 }, { cue: 'ext', at: 0.35, span: 0.05 }],
-    cams: [{ t: 0.3, ...C.entr }, { t: 1, pos: [L + 5.6, 1.5, 2.2], tgt: [L + 3.0, 0.7, 1.2] }],
+    reveal: [{ cue: 'barricade', v: 19.0, vspan: 1.2 }, { cue: 'cabinet', v: 22.4, vspan: 0 }, { cue: 'ext', v: 25.6, vspan: 0 }],
+    // Bois, quincaillerie, outils et ÉPI étalés derrière la barricade ; les outils (que la voix
+    // ne nomme pas) défilent à la fin de la partie, avec leurs étiquettes.
+    show: [{ obj: 'materiel', vfrom: 26.6 }],
+    cams: [{ v: 18.2, ...C.entr }, { v: 21.4, ...C.entr }, { v: 22.6, ...C.cab }, { v: 26.2, ...C.cab }, { v: 27.6, ...C.mat }, { v: 38.6, ...C.mat }, { v: 40.0, ...C.tools1 }, { v: 44.8, ...C.tools1 }, { v: 46.0, ...C.tools2 }, { v: 51.5, ...C.tools2 }],
   },
   {
     id: 'inspection', min: 9,
@@ -124,7 +131,7 @@ export const SEGMENTS = [
     ],
     show: [{ obj: 'level', from: 0.05, to: 0.5 }],
     reveal: [{ cue: 'support1', at: 0.35, span: 0.55 }],
-    cams: [{ t: 0.15, pos: [2.9, 1.2, 2.6], tgt: [2.2, 0.15, 0.4] }, { t: 0.45, ...C.s1low }, { t: 1, pos: [SEC * 0.55, 0.45, 3.6], tgt: [SEC * 0.3, -0.02, 0.6] }],
+    cams: [{ t: 0.15, pos: [4.4, 1.4, -0.4], tgt: [2.3, 0.15, -0.4] }, { t: 0.45, ...C.s1low }, { t: 1, pos: [3.0, 1.15, 3.5], tgt: [2.4, -0.05, 0.2] }],
   },
   {
     id: 'e5b', min: 9,
@@ -168,7 +175,7 @@ export const SEGMENTS = [
     lines: [
       [1, 'Étape huit : on laisse environ deux planches libres au bout. Ça donne la place pour partir la deuxième section ; on les visse à la fin pour joindre les deux.'],
     ],
-    cams: [{ t: 0.35, ...C.joint }, { t: 1, pos: [SEC + 1.8, 1.6, 3.4], tgt: [SEC - 0.3, 0.1, 0.3] }],
+    cams: [{ t: 0.35, ...C.joint }, { t: 1, pos: [SEC + 2.4, 2.4, 2.6], tgt: [SEC - 0.6, 0.05, -0.2] }],
   },
   {
     id: 'e9', min: 8,
@@ -324,7 +331,7 @@ const VOICE_END = 332.59;
 // Silences ajoutés dans la voix : [instant dans l'enregistrement, durée] (ex. cage, étape 11).
 const GAPS = { e11: [[203.45, 2.4]] };
 // Temps laissé après la voix (s) ; par défaut 0,4.
-const TAIL = { e11: 7.5, titre: 0.2, fin: 1.2, e15: 0.2, e7: 1.6 };
+const TAIL = { e11: 7.5, titre: 0.2, fin: 1.2, e15: 0.2, e7: 1.6, materiel: 12.6 };
 const LEAD = 0.3; // la voix démarre 0,3 s après le début de la partie
 const r24 = (x) => Math.round(x * 24) / 24;
 

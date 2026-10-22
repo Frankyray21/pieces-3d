@@ -20,10 +20,11 @@ import './plancher-video.css';
 import { buildProcedural } from '../viewer/assembly.js';
 import * as S from '../viewer/shapes.js';
 import models from '../models/plancher-dd/index.js';
-import { IN, FT, P3, P8, B66, W, L, SEC, DECK, ground, plankZ, TIGHT, joistX, joistX2, DIP } from '../models/plancher-dd/plan.js';
+import { IN, FT, P3, P8, B66, W, L, SEC, DECK, ground, plankX, TIGHT, joistZ, GUIDE_X, DIP } from '../models/plancher-dd/plan.js';
 import { lagScrews } from '../models/plancher-dd/lumber.js';
 import { timeline, RETENIR, stepCard, STEP_CARD, vt } from './plancher-script.js';
 import { Annotator } from './plancher-annot.js';
+import { materielGroup } from './plancher-materiel.js';
 
 const VW = 1280, VH = 540;
 const SEGS = timeline();
@@ -120,17 +121,17 @@ function cueOf({ asm, ref, obj, crib }) {
   if (crib) return crib;
   const R = {
     P02: { G: 'always', 1: 'line', 9: 'drill', 10: 'barricade', 11: 'cabinet', 12: 'ext' },
-    P04: { 1: 'joist1', 2: 'joists1', 3: 'support1', 5: 'support1', 6: 'joint1' },
+    P04: { 1: 'joist1', 2: 'joists1', 3: 'support1', 4: 'support1', 5: 'support1', 6: 'joint1', 7: 'joint1', 8: 'joint1' },
     P07: { 1: 'deck1', 2: 'joinPlanks', 3: 'screws1', 4: 'screwsT', 5: 'joinScrews' },
-    P10: { 1: 'joists2', 2: 'sleepers', 3: 'support2', 4: 'support2', 5: 'support2', 6: 'crib' },
+    P10: { 1: 'joists2', 2: 'sleepers', 3: 'support2', 4: 'support2', 5: 'support2', 6: 'crib', 7: 'joists2' },
     P13: { 1: 'deck2', 2: 'screws2', 3: 'screws2' },
     P14: { 1: 'stairs', 2: 'stairs', 3: 'stairs', 4: 'handrails', 5: 'handrails' },
     P16: { 1: 'guards', 2: 'guards', 3: 'guards', 4: 'guards', 5: 'guards', 6: 'grille' },
   };
   if (asm === 'P17') return 'secondary';
   let c = R[asm]?.[ref];
-  if (c === 'joists1' && Math.abs(obj.position.x - joistX.at(-1)) < 0.01) c = 'joistFar';
-  if (c === 'joists2' && Math.abs(obj.position.x - joistX2.at(-1)) < 0.01) c = 'guide';
+  if (c === 'joists1' && Math.abs(obj.position.z - joistZ.at(-1)) < 0.01) c = 'joistFar';
+  if (c === 'sleepers' && Math.abs(obj.position.x - GUIDE_X) < 0.01) c = 'guide';
   if (c === 'deck1') { const i = obj.userData.order; c = i === ANCHOR ? 'anchor' : i > ANCHOR ? 'deck1b' : 'deck1'; }
   return c || 'always';
 }
@@ -152,7 +153,7 @@ const REF_ORDER = (lf) => ({ 1: 0, 2: 2, 3: 3, 4: 4, 5: 1 })[lf.ref] ?? 0;
 for (const [name, list] of cues) {
   list.sort((a, b) => {
     if (name === 'guards' && REF_ORDER(a) !== REF_ORDER(b)) return REF_ORDER(a) - REF_ORDER(b);
-    if (name.startsWith('joists')) return a.c.x - b.c.x;
+    if (name.startsWith('joists')) return a.c.z - b.c.z;
     if (name.startsWith('deck')) return (a.obj.userData.order ?? 0) - (b.obj.userData.order ?? 0) || a.c.x - b.c.x;
     if (name.startsWith('crib')) return a.c.y - b.c.y || a.c.x - b.c.x || a.c.z - b.c.z;
     return a.c.x - b.c.x || a.c.z - b.c.z || a.c.y - b.c.y;
@@ -214,12 +215,14 @@ const extras = {
     S.cyl(0.05, 0.12, 'fluoRed', { r2: 0.001, pos: [0, 0.18, 0] }),
     S.cyl(0.012, 0.25, 'fluoRed', { pos: [0, 0.36, 0] }),
   ),
-  // Niveau de 48 po sur un 3 × 8 de 8 pi posé en travers des madriers (selon X).
+  // Niveau de 48 po sur un 3 × 8 de 8 pi posé en travers des madriers (selon Z).
   level: S.group(
-    S.box(8 * FT, P3, 0.2, 'woodLight', { pos: [0, P3 / 2, 0] }),
-    S.box(48 * IN, 0.07, 0.045, 'blue', { pos: [0, P3 + 0.035, 0] }),
-    S.box(0.07, 0.02, 0.047, 'lampAmber', { pos: [0, P3 + 0.06, 0] }),
+    S.box(0.2, P3, 8 * FT, 'woodLight', { pos: [0, P3 / 2, 0] }),
+    S.box(0.045, 0.07, 48 * IN, 'blue', { pos: [0, P3 + 0.035, 0] }),
+    S.box(0.047, 0.02, 0.07, 'lampAmber', { pos: [0, P3 + 0.06, 0] }),
   ),
+  // Matériel et outils de la procédure, étalés derrière la barricade (présentation du début).
+  materiel: materielGroup(S),
 };
 extras.highMark.position.set(high.x, high.y + 0.004, high.z);
 extras.highMark.children[2].rotation.x = Math.PI; // pointe vers le sol
@@ -239,24 +242,23 @@ const WG = 0.05; // espace pour les coins
 const TSEG = SEGS.find((x) => x.tighten);
 const TT = Object.fromEntries(Object.entries(TSEG.tighten).map(([k, v]) => [k, Array.isArray(v) ? v.map((x) => vt(TSEG, x)) : vt(TSEG, v)]));
 const span01 = (t, a, b) => Math.min(1, Math.max(0, (t - a) / (b - a)));
-const anchorZ0 = plankZ(ANCHOR);
-const anchorScrews = lagScrews(S, [B66 / 2, SEC - B66 / 2].map((x) => [x, DECK, 0]));
-const wedgeXs = [0.75, 1.85, 2.95, 4.05];
+const anchorX0 = plankX(ANCHOR);
+const anchorScrews = lagScrews(S, [joistZ[0], joistZ.at(-1)].map((z) => [0, DECK, z]));
+const wedgeZs = [-1.65, -0.55, 0.55, 1.65];
 const tightWedges = S.group();
-for (const x of wedgeXs) {
-  // Coin pointe en bas, épaisseur selon Z (mise à l'échelle selon l'écart à combler).
+for (const z of wedgeZs) {
+  // Coin pointe en bas, épaisseur selon X (mise à l'échelle selon l'écart à combler).
   const w = S.extrude([[0, 0], [1, 0], [0.62, -0.26], [0.38, -0.26]], 0.1, 'woodWedge');
   w.position.set(-0.5, 0, -0.05);
   const holder = S.group(w);
-  holder.rotation.y = -Math.PI / 2;
   const g = S.group(holder);
-  g.position.x = x;
+  g.position.z = z;
   tightWedges.add(g);
 }
 scene.add(anchorScrews, tightWedges);
 anchorScrews.visible = tightWedges.visible = false;
 const deckLeaves = leaves.filter((lf) => ['deck1', 'anchor'].includes(lf.cue));
-/** Décalage (selon Z) des planches non serrées et du dernier 3 × 8 à l'instant t. */
+/** Décalage (selon X) des planches non serrées et du dernier 3 × 8 à l'instant t. */
 function tighten(t) {
   const drive = span01(t, TT.drive[0], TT.drive[1]);
   const k = drive * drive * (3 - 2 * drive);
@@ -266,21 +268,21 @@ function tighten(t) {
   for (const lf of deckLeaves) {
     const i = lf.obj.userData.order;
     if (i === 0) continue;
-    lf.obj.position.z = lf.base.z + (i === ANCHOR ? anchorOff : loose(i));
+    lf.obj.position.x = lf.base.x + (i === ANCHOR ? anchorOff : loose(i));
   }
   // Tire-fonds temporaires du dernier 3 × 8 : posés, puis retirés (ils remontent).
   const up = span01(t, TT.unscrew, TT.unscrew + 0.6);
   anchorScrews.visible = t >= TT.anchorScrews && up < 1;
-  anchorScrews.position.set(0, 0.25 * (1 - span01(t, TT.anchorScrews, TT.anchorScrews + 0.4)) + 0.12 * up, anchorZ0 + anchorOff);
+  anchorScrews.position.set(anchorX0 + anchorOff, 0.25 * (1 - span01(t, TT.anchorScrews, TT.anchorScrews + 0.4)) + 0.12 * up, 0);
   // Coins : insérés au-dessus de l'écart, enfoncés, puis enlevés.
   const out = span01(t, TT.wedgesOut, TT.wedgesOut + 0.5);
   tightWedges.visible = t >= TT.wedgesIn && out < 1;
-  const zFront = plankZ(TIGHT) + loose(TIGHT) + P8 / 2; // face de la planche devant les coins
-  const zBack = anchorZ0 + anchorOff - P8 / 2; // face du dernier 3 × 8
-  const gap = Math.max(0.004, zBack - zFront);
+  const xFront = plankX(TIGHT) + loose(TIGHT) + P8 / 2; // face de la planche devant les coins
+  const xBack = anchorX0 + anchorOff - P8 / 2; // face du dernier 3 × 8
+  const gap = Math.max(0.004, xBack - xFront);
   const ins = span01(t, TT.wedgesIn, TT.wedgesIn + 0.5);
   for (const g of tightWedges.children) {
-    g.position.z = (zFront + zBack) / 2;
+    g.position.x = (xFront + xBack) / 2;
     g.position.y = DECK + 0.14 + 0.25 * (1 - ins) - 0.1 * k + 0.35 * out;
     g.children[0].scale.x = gap; // épaisseur du coin = écart comblé (axe X local du profil)
   }
@@ -296,7 +298,7 @@ const ghostMats = new Map(), nearMats = new Map();
 for (const lf of leaves) {
   if (lf.cue.startsWith('crib') || ['always', 'line', 'barricade', 'cabinet', 'ext', 'grille'].includes(lf.cue)) continue;
   // Le soutien et le madrier portés par la cage restent visibles en transparence.
-  const near = (lf.cue === 'sleepers' && Math.abs(lf.c.z - CRIB_FOCUS.z) < 0.2) || (['joists2', 'guide'].includes(lf.cue) && Math.abs(lf.c.x - CRIB_FOCUS.x) < 0.2);
+  const near = (['sleepers', 'guide'].includes(lf.cue) && Math.abs(lf.c.x - CRIB_FOCUS.x) < 0.2) || (lf.cue === 'joists2' && Math.abs(lf.c.z - CRIB_FOCUS.z) < 0.2);
   const map = near ? nearMats : ghostMats;
   lf.obj.traverse((o) => {
     if (!o.isMesh) return;
@@ -447,7 +449,7 @@ function shadowSignature() {
     n++;
     s += n * (p.x * 1.31 + p.y * 7.13 + p.z * 3.77 + lf.obj.scale.x * 0.53);
   }
-  return `${n}|${s.toFixed(6)}`;
+  return `${n}|${s.toFixed(6)}|${extras.materiel.visible ? 1 : 0}`;
 }
 
 function render(t) {
@@ -494,6 +496,17 @@ function render(t) {
 
 window.__video = { duration: DURATION, fps: 24, segments: SEGS.map(({ id, start, dur, band, lines }) => ({ id, start, dur, band, lines })) };
 window.__render = (t) => { render(t); return true; };
+// Image fixe (validation) : l'état de l'instant t, vu d'une caméra donnée.
+window.__still = (t, pos, tgt, fov) => {
+  render(t);
+  camera.position.set(...pos);
+  camera.fov = fov || 40;
+  camera.updateProjectionMatrix();
+  camera.lookAt(...tgt);
+  camera.updateMatrixWorld(true);
+  if (composer) composer.render(); else renderer.render(scene, camera);
+  return renderer.domElement.toDataURL('image/jpeg', 0.95);
+};
 // Capture rapide : la 3D seule (JPEG) et les opacités des calques ; les calques
 // eux-mêmes sont capturés une fois par segment (__layer), puis composés à part.
 window.__frame = (t) => {

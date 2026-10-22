@@ -5,7 +5,7 @@
 // fixe à l'écran).
 import * as THREE from 'three';
 import {
-  IN, FT, B66, P3, P8, W, L, SEC, DECK, joistX, GAL, STAIR, SUPPORTS_Z, ground, deckHeight, plankZ, TIGHT,
+  IN, FT, B66, P3, P8, W, L, SEC, DECK, joistZ, GAL, STAIR, SUPPORTS_X, ground, deckHeight, plankX, TIGHT,
 } from './plan.js';
 import { stairPlan, secondaryPlan } from './floor.js';
 
@@ -152,23 +152,23 @@ export function dimensions() {
   at([3], bigArrow([2.2, B66 + 0.05, 0.6], [-0.6, B66 + 0.05, 0.6], 'Sens du forage'));
   at([3], dim([0, 0, zN], [0, B66, zN], '6 po', [-0.3, 0, -0.1]));
   // Étape 4 : cadrage 16 × 16 pi, madriers à environ 32 po centre.
-  at([4], dim([0, B66, zP], [SEC, B66, zP], '16 pi', [0, 0, 0.45]));
   at([4], dim([0, B66, zN], [0, B66, zP], '16 pi', [-0.45, 0, 0]));
-  at([4], dim([joistX[2], B66 + 0.02, 0.4], [joistX[3], B66 + 0.02, 0.4], '≈ 32 po c/c', [0, 0.12, 0]));
+  at([4], dim([0, B66, zP], [SEC, B66, zP], '16 pi', [0, 0, 0.45]));
+  at([4], dim([2.0, B66 + 0.02, joistZ[2]], [2.0, B66 + 0.02, joistZ[3]], '≈ 32 po c/c', [0, 0.12, 0]));
   // Étape 5 : niveau de 48 po sur un 3 × 8 de 8 pi, appuis.
-  at([5], dim([2.3 - 24 * IN, B66 + P3 + 0.08, -0.4], [2.3 + 24 * IN, B66 + P3 + 0.08, -0.4], 'Niveau 48 po', [0, 0.16, 0]));
-  at([5], dim([2.3 - 4 * FT, B66 + P3, -0.4], [2.3 + 4 * FT, B66 + P3, -0.4], '3 × 8 de 8 pi min.', [0, 0, 0.28]));
-  at([5], dim([joistX[3], 0, SUPPORTS_Z[3]], [joistX[3], 0, SUPPORTS_Z[4]], '≈ 3 pi', [0.3, 0, 0]));
-  at([5], tag([joistX[4], B66 + 0.05, 0], '6 appuis min. par madrier', { h: 0.04, color: '#ffffff' }));
+  at([5], dim([2.3, B66 + P3 + 0.08, -0.4 - 24 * IN], [2.3, B66 + P3 + 0.08, -0.4 + 24 * IN], 'Niveau 48 po', [0, 0.16, 0]));
+  at([5], dim([2.3, B66 + P3, -0.4 - 4 * FT], [2.3, B66 + P3, -0.4 + 4 * FT], '3 × 8 de 8 pi min.', [0.28, 0, 0]));
+  at([5], dim([SUPPORTS_X[3], 0, joistZ[3]], [SUPPORTS_X[4], 0, joistZ[3]], `≈ ${po(SUPPORTS_X[4] - SUPPORTS_X[3])}`, [0, 0, 0.3]));
+  at([5], tag([2.4, B66 + 0.05, joistZ[4]], '6 appuis min. par madrier', { h: 0.04, color: '#ffffff' }));
   // Étape 6 : épaisseurs, 9 po en tout.
   at([6], dim([0, 0, zP], [0, B66, zP], '6 × 6', [-0.35, 0, 0.1], { h: 0.04 }));
   at([6], dim([0, B66, zP], [0, DECK, zP], '3 × 8', [-0.35, 0, 0.1], { h: 0.04, lift: [0, 0.07, 0] }));
   at([6], dim([0, 0, zP], [0, DECK, zP], 'Plancher 9 po', [-0.85, 0, 0.1]));
-  at([6], dim([0, DECK, zN], [0, DECK, zN + P8], '8 po', [-0.35, 0, 0], { h: 0.04 }));
+  at([6], dim([0, DECK, zN], [P8, DECK, zN], '8 po', [0, 0, -0.35], { h: 0.04 }));
   // Étape 7 : environ 50 % de la section couverte avant de resserrer.
-  at([7], dim([0, DECK, zN], [0, DECK, plankZ(TIGHT) + P8 / 2], '≈ 50 % de la section', [-0.4, 0, 0]));
+  at([7], dim([0, DECK, zN], [plankX(TIGHT) + P8 / 2, DECK, zN], '≈ 50 % de la section', [0, 0, -0.4]));
   // Étape 8 : deux planches libres (16 po).
-  at([8], dim([0, B66, zP - 2 * P8], [0, B66, zP], '2 planches = 16 po', [-0.4, 0, 0]));
+  at([8], dim([SEC - 2 * P8, B66, zP], [SEC, B66, zP], '2 planches = 16 po', [0, 0, 0.4]));
   // Étapes 9 et 10 : hauteur à soutenir au bout de la section 2, madrier guide à 16 pi.
   const gL = ground(L - 0.05, zP - 0.05);
   at([9, 10], dim([L - 0.05, gL, zP], [L - 0.05, 0, zP], `Hauteur à soutenir ≈ ${po(-gL)}`, [0.35, 0, 0.25]));
