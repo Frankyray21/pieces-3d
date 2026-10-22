@@ -15,33 +15,40 @@
 // La durée d'un segment vient de sa narration (débit d'environ 2,5 mots/s,
 // celui de la vidéo du mandrin), avec un minimum pour l'action.
 
-const L = 9.7536, SEC = 4.8768, W = 4.8768, DECK = 0.2286;
+// Plancher de 16 pi de profond (X, le long de la galerie) sur 32 pi de large
+// (Z) : section 1 du côté Z négatif, section 2 du côté Z positif, jonction à Z = 0.
+const L = 4.8768, SEC = 4.8768, W = 9.7536, DECK = 0.2286;
+const S1 = -SEC / 2, S2 = SEC / 2; // centres des sections en travers
+const CAGE = [3.2258, 4.0005]; // creux sous un croisement de la section 2 (DIP)
 
 const C = {
-  ov: { pos: [L / 2 + 6.2, 5.0, 8.4], tgt: [L / 2, -0.15, -0.4] },
+  ov: { pos: [L + 7.0, 5.4, 2.6], tgt: [L / 2 - 0.4, -0.2, 0] },
   entr: { pos: [L + 6.6, 1.45, 1.1], tgt: [L + 4.3, 1.3, 0] },
-  wall: { pos: [3.4, 1.65, 0.9], tgt: [-0.95, 1.5, 0.1] },
-  line: { pos: [-2.6, 2.0, 0.9], tgt: [3.2, -0.15, -2.35] },
-  high: { pos: [-1.9, 1.45, 1.4], tgt: [0.9, -0.05, -1.7] },
-  s1: { pos: [SEC / 2 + 4.0, 3.1, 5.8], tgt: [SEC / 2, -0.05, -0.2] },
-  s1low: { pos: [SEC * 0.78, 0.6, 3.9], tgt: [SEC * 0.42, -0.02, 0.8] },
-  joint: { pos: [SEC + 1.5, 0.75, 3.5], tgt: [SEC, -0.05, 1.5] },
-  deck1: { pos: [-1.9, 3.5, 4.6], tgt: [SEC * 0.62, 0, 0] },
-  tight: { pos: [SEC + 1.9, 2.25, 1.0], tgt: [SEC - 1.2, 0.1, -1.05] },
-  tight2: { pos: [SEC + 1.55, 1.85, 0.75], tgt: [SEC - 1.2, 0.12, -1.0] },
-  s2: { pos: [SEC * 1.5 + 4.6, 2.7, 5.6], tgt: [SEC * 1.5, -0.2, 0] },
-  s2low: { pos: [L + 1.7, 0.45, 4.1], tgt: [L - 1.6, -0.25, 1.0] },
-  crib: { pos: [10.7, 0.55, 3.7], tgt: [8.8, -0.35, 1.55] },
-  cageA: { pos: [7.15, 0.25, 0.45], tgt: [8.89, -0.52, 1.37] },
-  cageB: { pos: [7.3, 0.45, 2.75], tgt: [8.89, -0.54, 1.4] },
-  cageC: { pos: [7.85, 0.75, 3.15], tgt: [8.93, -0.5, 1.42] },
-  deck2: { pos: [L + 3.0, 3.4, 4.8], tgt: [SEC * 1.45, 0, 0] },
-  edge: { pos: [4.6, 0.8, 3.9], tgt: [6.4, 0.16, 2.44] },
-  stairs: { pos: [L + 3.4, 1.45, 2.15], tgt: [L + 0.3, 0.02, 0.96] },
-  guards: { pos: [L + 4.6, 2.7, 5.2], tgt: [L - 2.2, 0.6, 0.4] },
-  grille: { pos: [6.3, 1.9, -1.2], tgt: [6.6, 0.0, -2.75] },
-  second: { pos: [3.3, 1.9, 2.5], tgt: [0.9, 0.35, 0.3] },
-  end: { pos: [-3.6, 4.3, 6.7], tgt: [L / 2, 0, 0] },
+  mat: { pos: [L + 7.3, 2.4, 0.2], tgt: [L + 5.4, 0.0, -0.6] },
+  tools1: { pos: [L + 7.2, 1.7, 0.4], tgt: [L + 5.5, 0.0, 0.2] },
+  tools2: { pos: [L + 7.3, 1.8, 2.0], tgt: [L + 5.5, 0.0, 2.1] },
+  wall: { pos: [3.4, 1.65, -1.54], tgt: [-0.95, 1.5, -2.34] },
+  line: { pos: [L + 1.6, 3.2, 1.6], tgt: [0.2, -0.1, -1.4] },
+  high: { pos: [-1.9, 1.45, -1.04], tgt: [0.9, -0.05, -4.14] },
+  s1: { pos: [SEC / 2 + 4.0, 3.1, S1 + 5.8], tgt: [SEC / 2, -0.05, S1 - 0.2] },
+  s1low: { pos: [SEC * 0.78, 0.6, S1 + 3.9], tgt: [SEC * 0.42, -0.02, S1 + 0.8] },
+  joint: { pos: [3.6, 0.85, 1.7], tgt: [1.8, -0.05, -0.05] },
+  deck1: { pos: [-1.9, 3.5, S1 + 4.6], tgt: [SEC * 0.62, 0, S1] },
+  tight: { pos: [SEC + 1.9, 2.25, S1 + 1.0], tgt: [SEC - 1.2, 0.1, S1 - 1.05] },
+  tight2: { pos: [SEC + 1.55, 1.85, S1 + 0.75], tgt: [SEC - 1.2, 0.12, S1 - 1.0] },
+  free: { pos: [6.0, 3.0, 2.3], tgt: [2.3, 0.0, -0.8] },
+  s2: { pos: [L + 3.3, 2.9, 4.6], tgt: [L / 2, -0.2, S2 - 0.6] },
+  s2low: { pos: [L + 1.7, 0.45, 3.4], tgt: [L - 1.6, -0.25, 1.6] },
+  cageA: { pos: [CAGE[0] - 1.74, 0.25, CAGE[1] - 0.92], tgt: [CAGE[0], -0.52, CAGE[1]] },
+  cageB: { pos: [CAGE[0] - 1.59, 0.45, CAGE[1] + 1.38], tgt: [CAGE[0], -0.54, CAGE[1] + 0.03] },
+  cageC: { pos: [CAGE[0] - 1.04, 0.75, CAGE[1] + 1.78], tgt: [CAGE[0] + 0.04, -0.5, CAGE[1] + 0.05] },
+  deck2: { pos: [L + 3.3, 3.6, 4.4], tgt: [L / 2, 0, S2 - 0.4] },
+  edge: { pos: [L + 1.6, 0.8, 0.9], tgt: [L, 0.16, 3.0] },
+  stairs: { pos: [L + 3.4, 1.45, 4.1], tgt: [L + 0.3, 0.02, 2.91] },
+  guards: { pos: [L + 4.8, 2.9, 3.6], tgt: [L / 2 - 0.3, 0.6, 1.6] },
+  grille: { pos: [2.4, 1.9, -3.6], tgt: [2.7, 0.0, -5.15] },
+  second: { pos: [3.3, 1.9, 0.06], tgt: [0.9, 0.35, -2.14] },
+  end: { pos: [L + 4.2, 6.2, -7.4], tgt: [L / 2, 0, 0] },
 };
 
 export const SEGMENTS = [
@@ -57,15 +64,18 @@ export const SEGMENTS = [
   },
   {
     id: 'materiel', min: 10,
-    band: { n: '', title: 'Matériel nécessaire et ÉPI', text: 'Barricade travaux en cours avec flasher orange · Armoire (trousse de premier soin et lave-yeux 2x) · Extincteur · Bois brut de 6\'\'X 6\'\' et de 3\'\'X 8\'\' · Coin de bois · Tire fond 6\'\'', detail: 'ÉPI : équipement de base obligatoire · Le travailleur applique la procédure, le superviseur voit au bon déroulement' },
+    band: { n: '', title: 'Matériel nécessaire et ÉPI', text: 'Barricade travaux en cours avec flasher orange · Armoire (trousse de premier soin et lave-yeux 2x) · Extincteur · Bois 2\'\'X4\'\' planés (ou bruts) · Bois brut de 6\'\'X6\'\' et de 3\'\'X8\'\' · Coins de bois · Tire-fonds 6\'\' · Lame à bois pour scie', detail: 'Outils : pied de biche, masse, marteau, sciotte, pinces à billots, niveau au laser Bosch, niveau de 48\'\', barres d’écaillage de 6\', 8\' et 10\', pingouin, scie va-et-vient · ÉPI : équipement de base obligatoire' },
     why: 'TOUJOURS TRANSPORTER LES GROSSES PIÈCES DE BOIS À DEUX.',
     lines: [
       [1, 'Avant de commencer : la barricade travaux en cours avec son flasher orange, l\'armoire avec la trousse de premiers soins pis les deux lave-yeux, l\'extincteur.'],
       [2, 'Pis le bois : du six par six brut, du trois par huit brut, des coins pis des tire-fonds de six pouces.'],
       [1, 'Une règle qui change pas : les grosses pièces de bois, on les transporte toujours à deux.'],
     ],
-    reveal: [{ cue: 'barricade', at: 0.05, span: 0.1 }, { cue: 'cabinet', at: 0.25, span: 0.1 }, { cue: 'ext', at: 0.35, span: 0.05 }],
-    cams: [{ t: 0.3, ...C.entr }, { t: 1, pos: [L + 5.6, 1.5, 2.2], tgt: [L + 3.0, 0.7, 1.2] }],
+    reveal: [{ cue: 'barricade', v: 19.0, vspan: 1.2 }, { cue: 'cabinet', v: 22.4, vspan: 0 }, { cue: 'ext', v: 25.6, vspan: 0 }],
+    // Bois, quincaillerie, outils et ÉPI étalés derrière la barricade ; les outils (que la voix
+    // ne nomme pas) défilent à la fin de la partie, avec leurs étiquettes.
+    show: [{ obj: 'materiel', vfrom: 26.6 }],
+    cams: [{ v: 18.2, ...C.entr }, { v: 21.4, ...C.entr }, { v: 22.6, pos: [L + 5.6, 1.5, -1.6], tgt: [L + 3.2, 0.7, -2.8] }, { v: 26.2, pos: [L + 5.6, 1.5, -1.6], tgt: [L + 3.2, 0.7, -2.8] }, { v: 27.6, ...C.mat }, { v: 38.6, ...C.mat }, { v: 40.0, ...C.tools1 }, { v: 44.8, ...C.tools1 }, { v: 46.0, ...C.tools2 }, { v: 51.5, ...C.tools2 }],
   },
   {
     id: 'inspection', min: 9,
@@ -73,7 +83,7 @@ export const SEGMENTS = [
     lines: [
       [1, 'Le superviseur inspecte les lieux avant d\'amener l\'équipement : un sol sans débris, plat, pis les fonds de trous trouvés et marqués sur le mur.'],
     ],
-    cams: [{ t: 0.35, ...C.wall }, { t: 1, pos: [2.4, 1.55, 0.3], tgt: [-0.95, 1.55, 0.2] }],
+    cams: [{ t: 0.35, ...C.wall }, { t: 1, pos: [2.4, 1.55, -2.14], tgt: [-0.95, 1.55, -2.24] }],
   },
   {
     id: 'e1', min: 9,
@@ -82,7 +92,7 @@ export const SEGMENTS = [
       [1, 'Étape un : plan de forage en main, on place le plancher d\'après la position prévue de la foreuse. On trace la ligne à la peinture, bien droite sur toute la longueur : seize par trente-deux.'],
     ],
     reveal: [{ cue: 'line', at: 0.2, span: 0.4 }],
-    cams: [{ t: 0.25, ...C.line }, { t: 1, pos: [-2.2, 3.0, 2.6], tgt: [4.2, -0.15, -1.6] }],
+    cams: [{ t: 0.25, ...C.line }, { t: 1, pos: [L + 3.4, 4.6, 2.2], tgt: [0.9, -0.15, -0.6] }],
   },
   {
     id: 'e2', min: 9,
@@ -91,7 +101,7 @@ export const SEGMENTS = [
       [1, 'Étape deux : avec le niveau au laser Bosch, on trouve le point le plus haut du sol. Le premier madrier repose directement là, sur le sol : c\'est le repère de niveau pour tout le reste.'],
     ],
     show: [{ obj: 'laser', from: 0.1, to: 1 }, { obj: 'highMark', from: 0.45, to: 1 }],
-    cams: [{ t: 0.3, ...C.high }, { t: 1, pos: [-1.4, 2.4, 3.2], tgt: [2.4, -0.1, -0.6] }],
+    cams: [{ t: 0.3, ...C.high }, { t: 1, pos: [-1.4, 2.4, 0.76], tgt: [2.4, -0.1, -3.04] }],
   },
   {
     id: 'e3', min: 10,
@@ -104,7 +114,7 @@ export const SEGMENTS = [
     ],
     show: [{ obj: 'laser', from: 0, to: 0.3 }],
     reveal: [{ cue: 'joist1', at: 0.15, span: 0.05 }],
-    cams: [{ t: 0.3, ...C.s1 }, { t: 1, pos: [SEC / 2 + 3.4, 2.6, 5.0], tgt: [SEC / 2, -0.05, -0.6] }],
+    cams: [{ t: 0.3, ...C.s1 }, { t: 1, pos: [SEC / 2 + 3.4, 2.6, S1 + 5.0], tgt: [SEC / 2, -0.05, S1 - 0.6] }],
   },
   {
     id: 'e4', min: 10,
@@ -113,7 +123,7 @@ export const SEGMENTS = [
       [1, 'Étape quatre : un six par six à seize pieds du premier, pour un cadrage de seize par seize bien droit. Les autres entre les deux, à trente-deux pouces centre.'],
     ],
     reveal: [{ cue: 'joistFar', at: 0.08, span: 0.05 }, { cue: 'joists1', at: 0.3, span: 0.45 }],
-    cams: [{ t: 0.4, ...C.s1 }, { t: 1, pos: [SEC / 2 + 2.6, 4.2, 4.6], tgt: [SEC / 2, -0.05, 0] }],
+    cams: [{ t: 0.4, ...C.s1 }, { t: 1, pos: [SEC / 2 + 2.6, 4.2, S1 + 4.6], tgt: [SEC / 2, -0.05, S1] }],
   },
   {
     id: 'e5', min: 14,
@@ -124,7 +134,7 @@ export const SEGMENTS = [
     ],
     show: [{ obj: 'level', from: 0.05, to: 0.5 }],
     reveal: [{ cue: 'support1', at: 0.35, span: 0.55 }],
-    cams: [{ t: 0.15, pos: [2.9, 1.2, 2.6], tgt: [2.2, 0.15, 0.4] }, { t: 0.45, ...C.s1low }, { t: 1, pos: [SEC * 0.55, 0.45, 3.6], tgt: [SEC * 0.3, -0.02, 0.6] }],
+    cams: [{ t: 0.15, pos: [2.9, 1.2, S1 + 2.6], tgt: [2.2, 0.15, S1 + 0.4] }, { t: 0.45, ...C.s1low }, { t: 1, pos: [SEC * 0.55, 0.45, S1 + 3.6], tgt: [SEC * 0.3, -0.02, S1 + 0.6] }],
   },
   {
     id: 'e5b', min: 9,
@@ -133,7 +143,7 @@ export const SEGMENTS = [
       [1, 'Au bout de la première section, on met tout de suite le blocage qui va porter aussi les madriers de la deuxième. Les deux sections vont être parfaitement égales.'],
     ],
     reveal: [{ cue: 'joint1', at: 0.15, span: 0.5 }],
-    cams: [{ t: 0.3, ...C.joint }, { t: 1, pos: [SEC + 1.0, 0.95, 3.0], tgt: [SEC, -0.05, 0.4] }],
+    cams: [{ t: 0.3, ...C.joint }, { t: 1, pos: [L + 0.7, 1.0, 1.5], tgt: [L - 1.7, -0.05, -0.05] }],
   },
   {
     id: 'e6', min: 14,
@@ -146,7 +156,7 @@ export const SEGMENTS = [
     ],
     // Planches posées une à une, sans serrage : de petits écarts restent entre elles.
     reveal: [{ cue: 'deck1', from: 0, to: 1, at: 0.08, span: 0 }, { cue: 'screws1', at: 0.16, span: 0 }, { cue: 'deck1', from: 1, to: 11, at: 0.25, span: 0.7 }],
-    cams: [{ t: 0.25, ...C.deck1 }, { t: 1, pos: [-0.8, 2.6, 4.0], tgt: [SEC * 0.5, 0, 0] }],
+    cams: [{ t: 0.25, ...C.deck1 }, { t: 1, pos: [-0.8, 2.6, S1 + 4.0], tgt: [SEC * 0.5, 0, S1] }],
   },
   {
     id: 'e7', min: 13,
@@ -168,7 +178,7 @@ export const SEGMENTS = [
     lines: [
       [1, 'Étape huit : on laisse environ deux planches libres au bout. Ça donne la place pour partir la deuxième section ; on les visse à la fin pour joindre les deux.'],
     ],
-    cams: [{ t: 0.35, ...C.joint }, { t: 1, pos: [SEC + 1.8, 1.6, 3.4], tgt: [SEC - 0.3, 0.1, 0.3] }],
+    cams: [{ t: 0.35, pos: [L + 1.4, 1.5, 1.9], tgt: [L / 2, 0.05, -0.4] }, { t: 1, ...C.free }],
   },
   {
     id: 'e9', min: 8,
@@ -188,7 +198,7 @@ export const SEGMENTS = [
     ],
     show: [{ obj: 'laser2', from: 0, to: 0.4 }],
     reveal: [{ cue: 'support2', v: 179.6, vspan: 2.0 }, { cue: 'guide', v: 181.2, vspan: 0 }, { cue: 'sleepers', v: 186.0, vspan: 2.6 }],
-    cams: [{ t: 0.3, ...C.s2 }, { t: 1, pos: [SEC * 1.5 + 3.6, 1.6, 5.2], tgt: [SEC * 1.5, -0.25, 0.3] }],
+    cams: [{ t: 0.3, ...C.s2 }, { t: 1, pos: [L + 3.2, 1.7, 4.2], tgt: [L / 2, -0.25, S2 - 0.2] }],
   },
   {
     id: 'e11', min: 14,
@@ -201,7 +211,7 @@ export const SEGMENTS = [
     // Cage (cas spécial) : gros plan, plancher en transparence, montée couche par couche.
     reveal: [{ cue: 'joists2', v: 194.4, vspan: 3.6 }, { cue: 'cribFocus', v: 204.0, vspan: 9.6 }, { cue: 'cribOther', v: 214.4, vspan: 1.6 }],
     ghost: { vfrom: 203.2, vto: 230 },
-    cams: [{ v: 194.0, ...C.s2 }, { v: 202.6, pos: [SEC * 1.5 + 3.4, 1.5, 4.4], tgt: [SEC * 1.5 + 0.6, -0.3, 0.9] }, { v: 205.2, ...C.cageA }, { v: 212.5, ...C.cageB }, { v: 217.6, ...C.cageC }],
+    cams: [{ v: 194.0, ...C.s2 }, { v: 202.6, pos: [L + 2.4, 1.5, 4.6], tgt: [CAGE[0] + 0.4, -0.3, CAGE[1] - 0.4] }, { v: 205.2, ...C.cageA }, { v: 212.5, ...C.cageB }, { v: 217.6, ...C.cageC }],
   },
   {
     id: 'e12', min: 10,
@@ -210,7 +220,7 @@ export const SEGMENTS = [
       [1, 'Étape douze : on couvre la deuxième section en répétant les étapes six pis sept. Les deux planches de jonction sont vissées à la fin.'],
     ],
     reveal: [{ cue: 'deck2', at: 0.05, span: 0.6 }, { cue: 'screws2', at: 0.68, span: 0.08 }, { cue: 'joinPlanks', at: 0.78, span: 0.08 }, { cue: 'joinScrews', at: 0.9, span: 0 }],
-    cams: [{ t: 0.3, ...C.deck2 }, { t: 1, pos: [L + 2.4, 2.6, 4.2], tgt: [SEC, 0, 0] }],
+    cams: [{ t: 0.3, ...C.deck2 }, { t: 1, pos: [L + 2.2, 2.4, 1.6], tgt: [2.2, 0, -0.2] }],
   },
   {
     id: 'e13', min: 9,
@@ -218,7 +228,7 @@ export const SEGMENTS = [
     lines: [
       [1, 'Étape treize : rien ne dépasse. Les bouts de six par six pis de trois par huit sont coupés carrés, égal avec le bord. Un bout qui dépasse, c\'est une chute.'],
     ],
-    cams: [{ t: 0.35, ...C.edge }, { t: 1, pos: [3.8, 0.9, 3.9], tgt: [5.6, 0.16, 2.44] }],
+    cams: [{ t: 0.35, ...C.edge }, { t: 1, pos: [L + 1.4, 0.9, 0.6], tgt: [L, 0.16, 2.2] }],
   },
   {
     id: 'e14', min: 12,
@@ -227,16 +237,16 @@ export const SEGMENTS = [
       [1, 'Étape quatorze : ici, le plancher dépasse douze pouces. Il faut des marches : seize pouces de profondeur, entre trente-six pis soixante pouces de large, douze pouces de haut au maximum. On vise neuf.'],
     ],
     reveal: [{ cue: 'stairs', at: 0.1, span: 0.6 }],
-    cams: [{ t: 0.3, ...C.stairs }, { t: 1, pos: [L + 2.6, 1.0, 2.1], tgt: [L + 0.3, 0.0, 0.96] }],
+    cams: [{ t: 0.3, ...C.stairs }, { t: 1, pos: [L + 2.6, 1.0, 4.05], tgt: [L + 0.3, 0.0, 2.91] }],
   },
   {
     id: 'e15', min: 15,
-    band: { n: '15', title: 'Garde-corps (RSST, art. 12)', text: 'Si le plancher est plus haut que 12 pouces, des garde-corps devront être installés et respecter l’article 12 du RSST. Une lisse inférieure doit être ajoutée pour les endroits sur le plancher où les travailleurs ont accès.', detail: 'Ici : au bout du plancher, côté galerie (vide) ; le long des parois, le grillage ferme l’écart · lisse supérieure 1 m à 1,2 m · lisse intermédiaire · plinthe d’au moins 90 mm' },
+    band: { n: '15', title: 'Garde-corps (RSST, art. 12)', text: 'Si le plancher est plus haut que 12 pouces, des garde-corps devront être installés et respecter l’article 12 du RSST. Une lisse inférieure doit être ajoutée pour les endroits sur le plancher où les travailleurs ont accès.', detail: 'Ici : aux deux bouts de la section 2 (côté galerie et côté front de taille) ; le long des parois, le grillage ferme l’écart · lisse supérieure 1 m à 1,2 m · lisse intermédiaire · plinthe d’au moins 90 mm' },
     lines: [
       [1, 'Étape quinze : plus de douze pouces de haut pis un vide, des garde-corps selon l\'article douze du RSST. La lisse du haut entre un mètre pis un mètre vingt, une lisse à mi-hauteur, pis une plinthe d\'au moins quatre-vingt-dix millimètres.'],
     ],
     reveal: [{ cue: 'guards', at: 0.08, span: 0.6 }],
-    cams: [{ t: 0.3, ...C.guards }, { t: 1, pos: [L + 3.4, 1.9, 4.4], tgt: [L - 1.4, 0.7, 1.0] }],
+    cams: [{ t: 0.3, ...C.guards }, { t: 1, pos: [L + 3.2, 1.9, 2.8], tgt: [L - 1.6, 0.7, 2.4] }],
   },
   {
     id: 'e16', min: 7,
@@ -245,7 +255,7 @@ export const SEGMENTS = [
       [1, 'Étape seize : plus d\'une marche, des mains courantes des deux bords.'],
     ],
     reveal: [{ cue: 'handrails', at: 0.15, span: 0.3 }],
-    cams: [{ t: 0.4, ...C.stairs }, { t: 1, pos: [L + 3.0, 1.7, 2.2], tgt: [L + 0.3, 0.3, 0.96] }],
+    cams: [{ t: 0.4, ...C.stairs }, { t: 1, pos: [L + 3.0, 1.7, 4.15], tgt: [L + 0.3, 0.3, 2.91] }],
   },
   {
     id: 'e17', min: 9,
@@ -254,7 +264,7 @@ export const SEGMENTS = [
       [1, 'Étape dix-sept : entre le plancher pis le mur, douze pouces ou moins ? Un grillage de vingt-quatre pouces au bas du mur. Le pied passe pas dans le trou.'],
     ],
     reveal: [{ cue: 'grille', at: 0.12, span: 0.3 }],
-    cams: [{ t: 0.35, ...C.grille }, { t: 1, pos: [7.4, 1.8, -1.1], tgt: [6.4, 0.0, -2.75] }],
+    cams: [{ t: 0.35, ...C.grille }, { t: 1, pos: [3.5, 1.8, -3.5], tgt: [2.5, 0.0, -5.15] }],
   },
   {
     id: 'sec', min: 16,
@@ -264,7 +274,7 @@ export const SEGMENTS = [
       [1, 'Les deux planches les plus proches sont vissées, la dernière arrive à trois pouces de la tour. À chaque changement d\'angle, on les ajuste. Pis pas de bois plané sur les planchers.'],
     ],
     reveal: [{ cue: 'secondary', at: 0.15, span: 0.45 }],
-    cams: [{ t: 0.2, ...C.ov }, { t: 0.5, ...C.second }, { t: 1, pos: [2.9, 1.5, 1.9], tgt: [0.8, 0.4, 0.2] }],
+    cams: [{ t: 0.2, ...C.ov }, { t: 0.5, ...C.second }, { t: 1, pos: [2.9, 1.5, -0.54], tgt: [0.8, 0.4, -2.24] }],
   },
   {
     id: 'demont', min: 12,
@@ -273,7 +283,7 @@ export const SEGMENTS = [
       [1, 'Au démantèlement, c\'est l\'inverse : le plancher secondaire d\'abord, le principal en commençant par les planches du fond, les tire-fonds enlevés à mesure.'],
       [1, 'À la fin : clôture orange pis carte de ruban rouge. Trou non arpenté et non cimenté, la date, le nom du superviseur.'],
     ],
-    cams: [{ t: 0.4, ...C.end }, { t: 1, pos: [-2.6, 3.4, 5.6], tgt: [L / 2, 0.2, 0] }],
+    cams: [{ t: 0.4, ...C.end }, { t: 1, pos: [-2.6, 4.4, 6.6], tgt: [L / 2, 0.2, 0] }],
   },
   {
     id: 'fin', min: 10, card: 'end',
@@ -324,7 +334,7 @@ const VOICE_END = 332.59;
 // Silences ajoutés dans la voix : [instant dans l'enregistrement, durée] (ex. cage, étape 11).
 const GAPS = { e11: [[203.45, 2.4]] };
 // Temps laissé après la voix (s) ; par défaut 0,4.
-const TAIL = { e11: 7.5, titre: 0.2, fin: 1.2, e15: 0.2, e7: 1.6 };
+const TAIL = { e11: 7.5, titre: 0.2, fin: 1.2, e15: 0.2, e7: 1.6, materiel: 12.6 };
 const LEAD = 0.3; // la voix démarre 0,3 s après le début de la partie
 const r24 = (x) => Math.round(x * 24) / 24;
 

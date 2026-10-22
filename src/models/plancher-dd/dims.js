@@ -156,8 +156,8 @@ export function dimensions() {
   at([4], dim([0, B66, zN], [0, B66, 0], '16 pi', [-0.45, 0, 0]));
   at([4], dim([joistX[2], B66 + 0.02, -2.0], [joistX[3], B66 + 0.02, -2.0], '≈ 32 po c/c', [0, 0.12, 0]));
   // Étape 5 : niveau de 48 po sur un 3 × 8 de 8 pi (en travers des madriers), appuis.
-  at([5], dim([2.3 - 24 * IN, B66 + P3 + 0.08, -2.0], [2.3 + 24 * IN, B66 + P3 + 0.08, -2.0], 'Niveau 48 po', [0, 0.16, 0]));
-  at([5], dim([2.3 - 4 * FT, B66 + P3, -2.0], [2.3 + 4 * FT, B66 + P3, -2.0], '3 × 8 de 8 pi min.', [0, 0, 0.28]));
+  at([5], dim([2.3 - 24 * IN, B66 + P3 + 0.08, -2.84], [2.3 + 24 * IN, B66 + P3 + 0.08, -2.84], 'Niveau 48 po', [0, 0.16, 0]));
+  at([5], dim([2.3 - 4 * FT, B66 + P3, -2.84], [2.3 + 4 * FT, B66 + P3, -2.84], '3 × 8 de 8 pi min.', [0, 0, 0.28]));
   at([5], dim([joistX[3], 0, SUPPORTS_Z[3]], [joistX[3], 0, SUPPORTS_Z[4]], `≈ ${po(SUPPORTS_Z[4] - SUPPORTS_Z[3])}`, [0.3, 0, 0]));
   at([5], tag([joistX[4], B66 + 0.05, secZ(0)], '6 appuis min. par madrier', { h: 0.04, color: '#ffffff' }));
   // Étape 6 : épaisseurs, 9 po en tout.

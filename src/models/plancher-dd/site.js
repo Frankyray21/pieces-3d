@@ -81,6 +81,8 @@ function rocks() {
     const z = (r() * 2 - 1) * (GAL - 0.12);
     // Roches hors de l'emprise du plancher, des marches et de la barricade.
     if (x > -0.25 && x < L + 1.4 && Math.abs(z) < W / 2 + 0.1) continue;
+    // Aire du matériel étalé derrière la barricade (présentation de la vidéo).
+    if (x > L + 4.0 && x < L + 7.6 && z > -4.3 && z < 3.5) continue;
     const sc = 0.025 + r() ** 2 * 0.09;
     const g = base.clone().scale(sc * (0.8 + r() * 0.5), sc * (0.5 + r() * 0.4), sc * (0.8 + r() * 0.5));
     g.rotateY(r() * 6.28).rotateX(r() * 0.6);
@@ -500,7 +502,7 @@ export function guides(S, high) {
     S.box(0.047, 0.02, 0.07, 'lampAmber', { pos: [0, P3 + 0.06, 0] }),
   );
   level.rotation.y = Math.PI / 2; // en travers des madriers (selon X)
-  level.position.set(2.3, B66, -2.0);
+  level.position.set(2.3, B66, -2.84);
   only(level, [5]);
   // Coins de serrage entre la planche vissée devant les coins et la suivante (planches selon X).
   const wedges = S.group();

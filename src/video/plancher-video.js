@@ -24,6 +24,7 @@ import { IN, FT, P3, P8, B66, W, L, SEC, DECK, ground, plankZ, TIGHT, joistX, GU
 import { lagScrews } from '../models/plancher-dd/lumber.js';
 import { timeline, RETENIR, stepCard, STEP_CARD, vt } from './plancher-script.js';
 import { Annotator } from './plancher-annot.js';
+import { materielGroup } from './plancher-materiel.js';
 
 const VW = 1280, VH = 540;
 const SEGS = timeline();
@@ -222,10 +223,12 @@ const extras = {
     S.box(48 * IN, 0.07, 0.045, 'blue', { pos: [0, P3 + 0.035, 0] }),
     S.box(0.07, 0.02, 0.047, 'lampAmber', { pos: [0, P3 + 0.06, 0] }),
   ),
+  // Matériel et outils de la procédure, étalés derrière la barricade (présentation du début).
+  materiel: materielGroup(S),
 };
 extras.highMark.position.set(high.x, high.y + 0.004, high.z);
 extras.highMark.children[2].rotation.x = Math.PI; // pointe vers le sol
-extras.level.position.set(2.3, B66, -2.0);
+extras.level.position.set(2.3, B66, -2.84);
 for (const o of Object.values(extras)) { o.visible = false; scene.add(o); }
 
 // ------------------------------------------------------------------ serrage des planches (étape 7)
@@ -449,7 +452,7 @@ function shadowSignature() {
     n++;
     s += n * (p.x * 1.31 + p.y * 7.13 + p.z * 3.77 + lf.obj.scale.x * 0.53);
   }
-  return `${n}|${s.toFixed(6)}`;
+  return `${n}|${s.toFixed(6)}|${extras.materiel.visible ? 1 : 0}`;
 }
 
 function render(t) {
