@@ -15,6 +15,9 @@ function soil(api, opts, x0, x1, z0, z1) {
   if (!opts.inPlace) api.part('G', groundPatch(api.S, x0, x1, z0, z1), [0, 0, 0], { noLabel: true });
 }
 
+// Bout de 6 × 6 de jonction : 24 po en travers, gardé sous le plancher à la rive.
+const JOINT_LEN = 24 * IN;
+const jointZ = (z) => Math.min(Math.max(z, -W / 2 + JOINT_LEN / 2), W / 2 - JOINT_LEN / 2);
 export const PER_SEC = Math.round(SEC / P8); // 24 planches de 3 × 8 sur 16 pi, par section
 // Tire-fonds au-dessus du premier et du dernier madrier, planche i (numérotation des deux sections).
 const ends = (i) => [joistZ[0], joistZ[joistZ.length - 1]].map((z) => [plankX(i), DECK, z]);
@@ -38,11 +41,15 @@ export function P04(api, opts = {}) {
       placeStack(api, stack(x, z, 0, 'z', { inFloor: true }), { refs: { b38: '3', b66: '4', crib: '4', wedge: '5' }, labeled, step: 5, explode: { wedge: [0, 0.28, 0], b38: [0, 0.12, 0] } });
     }
   }
-  // Blocage de jonction : à l'extrémité de chaque madrier, il portera aussi le
-  // madrier de la section 2 qui le prolonge.
+  // Jonction (étape 5, p. 6 et 9) : sous le bout de chaque madrier, un bout de
+  // 6 × 6 de 24 po en travers (sous les planches), sur son blocage ; il portera
+  // aussi le madrier de la section 2 qui le prolonge. Le madrier y est vissé.
   for (const z of joistZ) {
-    placeStack(api, stack(JOINT_X, z, 0, 'z', { inFloor: true }), { labeled, step: 5, group: { ref: '6', explode: [0.25, 0.12, 0] } });
+    const zc = jointZ(z);
+    put('7', lumber(S, [B66, B66, JOINT_LEN], [JOINT_X, -B66 / 2, zc]), [0, -0.3, 0], 5);
+    placeStack(api, stack(JOINT_X, zc, -B66, 'x', { inFloor: true }), { labeled, step: 5, group: { ref: '6', explode: [0, -0.5, 0] } });
   }
+  put('8', lagScrews(S, joistZ.map((z) => [JOINT_X - 1.5 * IN, B66, z])), [0, 0.6, 0], 5);
   return { view: { dir: [0.9, 0.75, 1.15] } };
 }
 
@@ -81,6 +88,8 @@ export function P10(api, opts = {}) {
   const labeled = new Set();
   // Madriers de la section 2 : bout à bout avec ceux de la section 1 (blocage de jonction).
   joistZ.forEach((z) => put('1', lumber(S, [SEC, B66, B66], [SEC * 1.5, B66 / 2, z]), [0, 0.75, 0], 11));
+  // Chaque madrier vissé dans le bout de 6 × 6 de jonction, comme celui de la section 1.
+  put('7', lagScrews(S, joistZ.map((z) => [JOINT_X + 1.5 * IN, B66, z])), [0, 0.9, 0], 11);
   // Soutiens 6 × 6 de 16 pi (selon Z) ; le dernier, à 16 pi de la section 1, est le madrier guide.
   SLEEPERS_X.forEach((x, k) => {
     const guide = k === SLEEPERS_X.length - 1;

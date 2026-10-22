@@ -79,7 +79,7 @@ const smooth = (t) => { t = Math.min(1, Math.max(0, t)); return t * t * (3 - 2 *
 // plus haute que le sol, d'où les soutiens 6 × 6 et l'escalier), léger dévers,
 // ondulations de roche concassée et un creux sous un coin (cage de bois).
 function rawGround(x, z) {
-  const drop = -0.33 * smooth((x - 1.2) / 8.2);
+  const drop = -0.33 * smooth((x - 0.45) / 8.2);
   const cross = -0.035 * (z + W / 2) / W;
   const dip = -0.5 * Math.exp(-((x - DIP.x) ** 2 + (z - DIP.z) ** 2) / (2 * 0.33 ** 2));
   const n = 0.012 * Math.sin(2.3 * x + 1.1 * z) * Math.cos(2.9 * z - 0.8 * x) + 0.006 * Math.sin(5.7 * x + 0.4) * Math.sin(4.3 * z + 1.2);

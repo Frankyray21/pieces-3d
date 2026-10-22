@@ -223,7 +223,7 @@
      "2",
      "",
      6,
-     "Madrier 6 × 6 × 16 pi en travers de la galerie (structure de base)",
+     "Madrier 6 × 6 × 16 pi le long de la galerie (structure de base)",
      {
       "pnText": "6 × 6 brut × 16 pi"
      }
@@ -231,16 +231,25 @@
     [
      "3",
      "",
-     7,
+     13,
      "Blocage 3 × 8 (24 po), dans le sens contraire des madriers",
      {
       "pnText": "3 × 8 brut × 24 po"
      }
     ],
     [
+     "4",
+     "",
+     1,
+     "Blocage 6 × 6 (18 po), dans le sens contraire des madriers",
+     {
+      "pnText": "6 × 6 brut"
+     }
+    ],
+    [
      "5",
      "",
-     38,
+     40,
      "Coin de bois (mise de niveau)",
      {
       "note": "Au moins 6 appuis par madrier (étape 5). Jamais de bois simplement empilé : un seul blocage (3 × 8 ou 6 × 6) et des coins ; là où le sol touche presque le madrier, des coins seulement.",
@@ -251,10 +260,29 @@
      "6",
      "",
      7,
-     "Blocage de jonction (porte aussi les madriers de la section 2)",
+     "Blocage sous le bout de 6 × 6 de jonction",
      {
       "note": "Étape 5 : placé en mettant de niveau le bout des 6 × 6 de la section 1.",
       "pnText": "3 × 8 / 6 × 6 brut"
+     }
+    ],
+    [
+     "7",
+     "",
+     7,
+     "Bout de 6 × 6 de jonction (24 po), en travers sous le bout des madriers, sous les planches",
+     {
+      "pnText": "6 × 6 brut"
+     }
+    ],
+    [
+     "8",
+     "",
+     7,
+     "Tire-fond 6 po : bout du madrier vissé dans le 6 × 6 de jonction",
+     {
+      "pnText": "Tire-fond 6 po",
+      "qty3d": 1
      }
     ],
     [
@@ -282,7 +310,7 @@
      "1",
      "",
      22,
-     "Planche 3 × 8 × 16 pi, dans le sens de la galerie",
+     "Planche 3 × 8 × 16 pi, en travers de la galerie",
      {
       "pnText": "3 × 8 brut × 16 pi"
      }
@@ -350,7 +378,7 @@
      "1",
      "",
      7,
-     "Madrier 6 × 6 × 16 pi en travers (le dernier sert de madrier guide)",
+     "Madrier 6 × 6 × 16 pi le long de la galerie, dans le prolongement de la section 1",
      {
       "pnText": "6 × 6 brut × 16 pi"
      }
@@ -359,7 +387,7 @@
      "2",
      "",
      6,
-     "Soutien 6 × 6 × 16 pi dans le sens contraire, sous les madriers",
+     "Soutien 6 × 6 × 16 pi en travers, sous les madriers (le dernier sert de madrier guide)",
      {
       "pnText": "6 × 6 brut × 16 pi"
      }
@@ -367,7 +395,7 @@
     [
      "3",
      "",
-     13,
+     14,
      "Blocage 3 × 8 (24 po)",
      {
       "pnText": "3 × 8 brut × 24 po"
@@ -376,7 +404,7 @@
     [
      "4",
      "",
-     17,
+     22,
      "Blocage 6 × 6 (18 po)",
      {
       "pnText": "6 × 6 brut × 18 po"
@@ -399,6 +427,16 @@
      {
       "link": "P12",
       "pseudo": true
+     }
+    ],
+    [
+     "7",
+     "",
+     7,
+     "Tire-fond 6 po : madrier de la section 2 vissé dans le 6 × 6 de jonction",
+     {
+      "pnText": "Tire-fond 6 po",
+      "qty3d": 1
      }
     ],
     [

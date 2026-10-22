@@ -94,7 +94,7 @@ export const ANNOTATIONS = {
     { v: 111.0, type: 'note', at: [2.8, B66, joistZ[5]], text: 'Au moins 6 appuis par madrier', dir: 'up' },
   ],
   e5b: [
-    { v: 114.6, type: 'note', at: [JOINT_X, 0.0, joistZ[4]], text: 'Blocage de jonction : porte les 2 sections', dir: 'up' },
+    { v: 114.6, type: 'note', at: [JOINT_X, -0.05, joistZ[4]], text: 'Bout de 6 × 6 en travers : porte les 2 sections', dir: 'up' },
   ],
   e6: [
     { v: 124.6, type: 'dim', a: [0, 0, zN], b: [0, DECK, zN], off: [-0.35, 0, -0.1], text: '9 po', sub: '6 × 6 + 3 × 8' },
