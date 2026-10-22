@@ -10,9 +10,13 @@ import REFS from './refs.js';
 
 export const IN = 0.0254;
 
-export const SLED = { len: 2.9, w: 0.864, railW: 0.102, railH: 0.152 };
+// Traîneau : longerons en tube 6 × 3 po (largeur hors tout 864 mm) ; le bâti du treuil (699 mm,
+// page 8.0) se loge entre eux et s'appuie dessus par ses longerons supérieurs (page 1.01).
+export const SLED = { len: 2.9, w: 0.864, railW: 0.076, railH: 0.152 };
 export const AXIS_Y = 1.235; // axe de la broche (avance à 0°)
-export const BEAM = { x0: -2.25, x1: 1.86, w: 0.3, h: 0.28, top: 0.905 }; // poutre d'avance (feed frame)
+// Poutre d'avance (feed frame) : dessous à 715 mm du sol (page 1.01 : le volant du treuil, capot en position
+// haute, passe juste dessous).
+export const BEAM = { x0: -2.25, x1: 1.86, w: 0.3, h: 0.19, top: 0.905 };
 export const PIVOT = { x: 0.45, y: 0.62 }; // axe de bascule sur le support d'avance
 
 /** Groupe de pose des pièces d'une liste : P(n° de pièce, objet, éclaté) → repère de la ligne. */

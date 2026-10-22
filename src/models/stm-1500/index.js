@@ -1,12 +1,14 @@
 import { P010, SLED_PORTS, HEAD_PORTS, SWIVEL_PORT } from './drill.js';
 import { P048 } from './head.js';
+import { P042, P039, P040, P041 } from './winch.js';
 import { P068, PP_PORTS, PP_CABLE, PP_N } from './powerpack.js';
 import { P078, CON_PACK, CON_ROT, CON_WATER, CON_SLED, CON_CABLE, CON_BACK_N, CON_SIDE_N } from './console.js';
 
 // Usinage Marcotte STM-1500 s/n STM-1500-128 (manuel de pièces de Machines
-// Roger, 96 pages). En 3D : l'ensemble (P002), la foreuse (P010) et sa tête
-// Boyles (P048), le groupe hydraulique 125 HP (P068) et la console (P078) ;
-// les autres assemblages s'affichent avec les dessins du manuel.
+// Roger, 96 pages). En 3D : l'ensemble (P002), la foreuse (P010), sa tête
+// Boyles (P048) et son treuil de câble 10 000 pi (P042, étapes P039 à P041),
+// le groupe hydraulique 125 HP (P068) et la console (P078) ; les autres
+// assemblages s'affichent avec les dessins du manuel.
 
 // P002 — Ensemble prêt à forer, disposé comme sur le plan de l'atelier (vue de
 // dessus : X vers la droite du plan, Z vers le bas) : foreuse à gauche, inclinée,
@@ -86,4 +88,4 @@ function P002(api) {
   return { view: { dir: [0.2, 1.1, 1.0] } };
 }
 
-export default { P002, P010, P048, P068, P078 };
+export default { P002, P010, P039, P040, P041, P042, P048, P068, P078 };

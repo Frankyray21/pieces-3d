@@ -140,10 +140,38 @@ PSEUDO = {
 }
 NOTES = {
     'P002': "Prêt à forer, disposé d'après le plan de l'atelier : foreuse à gauche, inclinée vers le trou ; console STM à droite de la foreuse, à plus de 3 m (3,3 m), commandes tournées vers l'opérateur qui se tient entre la console et le groupe et regarde la foreuse par-dessus la console ; groupe hydraulique en haut à droite, à plus de 3 m (5,5 m), raccords au bout tourné vers la console, interrupteur principal accessible du côté bas. Boyaux branchés au sol : groupe → console (pression, retour, drain) et câble de commande ; console → tête (rotation A et B), bloc du traîneau (avance, vérins) et eau vers l'émerillon (par-dessus le moteur de la tête), chaque boyau dans sa voie. Seul le matériel du manuel est en 3D.",
-    'P010': "Avance à 0° (horizontale) comme sur la page 1.01, sans le garde-corps grillagé ni le vérin supérieur ; le vérin d'avance double est logé dans la poutre. Les sous-ensembles qui ont leur liste ouvrent leur page (dessins du manuel).",
+    'P010': "Avance à 0° (horizontale) comme sur la page 1.01, sans le garde-corps grillagé ni le vérin supérieur ; le vérin d'avance double est logé dans la poutre. Treuil de câble posé sur le traîneau, au bout arrière, capot en position haute comme à la page 1.01 (volant sous la poutre) ; vérins de bascule dans le support d'avance, à l'extérieur des longerons, vérin de relevage entre le support et le treuil. Les sous-ensembles qui ont leur liste ouvrent leur page (dessins du manuel).",
     'P068': "Groupe posé sur ses patins : roues, moyeux et timon (options, pages 3.01 et 3.2) ne sont pas montés en 3D.",
     'P012': "Liste de débit (matériaux et longueurs en pouces) ; quantités illisibles pour trois lignes.",
+    'P042': "Treuil en position haute (page 8.0 : 642 mm hors tout), câble enroulé sur le tambour. Les listes des pages 8.1 à 8.4 valent pour les versions gauche et droite (UM-032-100A_L et _R) : une machine porte un tambour, une transmission par chaîne 80 et un moteur White ; côté transmissions comme sur la foreuse (page 1.01). Le cadre « option underground » de la page 8.0 (hors liste) n'est pas monté.",
 }
+
+# Treuil UM-032-100A (pages 8.1 à 8.4) : les listes valent pour les versions gauche et droite
+# (UM-032-100A_L et _R, page 8.0) ; une machine porte un seul tambour, une seule transmission et un
+# seul moteur. qty3d : nombre posé en 3D sur une machine (dessins des pages 8.1 à 8.4).
+DRAWN = {
+    'P042': {'6400-12-12': 2, 'B437-1500': 4, 'B750-2500': 2, 'UM-032-102A': 1, 'UM-032-104B': 1, 'UM-032-111F': 1,
+             'UM-032-112F': 1, 'UM-032-225F': 1, 'UM-032-241F': 1, 'UM-032-C2': 1, 'UM-041-208F': 1, 'UMV-10MW-12': 1,
+             'W375': 2, 'W750': 2, 'SS375-500': 1, 'SS313-375': 1},
+    'P039': {'B375-1250': 1, 'B375-3500': 3, 'SP250-1250': 2, 'SP375-3000': 1, 'UM-032-102F': 1, 'UM-032-103A': 1,
+             'UM-032-163F': 1, 'UM-032-169F': 1, 'W375': 4},
+    'P040': {'UM-032-109F': 1, 'UM-032-110F': 1, 'UM-032-162F': 1, 'UM-032-165F': 1, 'UM-032-224F': 1, 'UM-032-C1': 1},
+    'P041': {'UM-032-226F': 1},
+}
+# Quantités dessinées qui ne s'expliquent pas par les deux versions : note propre à la ligne.
+NOTES3D = {
+    ('P039', 'B375-1250'): "La liste (versions gauche et droite UM-032-100A_L et _R) indique 10 boulons ; la page 8.1 "
+                           "n'en dessine qu'un, la vis du bout de la vis-mère (en 3D) : les autres boulons ne sont pas dessinés.",
+    ('P039', 'W375'): "La liste (versions gauche et droite UM-032-100A_L et _R) indique 25 rondelles ; en 3D, 4 : sous "
+                      "les trois boulons du carter et sous la vis du bout. Les autres boulons ne sont pas dessinés.",
+}
+# Ensembles détaillés dans la même liste : la ligne de l'ensemble désigne ses pièces (n° des lignes).
+GROUPS = {
+    'P041': {'UM-041-014F': ['UM-041-164F', 'UM-041-106F', 'UM-041-155F', 'B375-1500', 'UM-041-020F', '',
+                             'UM-041-176F', 'UM-041-174F', 'CTP-125-2250']},
+}
+# Renvois d'étape dont l'assemblage a sa 3D (inséré dans le treuil complet).
+PSEUDO_3D = {'P039', 'P040', 'P041'}
 
 # ------------------------------------------------------------------ transcriptions à la main
 HAND = {
@@ -331,10 +359,23 @@ for aid, (title, fr, pn, sheets) in ASM.items():
             extra['note'] = 'Option non montée (groupe posé sur ses patins).'
             extra['no3d'] = True
             extra.pop('link', None)
+        n3d = DRAWN.get(aid, {}).get(r['pn'])
+        if n3d is not None and n3d != r['qty']:
+            extra['qty3d'] = n3d
+            extra['note'] = NOTES3D.get((aid, r['pn'])) or (
+                f"La liste vaut pour les versions gauche et droite (UM-032-100A_L et _R) : elle indique {r['qty']}, "
+                f"une machine en porte {n3d} (en 3D).")
         out.append([str(i), r['pn'], r['qty'], r['desc']] + ([extra] if extra else []))
         rmap.setdefault(r['pn'], str(i))
+    for row in out:
+        members = GROUPS.get(aid, {}).get(row[1])
+        if members:
+            if len(row) == 4:
+                row.append({})
+            row[4]['group'] = [rmap[m] for m in members]
     for j, (ppn, q, desc, link) in enumerate(PSEUDO.get(aid, []), len(out) + 1):
-        out.append([str(j), ppn, q, desc, {'link': link, 'pseudo': True, **({'no3d': True} if 'OPTION' in desc or q is None else {})}])
+        no3d = link not in PSEUDO_3D and ('OPTION' in desc or q is None)
+        out.append([str(j), ppn, q, desc, {'link': link, 'pseudo': True, **({'no3d': True} if no3d else {})}])
         rmap.setdefault(ppn, str(j))
     a = {'title': title, 'titleFr': fr, 'pn': pn, 'sheets': sheets, 'parts': out}
     if aid in NOTES:
@@ -363,7 +404,7 @@ data = {
               ['Tête de forage', 'UM-012-100UG Boyles, transmission Funk HMD-2355 4 vitesses, moteur A6VM160, 1 200 tr/min max'],
               ['Mandrin', 'Boyles H, passage Ø 3 7/8 po'],
               ['Serre-tiges de pied', 'Boyles 12HH'],
-              ['Treuil de câble', '10 000 pi (UM-032-100A), 2 moteurs White RE12'],
+              ['Treuil de câble', '10 000 pi (UM-032-100A), tambour à flasques Ø 490 mm, moteur White RE12, chaîne 80'],
               ['Réservoir', '110 gal US'],
               ['Foreuse à 0°', '4 202 × 864 × 1 731 mm, axe à 1 235 mm'],
               ['Groupe hydraulique', '2 460 × 1 225 × 1 548 mm'],

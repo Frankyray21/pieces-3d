@@ -100,10 +100,16 @@ pièces (numéro, quantité, page du manuel).
   boîte et serre-tiges Boyles 12HH, table, vérins de bascule, de relevage,
   d'avance double logé dans la poutre, jambes, attelage, plaque d'extrémité
   portant la rallonge, la poulie double et le guide de tiges, émerillon d'eau
-  au bout de la broche, treuil de câble posé à côté avec son câble passé sur la
-  poulie jusqu'au guide de tiges, boyaux des vérins (avance, bascule,
-  relevage) et des moteurs du treuil sur les blocs de raccords des longerons ;
-  sans le garde-corps ni le vérin supérieur ; mandrin rouge), la tête
+  au bout de la broche, treuil de câble posé sur le traîneau au bout arrière,
+  sous la poutre, avec son câble passé par le guide-câble et la poulie double
+  jusqu'au guide de tiges, boyaux des vérins (avance, bascule, relevage) et du
+  moteur du treuil sur les blocs de raccords des longerons ; sans le
+  garde-corps ni le vérin supérieur ; mandrin rouge), le treuil de câble
+  10 000 pi (P042 et ses étapes P039 à P041 : bâti, tambour à flasques et câble
+  enroulé, paliers, transmission par chaîne 80 depuis le moteur White, capots,
+  vis-mère et guide-câble à rouleaux, chaîne 35, volant, bras réglables ; une
+  machine porte un seul tambour et une seule transmission, les listes valant
+  pour les versions gauche et droite), la tête
   Boyles (P048 : boîte à chaîne triple, broche, roulements, joints, mandrin
   Boyles H, transmission Funk 4 vitesses, moteur A6VM, pompe de lubrification,
   filtre, visserie), le groupe hydraulique 125 HP posé sur ses patins, sans
