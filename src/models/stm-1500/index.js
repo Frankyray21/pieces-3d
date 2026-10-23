@@ -98,6 +98,15 @@ function P002(api) {
     const len = u.length();
     u.normalize().multiplyScalar(Math.min(0.3, len * 0.3));
     let pts = [...a, ga.clone().add(u), gb.clone().sub(u), ...b];
+    // Tronçons au sol redécoupés tous les 0,15 m au plus : la courbe (Catmull-Rom uniforme) reste alors sur son tracé
+    // aux coudes au lieu de déborder dans la voie voisine (ex. pression et retour au coin du groupe).
+    const low = (q) => q.y < FLOOR + r + 0.005;
+    pts = pts.flatMap((q, k) => {
+      const prev = pts[k - 1];
+      if (!prev || !low(prev) || !low(q)) return [q];
+      const n = Math.ceil(prev.distanceTo(q) / 0.15);
+      return [...Array.from({ length: n - 1 }, (_, j) => prev.clone().lerp(q, (j + 1) / n)), q];
+    });
     if (over) pts = bridge(pts, r, over);
     let L = 0;
     for (let k = 1; k < pts.length; k++) L += pts[k].distanceTo(pts[k - 1]);

@@ -111,7 +111,8 @@ const COL_BOT = tipOf(0.04, [cx, COL.y0, cz], '-y'); // 611P : entrée du drain 
 const DR_ELBOW = add(COL_BOT, [0, -0.14 * 0.045, 0]); // embout coudé du boyau de drain de la console
 const COL_IN = add(DR_ELBOW, [0, -0.7 * 0.045, 0.55 * 0.045]);
 // Vanne de démarrage DTDA-MHN-GAI du même côté du poteau du milieu que le collecteur (page 3.2, détail A) : sa petite
-// platine, soudée au bord du poteau, passe devant le bord −X de la face −Z du collecteur ; bloc GAI au niveau du dessus
+// platine passe devant le bord −X de la face −Z du collecteur et revient en équerre le long de la face +X du poteau,
+// où elle est soudée (le collecteur dépasse le poteau vers −Z) ; bloc GAI au niveau du dessus
 // du collecteur, cartouche et bobine dessous, 6400-6-6 dessus (coude vers le pilotage) et sur la face +X (vers le
 // collecteur).
 const GAI = { x: MID + t / 2 + 0.022, y0: 0.64, y1: 0.69, z: COL.z0 - 0.006 - 0.0225, pl: 0.045 };
@@ -409,6 +410,10 @@ export function P068(api) {
   const pl0 = MID + t / 2, pl1 = COL.x1 + 0.006;
   red.push(at(box(pl1 - pl0, 0.3, 0.01, 'red'), [(pl0 + pl1) / 2, 0.51, COL.z1 + 0.005]));
   red.push(at(box(GAI.pl, 0.16, 0.006, 'red'), [MID + t / 2 + GAI.pl / 2, 0.64, COL.z0 - 0.003]));
+  // Retour en équerre de cette petite platine contre la face +X du poteau, de son bord −Z jusqu'à la grande
+  // platine : soudé au poteau sur ses derniers millimètres et au bout de la grande platine.
+  const gz0 = COL.z0 - 0.006, gz1 = COL.z1;
+  red.push(at(box(0.006, 0.16, gz1 - gz0, 'red'), [MID + t / 2 + 0.003, 0.64, (gz0 + gz1) / 2]));
   // Patte du transformateur (poteau du milieu, flanc −Z) : bras et aile verticale.
   red.push(at(box(0.267, 0.006, 0.2365, 'red'), [0.0665, 0.683, -0.44125]));
   red.push(at(box(0.17, 0.041, 0.006, 'red'), [0.075, 0.6655, -0.324]));
