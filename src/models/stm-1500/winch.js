@@ -19,14 +19,16 @@
 // sur la foreuse (page 1.01). Les listes valent pour les versions gauche et
 // droite (UM-032-100A_L et _R) : une machine porte un seul tambour, une seule
 // transmission et un seul moteur (quantités dessinées : qty3d dans data.json).
-// Le cadre « option underground » de la page 8.0 (hors liste) n'est pas monté.
+// Le cadre « option underground » de la page 8.0 (hors liste) n'est monté que sur
+// la foreuse (option cadre, pages 1.00 et 1.01).
 // Repère : origine au sol sous le centre du bâti, X vers l'avant (moteur,
 // montants), Y vers le haut, Z le long de l'axe du tambour. Options : capot
 // (angle de la vis-mère au-dessus de l'horizontale, vers l'arrière, en degrés ;
 // 42° = position haute de la page 8.0, 642 mm), guide (position du guide-câble
 // le long de la vis, Z ; 0 = au milieu, sous le trou de graissage, comme à la
 // page 8.0), cable (false : sans le bout de câble sorti du guide,
-// la foreuse trace le câble jusqu'à la poulie double).
+// la foreuse trace le câble jusqu'à la poulie double), cadre (true : cadre
+// « underground » devant le bâti, comme sur la foreuse).
 import { lister, each } from './layout.js';
 
 // Bâti (page 8.0) : longueur 813, largeur 699 ; tubes du bas 2 × 4 po ; longerons supérieurs
@@ -256,8 +258,28 @@ export function P042(api, opts = {}) {
     frame.push(at(api.S.torus(0.008, 0.0015, 'steel', { axis: 'x' }), [BAR[0], BAR[1], s * 0.322]));
   }
   frame.push(at(cyl(0.009, 0.66, 'black', { axis: 'z', seg: 14 }), [BAR[0], BAR[1], 0]));
-  for (const y of [0.026, 0.074]) for (const z of [-0.2, 0, 0.2]) frame.push(at(ring(0.016, 0.009, 0.004, 'darkSteel', { axis: 'x', seg: 20 }), [L / 2 + 0.0015, y, z]));
+  // Six trous de la traverse avant (deux rangées de trois) : libres, ou boulons du cadre « underground ».
+  const TROUS_UG = [0.026, 0.074].flatMap((y) => [-0.2, 0, 0.2].map((z) => [y, z]));
+  if (!opts.cadre) for (const [y, z] of TROUS_UG) frame.push(at(ring(0.016, 0.009, 0.004, 'darkSteel', { axis: 'x', seg: 20 }), [L / 2 + 0.0015, y, z]));
   P('UM-032-101A', group(frame), [0, -0.25, 0]);
+
+  // Cadre « option for underground drill » (page 8.0, hors liste ; posé sur la foreuse, pages 1.00 et 1.01) : tubes
+  // 2 × 4 po couchés, 709 mm devant le bâti (1 677 mm hors tout), 699 mm de large, dessous au niveau du bâti ; deux
+  // tubes de côté, traverse avant, traverse arrière boulonnée contre la traverse avant du bâti (six boulons 1/2 po,
+  // têtes dans le bâti, écrous dans le cadre) ; deux patins de 456 mm sur les tubes de côté, de 164 à 619 mm devant
+  // le bâti. Sur la foreuse, les patins restent sur les tubes (|z| 0,299 à 0,350) : le bord du longeron du traîneau,
+  // au même endroit, porte déjà sa plaque surélevée (page 1.1).
+  if (opts.cadre) {
+    const x0 = L / 2, x1 = L / 2 + 0.709, zt = W / 2 - t / 2;
+    const ug = [
+      ...[-1, 1].map((s) => at(box(x1 - x0, h, t, 'red', { r: 0.005 }), [(x0 + x1) / 2, h / 2, s * zt])),
+      ...[x0 + t / 2, x1 - t / 2].map((x) => at(box(t, h, W - 2 * t, 'red', { r: 0.005 }), [x, h / 2, 0])),
+      ...[-1, 1].map((s) => at(box(0.456, 0.049, t, 'red', { r: 0.004 }), [x0 + 0.164 + 0.228, h + 0.0245, s * zt])),
+      ...TROUS_UG.map(([y, z]) => at(bolt(0.0127, 0, 'steel', { axis: '-x' }), [L / 2 - t, y, z])),
+      ...TROUS_UG.map(([y, z]) => at(nut(0.019, 0.011, 'steel', { axis: 'x' }), [x0 + t + 0.0055, y, z])),
+    ];
+    api.add(group(...ug));
+  }
 
   // 9 — Tambour UM-032-102A : fût, flasques, arbre Ø 2 po ; câble de la couche extérieure (spires
   // jointives, Ø 8 mm) entre les flasques.
@@ -339,18 +361,22 @@ export function P042(api, opts = {}) {
   P('UM-032-225F', at(box(0.03, 0.0127, 0.0127, 'steel'), [AXE[0], AXE[1] + 0.0254, Z80 - 0.002], [0, Math.PI / 2, 0]), [-0.1, 0.2, -0.42]);
   P('SS375-500', at(cyl(0.0048, 0.012, 'blackOxide', { seg: 8 }), [AXE[0], AXE[1] + 0.048, Z80 - 0.0125]), [-0.1, 0.3, -0.4]);
   P('UM-032-C2', merged([tube(chainLoop(MOT, 0.0571, AXE, 0.1134, Z80), 0.008, 'darkSteel', { closed: true, seg: 220, radial: 8 })], 'darkSteel'), [0.1, 0.1, -0.45]);
-  // Carter de la chaîne 80 (page 8.4) : deux tôles, chants ouverts, reliées par quatre entretoises tubulaires
+  // Carter de la chaîne 80 (page 8.4) : deux tôles, chants ouverts, reliées par cinq entretoises tubulaires
   // boulonnées à 15 mm du bord supérieur (page 8.0, vue de côté : têtes en (0,27 ; 0,25), (0,10 ; 0,31) et
-  // (−0,07 ; 0,37), la dernière sur le bout arrondi, au-dessus de l'axe du tambour) ; bout côté moteur coupé
+  // (−0,07 ; 0,37), deux sur le bout arrondi) ; bout côté moteur coupé
   // droit, pattes boulonnées sur le longeron supérieur ; les deux tôles sont percées au passage de la barre
   // transversale du bâti (Ø 22 mm).
   const N80 = [0.333, 0.943], U80 = [N80[1], -N80[0]], E80 = 0.3406; // bord supérieur : N80 · p = E80
   const bord = (t, d) => [(E80 - d) * N80[0] + t * U80[0], (E80 - d) * N80[1] + t * U80[1]]; // à d sous le bord
   const R80 = E80 - (N80[0] * AXE[0] + N80[1] * AXE[1]); // bout arrondi, tangent au bord supérieur
-  const g80 = hull([...circle(AXE, R80, 40), bord(0.196, 0), bord(0.196, 0.2)]);
+  // Bout côté moteur coupé à la verticale en X 0,298 (devant le montant, X 0,304) : il couvre le pignon 80B14 et la
+  // chaîne 80 avec 13 à 14 mm de marge (page 8.4 : aucune dent visible entre la tôle et le montant, page 8.0).
+  const g80 = hull([...circle(AXE, R80, 40), bord(0.196, 0), [0.298, 0.075]]);
   const barHole = [BAR[0], BAR[1], 0.011];
   const zs = [-0.252, -0.296]; // faces extérieures des deux tôles (4 mm)
-  const ent = [...[0.1714, -0.0089, -0.1892].map((t) => bord(t, 0.015)), [AXE[0] + (R80 - 0.015) * Math.cos(rad(112)), AXE[1] + (R80 - 0.015) * Math.sin(rad(112))]];
+  // Cinq entretoises : trois sous le bord supérieur, deux sur le bout arrondi (au-dessus de l'axe du tambour et à
+  // son bord arrière, au-dessus du passage de l'arbre, page 8.4).
+  const ent = [...[0.1714, -0.0089, -0.1892].map((t) => bord(t, 0.015)), ...[112, 158].map((a) => [AXE[0] + (R80 - 0.015) * Math.cos(rad(a)), AXE[1] + (R80 - 0.015) * Math.sin(rad(a))])];
   P('UM-032-104B', group(
     K.guard(g80, [[MOT[0], MOT[1], 0.016], [AXE[0], AXE[1], 0.03], barHole], [[AXE[0], AXE[1], 0.03], barHole], zs[0], zs[1], 'red', 0.004, false),
     ...[0.06, 0.16].map((x) => at(box(0.03, 0.004, 0.04, 'red', { r: 0.001 }), [x, UP_TOP + 0.002, -0.316])),
@@ -477,38 +503,52 @@ export function P041(api, opts = {}) {
       at(box(0.006, wallY[1] - wallY[0], 2 * zi, 'red', { r: 0.002 }), [TOLE.x[0] + 0.003, (wallY[0] + wallY[1]) / 2, 0]),
     ),
     K.strip(F(...fromHaut([TOLE.x[0] + 0.003, wallY[0]])), F(0.24, -0.095), 0.006, -zi, zi),
-    K.strip(F(0.29, 0.183), F(0.325, 0.143), 0.006, -zi, zi),
+    K.strip(F(0.305, 0.166), F(0.325, 0.143), 0.006, -zi, zi), // bande des charnières, arrêtée sous les nœuds
   )), [-0.2, 0.3, 0]);
 
-  // 2 — Capot avant UM-032-108A, à charnières : dessus (logo UM découpé dans la tôle, ouverture de contrôle
-  // du câble), rebord avant, joues latérales ; deux charnières sur la bande du capot arrière.
-  const H = [0.297, 0.175], T = [0.0506, 0.303], B3 = [-0.06, 0.255];
-  const len = Math.hypot(T[0] - H[0], T[1] - H[1]), ang = Math.atan2(-(T[1] - H[1]), T[0] - H[0]);
+  // 2 — Capot avant UM-032-108A, à charnières (pages 8.0, 8.3, P037 et 1.01) : dessus plié en deux pans — pan
+  // arrière à plat (position haute) de la charnière au pli, avec le logo UM découpé, pan avant incliné jusqu'au bord
+  // avant libre, avec l'ouverture de contrôle du câble (sous lui, on voit les flasques et le fût du tambour) ; deux
+  // joues triangulaires à pointe arrondie qui redescendent vers l'arrière sous le pan avant (page 1.01, vue à 0° :
+  // coin avant haut, bord avant de la joue à environ 65° jusqu'au-dessus du bras 116F) ; deux charnières sur la bande
+  // du capot arrière. Points (a, b) du cadre pivotant : H charnière, Fp pli, T bord avant, B3 pointe des joues.
+  const H = [0.297, 0.175], Fp = [0.209, 0.242], T = [0.0506, 0.303], B3 = [0.008, 0.178];
   const zc = 0.405, ct = 0.005;
+  const panAng = (p, q) => Math.atan2(-(q[1] - p[1]), q[0] - p[0]);
+  const ang = panAng(H, Fp); // pan arrière (charnières)
+  // Pan de tôle de p à q (plan du cadre), pleine largeur, trous dans le plan de la tôle (x le long de p → q, y = −z).
+  const pan = (p, q, holes) => {
+    const l = Math.hypot(q[0] - p[0], q[1] - p[1]);
+    const sh = K.sheet([[-l / 2, -zc], [l / 2, -zc], [l / 2, zc], [-l / 2, zc]], holes(l), ct, 'red', 0);
+    sh.rotation.x = -Math.PI / 2;
+    const g = group(sh);
+    g.position.set((p[0] + q[0]) / 2, -(p[1] + q[1]) / 2, 0);
+    g.rotation.z = panAng(p, q);
+    return g;
+  };
   // Lettres UM inclinées (ajourées), lisibles depuis l'avant : haut des lettres vers la charnière. Contours dans
-  // le plan de la tôle (x le long du capot, y = −z).
+  // le plan de la tôle (x le long du capot, y = −z) ; logo entre 17 et 97 mm du bord de la charnière.
   const U = [[0, 1], [0.18, 1], [0.18, 0.3], [0.25, 0.18], [0.45, 0.18], [0.52, 0.3], [0.52, 1], [0.7, 1], [0.7, 0.25], [0.58, 0.05], [0.45, 0], [0.25, 0], [0.12, 0.05], [0, 0.25]];
   const M = [[0, 0], [0.18, 0], [0.18, 0.65], [0.4, 0.25], [0.52, 0.25], [0.74, 0.65], [0.74, 0], [0.92, 0], [0.92, 1], [0.74, 1], [0.46, 0.5], [0.18, 1], [0, 1]];
-  const hl = 0.08, x0 = -0.296 * len;
-  const letter = (pts, du) => pts.map(([u, v]) => [x0 + hl / 2 - v * hl, (u + 0.25 * v + du) * hl - 0.08]);
-  const cx = len / 2 - 0.2955 * len, cw = 0.353 * len / 2, cd = 0.178; // ouverture de contrôle du câble
-  const top = K.sheet([[-len / 2, -zc], [len / 2, -zc], [len / 2, zc], [-len / 2, zc]],
-    [[[cx - cw, -cd], [cx - cw, cd], [cx + cw, cd], [cx + cw, -cd]], letter(U, 0), letter(M, 0.85)], ct, 'red', 0);
-  top.rotation.x = -Math.PI / 2;
-  const topG = group(top);
-  topG.position.set((H[0] + T[0]) / 2, -(H[1] + T[1]) / 2, 0);
-  topG.rotation.z = ang;
+  const hl = 0.08;
+  const letter = (x0, pts, du) => pts.map(([u, v]) => [x0 + hl / 2 - v * hl, (u + 0.25 * v + du) * hl - 0.08]);
+  const logo = (l) => { const x0 = -l / 2 + 0.0165 + hl / 2; return [letter(x0, U, 0), letter(x0, M, 0.85)]; };
+  // Ouverture de contrôle du câble (98 × 356 mm) sur le pan avant, de 30 à 128 mm du pli.
+  const ouverture = (l) => { const x0 = -l / 2 + 0.03, x1 = x0 + 0.098, cd = 0.178; return [[[x0, -cd], [x0, cd], [x1, cd], [x1, -cd]]]; };
+  // Pointe arrondie (R 12 mm) au-dessus du bras 116F, qui passe dans la même couche (|z| 0,405 à 0,415) : jeu de
+  // 6 mm et plus de la position haute (42°) jusqu'à 18° ; au-delà de 45°, le bras remonte devant la joue.
+  const joue = hull([H, Fp, T, ...circle([B3[0] + 0.012, B3[1] + 0.012], 0.012, 16)]).map(([a, b]) => [a, -b]);
   const knuckles = [[0.178, 0.328], [-0.33, -0.177]].map(([z0, z1]) => at(cyl(0.011, z1 - z0, 'steel', { axis: 'z', seg: 16 }), F(H[0] + 0.004, H[1] + 0.006, (z0 + z1) / 2)));
   P('UM-032-108A', K.frame(group(
-    at(group(topG), [0, 0, 0]),
-    K.strip(F(...T), F(...B3), ct, -zc, zc),
-    ...[-1, 1].map((s) => K.sheet([H, T, B3].map(([a, b]) => [a, -b]), [], 0.006, 'red', s * (zc + 0.003))),
+    pan(H, Fp, logo),
+    pan(Fp, T, ouverture),
+    ...[-1, 1].map((s) => K.sheet(joue, [], 0.006, 'red', s * (zc + 0.003))),
     ...knuckles,
   )), [0.1, 0.5, 0]);
   // Visserie des capots : boulons 3/8 po des charnières (sur le capot avant) et « boulon n° 1 » de
   // blocage de chaque joue sur le flanc (page 8.3, réglage).
   const hingeBolts = [0.21, 0.3, -0.21, -0.3].map((z) => {
-    const p = [H[0] + (T[0] - H[0]) * 0.07, H[1] + (T[1] - H[1]) * 0.07];
+    const p = [H[0] + (Fp[0] - H[0]) * 0.17, H[1] + (Fp[1] - H[1]) * 0.17]; // 19 mm du bord de la charnière
     const g = group(bolt(0.0095, 0.02, 'steel'));
     g.position.set(p[0] - Math.sin(ang) * (ct / 2), -p[1] + Math.cos(ang) * (ct / 2), z);
     g.rotation.z = ang; // tête sur le dessus du capot, tige vers l'intérieur

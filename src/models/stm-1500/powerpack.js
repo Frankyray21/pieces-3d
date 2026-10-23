@@ -78,38 +78,78 @@ const SUC = (() => {
 // Réservoir 110 gal : du poteau du milieu (bout arrière posé sur la traverse entre les poteaux du milieu)
 // au poteau d'angle avant, dessus 0,17 m sous le dessus des longerons (pages 3.0 et 3.1).
 const TANK = { x0: -0.105, x1: 1.03, y0: 0.825, y1: 1.235, w: 0.93 };
-// Vannes d'aspiration sous le fond : 3 po (A11VO130) et 1 1/2 po (A10VO45), mamelon cannelé dessous.
+// Vannes sous l'avant du fond, groupées (pages 3.01 et 3.6) : 3 po 306TD sur mamelon 324TD, about cannelé 318TD
+// (A11VO130), côté +Z ; 1 1/2 po 307TD sur 5404-24-24, about cannelé 317TD (A10VO45K, A10VO45N), côté −Z ;
+// troisième 1 1/2 po et 1 po 308TD bouchonnées, dans le coin +X/−Z. a : orientation du levier (rotation selon Y).
 const VALVES = [
-  { x: 0.52, z: -0.25, s: 0.08, d: 0.08, len: 0.1, nr: 0.045 },
-  { x: 0.72, z: -0.25, s: 0.05, d: 0.045, len: 0.08, nr: 0.03 },
-  { x: 0.95, z: -0.1, s: 0.05, d: 0.045, len: 0.08, nr: 0.03 },
+  { x: 0.83, z: 0.26, s: 0.08, d: 0.08, len: 0.1, nr: 0.045, a: -Math.PI / 2 },
+  { x: 0.74, z: -0.25, s: 0.05, d: 0.045, len: 0.08, nr: 0.03, a: Math.PI / 2 },
+  { x: 0.94, z: -0.13, s: 0.05, d: 0.045, len: 0.08, nr: 0.03, a: Math.PI / 2 },
+  { x: 0.86, z: -0.37, s: 0.05, nr: 0.03, a: 0, plug: true },
+  { x: 0.95, z: -0.32, s: 0.035, nr: 0.021, a: 0, plug: true },
 ].map((v) => {
   const vy = TANK.y0 - 0.05 - 1.15 * v.s, F = [v.x, vy - 1.15 * v.s, v.z];
-  return { ...v, vy, F, p: tipOf(v.len, F, '-y') };
+  return { ...v, vy, F, p: v.plug ? null : tipOf(v.len, F, '-y') };
 });
-// Filtres de retour RTF-47 sur le dessus, au bout arrière : entrée n° 1 vers −X, n° 2 vers +Z.
-const FILTERS = [{ x: 0.02, z: -0.12 }, { x: 0.02, z: 0.205 }];
+// Filtres de retour RTF-47 sur le dessus, au bout arrière : entrée n° 1 vers −X, n° 2 vers +Z (page 3.1, vue de dessus).
+const FILTERS = [{ x: 0.02, z: -0.12 }, { x: 0.02, z: 0.39 }];
 const F_IN = [[FILTERS[0].x - 0.065, 1.3, FILTERS[0].z], [FILTERS[1].x, 1.3, FILTERS[1].z + 0.065]];
 const F_TIP = [tipOf(0.07, F_IN[0], '-x'), tipOf(0.07, F_IN[1], 'z')];
-// Collecteur de retour UM-064-600PP dressé contre la platine du poteau du milieu (flanc +Z).
-const COL = { x0: -0.189, x1: -0.124, y0: 0.56, y1: 0.85, z0: 0.43, z1: 0.495 };
+// Bossage d'huile du refroidisseur AB-1202 du haut, côté pompes : retour vers l'entrée n° 1 du filtre.
+const COOL_OUT = [-0.44, 1.245 + 0.0975, 0.33];
+// Bouchon de remplissage à coude 2501-16-20 (sortie vers −X) : arrivée du retour du collecteur.
+const CAP_E = [0.32 - 0.55 * 0.05, TANK.y1 + 0.068 + 0.7 * 0.05, 0.39];
+// Collecteur de retour UM-064-600PP (bloc Lynch dressé, page 3.5) vissé sur la platine soudée à la face +X du poteau
+// du milieu (flanc +Z, page 3.01), la vanne de démarrage entre lui et le poteau (page 3.2, détail A) : drains des pompes sur la face −Z (601P, 602P, 601P), 603P dessus vers le
+// réservoir, 611P dessous pour le drain de la console, 604P bouchonné (610P) et 605P sur la face +X.
+const COL = { x0: -0.036, x1: 0.029, y0: 0.36, y1: 0.65, z0: 0.448, z1: 0.513 };
 const cx = (COL.x0 + COL.x1) / 2, cz = (COL.z0 + COL.z1) / 2;
-const COL_DR = [0.6, 0.66, 0.72].map((y) => tipOf(0.04, [cx, y, COL.z0], '-z')); // drains des pompes
-const COL_TOP = tipOf(0.045, [cx, COL.y1, cz], 'y'); // sortie vers le réservoir
-const COL_IN = tipOf(0.04, [cx, 0.62, COL.z1], 'z'); // entrée du drain de la console
-// Vanne de démarrage DTDA-MHN-GAI contre le collecteur : bloc GAI, cartouche dessous, raccords dessus.
-const GAI = { x: COL.x0 - 0.025, y0: 0.78, y1: 0.83, z: cz };
-const GAI_ELBOW = add(tipOf(0.035, [GAI.x, GAI.y1, GAI.z - 0.0125], 'y'), [0, 0.14 * 0.04, 0]);
+const COL_F = [{ y: 0.42, d: 0.02, len: 0.04 }, { y: 0.5, d: 0.024, len: 0.05 }, { y: 0.58, d: 0.02, len: 0.04 }];
+const COL_DR = COL_F.map(({ y, len }) => tipOf(len, [cx, y, COL.z0], '-z')); // vers A10VO45N, A11VO130, A10VO45K
+const COL_TOP = tipOf(0.045, [cx, COL.y1, cz], 'y'); // 603P : sortie vers le réservoir
+const COL_BOT = tipOf(0.04, [cx, COL.y0, cz], '-y'); // 611P : entrée du drain de la console
+const DR_ELBOW = add(COL_BOT, [0, -0.14 * 0.045, 0]); // embout coudé du boyau de drain de la console
+const COL_IN = add(DR_ELBOW, [0, -0.7 * 0.045, 0.55 * 0.045]);
+// Vanne de démarrage DTDA-MHN-GAI du même côté du poteau du milieu que le collecteur (page 3.2, détail A) : sa petite
+// platine, soudée au bord du poteau, passe devant le bord −X de la face −Z du collecteur ; bloc GAI au niveau du dessus
+// du collecteur, cartouche et bobine dessous, 6400-6-6 dessus (coude vers le pilotage) et sur la face +X (vers le
+// collecteur).
+const GAI = { x: MID + t / 2 + 0.022, y0: 0.64, y1: 0.69, z: COL.z0 - 0.006 - 0.0225, pl: 0.045 };
+const GAI_ELBOW = add(tipOf(0.035, [GAI.x, GAI.y1, GAI.z], 'y'), [0, 0.14 * 0.04, 0]);
 const GAI_OUT = add(GAI_ELBOW, [0, 0.7 * 0.04, -0.55 * 0.04]);
 // Boîte électrique Hoffman 30 × 24 × 12 po, porte vers −Z, sur le berceau du flanc −Z.
 const BOX = { x: -0.575, y0: 0.5368, h: 0.762, w: 0.61, d: 0.305, z1: -0.538 };
 
 // Raccords des boyaux de la console (P002), tous sortant du flanc +Z : pression → bride de refoulement
-// de l'A11VO130 ; retour → entrée n° 2 du filtre RTF-47 ; drain → entrée du collecteur de retour.
+// de l'A11VO130 ; retour → entrée n° 2 du filtre RTF-47 ; drain → embout coudé sur le 611P du collecteur.
 export const PP_N = [0, 0, 1];
 export const PP_PORTS = [PRESS, F_TIP[1], COL_IN];
-// Aucun câble de commande au manuel : point gardé pour P002 (presse-étoupe sous la boîte électrique).
+// Tracés de ces boyaux dans P002, du sol jusqu'au raccord (comme SLED_VIA de la foreuse) : chacun arrive au sol
+// dans sa voie au droit des descentes de la console (pression la plus proche de l'axe du groupe), tourne au-delà
+// des pattes du bout moteur, longe le flanc +Z au sol, monte dans l'axe de son raccord et y entre selon +Z, sans
+// passer à travers ni sous le cadre. Voies imbriquées (la pression au coin le plus large, à l'extérieur du flanc +Z) :
+// aucun boyau n'en croise un autre.
+const VIA_R = [0.022, 0.017, 0.017], VIA_Z = [Z1 + 0.31, Z1 + 0.21, Z1 + 0.11];
+const VIA_ZM = [-0.4, -0.5, -0.6], VIA_X = [-X1 - 0.5, -X1 - 0.4, -X1 - 0.3];
+export const PP_VIA = PP_PORTS.map((p, i) => {
+  const r = VIA_R[i], z = VIA_Z[i], x = VIA_X[i], fy = 0.025 + r;
+  return [[x - 0.3, fy, VIA_ZM[i]], [x, fy, VIA_ZM[i]], [x, fy, z], [p[0] - 0.25, fy, z], [p[0] - 0.1, fy, z], [p[0], fy + 0.06, z],
+    [p[0], fy + 0.2, z], ...(p[1] - 0.12 > fy + 0.25 ? [[p[0], p[1] - 0.12, z]] : []), [p[0], p[1], Math.max(z - 0.1, p[2] + 0.1)], [p[0], p[1], p[2] + 0.06],
+    [p[0], p[1], p[2] + 0.02], p];
+});
+// Aucun câble de commande au manuel : point gardé pour P002 (presse-étoupe sous la boîte électrique), qu'on aborde
+// par-dessous (PP_CABLE_N). Tracé dans P002, du sol jusqu'au presse-étoupe : au sol le long du flanc −Z (hors de la
+// porte et des patins), montée hors du flanc, passage au-dessus du fourreau longitudinal entre les tubes du berceau,
+// montée verticale sous la boîte.
 export const PP_CABLE = [BOX.x, BOX.y0 - 0.006, BOX.z1 + BOX.d / 2];
+export const PP_CABLE_N = [0, -1, 0];
+export const PP_CABLE_VIA = (() => {
+  // Passage au-dessus du fourreau longitudinal à côté du fourreau rond de x −0,57 (côté pompes), puis retour sous le
+  // presse-étoupe.
+  const [x, y, z] = PP_CABLE, r = 0.012, zo = -Z1 - 0.16, xc = x + 0.08;
+  return [[-X1 - 0.6, r + 0.002, zo], [-X1 - 0.2, r + 0.002, zo], [xc - 0.15, r + 0.002, zo], [xc - 0.04, 0.05, zo], [xc, 0.17, zo + 0.02],
+    [xc, 0.225, -Z1 - 0.02], [xc, 0.225, z - 0.06], [xc - 0.02, 0.28, z], [x + 0.02, 0.36, z], [x, 0.42, z], [x, y - 0.05, z], [x, y - 0.015, z], [x, y, z]];
+})();
 
 /** Tôle découpée : contour [[x, y], ...] dans le plan XY, trous (contours ou cercles [x, y, r]), épaisseur selon Z. */
 function slab(api, outline, holes, th, mat) {
@@ -364,8 +404,11 @@ export function P068(api) {
     red.push(at(box(t, t, W - 2 * t, 'red', { r: 0.003 }), [x, TANK.y0 - 0.006 - t / 2, 0]));
     rubber.push(at(box(t - 0.006, 0.006, W - 2 * t - 0.04, 'rubber'), [x, TANK.y0 - 0.003, 0]));
   }
-  // Platine du collecteur de retour (face −X du poteau du milieu, flanc +Z).
-  red.push(at(box(0.006, 0.42, 0.13, 'red'), [COL.x1 + 0.003, 0.74, 0.465]));
+  // Platine soudée à la face +X du poteau du milieu (flanc +Z, page 3.01) : collecteur de retour et, contre le
+  // poteau, petite platine de la vanne de démarrage (page 3.2, détail A).
+  const pl0 = MID + t / 2, pl1 = COL.x1 + 0.006;
+  red.push(at(box(pl1 - pl0, 0.3, 0.01, 'red'), [(pl0 + pl1) / 2, 0.51, COL.z1 + 0.005]));
+  red.push(at(box(GAI.pl, 0.16, 0.006, 'red'), [MID + t / 2 + GAI.pl / 2, 0.64, COL.z0 - 0.003]));
   // Patte du transformateur (poteau du milieu, flanc −Z) : bras et aile verticale.
   red.push(at(box(0.267, 0.006, 0.2365, 'red'), [0.0665, 0.683, -0.44125]));
   red.push(at(box(0.17, 0.041, 0.006, 'red'), [0.075, 0.6655, -0.324]));
@@ -419,13 +462,14 @@ export function P068(api) {
     at(box(0.05, 0.01, 0.1, 'red'), [sx, seat - 0.045 - 0.005, sz]),
     at(box(0.055, 0.015, 0.1, 'black', { r: 0.003 }), [sx, seat - 0.0375, sz]),
     at(box(0.055, 0.03, 0.1, 'yellow', { r: 0.004 }), [sx, seat - 0.015, sz]),
+    ...[-1, 1].map((u) => at(cyl(0.009, 0.002, 'steel', { axis: 'y', seg: 6 }), [sx, seat - 0.0011, sz + u * 0.03])), // vis fraisées TD70
     ...[-1, 1].map((u) => tube([[sx - ux, sTop + 0.006, sz + u * 0.035], [sx - ux, ub, sz + u * 0.035], [sx + ux, ub, sz + u * 0.035], [sx + ux, sTop + 0.006, sz + u * 0.035]], 0.0048, 'steel', { sharp: true, seg: 3 })),
     ...[-1, 1].flatMap((u) => [-1, 1].map((v) => group(at(washer(0.011, 0.005, 0.002, 'steel'), [sx + v * ux, sTop + 0.001, sz + u * 0.035]), at(nut(0.015, 0.009, 'steel'), [sx + v * ux, sTop + 0.0065, sz + u * 0.035])))),
   ), [0, -0.3, 0.4]);
 
   // 1 — Réservoir 110 gal (page 3.6) sur ses traverses : trappes d'inspection bombées, filtres de retour
   // RTF-47 (têtes sous les capots), bouchons (raccord 2501-16-20, reniflard), indicateur de niveau sur la
-  // face avant ; dessous : vannes d'aspiration 3 po et 1 1/2 po, mamelons cannelés.
+  // face avant ; dessous : vannes 3 po et 1 1/2 po à abouts cannelés, 1 1/2 po et 1 po bouchonnées, bande d'appui.
   const tt = TANK.y1, tx = (TANK.x0 + TANK.x1) / 2;
   const capAt = (x, z) => [at(box(0.15, 0.025, 0.15, 'red', { r: 0.006 }), [x, tt + 0.0125, z]), at(box(0.15, 0.006, 0.15, 'darkSteel', { r: 0.006 }), [x, tt + 0.028, z]),
     S.boltSet([-1, 1].flatMap((a) => [-1, 1].map((b) => [x + a * 0.055, tt + 0.031, z + b * 0.055])), 0.008, 0.02, 'steel')];
@@ -448,28 +492,41 @@ export function P068(api) {
     at(lathe([[0, 0], [0.035, 0], [0.035, 0.05], [0.028, 0.065], [0, 0.068]], 'grey', { seg: 28 }), [0.02, tt + 0.056, -0.33]),
     at(box(0.012, 0.19, 0.05, 'darkSteel', { r: 0.004 }), [TANK.x1 + 0.006, TANK.y0 + 0.24, -0.4]),
     at(box(0.004, 0.15, 0.02, 'glass'), [TANK.x1 + 0.014, TANK.y0 + 0.24, -0.4]),
-    ...VALVES.flatMap(({ x, z, s, d, len, nr, vy, F }) => [
+    at(box(0.07, 0.01, TANK.w - 0.04, 'red'), [0.555, TANK.y0 - 0.0049, 0]), // bande d'appui sous le fond (pages 3.01 et 3.1)
+    ...VALVES.flatMap(({ x, z, s, d, len, nr, vy, F, a, plug }) => [
       at(cyl(nr, 0.05, 'steel', { axis: 'y', seg: 20 }), [x, TANK.y0 - 0.025, z]),
-      at(group(at(S.ballValve(s, 'brass'), [0, 0, 0], [0, 0, -Math.PI / 2])), [x, vy, z], [0, Math.PI / 2, 0]),
-      seated(S, d, len, F, '-y'),
+      at(group(at(S.ballValve(s, 'brass'), [0, 0, 0], [0, 0, -Math.PI / 2])), [x, vy, z], [0, a, 0]),
+      plug ? at(cyl(nr * 1.1, 0.025, 'steel', { axis: 'y', seg: 6 }), [x, F[1] - 0.0125, z]) : seated(S, d, len, F, '-y'),
     ]),
   ), [0, 0.7, 0]);
 
-  // 15 — Collecteur de retour (alu) dressé sur sa platine : drains des pompes sur la face −Z, drain de la
-  // console sur la face +Z, sortie vers le réservoir dessus.
+  // 15 — Collecteur de retour (page 3.5) : bloc Lynch H2505H09003SF en acier gris, dressé contre sa platine et
+  // serré par deux vis 607P en diagonale (rondelles 609P et écrous 608P côté platine) ; raccords en laiton :
+  // 601P, 602P et 601P sur la face −Z (drains des pompes), 603P dessus, 611P dessous, 604P bouchonné par 610P et
+  // deux bouchons 605P sur la face +X.
+  const cy = (COL.y0 + COL.y1) / 2, sideX = COL.x1;
+  const b607 = [[cx - 0.016, COL.y0 + 0.028], [cx + 0.016, COL.y1 - 0.028]];
   P('UM-064-600PP', group(
-    at(box(COL.x1 - COL.x0, COL.y1 - COL.y0, COL.z1 - COL.z0, 'castAlu', { r: 0.004 }), [cx, (COL.y0 + COL.y1) / 2, cz]),
-    ...[0.6, 0.66, 0.72].map((y) => seated(S, 0.02, 0.04, [cx, y, COL.z0], '-z')),
-    seated(S, 0.024, 0.04, [cx, 0.62, COL.z1], 'z'), seated(S, 0.024, 0.045, [cx, COL.y1, cz], 'y'),
+    at(box(COL.x1 - COL.x0, COL.y1 - COL.y0, COL.z1 - COL.z0, 'grey', { r: 0.003 }), [cx, cy, cz]),
+    ...COL_F.map(({ y, d, len }) => seated(S, d, len, [cx, y, COL.z0], '-z', 'brass')),
+    seated(S, 0.03, 0.045, [cx, COL.y1, cz], 'y', 'brass'), seated(S, 0.024, 0.04, [cx, COL.y0, cz], '-y', 'brass'),
+    seated(S, 0.02, 0.04, [sideX, cy + 0.03, cz], 'x', 'brass'),
+    at(cyl(0.011, 0.014, 'brass', { axis: 'x', seg: 6 }), [sideX + 0.04, cy + 0.03, cz]),
+    ...[cy - 0.085, cy + 0.11].map((y) => at(cyl(0.016, 0.008, 'brass', { axis: 'x', seg: 6 }), [sideX + 0.004, y, cz])),
+    ...b607.map(([x, y]) => group(
+      at(bolt(0.0095, 0.089, 'steel', { axis: '-z' }), [x, y, COL.z0]),
+      at(washer(0.011, 0.005, 0.002, 'steel', { axis: 'z' }), [x, y, COL.z1 + 0.011]),
+      at(nut(0.015, 0.009, 'steel', { axis: 'z' }), [x, y, COL.z1 + 0.0165]),
+    )),
   ), [0, 0, 0.4]);
-  // 22 — Vanne de démarrage : bloc GAI contre le collecteur, cartouche DTDA-MHN et bobine dessous ;
-  // 23 — raccords dessus, 24 — coude vers le pilotage de l'A11VO130.
+  // 22 — Vanne de démarrage (page 3.2, détail A) : bloc GAI sur sa platine, cartouche DTDA-MHN et bobine noire
+  // dessous ; 23 — raccords dessus et sur la face +X, 24 — coude vers le pilotage de l'A11VO130.
   P('DTDA-MHN-GAI', group(
-    at(box(0.05, GAI.y1 - GAI.y0, 0.05, 'zinc', { r: 0.003 }), [GAI.x, (GAI.y0 + GAI.y1) / 2, GAI.z]),
+    at(box(0.04, GAI.y1 - GAI.y0, 0.045, 'castAlu', { r: 0.003 }), [GAI.x, (GAI.y0 + GAI.y1) / 2, GAI.z]),
     at(cyl(0.011, 0.05, 'steel', { axis: 'y', seg: 16 }), [GAI.x, GAI.y0 - 0.025, GAI.z]),
     at(cyl(0.022, 0.034, 'black', { axis: 'y', seg: 20 }), [GAI.x, GAI.y0 - 0.025, GAI.z]),
   ), [-0.2, 0, 0.4]);
-  each(P, '6400-6-6', [-0.0125, 0.0125].map((dz2) => seated(S, 0.016, 0.035, [GAI.x, GAI.y1, GAI.z + dz2], 'y')), [-0.2, 0.2, 0.4]);
+  each(P, '6400-6-6', [seated(S, 0.016, 0.035, [GAI.x, GAI.y1, GAI.z], 'y'), seated(S, 0.016, 0.035, [GAI.x + 0.02, GAI.y0 + 0.025, GAI.z], 'x')], [-0.2, 0.2, 0.4]);
   P('6500-06-06', at(fitting(0.016, 0.04, 'steel', { elbow: true }), GAI_ELBOW, [0, Math.PI, 0]), [-0.2, 0.3, 0.4]);
 
   // 30 — Boîte électrique Hoffman (porte vers −Z) sur son berceau, voyants et poignée du sectionneur derrière
@@ -500,22 +557,23 @@ export function P068(api) {
   each(P, 'NC375', tb2.map(([x, y]) => at(nut(0.015, 0.009, 'steel', { axis: 'z' }), [x, y, -0.3205])), [0, 0, -0.2]);
   // Pompe à main au poteau d'angle côté moteur (flanc +Z) : 2 — Fill-Rite FR150 (corps rouge, levier à
   // poignée en D, colonne de sortie 19 à 21), 39 — équerre, 40 — étrier autour du poteau, 41 — écrous.
-  const hp = { x: -0.965, y: 0.849, z: 0.43 };
+  // Page 3.01 : corps rond devant le capot du ventilateur, centre à 0,56 m du sol, levier jusqu'à 0,93 m.
+  const hp = { x: -0.965, y: 0.563, z: 0.43 }, lv = 0.355;
   P('FR150', group(
     at(cyl(0.075, 0.09, 'red', { axis: 'z', seg: 36 }), [hp.x, hp.y, hp.z]),
     at(cyl(0.022, 0.02, 'black', { axis: 'z', seg: 18 }), [hp.x, hp.y, hp.z + 0.055]),
-    at(box(0.022, 0.34, 0.012, 'steel', { r: 0.003 }), [hp.x, hp.y + 0.17, hp.z + 0.071]),
-    at(box(0.08, 0.012, 0.012, 'black', { r: 0.004 }), [hp.x, hp.y + 0.346, hp.z + 0.071]),
-    ...[-1, 1].map((s) => at(box(0.012, 0.035, 0.012, 'black', { r: 0.004 }), [hp.x + s * 0.034, hp.y + 0.3225, hp.z + 0.071])),
+    at(box(0.022, lv, 0.012, 'steel', { r: 0.003 }), [hp.x, hp.y + lv / 2, hp.z + 0.071]),
+    at(box(0.08, 0.012, 0.012, 'woodDark', { r: 0.004 }), [hp.x, hp.y + lv + 0.006, hp.z + 0.071]),
+    ...[-1, 1].map((s) => at(box(0.012, 0.035, 0.012, 'woodDark', { r: 0.004 }), [hp.x + s * 0.034, hp.y + lv - 0.0175, hp.z + 0.071])),
     at(cyl(0.012, 0.09, 'steel', { axis: 'y', seg: 14 }), [hp.x, hp.y - 0.075 - 0.045, hp.z]),
   ), [-0.2, 0, 0.35]);
   const shelf = { x0: -xm + t / 2, x1: -0.885, y: hp.y - 0.075 - 0.003, z0: 0.385, z1: Z1 - t - 0.006 };
   P('FBRA-002-204PP', group(
-    at(box(0.21, 0.11, 0.006, 'red'), [-0.995, 0.715, Z1 - t - 0.003]),
+    at(box(0.21, 0.11, 0.006, 'red'), [-0.995, shelf.y - 0.052, Z1 - t - 0.003]),
     at(plate(shelf.x1 - shelf.x0, shelf.z1 - shelf.z0, 0.006, 'red', { holes: [[hp.x - (shelf.x0 + shelf.x1) / 2, hp.z - (shelf.z0 + shelf.z1) / 2, 0.014]] }),
       [(shelf.x0 + shelf.x1) / 2, shelf.y, (shelf.z0 + shelf.z1) / 2]),
   ), [-0.1, 0, 0.3]);
-  const uA = -X1 - 0.0048, uB = -X1 + t + 0.0048, uy = 0.715, uz = Z1 - t - 0.008;
+  const uA = -X1 - 0.0048, uB = -X1 + t + 0.0048, uy = shelf.y - 0.052, uz = Z1 - t - 0.008;
   P('FBRA-002-213P', tube([[uA, uy, uz - 0.014], [uA, uy, Z1 + 0.0048], [uB, uy, Z1 + 0.0048], [uB, uy, uz - 0.014]], 0.0048, 'steel', { sharp: true, seg: 3 }), [-0.2, 0, 0.35]);
   each(P, 'LN375NC', [uA, uB].map((x) => at(nut(0.015, 0.009, 'steel', { axis: 'z' }), [x, uy, uz - 0.0045])), [-0.25, 0, 0.35]);
   const hpTop = [hp.x, hp.y + 0.075, hp.z];
@@ -530,33 +588,43 @@ export function P068(api) {
     ...[uA, uB].map((x) => at(washer(0.011, 0.005, 0.002, 'steel', { axis: 'z' }), [x, uy, uz + 0.001])),
   ], [0, 0, 0.3]);
 
-  // 27 — Refroidisseurs AB-1202 superposés au-dessus du moteur (flanc +Z), axe selon X : calandre, brides,
-  // bonnets, pattes noires boulonnées aux flasques du support ; colonnes de raccords entre eux.
-  const co = { x0: -0.876, x1: -0.264, z: 0.36, ys: [0.853, 1.258] };
-  co.ys.forEach((y, i) => P('AB-1202', group(
+  // 27 — Refroidisseurs AB-1202 superposés en haut du bout moteur (flanc +Z), axe selon X (page 3.2) : calandre,
+  // brides, bonnets carrés boulonnés aux deux bouts (deux orifices sur le bonnet côté moteur), un bossage d'huile
+  // sur le dessus à chaque bout, pattes noires à lumières aux deux bouts, vissées aux joues du support.
+  const co = { x0: -0.876, x1: -0.264, z: 0.33, ys: [1.035, 1.245], bz: [0.225, 0.435] };
+  const pz = [0.21, 0.45], pp = [-0.045, 0.045].map((u) => co.z + u); // pattes (z), orifices du bonnet (z)
+  const lum = (z, y) => [[z - 0.006, y - 0.016], [z + 0.006, y - 0.016], [z + 0.006, y + 0.016], [z - 0.006, y + 0.016]];
+  const patte = (x, y, front) => group(
+    at(slab(api, [[pz[0], y - 0.09], [pz[1], y - 0.09], [pz[1], y + 0.09], [pz[0], y + 0.09]],
+      [...co.bz.map((z) => lum(z, y)), ...(front ? pp.map((z) => [z, y, 0.024]) : [])], 0.006, 'black'), [x, 0, 0], [0, -Math.PI / 2, 0]),
+    at(box(0.03, 0.006, pz[1] - pz[0], 'black'), [x + Math.sign(-0.57 - x) * 0.018, y - 0.098, (pz[0] + pz[1]) / 2]),
+  );
+  co.ys.forEach((y) => P('AB-1202', group(
     at(cyl(0.0775, 0.4, 'black', { axis: 'x', seg: 32 }), [-0.57, y, co.z]),
     ...[-0.78, -0.36].map((x) => at(cyl(0.1, 0.02, 'black', { axis: 'x', seg: 32 }), [x, y, co.z])),
     ...[-0.83, -0.31].map((x) => at(box(0.08, 0.19, 0.19, 'black', { r: 0.03 }), [x, y, co.z])),
-    ...[co.x0 + 0.003, co.x1 - 0.003].map((x) => at(box(0.006, 0.18, 0.28, 'black'), [x, y, 0.365])),
-    ...[-0.7, -0.44].map((x) => at(cyl(0.022, 0.02, 'black', { axis: 'y', seg: 18 }), [x, y + (i ? -0.0875 : 0.0875), co.z])),
-    ...(i ? [] : [-0.7, -0.44].flatMap((x) => [
-      at(cyl(0.012, 0.211, 'brass', { axis: 'y', seg: 16 }), [x, 1.0555, co.z]),
-      ...[0.97, 1.0555, 1.14].map((yy) => at(nut(0.032, 0.02, 'brass'), [x, yy, co.z])),
-    ])),
+    ...pp.map((z) => at(cyl(0.02, 0.03, 'black', { axis: 'x', seg: 18 }), [-0.885, y, z])),
+    ...[-0.7, -0.44].map((x) => at(cyl(0.022, 0.02, 'black', { axis: 'y', seg: 18 }), [x, y + 0.0875, co.z])),
+    patte(co.x0 + 0.003, y, true), patte(co.x1 - 0.003, y, false),
   ), [0, 0, 0.5]));
-  // 28 — Support : flasques à lumières (bord plié contre le longeron du haut), cornières à lumières du haut et
-  // du bas qui portent la plaque 12 ; 34 — vis des pattes, 16 — rondelles, 17 — écrous (deux à double écrou).
-  const fl = (x) => at(slab(api, [[0.165, 0.72], [0.515, 0.72], [0.515, H - t], [0.165, H - t]], [0.25, 0.495].map((z) => [[z - 0.005, 0.78], [z + 0.005, 0.78], [z + 0.005, 1.33], [z - 0.005, 1.33]]), 0.008, 'red'), [x, 0, 0], [0, -Math.PI / 2, 0]);
+  // 28 — Support : joues à lumières (bord plié sous le longeron du haut), cornières à lumières du haut et du bas qui
+  // portent la plaque 12 côté +Z, tirant entre les joues ; 34 — vis des pattes, 16 — rondelles, 17 — écrous
+  // (deux à double écrou).
+  const fl = (x, front) => at(slab(api, [[0.19, 0.9], [0.515, 0.9], [0.515, H - t], [0.19, H - t]],
+    [...co.bz.map((z) => [[z - 0.005, 0.95], [z + 0.005, 0.95], [z + 0.005, 1.33], [z - 0.005, 1.33]]),
+      ...(front ? co.ys.flatMap((y) => pp.map((z) => [z, y, 0.024])) : [])], 0.008, 'red'), [x, 0, 0], [0, -Math.PI / 2, 0]);
+  const cw = 0.487; // âme des cornières
   P('FMX-005-203PP', group(
-    fl(co.x0 - 0.004), fl(co.x1 + 0.004),
-    at(box(0.048, H - t - 0.72, 0.006, 'red'), [co.x0 + 0.024, (0.72 + H - t) / 2, 0.512]),
-    at(box(0.048, H - t - 0.72, 0.006, 'red'), [co.x1 - 0.024, (0.72 + H - t) / 2, 0.512]),
+    fl(co.x0 - 0.004, true), fl(co.x1 + 0.004, false),
+    at(box(0.048, H - t - 0.9, 0.006, 'red'), [co.x0 + 0.024, (0.9 + H - t) / 2, 0.512]),
+    at(box(0.048, H - t - 0.9, 0.006, 'red'), [co.x1 - 0.024, (0.9 + H - t) / 2, 0.512]),
     ...[1.315, 1.07].flatMap((y) => [
-      at(slab(api, [[co.x0, y - 0.025], [co.x1, y - 0.025], [co.x1, y + 0.025], [co.x0, y + 0.025]], [[[-0.735, y - 0.007], [-0.435, y - 0.007], [-0.435, y + 0.007], [-0.735, y + 0.007]]], 0.006, 'red'), [0, 0, 0.217]),
-      at(box(co.x1 - co.x0, 0.006, 0.034, 'red'), [(co.x0 + co.x1) / 2, y + 0.022, 0.197]),
+      at(slab(api, [[co.x0, y - 0.025], [co.x1, y - 0.025], [co.x1, y + 0.025], [co.x0, y + 0.025]], [[[-0.735, y - 0.007], [-0.435, y - 0.007], [-0.435, y + 0.007], [-0.735, y + 0.007]]], 0.006, 'red'), [0, 0, cw]),
+      at(box(co.x1 - co.x0, 0.006, 0.034, 'red'), [(co.x0 + co.x1) / 2, y + 0.022, cw - 0.02]),
     ]),
+    at(cyl(0.008, co.x1 - co.x0, 'red', { axis: 'x', seg: 14 }), [(co.x0 + co.x1) / 2, 1.335, 0.199]),
   ), [0, 0, 0.35]);
-  const cb = co.ys.flatMap((y) => [co.x0, co.x1].flatMap((x) => [0.25, 0.495].map((z) => [x, y, z])));
+  const cb = co.ys.flatMap((y) => [co.x0, co.x1].flatMap((x) => co.bz.map((z) => [x, y, z])));
   const sgn = (x) => (x < -0.6 ? 1 : -1); // tête côté refroidisseur
   each(P, 'B312-1250', cb.map(([x, y, z]) => at(bolt(0.0079, 0.032, 'steel', { axis: sgn(x) > 0 ? 'x' : '-x' }), [x + sgn(x) * 0.0076, y, z])), [0, 0, 0.5]);
   const out8 = cb.map(([x, y, z]) => [x - sgn(x) * 0.008, y, z]);
@@ -569,9 +637,9 @@ export function P068(api) {
     ...out8.map(([x, y, z]) => at(nut(0.013, 0.008, 'steel', { axis: 'x' }), [x - sgn(x) * 0.0056, y, z])),
     ...out8.slice(0, 2).map(([x, y, z]) => at(nut(0.013, 0.008, 'steel', { axis: 'x' }), [x - sgn(x) * 0.0152, y, z])),
   ], [0, 0, 0.4]);
-  // 12 — Plaque grise ajourée « UM » derrière les refroidisseurs, vissée aux cornières du support (32 en haut,
-  // 33 dans les lumières des jambes) avec 31 — rondelles sous les têtes et en entretoise.
-  const um = { x0: -0.76, y0: 0.97, z: 0.2255 };
+  // 12 — Plaque grise ajourée « UM » sur le flanc +Z des refroidisseurs (pages 3.01 et 3.2), vissée aux cornières
+  // du support (32 en haut, 33 dans les lumières des jambes) avec 31 — rondelles sous les têtes et en entretoise.
+  const um = { x0: -0.76, y0: 0.97, z: cw + 0.0085 };
   const umOut = [[0, 0], [0.09, 0], [0.09, 0.15], ...arc(0.175, 0.15, 0.085, Math.PI, 0, 8), [0.26, 0], [0.35, 0], [0.35, 0.31], [0.33, 0.37], [0.27, 0.37], [0.25, 0.33],
     [0.1, 0.33], [0.08, 0.37], [0.02, 0.37], [0, 0.31]].map(([u, v]) => [um.x0 + u, um.y0 + v]);
   const slot = (u, v, w, h) => [[um.x0 + u - w / 2, um.y0 + v - h / 2], [um.x0 + u + w / 2, um.y0 + v - h / 2], [um.x0 + u + w / 2, um.y0 + v + h / 2], [um.x0 + u - w / 2, um.y0 + v + h / 2]];
@@ -617,7 +685,7 @@ export function P068(api) {
   ))), [0.5, 0, 0]);
 
   // Boyaux du groupe (non repérés au manuel) : aspirations (vannes du réservoir → pompes, embouts serrés
-  // sur les mamelons cannelés), drains des carters → collecteur, collecteur → filtre n° 1, pilotage
+  // sur les mamelons cannelés), drains des carters → collecteur, collecteur → bouchon à coude du réservoir, pilotage
   // (vanne de démarrage → bride de refoulement de l'A11VO130).
   const out = (E, d, a = 0.03, b2 = 0.06) => [E, add(E, d, a), add(E, d, b2)];
   const into = (...args) => out(...args).reverse();
@@ -638,15 +706,29 @@ export function P068(api) {
   };
   const [V0, V1, V2] = VALVES, [S0, S1, S2] = SUC;
   api.add(group(
+    // Aspiration 3 po : de la vanne (côté +Z) sous les pompes jusqu'à l'about du coude de l'A11VO130 (côté −Z).
     clamp({ E: V0.p, n: [0, -1, 0], rm: 0.0345, a: 0.05, b: 0.09 }, { E: S0.p, n: S0.n, rm: 0.0445, a: 0.05, b: 0.09 },
-      [[0.505, 0.31, -0.245], [0.42, 0.23, -0.225], [0.29, 0.21, -0.195], [0.18, 0.225, -0.172]], S0.r),
-    clamp({ E: S1.p, n: S1.n, rm: 0.0152 }, { E: V1.p, n: [0, -1, 0], rm: 0.0193 }, [[0.72, AX.y + 0.012, -0.215], [0.72, 0.5, -0.243]], S1.r),
+      [[0.8, 0.3, 0.25], [0.66, 0.235, 0.17], [0.5, 0.21, 0.02], [0.36, 0.205, -0.09], [0.22, 0.205, -0.2], [0.13, 0.215, -0.19]], S0.r),
+    clamp({ E: S1.p, n: S1.n, rm: 0.0152 }, { E: V1.p, n: [0, -1, 0], rm: 0.0193 }, [[0.73, AX.y + 0.014, -0.225]], S1.r),
     clamp({ E: S2.p, n: S2.n, rm: 0.0145, a: 0.015, b: 0.025, o: 0.016 }, { E: V2.p, n: [0, -1, 0], rm: 0.0193, a: 0.015, b: 0.025 }, [], S2.r),
-    hose([...out(COL_DR[0], [0, 0, -1], 0.03, 0.05), [-0.05, 0.63, 0.31], [0.15, 0.665, 0.17], [0.27, 0.7, 0.07], ...into(DRAINS[0].p, DRAINS[0].n, 0.03, 0.06)], 0.014),
-    hose([...out(COL_DR[1], [0, 0, -1], 0.03, 0.05), [0.0, 0.7, 0.33], [0.35, 0.715, 0.3], [0.6, 0.7, 0.12], ...into(DRAINS[1].p, DRAINS[1].n, 0.03, 0.06)], 0.012),
-    hose([...out(COL_DR[2], [0, 0, -1], 0.03, 0.05), [0.0, 0.75, 0.37], [0.4, 0.765, 0.37], [0.8, 0.7, 0.15], ...into(DRAINS[2].p, DRAINS[2].n, 0.03, 0.06)], 0.012),
-    hose([...out(COL_TOP, [0, 1, 0], 0.04, 0.08), [-0.2, 1.17, 0.3], [-0.23, 1.29, 0.0], ...into(F_TIP[0], [-1, 0, 0], 0.04, 0.08)], 0.016),
-    hose([...out(GAI_OUT, [0, 0, -1], 0.03, 0.05), [-0.21, 0.8, 0.3], [-0.12, 0.745, 0.25], [0.1, 0.72, 0.24], [0.34, 0.66, 0.2], ...into(PILOT, [0, 1, 0], 0.03, 0.06)], 0.009),
+    // Drains des carters → collecteur (601P, 602P, 601P), en nappes étagées au-dessus de la cloche et des pompes.
+    hose([...out(COL_DR[0], [0, 0, -1], 0.03, 0.05), [0.0, 0.47, 0.27], [0.04, 0.62, 0.23], [0.2, 0.655, 0.2], [0.4, 0.66, 0.05],
+      [0.62, 0.655, -0.02], [0.8, 0.635, 0.02], ...into(DRAINS[2].p, DRAINS[2].n, 0.03, 0.06)], 0.012),
+    hose([...out(COL_DR[1], [0, 0, -1], 0.03, 0.05), [0.0, 0.55, 0.31], [0.04, 0.7, 0.29], [0.18, 0.715, 0.14], ...into(DRAINS[0].p, DRAINS[0].n, 0.03, 0.06)], 0.014),
+    hose([...out(COL_DR[2], [0, 0, -1], 0.03, 0.05), [0.0, 0.65, 0.37], [0.08, 0.755, 0.33], [0.25, 0.765, 0.12], [0.5, 0.76, 0.06],
+      ...into(DRAINS[1].p, DRAINS[1].n, 0.03, 0.06)], 0.012),
+    // Sortie 603P du collecteur → coude 2501-16-20 du bouchon : montée entre le flanc +Z du réservoir et le cadre.
+    hose([...out(COL_TOP, [0, 1, 0], 0.04, 0.08), [0.0, 0.84, 0.487], [0.12, 0.98, 0.487], [0.17, 1.15, 0.487], [0.17, 1.25, 0.486],
+      [0.19, 1.31, 0.44], ...into(CAP_E, [-1, 0, 0], 0.04, 0.08)], 0.016),
+    // Pilotage : coude de la vanne de démarrage → 6801F-06-06 de la bride de refoulement de l'A11VO130.
+    hose([...out(GAI_OUT, [0, 0, -1], 0.03, 0.05), [-0.02, 0.77, 0.335], [0.03, 0.78, 0.33], [0.12, 0.8, 0.33], [0.3, 0.78, 0.24],
+      [0.4, 0.7, 0.195], ...into(PILOT, [0, 1, 0], 0.03, 0.06)], 0.009),
+    // Retour d'huile du refroidisseur du haut (bossage côté pompes) → entrée n° 1 du filtre RTF-47 : sous les capots,
+    // par-dessus le tirant du support, puis sous la traverse des charnières.
+    hose([...out(COOL_OUT, [0, 1, 0], 0.012, 0.022), [-0.44, 1.372, 0.25], [-0.43, 1.37, 0.13], [-0.39, 1.355, 0.0],
+      [-0.31, 1.32, -0.09], [-0.22, 1.30, -0.12], ...into(F_TIP[0], [-1, 0, 0], 0.03, 0.06)], 0.014),
+    // Embout coudé du boyau de drain de la console sur le 611P (sortie vers +Z).
+    at(fitting(0.02, 0.045, 'steel', { elbow: true }), DR_ELBOW, [0, 0, Math.PI]),
   ));
   return { view: { dir: [1, 0.55, 0.9] } };
 }

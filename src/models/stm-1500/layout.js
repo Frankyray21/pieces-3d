@@ -18,10 +18,13 @@ export const IN = 0.0254;
 // longerons supérieurs).
 export const SLED = { len: 3.32, w: 1.067, railW: 0.178, railH: 0.137 };
 export const AXIS_Y = 1.235; // axe de la broche (avance à 0°)
-// Poutre d'avance (feed frame) : semelle posée sur les plats d'usure du support d'avance, à 715 mm du sol (page 1.01),
-// 554 mm de large (vue de bout : elle repose sur le bord intérieur des HSS du support) ; face avant de la plaque de pied
-// (BEAM.x1 + 0,03) 181 mm derrière la pointe de l'oreille avant du traîneau (page 1.01, vue à 0°).
-export const BEAM = { x0: -1.781, x1: 1.449, w: 0.554, h: 0.19, top: 0.905 };
+// Poutre d'avance FBRA-002-300BB (pages 1.01, 1.03 et 1.3) : deux longerons-caissons de 110 mm (z ±0,167 à ±0,277,
+// 554 mm hors tout), dessous à 715 mm du sol sur les plats d'usure du support, dessus à 964 mm ; fond ouvert à
+// traverses et diagonales. x1 : avant de la poutre (flasque avant de la plateforme), 180 mm derrière la face avant de
+// la plaque de pied, elle-même 181 mm derrière la pointe de l'oreille avant du traîneau ; x0 : face arrière de la plaque
+// d'extrémité (mast end plate), 3,08 m derrière l'avant de la poutre (page 1.01, vue à 0°).
+export const BEAM = { x0: -1.781, x1: 1.299, w: 0.554, h: 0.249, top: 0.964 };
+export const FOOT_X = BEAM.x1 + 0.18; // face avant de la plaque de pied FBRA-002-305BB
 // Axes de bascule : tubes de pivot du support d'avance dans les paliers fendus des poteaux avant et arrière du
 // traîneau (page 1.01 : 700 et 1 665 mm de la pointe avant, 598 mm du sol). La poutre bascule sur l'un ou l'autre
 // (45° vers le bas sur l'avant, 45° vers le haut sur l'arrière).

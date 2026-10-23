@@ -406,10 +406,10 @@ export function P048(api) {
 // P049 — Raccords et boyaux de lubrification de la tête (page 2.3), dans le repère de P048. Circuit :
 // carter → boyaux d'aspiration H15C (avant, forage vers le bas) et H16C (arrière, par le té du bout +Z,
 // forage vers le haut) → vanne 3 voies BKH → pompe 139 → H20C → filtre → H17C → bas du refroidisseur →
-// haut du refroidisseur → H18C → té avant du régulateur NDV-10-N (H21C vers la transmission) → régulateur →
-// té arrière (H24C vers le roulement avant par le couvercle 114, H25C vers le roulement arrière par le
-// couvercle 121). Transmission ↔ boîte : H22C, H10C, H11C ; évent : H23C (transmission → couvercle) et
-// H08C (té du couvercle → reniflard). Boyaux 3/8 gris (H11C 1/2), raccords JIC laiton (2404, 2501, 2601,
+// haut du refroidisseur → H18C → té avant du régulateur NDV-10-N (H21C vers la rangée laiton du dessus de
+// la transmission) → régulateur → té arrière (H24C vers le roulement avant par le couvercle 114, H25C vers
+// le roulement arrière par le couvercle 121). Transmission ↔ boîte : H22C, H10C, H11C ; évent : rangée
+// 6602 / 2601 / 6500 sur la tour de transmission, H23C (rangée → couvercle) et H08C (rangée → reniflard). Boyaux 3/8 gris (H11C 1/2), raccords JIC laiton (2404, 2501, 2601,
 // 5000) ou zingués (6402, 6500, 66xx, 6801).
 export function P049(api) {
   const S = api.S, THREE = api.THREE;
@@ -466,43 +466,59 @@ export function P049(api) {
   ), [0.35, 0, 0.05]);
   const vA = fit('2501-6-6', 'coude', 6, 'brass', [VAL.x, VAL.y, VAL.z - 0.0475], [0, 0, -1], [0, -1, 0]);
   const vB = fit('2501-6-6', 'coude', 6, 'brass', [VAL.x, VAL.y, VAL.z + 0.0475], [0, 0, 1], [0, -1, 0]);
-  // Refoulement de la pompe (dessus) → H20C → entrée du filtre (côté +Z) ; sortie (côté −Z) → H17C → bas du refroidisseur.
-  const ref = fit('6801-6-8', 'coude', 6, 'zinc', [0.166, DR.y + 0.044, DR.z], [0, 1, 0], [1, 0, 0]);
-  const fIn = fit('2501-6-8', 'coude', 6, 'brass', [FIL.x, FIL.y, FIL.z + 0.043], [0, 0, 1], [1, 0, 0]);
-  const fOut = fit('2501-6-8', 'coude', 6, 'brass', [FIL.x, FIL.y, FIL.z - 0.043], [0, 0, -1], [0, -1, 0]);
+  // Refoulement de la pompe (coude tourné vers −Z) → H20C sous la cartouche → entrée du filtre (côté −Z,
+  // coude vers le bas) ; sortie (côté +Z, coude vers +X) → H17C qui descend à l'extérieur de la pompe
+  // jusqu'au bas du refroidisseur (vue de face de la page 2.3).
+  const ref = fit('6801-6-8', 'coude', 6, 'zinc', [0.166, DR.y + 0.044, DR.z], [0, 1, 0], [0, 0, -1]);
+  const fIn = fit('2501-6-8', 'coude', 6, 'brass', [FIL.x, FIL.y, FIL.z - 0.043], [0, 0, -1], [0, -1, 0]);
+  const fOut = fit('2501-6-8', 'coude', 6, 'brass', [FIL.x, FIL.y, FIL.z + 0.043], [0, 0, 1], [1, 0, 0]);
   const cBas = fit('2501-6-8', 'coude', 6, 'brass', [COOL.x + 0.035, COOL.yb, COOL.z], [1, 0, 0], [0, 0, -1]);
   const cHaut = fit('2501-6-8', 'coude', 6, 'brass', [COOL.x + 0.035, COOL.yt, COOL.z], [1, 0, 0], [0, 1, 0]);
-  boyau('UM-012-H20C-UG', ref, fIn, [[0.215, Y + 0.124, 0.35], [0.245, Y + 0.14, 0.33], [0.235, Y + 0.16, 0.302]]);
-  boyau('UM-012-H17C-UG', fOut, cBas, [[0.158, Y + 0.09, 0.153], [0.165, Y + 0.0, 0.16], [0.175, Y - 0.07, 0.19], [0.19, Y - 0.105, 0.26], [0.2, Y - 0.12, 0.33]]);
-  // Régulateur NDV-10-N (corps noir, molette laiton) sur le couvercle, un té à chaque bout (vue de dessus de
-  // la page 2.3) : devant (+Z), té de branche 6600 (H18C du refroidisseur, H21C vers la transmission) ;
-  // derrière (−Z), té de passage 6602 (H24C vers le couvercle 114, H25C vers le couvercle 121).
+  boyau('UM-012-H20C-UG', ref, fIn, [[0.165, Y + 0.07, 0.272], [0.161, Y + 0.035, 0.205], [0.156, Y + 0.055, 0.156]]);
+  boyau('UM-012-H17C-UG', fOut, cBas, [[0.219, Y + 0.12, 0.3], [0.217, Y - 0.03, 0.315], [0.205, Y - 0.1, 0.352]]);
+  // Régulateur NDV-10-N (corps noir, molette laiton, bouts filetés laiton) sur le couvercle, un té de branche
+  // 6600 à chaque bout, passage le long de X (vue de dessus de la page 2.3) : devant (+Z), H18C du
+  // refroidisseur et H21C vers la transmission ; derrière (−Z), H24C vers le couvercle 114 et H25C vers le
+  // couvercle 121.
   P('NDV-10-N', group(
     at(box(0.03, 0.03, REG.z1 - REG.z0, 'black', { r: 0.004 }), [REG.x, REG.y, (REG.z0 + REG.z1) / 2]),
     cyl(0.009, 0.02, 'black', { pos: [REG.x, REG.y + 0.025, 0.235] }),
     cyl(0.008, 0.022, 'brass', { pos: [REG.x, REG.y + 0.046, 0.235] }),
+    ...[[REG.z1, 1], [REG.z0, -1]].map(([z, s]) => nut(0.017, 0.007, 'brass', { axis: 'z', pos: [REG.x, REG.y, z + s * 0.0035] })),
+    ...[[REG.z1, 1], [REG.z0, -1]].map(([z, s]) => cyl(0.0058, 0.008, 'brass', { axis: 'z', pos: [REG.x, REG.y, z + s * 0.011] })),
   ), [0, 0.15, 0]);
-  const rIn = fit('6500-06-06', 'droit', 6, 'zinc', [REG.x, REG.y, REG.z1], [0, 0, 1]);
-  const rOut = fit('6500-06-06', 'droit', 6, 'zinc', [REG.x, REG.y, REG.z0], [0, 0, -1]);
-  const [t1av, t1ar] = te('6600-06-06-06', 6, 'zinc', rIn.tip, [0, 0, -1], [[1, 0, 0], [-1, 0, 0]]);
-  const [t2ar, t2br] = te('6602-06-06-06', 6, 'zinc', rOut.tip, [0, 0, 1], [[0, 0, -1], [-1, 0, 0]]);
-  boyau('UM-012-H18C-UG', cHaut, t1av, [[0.22, Y + 0.22, 0.432], [0.165, Y + 0.275, 0.37], [0.09, REG.y + 0.005, 0.32]]);
-  // Transmission (devant de la tour) ← H21C ; couvercle 114 (roulement avant) ← H24C ; couvercle 121 (roulement arrière) ← H25C.
-  const tIn = fit('2501-06-04', 'coude', 6, 'brass', [-0.161, Y + 0.21, 0.31], [1, 0, 0], [0, 1, 0]);
+  const [t1av, t1ar] = te('6600-06-06-06', 6, 'zinc', [REG.x, REG.y, REG.z1 + 0.014], [0, 0, -1], [[1, 0, 0], [-1, 0, 0]]);
+  const [t2av, t2ar] = te('6600-06-06-06', 6, 'zinc', [REG.x, REG.y, REG.z0 - 0.014], [0, 0, 1], [[1, 0, 0], [-1, 0, 0]]);
+  boyau('UM-012-H18C-UG', cHaut, t1av, [[0.22, Y + 0.22, 0.432], [0.165, Y + 0.275, 0.37], [0.09, REG.y + 0.005, 0.315]]);
+  // Rangée d'évent laiton sur le dessus de la tour de transmission (vue de dessus de la page 2.3) : té
+  // 2601-06-06-08 vissé dans la tour, té de passage 6602 côté +Z (branche vers la boîte : H23C jusqu'au
+  // 2404 du bossage du couvercle ; passage : H08C en boucle haute jusqu'au reniflard), adaptateur 6500
+  // côté −Z (H21C du té avant du régulateur, entrée de la transmission).
+  const [d6, L6] = DIM[6];
+  const RG = { x: -0.19, y: Y + 0.249 + 0.016, z: 0.36 };
+  const rang = [
+    at(box(0.95 * d6, 0.95 * d6, 0.95 * d6, 'brass', { r: d6 * 0.12 }), [RG.x, RG.y, RG.z]),
+    nut(d6 * 1.25, 0.008, 'brass', { pos: [RG.x, Y + 0.253, RG.z] }),
+    cyl(0.0058, 0.012, 'brass', { pos: [RG.x, Y + 0.245, RG.z] }),
+  ];
+  const rTip = [1, -1].map((s) => {
+    rang.push(nut(d6 * 1.05, 0.12 * L6, 'brass', { axis: 'z', pos: [RG.x, RG.y, RG.z + s * (0.5 * d6 + 0.06 * L6)] }));
+    rang.push(cyl(0.36 * d6, 0.42 * L6, 'brass', { axis: 'z', pos: [RG.x, RG.y, RG.z + s * (0.5 * d6 + 0.33 * L6)] }));
+    return [RG.x, RG.y, RG.z + s * (0.5 * d6 + 0.54 * L6)];
+  });
+  P('2601-06-06-08', group(...rang), [0, 0.06, 0]);
+  const [evH08, evH23] = te('6602-06-06-06', 6, 'zinc', rTip[0], [0, 0, -1], [[0, 0, 1], [1, 0, 0]]);
+  const rTr = fit('6500-06-06', 'droit', 6, 'zinc', rTip[1], [0, 0, -1]);
+  boyau('UM-012-H21C-UG', rTr, t1ar, [[-0.16, Y + 0.262, 0.282], [-0.07, Y + 0.25, 0.292]]);
+  // Bossage +Z du couvercle : raccord droit 2404 où H23C descend à la verticale.
+  const cvB = fit('2404-6-4', 'droit', 6, 'brass', [0, TOP + 0.02, 0.42], [0, 1, 0]);
+  boyau('UM-012-H23C-UG', evH23, cvB, [[-0.12, Y + 0.29, 0.41], [-0.06, Y + 0.33, 0.42], [-0.01, Y + 0.31, 0.42]]);
+  // Couvercle 114 (roulement avant) ← H24C ; couvercle 121 (roulement arrière) ← H25C.
   const b114 = fit('2501-6-6', 'coude', 6, 'brass', [0.13, Y + 0.13, 0.05], [1, 0, 0], [0, 1, 0]);
   const b121 = fit('2404-6-4', 'droit', 6, 'brass', [-0.12, Y + 0.18, 0], [0, 1, 0]);
-  boyau('UM-012-H21C-UG', t1ar, tIn, [[-0.07, REG.y + 0.008, 0.318], [-0.12, Y + 0.275, 0.312]]);
-  boyau('UM-012-H24C-UG', t2ar, b114, [[REG.x + 0.01, REG.y, 0.09], [0.08, Y + 0.25, 0.06], [0.135, Y + 0.235, 0.05]]);
-  boyau('UM-012-H25C-UG', t2br, b121, [[-0.06, Y + 0.25, 0.115], [-0.105, Y + 0.252, 0.04]]);
-  // Évent : té 2601 sur le bossage +Z du couvercle ; H23C vers le dessus de la tour de transmission, H08C en
-  // boucle haute jusqu'au reniflard A-1199-R-4048 (manchon 5000-6-6) qui dépasse du bout +Z.
-  const [d6, L6] = DIM[6];
-  const t2601 = S.fitting(d6, L6, 'brass', { tee: true });
-  pose(THREE, t2601, [0, TOP + 0.02 + 0.14 * L6, 0.42], [0, 1, 0], [0, 0, 1]);
-  P('2601-06-06-08', t2601, [0, 0.06, 0]);
-  const cvH = { tip: [0, TOP + 0.02 + 0.935 * L6, 0.42], dir: [0, 1, 0] }, cvB = { tip: [-0.65 * L6, TOP + 0.02 + 0.44 * L6, 0.42], dir: [-1, 0, 0] };
-  const tTour = fit('2404-6-4', 'droit', 6, 'brass', [-0.205, Y + 0.249, 0.385], [0, 1, 0]);
-  boyau('UM-012-H23C-UG', cvB, tTour, [[-0.065, Y + 0.24, 0.42], [-0.13, Y + 0.305, 0.41], [-0.19, Y + 0.325, 0.395]]);
+  boyau('UM-012-H24C-UG', t2av, b114, [[0.085, REG.y, 0.15], [0.15, Y + 0.24, 0.09]]);
+  boyau('UM-012-H25C-UG', t2ar, b121, [[-0.075, REG.y - 0.005, 0.1]]);
+  // Reniflard A-1199-R-4048 (manchon 5000-6-6) qui dépasse du bout +Z, au bout de la boucle haute H08C.
   const rn = { x: -0.07, y: Y + 0.215, z: 0.495 };
   P('5000-6-6', at(group(nut(0.022, 0.02, 'brass', { axis: 'z' }), cyl(0.0075, 0.006, 'brass', { axis: 'z', pos: [0, 0, -0.013] })), [rn.x, rn.y, rn.z + 0.012]), [0, 0, 0.1]);
   P('A-1199-R-4048', group(
@@ -510,19 +526,21 @@ export function P049(api) {
     cyl(0.013, 0.044, 'chrome', { axis: 'z', pos: [rn.x, rn.y, rn.z + 0.052], seg: 20 }),
     cyl(0.009, 0.004, 'white', { axis: 'z', pos: [rn.x, rn.y, rn.z + 0.076] }),
   ), [0, 0, 0.15]);
-  boyau('UM-012-H08C', cvH, { tip: [rn.x, rn.y, rn.z - 0.004], dir: [0, 0, -1] }, [[0, Y + 0.3, 0.42], [-0.02, Y + 0.35, 0.405], [-0.055, Y + 0.335, 0.44], [-0.07, Y + 0.265, 0.455]]);
-  // Transmission ↔ boîte, sur le flanc +Z de la transmission et le bout +Z de la boîte : té 6600 (H22C en
-  // haut, H10C en bas), 6500 dans la boîte ; H11C 1/2 du coude 2501-8-8 de la transmission au té 6600-8-8-8,
-  // porté par le coude long 2501LL-8-8 de la boîte, dont l'autre embout reçoit l'aspiration arrière H16C.
-  const [tH, tB] = te('6600-06-06-06', 6, 'zinc', [-0.2, Y + 0.05, TR.z1], [0, 0, -1], [[0, 1, 0], [0, -1, 0]]);
+  boyau('UM-012-H08C', evH08, { tip: [rn.x, rn.y, rn.z - 0.004], dir: [0, 0, -1] }, [[-0.19, Y + 0.3, 0.47], [-0.17, Y + 0.42, 0.485], [-0.12, Y + 0.465, 0.44], [-0.075, Y + 0.42, 0.44], [-0.068, Y + 0.3, 0.458]]);
+  // Transmission ↔ boîte, sur le flanc +Z de la transmission et le bout +Z de la boîte : H22C du 6500 du
+  // haut au 6500 du haut de la boîte, H10C court du coude 2501-06-04 au 6500 du milieu de la boîte ;
+  // H11C 1/2 du coude 2501-8-8 de la transmission au té 6600-8-8-8, porté par le coude long 2501LL-8-8
+  // de la boîte, dont l'autre embout reçoit l'aspiration arrière H16C.
+  const tH = fit('6500-06-06', 'droit', 6, 'zinc', [-0.2, Y + 0.1, TR.z1], [0, 0, 1]);
+  const tB = fit('2501-06-04', 'coude', 6, 'brass', [-0.17, Y - 0.035, TR.z1], [0, 0, 1], [1, 0, 0]);
   const bH = fit('6500-06-06', 'droit', 6, 'zinc', [-0.05, Y + 0.13, BOX.z1], [0, 0, 1]);
   const bM = fit('6500-06-06', 'droit', 6, 'zinc', [-0.08, Y - 0.035, BOX.z1], [0, 0, 1]);
-  boyau('UM-012-H22C-UG', tH, bH, [[-0.2, Y + 0.115, 0.5], [-0.15, Y + 0.135, 0.545], [-0.085, Y + 0.13, 0.555]]);
-  boyau('UM-012-H10C', tB, bM, [[-0.2, Y - 0.02, 0.49], [-0.15, Y - 0.035, 0.525], [-0.1, Y - 0.035, 0.54]]);
-  const trB = fit('2501-8-8', 'coude', 8, 'brass', [-0.26, Y - 0.1, TR.z1], [0, 0, 1], [1, 0, 0]);
+  boyau('UM-012-H22C-UG', tH, bH, [[-0.18, Y + 0.11, 0.53], [-0.1, Y + 0.13, 0.555]]);
+  boyau('UM-012-H10C', tB, bM, [[-0.11, Y - 0.035, 0.53]]);
+  const trB = fit('2501-8-8', 'coude', 8, 'brass', [-0.21, Y - 0.1, TR.z1], [0, 0, 1], [1, 0, 0]);
   const ll = fit('2501LL-8-8', 'coude', 'LL', 'brass', [-0.04, Y - 0.13, BOX.z1], [0, 0, 1], [-1, 0, 0]);
   const [t3h, t3b] = te('6600-8-8-8', 8, 'zinc', ll.tip, [1, 0, 0], [[0, 1, 0], [0, -1, 0]]);
-  boyau('UM-012-H11C', trB, t3h, [[-0.19, Y - 0.1, 0.505], [-0.13, Y - 0.06, 0.53]], 0.011);
+  boyau('UM-012-H11C', trB, t3h, [[-0.13, Y - 0.085, 0.51]], 0.011);
   // Aspiration : H15C de l'orifice bas de la face avant à l'entrée A, H16C du té arrière à l'entrée B.
   const cAv = fit('2404-6-4', 'droit', 6, 'brass', [BOX.x1, Y - 0.16, 0.26], [1, 0, 0]);
   boyau('UM-012-H15C-UG', vA, cAv, [[VAL.x - 0.002, Y - 0.04, 0.27], [0.262, Y - 0.13, 0.265], [0.19, Y - 0.163, 0.26]]);

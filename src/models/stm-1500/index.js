@@ -1,12 +1,13 @@
-import { P010, SLED_VIA, HEAD_PORTS, SWIVEL_PORT } from './drill.js';
+import { P010, P015, P016, P017, SLED_VIA, HEAD_VIA, SWIVEL_PORT } from './drill.js';
 import { P048 } from './head.js';
 import { P042, P039, P040, P041 } from './winch.js';
 import { P068, PP_PORTS, PP_CABLE, PP_N } from './powerpack.js';
-import { P078, CON_PACK, CON_ROT, CON_WATER, CON_SLED, CON_CABLE, CON_BACK_N, CON_SIDE_N } from './console.js';
+import { P078, CON_PACK, CON_ROT, CON_WATER_VIA, CON_SLED, CON_CABLE, CON_BACK_N, CON_SIDE_N } from './console.js';
 
 // Usinage Marcotte STM-1500 s/n STM-1500-128 (manuel de pièces de Machines
 // Roger, 96 pages). En 3D : l'ensemble (P002), la foreuse (P010), sa tête
-// Boyles (P048) et son treuil de câble 10 000 pi (P042, étapes P039 à P041),
+// Boyles (P048), le pivot de poulie, le guide de tiges et la poulie de la rallonge
+// (P015 à P017), son treuil de câble 10 000 pi (P042, étapes P039 à P041),
 // le groupe hydraulique 125 HP (P068) et la console (P078) ; les autres
 // assemblages s'affichent avec les dessins du manuel.
 
@@ -50,37 +51,92 @@ function P002(api) {
   };
   // Boyau entre deux raccords : les deux côtés, deux points au sol à 0,3 m des descentes
   // (le parcours reste posé au sol, sans plonger dessous), câble ou boyau.
-  const run = (A, B, r, mat = 'hose') => {
+  // Pont au-dessus de boyaux déjà posés au sol : le tronçon au sol est redécoupé tous les 2,5 cm et monte
+  // par-dessus chaque boyau croisé (dessus du boyau + garde de 5 mm), avec une rampe de 0,15 m de part et d'autre.
+  const bridge = (pts, r, over) => {
+    const flat = (q) => q.y < FLOOR + r + 0.005;
+    const dense = [];
+    pts.forEach((q, k) => {
+      const prev = pts[k - 1];
+      if (prev && flat(prev) && flat(q)) {
+        const n = Math.ceil(prev.distanceTo(q) / 0.025);
+        for (let j = 1; j < n; j++) dense.push(prev.clone().lerp(q, j / n));
+      }
+      dense.push(q.clone());
+    });
+    // Hauteur à franchir au droit de chaque point au sol (null : rien dessous).
+    const need = dense.map((q) => {
+      if (!flat(q)) return null;
+      let h = null;
+      over.forEach((o) => o.pts.forEach((c, k) => {
+        const c0 = o.pts[k - 1];
+        if (!c0 || Math.min(c.y, c0.y) > FLOOR + o.r + 0.03) return; // tronçons au sol (et pieds des descentes) de l'autre boyau
+        const ex = c.x - c0.x, ez = c.z - c0.z, t = Math.min(1, Math.max(0, ((q.x - c0.x) * ex + (q.z - c0.z) * ez) / (ex * ex + ez * ez || 1)));
+        const d = Math.hypot(q.x - c0.x - t * ex, q.z - c0.z - t * ez);
+        if (d < o.r + r + 0.015) h = Math.max(h ?? 0, c0.y + t * (c.y - c0.y) + o.r + r + 0.005);
+      }));
+      return h;
+    });
+    // Rampes de 0,15 m le long du boyau de part et d'autre de chaque franchissement.
+    const ramp = 0.15;
+    return dense.map((q) => {
+      if (!flat(q)) return q;
+      let h = q.y;
+      need.forEach((top, j) => {
+        if (top === null) return;
+        const s = Math.hypot(q.x - dense[j].x, q.z - dense[j].z);
+        if (s < ramp) h = Math.max(h, top - (top - q.y) * s / ramp);
+      });
+      return q.clone().setY(h);
+    });
+  };
+  const run = (A, B, r, mat = 'hose', over) => {
     const a = A.via ? A.via.slice().reverse() : end(A.p, A.n, r, A.out ?? 0.4, A.shift);
     const b = B.via ? B.via : end(B.p, B.n, r, B.out ?? 0.4, B.shift).reverse();
     const ga = a[a.length - 1], gb = b[0];
     const u = gb.clone().sub(ga).setY(0);
     const len = u.length();
     u.normalize().multiplyScalar(Math.min(0.3, len * 0.3));
-    const pts = [...a, ga.clone().add(u), gb.clone().sub(u), ...b];
+    let pts = [...a, ga.clone().add(u), gb.clone().sub(u), ...b];
+    if (over) pts = bridge(pts, r, over);
     let L = 0;
     for (let k = 1; k < pts.length; k++) L += pts[k].distanceTo(pts[k - 1]);
     const seg = Math.ceil(L / 0.025); // un segment tous les 2,5 cm : coudes lisses
     const arr = pts.map((q) => q.toArray());
-    return mat === 'hose' ? tube(arr, r, 'hose', { seg }) : tube(arr, r, 'black', { seg, ends: 'gland', endMaterial: 'black', radial: 8, tension: 0.4 });
+    const t = mat === 'hose' ? tube(arr, r, 'hose', { seg }) : tube(arr, r, 'black', { seg, ends: 'gland', endMaterial: 'black', radial: 8, tension: 0.4 });
+    t.userData.hose = { pts, r }; // tracé gardé pour les ponts des boyaux posés ensuite
+    return t;
   };
   const hoses = [];
-  const cBack = D(cons, CON_BACK_N), cSide = D(cons, CON_SIDE_N), pEnd = D(pack, PP_N), dSide = D(drill, [0, 0, -1]);
-  const along = D(drill, [1, 0, 0]);
+  const cBack = D(cons, CON_BACK_N), cSide = D(cons, CON_SIDE_N), pEnd = D(pack, PP_N);
   // Groupe → console : pression (1 po), retour, drain, chacun sur son raccord, et câble de commande.
   // Le boyau du raccord le plus à l'arrière de la console s'écarte le plus du flanc : les voies
   // restent parallèles et ne se croisent pas (câble à l'extérieur du faisceau).
   PP_PORTS.forEach((p, i) => hoses.push(run({ p: W(cons, CON_PACK[2 - i]), n: cSide, out: 0.3 + i * 0.07 }, { p: W(pack, p), n: pEnd }, i === 0 ? 0.022 : 0.017)));
   hoses.push(run({ p: W(cons, CON_CABLE), n: cSide, out: 0.55 }, { p: W(pack, PP_CABLE), n: pEnd, shift: D(pack, [0, 0, -1]).multiplyScalar(0.1) }, 0.012, 'cable'));
-  // Console → tête : rotation A et B (1 po), descentes écartées le long de l'avance.
-  HEAD_PORTS.forEach((p, i) => hoses.push(run({ p: W(cons, CON_ROT[i]), n: cBack }, { p: W(drill, p), n: dSide, shift: along.clone().multiplyScalar(i ? 0.06 : -0.06) }, 0.022)));
+  // Console → tête : rotation A et B (1 po), par-dessus le bout arrière de la poutre jusqu'aux coudes du moteur.
+  const rot = HEAD_VIA.map((via, i) => run({ p: W(cons, CON_ROT[i]), n: cBack }, { via: via.map((q) => W(drill, q)) }, 0.022));
+  hoses.push(...rot);
   // Console → raccords avant des deux sélecteurs mât / treuil du traîneau (tracés imposés : par-dessus le longeron
   // gauche, devant les poteaux avant).
   SLED_VIA.forEach((via, i) => hoses.push(run({ p: W(cons, CON_SLED[i]), n: cBack }, { via: via.map((q) => W(drill, q)) }, 0.016)));
-  // Eau : traversée de la console → entrée sur le dessus de l'émerillon, par-dessus le moteur de la tête.
-  const [sx, sy, sz] = SWIVEL_PORT, wr = 0.02;
-  const swivel = [[sx, FLOOR + wr, -0.94], [sx, 0.2, -0.92], [sx, 0.9, -0.86], [sx, 1.45, -0.62], [sx, sy + 0.16, -0.3], [sx, sy + 0.12, sz], [sx, sy + 0.04, sz], [sx, sy, sz]];
-  hoses.push(run({ p: W(cons, CON_WATER), n: cBack }, { via: swivel.map((q) => W(drill, q)) }, wr));
+  // Eau : traversée de la console → entrée axiale au bout de l'émerillon (raccord tourné vers l'arrière), montée côté
+  // console devant les boyaux de rotation, passage au-dessus du flanc −Z de la poutre, arrivée dans l'axe de la broche.
+  const [sx, sy, sz] = SWIVEL_PORT, wr = 0.02, x0 = sx - 0.16;
+  const swivel = [[x0, FLOOR + wr, -0.94], [x0, 0.2, -0.92], [x0, 0.75, -0.84], [x0, 1.1, -0.62], [x0 + 0.01, sy + 0.02, -0.34],
+    [x0 + 0.04, sy + 0.01, -0.14], [sx - 0.1, sy, -0.03], [sx - 0.04, sy, sz], [sx, sy, sz]];
+  // Au sol, sa voie longe celle des boyaux de rotation sans s'y mêler : point de passage à 0,35 m du pied de la
+  // rotation A, écarté du côté du pied de sa montée (au-delà de la rotation B si elle s'y trouve). S'il en croisait
+  // un (console déplacée), il passerait par-dessus : aucun boyau ne traverse l'autre.
+  const wFoot = W(drill, swivel[0]);
+  const flatA = rot[0].userData.hose.pts.filter((q) => q.y < FLOOR + 0.022 + 0.005);
+  const [fa, fb] = [flatA[0], flatA[flatA.length - 1]], dir = fb.clone().sub(fa).setY(0).normalize();
+  const side = new api.THREE.Vector3(dir.z, 0, -dir.x); // normale au sol de la voie de rotation A
+  const toB = rot[1].userData.hose.pts.find((q) => q.y < FLOOR + 0.03).clone().sub(fa);
+  if (side.dot(wFoot.clone().sub(fa)) < 0) side.negate(); // du côté du pied de la montée
+  const off = side.dot(toB) > 0 ? 0.17 : 0.1; // au-delà de la rotation B si elle est de ce côté
+  const wpt = fa.clone().addScaledVector(dir, 0.35).addScaledVector(side, off).setY(FLOOR + wr);
+  hoses.push(run({ via: [wpt, ...CON_WATER_VIA.map((q) => W(cons, q))] }, { via: swivel.map((q) => W(drill, q)) }, wr, 'hose', rot.map((t) => t.userData.hose)));
 
   api.part('1', drill, [-1.2, 0, 0]);
   api.part('3', cons, [0, 0.6, 0]);
@@ -89,4 +145,4 @@ function P002(api) {
   return { view: { dir: [0.2, 1.1, 1.0] } };
 }
 
-export default { P002, P010, P039, P040, P041, P042, P048, P068, P078 };
+export default { P002, P010, P015, P016, P017, P039, P040, P041, P042, P048, P068, P078 };
