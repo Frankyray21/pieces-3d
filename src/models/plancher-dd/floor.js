@@ -4,8 +4,8 @@
 // plan.js, si bien qu'un sous-assemblage s'insère tel quel dans la vue
 // d'ensemble. Chaque objet porte userData.step (étape de la procédure).
 import {
-  IN, FT, B66, P3, P8, S24, R24, W, L, SEC, DECK, joistX, joistX2, GAL, JOINT_X, SUPPORTS_Z, SLEEPER,
-  stack, ground, over12, deckHeight, STAIR, DRILL, WEDGE, plankZ, TIGHT,
+  IN, FT, B66, P3, P8, S24, R24, W, L, SEC, DECK, joistZ, GAL, JOINT_X, SUPPORTS_X, SLEEPERS_X,
+  stack, ground, over12, deckHeight, STAIR, DRILL, WEDGE, plankX, TIGHT,
 } from './plan.js';
 import { lumber, between, wedge, lagScrews, placeStack, labeler } from './lumber.js';
 import { wireMesh, groundPatch } from './site.js';
@@ -15,97 +15,110 @@ function soil(api, opts, x0, x1, z0, z1) {
   if (!opts.inPlace) api.part('G', groundPatch(api.S, x0, x1, z0, z1), [0, 0, 0], { noLabel: true });
 }
 
-const PER_SEC = Math.round(W / P8); // 24 planches de 3 × 8 en travers de 16 pi, par section
-// Tire-fonds au-dessus du premier et du dernier madrier de la section.
-const ends = (sec, i) => [B66 / 2, SEC - B66 / 2].map((x) => [x + sec * SEC, DECK, plankZ(i)]);
+export const PER_SEC = Math.round(SEC / P8); // 24 planches de 3 × 8 sur 16 pi, par section
+// Tire-fonds au-dessus du premier et du dernier madrier, planche i (numérotation des deux sections).
+const ends = (i) => [joistZ[0], joistZ[joistZ.length - 1]].map((z) => [plankX(i), DECK, z]);
 
 // ------------------------------------------------------------------ section 1
 
-/** Structure de base, section 1 (16 × 16 pi), étapes 2 à 5 : madriers en travers de la galerie. */
+/** Structure de base, section 1 (16 × 16 pi), étapes 2 à 5 : madriers le long de la galerie. */
 export function P04(api, opts = {}) {
   const S = api.S;
   soil(api, opts, -0.4, SEC + 0.4, -W / 2 - 0.3, W / 2 + 0.3);
   const put = labeler(api);
   const labeled = new Set();
-  // Madriers 6 × 6 de 16 pi : le premier sur la ligne de peinture (X = 0).
-  joistX.forEach((x, k) => {
-    const j = lumber(S, [B66, B66, W], [x, B66 / 2, 0]);
+  // Madriers 6 × 6 de 16 pi : le premier sur la ligne de peinture (rive Z négative).
+  joistZ.forEach((z, k) => {
+    const j = lumber(S, [SEC, B66, B66], [SEC / 2, B66 / 2, z]);
     put(k === 0 ? '1' : '2', j, [0, 0.55, 0], k === 0 ? 3 : 4);
   });
   // Blocages et coins sous chaque madrier (au moins 6 par madrier), en sens contraire.
-  joistX.slice(0, -1).forEach((x) => {
-    for (const z of SUPPORTS_Z) {
-      placeStack(api, stack(x, z, 0, 'x'), { refs: { b38: '3', b66: '4', crib: '4', wedge: '5' }, labeled, step: 5, explode: { wedge: [0, 0.28, 0], b38: [0, 0.12, 0] } });
+  for (const x of SUPPORTS_X) {
+    for (const z of joistZ) {
+      placeStack(api, stack(x, z, 0, 'z', { inFloor: true }), { refs: { b38: '3', b66: '4', crib: '4', wedge: '5' }, labeled, step: 5, explode: { wedge: [0, 0.28, 0], b38: [0, 0.12, 0] } });
     }
-  });
-  // Blocage de jonction : sous le dernier madrier, il porte aussi le premier madrier de la section 2.
-  for (const z of SUPPORTS_Z) {
-    placeStack(api, stack(JOINT_X, z, 0, 'x'), { labeled, step: 5, group: { ref: '6', explode: [0.25, 0.12, 0] } });
   }
+  // Jonction (étape 5, p. 6 et 9) : sous le bout des madriers, un 6 × 6 de
+  // 16 pi d'un seul bout, en travers (sous les planches), sur ses blocages
+  // vis-à-vis chaque madrier ; il portera aussi les madriers de la section 2
+  // qui les prolongent (c'est le « dernier 6 × 6 de la première section » de
+  // l'étape 10). Les madriers y sont vissés.
+  put('7', lumber(S, [B66, B66, W], [JOINT_X, -B66 / 2, 0]), [0, -0.3, 0], 5);
+  for (const z of joistZ) {
+    placeStack(api, stack(JOINT_X, z, -B66, 'x', { inFloor: true }), { labeled, step: 5, group: { ref: '6', explode: [0, -0.5, 0] } });
+  }
+  put('8', lagScrews(S, joistZ.map((z) => [JOINT_X - 1.5 * IN, B66, z])), [0, 0.6, 0], 5);
   return { view: { dir: [0.9, 0.75, 1.15] } };
 }
 
-/** Recouvrement en 3 × 8 de la section 1 (planches selon la galerie), étapes 6 à 8. */
+/** Recouvrement en 3 × 8 de la section 1 (planches en travers de la galerie), étapes 6 à 8. */
 export function P07(api, opts = {}) {
   const S = api.S;
   soil(api, opts, -0.4, SEC + 0.4, -W / 2 - 0.3, W / 2 + 0.3);
   const put = labeler(api);
   for (let i = 0; i < PER_SEC; i++) {
-    const join = i >= PER_SEC - 2; // deux planches laissées libres puis vissées à la fin (étape 8)
-    const p = lumber(S, [SEC, P3, P8], [SEC / 2, B66 + P3 / 2, plankZ(i)]);
+    const join = i >= PER_SEC - 2; // deux planches laissées libres à la jonction, vissées à la fin (étape 8)
+    const p = lumber(S, [P8, P3, W], [plankX(i), B66 + P3 / 2, 0]);
     p.userData.order = i;
     put(join ? '2' : '1', p, [0, join ? 0.75 : 0.45, 0], join ? 12 : 6, { seq: join ? 1 : 0 });
   }
   // Tire-fonds de la procédure seulement : première planche à chaque extrémité
   // (étape 6), planche vissée devant les coins pour retenir la tension (étape 7),
   // planches de jonction, de chaque bout (étape 8).
-  put('3', lagScrews(S, ends(0, 0)), [0, 1.05, 0], 6, { seq: 0 });
-  put('4', lagScrews(S, ends(0, TIGHT)), [0, 1.05, 0], 7);
-  put('5', lagScrews(S, [...ends(0, PER_SEC - 2), ...ends(0, PER_SEC - 1)]), [0, 1.2, 0], 12, { seq: 2 });
+  put('3', lagScrews(S, ends(0)), [0, 1.05, 0], 6, { seq: 0 });
+  put('4', lagScrews(S, ends(TIGHT)), [0, 1.05, 0], 7);
+  put('5', lagScrews(S, [...ends(PER_SEC - 2), ...ends(PER_SEC - 1)]), [0, 1.2, 0], 12, { seq: 2 });
   return { view: { dir: [0.75, 1.0, 1.1] } };
 }
 
 // ------------------------------------------------------------------ section 2
 
-/** Structure de base, section 2, étapes 9 à 11 : soutiens de 16 pi selon la galerie, madriers en travers. */
+/**
+ * Structure de base, section 2, étapes 9 à 11 : madrier guide à 16 pi de la
+ * section 1, soutiens 6 × 6 de 16 pi en travers (sens contraire des madriers)
+ * jusqu'à lui, puis madriers par-dessus, dans le prolongement de ceux de la
+ * section 1.
+ */
 export function P10(api, opts = {}) {
   const S = api.S;
   soil(api, opts, SEC - 0.4, L + 0.4, -W / 2 - 0.3, W / 2 + 0.3);
   const put = labeler(api);
   const labeled = new Set();
-  // Madriers de la section 2 ; le dernier (à 16 pi de la section 1) est le madrier guide (étape 10).
-  joistX2.forEach((x, k) => {
-    const guide = k === joistX2.length - 1;
-    put('1', lumber(S, [B66, B66, W], [x, B66 / 2, 0]), [0, 0.75, 0], guide ? 10 : 11, { seq: guide ? 2 : 0 });
+  // Madriers de la section 2 : bout à bout avec ceux de la section 1 (blocage de jonction).
+  joistZ.forEach((z) => put('1', lumber(S, [SEC, B66, B66], [SEC * 1.5, B66 / 2, z]), [0, 0.75, 0], 11));
+  // Chaque madrier vissé dans le bout de 6 × 6 de jonction, comme celui de la section 1.
+  put('7', lagScrews(S, joistZ.map((z) => [JOINT_X + 1.5 * IN, B66, z])), [0, 0.9, 0], 11);
+  // Soutiens 6 × 6 de 16 pi (selon Z) ; le dernier, à 16 pi de la section 1, est le madrier guide.
+  SLEEPERS_X.forEach((x, k) => {
+    const guide = k === SLEEPERS_X.length - 1;
+    put('2', lumber(S, [B66, B66, W], [x, -B66 / 2, 0]), [0, 0.4, 0], 10, { seq: guide ? 0 : 2 });
   });
-  // Soutiens 6 × 6 de 16 pi dans le sens contraire (selon X), sous les madriers.
-  for (const z of SUPPORTS_Z) {
-    put('2', lumber(S, [SLEEPER.x1 - SLEEPER.x0, B66, B66], [(SLEEPER.x0 + SLEEPER.x1) / 2, -B66 / 2, z]), [0, 0.4, 0], 10, { seq: 1 });
-  }
   // Blocages sous les soutiens, vis-à-vis chaque croisement de madrier (étape 11) ;
   // cage de bois dans le creux (cas spécial).
-  joistX2.slice(1).forEach((x) => {
-    for (const z of SUPPORTS_Z) {
-      const st = stack(x, z, -B66, 'z');
+  for (const x of SLEEPERS_X) {
+    for (const z of joistZ) {
+      const st = stack(x, z, -B66, 'x', { inFloor: true });
       const crib = st.pieces.some((p) => p.kind === 'crib');
       if (crib) placeStack(api, st, { labeled, step: 11, group: { ref: '6', explode: [0, 0.1, 0.35] } });
-      else placeStack(api, st, { refs: { b38: '3', b66: '4', wedge: '5' }, labeled, step: 10, seq: 0, explode: { wedge: [0, 0.22, 0], b38: [0, 0.1, 0] } });
+      else placeStack(api, st, { refs: { b38: '3', b66: '4', wedge: '5' }, labeled, step: 10, seq: 1, explode: { wedge: [0, 0.22, 0], b38: [0, 0.1, 0] } });
     }
-  });
+  }
   return { view: { dir: [-0.85, 0.7, 1.2] } };
 }
 
-/** Recouvrement de la section 2 (étape 12), bouts au ras (étape 13). */
+/** Recouvrement de la section 2 (étape 12), de la jonction vers l'entrée, bouts au ras (étape 13). */
 export function P13(api, opts = {}) {
   const S = api.S;
   soil(api, opts, SEC - 0.4, L + 0.4, -W / 2 - 0.3, W / 2 + 0.3);
   const put = labeler(api);
   for (let i = 0; i < PER_SEC; i++) {
-    put('1', lumber(S, [SEC, P3, P8], [SEC * 1.5, B66 + P3 / 2, plankZ(i)]), [0, 0.45, 0], 12);
+    const p = lumber(S, [P8, P3, W], [plankX(PER_SEC + i), B66 + P3 / 2, 0]);
+    p.userData.order = i;
+    put('1', p, [0, 0.45, 0], 12);
   }
   // Étapes 6 et 7 répétées : première planche de la section, planche devant les coins.
-  put('2', lagScrews(S, ends(1, 0)), [0, 1.05, 0], 12);
-  put('3', lagScrews(S, ends(1, TIGHT)), [0, 1.05, 0], 12);
+  put('2', lagScrews(S, ends(PER_SEC)), [0, 1.05, 0], 12);
+  put('3', lagScrews(S, ends(PER_SEC + TIGHT)), [0, 1.05, 0], 12);
   return { view: { dir: [-0.75, 1.0, 1.1] } };
 }
 
@@ -221,11 +234,6 @@ export function P16(api, opts = {}) {
     for (const u of postsAlong(seg.a, seg.b)) {
       const top = DECK + RAIL_TOP + 0.03;
       put('1', lumber(S, sz(S24.w, top, S24.t), P(u, postC, top / 2), 'woodPlaned'), ex(1), 15, { seq: 0 });
-      // Jambe de force vers le sol, au bout du plancher (dégagé).
-      if (!alongX) {
-        const xg = L + 0.75;
-        put('5', between(S, [L + S24.t, DECK + 0.75, u], [xg, ground(xg, u) + 0.02, u], S24.w, S24.t), ex(1.4), 15, { seq: 1 });
-      }
     }
     put('2', lumber(S, sz(len, S24.w, S24.t), P(mid, railC, DECK + RAIL_TOP - S24.w / 2), 'woodPlaned'), ex(2), 15, { seq: 2 });
     put('3', lumber(S, sz(len, S24.w, S24.t), P(mid, railC, DECK + RAIL_TOP / 2), 'woodPlaned'), ex(1.6), 15, { seq: 3 });

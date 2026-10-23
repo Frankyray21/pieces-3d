@@ -6,7 +6,7 @@
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { mat } from '../../viewer/materials.js';
-import { IN, FT, B66, P3, P8, W, L, DECK, GAL, GAL_X0, GAL_X1, FACE_X, WALL_H, ground, joistX, DRILL, plankZ, TIGHT } from './plan.js';
+import { IN, FT, B66, P3, P8, W, L, DECK, GAL, GAL_X0, GAL_X1, FACE_X, WALL_H, ground, DRILL, plankX, TIGHT } from './plan.js';
 import { lumber, between, labeler } from './lumber.js';
 
 // Petit générateur pseudo-aléatoire reproductible.
@@ -81,6 +81,8 @@ function rocks() {
     const z = (r() * 2 - 1) * (GAL - 0.12);
     // Roches hors de l'emprise du plancher, des marches et de la barricade.
     if (x > -0.25 && x < L + 1.4 && Math.abs(z) < W / 2 + 0.1) continue;
+    // Aire du matériel étalé derrière la barricade (présentation de la vidéo).
+    if (x > L + 4.4 && x < L + 8.4) continue;
     const sc = 0.025 + r() ** 2 * 0.09;
     const g = base.clone().scale(sc * (0.8 + r() * 0.5), sc * (0.5 + r() * 0.4), sc * (0.8 + r() * 0.5));
     g.rotateY(r() * 6.28).rotateX(r() * 0.6);
@@ -499,13 +501,12 @@ export function guides(S, high) {
   );
   level.position.set(2.3, B66, -0.4);
   only(level, [5]);
-  // Coins de serrage entre la planche vissée devant les coins et la suivante (planches selon X).
+  // Coins de serrage entre la planche vissée devant les coins et la suivante (planches selon Z).
   const wedges = S.group();
-  for (const x of [0.8, 1.9, 3.0, 4.1]) {
+  for (const z of [-1.65, -0.55, 0.55, 1.65]) {
     const w = S.extrude([[0, 0], [0.025, 0], [0.012, -0.2]], 0.09, 'woodWedge');
     const r = S.group(w);
-    r.rotation.y = Math.PI / 2;
-    r.position.set(x - 0.045, B66 + P3 + 0.03, plankZ(TIGHT) + P8 / 2 + 0.0125);
+    r.position.set(plankX(TIGHT) + P8 / 2 + 0.0125 - 0.0125, B66 + P3 + 0.03, z);
     wedges.add(r);
   }
   only(wedges, [7]);
