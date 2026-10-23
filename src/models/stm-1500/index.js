@@ -1,8 +1,8 @@
 import { P010, P015, P016, P017, SLED_VIA, HEAD_VIA, SWIVEL_PORT } from './drill.js';
-import { P048 } from './head.js';
+import { P048, P049 } from './head.js';
 import { P042, P039, P040, P041 } from './winch.js';
-import { P068, PP_PORTS, PP_CABLE, PP_N } from './powerpack.js';
-import { P078, CON_PACK, CON_ROT, CON_WATER_VIA, CON_SLED, CON_CABLE, CON_BACK_N, CON_SIDE_N } from './console.js';
+import { P068, P069, PP_VIA } from './powerpack.js';
+import { P078, P079, CON_PACK_VIA, CON_ROT, CON_WATER_VIA, CON_SLED, CON_BACK_N } from './console.js';
 
 // Usinage Marcotte STM-1500 s/n STM-1500-128 (manuel de pièces de Machines
 // Roger, 96 pages). En 3D : l'ensemble (P002), la foreuse (P010), sa tête
@@ -20,7 +20,7 @@ import { P078, CON_PACK, CON_ROT, CON_WATER_VIA, CON_SLED, CON_CABLE, CON_BACK_N
 // raccords au bout tourné vers la console, interrupteur principal (porte de la
 // boîte électrique) accessible du côté bas du plan, vers la gauche. Boyaux posés
 // au sol, chacun dans sa voie, et branchés : groupe → console (pression, retour,
-// drain) et câble de commande ; console → foreuse (rotation A et B vers le moteur
+// drain) ; console → foreuse (rotation A et B vers le moteur
 // de la tête, boyaux des sélecteurs du traîneau, eau vers l'émerillon par-dessus le
 // moteur). Seul le matériel du manuel est modélisé.
 // Contrôles : node scripts/check-layout.mjs --eq stm-1500 P002 --min 3 --ref 1.
@@ -108,12 +108,10 @@ function P002(api) {
     return t;
   };
   const hoses = [];
-  const cBack = D(cons, CON_BACK_N), cSide = D(cons, CON_SIDE_N), pEnd = D(pack, PP_N);
-  // Groupe → console : pression (1 po), retour, drain, chacun sur son raccord, et câble de commande.
-  // Le boyau du raccord le plus à l'arrière de la console s'écarte le plus du flanc : les voies
-  // restent parallèles et ne se croisent pas (câble à l'extérieur du faisceau).
-  PP_PORTS.forEach((p, i) => hoses.push(run({ p: W(cons, CON_PACK[2 - i]), n: cSide, out: 0.3 + i * 0.07 }, { p: W(pack, p), n: pEnd }, i === 0 ? 0.022 : 0.017)));
-  hoses.push(run({ p: W(cons, CON_CABLE), n: cSide, out: 0.55 }, { p: W(pack, PP_CABLE), n: pEnd, shift: D(pack, [0, 0, -1]).multiplyScalar(0.1) }, 0.012, 'cable'));
+  const cBack = D(cons, CON_BACK_N);
+  // Groupe → console : pression (1 po), retour, drain, chacun sur son raccord, par les tracés imposés des deux
+  // appareils (voies imbriquées, sans croisement). Pas de câble de commande : le manuel n'en montre aucun.
+  PP_VIA.forEach((via, i) => hoses.push(run({ via: CON_PACK_VIA[2 - i].map((q) => W(cons, q)) }, { via: via.map((q) => W(pack, q)) }, i === 0 ? 0.022 : 0.017)));
   // Console → tête : rotation A et B (1 po), par-dessus le bout arrière de la poutre jusqu'aux coudes du moteur.
   const rot = HEAD_VIA.map((via, i) => run({ p: W(cons, CON_ROT[i]), n: cBack }, { via: via.map((q) => W(drill, q)) }, 0.022));
   hoses.push(...rot);
@@ -145,4 +143,4 @@ function P002(api) {
   return { view: { dir: [0.2, 1.1, 1.0] } };
 }
 
-export default { P002, P010, P015, P016, P017, P039, P040, P041, P042, P048, P068, P078 };
+export default { P002, P010, P015, P016, P017, P039, P040, P041, P042, P048, P049, P068, P069, P078, P079 };

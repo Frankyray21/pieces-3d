@@ -3700,8 +3700,7 @@
      "DRILLING HEAD FITTING DETAILS (page 2.3)",
      {
       "link": "P049",
-      "pseudo": true,
-      "no3d": true
+      "pseudo": true
      }
     ]
    ]
@@ -5200,8 +5199,7 @@
      "CONSOLE HYDRAULIC COMPONENTS (page 4.3)",
      {
       "link": "P079",
-      "pseudo": true,
-      "no3d": true
+      "pseudo": true
      }
     ]
    ]
@@ -5272,7 +5270,11 @@
      "10",
      "M02-03-B-2",
      2,
-     "M02-03-B-2"
+     "M02-03-B-2",
+     {
+      "qty3d": 1,
+      "note": "La liste en indique 2 ; les dessins de la console (pages 4.1 à 4.4) en montrent 1 (en 3D)."
+     }
     ],
     [
      "11",
@@ -5293,19 +5295,31 @@
      "13",
      "2404-8-8",
      1,
-     "MJIC 8 x MP 8"
+     "MJIC 8 x MP 8",
+     {
+      "note": "Non dessiné sur les pages de la console (4.1 à 4.4) : pas de 3D.",
+      "no3d": true
+     }
     ],
     [
      "14",
      "6505-8-8",
      1,
-     "MP 8 x FJIC 8 SWIVEL STRAIGHT"
+     "MP 8 x FJIC 8 SWIVEL STRAIGHT",
+     {
+      "note": "Non dessiné sur les pages de la console (4.1 à 4.4) : pas de 3D.",
+      "no3d": true
+     }
     ],
     [
      "15",
      "6600-8-8-8",
      1,
-     "MJIC 8 x MJIC 8 x FJIC 8 TEE"
+     "MJIC 8 x MJIC 8 x FJIC 8 TEE",
+     {
+      "note": "Non dessiné sur les pages de la console (4.1 à 4.4) : pas de 3D.",
+      "no3d": true
+     }
     ],
     [
      "16",
@@ -5391,7 +5405,8 @@
      3,
      "BKH-1/2-NPT",
      {
-      "note": "Repère 27 du schéma hydraulique."
+      "note": "Repère 27 du schéma hydraulique. La liste en indique 3 ; les dessins de la console (pages 4.1 à 4.4) en montrent 2 (en 3D).",
+      "qty3d": 2
      }
     ],
     [

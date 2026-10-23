@@ -110,7 +110,7 @@ ASM = {
 
 # Liens n° de pièce → assemblage (sous-ensembles), par liste.
 LINKS = {
-    'P010': {'FBRA-002-150BM': 'P011', 'FBRA-002-300BB': 'P013', 'FBRA-002-400HH': 'P042', 'FBRA-002-600BB': 'P012',
+    'P010': {'UM-064-200C': 'P013', 'UM-064-400D': 'P020', 'FBRA-002-150BM': 'P011', 'FBRA-002-300BB': 'P013', 'FBRA-002-400HH': 'P042', 'FBRA-002-600BB': 'P012',
              'FTD-030-100ZZ': 'P022', 'FTD-148-800K': 'P028', 'UM-012-100UG': 'P048', 'UM-064-200DS': 'P018',
              'UM-064-300Z': 'P019', 'UM-064-351D': 'P020', 'UM-064-800B': 'P014', 'UM-079-100A-12': 'P032',
              'UM-064-100Z': 'P021'},
@@ -140,7 +140,7 @@ PSEUDO = {
 }
 NOTES = {
     'P002': "Prêt à forer, disposé d'après le plan de l'atelier : foreuse à gauche, inclinée vers le trou ; console STM à droite de la foreuse, à plus de 3 m (3,3 m), commandes tournées vers l'opérateur qui se tient entre la console et le groupe et regarde la foreuse par-dessus la console ; groupe hydraulique en haut à droite, à plus de 3 m (5,5 m), raccords au bout tourné vers la console, interrupteur principal accessible du côté bas. Boyaux branchés au sol : groupe → console (pression, retour, drain) et câble de commande ; console → tête (rotation A et B), bloc du traîneau (avance, vérins) et eau vers l'émerillon (par-dessus le moteur de la tête), chaque boyau dans sa voie. Seul le matériel du manuel est en 3D.",
-    'P010': "Avance à 0° (horizontale) comme sur la page 1.01, sans le garde-corps grillagé ni le vérin supérieur ; le vérin d'avance double est logé dans la poutre. Treuil de câble posé sur le traîneau, au bout arrière, capot en position haute comme à la page 1.01 (volant sous la poutre) ; vérins de bascule dans le support d'avance, à l'extérieur des longerons, vérin de relevage entre le support et le treuil. Les sous-ensembles qui ont leur liste ouvrent leur page (dessins du manuel).",
+    'P010': "Avance à 0° (horizontale) comme sur la page 1.01, sans le garde-corps grillagé ni le vérin supérieur ; le vérin d'avance double est logé dans la poutre. Treuil de câble posé sur l'arrière du traîneau, capot en position haute comme à la page 1.01 (volant sous la poutre) ; vérins de bascule de la chape des longerons à la patte avant du support d'avance, vérin de relevage couché dans le support, sous la poutre ; jambes et attelage non posés (page 1.01). Les sous-ensembles qui ont leur liste ouvrent leur page (dessins du manuel).",
     'P068': "Groupe posé sur ses patins : roues, moyeux et timon (options, pages 3.01 et 3.2) ne sont pas montés en 3D.",
     'P012': "Liste de débit (matériaux et longueurs en pouces) ; quantités illisibles pour trois lignes.",
     'P042': "Treuil en position haute (page 8.0 : 642 mm hors tout), câble enroulé sur le tambour. Les listes des pages 8.1 à 8.4 valent pour les versions gauche et droite (UM-032-100A_L et _R) : une machine porte un tambour, une transmission par chaîne 80 et un moteur White ; côté transmissions comme sur la foreuse (page 1.01). Le cadre « option underground » de la page 8.0 (hors liste) n'est pas monté.",
@@ -157,6 +157,7 @@ DRAWN = {
              'UM-032-163F': 1, 'UM-032-169F': 1, 'W375': 4},
     'P040': {'UM-032-109F': 1, 'UM-032-110F': 1, 'UM-032-162F': 1, 'UM-032-165F': 1, 'UM-032-224F': 1, 'UM-032-C1': 1},
     'P041': {'UM-032-226F': 1},
+    'P079': {'UM-10B-TR#8': 2, 'M02-03-B-2': 1},
 }
 # Quantités dessinées qui ne s'expliquent pas par les deux versions : note propre à la ligne.
 NOTES3D = {
@@ -164,6 +165,12 @@ NOTES3D = {
                            "n'en dessine qu'un, la vis du bout de la vis-mère (en 3D) : les autres boulons ne sont pas dessinés.",
     ('P039', 'W375'): "La liste (versions gauche et droite UM-032-100A_L et _R) indique 25 rondelles ; en 3D, 4 : sous "
                       "les trois boulons du carter et sous la vis du bout. Les autres boulons ne sont pas dessinés.",
+    ('P079', 'UM-10B-TR#8'): "Repère 27 du schéma hydraulique. La liste en indique 3 ; les dessins de la console (pages 4.1 à 4.4) en montrent 2 (en 3D).",
+    ('P079', 'M02-03-B-2'): "La liste en indique 2 ; les dessins de la console (pages 4.1 à 4.4) en montrent 1 (en 3D).",
+}
+# Lignes de liste sans pièce dessinée : pas de 3D (note propre à la ligne).
+NOT_DRAWN = {
+    ('P079', '2404-8-8'), ('P079', '6505-8-8'), ('P079', '6600-8-8-8'),
 }
 # Ensembles détaillés dans la même liste : la ligne de l'ensemble désigne ses pièces (n° des lignes).
 GROUPS = {
@@ -171,7 +178,7 @@ GROUPS = {
                              'UM-041-176F', 'UM-041-174F', 'CTP-125-2250']},
 }
 # Renvois d'étape dont l'assemblage a sa 3D (inséré dans le treuil complet).
-PSEUDO_3D = {'P039', 'P040', 'P041'}
+PSEUDO_3D = {'P039', 'P040', 'P041', 'P049', 'P079'}
 
 # ------------------------------------------------------------------ transcriptions à la main
 HAND = {
@@ -355,10 +362,20 @@ for aid, (title, fr, pn, sheets) in ASM.items():
         if aid == 'P010' and r['pn'] in ('FTD-030-100ZZ', 'FTD-148-800K'):
             extra['note'] = 'Non monté en 3D : l\'avance se fait par le vérin double logé dans la poutre (UM-064-100Z).'
             extra['no3d'] = True
+        if aid == 'P010' and r['pn'] == 'UM-064-351D':
+            extra['note'] = 'Non monté en 3D : la page 1.01 ne le montre posé dans aucune vue (voir 1.10).'
+            extra['no3d'] = True
+        if aid == 'P010' and r['pn'] == 'UM-064-400D':
+            extra['note'] = ("Non montées en 3D : à 0° (page 1.01) les jambes ne sont pas posées ; aux inclinaisons de 45° et 90°, "
+                             "elles se posent entre l'oreille d'un poteau du traîneau (à 455 mm du sol) et une patte sous la poutre (voir 1.01 et 1.10).")
+            extra['no3d'] = True
         if aid == 'P068' and r['pn'] in ('UM-064-1601RM', 'UM-064-1605RM', 'UM-064-195TB', 'UM-064-TD41'):
             extra['note'] = 'Option non montée (groupe posé sur ses patins).'
             extra['no3d'] = True
             extra.pop('link', None)
+        if (aid, r['pn']) in NOT_DRAWN:
+            extra['note'] = 'Non dessiné sur les pages de la console (4.1 à 4.4) : pas de 3D.'
+            extra['no3d'] = True
         n3d = DRAWN.get(aid, {}).get(r['pn'])
         if n3d is not None and n3d != r['qty']:
             extra['qty3d'] = n3d
