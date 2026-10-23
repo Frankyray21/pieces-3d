@@ -41,7 +41,11 @@ const HEAD_X = FOOT_X - 1.074; // milieu de la table et de la tête le long de l
 const SW_X = HEAD_X - 0.55; // nez de l'émerillon d'eau, abouté au bout arrière de la broche (x = −0,55 dans la tête)
 const by0 = BEAM.top - BEAM.h; // dessous de la poutre (bande basse des longerons)
 const LZ = [0.167, 0.277]; // faces intérieure et extérieure des longerons
-const TBL = { y0: AXIS_Y - SPY - 0.034, y1: AXIS_Y - SPY, hl: 0.41, hw: 0.345 }; // plaque de la table (dessus sous la tête), demi-longueur, demi-largeur
+// Plaque de la table (P005, vue à 0°) : 34 mm d'épaisseur, dessus à 1,000 m du sol, soit 235 mm sous l'axe de la broche ;
+// demi-longueur, demi-largeur. HB : dessous des tubes de charnière de la tête (sa face d'appui), posé pour que la
+// broche tombe sur l'axe AXIS_Y ; il coïncide avec le dessus de la table quand SPY (head.js) vaut 0,235.
+const TBL = { y0: AXIS_Y - 0.235 - 0.034, y1: AXIS_Y - 0.235, hl: 0.41, hw: 0.345 };
+const HB = AXIS_Y - SPY;
 const FC = { y: 0.845, r: 0.0254, x0: BEAM.x0 + 0.022, x1: BEAM.x1 - 0.02 }; // tiges du vérin d'avance : axe, rayon, plaques d'ancrage
 const HX = FOOT_X - 0.3985; // axe de la boîte du serre-tiges (plaques d'about à 0,224 et 0,567 m de la face du pied)
 
@@ -117,7 +121,7 @@ export const SLED_VIA = (() => {
     [...down(1.3, 0.32), [1.3, 0.32, 0.25], [1.22, 0.3, p3[2]], [1.01, 0.21, p3[2]], [0.93, 0.168, p3[2]], p3],
   ];
 })();
-export const HEAD_PORTS = HEAD_LOCAL.map(([x, y, z]) => [HEAD_X + x, AXIS_Y - SPY + y, z]);
+export const HEAD_PORTS = HEAD_LOCAL.map(([x, y, z]) => [HEAD_X + x, HB + y, z]);
 // Boyaux de rotation (console → coudes A et B du moteur, côté +Z, tournés vers l'arrière) : sortie dans l'axe du
 // coude, vers l'arrière au-dessus de la poutre, passage par-dessus la poutre derrière le moteur et l'émerillon (le
 // boyau du flanc côté broche en arrière, celui du flanc extérieur en avant et plus haut, qui passe par-dessus
@@ -501,6 +505,10 @@ export function P010(api) {
   // plaque avant à deux trous côte à côte, plaque arrière à deux trous l'un au-dessus de l'autre sur son bord avant.
   beam.push(at(profil(api, rect(-0.44, yb, -0.22, 0.843), [[-0.293, 0.814, 0.007], [-0.369, 0.814, 0.007]], 0.008), [0, 0, -0.266]));
   beam.push(at(profil(api, rect(-0.97, yb, -0.72, 0.855), [[-0.735, 0.801, 0.007], [-0.735, 0.843, 0.007]], 0.008), [0, 0, -0.266]));
+  // Plaque du bout arrière du flanc −Z (page 1.01, vue à 0°) : juste en avant de la plaque d'extrémité, contre la face
+  // extérieure du longeron (z −0,277 à −0,285), à cheval sur la bande basse ; deux trous en diagonale, le haut en
+  // arrière, le bas en avant.
+  beam.push(at(profil(api, rect(bx0, 0.723, bx0 + 0.127, 0.831), [[bx0 + 0.025, 0.809, 0.007], [bx0 + 0.107, 0.746, 0.007]], 0.008), [0, 0, -(LZ[1] + 0.004)]));
   // Plaque en saillie sur le flanc +Z (vue de bout de la page 1.01) : col étroit soudé à l'âme, tête à coins arrondis
   // de z 0,36 à 0,54 percée de huit trous en quinconce (trois rangées).
   {
@@ -621,7 +629,7 @@ export function P010(api) {
   // dessous, deux brides 205DS et blocs 204DS sur la barre du cylindre du vérin d'avance.
   {
     const tx0 = HEAD_X - TBL.hl, tl = 2 * TBL.hl, yBar = 0.925, y224 = 0.877, y225 = 0.905, zb = 0.315;
-    const PIN = [TBL.y1 + 0.025, 0.284]; // axe du tube de charnière « underground » de la tête (y, z)
+    const PIN = [HB + 0.025, 0.284]; // axe du tube de charnière « underground » de la tête (y, z)
     const OEIL = [-0.0685, 0.0015].map((dx) => HEAD_X + dx), zo = -0.2; // boulons à œil sous les fentes de la patte de la tête
     const t = [
       profilY(rect(tx0, -TBL.hw, tx0 + tl, TBL.hw), [rect(HEAD_X + 0.05, -0.06, HEAD_X + 0.25, 0.06)], TBL.y1 - TBL.y0, (TBL.y0 + TBL.y1) / 2),
@@ -661,7 +669,7 @@ export function P010(api) {
   }
 
   // 9 — Tête de forage Boyles sur la table, broche dans l'axe de l'avance.
-  P('UM-012-100UG', at(api.sub('P048'), [HEAD_X, TBL.y1, 0]), [0, 0.7, 0]);
+  P('UM-012-100UG', at(api.sub('P048'), [HEAD_X, HB, 0]), [0, 0.7, 0]);
 
   // 17 — Vérin d'avance double UM-064-100Z (P021), logé dans la poutre : deux tiges creuses 119Z Ø 2 po ancrées dans la
   // plaque d'extrémité et le flasque avant de la plateforme (bagues 317B, écrous 128Z et contre-écrous 127Z à
