@@ -249,9 +249,13 @@ export class Viewer {
     this.selectedKey = null;
     this.hoverObjs = [];
     this.selectedObjs = [];
-    // Mise en évidence demandée par une fonction de l'interface (setMarked) : objets, et autres pièces estompées ou non.
+    // Mise en évidence demandée par une fonction de l'interface (markObjects) : objets, et autres pièces estompées ou non.
     this.markObjs = [];
     this.markGhost = false;
+    // Matériaux de base remplacés par une fonction (setBaseMaterials) : maillage → matériau d'origine.
+    this._baseOrig = new Map();
+    // Pièces masquées ou montrées par une fonction (showParts) : objet → visibilité d'origine.
+    this._partVis = new Map();
     this.isolate = false;
     this.labelsVisible = true;
     this.edgesVisible = false; // rendu réaliste par défaut ; contours en option
@@ -339,6 +343,9 @@ export class Viewer {
   // ---------------------------------------------------------------- modèle
 
   setModel(model) {
+    // Couleurs et visibilités changées par les fonctions : rendues à l'ancien modèle, oubliées pour le nouveau.
+    this._restoreBase();
+    this._restoreVis();
     if (this.model) {
       this.scene.remove(this.model.root);
       this._clearLabels();
@@ -425,6 +432,9 @@ export class Viewer {
     this.hoverObjs = this.hoverKey ? this.resolve(this.hoverKey.split('>')) : [];
     this.selectedObjs = this.selectedKey ? this.resolve(this.selectedKey.split('>')) : [];
     this.markObjs = this.markObjs.map((o) => (o === oldObj ? newObj : o));
+    // Remplacements des fonctions (couleurs, visibilités) : ceux de l'ancienne pièce sont oubliés.
+    for (const o of [...this._baseOrig.keys()]) if (gone.has(o)) this._baseOrig.delete(o);
+    for (const o of [...this._partVis.keys()]) if (gone.has(o)) this._partVis.delete(o);
     if (this.section.on) this._updatePlane();
     this._applyAll();
     this._refreshStates();
@@ -746,25 +756,33 @@ export class Viewer {
     const up = Math.abs(viewDir.y) > 0.98 ? new THREE.Vector3(0, 0, -1) : new THREE.Vector3(0, 1, 0);
     const right = new THREE.Vector3().crossVectors(up, viewDir).normalize();
     const camUp = new THREE.Vector3().crossVectors(viewDir, right).normalize();
-    // Marges (px) laissées libres en haut, en bas et sur chaque côté de la scène
-    // (insets : objet ou fonction, ex. barre d'outils posée sur la scène,
-    // légendes plus larges que les objets) : le modèle est cadré dans le reste.
+    // Marges (px) laissées libres en haut, en bas, à gauche et à droite de la
+    // scène (insets : objet ou fonction ; ex. barre d'outils posée sur la scène,
+    // panneau latéral, légendes plus larges que les objets — side : les deux
+    // côtés) : le modèle est cadré dans le reste.
     const hPx = this.container.clientHeight, wPx = this.container.clientWidth;
     this._frameBlind = !hPx; // scène masquée : cadrage à refaire quand elle réapparaît
     const ins = (typeof this.insets === 'function' ? this.insets() : this.insets) || {};
-    const top = hPx ? ins.top || 0 : 0, bottom = hPx ? ins.bottom || 0 : 0, side = wPx ? ins.side || 0 : 0;
+    const top = hPx ? ins.top || 0 : 0, bottom = hPx ? ins.bottom || 0 : 0;
+    // Côtés : au plus 70 % de la largeur couverts (sinon le modèle serait illisible).
+    let left = wPx ? Math.max(ins.side || 0, ins.left || 0) : 0, rgt = wPx ? Math.max(ins.side || 0, ins.right || 0) : 0;
+    if (left + rgt > wPx * 0.7) { const k = (wPx * 0.7) / (left + rgt); left *= k; rgt *= k; }
     const tanFull = Math.tan(THREE.MathUtils.degToRad(this.camera.fov) / 2);
     const tanV = tanFull * Math.max(0.3, 1 - (top + bottom) / (hPx || 1));
-    const tanH = tanFull * this.camera.aspect * Math.max(0.3, 1 - (2 * side) / (wPx || 1));    const proj = points.map((p) => { const v = p.clone().sub(c0); return [v.dot(right), v.dot(camUp), v.dot(viewDir)]; });
+    const tanH = tanFull * this.camera.aspect * Math.max(0.3, 1 - (left + rgt) / (wPx || 1));
+    const proj = points.map((p) => { const v = p.clone().sub(c0); return [v.dot(right), v.dot(camUp), v.dot(viewDir)]; });
     let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
     proj.forEach(([x, y]) => { x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); });
     const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
     let dist = 0.1;
     proj.forEach(([x, y, z]) => { dist = Math.max(dist, z + Math.abs(x - cx) / tanH, z + Math.abs(y - cy) / tanV); });
     dist *= box ? 1.35 : 1.06;
-    // Centre de la bande libre : le modèle descend de (haut − bas) / 2 px.
+    // Centre de la partie libre : le modèle descend de (haut − bas) / 2 px et
+    // se décale de (gauche − droite) / 2 px.
     const shift = hPx ? ((top - bottom) / hPx) * dist * tanFull : 0;
-    const center = c0.addScaledVector(right, cx).addScaledVector(camUp, cy + shift);    this._moveCamera(center.clone().addScaledVector(viewDir, dist), center, instant);
+    const shiftX = wPx ? ((left - rgt) / wPx) * dist * tanFull * this.camera.aspect : 0;
+    const center = c0.addScaledVector(right, cx - shiftX).addScaledVector(camUp, cy + shift);
+    this._moveCamera(center.clone().addScaledVector(viewDir, dist), center, instant);
   }
 
   /** Cadre une pièce ou un groupe (à son état final si une animation est en cours). */
@@ -847,23 +865,140 @@ export class Viewer {
   setMarked(paths, { ghost = false } = {}) {
     const objs = [];
     for (const p of paths || []) for (const o of this.resolve(p)) if (!objs.includes(o)) objs.push(o);
-    this.markObjs = objs;
-    this.markGhost = !!ghost && objs.length > 0;
+    return this.markObjects(objs, { ghost });
+  }
+
+  /**
+   * Met en évidence des objets 3D quelconques du modèle (pièces, graisseurs,
+   * boyaux…), sans changer la sélection ; ghost : estompe tout le reste.
+   * Liste vide ou null : plus rien de mis en évidence. Retourne les objets.
+   */
+  markObjects(objs, { ghost = false } = {}) {
+    const list = [...new Set((objs || []).filter((o) => o?.isObject3D))];
+    this.markObjs = list;
+    this.markGhost = !!ghost && list.length > 0;
     this._refreshStates();
-    return objs;
+    return list;
+  }
+
+  /**
+   * Remplace le matériau de base de maillages du modèle (ex. couleurs des
+   * circuits) : entries = Map ou liste de [maillage, matériau]. Les états
+   * (survol, sélection, estompage, coupe) s'appliquent par-dessus. Les
+   * maillages remplacés auparavant et absents de entries retrouvent leur
+   * matériau d'origine. Oublié au changement de modèle.
+   */
+  setBaseMaterials(entries) {
+    const next = new Map(entries || []);
+    for (const [o, m] of this._baseOrig) if (!next.has(o)) { o.userData.baseMaterial = m; this._baseOrig.delete(o); }
+    for (const [o, m] of next) {
+      if (!o?.isMesh || !m) continue;
+      if (!this._baseOrig.has(o)) this._baseOrig.set(o, o.userData.baseMaterial || o.material);
+      o.userData.baseMaterial = m;
+    }
+    this._refreshStates();
+  }
+
+  /** Matériaux d'origine rétablis (annule setBaseMaterials). */
+  restoreBaseMaterials() {
+    if (!this._baseOrig.size) return;
+    this._restoreBase();
+    this._refreshStates();
+  }
+
+  _restoreBase() {
+    for (const [o, m] of this._baseOrig) o.userData.baseMaterial = m;
+    this._baseOrig.clear();
+  }
+
+  /**
+   * Montre ou masque des objets du modèle (montage pas à pas) ; les bulles de
+   * repère des pièces masquées sont masquées aussi. restoreParts rétablit la
+   * visibilité d'origine. Oublié au changement de modèle.
+   */
+  showParts(objs, visible = true) {
+    for (const o of objs || []) {
+      if (!o?.isObject3D) continue;
+      if (!this._partVis.has(o)) this._partVis.set(o, o.visible);
+      o.visible = !!visible;
+    }
+    this._partsChanged();
+  }
+
+  /** Visibilités d'origine rétablies (annule showParts), animations d'arrivée arrêtées. */
+  restoreParts() {
+    this.settleParts();
+    if (!this._partVis.size) return;
+    this._restoreVis();
+    this._partsChanged();
+  }
+
+  _restoreVis() {
+    for (const [o, v] of this._partVis) o.visible = v;
+    this._partVis.clear();
+  }
+
+  _partsChanged() {
+    // Pièces apparues ou disparues : masquage des bulles à recalculer.
+    this.labels.forEach((l) => { l.culled = false; });
+    this._cullDirty = true;
+    this._refreshLabels();
+    this.invalidate();
+  }
+
+  /**
+   * Fait arriver des objets un à un à leur place (montage pas à pas) : chacun
+   * apparaît à son tour, depuis sa position éclatée × far, et glisse jusqu'à sa
+   * position actuelle (mouvement amorti de duration ms, départs espacés de gap
+   * ms). Retourne la durée totale (ms). settleParts arrête et pose tout.
+   */
+  arriveParts(objs, { far = 1.25, duration = 900, gap = null } = {}) {
+    this.settleParts();
+    const list = (objs || []).filter((o) => o?.isObject3D);
+    if (!list.length) return 0;
+    const step = gap ?? Math.max(40, Math.min(260, 3200 / list.length));
+    const now = performance.now();
+    this.showParts(list, false);
+    list.forEach((o, i) => {
+      const to = o.position.clone();
+      const ex = o.userData.explode;
+      const from = ex ? to.clone().addScaledVector(ex, far) : to.clone();
+      o.position.copy(from);
+      this.tweens.push({ kind: 'arrive', node: o, start: now + i * step, dur: duration, step: (k) => {
+        if (k < 0) return;
+        if (!o.visible) { o.visible = true; this._refreshLabels(); }
+        o.position.lerpVectors(from, to, 1 - Math.pow(1 - k, 3));
+      } });
+    });
+    return (list.length - 1) * step + duration;
+  }
+
+  /** Arrête les arrivées en cours : chaque pièce à sa place (position d'éclatement actuelle). */
+  settleParts() {
+    if (!this.tweens.some((tw) => tw.kind === 'arrive')) return;
+    this.tweens = this.tweens.filter((tw) => tw.kind !== 'arrive');
+    this._applyAll();
+    this._cullDirty = true;
+    this._refreshLabels();
   }
 
   /** Cadre plusieurs pièces (chemins de repères) ; sans pièce trouvée, ne fait rien. */
   focusPaths(paths) {
     const objs = [];
     for (const p of paths || []) objs.push(...this.resolve(p));
-    if (!objs.length) return;
+    this.focusObjects(objs);
+  }
+
+  /** Cadre des objets du modèle (à leur état final si une animation est en cours) ; liste vide : rien. */
+  focusObjects(objs) {
+    const list = (objs || []).filter((o) => o?.isObject3D);
+    if (!list.length || !this.model) return;
     const box = this._atTargets(() => {
       const b = new THREE.Box3();
-      objs.forEach((o) => b.expandByObject(o));
+      list.forEach((o) => b.expandByObject(o));
       return b;
     });
-    this.frame({ box });
+    if (!box.isEmpty()) this.frame({ box });
   }
 
   _refreshStates() {
@@ -1077,7 +1212,8 @@ export class Viewer {
     // encore affichées, par exemple repères activés après l'ouverture).
     this.labelRenderer.render(this.scene, this.camera);
     const meshes = [];
-    root.traverse((o) => { if (o.isMesh && !o.userData.isEdges) meshes.push(o); });
+    // Pièces affichées seulement (une pièce masquée ne cache pas la bulle d'une autre).
+    root.traverseVisible((o) => { if (o.isMesh && !o.userData.isEdges) meshes.push(o); });
     const cam = this.camera.position;
     const rc = this._cullRay || (this._cullRay = new THREE.Raycaster());
     const p = new THREE.Vector3(), dir = new THREE.Vector3();
@@ -1135,9 +1271,11 @@ export class Viewer {
     const dimOthers = (this.isolate || this.section.scope === 'selection') && this.selectedKey;
     const marks = new Set(this.markObjs);
     const marked = (o) => { for (let a = o; a && a !== root; a = a.parent) if (marks.has(a)) return true; return false; };
+    // Pièces masquées par une fonction (showParts, arriveParts) : leurs bulles aussi.
+    const hiding = this._partVis.size > 0;
     for (const { key, owner, label, culled } of this.labels) {
       label.visible = this.labelsVisible && (owner === root || owner.userData.explodeT > 0.05) && (!culled || key === this.selectedKey)
-        && (this.step == null || this._anyShown(label.parent));
+        && ((this.step == null && !hiding) || this._anyShown(label.parent));
       const el = label.element;
       el.classList.toggle('is-selected', key === this.selectedKey);
       el.classList.toggle('is-hover', key === this.hoverKey);

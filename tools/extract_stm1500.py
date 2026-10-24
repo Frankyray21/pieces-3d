@@ -421,7 +421,7 @@ data = {
               ['Tête de forage', 'UM-012-100UG Boyles, transmission Funk HMD-2355 4 vitesses, moteur A6VM160, 1 200 tr/min max'],
               ['Mandrin', 'Boyles H, passage Ø 3 7/8 po'],
               ['Serre-tiges de pied', 'Boyles 12HH'],
-              ['Treuil de câble', '10 000 pi (UM-032-100A), tambour à flasques Ø 490 mm, moteur White RE12, chaîne 80'],
+              ['Treuil de câble', '10 000 pi (UM-032-100A), moteur White RE12, chaîne 80'],
               ['Réservoir', '110 gal US'],
               ['Foreuse à 0°', '4 202 × 864 × 1 731 mm, axe à 1 235 mm'],
               ['Groupe hydraulique', '2 460 × 1 225 × 1 548 mm'],
