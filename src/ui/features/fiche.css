@@ -5,7 +5,7 @@
 .fiche-ref {
   flex: none; min-width: 40px; height: 40px; padding: 0 8px; border-radius: 20px;
   display: inline-flex; align-items: center; justify-content: center;
-  background: var(--sys, var(--accent)); color: #fff;
+  background: var(--sys, var(--accent-text, var(--accent))); color: var(--on-sys, #fff);
   font: 700 18px/1 var(--f-display);
 }
 .fiche-id { min-width: 0; flex: 1; }
@@ -27,7 +27,7 @@
 .fiche-grid dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
 
 .fiche-link {
-  border: 0; background: none; padding: 0; margin: 0; font: inherit; color: var(--accent); text-align: left;
+  border: 0; background: none; padding: 0; margin: 0; font: inherit; color: var(--accent-text, var(--accent)); text-align: left;
   cursor: pointer; overflow-wrap: anywhere;
 }
 .fiche-link:hover { text-decoration: underline; }
@@ -51,7 +51,10 @@
 
 .fiche-dims { width: 100%; border-collapse: collapse; font-size: 14px; }
 .fiche-dims th { text-align: left; font-weight: 500; color: var(--muted); padding: 3px 8px 3px 0; }
-.fiche-dims td { text-align: right; padding: 3px 0 3px 8px; white-space: nowrap; }
+.fiche-dims td { text-align: right; padding: 3px 0 3px 8px; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.fiche-dims td:last-child { width: 1%; white-space: nowrap; }
+.fiche-dims .chip { font-size: 11px; }
+.fiche-conv { display: inline; font-size: 10.5px; }
 .fiche-dims tr + tr th, .fiche-dims tr + tr td { border-top: 1px solid var(--line); }
 
 .fiche-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; max-height: 220px; overflow: auto; }
@@ -91,4 +94,11 @@
 @keyframes fiche-wave { from { transform: scale(1); opacity: 0.9; } to { transform: scale(1.7); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) {
   .fiche-ring.on, .fiche-ring.on::after { animation: none; }
+}
+
+/* Doigt : liens et boutons de la fiche d'au moins 40 px. */
+@media (pointer: coarse) {
+  .fiche-link { min-height: 40px; display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0 4px; }
+  .fiche-list .fiche-link { display: block; padding: 6px 0; }
+  .fiche-actions .btn { height: 40px; }
 }

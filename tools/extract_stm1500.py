@@ -139,7 +139,7 @@ PSEUDO = {
              ['UM-051-FMC-036-7', None, 'HYDRAULIC COMPONENTS DETAILS (page 4.4.1)', 'P081']],
 }
 NOTES = {
-    'P002': "Prêt à forer, disposé d'après le plan de l'atelier : foreuse à gauche, inclinée vers le trou ; console STM à droite de la foreuse, à plus de 3 m (3,3 m), commandes tournées vers l'opérateur qui se tient entre la console et le groupe et regarde la foreuse par-dessus la console ; groupe hydraulique en haut à droite, à plus de 3 m (5,5 m), raccords au bout tourné vers la console, interrupteur principal accessible du côté bas. Boyaux branchés au sol : groupe → console (pression, retour, drain) et câble de commande ; console → tête (rotation A et B), bloc du traîneau (avance, vérins) et eau vers l'émerillon (par-dessus le moteur de la tête), chaque boyau dans sa voie. Seul le matériel du manuel est en 3D.",
+    'P002': "Prêt à forer, disposé d'après le plan de l'atelier : foreuse à gauche, inclinée vers le trou ; console STM à droite de la foreuse, à plus de 3 m (3,3 m), commandes tournées vers l'opérateur qui se tient entre la console et le groupe et regarde la foreuse par-dessus la console ; groupe hydraulique en haut à droite, à plus de 3 m (5,5 m), raccords au bout tourné vers la console, interrupteur principal accessible du côté bas. Boyaux branchés au sol : groupe → console (pression, retour, drain) ; console → tête (rotation A et B), bloc du traîneau (avance, vérins) et eau vers l'émerillon (par-dessus le moteur de la tête), chaque boyau dans sa voie. Seul le matériel du manuel est en 3D.",
     'P010': "Avance à 0° (horizontale) comme sur la page 1.01, sans le garde-corps grillagé ni le vérin supérieur ; le vérin d'avance double est logé dans la poutre. Treuil de câble posé sur l'arrière du traîneau, capot en position haute comme à la page 1.01 (volant sous la poutre) ; vérins de bascule de la chape des longerons à la patte avant du support d'avance, vérin de relevage couché dans le support, sous la poutre ; jambes et attelage non posés (page 1.01). Les sous-ensembles qui ont leur liste ouvrent leur page (dessins du manuel).",
     'P068': "Groupe posé sur ses patins : roues, moyeux et timon (options, pages 3.01 et 3.2) ne sont pas montés en 3D.",
     'P012': "Liste de débit (matériaux et longueurs en pouces) ; quantités illisibles pour trois lignes.",
@@ -285,6 +285,13 @@ PNFIX = {
              'HDC ROCKSTAR HOUSING CAP IP 65': 'HDC-1665230000', 'ENGLISH STICKER': 'UM-CIT-SC-UG-CA1'},
     'P040': {'': 'UM-032-102F'},
 }
+# Désignations perdues par le brouillon (colonne vide, étiquette voisine collée), relues sur la page : n° → désignation.
+DESCFIX = {
+    'P039': {'SP250-1250': "SPRING PIN 1/2'' x 1 1/4''", 'SP375-3000': "SPRING PIN 3/8'' x 3''"},
+    'P040': {'SPN-R3000-X237': 'INT. RET. RING SERIWE 3000 (2 3/8 x 0.78)'},
+    'P041': {'SB206-20': "INSERT BEARING 1 1/4''", 'SPN-R3100-300': 'EXT.RET.RING SÉRIE. (3100)'},
+    'P080': {'AL01_M12X250': 'SD25 ARM'},
+}
 PNPREFIX = {'10D003 806 12': 'C016 10D003 806 12', '20C003 100 12': 'C016 20C003 100 12', '20F003 100 12': 'C016 20F003 100 12',
             '20G003 100 12': 'C016 20G003 100 12', '20H003 110 12': 'C016 20H003 110 12', 'GRADE 8 BOLT 1/2-UNC x 6 1/2': 'B500-6500GR8',
             'GRADE 8 BOLT 1/2-UNC x 8': 'B500-8000GR8'}
@@ -335,6 +342,8 @@ def clean(page, tables):
         if not r['pn']:
             r['pn'] = PNFIX.get(page, {}).get(r['desc'], '')
         r['pn'] = r['pn'].replace('-----', '')
+        if r['pn'] in DESCFIX.get(page, {}):
+            r['desc'] = DESCFIX[page][r['pn']]
     return rows
 
 
@@ -413,11 +422,11 @@ data = {
     'manufacturer': 'Usinage Marcotte',
     'category': 'Foreuse aux diamants souterraine',
     'serial': 'STM-1500-128',
-    'document': {'title': 'Part book for STM-1500', 'reference': 'FBRA-002 (client Machines Roger)', 'preparedBy': 'Usinage Marcotte inc., Val-d\'Or (M. S. Gignac)',
+    'document': {'title': 'Part book for STM-1500', 'reference': 'FBRA-002', 'client': 'Machine Roger', 'preparedBy': 'Usinage Marcotte inc., Val-d\'Or (M. S. Gignac)',
                  'date': '2013-11-26', 'sheets': 96, 'pagePattern': 'pages/{sheet}.webp'},
     'specs': [['Modèle', 'STM-1500 (foreuse aux diamants souterraine, avance à vérin « top feed »)'],
               ['Moteur électrique', 'WEG 125 HP, 575 V, 60 Hz, 1 780 tr/min, 184 A (CT125504NPBBW22)'],
-              ['Pompes', 'Rexroth A11VO130 + A10VO45 + A10VO45 en tandem'],
+              ['Pompes', 'A11VO130 + A10VO45K + A10VO45N en tandem (page 3.4)'],
               ['Tête de forage', 'UM-012-100UG Boyles, transmission Funk HMD-2355 4 vitesses, moteur A6VM160, 1 200 tr/min max'],
               ['Mandrin', 'Boyles H, passage Ø 3 7/8 po'],
               ['Serre-tiges de pied', 'Boyles 12HH'],

@@ -234,7 +234,7 @@ export default {
         li.classList.toggle('is-current', on);
         if (on) item = li;
       });
-      if (scroll && item) item.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      if (scroll && item) item.scrollIntoView({ block: 'nearest', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
       if (frame) frameOn(id);
       ctx.viewer.invalidate();
     };

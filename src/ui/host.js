@@ -329,7 +329,10 @@ export function createHost(app) {
   };
 
   // ---------------------------------------------------------------- outils de la scène
-  const ftools = $('#ftools');
+  // Outils des fonctions : dans le groupe principal de la barre (après « Plein écran » et un séparateur), sans
+  // rangée à part ; sur téléphone, toute la barre tient sur une rangée qui défile.
+  const mainGroup = tools.querySelector('.tgroup:not(.ftools)') || $('#ftools');
+  let sep = null;
   const addTool = (btn) => {
     let el = btn;
     if (!(btn instanceof Element)) {
@@ -343,11 +346,28 @@ export function createHost(app) {
       if (pressed != null) el.setAttribute('aria-pressed', String(!!pressed));
       if (onClick) el.addEventListener('click', onClick);
     }
-    el.classList.add('tbtn');
-    ftools.appendChild(el);
-    ftools.hidden = false;
+    el.classList.add('tbtn', 'ftool');
+    if (!sep) {
+      sep = document.createElement('span');
+      sep.className = 'tsep';
+      sep.setAttribute('aria-hidden', 'true');
+      mainGroup.appendChild(sep);
+    }
+    mainGroup.appendChild(el);
     return el;
   };
+  // Rangée défilante (téléphone) : fondu sur le bord où il reste des outils ; l'outil qui prend le focus est montré.
+  const toolEdges = () => {
+    const over = tools.scrollWidth > tools.clientWidth + 1;
+    tools.classList.toggle('more-l', over && tools.scrollLeft > 2);
+    tools.classList.toggle('more-r', over && tools.scrollLeft + tools.clientWidth < tools.scrollWidth - 2);
+  };
+  tools.addEventListener('scroll', toolEdges, { passive: true });
+  new ResizeObserver(toolEdges).observe(tools);
+  new MutationObserver(toolEdges).observe(tools, { subtree: true, childList: true, attributes: true, attributeFilter: ['hidden', 'style'] });
+  tools.addEventListener('focusin', (e) => {
+    if (tools.scrollWidth > tools.clientWidth + 1) e.target.scrollIntoView?.({ block: 'nearest', inline: 'nearest' });
+  });
 
   // ---------------------------------------------------------------- page plein écran (sur l'espace de travail)
   const wp = $('#wpage');

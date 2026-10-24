@@ -52,6 +52,9 @@
   padding: 1px 7px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface);
 }
 .rch-use:hover { border-color: var(--accent); color: var(--ink); }
+@media (pointer: coarse) {
+  .rch-use { padding: 6px 9px; }
+}
 .rch-more { align-self: center; }
 .rch-help, .rch-empty { padding: 10px 12px; color: var(--muted); }
 .rch-help p { margin: 0 0 6px; color: var(--ink); }
@@ -71,7 +74,8 @@
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 .rch-pop.full .rch-head {
-  display: flex; align-items: center; gap: 8px; padding: 8px 16px 8px 8px; background: var(--head-bg, var(--surface)); flex: none;
+  display: flex; align-items: center; gap: 8px; background: var(--head-bg, var(--surface)); flex: none;
+  padding: max(8px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) 8px max(8px, env(safe-area-inset-left, 0px));
 }
 .rch-back {
   flex: none; width: 40px; height: 40px; display: grid; place-items: center; border: 0; border-radius: 8px;

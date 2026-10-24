@@ -95,6 +95,7 @@
 }
 .sysx-c .t { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 .sysx-c:hover { background: var(--hover); color: var(--ink); }
+.sysx-c:focus-visible { outline-offset: -2px; }
 .sysx-c.eq { color: var(--ink); font-weight: 600; }
 .sysx-c.eq svg { flex: none; color: var(--accent); }
 .sysx-c.cur { color: var(--ink); font-weight: 600; flex-shrink: 0.4; max-width: 40ch; }
@@ -114,10 +115,15 @@
 .stage.sysx-has-crumbs .sidepanel { top: max(var(--tools-bottom, 12px), 52px); }
 body.stage-full .sysx-crumbs { top: 10px; }
 @media (max-width: 900px) {
-  .sysx-crumbs { left: 8px; top: 8px; max-width: calc(100% - 16px); font-size: 12.5px; }
-  .sysx-c { max-width: 18ch; padding: 0 5px; }
+  /* Fil plus haut au doigt (maillons de 40 px) ; les outils descendent d'autant. */
+  .sysx-crumbs { left: max(8px, env(safe-area-inset-left, 0px)); top: 8px; max-width: calc(100% - 16px); height: 44px; font-size: 12.5px; }
+  .sysx-c { max-width: 18ch; height: 40px; padding: 0 6px; }
+  .sysx-c.more { min-width: 36px; justify-content: center; }
   .sysx-c.cur { max-width: 24ch; }
   .sysx-c.eq .t { max-width: 10ch; }
-  .stage.sysx-has-crumbs .tools { top: 48px; }
-  .stage.sysx-has-crumbs .sidepanel { top: max(var(--tools-bottom, 8px), 48px); }
+  .sysx-cmenu .sysx-c { height: 44px; }
+  .stage.sysx-has-crumbs .tools { top: 58px; }
+  .stage.sysx-has-crumbs .sidepanel { top: max(var(--tools-bottom, 8px), 58px); }
+  /* Puces des sous-ensembles : texte complet, sur deux lignes au besoin. */
+  .sysx-chip span { white-space: normal; overflow: visible; text-overflow: clip; }
 }

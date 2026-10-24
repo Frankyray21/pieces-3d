@@ -75,6 +75,9 @@ const PORTRAIT_ENTER = 1.4;
 const $ = (sel) => document.querySelector(sel);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const narrow = () => window.matchMedia('(max-width: 900px)').matches;
+// Mouvement réduit (préférence du système) : défilements sans animation.
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)');
+const smooth = () => (REDUCED.matches ? 'auto' : 'smooth');
 const keyOf = (path) => path.join('>');
 
 const S = {
@@ -1004,7 +1007,7 @@ function select(path, { focus = false, from3d = false } = {}) {
   if (row) {
     const tr = document.querySelector(`#rows tr[data-key="${CSS.escape(keyOf(S.selected))}"]`);
     tr?.classList.add('sel');
-    if (tr && from3d) tr.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    if (tr && from3d) tr.scrollIntoView({ block: 'nearest', behavior: smooth() });
   }
   const p3 = row && is3d() ? path3d(S.selected) : null;
   if (is3d()) viewer.setSelected(p3);

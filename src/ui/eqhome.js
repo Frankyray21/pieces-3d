@@ -49,6 +49,15 @@ const pagesOk = new Map();
 
 const plural = (n, w) => `${n} ${w}${n > 1 ? 's' : ''}`;
 
+/** Titre d'une puce sans le préfixe répété de sa tuile (« Treuil — volants… » sous « Treuil de câble » → « Volants… »). */
+function chipTitle(title, parent) {
+  const m = /^(.+?)\s+—\s+(.+)$/.exec(title || '');
+  if (!m) return title;
+  const first = (x) => x.toLowerCase().split(/[\s,]+/)[0];
+  if (first(m[1]) !== first(parent || '')) return title;
+  return m[2].charAt(0).toUpperCase() + m[2].slice(1);
+}
+
 /** Tuiles d'un système : en-tête (le système), puis ses sous-assemblages. */
 function renderSystem(eq, t, { has3d, badge, pageUrl }, n) {
   // Vignette : la page du manuel (aucune si la page n'est pas publiée avec cette version du site).
@@ -57,7 +66,7 @@ function renderSystem(eq, t, { has3d, badge, pageUrl }, n) {
   const tag3d = (id, iso) => (has3d(id) ? '<span class="tag3d">3D</span>' : iso ? '<span class="tag3d iso" title="Isolé dans la vue 3D de l’ensemble">3D</span>' : '');
   const tile = (c) => {
     const act = tileAction(eq, c.id, has3d);
-    const chips = c.children.map((g) => `<button type="button" class="sysx-chip" ${tileAction(eq, g.id, has3d)} title="${esc(g.title)} · ${esc(badge(g.sheet))}">${icon(g.icon, { size: 14 })}<span>${esc(g.title)}</span></button>`).join('');
+    const chips = c.children.map((g) => `<button type="button" class="sysx-chip" ${tileAction(eq, g.id, has3d)} title="${esc(g.title)} · ${esc(badge(g.sheet))}">${icon(g.icon, { size: 14 })}<span>${esc(chipTitle(g.title, c.title))}</span></button>`).join('');
     return `<div class="sysx-tile">
       <button type="button" class="sysx-open" ${act}>
         ${thumb(c.sheet, `Page ${c.sheet} du ${eq.docWord}`)}

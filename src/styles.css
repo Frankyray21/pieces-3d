@@ -152,7 +152,7 @@ details.more summary { cursor: pointer; margin: 0 6px; color: var(--muted); font
 }
 .tools > * { pointer-events: auto; }
 .explode, .tgroup {
-  display: flex; align-items: center; gap: 6px; padding: 5px; border-radius: 10px;
+  display: flex; align-items: center; flex-wrap: wrap; gap: 6px; padding: 5px; border-radius: 10px;
   background: color-mix(in srgb, var(--surface) 92%, transparent); border: 1px solid var(--line); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 .explode input { width: 150px; accent-color: var(--accent); }
@@ -366,7 +366,14 @@ table.parts { width: 100%; border-collapse: collapse; font-size: 13px; }
   .tb-page svg { width: 22px; height: 22px; }
   .tb-page strong { font-size: 12px; }
   .titleblock .dwg { font-size: 12px; }
-  .explode input { width: 100px; }
+  /* Outils sur une seule rangée qui défile au doigt (fondu sur le bord où il en reste : atelier.css). */
+  .tools {
+    flex-wrap: nowrap; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; pointer-events: auto;
+    left: 0; right: 0; padding: 0 max(8px, env(safe-area-inset-right, 0px)) 2px max(8px, env(safe-area-inset-left, 0px)); scroll-padding: 0 24px;
+  }
+  .tools::-webkit-scrollbar { display: none; }
+  .tools > * { flex: none; }
+  .explode input { width: 90px; }
   .tgroup .tbtn { padding: 0 8px; }
   /* Téléphone : le panneau du montage prend la largeur, le cartouche s'efface. */
   .stepsbar { left: 8px; right: 8px; bottom: 8px; width: auto; box-sizing: border-box; }
@@ -376,9 +383,6 @@ table.parts { width: 100%; border-collapse: collapse; font-size: 13px; }
   .stage.stepping .titleblock { display: none; }
   /* Téléphone : légendes sur une ligne, pour tenir entre deux rangées d'outils. */
   .balloon.caption { max-width: none; white-space: nowrap; padding: 2px 5px; font-size: 10px; }
-  /* Barre d'outils plus large que l'écran : défilement horizontal. */
-  .tgroup { max-width: 100%; overflow-x: auto; scrollbar-width: none; }
-  .tgroup::-webkit-scrollbar { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; }

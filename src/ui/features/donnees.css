@@ -17,7 +17,7 @@
 /* ---------------------------------------------------------------- page */
 .dn { display: grid; gap: 22px; min-width: 0; }
 .dn-head { display: grid; gap: 6px; }
-.dn-intro { margin: 0; font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
+.dn-intro { margin: 0; font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent-text, var(--accent)); }
 .dn-note { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.45; max-width: 80ch; }
 
 .dn-keys { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 165px), 1fr)); gap: 12px; }
@@ -128,4 +128,12 @@
   .dn-vt .c-q, .dn-tot .c-q { grid-column: 2; grid-row: 1; }
   .dn-vt td:not(.c-q), .dn-tot td:not(.c-q) { grid-column: 1 / -1; }
   .dn-sz { white-space: normal; }
+}
+
+/* Plusieurs pages sources pour une valeur ; cibles au doigt. */
+.dn-srcs { display: inline-flex; flex-wrap: wrap; justify-content: flex-end; gap: 4px; }
+.dn-key .dn-srcs { justify-self: start; margin-top: 4px; justify-content: flex-start; }
+.dn-key-v .dn-conv, .dn-key-s .dn-conv { vertical-align: 3px; }
+@media (pointer: coarse) {
+  .dn-src, .dn-asmchip, .dn-nav .chip, .dn-pn { min-height: 36px; display: inline-flex; align-items: center; }
 }

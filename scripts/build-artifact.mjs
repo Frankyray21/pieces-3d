@@ -26,7 +26,10 @@ const walk = (dir) => readdirSync(dir).flatMap((f) => {
 // Si cela ne suffit pas, les derniers équipements du catalogue sont publiés sans
 // les pages de leur manuel (listes, recherche et 3D restent complètes ; la page
 // renvoie alors à la version complète du site).
-const all = walk(join(dist, 'equipment')).map((p) => p.slice(dist.length + 1)).sort();
+// Données complémentaires (bulles, donnees, entretien, procedures) : déjà dans le module (src/data/extras.js),
+// jamais demandées ; elles ne sont pas publiées (limite de fichiers).
+const EXTRAS = /\/(?:bulles|donnees|entretien|procedures)\.json$/;
+const all = walk(join(dist, 'equipment')).map((p) => p.slice(dist.length + 1)).filter((p) => !EXTRAS.test(p)).sort();
 const catalogue = JSON.parse(readFileSync(join(dist, 'equipment', 'index.json'), 'utf8')).equipment;
 let files = all;
 let note = '';
@@ -67,7 +70,10 @@ for (const { id } of catalogue) {
 }
 const publication = JSON.stringify({ pagesAbsentes }).replace(/</g, '\\u003c');
 
-const page = `<title>Pièces 3D</title>
+// Déclaration d'encodage en tête : servie sans « charset » (aperçu local, serveur statique), la page reste lue en
+// UTF-8 (sinon les textes et les expressions régulières du module seraient mal décodés).
+const page = `<meta charset="utf-8">
+<title>Pièces 3D</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 ${fonts}
