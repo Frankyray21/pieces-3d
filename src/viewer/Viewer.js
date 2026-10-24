@@ -679,7 +679,7 @@ export class Viewer {
     const now = performance.now();
     for (const node of nodes) {
       node.userData.targetT = t;
-      this.tweens = this.tweens.filter((tw) => tw.node !== node);
+      this.tweens = this.tweens.filter((tw) => tw.kind !== 'explode' || tw.node !== node);
       if (!animate) { node.userData.explodeT = t; continue; }
       const from = node.userData.explodeT;
       if (from === t) continue;
@@ -865,18 +865,20 @@ export class Viewer {
   setMarked(paths, { ghost = false } = {}) {
     const objs = [];
     for (const p of paths || []) for (const o of this.resolve(p)) if (!objs.includes(o)) objs.push(o);
-    return this.markObjects(objs, { ghost });
+    // Pièce introuvable : rien d'estompé.
+    return this.markObjects(objs, { ghost: ghost && objs.length > 0 });
   }
 
   /**
    * Met en évidence des objets 3D quelconques du modèle (pièces, graisseurs,
-   * boyaux…), sans changer la sélection ; ghost : estompe tout le reste.
-   * Liste vide ou null : plus rien de mis en évidence. Retourne les objets.
+   * boyaux…), sans changer la sélection ; ghost : estompe tout le reste (même
+   * avec une liste vide). Liste vide ou null sans ghost : plus rien de mis en
+   * évidence. Retourne les objets.
    */
   markObjects(objs, { ghost = false } = {}) {
     const list = [...new Set((objs || []).filter((o) => o?.isObject3D))];
     this.markObjs = list;
-    this.markGhost = !!ghost && list.length > 0;
+    this.markGhost = !!ghost;
     this._refreshStates();
     return list;
   }
@@ -897,6 +899,11 @@ export class Viewer {
       o.userData.baseMaterial = m;
     }
     this._refreshStates();
+  }
+
+  /** Matériau d'origine d'un maillage (avant setBaseMaterials). */
+  originalMaterial(o) {
+    return this._baseOrig.get(o) ?? o?.userData.baseMaterial ?? o?.material ?? null;
   }
 
   /** Matériaux d'origine rétablis (annule setBaseMaterials). */

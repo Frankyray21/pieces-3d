@@ -4,7 +4,9 @@
 //    une tuile dont l'assemblage n'a pas de modèle 3D propre porte
 //    data-sysx-iso / data-sysx-from / data-sysx-path ; un clic ouvre la vue 3D
 //    de l'ensemble qui le contient avec ce sous-ensemble isolé, et sa liste de
-//    pièces dans le panneau latéral.
+//    pièces dans le panneau latéral (propriétaire « systemes »). Une ligne de
+//    la liste sélectionne la pièce : sa fiche se pose par-dessus la liste, qui
+//    revient quand la fiche se ferme.
 // 2. Fil d'Ariane en haut de la vue : équipement › système › … › assemblage ›
 //    pièce sélectionnée ; chaque maillon ramène à son niveau. Trop long pour la
 //    largeur : les maillons du milieu se replient derrière « … ».
@@ -49,24 +51,17 @@ export default {
       </div>`;
     };
 
+    const panelEl = document.createElement('div'); // contenu du panneau (gardé sous la fiche d'une pièce)
     const showIsolated = (st) => {
-      const n = ctx.viewer.isolate([st.path], { frame: true });
-      if (!n) { iso = null; ctx.go(st.target); return; } // pas trouvé en 3D : les dessins de l'assemblage
+      if (!ctx.viewer.objects([st.path]).length) { iso = null; ctx.go(st.target); return; } // pas trouvé en 3D : les dessins de l'assemblage
       iso = st;
       const a = ctx.equipment.assemblies.get(st.target);
-      ctx.ui.sidePanel.open({ owner: OWNER, title: a.titleFr, icon: ctx.systemOf(st.target)?.icon || 'cle', content: panelHtml(st) });
-      // Grand écran : le panneau recouvre la droite de la scène ; le cadrage garde
-      // une marge de sa largeur de chaque côté (le sous-ensemble reste visible).
-      const v = ctx.viewer.raw;
-      const orig = v?.insets;
-      const side = ctx.narrow() ? 0 : ctx.ui.sidePanel.element.offsetWidth + 24;
-      if (v && side) v.insets = () => ({ ...((typeof orig === 'function' ? orig() : orig) || {}), side });
-      try {
-        ctx.viewer.select(st.path);
-        ctx.viewer.isolate([st.path], { frame: true }); // la sélection recadre : l'isolement garde le cadrage du sous-ensemble
-      } finally {
-        if (v && side) v.insets = orig;
-      }
+      // Sous-ensemble sélectionné (fil d'Ariane), puis sa liste dans le panneau, qui remplace sa fiche.
+      ctx.viewer.select(st.path);
+      panelEl.innerHTML = panelHtml(st);
+      ctx.ui.sidePanel.open({ owner: OWNER, title: a.titleFr, icon: ctx.systemOf(st.target)?.icon || 'cle', content: panelEl });
+      // Cadrage dans la partie de la scène que le panneau ne couvre pas (marges du socle).
+      ctx.viewer.isolate([st.path], { frame: true });
     };
 
     document.addEventListener('click', (e) => {
@@ -83,8 +78,8 @@ export default {
     });
 
     // Panneau : une ligne sélectionne la pièce dans la vue (chemin depuis l'ensemble affiché).
-    ctx.ui.sidePanel.element.addEventListener('click', (e) => {
-      if (ctx.ui.sidePanel.owner !== OWNER || !iso) return;
+    panelEl.addEventListener('click', (e) => {
+      if (!iso) return;
       if (e.target.closest('[data-sysx-act="all"]')) { ctx.viewer.clear(); ctx.viewer.frame(); return; }
       const tr = e.target.closest('tr[data-sysx-ref]');
       if (tr) ctx.viewer.select([...iso.path, tr.dataset.sysxRef]);
@@ -100,24 +95,29 @@ export default {
       pending = null;
       if (iso && iso.from !== id) {
         iso = null;
-        if (ctx.ui.sidePanel.owner === OWNER) ctx.ui.sidePanel.close();
+        ctx.ui.sidePanel.release(OWNER);
       }
     });
     ctx.on('equipment', () => {
       pending = null;
       iso = null;
     });
-    ctx.on('sidepanel', ({ open, owner }) => { if (!open && owner === OWNER) iso = null; });
+    // Panneau replié ou pris par un autre mode : fin de l'isolement (pièces de nouveau toutes visibles).
+    ctx.on('sidepanel', ({ open, owner }) => {
+      if (open || owner !== OWNER) return;
+      if (iso && ctx.view?.type === 'assembly' && ctx.view.id === iso.from) ctx.viewer.clear();
+      iso = null;
+    });
     ctx.on('select', ({ path }) => {
-      if (ctx.ui.sidePanel.owner !== OWNER || !iso) return;
-      // Ligne du panneau correspondant à la pièce sélectionnée (sous le sous-ensemble isolé).
+      if (!iso || !ctx.ui.sidePanel.has(OWNER)) return;
+      // Ligne du panneau correspondant à la pièce sélectionnée (sous le sous-ensemble isolé), même sous la fiche.
       const inside = path && iso.path.every((r, i) => path[i] === r) && path.length > iso.path.length ? path[iso.path.length] : null;
-      ctx.ui.sidePanel.body.querySelectorAll('tr.on').forEach((tr) => tr.classList.remove('on'));
-      if (inside) ctx.ui.sidePanel.body.querySelector(`tr[data-sysx-ref="${CSS.escape(inside)}"]`)?.classList.add('on');
+      panelEl.querySelectorAll('tr.on').forEach((tr) => tr.classList.remove('on'));
+      if (inside) panelEl.querySelector(`tr[data-sysx-ref="${CSS.escape(inside)}"]`)?.classList.add('on');
     });
 
     // ------------------------------------------------------------ fil d'Ariane
-    const stage = document.getElementById('stage');
+    const stage = ctx.ui.stage;
     const nav = document.createElement('nav');
     nav.className = 'sysx-crumbs';
     nav.setAttribute('aria-label', 'Fil d’Ariane');
@@ -127,7 +127,6 @@ export default {
     menu.hidden = true;
     stage.prepend(nav);
     stage.appendChild(menu);
-    document.getElementById('shell')?.classList.add('sysx-on');
 
     /** Maillons : [{ label, title, act, color, cur, home }]. */
     const links = () => {
@@ -228,7 +227,7 @@ export default {
         ctx.viewer.select(null);
         ctx.viewer.clear();
         ctx.viewer.frame();
-        if (ctx.ui.sidePanel.owner === OWNER) ctx.ui.sidePanel.close();
+        ctx.ui.sidePanel.release(OWNER);
       } else if (kind === 'go') ctx.go(arg);
       else if (kind === 'sel') ctx.viewer.select(arg.split('>'));
     };
@@ -256,7 +255,8 @@ export default {
       run(current[Number(b.dataset.i)].act);
     });
     document.addEventListener('click', (e) => { if (!menu.hidden && !menu.contains(e.target) && !nav.contains(e.target)) menu.hidden = true; });
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') menu.hidden = true; });
+    // Échap : le menu des niveaux masqués d'abord (couche au-dessus des autres).
+    ctx.ui.onEscape(() => { if (menu.hidden) return false; menu.hidden = true; return true; }, 110);
 
     let raf = 0;
     const later = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(render); };

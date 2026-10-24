@@ -16,18 +16,6 @@ const css = assets.filter((f) => f.endsWith('.css')).map((f) => readFileSync(joi
 const app = html.slice(html.indexOf('<!--APP-->') + 10, html.indexOf('<!--/APP-->'));
 const fonts = html.match(/<link rel="stylesheet" href="https:\/\/fonts\.googleapis\.com[^>]+>/)[0];
 
-const page = `<title>Pièces 3D</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-${fonts}
-<style>${css}</style>
-${app.trim()}
-<script type="module">${js.replace(/<\/script/gi, '<\\/script')}</script>
-`;
-mkdirSync('dist-artifact', { recursive: true });
-writeFileSync('dist-artifact/index.html', page);
-console.log(`dist-artifact/index.html : ${(page.length / 1024).toFixed(0)} Ko`);
-
 // Fichiers de données. Au-delà de la limite, les pages du manuel qui ne portent
 // qu'une liste de pièces d'assemblage sont laissées de côté : leur contenu est
 // dans le panneau des pièces, et la page affiche un message à leur place.
@@ -61,6 +49,37 @@ for (const { id } of [...catalogue].reverse()) {
 }
 if (dropped.length) note += `${note ? ' ; ' : ''}sans pages du manuel : ${dropped.join(', ')}`;
 if (files.length + 1 > MAX_FILES) throw new Error(`${files.length + 1} fichiers : au-delà de la limite de ${MAX_FILES}`);
+
+// Pages du manuel non publiées, par équipement (« * » : toutes), inscrites dans
+// la page : le site n'en demande pas l'image (aucune erreur 404) et affiche un
+// message, avec un lien vers la version complète.
+const kept = new Set(files);
+const pagesAbsentes = {};
+for (const { id } of catalogue) {
+  const data = JSON.parse(readFileSync(join(dist, 'equipment', id, 'data.json'), 'utf8'));
+  const prefix = `equipment/${id}/`;
+  const pages = all.filter((f) => f.startsWith(`${prefix}pages/`));
+  const missing = pages.filter((f) => !kept.has(f));
+  if (!missing.length) continue;
+  if (missing.length === pages.length) { pagesAbsentes[id] = '*'; continue; }
+  const [before, after] = data.document.pagePattern.split('{sheet}');
+  pagesAbsentes[id] = missing.map((f) => f.slice(prefix.length + before.length, f.length - after.length)).sort();
+}
+const publication = JSON.stringify({ pagesAbsentes }).replace(/</g, '\\u003c');
+
+const page = `<title>Pièces 3D</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+${fonts}
+<style>${css}</style>
+<script type="application/json" id="publication">${publication}</script>
+${app.trim()}
+<script type="module">${js.replace(/<\/script/gi, '<\\/script')}</script>
+`;
+mkdirSync('dist-artifact', { recursive: true });
+writeFileSync('dist-artifact/index.html', page);
+console.log(`dist-artifact/index.html : ${(page.length / 1024).toFixed(0)} Ko`);
+
 writeFileSync('dist-artifact/files.json', `${JSON.stringify(files, null, 1)}\n`);
 const mb = files.reduce((n, f) => n + statSync(join(dist, f)).size, 0) / 1e6;
 console.log(`dist-artifact/files.json : ${files.length} fichiers de données (${mb.toFixed(1)} Mo)${note ? `, ${note}` : ''}`);

@@ -1,7 +1,7 @@
 import './styles.css';
 import { Viewer } from './viewer/Viewer.js';
 import { buildProcedural } from './viewer/assembly.js';
-import { loadIndex, loadEquipment, search, sourceLabel, sheetLabel, sizeGroups, isPnText } from './data/equipment.js';
+import { loadIndex, loadEquipment, sourceLabel, sheetLabel, sizeGroups, isPnText } from './data/equipment.js';
 import cubexModels from './models/cubex-mri-5200/index.js';
 import du311Models from './models/du311/index.js';
 import du311StdModels, { overview as du311StdOverview } from './models/du311-std/index.js';
@@ -53,6 +53,17 @@ async function loadDrafts(eq, id) {
 // allégée en Artifact y renvoie pour les pages qu'elle n'inclut pas.
 const SITE = 'https://frankyray21.github.io/pieces-3d/';
 
+// Publication allégée (Artifact, scripts/build-artifact.mjs) : pages du manuel
+// non publiées, par équipement (« * » : toutes). Aucune requête n'est faite
+// pour ces pages : un message en tient lieu.
+const PUBLICATION = (() => {
+  try { return JSON.parse(document.getElementById('publication')?.textContent || 'null') || {}; } catch { return {}; }
+})();
+function pageMissing(eqId, sheet) {
+  const m = PUBLICATION.pagesAbsentes?.[eqId];
+  return m === '*' || (Array.isArray(m) && m.includes(sheet));
+}
+
 // Page d'accueil 3D : consigne affichée sous la scène.
 const HOME_HINT = "Clic : ouvrir la page de l'outil · glisser : tourner · clic droit : déplacer";
 // Disposition en hauteur d'une page d'accueil quand la scène est plus haute que large d'au moins ce rapport
@@ -102,14 +113,37 @@ async function init() {
     path3d: (path) => (path?.length && S.view ? path3d(path) : []),
     rowAt: (path) => (S.view ? rowAt(path) : null),
     select: (path, opts) => select(path, opts),
+    openRow: jumpToRow,
+    assemble: ({ animate = true } = {}) => explodeEverything(false, { animate, frame: false }),
+    groups: {
+      is: (path) => !!path.length && isGroupPath(path),
+      isOpen: (path) => !!path.length && isGroupPath(path) && S.expanded.has(keyOf(path)),
+      toggle: (path, force) => toggleGroup(path, force),
+    },
+    section: {
+      canCut: (path) => !!path.length && !S.view?.home && !!viewer?.hasInterior(path3d(path)),
+      isCut: () => S.section.on && S.section.scope === 'selection',
+      cut: (path) => {
+        if (!path) { setSection({ on: false }); return; }
+        if (keyOf(path) !== keyOf(S.selected || [])) select(path);
+        const p3 = path3d(path);
+        setSection({ on: true, scope: 'selection', ...viewer.autoSection(p3) });
+        viewer.focusPath(p3);
+      },
+    },
     openPage,
     setPane,
+    pane: () => $('#workspace').dataset.pane,
     narrow,
     toast,
     // Vue sous une page plein écran (retour à la fermeture).
     viewToken: () => S.view?.id || S.eq?.root || '',
   });
   host.ctx.registerRoute('apercu', (ctx) => showEquipmentHome(ctx));
+  // Échap (une couche à la fois, voir host.js) : visionneuse des pages, sélection, scène en plein écran.
+  host.ctx.ui.onEscape(() => { if ($('#modal').hidden) return false; closePage(); return true; }, 100);
+  host.ctx.ui.onEscape(() => { if (!S.selected) return false; select(null); return true; }, 40);
+  host.ctx.ui.onEscape(() => { if (!document.body.classList.contains('stage-full')) return false; toggleFullscreen(); return true; }, 20);
   try {
     S.index = await loadIndex();
   } catch (err) {
@@ -145,13 +179,16 @@ async function route() {
       loadError(err);
       return;
     }
+    // Pages non publiées (version allégée) : pas d'adresse d'image.
+    const url = S.eq.pageUrl;
+    S.eq.pageUrl = (sheet) => (pageMissing(id, sheet) ? null : url(sheet));
     S.view = null;
     S.selected = null;
     const doc = S.eq.docWord === 'catalogue' ? 'catalogue' : 'manuel';
     $('#btn-page').textContent = `Page du ${doc}`;
     $('#btn-page').title = `Voir la page du ${doc}`;
     $('#btn-labels').title = `Afficher les repères du ${doc}`;
-    host.ctx.ui.sidePanel.close();
+    host.ctx.ui.sidePanel.closeAll();
     host.bus.emit('equipment', { equipment: S.eq, id: S.eq.id });
   }
   const eq = S.eq;
@@ -275,17 +312,17 @@ function badge(s) {
   return S.eq.docWord === 'catalogue' ? String(parseInt(String(s).replace(/^\D+/, ''), 10)) : s;
 }
 
-/** Numéros d'une ligne : un par taille (regroupés), ou texte du catalogue. */
-function pnHtml(r, big = false) {
-  const val = (v) => (isPnText(v) ? `<span class="${big ? 'pnbig' : ''}">${esc(v)}</span>` : `<span class="pnt">${esc(v === '-' ? '—' : v)}</span>`);
+/** Numéros d'une ligne de la liste : un par taille (regroupés), ou texte du catalogue. */
+function pnHtml(r) {
+  const val = (v) => (isPnText(v) ? `<span>${esc(v)}</span>` : `<span class="pnt">${esc(v === '-' ? '—' : v)}</span>`);
   if (r.sizes) {
     // Étiquette de plusieurs tailles (« NW · HW · HWT ») au-dessus du numéro.
     return sizeGroups(r).map(([v, ss]) => {
       const label = ss.join(' · ');
-      return `<span class="szl${!big && label.length > 5 ? ' stack' : ''}"><span class="sz">${esc(label)}</span>${val(v)}</span>`;
+      return `<span class="szl${label.length > 5 ? ' stack' : ''}"><span class="sz">${esc(label)}</span>${val(v)}</span>`;
     }).join('');
   }
-  if (r.pn) return big ? `<span class="pnbig">${esc(r.pn)}</span>` : esc(r.pn);
+  if (r.pn) return esc(r.pn);
   if (r.pnText) return `<span class="pnt">${esc(r.pnText)}</span>`;
   return null;
 }
@@ -377,7 +414,11 @@ function fitHome() {
   fitHomeChrome();
 }
 
-/** Marges de cadrage d'un assemblage : hors de la barre d'outils (haut) et du cartouche (bas). */
+/**
+ * Marges de cadrage d'un assemblage : hors de la barre d'outils (haut), du
+ * cartouche et du montage par étapes (bas), du panneau latéral et des barres
+ * des fonctions (host.insets).
+ */
 function viewInsets() {
   const vp = $('#viewport').getBoundingClientRect();
   const tools = $('#tools'), tb = $('#titleblock');
@@ -385,7 +426,19 @@ function viewInsets() {
   const sb = $('#stepsbar');
   const above = (el) => (el.hidden || !el.offsetHeight ? 0 : vp.bottom - el.getBoundingClientRect().top + 6);
   const bottom = Math.max(above(tb), above(sb));
-  return { top, bottom };
+  return withFeatureInsets({ top, bottom });
+}
+
+/** Ajoute les marges des fonctions et du panneau latéral. */
+function withFeatureInsets(ins) {
+  const f = host?.insets() || {};
+  return {
+    ...ins,
+    top: Math.max(ins.top || 0, f.top || 0),
+    bottom: Math.max(ins.bottom || 0, f.bottom || 0),
+    left: Math.max(ins.left || 0, f.left || 0),
+    right: Math.max(ins.right || 0, f.right || 0),
+  };
 }
 
 /**
@@ -394,7 +447,7 @@ function viewInsets() {
  */
 function homeInsets() {
   const st = $('#stage').getBoundingClientRect(), tools = $('#tools').getBoundingClientRect();
-  return { top: Math.max(0, tools.bottom - st.top) + 6, bottom: 34, side: S.view?.portrait ? 40 : 0 };
+  return withFeatureInsets({ top: Math.max(0, tools.bottom - st.top) + 6, bottom: 34, side: S.view?.portrait ? 40 : 0 });
 }
 
 async function openAssembly(id, { select: selPath = null } = {}) {
@@ -455,7 +508,6 @@ async function openAssembly(id, { select: selPath = null } = {}) {
   baseHint ??= $('#hint').textContent;
   $('#hint').textContent = S.view.home ? HOME_HINT : baseHint;
   renderRail();
-  renderCrumbs();
   renderTitleblock(asm);
   renderPanel();
   viewChanged();
@@ -478,7 +530,10 @@ function upgradeDetail(model, builders, ov) {
     if (!live() || !queue.length) { if (token === detailToken) badge.hidden = true; return; }
     const p = queue.shift();
     const det = buildProcedural(builders, p.userData.assemblyId, { quality: ov.quality });
-    if (det && live()) viewer.replacePart(p, det.root);
+    if (det && live() && viewer.replacePart(p, det.root)) {
+      // Les fonctions qui ont posé des marques sur le modèle les refont (pastilles, couleurs…).
+      host.bus.emit('model-update', { model, old: p, part: det.root, done: !queue.length });
+    }
     setTimeout(step, 60);
   };
   setTimeout(step, 400);
@@ -504,7 +559,7 @@ function toggleGroup(path, force) {
     viewer.focusPath(path3d(path));
   }
   renderRows();
-  renderDetail();
+  emitViewState();
 }
 
 function setMainExplode(t, { frame = true } = {}) {
@@ -512,17 +567,23 @@ function setMainExplode(t, { frame = true } = {}) {
   $('#explode').value = Math.round(t * 100);
   viewer?.setExplode(t);
   if (frame) viewer?.frame();
+  emitViewState();
 }
 
-function explodeEverything(on) {
+function explodeEverything(on, { animate = true, frame = true } = {}) {
   if (!viewer) return;
   S.explode = on ? 1 : 0;
   $('#explode').value = on ? 100 : 0;
-  viewer.explodeAll(on ? 1 : 0);
+  viewer.explodeAll(on ? 1 : 0, { animate });
   S.expanded = new Set(on ? viewer.groupPaths().map(keyOf) : []);
-  viewer.frame();
+  if (frame) viewer.frame();
   renderRows();
-  renderDetail();
+  emitViewState();
+}
+
+/** Signale aux fonctions l'état de la vue 3D (éclatement, groupes éclatés, coupe). */
+function emitViewState() {
+  host?.bus.emit('view-state', { explode: S.explode, expanded: [...S.expanded], section: { ...S.section } });
 }
 
 // ------------------------------------------------------------------ montage par étapes
@@ -658,7 +719,6 @@ function toggleFullscreen() {
 function bindFullscreen() {
   $('#btn-full').addEventListener('click', toggleFullscreen);
   for (const ev of ['fullscreenchange', 'webkitfullscreenchange']) document.addEventListener(ev, () => { renderFullscreen(); viewer?.resize(); });
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && document.body.classList.contains('stage-full')) toggleFullscreen(); });
 }
 
 // ------------------------------------------------------------------ documents (schémas + listes)
@@ -677,7 +737,6 @@ function openDocument(id) {
   $('#titleblock').hidden = true;
   showSheets(doc.sheets);
   renderRail();
-  renderCrumbs();
   renderPanel();
   viewChanged();
 }
@@ -687,11 +746,11 @@ function showSheets(sheets) {
   const eq = S.eq;
   const dv = $('#docview');
   dv.hidden = false;
-  dv.innerHTML = sheets.map((s) => `
+  dv.innerHTML = sheets.map((s) => (eq.pageUrl(s) ? `
     <figure>
       <img src="${esc(eq.pageUrl(s))}" alt="Page ${s} du ${eq.docWord} : ${esc(eq.sheetTitles[s] || '')}" data-sheet="${s}" loading="lazy">
       <figcaption><span class="mono">${eq.docWord === 'catalogue' ? sheetLabel(eq, s) : `${eq.document.reference.split(',')[0]}-${s}`}</span> · ${esc(eq.sheetTitles[s] || '')} — cliquez pour agrandir</figcaption>
-    </figure>`).join('') || `<p class="sub">Aucun dessin pour cette liste au ${eq.docWord}.</p>`;
+    </figure>` : `<figure>${missingPage(s, ` ${esc(eq.sheetTitles[s] || '')} : sa liste de pièces est dans le panneau « Pièces ».`)}</figure>`)).join('') || `<p class="sub">Aucun dessin pour cette liste au ${eq.docWord}.</p>`;
   dv.querySelectorAll('img').forEach((img) => {
     img.addEventListener('click', () => openPage(img.dataset.sheet));
     img.addEventListener('load', () => img.closest('figure').classList.toggle('portrait', img.naturalHeight > img.naturalWidth));
@@ -711,7 +770,6 @@ async function openIssues() {
   S.view = { type: 'issues', id: 'controle' };
   S.selected = null;
   renderRail();
-  renderCrumbs();
   renderPanel();
   viewChanged();
   if (narrow()) setPane('panel');
@@ -761,25 +819,6 @@ function renderRail() {
       <dl class="specs">${eq.specs.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}
       ${eq.weights.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl>
     </details>`;
-}
-
-function renderCrumbs() {
-  const eq = S.eq;
-  const chain = [];
-  if (isAsmView()) {
-    let id = S.view.id;
-    while (id) { chain.unshift(id); id = eq.assemblies.get(id).parent; }
-  }
-  const items = [`<button type="button" data-go="${eq.root}">${esc(eq.name)}</button>`];
-  if (isAsmView()) {
-    chain.forEach((id, i) => items.push(`<button type="button" class="${i === chain.length - 1 ? 'cur' : ''}" data-go="${id}">${badge(eq.assemblies.get(id).sheet)} · ${esc(eq.assemblies.get(id).titleFr)}</button>`));
-  } else if (S.view.type === 'document') {
-    const d = eq.documents.get(S.view.id);
-    items.push(`<button type="button" class="cur" data-go="${d.id}">${esc(d.titleFr)}</button>`);
-  } else {
-    items.push('<button type="button" class="cur" data-go="controle">Contrôle des listes</button>');
-  }
-  $('#crumbs').innerHTML = items.join('<span class="sep">›</span>');
 }
 
 function renderTitleblock(asm) {
@@ -840,13 +879,11 @@ function renderPanel() {
       <label class="sr" for="filter">Filtrer la liste</label>
       <input class="filter" id="filter" type="search" placeholder="Filtrer cette liste…" value="${esc(S.filter)}">
     </div>
-    <div class="detail" id="detail" hidden></div>
     <div class="tablewrap" id="tablewrap"><table class="parts">
       <thead><tr><th class="c-ref">Réf.</th><th>N° pièce</th><th class="c-qty">Qté</th><th>Description</th></tr></thead>
       <tbody id="rows"></tbody></table></div>`;
   $('#filter').addEventListener('input', (e) => { S.filter = e.target.value; renderRows(); });
   renderRows();
-  renderDetail();
 }
 
 function sevRank(r) {
@@ -931,74 +968,17 @@ function select(path, { focus = false, from3d = false } = {}) {
     tr?.classList.add('sel');
     if (tr && from3d) tr.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   }
-  if (is3d()) {
-    const p3 = row ? path3d(S.selected) : null;
-    viewer.setSelected(p3);
-    if (row && focus && viewer.resolve(p3).length && !narrow()) viewer.focusPath(p3);
-  }
-  renderDetail();
+  const p3 = row && is3d() ? path3d(S.selected) : null;
+  if (is3d()) viewer.setSelected(p3);
   renderSectionBar();
+  // La fiche de la pièce (src/ui/features/fiche.js) s'ouvre dans le panneau latéral ;
+  // le cadrage vient après, pour tenir compte du panneau ouvert.
   host?.bus.emit('select', {
     ref: row ? row.ref : null, path: row ? [...S.selected] : null, row, pn: row?.pn || null,
-    path3d: row && is3d() ? path3d(S.selected) : null, objects: row && is3d() ? viewer.selectedObjs.slice() : [],
+    path3d: p3, objects: p3 ? viewer.selectedObjs.slice() : [],
     source: from3d ? '3d' : 'list',
   });
-  if (row && from3d && narrow()) toast(`Réf. ${row.ref} · ${row.pn || '—'} · ${row.desc}`, 3500);
-}
-
-function renderDetail() {
-  const box = $('#detail');
-  if (!box) return;
-  const path = S.selected;
-  const row = path ? rowAt(path) : null;
-  if (!row) { box.hidden = true; box.innerHTML = ''; return; }
-  const eq = S.eq;
-  box.hidden = false;
-  const long = refLabel(row).length > 3;
-  const flags = row.flags.map((f) => `<div class="flag ${f.level}">${esc(f.text)}${f.refs?.length ? `<span class="lnk">${f.refs.map((o) => `<button type="button" class="chip" data-row="${esc(o.key)}">${badge(o.source.sheet)} réf. ${esc(refLabel(o))} · ${esc(o.desc)}</button>`).join('')}</span>` : ''}</div>`).join('');
-  const others = (row.usedIn || []).filter((o) => !row.flags.some((f) => f.refs?.includes(o)));
-  const used = others.length ? `<div class="meta">Aussi listé : <span class="lnk">${others.slice(0, 24).map((o) => `<button type="button" class="chip" data-row="${esc(o.key)}">${badge(o.source.sheet)} réf. ${esc(refLabel(o))}</button>`).join(' ')}${others.length > 24 ? ` … (${others.length})` : ''}</span></div>` : '';
-  const mirror = row.mirrorOf ? `<div class="flag info">Pièce symétrique (côté gauche) : la 3D met en évidence la pièce droite, réf. ${esc(row.mirrorOf)}.</div>` : '';
-  const ids = [row.supplier && `Fournisseur ${esc(row.supplier)}`, row.sandvik && row.sandvik !== 'N/A' && `Sandvik ${esc(row.sandvik)}`].filter(Boolean).join(' · ');
-  // Fil du groupe : où se trouve la pièce dans l'arbre des sous-assemblages.
-  const trail = path.length > 1 ? `<div class="trail">Dans ${path.slice(0, -1).map((_, i) => {
-    const g = rowAt(path.slice(0, i + 1));
-    return `<button type="button" class="chip" data-sel="${esc(keyOf(path.slice(0, i + 1)))}">${esc(g.link)} · ${esc(eq.assemblies.get(g.link)?.titleFr || g.desc)}</button>`;
-  }).join(' › ')}</div>` : '';
-  const group = isGroupPath(path);
-  const open = group && S.expanded.has(keyOf(path));
-  const p3 = is3d() ? path3d(path) : null;
-  const cutHere = p3 && !S.view.home && viewer?.hasInterior(p3);
-  const cutActive = S.section.on && S.section.scope === 'selection';
-  box.innerHTML = `
-    <div class="row1">
-      <span class="ref ${long ? 'long' : ''}">${esc(refLabel(row))}</span>
-      <div style="min-width:0"><h3>${esc(row.desc)}</h3>
-        <div class="meta">${row.qty != null ? `Qté au ${eq.docWord} : ${row.qty}${row.qty3d != null && row.qty3d !== row.qty ? ` (${row.qty3d} dessiné${row.qty3d > 1 ? 's' : ''})` : ''}` : 'Qté non indiquée'} · ${eq.docWord === 'catalogue' ? sheetLabel(eq, row.source.sheet) : `feuille ${row.source.sheet}`}${ids ? ` · ${ids}` : ''}</div></div>
-      <button type="button" class="close" id="d-close" aria-label="Fermer la fiche">×</button>
-    </div>
-    ${trail}
-    <div class="pnline ${row.sizes ? 'sizes' : ''}">${pnHtml(row, true) ?? `<span class="meta">${row.supplier ? `N° fournisseur : <span class="mono">${esc(row.supplier)}</span>` : 'Aucun numéro de pièce'}</span>`}</div>
-    ${mirror}${flags}${used}
-    <div class="actions">
-      ${group ? `<button type="button" class="btn primary" id="d-tog">${open ? 'Rassembler ce groupe' : 'Éclater ce groupe'}</button>` : ''}
-      ${cutHere ? `<button type="button" class="btn" id="d-cut">${cutActive ? 'Quitter la coupe' : 'Voir en coupe'}</button>` : ''}
-      ${is3d() ? '<button type="button" class="btn" id="d-focus">Centrer</button>' : ''}
-      ${row.link ? `<button type="button" class="btn" data-go="${row.link}">Ouvrir ${eq.docWord === 'catalogue' ? sheetLabel(eq, eq.assemblies.get(row.link)?.sheet || eq.documents.get(row.link)?.sheets[0] || row.link) : row.link} ›</button>` : ''}
-      ${row.see ? row.see.map((s) => `<button type="button" class="btn" data-page="${s}">Voir ${eq.docWord === 'catalogue' ? sheetLabel(eq, s) : s}</button>`).join('') : ''}
-    </div>`;
-  $('#d-close').addEventListener('click', () => select(null));
-  $('#d-tog')?.addEventListener('click', () => toggleGroup(path));
-  $('#d-cut')?.addEventListener('click', () => {
-    if (cutActive) setSection({ on: false });
-    else {
-      setSection({ on: true, scope: 'selection', ...viewer.autoSection(p3) });
-      viewer.focusPath(p3);
-    }
-  });
-  $('#d-focus')?.addEventListener('click', () => { viewer?.focusPath(p3); if (narrow()) setPane('stage'); });
-  box.querySelectorAll('[data-row]').forEach((b) => b.addEventListener('click', () => jumpToRow(b.dataset.row)));
-  box.querySelectorAll('[data-sel]').forEach((b) => b.addEventListener('click', () => select(b.dataset.sel.split('>'), { focus: true })));
+  if (p3 && focus && viewer.resolve(p3).length) viewer.focusPath(p3);
 }
 
 function jumpToRow(key) {
@@ -1014,7 +994,8 @@ function jumpToRow(key) {
     select([r.ref]);
     document.querySelector(`#rows tr[data-key="${CSS.escape(r.ref)}"]`)?.scrollIntoView({ block: 'center' });
   }
-  if (narrow()) setPane('panel');
+  // Téléphone : la liste, sauf si la fiche de la pièce s'est ouverte sur la vue.
+  if (narrow() && !host.ctx.ui.sidePanel.isOpen) setPane('panel');
 }
 
 // ------------------------------------------------------------------ vue en coupe
@@ -1025,7 +1006,7 @@ function setSection(patch) {
   if (S.section.scope === 'selection' && !S.selected) S.section.scope = 'all';
   viewer?.setSection(S.section);
   renderSectionBar();
-  renderDetail();
+  emitViewState();
 }
 
 function renderSectionBar() {
@@ -1038,47 +1019,6 @@ function renderSectionBar() {
   const scope = $('#sec-scope');
   scope.disabled = !S.selected;
   scope.setAttribute('aria-pressed', String(sec.scope === 'selection'));
-}
-
-// ------------------------------------------------------------------ recherche
-
-function bindSearch() {
-  const input = $('#q');
-  const box = $('#results');
-  let hits = [];
-  let idx = -1;
-  const render = () => {
-    const q = input.value;
-    if (q.trim().length < 2) { box.hidden = true; return; }
-    hits = search(S.eq, q);
-    idx = -1;
-    box.hidden = false;
-    box.innerHTML = hits.length ? hits.map((r, i) => `<button type="button" class="res" data-i="${i}">
-      <span class="pn">${esc(r.pns.join(' / ') || r.supplier || r.pnText || '—')}</span><span>${esc(r.desc)}</span>
-      <span class="where">${esc(sourceLabel(S.eq, r.source))} · réf. ${esc(refLabel(r))}${r.qty != null ? ` · qté ${r.qty}` : ''}</span></button>`).join('')
-      : `<div class="empty">Aucune pièce trouvée pour « ${esc(q)} ». Essayez un numéro partiel ou un mot de la description (en anglais, comme au ${S.eq.docWord}).</div>`;
-    box.querySelectorAll('[data-i]').forEach((b) => b.addEventListener('mousedown', (e) => { e.preventDefault(); pick(+b.dataset.i); }));
-  };
-  const pick = (i) => {
-    const r = hits[i];
-    if (!r) return;
-    box.hidden = true;
-    input.blur();
-    jumpToRow(r.key);
-  };
-  input.addEventListener('input', render);
-  input.addEventListener('focus', render);
-  input.addEventListener('blur', () => setTimeout(() => { box.hidden = true; }, 120));
-  input.addEventListener('keydown', (e) => {
-    const n = hits.length;
-    if (e.key === 'ArrowDown' && n) { idx = (idx + 1) % n; e.preventDefault(); }
-    else if (e.key === 'ArrowUp' && n) { idx = (idx - 1 + n) % n; e.preventDefault(); }
-    else if (e.key === 'Enter') { pick(idx >= 0 ? idx : 0); return; }
-    else if (e.key === 'Escape') { box.hidden = true; input.blur(); return; }
-    else return;
-    box.querySelectorAll('.res').forEach((b, i) => b.classList.toggle('on', i === idx));
-    box.querySelector('.res.on')?.scrollIntoView({ block: 'nearest' });
-  });
 }
 
 // ------------------------------------------------------------------ pages du manuel
@@ -1103,12 +1043,17 @@ function openPage(sheet) {
       ${owner ? `<button type="button" class="btn" id="p-open">${owner3d ? 'Ouvrir en 3D' : 'Ouvrir la liste'}</button>` : ''}
       <button type="button" class="btn" id="p-close">Fermer</button>
     </div>
-    <div class="canvas"><img src="${esc(eq.pageUrl(s))}" alt="Page ${s} du ${eq.docWord}" id="p-img"></div>`;
+    <div class="canvas">${eq.pageUrl(s) ? `<img src="${esc(eq.pageUrl(s))}" alt="Page ${s} du ${eq.docWord}" id="p-img">` : ''}</div>`;
+  $('#p-prev').addEventListener('click', () => openPage(eq.sheetId(num - 1)));
+  $('#p-next').addEventListener('click', () => openPage(eq.sheetId(num + 1)));
+  $('#p-zoom').addEventListener('click', () => { zoom = zoom === 'fit' ? 'full' : 'fit'; openPage(s); });
+  $('#p-close').addEventListener('click', closePage);
+  $('#p-open')?.addEventListener('click', () => { closePage(); go(owner); });
   const img = $('#p-img');
-  // Page absente (publication allégée : pages de liste laissées de côté).
-  img.addEventListener('error', () => {
-    m.querySelector('.canvas').innerHTML = missingPage(s, owner ? ' Sa liste de pièces est reprise dans « Ouvrir la liste ».' : '');
-  });
+  // Page absente (publication allégée : pages de liste laissées de côté) : un message à la place.
+  const missing = () => { m.querySelector('.canvas').innerHTML = missingPage(s, owner ? ' Sa liste de pièces est reprise dans « Ouvrir la liste ».' : ''); };
+  if (!img) { missing(); return; }
+  img.addEventListener('error', missing);
   const fit = () => {
     const c = m.querySelector('.canvas');
     const ratio = img.naturalHeight ? img.naturalWidth / img.naturalHeight : 1.5;
@@ -1119,11 +1064,6 @@ function openPage(sheet) {
   };
   img.addEventListener('load', fit);
   fit();
-  $('#p-prev').addEventListener('click', () => openPage(eq.sheetId(num - 1)));
-  $('#p-next').addEventListener('click', () => openPage(eq.sheetId(num + 1)));
-  $('#p-zoom').addEventListener('click', () => { zoom = zoom === 'fit' ? 'full' : 'fit'; openPage(s); });
-  $('#p-close').addEventListener('click', closePage);
-  $('#p-open')?.addEventListener('click', () => { closePage(); go(owner); });
 }
 function closePage() { const m = $('#modal'); m.hidden = true; m.innerHTML = ''; }
 
@@ -1223,13 +1163,6 @@ function bindChrome() {
   $('#secpos').addEventListener('input', (e) => setSection({ pos: e.target.value / 100 }));
   $('#sec-flip').addEventListener('click', () => setSection({ flip: !S.section.flip }));
   $('#sec-scope').addEventListener('click', () => setSection({ scope: S.section.scope === 'selection' ? 'all' : 'selection' }));
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key !== 'Escape') return;
-    if (!$('#modal').hidden) closePage();
-    else if (S.selected) select(null);
-  });
-  bindSearch();
 }
 
 let toastTimer;

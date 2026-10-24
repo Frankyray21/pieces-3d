@@ -4,8 +4,7 @@
 // d'assemblage et de page — sur l'équipement affiché et sur tous les
 // équipements du catalogue (data.json chargés à la demande, une fois).
 //
-// Remplace la recherche d'origine de l'en-tête (main.js, bindSearch) : le champ
-// #q est remplacé par une copie sans ses anciens écouteurs, au même endroit.
+// Seule recherche du site : elle prend le champ #q de l'en-tête (index.html).
 // Raccourcis : « / » ou Ctrl+K pour ouvrir, flèches, Entrée, Échap.
 // Sur téléphone, la recherche s'ouvre en plein écran.
 
@@ -219,15 +218,11 @@ export default {
   init(ctx) {
     const { esc } = ctx;
     const { icon } = ctx.icons;
-    const old = document.querySelector('#q');
-    const box = old?.closest('.search');
-    if (!old || !box) return; // en-tête absent : rien à faire
+    const input = document.querySelector('#q');
+    const box = input?.closest('.search');
+    if (!input || !box) return; // en-tête absent : rien à faire
 
     // ---------------------------------------------------------------- champ de l'en-tête
-    // Copie sans les écouteurs de l'ancienne recherche ; l'ancienne liste reste cachée.
-    const input = old.cloneNode(true);
-    old.replaceWith(input);
-    document.querySelector('#results')?.setAttribute('hidden', '');
     input.placeholder = 'Pièce, description, assemblage…';
     input.title = 'Rechercher dans tout le catalogue (raccourci : « / » ou Ctrl+K)';
     input.setAttribute('role', 'combobox');
@@ -537,6 +532,8 @@ export default {
     input.addEventListener('keydown', onKey);
     inner.addEventListener('keydown', onKey);
     pop.querySelector('.rch-back').addEventListener('click', () => close());
+    // Échap hors du champ (fenêtre ouverte, focus ailleurs) : la fenêtre d'abord.
+    ctx.ui.onEscape(() => { if (pop.hidden) return false; close(); return true; }, 120);
 
     // Raccourcis globaux : « / » (hors champ de saisie) ou Ctrl+K / Cmd+K.
     document.addEventListener('keydown', (e) => {
@@ -603,19 +600,11 @@ export default {
       }
       ctx.go(hash);
     }
-    function selectUse(u, e) {
+    function selectUse(u) {
+      // La fiche de la pièce s'ouvre (sur téléphone : volet bas de la vue, la pièce cadrée au-dessus).
       ctx.viewer.select(u.ref);
-      const narrow = ctx.narrow();
-      if (ctx.viewer.is3d) {
-        if (narrow) {
-          ctx.ui.setPane('stage');
-          ctx.viewer.frame(u.ref);
-          ctx.toast(`Réf. ${u.label} · ${e.pn || '—'} · ${e.desc}`, 3500);
-        }
-      } else {
-        if (narrow) ctx.ui.setPane('panel');
-        document.querySelector('#rows tr.sel')?.scrollIntoView({ block: 'center' });
-      }
+      document.querySelector('#rows tr.sel')?.scrollIntoView({ block: 'center' });
+      if (ctx.narrow() && !ctx.ui.sidePanel.isOpen) ctx.ui.setPane(ctx.viewer.is3d ? 'stage' : 'panel');
     }
     function pick(i, useIdx = null) {
       const r = flat[i];
@@ -626,7 +615,7 @@ export default {
       lastQ = null;
       if (e.kind === 'part') {
         const u = useIdx != null ? e.uses[useIdx] : r.use || bestUse(e);
-        openView(e.eq.id, u.id, () => selectUse(u, e));
+        openView(e.eq.id, u.id, () => selectUse(u));
       } else if (e.kind === 'asm') {
         openView(e.eq.id, e.id, () => { if (ctx.narrow()) ctx.ui.setPane(ctx.viewer.is3d ? 'stage' : 'panel'); });
       } else if (e.kind === 'page') {

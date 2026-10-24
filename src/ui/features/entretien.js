@@ -4,31 +4,17 @@
 // donne la liste numérotée (type, emplacement, assemblage, page source).
 //
 // Données : public/equipment/<id>/entretien.json (points du manuel, avec leurs
-// pages). Les objets 3D concernés portent userData.entretien = { type, id }
-// (src/models/<id>/*.js) ; un point sans objet 3D est placé par coordonnées
-// (« marqueurs » : repère local d'un assemblage, accroché à une de ses pièces).
-// Équipement sans fichier entretien.json : l'outil n'apparaît pas.
+// pages ; ctx.equipmentData('entretien')). Les objets 3D concernés portent
+// userData.entretien = { type, id } (src/models/<id>/*.js) ; un point sans objet
+// 3D est placé par coordonnées (« marqueurs » : repère local d'un assemblage,
+// accroché à une de ses pièces). Équipement sans fichier entretien.json :
+// l'outil n'apparaît pas.
+//
+// Un clic sur une pièce la sélectionne : sa fiche se pose par-dessus la liste
+// des points (le mode reste actif) ; un clic sur une pastille ramène la liste.
 import './entretien.css';
 import * as THREE from 'three';
 import { CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer.js';
-
-// Équipements qui ont un fichier entretien.json, connus à la construction (noms de fichiers seulement : les
-// chargeurs du glob ne sont jamais appelés) ; le fichier est lu à la demande, sans requête (ni erreur 404)
-// pour les autres équipements.
-const HAS = new Set(Object.keys(import.meta.glob('../../../public/equipment/*/entretien.json')).map((f) => f.split('/').slice(-2, -1)[0]));
-const DATA = new Map(); // id → données chargées (null : illisibles)
-const load = async (id) => {
-  if (!HAS.has(id)) return null;
-  if (!DATA.has(id)) {
-    try {
-      const res = await fetch(`equipment/${id}/entretien.json`, { cache: 'no-cache' });
-      DATA.set(id, res.ok ? await res.json() : null);
-    } catch {
-      DATA.set(id, null);
-    }
-  }
-  return DATA.get(id);
-};
 
 const TYPES = {
   graisseur: 'Graisseur',
@@ -53,12 +39,10 @@ export default {
     let active = false;
     let pins = []; // { label, el, point }
     let points = []; // points présents dans le modèle affiché : { n, def, objs, marks }
-    let sig = ''; // signature du modèle (remplacements de pièces pendant le chargement de la vue d'ensemble)
-    let timer = null;
     let current = null; // id du point mis en évidence
     let shown = null; // modèle déjà cadré par le mode
 
-    const data = () => (ctx.equipment ? DATA.get(ctx.equipment.id) ?? null : null);
+    const data = () => ctx.equipmentData('entretien');
     const usable = () => {
       const v = ctx.view;
       return !!data() && ctx.viewer.is3d && v?.type === 'assembly' && !v.home && !!ctx.viewer.model;
@@ -103,14 +87,6 @@ export default {
       return list;
     };
 
-    const signature = () => {
-      const m = ctx.viewer.model;
-      if (!m) return '';
-      let n = 0;
-      m.root.traverse((o) => { if (o.userData.entretien || o.userData.isAssembly) n++; });
-      return `${m.root.uuid}:${n}`;
-    };
-
     // ------------------------------------------------------------ pastilles
     const clearPins = () => {
       for (const { label } of pins) {
@@ -128,7 +104,7 @@ export default {
       el.title = `${pt.n}. ${pt.def.titre}${pt.def.approx ? ' (position approchée)' : ''}`;
       el.dataset.ent = pt.def.id;
       el.addEventListener('pointerdown', (e) => e.stopPropagation());
-      el.addEventListener('click', (e) => { e.stopPropagation(); focus(pt.def.id, { frame: false, scroll: true }); });
+      el.addEventListener('click', (e) => { e.stopPropagation(); reveal(); focus(pt.def.id, { frame: false, scroll: true }); });
       const label = new CSS2DObject(el);
       label.center.set(0.5, 0.5);
       return label;
@@ -136,8 +112,7 @@ export default {
 
     const placePins = () => {
       clearPins();
-      const v = ctx.viewer.raw;
-      if (!v) return;
+      if (!ctx.viewer.model) return;
       for (const pt of points) {
         for (const o of pt.objs) {
           // Centre de l'objet, comme les bulles des repères.
@@ -164,16 +139,12 @@ export default {
           pins.push({ label, el: label.element, point: pt });
         }
       }
-      v.invalidate?.();
+      ctx.viewer.invalidate();
     };
 
     // Machine estompée, objets des points en évidence (sans toucher à la sélection).
     const ghost = () => {
-      const v = ctx.viewer.raw;
-      if (!v || !ctx.viewer.is3d) return;
-      v.markObjs = points.flatMap((p) => p.objs);
-      v.markGhost = true;
-      v._refreshStates();
+      if (ctx.viewer.is3d) ctx.viewer.markObjects(points.flatMap((p) => p.objs), { ghost: true });
     };
 
     // ------------------------------------------------------------ panneau latéral
@@ -239,58 +210,42 @@ export default {
       });
       if (scroll && item) item.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
       if (frame) frameOn(id);
-      ctx.viewer.raw?.invalidate?.();
+      ctx.viewer.invalidate();
     };
 
-    // Cadre le point (tous ses exemplaires) en gardant la direction de vue ; le point est placé au milieu de la
-    // partie de la scène que le panneau latéral ne couvre pas.
+    // Cadre le point (tous ses exemplaires) en gardant la direction de vue, dans la partie de la scène que le
+    // panneau latéral et les barres ne couvrent pas (marges du socle).
     const frameOn = (id = null) => {
-      const v = ctx.viewer.raw;
       const mine = id == null ? pins : pins.filter((p) => p.point.def.id === id);
-      if (!v || !mine.length) return;
+      if (!mine.length) return;
       const box = new THREE.Box3();
       const w = new THREE.Vector3();
       for (const { label } of mine) box.expandByPoint(label.getWorldPosition(w));
-      const c = box.getCenter(new THREE.Vector3());
-      const r = Math.max(box.getSize(new THREE.Vector3()).length() / 2, 0.3);
-      const cam = v.camera;
-      const dir = cam.position.clone().sub(v.controls.target).normalize();
-      const tan = Math.tan(THREE.MathUtils.degToRad(cam.fov) / 2);
-      // Partie libre de la scène (px) : sous la barre d'outils, hors du panneau latéral (à droite sur grand écran,
-      // en bas sur téléphone) et au-dessus du cartouche.
-      const st = v.container.getBoundingClientRect();
-      if (!st.width || !st.height) return;
-      const ins = (typeof v.insets === 'function' ? v.insets() : v.insets) || {};
-      const free = { l: st.left, r: st.right, t: st.top + (ins.top || 0), b: st.bottom - (ins.bottom || 0) };
-      if (ctx.ui.sidePanel.isOpen) {
-        const sp = ctx.ui.sidePanel.element.getBoundingClientRect();
-        if (ctx.narrow()) free.b = Math.min(free.b, sp.top - 8);
-        else free.r = Math.min(free.r, sp.left - 8);
-      }
-      const fw = Math.max(free.r - free.l, st.width * 0.3), fh = Math.max(free.b - free.t, st.height * 0.25);
-      // Le point (ou l'ensemble des points) tient dans la partie libre.
-      const dist = Math.max((r / (tan * Math.min(fh / st.height, (cam.aspect * fw) / st.width))) * 1.15, 0.9);
-      const right = new THREE.Vector3().setFromMatrixColumn(cam.matrixWorld, 0).normalize();
-      const up = new THREE.Vector3().setFromMatrixColumn(cam.matrixWorld, 1).normalize();
-      const H = 2 * dist * tan, W = H * cam.aspect;
-      // Décalage (px) du milieu de la partie libre par rapport au milieu de la scène : la cible part à l'opposé.
-      const dx = (free.l + free.r) / 2 - (st.left + st.right) / 2, dy = (free.t + free.b) / 2 - (st.top + st.bottom) / 2;
-      const target = c.clone().addScaledVector(right, (-dx / st.width) * W).addScaledVector(up, (dy / st.height) * H);
-      v.lookAt(target.clone().addScaledVector(dir, dist).toArray(), target.toArray());
+      // Au moins 60 cm de côté : un point seul reste dans son contexte.
+      const size = box.getSize(new THREE.Vector3()).max(new THREE.Vector3(0.6, 0.6, 0.6));
+      box.setFromCenterAndSize(box.getCenter(new THREE.Vector3()), size);
+      ctx.viewer.frame(box);
     };
+
+    /** Le panneau de la liste revient (la fiche d'une pièce le recouvrait). */
+    const reveal = () => {
+      if (!active) return;
+      if (ctx.selection) ctx.viewer.select(null); // la fiche se ferme : la liste revient dessous
+      if (ctx.ui.sidePanel.owner !== OWNER) openPanel(panel());
+    };
+    const openPanel = (content) => ctx.ui.sidePanel.open({ owner: OWNER, title: 'Entretien et graissage', icon: 'cle', content, className: 'ent-side' });
 
     // ------------------------------------------------------------ marche / arrêt
     const build = () => {
       points = collect();
-      sig = signature();
       placePins();
       ghost();
-      ctx.viewer.raw?.container?.classList.add('ent-on');
+      ctx.ui.stage.classList.add('ent-on');
       if (current && !points.some((p) => p.def.id === current)) current = null;
       if (ctx.ui.sidePanel.owner === OWNER) {
         ctx.ui.sidePanel.setContent(panel());
         if (current) focus(current);
-      }
+      } else if (ctx.ui.sidePanel.base === OWNER) ctx.ui.sidePanel.setContent(panel(), OWNER); // sous la fiche
     };
 
     const start = () => {
@@ -299,43 +254,35 @@ export default {
       btn.setAttribute('aria-pressed', 'true');
       current = null;
       points = collect();
-      ctx.ui.sidePanel.open({ owner: OWNER, title: 'Entretien et graissage', icon: 'cle', content: panel() });
-      ctx.ui.sidePanel.element.classList.add('ent-side');
+      openPanel(panel());
       build();
       frameOn(); // tous les points dans la partie libre de la scène
       shown = ctx.viewer.model?.root.uuid ?? null;
-      // La vue d'ensemble remplace ses sous-assemblages simplifiés par leur version détaillée après coup :
-      // pastilles et estompage refaits si le modèle a changé.
-      clearInterval(timer);
-      timer = setInterval(() => {
-        if (!active || !usable()) return;
-        if (signature() !== sig) build();
-      }, 800);
     };
 
     const teardown = () => {
       clearPins();
-      const v = ctx.viewer.raw;
-      v?.container?.classList.remove('ent-on');
-      if (v && ctx.viewer.is3d && v.markGhost) v.setMarked(null);
+      ctx.ui.stage.classList.remove('ent-on');
+      ctx.viewer.clear();
     };
 
-    const stop = ({ keepPanel = false } = {}) => {
+    const stop = () => {
       if (!active) return;
       active = false;
-      clearInterval(timer);
-      timer = null;
       btn.setAttribute('aria-pressed', 'false');
       teardown();
       points = [];
       current = null;
-      ctx.ui.sidePanel.element.classList.remove('ent-side');
-      if (!keepPanel && ctx.ui.sidePanel.owner === OWNER) ctx.ui.sidePanel.close();
+      ctx.ui.sidePanel.release(OWNER);
     };
 
+    // Le panneau est pris par un autre mode, ou replié : le mode s'arrête (machine et repères rétablis).
     ctx.on('sidepanel', ({ open, owner }) => {
-      if (owner === OWNER && !open) stop({ keepPanel: true });
+      if (owner === OWNER && !open) stop();
     });
+    // La vue d'ensemble remplace ses sous-assemblages simplifiés par leur version détaillée après coup :
+    // pastilles et estompage refaits.
+    ctx.on('model-update', () => { if (active && usable()) build(); });
 
     // Nouvel assemblage ou nouvelle vue : bouton montré seulement pour une vue 3D d'un équipement qui a des données ;
     // en mode entretien, les points du nouvel assemblage remplacent les anciens.
@@ -352,10 +299,9 @@ export default {
     };
     ctx.on('assembly', refresh);
     ctx.on('view', refresh);
-    ctx.on('equipment', ({ id }) => {
+    ctx.on('equipment', () => {
       if (active) stop();
       btn.hidden = true;
-      load(id).then(() => { if (ctx.equipment?.id === id) refresh(); });
     });
   },
 };

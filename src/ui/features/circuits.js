@@ -7,6 +7,9 @@
 // de la légende ou sur un boyau met ce circuit seul en évidence, d'un bout à
 // l'autre (tronçons communs compris), avec la liste de ses boyaux et raccords.
 // Sans boyau étiqueté dans le modèle affiché, l'outil n'apparaît pas.
+// Un clic sur une autre pièce la sélectionne : sa fiche se pose par-dessus la
+// légende (le mode reste actif, la pièce garde ses couleurs) et la légende
+// revient quand la fiche se ferme.
 import './circuits.css';
 import * as THREE from 'three';
 
@@ -85,48 +88,35 @@ export default {
     let picked = null; // boyau cliqué
     let hoses = []; // boyaux étiquetés du modèle affiché
     let root = null;
-    const touched = new Map(); // maillage → matériau de base d'origine
+    let selected = new Set(); // maillages de la pièce sélectionnée (jamais estompés)
 
     const btn = ctx.ui.addTool({ label: 'Circuits', icon: 'goutte', title: 'Circuits hydrauliques en couleur', pressed: false, onClick: () => (active ? stop() : start()) });
     btn.style.display = 'none';
 
-    const refresh = () => {
-      const v = ctx.viewer.raw;
-      if (!v) return;
-      if (typeof v._refreshStates === 'function') v._refreshStates();
-      else v.invalidate?.();
-    };
-    const orig = (o) => (touched.has(o) ? touched.get(o) : o.userData.baseMaterial || o.material);
-    const setBase = (o, m) => {
-      if (!touched.has(o)) touched.set(o, o.userData.baseMaterial || o.material);
-      o.userData.baseMaterial = m;
-    };
-    /** Couleurs d'origine rétablies (sur les maillages touchés, même d'un modèle qui n'est plus affiché). */
-    const unpaint = () => {
-      for (const [o, m] of touched) o.userData.baseMaterial = m;
-      touched.clear();
-    };
+    /** Couleurs du mode : boyaux à la couleur de leur circuit, le reste estompé (API du visualiseur). */
     const paint = () => {
-      if (!root) return;
+      const map = new Map();
+      if (!root) return map;
       const fam = focus ? family(focus) : null;
+      const orig = (o) => ctx.viewer.originalMaterial(o);
       root.traverse((o) => {
-        if (!o.isMesh || o.userData.isEdges) return;
+        if (!o.isMesh || o.userData.isEdges || selected.has(o)) return;
         const h = o.userData.circuit ? o : o.parent?.userData.circuit ? o.parent : null;
         const lit = h && (!fam || fam.has(h.userData.circuit));
         if (h === o) {
           const hex = info(o.userData.circuit).color;
-          setBase(o, lit ? colorMat(hex, !!focus) : dimMat(colorMat(hex, false), 0.22));
+          map.set(o, lit ? colorMat(hex, !!focus) : dimMat(colorMat(hex, false), 0.22));
         } else if (h) {
-          setBase(o, lit ? orig(o) : dimMat(orig(o)));
+          if (!lit) map.set(o, dimMat(orig(o)));
         } else {
-          setBase(o, dimMat(orig(o)));
+          map.set(o, dimMat(orig(o)));
         }
       });
+      return map;
     };
     const apply = () => {
-      unpaint();
-      if (active) paint();
-      refresh();
+      if (active && root) ctx.viewer.setBaseMaterials(paint());
+      else ctx.viewer.restoreBaseMaterials();
     };
 
     // ---------------------------------------------------------------- légende (panneau latéral)
@@ -181,27 +171,21 @@ export default {
       const b = e.target.closest('[data-circuit]');
       if (b) setFocus(b.dataset.circuit === focus ? null : b.dataset.circuit, { frame: true });
     });
+    const openPanel = () => ctx.ui.sidePanel.open({ owner: OWNER, title: 'Circuits hydrauliques', icon: 'goutte', content: panelEl, className: 'circuits-sheet' });
     const render = () => {
-      panelEl.innerHTML = legend();
-      if (ctx.ui.sidePanel.owner === OWNER) ctx.ui.sidePanel.setContent(panelEl);
-      const body = ctx.ui.sidePanel.body;
-      if (body && ctx.ui.sidePanel.owner === OWNER) body.scrollTop = 0; // détail du circuit en tête du panneau
+      panelEl.innerHTML = legend(); // aussi quand la fiche d'une pièce recouvre la légende
+      if (ctx.ui.sidePanel.owner !== OWNER) return;
+      if (!ctx.ui.sidePanel.body.contains(panelEl)) ctx.ui.sidePanel.setContent(panelEl);
+      ctx.ui.sidePanel.body.scrollTop = 0; // détail du circuit en tête du panneau
       panelEl.querySelector('.is-picked')?.scrollIntoView?.({ block: 'nearest' });
     };
 
-    const frameHoses = (list) => {
-      const v = ctx.viewer.raw;
-      if (!v || !list.length) return;
-      const box = new THREE.Box3();
-      list.forEach((h) => box.expandByObject(h));
-      if (!box.isEmpty()) v.frame({ box });
-    };
     const setFocus = (id, { frame = false, hose = null } = {}) => {
       focus = id;
       picked = hose;
       apply();
       render();
-      if (frame && id) { const fam = family(id); frameHoses(hoses.filter((h) => fam.has(h.userData.circuit))); }
+      if (frame && id) { const fam = family(id); ctx.viewer.frame(hoses.filter((h) => fam.has(h.userData.circuit))); }
     };
 
     const start = () => {
@@ -211,8 +195,7 @@ export default {
       picked = null;
       btn.setAttribute('aria-pressed', 'true');
       panelEl.innerHTML = legend();
-      ctx.ui.sidePanel.open({ owner: OWNER, title: 'Circuits hydrauliques', icon: 'goutte', content: panelEl });
-      ctx.ui.sidePanel.element.classList.add('circuits-sheet');
+      openPanel();
       apply();
     };
     const stop = () => {
@@ -221,14 +204,11 @@ export default {
       focus = null;
       picked = null;
       btn.setAttribute('aria-pressed', 'false');
-      ctx.ui.sidePanel.element.classList.remove('circuits-sheet');
-      if (ctx.ui.sidePanel.owner === OWNER) ctx.ui.sidePanel.close();
+      ctx.ui.sidePanel.release(OWNER);
       apply();
     };
-    ctx.on('sidepanel', ({ open, owner }) => {
-      if (owner === OWNER && !open) stop();
-      if (open && owner !== OWNER) ctx.ui.sidePanel.element.classList.remove('circuits-sheet');
-    });
+    // Le panneau est pris par un autre mode, ou replié : le mode s'arrête (couleurs rétablies).
+    ctx.on('sidepanel', ({ open, owner }) => { if (owner === OWNER && !open) stop(); });
 
     // ---------------------------------------------------------------- modèle affiché
     const scan = (r) => {
@@ -236,21 +216,33 @@ export default {
       r?.traverse((o) => { if (o.isMesh && o.userData.circuit) list.push(o); });
       return list;
     };
-    ctx.on('assembly', ({ is3d, model }) => {
-      unpaint(); // les maillages du modèle précédent retrouvent leurs couleurs (modèle gardé en cache)
-      root = is3d ? model?.root ?? null : null;
+    const rescan = (model) => {
+      root = model?.root ?? null;
       hoses = scan(root);
       btn.style.display = hoses.length ? '' : 'none';
       if (!hoses.length) { stop(); return; }
       if (active) {
         if (focus && !hoses.some((h) => family(focus).has(h.userData.circuit))) focus = null;
-        picked = null;
+        if (picked && !hoses.includes(picked)) picked = null;
         apply();
         render();
       }
+    };
+    ctx.on('assembly', ({ is3d, model }) => {
+      selected = new Set();
+      picked = null;
+      rescan(is3d ? model : null);
     });
+    // Vue d'ensemble : sous-assemblages remplacés par leur version détaillée.
+    ctx.on('model-update', ({ model }) => { if (model === ctx.viewer.model) rescan(model); });
     ctx.on('view', ({ type }) => {
       if (type !== 'assembly') { btn.style.display = 'none'; stop(); }
+    });
+    // Pièce sélectionnée pendant le mode : gardée à ses couleurs (sa fiche s'ouvre par-dessus la légende).
+    ctx.on('select', ({ objects }) => {
+      selected = new Set();
+      for (const o of objects || []) o.traverse((m) => { if (m.isMesh) selected.add(m); });
+      if (active) apply();
     });
 
     // ---------------------------------------------------------------- clic sur un boyau
@@ -259,15 +251,15 @@ export default {
     const ndc = new THREE.Vector2();
     let down = null;
     const hoseAt = (e) => {
-      const v = ctx.viewer.raw;
-      if (!v?.camera) return null;
-      const rect = v.renderer.domElement.getBoundingClientRect();
+      const cam = ctx.viewer.camera, canvas = ctx.viewer.canvas;
+      if (!cam || !canvas) return null;
+      const rect = canvas.getBoundingClientRect();
       ndc.set(((e.clientX - rect.left) / rect.width) * 2 - 1, -((e.clientY - rect.top) / rect.height) * 2 + 1);
-      ray.setFromCamera(ndc, v.camera);
+      ray.setFromCamera(ndc, cam);
       const shown = hoses.filter((h) => { for (let a = h; a; a = a.parent) if (!a.visible) return false; return true; });
       return ray.intersectObjects(shown, false)[0]?.object ?? null;
     };
-    const onCanvas = (e) => active && e.target === ctx.viewer.raw?.renderer?.domElement;
+    const onCanvas = (e) => active && !!ctx.viewer.canvas && e.target === ctx.viewer.canvas;
     document.addEventListener('pointerdown', (e) => { down = onCanvas(e) && e.isPrimary ? { x: e.clientX, y: e.clientY } : null; }, true);
     document.addEventListener('pointerup', (e) => {
       if (!onCanvas(e) || !down || Math.hypot(e.clientX - down.x, e.clientY - down.y) > 5) return;
@@ -275,6 +267,9 @@ export default {
       const h = hoseAt(e);
       if (!h) return;
       e.stopPropagation();
+      // Le boyau prend la main : plus de pièce sélectionnée, la légende revient par-dessus la fiche.
+      if (ctx.selection) ctx.viewer.select(null);
+      if (ctx.ui.sidePanel.owner !== OWNER) openPanel();
       setFocus(h.userData.circuit, { hose: h });
     }, true);
     document.addEventListener('dblclick', (e) => { if (onCanvas(e) && hoseAt(e)) e.stopPropagation(); }, true);

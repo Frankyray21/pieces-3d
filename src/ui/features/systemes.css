@@ -81,8 +81,7 @@
 .sysx-sub { display: inline-flex; align-items: center; gap: 2px; font: 500 11px var(--f-mono); color: var(--sys); }
 
 /* ---------------------------------------------------------------- fil d'Ariane en haut de la vue */
-/* Le fil remplace celui de l'en-tête (même information, plus la pièce sélectionnée, visible aussi sur téléphone). */
-.shell.sysx-on .topbar .crumbs { visibility: hidden; }
+/* Seul fil d'Ariane du site (vues 3D, dessins sans 3D, schémas, contrôle ; aussi sur téléphone), avec la pièce sélectionnée. */
 .sysx-crumbs {
   position: absolute; left: 12px; top: 10px; max-width: calc(100% - 24px); z-index: 6; height: 34px; box-sizing: border-box;
   display: flex; align-items: center; gap: 2px; padding: 0 6px; min-width: 0; overflow: hidden; white-space: nowrap;

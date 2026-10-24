@@ -3,8 +3,9 @@
 // - Valeurs relevées dans le manuel, groupées par système (foreuse, tête,
 //   treuil, groupe, console…), une valeur par ligne, unités métriques et
 //   impériales, colonne « Source » qui ouvre la page du manuel. Elles viennent
-//   de public/equipment/<id>/donnees.json ; sans ce fichier, la fiche technique
-//   de data.json (specs, weights) est reprise telle quelle, sans page source.
+//   de public/equipment/<id>/donnees.json (ctx.equipmentData('donnees'), lu à
+//   la construction : aucune requête) ; sans ce fichier, la fiche technique de
+//   data.json (specs, weights) est reprise telle quelle, sans page source.
 // - Tableau « Visserie par assemblage » calculé depuis les listes de pièces
 //   (boulons, vis, écrous, rondelles, goupilles) : quantité par taille.
 // Rien n'est inventé : une donnée absente du manuel n'apparaît pas.
@@ -12,17 +13,6 @@
 import './donnees.css';
 
 const ID = 'donnees';
-
-// ------------------------------------------------------------------ chargement de donnees.json
-const cache = new Map(); // id d'équipement → Promise<objet | null>
-function loadDonnees(eqId) {
-  if (!cache.has(eqId)) {
-    cache.set(eqId, fetch(`equipment/${eqId}/donnees.json`, { cache: 'no-cache' })
-      .then((r) => (r.ok && /json/.test(r.headers.get('content-type') || 'json') ? r.json() : null))
-      .catch(() => null));
-  }
-  return cache.get(eqId);
-}
 
 // ------------------------------------------------------------------ visserie
 /** Décimal → fraction au 1/64 la plus proche (« 5/8 », « 2 3/4 », « 1 »). */
@@ -159,11 +149,9 @@ export default {
     card.hidden = true;
     ctx.ui.equipmentHome.appendChild(card);
 
-    ctx.on('equipment', async ({ equipment: eq, id }) => {
+    ctx.on('equipment', ({ equipment: eq, id }) => {
       card.hidden = true;
-      tool.hidden = !(eq.specs?.length || eq.weights?.length);
-      const don = await loadDonnees(id);
-      if (ctx.equipment?.id !== id) return;
+      const don = ctx.equipmentData(ID, id);
       const ok = disponible(eq, don);
       tool.hidden = !ok;
       if (!ok) return;
@@ -181,11 +169,10 @@ export default {
     });
 
     // --- page plein écran
-    ctx.registerRoute(ID, async () => {
+    ctx.registerRoute(ID, () => {
       const eq = ctx.equipment;
       if (!eq) return;
-      const don = await loadDonnees(eq.id);
-      if (ctx.equipment !== eq) return;
+      const don = ctx.equipmentData(ID, eq.id);
       const el = document.createElement('div');
       el.className = 'dn';
       el.innerHTML = render(eq, don);

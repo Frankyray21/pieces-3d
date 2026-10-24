@@ -1,19 +1,21 @@
-// Fiche de la pièce sélectionnée, dans le panneau latéral : numéro, description,
-// quantités, repère, assemblage parent, notes, cotes mesurées sur la 3D, autres
-// assemblages qui listent le même numéro et vignette de la page du manuel.
-// « Voir sur le dessin » ouvre la page du manuel avec la bulle de la pièce
-// entourée d'un cercle animé (positions : public/equipment/<id>/bulles.json,
-// produit par tools/extract_bulles.py ; sans position connue, la page s'ouvre
-// simplement).
+// Fiche de la pièce sélectionnée, dans le panneau latéral (seule fiche du site) :
+// numéro (un par taille), description, quantités, repère, assemblage parent,
+// groupes, actions de la vue 3D (éclater le groupe, coupe, centrer), notes et
+// lignes à vérifier, cotes mesurées sur la 3D, autres listes qui portent le
+// même numéro et vignette de la page du manuel. « Voir sur le dessin » ouvre
+// la page du manuel avec la bulle de la pièce entourée d'un cercle animé
+// (positions : public/equipment/<id>/bulles.json, produit par
+// tools/extract_bulles.py ; sans position connue, la page s'ouvre simplement).
+//
+// La fiche se pose par-dessus le panneau d'un mode (circuits, entretien,
+// procédure, sous-ensemble isolé : sidePanel.open({ over: true })) : le mode
+// reste actif, et revient quand la fiche se ferme (×, « ‹ », Échap).
 import { Box3, Matrix4, Quaternion, Vector3 } from 'three';
+import { normPn, sizeGroups } from '../../data/equipment.js';
 import './fiche.css';
 
 const OWNER = 'fiche';
-// Équipements dont les positions des bulles sont connues (évite une requête vaine ailleurs).
-const BULLES = new Set(['stm-1500']);
 
-/** Comme normPn (src/data/equipment.js). */
-const normPn = (pn) => String(pn || '').toUpperCase().replace(/^\*/, '').replace(/\s/g, '');
 
 // ------------------------------------------------------------------ cotes mesurées sur la 3D
 
@@ -74,20 +76,8 @@ export default {
   init(ctx) {
     const { esc } = ctx;
     const { icon } = ctx.icons;
-    const bulles = new Map(); // id d'équipement → Promise<pages | null>
     let current = null; // dernier détail de « select » affiché
-    let drawing = null; // page « Voir sur le dessin » ouverte : { close }
-
-    const loadBulles = (eqId) => {
-      if (!BULLES.has(eqId)) return Promise.resolve(null);
-      if (!bulles.has(eqId)) {
-        bulles.set(eqId, fetch(`equipment/${eqId}/bulles.json`)
-          .then((r) => (r.ok ? r.json() : null))
-          .then((j) => j?.pages ?? null)
-          .catch(() => null));
-      }
-      return bulles.get(eqId);
-    };
+    let box = null; // contenu de la fiche affichée
 
     const eq = () => ctx.equipment;
     const sheetLabel = (s) => (eq().docWord === 'catalogue' ? `p. ${parseInt(String(s).replace(/^\D+/, ''), 10)}` : s);
@@ -103,8 +93,8 @@ export default {
       return [...new Set([row.source.sheet, ...(o?.sheets || []), ...(o?.lists || [])].filter(Boolean))];
     };
     /** Page et positions de la bulle de la ligne : { sheet, boxes } (boxes vide si inconnue). */
-    const locate = async (row) => {
-      const pages = await loadBulles(eq().id);
+    const locate = (row) => {
+      const pages = ctx.equipmentData('bulles')?.pages ?? null;
       const sheets = sheetsOf(row);
       const keys = (row.pns?.length ? row.pns : [row.pn]).map(normPn).filter(Boolean);
       if (pages) {
@@ -116,19 +106,41 @@ export default {
       return { sheet: sheets[0], boxes: [] };
     };
 
+    // ---------------------------------------------------------------- actions de la vue 3D
+    const actionsHtml = (d) => {
+      const { row, path } = d;
+      const e = eq();
+      const v = ctx.viewer;
+      const btns = [];
+      if (v.is3d && v.isGroup(path)) {
+        btns.push(`<button type="button" class="btn primary" data-fiche-act="group">${v.isGroupOpen(path) ? 'Rassembler ce groupe' : 'Éclater ce groupe'}</button>`);
+      }
+      if (v.is3d && v.canCut(path)) {
+        btns.push(`<button type="button" class="btn" data-fiche-act="cut">${v.isCut() ? 'Quitter la coupe' : 'Voir en coupe'}</button>`);
+      }
+      if (v.is3d && v.objects(path).length) btns.push('<button type="button" class="btn" data-fiche-act="center">Centrer</button>');
+      for (const s of row.see || []) btns.push(`<button type="button" class="btn" data-page="${esc(s)}">Voir ${esc(e.docWord === 'catalogue' ? sheetLabel(s) : s)}</button>`);
+      return btns.length ? `<div class="fiche-actions">${btns.join('')}</div>` : '<div class="fiche-actions" hidden></div>';
+    };
+
     // ---------------------------------------------------------------- contenu de la fiche
     const render = (d) => {
       const e = eq();
       const { row, path } = d;
       const own = ownerOf(row);
-      const box = document.createElement('div');
-      box.className = 'fiche';
+      const el = document.createElement('div');
+      el.className = 'fiche';
       const desc = row.descFr || row.fr || null;
       const sub = row.link ? e.assemblies.get(row.link) || e.documents.get(row.link) : null;
       const qtyTxt = row.qty != null ? `${row.qty}${row.uom ? ` ${esc(row.uom)}` : ''}` : 'non indiquée';
       const q3d = row.qty3d != null && row.qty3d !== row.qty
-        ? `<span class="fiche-sub">${row.qty3d} posée${row.qty3d > 1 ? 's' : ''} en 3D</span>` : '';
-      // Fil des groupes, depuis l'assemblage affiché.
+        ? `<span class="fiche-sub">${row.qty3d} dessinée${row.qty3d > 1 ? 's' : ''} (posée${row.qty3d > 1 ? 's' : ''} en 3D)</span>` : '';
+      // Numéros : un par taille (regroupés), sinon le numéro ou le texte du catalogue.
+      const sizes = row.sizes ? sizeGroups(row) : null;
+      const pnHtml = sizes?.length
+        ? `<div class="fiche-sizes">${sizes.map(([v, ss]) => `<div><span class="fiche-sz">${esc(ss.join(' · '))}</span><span class="mono">${esc(v === '-' ? '—' : v)}</span></div>`).join('')}</div>`
+        : `<div class="fiche-pn mono">${esc(row.pnText || row.pn || (row.nss ? 'Non vendu séparément' : '—'))}</div>`;
+      // Groupes depuis l'assemblage affiché : chaque maillon sélectionne le groupe dans la vue.
       const asm = ctx.assembly;
       const groupes = path.length > 1 && asm ? path.slice(0, -1).map((_, i) => {
         let a = asm, r = null;
@@ -136,16 +148,24 @@ export default {
           r = a?.parts.find((p) => p.ref === ref);
           a = r?.link ? e.assemblies.get(r.link) : null;
         }
-        return r?.link ? `<button type="button" class="chip" data-go="${esc(r.link)}">${esc(r.link)} · ${esc(e.assemblies.get(r.link)?.titleFr || r.desc)}</button>` : '';
+        return r ? `<button type="button" class="chip" data-fiche-sel="${esc(path.slice(0, i + 1).join('>'))}" title="Sélectionner ce groupe">${esc(r.link || refLabel(r))} · ${esc(e.assemblies.get(r.link)?.titleFr || r.desc)}</button>` : '';
       }).filter(Boolean).join(' › ') : '';
       const ids = [row.supplier && `Fournisseur <span class="mono">${esc(row.supplier)}</span>`, row.sandvik && row.sandvik !== 'N/A' && `Sandvik <span class="mono">${esc(row.sandvik)}</span>`].filter(Boolean).join(' · ');
-      const notes = [row.note, ...(row.flags || []).filter((f) => f.level !== 'info' && f.text !== row.note).map((f) => f.text)].filter(Boolean);
-      // Autres assemblages qui listent le même numéro (un lien par liste).
+      // Remarques et lignes à vérifier (avec les lignes en cause, cliquables).
+      const rowChip = (o, extra = '') => `<button type="button" class="chip" data-fiche-row="${esc(o.key)}">${esc(sheetLabel(o.source.sheet))} réf. ${esc(refLabel(o))}${extra}</button>`;
+      const flags = (row.flags || []).filter((f) => f.level !== 'info' || f.text !== row.note);
+      const notes = [
+        row.note ? `<p class="fiche-note info">${esc(row.note)}</p>` : '',
+        row.mirrorOf ? `<p class="fiche-note info">Pièce symétrique (côté gauche) : la 3D met en évidence la pièce droite, réf. ${esc(row.mirrorOf)}.</p>` : '',
+        ...flags.map((f) => `<div class="fiche-note ${esc(f.level)}">${esc(f.text)}${f.refs?.length ? `<span class="fiche-chips">${f.refs.map((o) => rowChip(o, ` · ${esc(o.desc)}`)).join('')}</span>` : ''}</div>`),
+      ].filter(Boolean);
+      // Autres listes qui portent le même numéro (une ligne par liste ; un clic l'ouvre, la ligne sélectionnée).
+      const flagged = new Set(flags.flatMap((f) => (f.refs || []).map((o) => o.key)));
       const seen = new Set([row.source.id]);
-      const autres = (row.usedIn || []).filter((o) => !seen.has(o.source.id) && seen.add(o.source.id));
+      const autres = (row.usedIn || []).filter((o) => !flagged.has(o.key) && !seen.has(o.source.id) && seen.add(o.source.id));
       const autresHtml = autres.map((o) => {
         const t = o.source.type === 'assembly' ? e.assemblies.get(o.source.id)?.titleFr : e.documents.get(o.source.id)?.titleFr;
-        return `<li><button type="button" class="fiche-link" data-go="${esc(o.source.id)}"><span class="mono">${esc(sheetLabel(o.source.sheet))}</span> ${esc(t || o.source.id)}<span class="fiche-sub">réf. ${esc(refLabel(o))} · qté ${o.qty ?? '—'}</span></button></li>`;
+        return `<li><button type="button" class="fiche-link" data-fiche-row="${esc(o.key)}"><span class="mono">${esc(sheetLabel(o.source.sheet))}</span> ${esc(t || o.source.id)}<span class="fiche-sub">réf. ${esc(refLabel(o))} · qté ${o.qty ?? '—'}</span></button></li>`;
       }).join('');
       const m = measure(d.objects);
       const dims = m ? `
@@ -158,11 +178,23 @@ export default {
         </section>` : '';
       const sheet = sheetsOf(row)[0];
       const url = sheet ? ctx.pageUrl(sheet) : null;
-      box.innerHTML = `
+      const pageSec = !sheet ? '' : url ? `<section class="fiche-sec">
+          <h4>Page du ${e.docWord}</h4>
+          <button type="button" class="fiche-thumb" data-fiche-draw title="Voir la pièce sur le dessin">
+            <img src="${esc(url)}" alt="Page ${esc(sheet)} du ${e.docWord}" loading="lazy">
+            <span class="fiche-thumb-cap"><span class="mono">${esc(sheetLabel(sheet))}</span> ${esc(ctx.sheetTitle(sheet))}</span>
+          </button>
+          <button type="button" class="btn primary fiche-draw" data-fiche-draw>${icon('page', { size: 16 })}<span>${locate(row).boxes.length ? 'Voir sur le dessin' : 'Ouvrir la page'}</span></button>
+        </section>` : `<section class="fiche-sec">
+          <h4>Page du ${e.docWord}</h4>
+          <p class="fiche-sub">La page ${esc(sheetLabel(sheet))} (${esc(ctx.sheetTitle(sheet))}) n'est pas incluse dans cette version du site.</p>
+          <button type="button" class="btn fiche-draw" data-page="${esc(sheet)}">${icon('page', { size: 16 })}<span>Ouvrir la page</span></button>
+        </section>`;
+      el.innerHTML = `
         <div class="fiche-head">
           <span class="fiche-ref" title="Repère">${esc(refLabel(row))}</span>
           <div class="fiche-id">
-            <div class="fiche-pn mono">${esc(row.pnText || row.pn || '—')}</div>
+            ${pnHtml}
             <div class="fiche-desc">${esc(row.desc)}</div>
             ${desc ? `<div class="fiche-fr">${esc(desc)}</div>` : ''}
             ${sub?.titleFr && sub.titleFr !== row.desc ? `<div class="fiche-fr">${esc(sub.titleFr)}</div>` : ''}
@@ -176,35 +208,34 @@ export default {
           ${ids ? `<dt>Autres n°</dt><dd>${ids}</dd>` : ''}
         </dl>
         ${groupes ? `<div class="fiche-trail">Dans ${groupes}</div>` : ''}
-        ${notes.length ? `<section class="fiche-sec"><h4>Notes</h4>${notes.map((n) => `<p class="fiche-note">${esc(n)}</p>`).join('')}</section>` : ''}
+        ${actionsHtml(d)}
+        ${notes.length ? `<section class="fiche-sec"><h4>Notes</h4>${notes.join('')}</section>` : ''}
         ${dims}
         ${autres.length ? `<section class="fiche-sec"><h4>Aussi listé dans ${autres.length} autre${autres.length > 1 ? 's' : ''} liste${autres.length > 1 ? 's' : ''}</h4><ul class="fiche-list">${autresHtml}</ul></section>` : ''}
-        ${url ? `<section class="fiche-sec">
-          <h4>Page du ${e.docWord}</h4>
-          <button type="button" class="fiche-thumb" data-fiche-draw title="Voir la pièce sur le dessin">
-            <img src="${esc(url)}" alt="Page ${esc(sheet)} du ${e.docWord}" loading="lazy">
-            <span class="fiche-thumb-cap"><span class="mono">${esc(sheetLabel(sheet))}</span> ${esc(ctx.sheetTitle(sheet))}</span>
-          </button>
-          <button type="button" class="btn primary fiche-draw" data-fiche-draw>${icon('page', { size: 16 })}<span>Voir sur le dessin</span></button>
-        </section>` : ''}`;
-      box.querySelector('.fiche-thumb img')?.addEventListener('error', (ev) => ev.target.closest('.fiche-thumb')?.remove());
-      box.querySelectorAll('[data-fiche-draw]').forEach((b) => b.addEventListener('click', () => showDrawing(row)));
-      // Bouton actif seulement si une bulle est connue (sinon libellé « Ouvrir la page »).
-      locate(row).then(({ boxes }) => {
-        if (current?.row !== row) return;
-        const lbl = box.querySelector('.fiche-draw span');
-        if (lbl && !boxes.length) lbl.textContent = 'Ouvrir la page';
+        ${pageSec}`;
+      el.querySelector('.fiche-thumb img')?.addEventListener('error', (ev) => ev.target.closest('.fiche-thumb')?.remove());
+      el.addEventListener('click', (ev) => {
+        const t = ev.target.closest('[data-fiche-draw], [data-fiche-act], [data-fiche-sel], [data-fiche-row]');
+        if (!t) return;
+        if (t.hasAttribute('data-fiche-draw')) showDrawing(row);
+        else if (t.dataset.ficheSel) ctx.viewer.select(t.dataset.ficheSel);
+        else if (t.dataset.ficheRow) ctx.openRow(t.dataset.ficheRow);
+        else if (t.dataset.ficheAct === 'group') ctx.viewer.toggleGroup(path);
+        else if (t.dataset.ficheAct === 'cut') ctx.viewer.cut(ctx.viewer.isCut() ? null : path);
+        else if (t.dataset.ficheAct === 'center') ctx.viewer.frame(path);
       });
-      return box;
+      return el;
     };
 
     const open = (d) => {
       current = d;
-      ctx.ui.sidePanel.open({ owner: OWNER, title: 'Fiche de la pièce', icon: 'cle', content: render(d) });
+      box = render(d);
+      ctx.ui.sidePanel.open({ owner: OWNER, title: 'Fiche de la pièce', icon: 'cle', content: box, over: true });
       ctx.ui.sidePanel.body.scrollTop = 0;
     };
     const close = () => {
       current = null;
+      box = null;
       if (ctx.ui.sidePanel.owner === OWNER) ctx.ui.sidePanel.close();
     };
 
@@ -212,28 +243,23 @@ export default {
       if (!d?.row || !ctx.equipment) { close(); return; }
       open(d);
     });
+    // Groupe éclaté ou rassemblé, coupe : les boutons de la fiche suivent.
+    ctx.on('view-state', () => {
+      const old = current && box?.querySelector('.fiche-actions');
+      if (!old) return;
+      const t = document.createElement('template');
+      t.innerHTML = actionsHtml(current).trim();
+      old.replaceWith(t.content);
+    });
     ctx.on('equipment', close);
     ctx.on('assembly', close);
-    ctx.on('sidepanel', ({ open: o, owner }) => { if (!o && owner === OWNER) current = null; });
-    // Échap : la page du dessin d'abord (sans toucher à la sélection), sinon la fiche.
-    window.addEventListener('keydown', (e) => {
-      if (e.key !== 'Escape') return;
-      if (drawing) {
-        e.stopImmediatePropagation();
-        e.preventDefault();
-        drawing.close();
-      } else if (ctx.ui.sidePanel.owner === OWNER && ctx.ui.sidePanel.isOpen
-        && !document.body.classList.contains('page-open') && document.getElementById('modal')?.hidden !== false) {
-        // (Échap ferme d'abord la page plein écran ou la visionneuse des pages.)
-        close();
-      }
-    }, true);
+    ctx.on('sidepanel', ({ open: o, owner }) => { if (!o && owner === OWNER) { current = null; box = null; } });
 
     // ---------------------------------------------------------------- « Voir sur le dessin »
-    async function showDrawing(row) {
-      const { sheet, boxes } = await locate(row);
+    function showDrawing(row) {
+      const { sheet, boxes } = locate(row);
       if (!sheet) return;
-      if (!boxes.length) { ctx.openPage(sheet); return; }
+      if (!boxes.length || !ctx.pageUrl(sheet)) { ctx.openPage(sheet); return; }
       const e = eq();
       const el = document.createElement('div');
       el.className = 'fiche-dw';
@@ -274,7 +300,7 @@ export default {
         if (zb) zb.textContent = zoomed ? 'Page entière' : 'Zoom sur la bulle';
       };
       img.addEventListener('load', layout);
-      img.addEventListener('error', () => { view.innerHTML = `<p class="fiche-sub" style="padding:16px">Page ${esc(sheet)} non publiée dans cette version.</p>`; });
+      img.addEventListener('error', () => { view.innerHTML = `<p class="fiche-sub" style="padding:16px">Page ${esc(sheet)} non incluse dans cette version du site.</p>`; });
       let lastW = 0;
       const ro = new ResizeObserver(() => { if (view.clientWidth !== lastW) { lastW = view.clientWidth; layout(); } });
       el.querySelector('[data-act="zoom"]').addEventListener('click', () => { zoomed = !zoomed; layout(); });
@@ -284,12 +310,9 @@ export default {
         zoomed = true;
         layout();
       });
-      el.querySelector('[data-act="page"]').addEventListener('click', () => { drawing?.close(); ctx.openPage(sheet); });
-      const page = ctx.ui.showPage(`Sur le dessin : réf. ${refLabel(row)}`, el, {
-        icon: 'page',
-        onClose: () => { ro.disconnect(); drawing = null; },
-      });
-      drawing = page;
+      // Page plein écran non liée à l'adresse : Retour ou Échap la ferme, la fiche et la sélection restent.
+      const page = ctx.ui.showPage(`Sur le dessin : réf. ${refLabel(row)}`, el, { icon: 'page', onClose: () => ro.disconnect() });
+      el.querySelector('[data-act="page"]').addEventListener('click', () => { page.close(); ctx.openPage(sheet); });
       ro.observe(view);
       if (img.complete) layout();
     }

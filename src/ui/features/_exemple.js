@@ -66,8 +66,9 @@ export default {
     // Page plein écran liée à une adresse (#<équipement>.exemple) ; Retour / Échap la ferme.
     ctx.registerRoute('exemple', () => {
       const el = document.createElement('div');
+      const url = ctx.pageUrl(ctx.equipment.sheetId(1)); // null : page non publiée (version allégée)
       el.innerHTML = `<p>Page de l'exemple pour ${esc(ctx.equipment.name)}.</p>
-        <p><img src="${esc(ctx.pageUrl(ctx.equipment.sheetId(1)))}" alt="Première page du manuel" style="max-width:100%"></p>`;
+        ${url ? `<p><img src="${esc(url)}" alt="Première page du manuel" style="max-width:100%"></p>` : ''}`;
       ctx.ui.showPage('Exemple', el, { icon: 'recherche' });
     });
   },

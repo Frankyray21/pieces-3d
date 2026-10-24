@@ -33,7 +33,8 @@ const plural = (n, w) => `${n} ${w}${n > 1 ? 's' : ''}`;
 
 /** Tuiles d'un système : en-tête (le système), puis ses sous-assemblages. */
 function renderSystem(eq, t, { has3d, badge, pageUrl }, n) {
-  const thumb = (sheet, alt) => `<span class="sysx-thumb"><img data-src="${esc(pageUrl(sheet))}" alt="${esc(alt)}" decoding="async"></span>`;
+  // Vignette : la page du manuel (aucune si la page n'est pas publiée avec cette version du site).
+  const thumb = (sheet, alt) => (pageUrl(sheet) ? `<span class="sysx-thumb"><img data-src="${esc(pageUrl(sheet))}" alt="${esc(alt)}" decoding="async"></span>` : '');
   const meta = (x) => `<span class="mono">${esc(badge(x.sheet))}</span> · ${plural(x.pieces, 'pièce')}${x.subs ? ` · ${plural(x.subs, 'sous-ensemble')}` : ''}`;
   const tag3d = (id, iso) => (has3d(id) ? '<span class="tag3d">3D</span>' : iso ? '<span class="tag3d iso" title="Isolé dans la vue 3D de l’ensemble">3D</span>' : '');
   const tile = (c) => {

@@ -9,18 +9,15 @@
 // (mouvement amorti), les suivantes sont cachées. En sortant, le modèle est
 // rétabli (tout visible, assemblé, rien de mis en évidence).
 //
-// Les procédures sont lues au moment de la construction (import.meta.glob) :
+// Les procédures sont lues au moment de la construction (ctx.equipmentData) :
 // pas de requête, donc pas d'erreur 404 pour un équipement qui n'en a pas.
-import * as THREE from 'three';
+// Un clic sur une pièce pendant la procédure la sélectionne : sa fiche se pose
+// par-dessus les détails de l'étape, qui reviennent quand elle se ferme.
 import './procedures.css';
-
-const FILES = import.meta.glob('../../../public/equipment/*/procedures.json', { eager: true, import: 'default' });
-const BY_EQ = new Map(Object.entries(FILES).map(([f, d]) => [f.split('/').at(-2), d?.procedures || []]));
 
 const ARRIVE = 900; // durée du mouvement d'une pièce (ms)
 const PAUSE = 2400; // lecture auto : pause après la pose d'une étape (ms)
 const FAR = 1.25; // départ : position éclatée × FAR
-const ease = (k) => 1 - Math.pow(1 - k, 3);
 
 export default {
   id: 'procedures',
@@ -29,7 +26,7 @@ export default {
   init(ctx) {
     const { esc } = ctx;
     const { icon } = ctx.icons;
-    const list = () => BY_EQ.get(ctx.equipment?.id) || [];
+    const list = () => ctx.equipmentData('procedures')?.procedures || [];
     const forAsm = (id) => list().find((p) => p.assembly === id) || null;
 
     // ------------------------------------------------------------ données
@@ -48,11 +45,11 @@ export default {
     const pageLabel = (st) => (st.page ? `page ${st.page}` : ctx.sheetTitle(st.sheet));
 
     // ------------------------------------------------------------ état du lecteur
-    let run = null; // { proc, n, steps: [{ objs, paths }], managed, extras, timer, raf, anim, focus }
+    let run = null; // { proc, n, prep: { steps, stepOf, extras, managed, wasVisible }, timer, focus, model }
     let pending = null; // procédure à lancer à l'ouverture de son assemblage
 
     // Barre de commande, posée sur la scène.
-    const stage = document.getElementById('stage');
+    const stage = ctx.ui.stage;
     const bar = document.createElement('div');
     bar.className = 'proc-bar';
     bar.hidden = true;
@@ -78,24 +75,15 @@ export default {
     const $b = (s) => bar.querySelector(s);
     new ResizeObserver(() => stage.style.setProperty('--proc-bar-h', `${bar.offsetHeight + 16}px`)).observe(bar);
 
-    // ------------------------------------------------------------ 3D
-    const V = () => ctx.viewer.raw;
-
+    // ------------------------------------------------------------ 3D (API publique du visualiseur : ctx.viewer)
     /** Prépare le modèle : objets de chaque étape, conteneurs, objets hors procédure (posés à la fin). */
     const prepare = (proc) => {
-      const v = V();
-      const steps = proc.steps.map((st) => {
-        const objs = [];
-        for (const p of st.parts) {
-          const path3d = ctx.viewer.path3d(p);
-          for (const o of v.resolve(path3d)) if (!objs.includes(o)) objs.push(o);
-        }
-        return { objs, paths: st.parts };
-      });
+      const root = ctx.viewer.model.root;
+      const steps = proc.steps.map((st) => ({ objs: ctx.viewer.objects(st.parts), paths: st.parts }));
       const stepOf = new Map();
       steps.forEach((s, i) => s.objs.forEach((o) => { if (!stepOf.has(o)) stepOf.set(o, i); }));
       const containers = new Set();
-      for (const o of stepOf.keys()) for (let a = o.parent; a && a !== v.model.root; a = a.parent) containers.add(a);
+      for (const o of stepOf.keys()) for (let a = o.parent; a && a !== root; a = a.parent) containers.add(a);
       // Objets hors étapes : pièces non citées et ajouts du modèle (câble, décor) ; affichés à la dernière étape.
       const extras = [];
       const visit = (node) => {
@@ -105,104 +93,24 @@ export default {
           else extras.push(c);
         }
       };
-      visit(v.model.root);
+      visit(root);
       const managed = [...stepOf.keys(), ...extras];
       return { steps, stepOf, extras, managed, wasVisible: new Map(managed.map((o) => [o, o.visible])) };
-    };
-
-    /**
-     * Marges de cadrage pendant la procédure : la barre en bas, le panneau
-     * latéral à droite (grand écran). Le viewer ne connaît que des marges
-     * symétriques : le cadrage est fait dans la largeur libre, puis décalé
-     * vers la gauche de la moitié du panneau.
-     */
-    const panelW = () => (!ctx.narrow() && ctx.ui.sidePanel.isOpen ? ctx.ui.sidePanel.element.offsetWidth + 12 : 0);
-    const runInsets = (orig) => () => {
-      const b = (typeof orig === 'function' ? orig() : orig) || {};
-      const vp = V()?.container.getBoundingClientRect();
-      const barTop = bar.hidden || !vp ? 0 : vp.bottom - bar.getBoundingClientRect().top + 8;
-      return { ...b, bottom: Math.max(b.bottom || 0, barTop), side: Math.max(b.side || 0, panelW() / 2) };
-    };
-    /** Cadre tout le modèle (paths absent) ou des pièces, dans la partie libre de la scène, avec un mouvement de caméra. */
-    const frameFree = (paths = null) => {
-      const v = V();
-      if (!v?.model) return;
-      const cam = v.camera, ctl = v.controls;
-      const p0 = cam.position.clone(), t0 = ctl.target.clone();
-      if (paths) {
-        const objs = paths.flatMap((p) => v.resolve(ctx.viewer.path3d(p)));
-        if (!objs.length) return;
-        const box = v._atTargets(() => { const b = new THREE.Box3(); objs.forEach((o) => b.expandByObject(o)); return b; });
-        v.frame({ box, instant: true });
-      } else v.frame({ instant: true });
-      const shift = panelW() / 2;
-      if (shift) {
-        const back = cam.position.clone().sub(ctl.target);
-        const upp = (2 * back.length() * Math.tan(THREE.MathUtils.degToRad(cam.fov) / 2)) / (v.container.clientHeight || 1);
-        const right = new THREE.Vector3(0, 1, 0).cross(back.normalize()).normalize().multiplyScalar(shift * upp);
-        cam.position.add(right);
-        ctl.target.add(right);
-      }
-      const p1 = cam.position.clone(), t1 = ctl.target.clone();
-      cam.position.copy(p0);
-      ctl.target.copy(t0);
-      ctl.update();
-      v.lookAt(p1.toArray(), t1.toArray());
-    };
-
-    /** Remet chaque pièce à sa place (éclatement du viewer : 0 partout pendant la procédure). */
-    const settle = () => {
-      if (!run) return;
-      cancelAnimationFrame(run.raf);
-      run.anim = null;
-      V()?._applyAll();
     };
 
     /** Affiche l'étape n : posées avant, arrivée animée de l'étape, cachées après. */
     const show = (n, { animate = true } = {}) => {
       if (!run) return 0;
-      const v = V();
-      settle();
+      ctx.viewer.settleParts();
       const last = run.proc.steps.length - 1;
       run.n = Math.max(0, Math.min(last, n));
-      for (const [o, i] of run.prep.stepOf) o.visible = i <= run.n;
-      for (const o of run.prep.extras) o.visible = run.n === last && run.prep.wasVisible.get(o);
+      const shown = [], hidden = [];
+      for (const [o, i] of run.prep.stepOf) (i <= run.n ? shown : hidden).push(o);
+      for (const o of run.prep.extras) (run.n === last && run.prep.wasVisible.get(o) ? shown : hidden).push(o);
+      ctx.viewer.showParts(shown, true);
+      ctx.viewer.showParts(hidden, false);
       const fresh = run.prep.steps[run.n].objs;
-      let total = 0;
-      if (animate && fresh.length) {
-        const gap = Math.max(40, Math.min(260, 3200 / fresh.length));
-        const now = performance.now();
-        run.anim = fresh.map((o, i) => {
-          const to = o.position.clone();
-          const ex = o.userData.explode;
-          const from = ex ? to.clone().addScaledVector(ex, FAR) : to.clone();
-          o.position.copy(from);
-          o.visible = false;
-          return { o, from, to, start: now + i * gap };
-        });
-        total = (fresh.length - 1) * gap + ARRIVE;
-        const tick = () => {
-          if (!run?.anim) return;
-          const t = performance.now();
-          let left = 0;
-          for (const a of run.anim) {
-            const k = (t - a.start) / ARRIVE;
-            if (k < 0) { left++; continue; }
-            a.o.visible = true;
-            a.o.position.lerpVectors(a.from, a.to, ease(Math.min(1, k)));
-            if (k < 1) left++;
-          }
-          v.invalidate();
-          v._refreshLabels();
-          if (left) run.raf = requestAnimationFrame(tick);
-          else { run.anim = null; v._cullDirty = true; }
-        };
-        run.raf = requestAnimationFrame(tick);
-      }
-      v._cullDirty = true;
-      v.labels?.forEach((l) => { l.culled = false; });
-      v._refreshLabels();
-      v.invalidate();
+      const total = animate && fresh.length ? ctx.viewer.arriveParts(fresh, { far: FAR, duration: ARRIVE }) : 0;
       mark();
       render();
       if (ctx.ui.sidePanel.owner === 'procedures') ctx.ui.sidePanel.body.scrollTop = 0;
@@ -213,7 +121,7 @@ export default {
     const mark = () => {
       if (!run) return;
       const st = run.proc.steps[run.n];
-      if (run.focus) { ctx.viewer.highlight([run.focus]); frameFree([run.focus]); }
+      if (run.focus) { ctx.viewer.highlight([run.focus]); ctx.viewer.frame([run.focus]); }
       else ctx.viewer.highlight(st.parts);
     };
 
@@ -264,7 +172,7 @@ export default {
       const rows = st.parts.map((p) => {
         const path = p.split('>');
         const row = rowAt(asmId, path);
-        const shown = V()?.resolve(ctx.viewer.path3d(p)).length > 0;
+        const shown = ctx.viewer.objects(p).length > 0;
         return { p, path, row, shown };
       });
       const thumb = ctx.pageUrl(st.sheet);
@@ -316,7 +224,7 @@ export default {
     });
     const pick = (p) => {
       run.focus = run.focus === p ? null : p;
-      if (!run.focus) frameFree();
+      if (!run.focus) ctx.viewer.frame();
       mark();
       renderPanel();
     };
@@ -339,7 +247,7 @@ export default {
       pr.setAttribute('aria-valuemax', String(N));
       pr.setAttribute('aria-valuenow', String(n + 1));
       $b('.proc-segs').innerHTML = proc.steps.map((s, i) => `<button type="button" class="proc-seg${i < n ? ' done' : ''}${i === n ? ' cur' : ''}" data-i="${i}" title="Étape ${i + 1} : ${esc(s.title)}" aria-label="Étape ${i + 1}"></button>`).join('');
-      if (ctx.ui.sidePanel.owner === 'procedures') renderPanel();
+      if (ctx.ui.sidePanel.has('procedures')) renderPanel(); // aussi sous la fiche d'une pièce
     };
 
     $b('.proc-prev').addEventListener('click', () => go(run.n - 1));
@@ -366,25 +274,22 @@ export default {
 
     // ------------------------------------------------------------ début et fin
     const start = (proc) => {
-      if (!ctx.viewer.is3d || !V()?.model) return;
+      if (!ctx.viewer.is3d || !ctx.viewer.model) return;
       if (run) stop({ quiet: true });
-      // Modèle assemblé, sans animation d'éclatement en cours (l'état du site suit : bouton « Assembler »).
-      const v = V();
-      if (v.explode > 0 || v.nodes.some((nd) => nd.userData.explodeT > 0 || nd.userData.targetT > 0)) {
-        document.getElementById('btn-assemble')?.click();
-      }
-      v.explodeAll(0, { animate: false });
-      run = { proc, n: 0, prep: prepare(proc), timer: null, raf: 0, anim: null, focus: null, prevStep: v.step, model: v.model, insets: v.insets };
-      v.insets = runInsets(v.insets);
-      v.step = 'procedure'; // bulles des pièces cachées masquées (voir Viewer._refreshLabels)
+      // Modèle assemblé tout de suite, sans animation d'éclatement en cours (curseur et liste suivent).
+      ctx.viewer.assemble({ animate: false });
+      run = { proc, n: 0, prep: prepare(proc), timer: null, focus: null, model: ctx.viewer.model };
       stage.classList.add('proc-on');
       bar.hidden = false;
+      // Cadrage au-dessus de la barre (et hors du panneau latéral, pris en compte par le socle).
+      ctx.ui.setInsets('procedures', bar);
       tool.setAttribute('aria-pressed', 'true');
-      // Sur téléphone, le panneau couvrirait la scène : il s'ouvre par « Détails ».
+      // Le panneau passe à la procédure : les autres modes (circuits, entretien…) s'arrêtent.
+      // Sur téléphone, il couvrirait la scène : il est replié, les détails s'ouvrent par « Détails ».
       if (!ctx.narrow()) openPanel();
-      else if (ctx.ui.sidePanel.owner === 'procedures-list') ctx.ui.sidePanel.close();
+      else ctx.ui.sidePanel.closeAll();
       show(0);
-      frameFree();
+      ctx.viewer.frame();
       ctx.emit('procedures:started', { id: proc.id, assembly: proc.assembly });
     };
 
@@ -392,26 +297,18 @@ export default {
     const stop = ({ quiet = false, gone = false } = {}) => {
       if (!run) return;
       stopPlay();
-      settle();
       const r = run;
       run = null;
-      const v = V();
-      if (!gone && v?.model) {
-        for (const o of r.prep.managed) o.visible = r.prep.wasVisible.get(o) ?? true;
-        v.step = r.prevStep ?? null;
-        v.insets = r.insets;
-        stage.classList.remove('proc-on');
-        v._applyAll();
+      ctx.ui.setInsets('procedures', null);
+      if (!gone) {
+        ctx.viewer.restoreParts(); // visibilités d'origine, arrivées en cours posées
         ctx.viewer.clear();
-        v.labels?.forEach((l) => { l.culled = false; });
-        v._cullDirty = true;
-        v._refreshLabels();
-        if (!quiet) v.frame();
+        if (!quiet) ctx.viewer.frame();
       }
       stage.classList.remove('proc-on');
       bar.hidden = true;
       tool.setAttribute('aria-pressed', 'false');
-      if (ctx.ui.sidePanel.owner === 'procedures') ctx.ui.sidePanel.close();
+      ctx.ui.sidePanel.release('procedures');
       ctx.emit('procedures:stopped', { id: r.proc.id });
     };
 
@@ -461,8 +358,11 @@ export default {
     });
     tool.hidden = true;
 
-    ctx.on('sidepanel', ({ open, owner }) => {
+    ctx.on('sidepanel', ({ open, owner, over }) => {
       if (owner === 'procedures') $b('.proc-details').setAttribute('aria-pressed', String(open));
+      // Un autre mode prend le panneau (circuits, entretien, sous-ensemble isolé) : la procédure s'arrête.
+      // La fiche d'une pièce (over) se pose par-dessus sans l'arrêter.
+      if (open && run && !over && owner !== 'procedures' && owner !== 'procedures-list') stop();
     });
 
     // ------------------------------------------------------------ carte de la page d'équipement
@@ -498,7 +398,7 @@ export default {
     // ------------------------------------------------------------ changements de vue
     ctx.on('assembly', ({ id, is3d, home }) => {
       // Nouveau modèle (ou dessins du manuel) : la procédure en cours n'a plus d'objet.
-      if (run && (run.proc.assembly !== id || V()?.model !== run.model)) stop({ gone: V()?.model !== run.model, quiet: true });
+      if (run && (run.proc.assembly !== id || ctx.viewer.raw?.model !== run.model)) stop({ gone: ctx.viewer.raw?.model !== run.model, quiet: true });
       tool.hidden = !list().length;
       if (pending && pending.assembly === id && is3d && !home) {
         const p = pending;
@@ -509,7 +409,7 @@ export default {
     });
     // La vue affichée change de type (document, contrôle) : on sort.
     ctx.on('view', ({ type, id }) => {
-      if (run && (type !== 'assembly' || id !== run.proc.assembly)) stop({ gone: V()?.model !== run.model, quiet: true });
+      if (run && (type !== 'assembly' || id !== run.proc.assembly)) stop({ gone: ctx.viewer.raw?.model !== run.model, quiet: true });
     });
   },
 };
