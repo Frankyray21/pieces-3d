@@ -302,7 +302,7 @@ export default {
       const out = { part: [], asm: [], page: [] };
       const n = P.qn.length;
       for (const ix of indexes.values()) {
-        const here = ix.eq.id === cur ? 25 : 0;
+        const here = ix.eq.id === cur ? 200 : 0; // l'équipement affiché d'abord
         if (P.ref) {
           // Repère : lignes des schémas et listes (et de la vue affichée), filtrées par les mots restants.
           for (const e of ix.parts) {
