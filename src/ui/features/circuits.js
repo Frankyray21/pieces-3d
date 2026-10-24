@@ -233,8 +233,9 @@ export default {
       picked = null;
       rescan(is3d ? model : null);
     });
-    // Vue d'ensemble : sous-assemblages remplacés par leur version détaillée.
-    ctx.on('model-update', ({ model }) => { if (model === ctx.viewer.model) rescan(model); });
+    // Vue d'ensemble : sous-assemblages remplacés par leur version détaillée (en mode actif à chaque fois,
+    // sinon au dernier remplacement : de nouveaux boyaux peuvent faire paraître l'outil).
+    ctx.on('model-update', ({ model, done }) => { if (model === ctx.viewer.model && (active || done)) rescan(model); });
     ctx.on('view', ({ type }) => {
       if (type !== 'assembly') { btn.style.display = 'none'; stop(); }
     });

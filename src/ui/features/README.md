@@ -62,7 +62,7 @@ horizontal). Classes prêtes à l'emploi : `btn`, `btn primary`, `tbtn`, `chip`,
 | `'view-state'` | `{ explode, expanded, section }` | éclatement, groupes éclatés (clés de chemins `'1>4'`) ou coupe changés |
 | `'model-update'` | `{ model, old, part, done }` | la vue d'ensemble a remplacé un sous-assemblage simplifié (`old`) par sa version détaillée (`part`) : refaire les marques posées sur le modèle (pastilles, couleurs…) ; `done` : dernier remplacement |
 | `'route'` | `{ hash, equipmentId, token, view }` | après chaque changement d'adresse traité (`token` : `'catalogue'`, id d'assemblage, de document, `'controle'`, `'apercu'` ou adresse d'une fonction) |
-| `'sidepanel'` | `{ open, owner, over?, base?, restored? }` | panneau latéral : couche ouverte / fermée (`owner` : propriétaire donné à `open` ; `over` : couche posée par-dessus un mode ; `base` : propriétaire recouvert ; `restored` : couche recouverte revenue). Voir « Panneau latéral et modes » |
+| `'sidepanel'` | `{ open, owner, over?, base?, restored? }` | panneau latéral : couche ouverte / fermée (`owner` : propriétaire donné à `open` ; `over` : couche ouverte avec `over: true`, comme la fiche ; `base` : propriétaire recouvert par elle ; `restored` : couche recouverte revenue). Voir « Panneau latéral et modes » |
 | `'page'` | `{ open, title?, token }` | page plein écran affichée / fermée |
 
 ### Données
