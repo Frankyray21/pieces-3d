@@ -55,6 +55,6 @@
 
 /* Téléphone : le panneau n'occupe que le bas de la scène, les pastilles restent visibles au-dessus. */
 @media (max-width: 900px) {
-  .sidepanel.ent-side { top: auto; height: 46%; }
+  #stage .sidepanel.ent-side { top: auto; height: 46%; }
   .ent-meta { padding-left: 10px; }
 }

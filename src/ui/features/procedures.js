@@ -205,6 +205,7 @@ export default {
       v.invalidate();
       mark();
       render();
+      if (ctx.ui.sidePanel.owner === 'procedures') ctx.ui.sidePanel.body.scrollTop = 0;
       return total;
     };
 
@@ -252,7 +253,7 @@ export default {
     const qtyText = (row) => {
       if (!row) return '—';
       if (row.qty == null) return '—';
-      return row.qty3d != null && row.qty3d !== row.qty ? `${row.qty} <small>(${row.qty3d} en 3D)</small>` : String(row.qty);
+      return row.qty3d != null && row.qty3d !== row.qty ? `${row.qty}<small class="proc-q3d">${row.qty3d} en 3D</small>` : String(row.qty);
     };
 
     const renderPanel = () => {
@@ -279,7 +280,7 @@ export default {
           <tbody>${rows.map(({ p, path, row, shown }) => `
             <tr data-path="${esc(p)}" class="${run.focus === p ? 'is-on' : ''}${shown ? '' : ' no3d'}" tabindex="0"
               title="${shown ? 'Mettre en évidence cette pièce' : 'Pièce non dessinée en 3D'}">
-              <td class="mono">${esc(path.map((r) => (r.includes('#') ? r.split('#')[0] : r)).join(' › '))}</td>
+              <td class="mono proc-ref">${path.slice(0, -1).map((r) => `<small>${esc(r.split('#')[0])}›</small>`).join('')}${esc(path.at(-1).split('#')[0])}</td>
               <td class="mono">${esc(row?.pn || '—')}</td>
               <td>${qtyText(row)}</td>
               <td>${esc(row?.desc || '')}${row?.group ? ` <small>(ensemble : repères ${esc(row.group[0])} à ${esc(row.group.at(-1))})</small>` : ''}</td>
@@ -390,6 +391,7 @@ export default {
         for (const o of r.prep.managed) o.visible = r.prep.wasVisible.get(o) ?? true;
         v.step = r.prevStep ?? null;
         v.insets = r.insets;
+        stage.classList.remove('proc-on');
         v._applyAll();
         ctx.viewer.clear();
         v.labels?.forEach((l) => { l.culled = false; });

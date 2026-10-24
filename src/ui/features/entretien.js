@@ -256,25 +256,26 @@ export default {
       const cam = v.camera;
       const dir = cam.position.clone().sub(v.controls.target).normalize();
       const tan = Math.tan(THREE.MathUtils.degToRad(cam.fov) / 2);
-      // Visible en entier dans la partie libre de la scène (largeur ou hauteur, la plus petite).
-      const free = ctx.narrow() ? 0.5 : 0.6;
-      const dist = Math.max((r / (tan * Math.min(1, cam.aspect * free))) * 1.15, 0.9);
+      // Partie libre de la scène (px) : sous la barre d'outils, hors du panneau latéral (à droite sur grand écran,
+      // en bas sur téléphone) et au-dessus du cartouche.
+      const st = v.container.getBoundingClientRect();
+      if (!st.width || !st.height) return;
+      const ins = (typeof v.insets === 'function' ? v.insets() : v.insets) || {};
+      const free = { l: st.left, r: st.right, t: st.top + (ins.top || 0), b: st.bottom - (ins.bottom || 0) };
+      if (ctx.ui.sidePanel.isOpen) {
+        const sp = ctx.ui.sidePanel.element.getBoundingClientRect();
+        if (ctx.narrow()) free.b = Math.min(free.b, sp.top - 8);
+        else free.r = Math.min(free.r, sp.left - 8);
+      }
+      const fw = Math.max(free.r - free.l, st.width * 0.3), fh = Math.max(free.b - free.t, st.height * 0.25);
+      // Le point (ou l'ensemble des points) tient dans la partie libre.
+      const dist = Math.max((r / (tan * Math.min(fh / st.height, (cam.aspect * fw) / st.width))) * 1.15, 0.9);
       const right = new THREE.Vector3().setFromMatrixColumn(cam.matrixWorld, 0).normalize();
       const up = new THREE.Vector3().setFromMatrixColumn(cam.matrixWorld, 1).normalize();
-      const stage = v.container.getBoundingClientRect();
-      const sp = ctx.ui.sidePanel.isOpen ? ctx.ui.sidePanel.element.getBoundingClientRect() : null;
       const H = 2 * dist * tan, W = H * cam.aspect;
-      const target = c.clone();
-      if (sp && stage.width) {
-        if (ctx.narrow()) {
-          // Panneau en bas de la scène : le point remonte au milieu de la partie libre.
-          const covered = Math.max(0, stage.bottom - sp.top);
-          target.addScaledVector(up, -((covered / 2) / stage.height) * H);
-        } else {
-          const covered = Math.max(0, stage.right - sp.left);
-          target.addScaledVector(right, ((covered / 2) / stage.width) * W);
-        }
-      }
+      // Décalage (px) du milieu de la partie libre par rapport au milieu de la scène : la cible part à l'opposé.
+      const dx = (free.l + free.r) / 2 - (st.left + st.right) / 2, dy = (free.t + free.b) / 2 - (st.top + st.bottom) / 2;
+      const target = c.clone().addScaledVector(right, (-dx / st.width) * W).addScaledVector(up, (dy / st.height) * H);
       v.lookAt(target.clone().addScaledVector(dir, dist).toArray(), target.toArray());
     };
 

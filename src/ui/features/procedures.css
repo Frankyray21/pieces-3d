@@ -50,9 +50,12 @@
 .proc-h span { font-weight: 500; }
 .proc-parts { width: 100%; border-collapse: collapse; font-size: 12.5px; table-layout: fixed; }
 .proc-parts th { text-align: left; font-weight: 600; color: var(--muted); padding: 4px 4px; border-bottom: 1px solid var(--line); }
-.proc-parts th:nth-child(1) { width: 15%; }
-.proc-parts th:nth-child(2) { width: 33%; }
-.proc-parts th:nth-child(3) { width: 12%; }
+.proc-parts th:nth-child(1) { width: 16%; }
+.proc-parts th:nth-child(2) { width: 32%; }
+.proc-parts th:nth-child(3) { width: 15%; }
+.proc-ref { white-space: nowrap; }
+.proc-ref small { color: var(--muted); }
+.proc-q3d { display: block; font-size: 10.5px; line-height: 1.2; }
 .proc-parts td { padding: 5px 4px; border-bottom: 1px solid var(--line); vertical-align: top; overflow-wrap: anywhere; }
 .proc-parts td small { color: var(--muted); }
 .proc-parts tbody tr { cursor: pointer; }
@@ -71,8 +74,9 @@
 
 /* Cartes (liste des procédures, page de l'équipement). */
 .proc-cards { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.proc-cards li { display: flex; min-width: 0; }
 .proc-card {
-  width: 100%; display: grid; gap: 3px; text-align: left; padding: 10px 12px; cursor: pointer;
+  width: 100%; display: grid; gap: 3px; align-content: start; text-align: left; padding: 10px 12px; cursor: pointer;
   border: 1px solid var(--line); border-left: 4px solid var(--mark); border-radius: 8px; background: var(--surface); color: var(--ink);
 }
 .proc-card:hover { background: var(--hover); }

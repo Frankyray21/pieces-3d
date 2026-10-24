@@ -1,7 +1,10 @@
 // Page d'un équipement (adresse « #<équipement>.apercu ») : machine → systèmes.
-// Données clés en gros chiffres, une carte par système (bandeau de couleur et
-// icône), schémas et listes, fiche technique, puis l'emplacement des fonctions
-// (ctx.ui.equipmentHome).
+// Données clés en gros chiffres, une tuile par système (bandeau de couleur,
+// icône, vignette de la page du manuel) suivie des tuiles de ses
+// sous-assemblages (et de leurs propres sous-ensembles en raccourcis), schémas
+// et listes, fiche technique, puis l'emplacement des fonctions
+// (ctx.ui.equipmentHome). Un sous-ensemble sans modèle 3D propre s'ouvre isolé
+// dans la vue 3D de l'ensemble qui le contient (src/ui/features/systemes.js).
 
 import { icon } from './icons.js';
 import { systems, systemTiles, refPath } from './systems.js';
@@ -23,10 +26,13 @@ function tileAction(eq, id, has3d) {
   return `data-go="${esc(id)}"`;
 }
 
+/** Pages du manuel publiées avec cette version du site (sonde par équipement). */
+const pagesOk = new Map();
+
 const plural = (n, w) => `${n} ${w}${n > 1 ? 's' : ''}`;
 
 /** Tuiles d'un système : en-tête (le système), puis ses sous-assemblages. */
-function renderSystem(eq, t, { has3d, badge, pageUrl }) {
+function renderSystem(eq, t, { has3d, badge, pageUrl }, n) {
   const thumb = (sheet, alt) => `<span class="sysx-thumb"><img data-src="${esc(pageUrl(sheet))}" alt="${esc(alt)}" decoding="async"></span>`;
   const meta = (x) => `<span class="mono">${esc(badge(x.sheet))}</span> · ${plural(x.pieces, 'pièce')}${x.subs ? ` · ${plural(x.subs, 'sous-ensemble')}` : ''}`;
   const tag3d = (id, iso) => (has3d(id) ? '<span class="tag3d">3D</span>' : iso ? '<span class="tag3d iso" title="Isolé dans la vue 3D de l’ensemble">3D</span>' : '');
@@ -47,7 +53,7 @@ function renderSystem(eq, t, { has3d, badge, pageUrl }) {
   return `<section class="sysx-sys" style="--sys:${t.color}" aria-label="${esc(t.title)}">
     <button type="button" class="sysx-main" ${tileAction(eq, t.id, has3d)}>
       <span class="sysx-ico big">${icon(t.icon, { size: 24 })}</span>
-      <span class="sysx-body"><span class="sysx-kicker">Système ${t.index}</span><strong>${esc(t.title)}</strong>
+      <span class="sysx-body"><span class="sysx-kicker">Système ${n}</span><strong>${esc(t.title)}</strong>
         <span class="sysx-meta">${meta(t)}</span></span>
       ${tag3d(t.id, false)}
       ${thumb(t.sheet, `Page ${t.sheet} du ${eq.docWord}`)}
@@ -68,7 +74,7 @@ export function renderEquipmentHome(eq, { has3d, badge, slot }) {
   const errors = eq.issues.filter((r) => r.flags.some((f) => f.level === 'error')).length;
   const stat = (n, label, extra = '') => `<div class="stat${extra}"><span class="num">${esc(n)}</span><span class="lbl">${esc(label)}</span></div>`;
   const sys = systems(eq);
-  const cards = systemTiles(eq).map((t) => renderSystem(eq, t, { has3d, badge, pageUrl: eq.pageUrl })).join('');
+  const cards = systemTiles(eq).map((t, i) => renderSystem(eq, t, { has3d, badge, pageUrl: eq.pageUrl }, i + 1)).join('');
   const docs = [...eq.documents.values()].map((d) => `<button type="button" class="doccard" data-go="${esc(d.id)}">
       ${icon('page', { size: 18 })}<span class="mono">${esc(badge(d.sheets[d.sheets.length - 1]))}</span><span class="t">${esc(d.titleFr)}</span></button>`).join('');
   const specs = [...(eq.specs || []), ...(eq.weights || [])];
@@ -95,16 +101,33 @@ export function renderEquipmentHome(eq, { has3d, badge, slot }) {
     ${docs ? `<section class="eqh-sec"><h3>${icon('liste', { size: 16 })}${esc(eq.labels?.documents || 'Schémas et listes')}</h3><div class="doccards">${docs}</div></section>` : ''}
     ${specs.length ? `<section class="eqh-sec"><h3>${icon('engrenage', { size: 16 })}Fiche technique</h3>
       <dl class="card specs-card">${specs.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl></section>` : ''}`;
-  // Page absente de cette publication (version allégée) : la vignette s'efface.
-  // Vignettes chargées à l'approche de l'écran seulement (pages du manuel lourdes à décoder).
-  const io = 'IntersectionObserver' in window ? new IntersectionObserver((entries) => {
-    for (const e of entries) if (e.isIntersecting) { io.unobserve(e.target); e.target.src = e.target.dataset.src; }
-  }, { rootMargin: '200px 0px' }) : null;
-  el.querySelectorAll('.sysx-thumb img').forEach((img) => {
-    img.addEventListener('error', () => { img.parentNode.classList.add('none'); img.remove(); });
-    if (io) io.observe(img);
-    else img.src = img.dataset.src;
-  });
+  // Vignettes chargées à l'approche de l'écran seulement (pages du manuel lourdes
+  // à décoder). La première sert de sonde : si les pages du manuel ne sont pas
+  // publiées avec cette version du site, toutes les vignettes s'effacent.
+  const imgs = [...el.querySelectorAll('.sysx-thumb img')];
+  const drop = (img) => { img.parentNode?.classList.add('none'); img.remove(); };
+  const start = () => {
+    const io = 'IntersectionObserver' in window ? new IntersectionObserver((entries) => {
+      for (const e of entries) if (e.isIntersecting) { io.unobserve(e.target); e.target.src = e.target.dataset.src; }
+    }, { rootMargin: '200px 0px' }) : null;
+    for (const img of imgs.slice(1)) {
+      img.addEventListener('error', () => drop(img));
+      if (io) io.observe(img);
+      else img.src = img.dataset.src;
+    }
+  };
+  if (pagesOk.get(eq.id) === false) imgs.forEach(drop);
+  else if (imgs.length) {
+    const probe = imgs[0];
+    probe.addEventListener('load', () => { if (pagesOk.get(eq.id) !== true) { pagesOk.set(eq.id, true); start(); } }, { once: true });
+    probe.addEventListener('error', () => {
+      if (pagesOk.get(eq.id) === true) { drop(probe); return; } // cette page seule manque
+      pagesOk.set(eq.id, false);
+      imgs.forEach(drop);
+    }, { once: true });
+    if (pagesOk.get(eq.id) === true) start();
+    probe.src = probe.dataset.src;
+  }
   el.appendChild(slot);
   return el;
 }
