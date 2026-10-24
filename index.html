@@ -18,10 +18,13 @@
     </button>
     <nav class="crumbs" id="crumbs" aria-label="Fil d'Ariane"></nav>
     <div class="search">
+      <svg class="search-ico" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6"/><path d="m15 15 5.6 5.6"/></svg>
       <label class="sr" for="q">Rechercher une pièce</label>
       <input id="q" type="search" autocomplete="off" placeholder="N° de pièce ou description (ex. 2717074, roller)">
       <div class="results" id="results" hidden></div>
     </div>
+    <!-- Emplacement des fonctions (ctx.ui.searchSlot) : filtres, boutons de recherche. -->
+    <div class="search-slot" id="searchslot"></div>
   </header>
 
   <main class="workspace" id="workspace" data-pane="stage">
@@ -48,6 +51,8 @@
           <button type="button" class="tbtn" id="btn-page" title="Voir la page du manuel">Page du manuel</button>
           <button type="button" class="tbtn" id="btn-full" aria-pressed="false" title="Afficher la vue 3D en plein écran">Plein écran</button>
         </div>
+        <!-- Outils ajoutés par les fonctions (ctx.ui.addTool). -->
+        <div class="tgroup ftools" id="ftools" hidden></div>
         <div class="sectionbar" id="sectionbar" hidden>
           <span class="lbl">Plan de coupe</span>
           <div class="seg" role="group" aria-label="Orientation du plan de coupe">
@@ -80,9 +85,24 @@
       <div class="titleblock" id="titleblock"></div>
       <div class="loading" id="loading" hidden>Construction du modèle…</div>
       <div class="loading-detail" id="loadingDetail" hidden>Chargement des détails…</div>
+      <!-- Panneau latéral droit des fonctions (ctx.ui.sidePanel). -->
+      <aside class="sidepanel" id="sidepanel" hidden aria-label="Panneau latéral">
+        <div class="sp-head"><span class="sp-icon"></span><strong class="sp-title"></strong>
+          <button type="button" class="sp-close" title="Replier le panneau" aria-label="Replier le panneau"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
+        <div class="sp-body"></div>
+      </aside>
     </section>
 
     <aside class="panel pane" id="panel" aria-label="Pièces"></aside>
+
+    <!-- Page plein écran sur l'espace de travail (page d'équipement, ctx.ui.showPage). -->
+    <section class="wpage" id="wpage" hidden>
+      <div class="wp-bar">
+        <button type="button" class="wp-close btn" title="Fermer la page (Échap)"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg><span>Retour</span></button>
+        <span class="wp-icon"></span><h1 class="wp-title"></h1>
+      </div>
+      <div class="wp-body"></div>
+    </section>
   </main>
 
   <nav class="mtabs" id="mtabs" aria-label="Sections">

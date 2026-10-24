@@ -249,6 +249,9 @@ export class Viewer {
     this.selectedKey = null;
     this.hoverObjs = [];
     this.selectedObjs = [];
+    // Mise en évidence demandée par une fonction de l'interface (setMarked) : objets, et autres pièces estompées ou non.
+    this.markObjs = [];
+    this.markGhost = false;
     this.isolate = false;
     this.labelsVisible = true;
     this.edgesVisible = false; // rendu réaliste par défaut ; contours en option
@@ -359,6 +362,8 @@ export class Viewer {
     this.hoverKey = this.selectedKey = null;
     this.hoverObjs = [];
     this.selectedObjs = [];
+    this.markObjs = [];
+    this.markGhost = false;
     this.isolate = false;
     this.section.on = false;
     this.planeHelper.visible = false;
@@ -419,6 +424,7 @@ export class Viewer {
     this._createLabels();
     this.hoverObjs = this.hoverKey ? this.resolve(this.hoverKey.split('>')) : [];
     this.selectedObjs = this.selectedKey ? this.resolve(this.selectedKey.split('>')) : [];
+    this.markObjs = this.markObjs.map((o) => (o === oldObj ? newObj : o));
     if (this.section.on) this._updatePlane();
     this._applyAll();
     this._refreshStates();
@@ -833,15 +839,43 @@ export class Viewer {
     this._refreshStates();
   }
 
+  /**
+   * Met en évidence des pièces (chemins de repères, comme setSelected) sans
+   * changer la sélection ; ghost : estompe toutes les autres pièces.
+   * Liste vide ou null : plus rien de mis en évidence. Retourne les objets trouvés.
+   */
+  setMarked(paths, { ghost = false } = {}) {
+    const objs = [];
+    for (const p of paths || []) for (const o of this.resolve(p)) if (!objs.includes(o)) objs.push(o);
+    this.markObjs = objs;
+    this.markGhost = !!ghost && objs.length > 0;
+    this._refreshStates();
+    return objs;
+  }
+
+  /** Cadre plusieurs pièces (chemins de repères) ; sans pièce trouvée, ne fait rien. */
+  focusPaths(paths) {
+    const objs = [];
+    for (const p of paths || []) objs.push(...this.resolve(p));
+    if (!objs.length) return;
+    const box = this._atTargets(() => {
+      const b = new THREE.Box3();
+      objs.forEach((o) => b.expandByObject(o));
+      return b;
+    });
+    this.frame({ box });
+  }
+
   _refreshStates() {
     if (!this.model) return;
     const sel = this.selectedObjs;
     const sec = this.section;
     const cutSel = sec.on && sec.scope === 'selection' && sel.length;
     const cutAll = sec.on && !cutSel;
-    const ghostOthers = (this.isolate && sel.length) || cutSel;
+    const ghostOthers = (this.isolate && sel.length) || cutSel || this.markGhost;
     applyState(this.model.root, ghostOthers ? 'ghost' : 'base', cutAll);
     if (this.step != null && this._stepFresh) for (const o of this._stepFresh) if (!sel.includes(o)) applyState(o, 'step', cutAll);
+    for (const o of this.markObjs) if (!sel.includes(o)) applyState(o, 'mark', cutAll);
     for (const o of this.hoverObjs) if (!sel.includes(o)) applyState(o, 'hover', cutAll);
     for (const o of sel) applyState(o, cutSel ? 'base' : 'select', cutAll || cutSel);
     this._refreshLabels();
@@ -1099,13 +1133,18 @@ export class Viewer {
   _refreshLabels() {
     const root = this.model?.root;
     const dimOthers = (this.isolate || this.section.scope === 'selection') && this.selectedKey;
+    const marks = new Set(this.markObjs);
+    const marked = (o) => { for (let a = o; a && a !== root; a = a.parent) if (marks.has(a)) return true; return false; };
     for (const { key, owner, label, culled } of this.labels) {
       label.visible = this.labelsVisible && (owner === root || owner.userData.explodeT > 0.05) && (!culled || key === this.selectedKey)
         && (this.step == null || this._anyShown(label.parent));
       const el = label.element;
       el.classList.toggle('is-selected', key === this.selectedKey);
       el.classList.toggle('is-hover', key === this.hoverKey);
-      el.classList.toggle('is-dim', !!dimOthers && key !== this.selectedKey && !key.startsWith(`${this.selectedKey}>`));
+      const mk = marks.size > 0 && marked(label.parent);
+      el.classList.toggle('is-mark', mk);
+      el.classList.toggle('is-dim', (!!dimOthers && key !== this.selectedKey && !key.startsWith(`${this.selectedKey}>`))
+        || (this.markGhost && !mk && key !== this.selectedKey));
     }
     this._dirty = true;
   }

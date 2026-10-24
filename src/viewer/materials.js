@@ -341,6 +341,10 @@ function variant(base, kind, cut) {
     // Pièces de l'étape en cours (montage par étapes) : surbrillance douce.
     v.emissive = new THREE.Color(0xff7a10);
     v.emissiveIntensity = 0.32;
+  } else if (kind === 'mark') {
+    // Pièces mises en évidence par une fonction de l'interface (Viewer.setMarked) : bleu-vert, distinct du survol et de la sélection.
+    v.emissive = new THREE.Color(0x12a39a);
+    v.emissiveIntensity = 0.55;
   } else if (kind === 'ghost') {
     v.transparent = true;
     v.opacity = 0.1;

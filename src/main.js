@@ -9,6 +9,16 @@ import epirocModels from './models/epiroc-ith/index.js';
 import plancherModels from './models/plancher-dd/index.js';
 import stmModels from './models/stm-1500/index.js';
 import './ui/resize.js';
+import './ui/atelier.css';
+import { createHost } from './ui/host.js';
+import { renderEquipmentHome } from './ui/eqhome.js';
+import { systemOf } from './ui/systems.js';
+import { icon } from './ui/icons.js';
+
+// Fonctions de l'interface : chaque fichier src/ui/features/<nom>.js est chargé
+// tout seul (export par défaut { id, order, init(ctx) }) ; ceux dont le nom
+// commence par « _ » (exemples, brouillons) sont ignorés. Voir src/ui/features/README.md.
+const FEATURES = import.meta.glob(['./ui/features/*.js', '!./ui/features/_*.js'], { eager: true });
 
 // Modèles 3D disponibles par équipement (builders procéduraux).
 const MODELS = { 'cubex-mri-5200': cubexModels, du311: du311Models, 'du311-std': du311StdModels, 'epiroc-ith': epirocModels, 'plancher-dd': plancherModels, 'stm-1500': stmModels };
@@ -72,6 +82,7 @@ const S = {
   stepsList: null,
 };
 let viewer = null;
+let host = null; // socle des fonctions (createHost)
 
 try { S.labels = localStorage.getItem('pieces3d.labels') !== '0'; } catch { /* préférence non disponible */ }
 try { S.edges = localStorage.getItem('pieces3d.contours') === '1'; } catch { /* préférence non disponible */ }
@@ -80,12 +91,32 @@ try { S.edges = localStorage.getItem('pieces3d.contours') === '1'; } catch { /* 
 
 async function init() {
   bindChrome();
+  host = createHost({
+    state: () => S,
+    viewer: () => viewer,
+    is3d,
+    has3d: (id) => !!(S.eq && (MODELS[S.eq.id] || {})[id]),
+    go,
+    follow,
+    hashFor: (token, id) => hashFor(token, id ?? S.eq?.id ?? S.index[0]?.id),
+    path3d: (path) => (path?.length && S.view ? path3d(path) : []),
+    rowAt: (path) => (S.view ? rowAt(path) : null),
+    select: (path, opts) => select(path, opts),
+    openPage,
+    setPane,
+    narrow,
+    toast,
+    // Vue sous une page plein écran (retour à la fermeture).
+    viewToken: () => S.view?.id || S.eq?.root || '',
+  });
+  host.ctx.registerRoute('apercu', (ctx) => showEquipmentHome(ctx));
   try {
     S.index = await loadIndex();
   } catch (err) {
     loadError(err);
     return;
   }
+  await host.loadFeatures(FEATURES);
   window.addEventListener('hashchange', route);
   route();
 }
@@ -120,16 +151,43 @@ async function route() {
     $('#btn-page').textContent = `Page du ${doc}`;
     $('#btn-page').title = `Voir la page du ${doc}`;
     $('#btn-labels').title = `Afficher les repères du ${doc}`;
+    host.ctx.ui.sidePanel.close();
+    host.bus.emit('equipment', { equipment: S.eq, id: S.eq.id });
   }
   const eq = S.eq;
+  const info = { hash: location.hash, equipmentId: eq.id, token };
   // Page d'accueil (adresse sans « # ») : la liste des équipements.
   const home = raw === '' || token === 'catalogue';
   $('#catalogue').hidden = !home;
-  if (home) { document.title = 'Équipements · Pièces 3D'; renderCatalogue(); return; }
-  if (token === 'controle') return openIssues();
-  if (eq.assemblies.has(token)) return openAssembly(token);
-  if (eq.documents.has(token)) return openDocument(token);
-  openAssembly(eq.root);
+  const featureRoute = !home && host.routes.has(token);
+  if (!featureRoute) host.hidePage();
+  if (home) { document.title = 'Équipements · Pièces 3D'; renderCatalogue(); host.bus.emit('route', { ...info, token: 'catalogue', view: null }); return; }
+  if (featureRoute) {
+    // Page d'une fonction (ou page de l'équipement) : la vue d'en dessous reste prête.
+    if (!S.view) await openAssembly(eq.root);
+    await host.runRoute(token, info);
+  } else if (token === 'controle') await openIssues();
+  else if (eq.assemblies.has(token)) await openAssembly(token);
+  else if (eq.documents.has(token)) openDocument(token);
+  else await openAssembly(eq.root);
+  host.bus.emit('route', { ...info, view: S.view ? { ...S.view } : null });
+}
+
+/** Page de l'équipement (#<équipement>.apercu) : machine → systèmes → fiches. */
+function showEquipmentHome(ctx) {
+  const eq = S.eq;
+  document.title = `${eq.name} · Pièces 3D`;
+  ctx.ui.showPage(eq.name, renderEquipmentHome(eq, { has3d: ctx.has3d, badge, slot: ctx.ui.equipmentHome }), { icon: 'accueil' });
+}
+
+/** Signale la vue affichée aux fonctions et applique la couleur de son système. */
+function viewChanged() {
+  const sys = isAsmView() ? systemOf(S.eq, S.view.id) : null;
+  const shell = $('#shell');
+  if (sys) shell.style.setProperty('--sys', sys.color);
+  else shell.style.removeProperty('--sys');
+  shell.dataset.system = sys ? sys.id : '';
+  host.bus.emit('view', { ...S.view, system: sys });
 }
 
 function go(token) {
@@ -400,6 +458,8 @@ async function openAssembly(id, { select: selPath = null } = {}) {
   renderCrumbs();
   renderTitleblock(asm);
   renderPanel();
+  viewChanged();
+  host.bus.emit('assembly', { id, assembly: asm, is3d: has3d, home: !!S.view.home, model: has3d ? viewer?.model ?? null : null, equipment: eq });
   if (selPath) select(selPath, { focus: true });
 }
 
@@ -619,6 +679,7 @@ function openDocument(id) {
   renderRail();
   renderCrumbs();
   renderPanel();
+  viewChanged();
 }
 
 // Pages du manuel affichées dans la scène (schémas, ou dessins d'un assemblage sans 3D).
@@ -652,6 +713,7 @@ async function openIssues() {
   renderRail();
   renderCrumbs();
   renderPanel();
+  viewChanged();
   if (narrow()) setPane('panel');
 }
 
@@ -673,7 +735,8 @@ function renderRail() {
     const err = issueCount(id);
     const open = !big || id === eq.root || path.has(id);
     const kids = a.children.length && open ? `<ul class="tree">${a.children.map(node).join('')}</ul>` : '';
-    return `<li><button type="button" class="node ${id === cur ? 'cur' : ''}" data-go="${id}">
+    const sys = a.parent === eq.root ? systemOf(eq, id) : null; // bandeau de couleur des systèmes
+    return `<li><button type="button" class="node ${id === cur ? 'cur' : ''}${sys ? ' sysnode' : ''}" data-go="${id}"${sys ? ` style="--sys:${sys.color}"` : ''}>
       <span class="sheet ${partial && models[id] ? 'm3d' : ''}">${badge(a.sheet)}</span><span class="t">${a.children.length && !open ? '▸ ' : ''}${esc(a.titleFr)}</span>
       <span class="n">${err ? `<span class="alert" title="Numéros à vérifier">!</span> ` : ''}${a.parts.length}</span></button>${kids}</li>`;
   };
@@ -686,7 +749,8 @@ function renderRail() {
     ? ` Ouvrir : ${tops.map((a) => `<button type="button" class="lnk" data-go="${a.id}">${badge(a.sheet)} ${esc(a.titleFr)}</button>`).join('')}`
     : ' Leur numéro de page est encadré dans la liste.';
   $('#rail').innerHTML = `
-    <div class="equip"><strong>${esc(eq.name)}</strong><span>${esc(eq.category)} · ${eq.serial ? `n° de série ${esc(eq.serial)}` : esc(eq.document.title)}</span></div>
+    <div class="equip"><strong>${esc(eq.name)}</strong><span>${esc(eq.category)} · ${eq.serial ? `n° de série ${esc(eq.serial)}` : esc(eq.document.title)}</span>
+      <button type="button" class="btn eq-over" data-go="apercu">${icon('accueil', { size: 16 })}Vue d'ensemble et systèmes</button></div>
     <div><h2>Assemblages${n3d && !partial ? ' 3D' : ''}</h2>${partial ? `<p class="legend"><span class="sheet m3d">3D</span><span>${n3d} assemblages en 3D, les autres avec les dessins du ${eq.docWord}.${open3d}</span></p>` : ''}<ul class="tree">${node(eq.root)}</ul></div>
     <div><h2>${esc(eq.labels?.documents || 'Schémas et listes')}</h2><ul class="tree">${docs}</ul></div>
     <div><h2>${eq.docWord === 'catalogue' ? 'Catalogue' : 'Manuel'}</h2><ul class="tree">
@@ -763,10 +827,15 @@ function renderPanel() {
   const sheets = shown.length > 3 ? `${shown[0]} à ${shown[shown.length - 1]}` : shown.join(' / ');
   const sub = [`${cat ? (shown.length > 1 ? 'Pages' : 'Page') : 'Feuille'} ${sheets}`, src.pn && `N° ${src.pn}`,
     src.sizes && `Tailles : ${src.sizes.join(', ')}`, src.title !== src.titleFr && src.title].filter(Boolean);
+  const sys = isAsm ? systemOf(eq, src.id) : null;
+  const qtyTotal = src.parts.reduce((n, r) => n + (typeof r.qty === 'number' ? r.qty : 0), 0);
+  const toCheck = src.parts.filter((r) => r.flags.some((f) => f.level === 'error')).length;
   panel.innerHTML = `
     <div class="phead">
+      ${sys ? `<span class="syskick">${icon(sys.icon, { size: 15 })}${esc(sys.title)}</span>` : ''}
       <h1>${esc(src.titleFr)}</h1>
       <span class="sub">${sub.map(esc).join(' · ')}</span>
+      <div class="pstats"><span><b>${src.parts.length}</b>ligne${src.parts.length > 1 ? 's' : ''}</span>${qtyTotal ? `<span><b>${qtyTotal}</b>pièce${qtyTotal > 1 ? 's' : ''}</span>` : ''}${toCheck ? `<span class="warn"><b>${toCheck}</b>à vérifier</span>` : ''}</div>
       ${src.note ? `<div class="note">${esc(src.note)}</div>` : ''}
       <label class="sr" for="filter">Filtrer la liste</label>
       <input class="filter" id="filter" type="search" placeholder="Filtrer cette liste…" value="${esc(S.filter)}">
@@ -869,6 +938,11 @@ function select(path, { focus = false, from3d = false } = {}) {
   }
   renderDetail();
   renderSectionBar();
+  host?.bus.emit('select', {
+    ref: row ? row.ref : null, path: row ? [...S.selected] : null, row, pn: row?.pn || null,
+    path3d: row && is3d() ? path3d(S.selected) : null, objects: row && is3d() ? viewer.selectedObjs.slice() : [],
+    source: from3d ? '3d' : 'list',
+  });
   if (row && from3d && narrow()) toast(`Réf. ${row.ref} · ${row.pn || '—'} · ${row.desc}`, 3500);
 }
 
@@ -1073,6 +1147,7 @@ function renderCatalogue() {
 // ------------------------------------------------------------------ chrome
 
 function setPane(p) {
+  if (host?.pageOpen) host.hidePage();
   $('#workspace').dataset.pane = p;
   document.querySelectorAll('#mtabs button').forEach((b) => b.classList.toggle('on', b.dataset.pane === p));
   if (p === 'stage') { viewer?.resize(); fitHome(); }
@@ -1094,7 +1169,11 @@ function bindChrome() {
     if (p) { e.preventDefault(); openPage(p.dataset.page); }
   });
   $('#brand').addEventListener('click', () => go('catalogue'));
-  document.querySelectorAll('#mtabs button').forEach((b) => b.addEventListener('click', () => setPane(b.dataset.pane)));
+  document.querySelectorAll('#mtabs button').forEach((b) => b.addEventListener('click', () => {
+    // Onglet touché sur une page plein écran : retour à la vue (adresse comprise).
+    if (host?.pageOpen) host.closePage();
+    setPane(b.dataset.pane);
+  }));
 
   const slider = $('#explode');
   slider.addEventListener('input', () => { S.explode = slider.value / 100; viewer?.setExplode(S.explode, { animate: false }); });
