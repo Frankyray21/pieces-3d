@@ -27,7 +27,7 @@ const plural = (n, w) => `${n} ${w}${n > 1 ? 's' : ''}`;
 
 /** Tuiles d'un système : en-tête (le système), puis ses sous-assemblages. */
 function renderSystem(eq, t, { has3d, badge, pageUrl }) {
-  const thumb = (sheet, alt) => `<span class="sysx-thumb"><img src="${esc(pageUrl(sheet))}" alt="${esc(alt)}" loading="lazy" decoding="async"></span>`;
+  const thumb = (sheet, alt) => `<span class="sysx-thumb"><img data-src="${esc(pageUrl(sheet))}" alt="${esc(alt)}" decoding="async"></span>`;
   const meta = (x) => `<span class="mono">${esc(badge(x.sheet))}</span> · ${plural(x.pieces, 'pièce')}${x.subs ? ` · ${plural(x.subs, 'sous-ensemble')}` : ''}`;
   const tag3d = (id, iso) => (has3d(id) ? '<span class="tag3d">3D</span>' : iso ? '<span class="tag3d iso" title="Isolé dans la vue 3D de l’ensemble">3D</span>' : '');
   const tile = (c) => {
@@ -96,7 +96,15 @@ export function renderEquipmentHome(eq, { has3d, badge, slot }) {
     ${specs.length ? `<section class="eqh-sec"><h3>${icon('engrenage', { size: 16 })}Fiche technique</h3>
       <dl class="card specs-card">${specs.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl></section>` : ''}`;
   // Page absente de cette publication (version allégée) : la vignette s'efface.
-  el.querySelectorAll('.sysx-thumb img').forEach((img) => img.addEventListener('error', () => { img.parentNode.classList.add('none'); img.remove(); }));
+  // Vignettes chargées à l'approche de l'écran seulement (pages du manuel lourdes à décoder).
+  const io = 'IntersectionObserver' in window ? new IntersectionObserver((entries) => {
+    for (const e of entries) if (e.isIntersecting) { io.unobserve(e.target); e.target.src = e.target.dataset.src; }
+  }, { rootMargin: '200px 0px' }) : null;
+  el.querySelectorAll('.sysx-thumb img').forEach((img) => {
+    img.addEventListener('error', () => { img.parentNode.classList.add('none'); img.remove(); });
+    if (io) io.observe(img);
+    else img.src = img.dataset.src;
+  });
   el.appendChild(slot);
   return el;
 }

@@ -56,6 +56,7 @@ export default {
     let sig = ''; // signature du modèle (remplacements de pièces pendant le chargement de la vue d'ensemble)
     let timer = null;
     let current = null; // id du point mis en évidence
+    let shown = null; // modèle déjà cadré par le mode
 
     const data = () => (ctx.equipment ? DATA.get(ctx.equipment.id) ?? null : null);
     const usable = () => {
@@ -243,19 +244,21 @@ export default {
 
     // Cadre le point (tous ses exemplaires) en gardant la direction de vue ; le point est placé au milieu de la
     // partie de la scène que le panneau latéral ne couvre pas.
-    const frameOn = (id) => {
+    const frameOn = (id = null) => {
       const v = ctx.viewer.raw;
-      const mine = pins.filter((p) => p.point.def.id === id);
+      const mine = id == null ? pins : pins.filter((p) => p.point.def.id === id);
       if (!v || !mine.length) return;
       const box = new THREE.Box3();
       const w = new THREE.Vector3();
       for (const { label } of mine) box.expandByPoint(label.getWorldPosition(w));
       const c = box.getCenter(new THREE.Vector3());
-      const r = Math.max(box.getSize(new THREE.Vector3()).length() / 2, 0.25);
+      const r = Math.max(box.getSize(new THREE.Vector3()).length() / 2, 0.3);
       const cam = v.camera;
       const dir = cam.position.clone().sub(v.controls.target).normalize();
       const tan = Math.tan(THREE.MathUtils.degToRad(cam.fov) / 2);
-      const dist = Math.max((r / tan) * 1.5, 0.7);
+      // Visible en entier dans la partie libre de la scène (largeur ou hauteur, la plus petite).
+      const free = ctx.narrow() ? 0.5 : 0.6;
+      const dist = Math.max((r / (tan * Math.min(1, cam.aspect * free))) * 1.15, 0.9);
       const right = new THREE.Vector3().setFromMatrixColumn(cam.matrixWorld, 0).normalize();
       const up = new THREE.Vector3().setFromMatrixColumn(cam.matrixWorld, 1).normalize();
       const stage = v.container.getBoundingClientRect();
@@ -298,6 +301,8 @@ export default {
       ctx.ui.sidePanel.open({ owner: OWNER, title: 'Entretien et graissage', icon: 'cle', content: panel() });
       ctx.ui.sidePanel.element.classList.add('ent-side');
       build();
+      frameOn(); // tous les points dans la partie libre de la scène
+      shown = ctx.viewer.model?.root.uuid ?? null;
       // La vue d'ensemble remplace ses sous-assemblages simplifiés par leur version détaillée après coup :
       // pastilles et estompage refaits si le modèle a changé.
       clearInterval(timer);
@@ -339,7 +344,10 @@ export default {
       clearPins();
       if (!usable()) { stop(); return; }
       current = null;
+      const before = ctx.viewer.model?.root.uuid;
       build();
+      if (before && before !== shown) frameOn();
+      shown = before;
     };
     ctx.on('assembly', refresh);
     ctx.on('view', refresh);
