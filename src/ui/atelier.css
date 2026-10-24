@@ -188,6 +188,8 @@ body.page-open .workspace .resizer { display: none; }
 .stat.warn .num { color: var(--error); }
 .eqh-sec { display: grid; gap: 10px; }
 .eqh-sec h3 { margin: 0; display: flex; align-items: center; gap: 8px; font: 600 12px/1 var(--f-body); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+/* Onglet actif du téléphone : texte en accent foncé (contraste du petit texte). */
+.mtabs button.on { color: var(--accent-text); }
 .tag3d { flex: none; font: 600 11px/1 var(--f-mono); padding: 4px 6px; border-radius: 5px; border: 1px solid var(--accent); color: var(--accent-text); }
 .doccards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 8px; }
 .doccard {
