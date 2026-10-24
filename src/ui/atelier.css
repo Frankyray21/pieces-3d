@@ -91,7 +91,7 @@
 .tb-grid { width: 270px; }
 .titleblock .dwg { font-size: 13px; }
 .explode, .tgroup, .sectionbar { border-radius: var(--radius); }
-.ftools .tbtn, .tbtn.ftool { display: inline-flex; align-items: center; gap: 6px; }
+.tbtn.ftool { display: inline-flex; align-items: center; gap: 6px; }
 .balloon.is-mark { background: var(--mark); border-color: var(--mark); color: var(--on-sys); }
 /* Outils des fonctions dans le groupe principal, après un séparateur. */
 .tgroup .tsep { flex: none; width: 1px; align-self: stretch; margin: 4px 2px; background: var(--line); }

@@ -331,7 +331,7 @@ export function createHost(app) {
   // ---------------------------------------------------------------- outils de la scène
   // Outils des fonctions : dans le groupe principal de la barre (après « Plein écran » et un séparateur), sans
   // rangée à part ; sur téléphone, toute la barre tient sur une rangée qui défile.
-  const mainGroup = tools.querySelector('.tgroup:not(.ftools)') || $('#ftools');
+  const mainGroup = tools.querySelector('.tgroup');
   let sep = null;
   const addTool = (btn) => {
     let el = btn;

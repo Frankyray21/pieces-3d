@@ -206,6 +206,9 @@ async function route() {
     S.eq.pageUrl = (sheet) => (pageMissing(id, sheet) ? null : url(sheet));
     S.view = null;
     S.selected = null;
+    // Rail et liste de l'équipement précédent effacés (une page plein écran peut s'afficher avant la vue).
+    $('#rail').innerHTML = '';
+    $('#panel').innerHTML = '';
     const doc = S.eq.docWord === 'catalogue' ? 'catalogue' : 'manuel';
     $('#btn-page').textContent = `Page du ${doc}`;
     $('#btn-page').title = `Voir la page du ${doc}`;
@@ -1091,6 +1094,8 @@ function openPage(sheet) {
   const owner = eq.sheetOwner.get(s);
   const owner3d = eq.assemblies.has(owner) && !!(MODELS[eq.id] || {})[owner];
   const m = $('#modal');
+  // Page suivante ou précédente : le focus reste sur le même bouton de la barre.
+  const focused = m.contains(document.activeElement) ? document.activeElement.id : '';
   m.hidden = false;
   m.innerHTML = `
     <div class="bar">
@@ -1107,7 +1112,8 @@ function openPage(sheet) {
   $('#p-next').addEventListener('click', () => openPage(eq.sheetId(num + 1)));
   $('#p-zoom').addEventListener('click', () => { zoom = zoom === 'fit' ? 'full' : 'fit'; openPage(s); });
   $('#p-close').addEventListener('click', () => closePage());
-  if (!m.contains(document.activeElement)) $('#p-close').focus({ preventScroll: true });
+  const keep = focused ? document.getElementById(focused) : null;
+  (keep && !keep.disabled ? keep : $('#p-close')).focus({ preventScroll: true });
   $('#p-open')?.addEventListener('click', () => { closePage(); go(owner); });
   const img = $('#p-img');
   // Page absente (publication allégée : pages de liste laissées de côté) : un message à la place.

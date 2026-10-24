@@ -120,6 +120,12 @@ Les repères sont ceux de la liste de l'assemblage affiché : `'3'`, un chemin
 groupes sont résolus comme pour un clic dans la liste. Sans vue 3D (dessins
 du manuel), les méthodes ne font rien et retournent 0.
 
+**Attention** : `objects`, `highlight`, `isolate` et `frame` prennent une
+*liste* de repères ; un tableau seul y est lu comme une liste
+(`['1', '9']` = repères 1 et 9 de l'assemblage). Un chemin seul s'écrit
+`'1>9>63>5'` ou s'enveloppe : `[['1', '9', '63', '5']]`. `select`, `isGroup`,
+`toggleGroup`, `canCut` et `cut` prennent un seul chemin (`'1>4'` ou `['1', '4']`).
+
 | Signature | Rôle |
 |---|---|
 | `ctx.viewer.is3d` | vrai si la vue courante est un modèle 3D |
@@ -135,6 +141,7 @@ du manuel), les méthodes ne font rien et retournent 0.
 | `ctx.viewer.lookAt([x, y, z], [x, y, z])` | caméra à une position, vers une cible |
 | `ctx.viewer.select(repère)` | sélectionne comme un clic dans la liste (fiche, liste, 3D) ; `null` désélectionne |
 | `ctx.viewer.path3d(repère) → string[]` | chemin 3D résolu (`'1\|2\|3'` pour un ensemble) |
+| `ctx.viewer.dimMaterial(matériau, opacité = 0.13)` | variante estompée (transparente) d'un matériau, pour `setBaseMaterials` : contrairement au fantôme de `ghost`, la pièce reste cliquable (modes Circuits et Entretien) |
 | `ctx.viewer.setBaseMaterials(entrées)` / `.restoreBaseMaterials()` | recolore des maillages : `Map` ou liste de `[maillage, matériau]`, qui remplace le jeu précédent (les autres maillages retrouvent leur matériau) ; survol, sélection, estompage et coupe s'appliquent par-dessus ; oublié au changement de modèle. `ctx.viewer.originalMaterial(maillage)` : matériau d'origine |
 | `ctx.viewer.showParts(cible, visible) → Object3D[]` / `.restoreParts()` | montre ou masque des pièces (repères ou objets) avec leurs bulles de repère ; `restoreParts` rend les visibilités d'origine |
 | `ctx.viewer.arriveParts(cible, { far, duration, gap }) → ms` / `.settleParts()` | montage pas à pas : chaque pièce apparaît à son tour depuis sa position éclatée × `far` et glisse à sa place ; `settleParts` arrête et pose tout |
@@ -158,11 +165,13 @@ préfixés par `_`, ni `markObjs`, `insets`, `step` ou `userData.baseMaterial`).
 | `ctx.ui.setInsets(id, marges \| fonction \| élément \| null)` | parties de la scène couvertes par l'interface d'une fonction (`{ top, right, bottom, left }` en px, fonction qui les retourne, ou élément posé sur la scène, dégagé par son côté le plus économique) : le cadrage (`frame`, sélection, « Recadrer ») place le modèle dans le reste. Le panneau latéral est pris en compte d'office ; `null` retire les marges |
 | `ctx.ui.onEscape(fn, ordre) → off()` | couche fermée par Échap : `fn()` retourne vrai si elle a fermé quelque chose (voir « Touche Échap ») |
 | `ctx.ui.stage` | la scène (`#stage`) : élément où poser barres et calques |
-| `ctx.ui.addTool(bouton \| { id, label, title, icon, pressed, onClick }) → bouton` | bouton dans la barre d'outils de la vue 3D (groupe des fonctions, après « Plein écran ») ; reçoit la classe `tbtn` ; `pressed` → `aria-pressed`. La barre n'est affichée que pour une vue 3D |
+| `ctx.ui.addTool(bouton \| { id, label, title, icon, pressed, onClick }) → bouton` | bouton dans la barre d'outils de la vue 3D (groupe principal, après « Plein écran » et un séparateur) ; reçoit les classes `tbtn ftool` ; `pressed` → `aria-pressed`. La barre n'est affichée que pour une vue 3D ; sur téléphone ou dans une scène étroite, elle tient sur une rangée qui défile |
 | `ctx.ui.searchSlot` | élément de l'en-tête, à droite du champ de recherche (fond sombre : boutons `btn` déjà adaptés) |
 | `ctx.ui.equipmentHome` | élément affiché en bas de la page de l'équipement (`#<équipement>.apercu`), après systèmes, schémas et fiche technique ; le même élément sert pour tous les équipements : le remplir à l'événement `'equipment'` |
-| `ctx.ui.showPage(titre, contenu, { icon, onClose }) → { element, close }` | page plein écran sur l'espace de travail (en-tête et onglets du téléphone restent visibles) ; Retour ou Échap la ferme |
-| `ctx.ui.closePage()` | ferme la page (retour à la vue si elle est liée à une adresse) |
+| `ctx.ui.showPage(titre, contenu, { icon, onClose }) → { element, close }` | page plein écran sur l'espace de travail (en-tête et onglets du téléphone restent visibles) ; Retour ou Échap la ferme. Le contenu recouvert (rail, scène, liste) sort de la tabulation (`inert`), le focus passe au titre. Une page sans adresse propre ajoute une entrée d'historique : le bouton Retour du navigateur la ferme. La scène en plein écran le quitte |
+| `ctx.ui.closePage()` | ferme la page ; liée à une adresse, elle revient à l'entrée d'historique précédente (lien direct : la vue d'en dessous remplace l'adresse), sans empiler d'entrée |
+| `ctx.ui.historyLayer(surRetour) → release()` | couche plein écran sans adresse (recherche du téléphone…) : une entrée d'historique est ajoutée, `surRetour()` est appelé si le bouton Retour du navigateur la ferme ; `release()` à la fermeture par l'interface consomme l'entrée |
+| `ctx.ui.exitFullscreen()` | quitte le plein écran de la scène (avant d'afficher une couche hors de la scène) |
 | `ctx.ui.setPane('rail' \| 'stage' \| 'panel')` | onglet affiché sur téléphone |
 
 ### Utilitaires
@@ -174,6 +183,7 @@ préfixés par `_`, ni `markObjs`, `insets`, `step` ou `userData.baseMaterial`).
 | `ctx.esc(texte)` | échappe le HTML |
 | `ctx.toast(message, ms?)` | message bref en bas de l'écran |
 | `ctx.narrow()` | vrai sur téléphone (≤ 900 px) |
+| `ctx.compact()` | vrai sur téléphone ou quand la scène fait moins de 720 px de large (tablette, petit portable) : le panneau latéral y est un volet bas (requête de conteneur `@container stage (max-width: 719px)`), à ne pas ouvrir d'office |
 
 Les boutons et liens portant `data-go="<jeton>"` (navigation) ou
 `data-page="<feuille>"` (page du manuel) sont gérés par le site, partout dans la page.
@@ -189,6 +199,10 @@ sous-ensemble isolé (`'systemes'`).
   `'sidepanel' { open: false, owner }` et se désactive proprement (couleurs,
   marques, pastilles, visibilités rétablies). Une procédure en cours s'arrête
   aussi quand un autre mode prend le panneau (sa barre n'en dépend pas).
+- La **fiche de la pièce** (`'fiche'`) se ferme quand une autre vue
+  s'affiche sans pièce sélectionnée (schéma, contrôle des listes, autre
+  assemblage) ; le même assemblage réaffiché (retour d'une page plein écran)
+  la garde.
 - La **fiche de la pièce** (`'fiche'`) s'ouvre avec `over: true` : elle se
   pose par-dessus le panneau d'un mode, qui **reste actif** ; l'en-tête montre
   « ‹ <titre du mode> » ; la fiche fermée (×, « ‹ », Échap, désélection), le
@@ -210,8 +224,8 @@ il bascule sur « Vue » et son en-tête offre « ‹ Liste des pièces » (ou
 Une seule couche est fermée par appui, de la plus haute à la plus basse :
 fenêtres surgissantes des fonctions (recherche 120, menu du fil d'Ariane 110),
 visionneuse des pages (100), page plein écran (80), panneau latéral (60 : la
-couche du dessus, la fiche avant le mode recouvert), sélection (40), scène en
-plein écran (20). Une fonction ajoute sa couche avec `ctx.ui.onEscape(fn,
+couche du dessus, la fiche avant le mode recouvert), sélection (40),
+procédure en cours (30), scène en plein écran (20). Une fonction ajoute sa couche avec `ctx.ui.onEscape(fn,
 ordre)`.
 
 ## Publication allégée (Artifact)
