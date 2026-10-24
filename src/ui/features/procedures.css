@@ -112,7 +112,7 @@
 }
 /* Doigt : segments de progression et flèches d'au moins 40 px de haut (le trait reste fin). */
 @media (pointer: coarse) {
-  .proc-seg { height: 40px; padding: 16px 0; background-clip: content-box; }
+  .proc-seg, .proc-seg.done, .proc-seg.cur { height: 40px; padding: 16px 0; background-clip: content-box; }
   .proc-segs { margin: -12px 0; }
   .proc-bar .tbtn { min-height: 40px; }
   .proc-prev, .proc-next { width: 44px; }

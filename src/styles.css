@@ -161,6 +161,9 @@ details.more summary { cursor: pointer; margin: 0 6px; color: var(--muted); font
   font-size: 13px; white-space: nowrap;
 }
 .tbtn:hover { background: var(--hover); }
+/* Groupe d'outils serré (outils des fonctions compris) : une rangée tient dans la scène d'un portable. */
+.tgroup { gap: 4px; }
+.tgroup .tbtn { padding: 0 8px; }
 .tbtn[aria-pressed="true"] { background: var(--ink); color: var(--surface); }
 .tbtn.strong { background: var(--accent); color: var(--accent-ink); font-weight: 600; }
 .tbtn.strong:hover { filter: brightness(1.06); background: var(--accent); }
@@ -373,6 +376,7 @@ table.parts { width: 100%; border-collapse: collapse; font-size: 13px; }
   }
   .tools::-webkit-scrollbar { display: none; }
   .tools > * { flex: none; }
+  .tools .tgroup, .tools .explode { flex-wrap: nowrap; }
   .explode input { width: 90px; }
   .tgroup .tbtn { padding: 0 8px; }
   /* Téléphone : le panneau du montage prend la largeur, le cartouche s'efface. */

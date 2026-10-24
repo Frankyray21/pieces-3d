@@ -135,6 +135,14 @@
    la liste, une scène de moins de 720 px (tablette, petit portable) prend le volet bas du téléphone. */
 .stage { container: stage / inline-size; }
 @container stage (max-width: 719px) {
+  /* Outils sur une seule rangée qui défile (comme sur téléphone). */
+  .tools {
+    flex-wrap: nowrap; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; pointer-events: auto;
+    left: 0; right: 0; padding: 0 8px 2px; scroll-padding: 0 24px;
+  }
+  .tools::-webkit-scrollbar { display: none; }
+  .tools > * { flex: none; }
+  .tools .tgroup, .tools .explode { flex-wrap: nowrap; }
   #stage .sidepanel { left: 8px; right: 8px; bottom: 8px; top: auto; width: auto; height: min(46%, calc(100% - var(--tools-bottom, 8px) - 8px)); }
   #stage.side-open .titleblock, #stage.side-open .loading-detail { display: none; }
   #stage.side-open .docview { padding-right: 16px; padding-bottom: 50vh; }

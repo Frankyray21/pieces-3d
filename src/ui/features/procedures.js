@@ -278,6 +278,8 @@ export default {
     $b('.proc-details').addEventListener('click', () => {
       if (ctx.ui.sidePanel.owner === 'procedures') ctx.ui.sidePanel.close();
       else openPanel();
+      // Scène étroite : le volet bas couvre la moitié de la scène ; le modèle est recadré dans le reste.
+      if (ctx.compact()) requestAnimationFrame(() => { if (run) ctx.viewer.frame(); });
     });
     $b('.proc-segs').addEventListener('click', (e) => {
       const b = e.target.closest('[data-i]');

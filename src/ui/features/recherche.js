@@ -305,6 +305,13 @@ export default {
       const view = ctx.view;
       const out = { part: [], asm: [], page: [] };
       const n = P.qn.length;
+      // « 2.4 », « page 8.3 » : pages dont le titre porte ce numéro (« … (2.4) ») ; aucune : recherche ordinaire.
+      let pageHits = null;
+      if (P.pageNum) {
+        const re = new RegExp(`\\(${P.pageNum.replace(/\./g, '\\.')}(?:\\)|\\s|[,;])`);
+        const hits = [...indexes.values()].flatMap((ix) => ix.pages.filter((p) => re.test(p.title)));
+        if (hits.length) pageHits = new Set(hits);
+      }
       for (const ix of indexes.values()) {
         const here = ix.eq.id === cur ? 200 : 0; // l'équipement affiché d'abord
         if (P.ref) {
@@ -320,12 +327,10 @@ export default {
           }
           continue;
         }
-        if (P.pageNum) {
-          // Numéro de page imprimé : la page dont le titre le porte (« … (2.4) ») ; trouvée, rien d'autre n'est cherché.
-          const re = new RegExp(`\\(${P.pageNum.replace(/\./g, '\\.')}(?:\\)|\\s|[,;])`);
-          const hits = ix.pages.filter((p) => re.test(p.title));
-          for (const p of hits) out.page.push({ e: p, s: 1000 + here });
-          if (hits.length) continue;
+        if (pageHits) {
+          // Numéro de page imprimé trouvé dans un titre de page : seules ces pages sont proposées.
+          for (const p of ix.pages) if (pageHits.has(p)) out.page.push({ e: p, s: 1000 + here });
+          continue;
         }
         for (const e of ix.parts) {
           let s = 0;
