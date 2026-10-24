@@ -1,0 +1,97 @@
+/* Procédures d'assemblage pas à pas (procedures.js). */
+
+/* Pendant une procédure : consigne et cartouche masqués, la barre prend le bas de la scène. */
+.stage.proc-on .hint, .stage.proc-on .titleblock { display: none; }
+
+.proc-bar {
+  position: absolute; left: 12px; bottom: 12px; z-index: 8; width: min(560px, calc(100% - 24px)); box-sizing: border-box;
+  display: grid; gap: 8px; padding: 10px 12px; border-radius: var(--radius);
+  background: color-mix(in srgb, var(--surface) 96%, transparent); color: var(--ink);
+  border: 1px solid var(--line); border-top: 4px solid var(--mark); box-shadow: var(--shadow);
+}
+.proc-bar[hidden] { display: none; }
+@media (min-width: 901px) {
+  .stage.side-open .proc-bar { width: min(560px, calc(100% - min(var(--side-w), 100% - 24px) - 48px)); }
+}
+.proc-bar-row { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.proc-bar .tbtn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 34px; }
+.proc-prev, .proc-next { flex: none; width: 40px; padding: 0; }
+.proc-bar-mid { flex: 1; min-width: 0; display: grid; gap: 2px; text-align: center; }
+.proc-num { font: 700 12px/1 var(--f-body); letter-spacing: 0.06em; text-transform: uppercase; color: var(--mark); }
+.proc-bar-title { font: 700 17px/1.15 var(--f-display); text-transform: uppercase; letter-spacing: 0.01em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.proc-bar-actions { flex-wrap: wrap; justify-content: center; }
+.proc-bar-actions .tbtn { flex: 1 1 auto; }
+.proc-quit { color: var(--muted); }
+
+/* Progression : un segment par étape, cliquable. */
+.proc-progress { min-width: 0; }
+.proc-segs { display: flex; gap: 3px; }
+.proc-seg {
+  flex: 1; min-width: 0; height: 8px; padding: 0; border: 0; border-radius: 4px; cursor: pointer;
+  background: color-mix(in srgb, var(--muted) 30%, transparent); transition: background 0.25s;
+}
+.proc-seg.done { background: color-mix(in srgb, var(--mark) 55%, transparent); }
+.proc-seg.cur { background: var(--mark); }
+.proc-seg:hover { outline: 2px solid color-mix(in srgb, var(--mark) 45%, transparent); outline-offset: 1px; }
+
+/* Panneau latéral. */
+.proc-panel { display: grid; gap: 10px; min-width: 0; }
+.proc-panel p { margin: 0; }
+.proc-kicker { font: 600 12px/1.3 var(--f-body); letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
+.proc-intro { font-size: 13px; line-height: 1.45; color: var(--muted); padding: 8px 10px; border-left: 3px solid var(--mark); background: var(--surface-2); border-radius: 0 6px 6px 0; }
+.proc-step-title { display: flex; align-items: flex-start; gap: 8px; margin: 2px 0 0; font: 700 20px/1.1 var(--f-display); text-transform: uppercase; }
+.proc-badge {
+  flex: none; display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%;
+  background: var(--mark); color: #fff; font: 700 15px/1 var(--f-body);
+}
+.proc-label { font-size: 12px; color: var(--mark); font-weight: 600; }
+.proc-text { font-size: 14px; line-height: 1.5; }
+.proc-h { margin: 6px 0 0; font: 700 14px/1.2 var(--f-display); letter-spacing: 0.03em; text-transform: uppercase; color: var(--muted); }
+.proc-h span { font-weight: 500; }
+.proc-parts { width: 100%; border-collapse: collapse; font-size: 12.5px; table-layout: fixed; }
+.proc-parts th { text-align: left; font-weight: 600; color: var(--muted); padding: 4px 4px; border-bottom: 1px solid var(--line); }
+.proc-parts th:nth-child(1) { width: 15%; }
+.proc-parts th:nth-child(2) { width: 33%; }
+.proc-parts th:nth-child(3) { width: 12%; }
+.proc-parts td { padding: 5px 4px; border-bottom: 1px solid var(--line); vertical-align: top; overflow-wrap: anywhere; }
+.proc-parts td small { color: var(--muted); }
+.proc-parts tbody tr { cursor: pointer; }
+.proc-parts tbody tr:hover { background: var(--hover); }
+.proc-parts tbody tr:focus-visible { outline: 2px solid var(--mark); outline-offset: -2px; }
+.proc-parts tbody tr.is-on { background: color-mix(in srgb, var(--mark) 18%, transparent); box-shadow: inset 3px 0 0 var(--mark); }
+.proc-parts tbody tr.no3d { color: var(--muted); cursor: default; }
+.proc-thumb {
+  display: grid; gap: 6px; padding: 6px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface-2);
+  color: var(--ink); cursor: zoom-in; text-align: left; font-size: 12px;
+}
+.proc-thumb img { width: 100%; height: auto; max-height: 260px; object-fit: contain; background: #fff; border-radius: 4px; }
+.proc-thumb:hover { border-color: var(--mark); }
+.proc-foot { padding-top: 4px; }
+.proc-foot .btn { display: inline-flex; align-items: center; gap: 6px; }
+
+/* Cartes (liste des procédures, page de l'équipement). */
+.proc-cards { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.proc-card {
+  width: 100%; display: grid; gap: 3px; text-align: left; padding: 10px 12px; cursor: pointer;
+  border: 1px solid var(--line); border-left: 4px solid var(--mark); border-radius: 8px; background: var(--surface); color: var(--ink);
+}
+.proc-card:hover { background: var(--hover); }
+.proc-card-t { font: 700 16px/1.15 var(--f-display); text-transform: uppercase; }
+.proc-card-s { font-size: 13px; line-height: 1.35; }
+.proc-card-m { font-size: 12px; color: var(--muted); }
+.proc-home { padding: 16px; display: grid; gap: 10px; }
+.proc-home[hidden] { display: none; }
+.proc-home-h { display: flex; align-items: center; gap: 8px; margin: 0; font: 700 20px/1.1 var(--f-display); text-transform: uppercase; color: var(--ink); }
+.proc-home-h svg { color: var(--mark); }
+.proc-home-p { margin: 0; font-size: 13px; color: var(--muted); }
+@media (min-width: 901px) {
+  .proc-home .proc-cards { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+}
+
+/* Téléphone : barre sur toute la largeur ; le panneau des détails s'arrête au-dessus d'elle. */
+@media (max-width: 900px) {
+  .proc-bar { left: 8px; right: 8px; bottom: 8px; width: auto; padding: 8px 10px; gap: 6px; }
+  .proc-bar-title { font-size: 15px; }
+  .proc-bar-actions .tbtn { padding-left: 8px; padding-right: 8px; }
+  .stage.proc-on .sidepanel { bottom: var(--proc-bar-h, 140px); }
+}

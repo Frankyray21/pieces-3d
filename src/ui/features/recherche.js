@@ -58,16 +58,26 @@ const LEX = {
   anneau: ['ring'], entretoise: ['spacer'], cale: ['shim', 'spacer'], moyeu: ['hub'], tambour: ['drum'], bras: ['arm'],
   pied: ['foot', 'leg'], plancher: ['floor', 'deck'], toit: ['roof', 'canopy'], porte: ['door'], vitre: ['glass', 'window'],
   fenetre: ['window'], klaxon: ['horn'], alarme: ['alarm'], avertisseur: ['horn', 'alarm', 'beacon'], tableau: ['panel', 'board'],
+  hydraulique: ['hydraulic', 'hyd'], electrique: ['electric', 'elec'], pneumatique: ['pneumatic', 'air'],
+  avant: ['front', 'fwd'], arriere: ['rear', 'back'], gauche: ['left', 'lh'], droit: ['right', 'rh'], droite: ['right', 'rh'],
+  superieur: ['upper', 'top'], inferieur: ['lower', 'bottom'], haut: ['upper', 'top'], bas: ['lower', 'bottom'],
+  interieur: ['inner', 'inside'], exterieur: ['outer', 'outside'], principal: ['main'], securite: ['safety'], urgence: ['emergency'],
+  arret: ['stop'], pression: ['pressure'], retour: ['return'], aspiration: ['suction'], vidange: ['drain'], niveau: ['level'],
+  avance: ['feed'], foreuse: ['drill'], forage: ['drill'], boue: ['mud'], carburant: ['fuel'], echappement: ['exhaust'],
+  silencieux: ['muffler', 'silencer'], vitesse: ['speed'], debit: ['flow'],
   lubrificateur: ['lubricator'], graisse: ['grease'], air: ['air'], tube: ['tube'], piston: ['piston'], console: ['console'],
 };
 const STOP = new Set(['de', 'du', 'des', 'la', 'le', 'les', 'l', 'd', 'a', 'au', 'aux', 'et', 'en', 'pour', 'sur', 'un', 'une', 'avec']);
 
-/** Variantes d'un mot de la requête (pluriel, traduction). */
-function variants(w) {
+const LEX_KEYS = Object.keys(LEX);
+/** Variantes d'un mot de la requête (pluriel, traduction) ; typing : mot en cours de frappe (« filt » → filtre). */
+function variants(w, typing = false) {
   const out = new Set([w]);
   const sing = w.length > 4 && w.endsWith('s') ? w.slice(0, -1) : null;
   if (sing) out.add(sing);
-  for (const k of [w, sing]) for (const t of LEX[k] || []) out.add(fold(t).replace(/[^a-z0-9]+/g, ' '));
+  const keys = [w, sing];
+  if (typing && w.length >= 4) keys.push(...LEX_KEYS.filter((k) => k !== w && k.startsWith(w)));
+  for (const k of keys) for (const t of LEX[k] || []) out.add(fold(t).replace(/[^a-z0-9]+/g, ' '));
   return [...out];
 }
 
@@ -87,7 +97,7 @@ function parse(q) {
     qn: normPn(q),
     ref,
     // Les mots courts (≤ 2) doivent être complets, sauf le dernier (en cours de frappe).
-    words: words.map((w, i) => ({ alts: variants(w).map((a) => ` ${a}${w.length <= 2 && i !== last ? ' ' : ''}`) })),
+    words: words.map((w, i) => ({ alts: variants(w, i === last).map((a) => ` ${a}${w.length <= 2 && i !== last ? ' ' : ''}`) })),
   };
 }
 const matchAll = (hay, words) => words.length > 0 && words.every((w) => w.alts.some((a) => hay.includes(a)));
@@ -218,7 +228,8 @@ export default {
     const input = old.cloneNode(true);
     old.replaceWith(input);
     document.querySelector('#results')?.setAttribute('hidden', '');
-    input.placeholder = 'Rechercher : n° de pièce, description, assemblage, page…';
+    input.placeholder = 'Pièce, description, assemblage…';
+    input.title = 'Rechercher dans tout le catalogue (raccourci : « / » ou Ctrl+K)';
     input.setAttribute('role', 'combobox');
     input.setAttribute('aria-autocomplete', 'list');
     input.setAttribute('aria-expanded', 'false');
@@ -283,7 +294,7 @@ export default {
     ctx.on('equipment', () => { ensureCurrent(); if (!pop.hidden) render(); });
 
     // ---------------------------------------------------------------- recherche
-    const LIMITS = { part: 40, asm: 12, page: 10 };
+    const LIMITS = { part: 30, asm: 12, page: 10 };
     function find(q) {
       const P = parse(q);
       const cur = ctx.equipment?.id;
@@ -339,7 +350,8 @@ export default {
     }
 
     // ---------------------------------------------------------------- affichage
-    let flat = []; // résultats dans l'ordre affiché
+    let flat = []; // résultats (indices des options)
+    let ordre = []; // indices dans l'ordre affiché
     let active = -1;
     let lastQ = null;
     const hl = (text, P) => {
@@ -362,6 +374,7 @@ export default {
       const q = field().value;
       const t0 = performance.now();
       flat = [];
+      ordre = [];
       active = -1;
       if (q.trim().length < 2) {
         list.innerHTML = `<div class="rch-help">
@@ -375,7 +388,9 @@ export default {
         return;
       }
       const { P, out } = find(q);
-      const groups = [];
+      pop.dataset.find = (performance.now() - t0).toFixed(1);
+      const html = { part: [], asm: [], page: [] };
+      let groups = html.part;
       if (out.part.length) {
         groups.push(`<div class="rch-group" role="presentation">${P.ref ? `Repère ${esc(P.ref)}` : 'Pièces'} <span>${out.part.length}${out.part.length >= LIMITS.part ? '+' : ''}</span></div>`);
         for (const r of out.part) {
@@ -393,6 +408,7 @@ export default {
             </div></div>`);
         }
       }
+      groups = html.asm;
       if (out.asm.length) {
         groups.push(`<div class="rch-group" role="presentation">Assemblages et schémas <span>${out.asm.length}</span></div>`);
         for (const r of out.asm) {
@@ -406,6 +422,7 @@ export default {
             </div></div>`);
         }
       }
+      groups = html.page;
       if (out.page.length) {
         groups.push(`<div class="rch-group" role="presentation">Pages du manuel <span>${out.page.length}</span></div>`);
         for (const r of out.page) {
@@ -418,9 +435,15 @@ export default {
             </div></div>`);
         }
       }
-      list.innerHTML = groups.length ? groups.join('')
-        : `<div class="rch-empty">Rien trouvé pour « ${esc(q)} ». Essayez un numéro partiel, un autre mot de la description ou « réf 12 » pour un repère de schéma.</div>`;
-      if (flat.length) setActive(0);
+      // Groupes dans l'ordre de leur meilleur résultat (à égalité : pièces, assemblages, pages).
+      const order = ['part', 'asm', 'page'].filter((k) => out[k].length).sort((a, b) => (out[b][0].s - out[a][0].s) || 0);
+      const all = order.flatMap((k) => html[k]).join('');
+      // Navigation au clavier dans l'ordre affiché.
+      list.innerHTML = all
+        || `<div class="rch-empty">Rien trouvé pour « ${esc(q)} ». Essayez un numéro partiel, un autre mot de la description ou « réf 12 » pour un repère de schéma.</div>`;
+      const shown = [...list.querySelectorAll('.rch-opt')].map((o) => +o.dataset.i);
+      if (shown.length) setActive(shown[0], false); // sans défilement : pas de mise en page forcée à chaque frappe
+      ordre = shown;
       list.scrollTop = 0;
       lastQ = q;
       updateStatus(performance.now() - t0);
@@ -437,7 +460,7 @@ export default {
     function setExpanded(on) {
       input.setAttribute('aria-expanded', String(on && !full));
     }
-    function setActive(i) {
+    function setActive(i, scroll = true) {
       const opts = list.querySelectorAll('.rch-opt');
       opts.forEach((o) => { o.classList.remove('on'); o.setAttribute('aria-selected', 'false'); });
       active = i;
@@ -446,7 +469,7 @@ export default {
       o.classList.add('on');
       o.setAttribute('aria-selected', 'true');
       field().setAttribute('aria-activedescendant', o.id);
-      o.scrollIntoView({ block: 'nearest' });
+      if (scroll) o.scrollIntoView({ block: 'nearest' });
     }
 
     // ---------------------------------------------------------------- ouverture / fermeture
@@ -490,16 +513,20 @@ export default {
     });
 
     // ---------------------------------------------------------------- saisie et clavier
-    const onInput = () => { if (pop.hidden) open({ focus: false }); else render(); };
+    const onInput = (e) => {
+      if (full && e.target === input) inner.value = input.value; // saisie arrivée dans le champ de l'en-tête
+      if (pop.hidden) open({ focus: false }); else render();
+    };
     input.addEventListener('input', onInput);
     inner.addEventListener('input', onInput);
     input.addEventListener('focus', () => open({ focus: ctx.narrow() }));
     input.addEventListener('click', () => { if (pop.hidden) open(); });
     const onKey = (e) => {
       const n = flat.length;
-      if (e.key === 'ArrowDown') { e.preventDefault(); if (n) setActive((active + 1) % n); }
-      else if (e.key === 'ArrowUp') { e.preventDefault(); if (n) setActive((active - 1 + n) % n); }
-      else if (e.key === 'Enter') { e.preventDefault(); if (pop.hidden) open(); else if (n) pick(Math.max(0, active)); }
+      const pos = ordre.indexOf(active);
+      if (e.key === 'ArrowDown') { e.preventDefault(); if (n) setActive(ordre[(pos + 1) % n]); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); if (n) setActive(ordre[(pos - 1 + n) % n]); }
+      else if (e.key === 'Enter') { e.preventDefault(); if (pop.hidden) open(); else if (n) pick(active >= 0 ? active : ordre[0]); }
       else if (e.key === 'Escape') {
         e.preventDefault();
         e.stopPropagation(); // ne pas désélectionner la pièce ni fermer la page en même temps
@@ -530,7 +557,7 @@ export default {
     pop.addEventListener('mousedown', (e) => { if (!full && e.target !== inner) e.preventDefault(); });
     list.addEventListener('mousemove', (e) => {
       const o = e.target.closest('.rch-opt');
-      if (o && +o.dataset.i !== active) setActive(+o.dataset.i);
+      if (o && +o.dataset.i !== active) setActive(+o.dataset.i, false);
     });
     list.addEventListener('click', (e) => {
       const o = e.target.closest('.rch-opt');

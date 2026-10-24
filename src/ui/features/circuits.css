@@ -32,5 +32,5 @@
 .circuits-hl .mono { font-size: 11px; color: var(--muted); font-weight: 400; }
 /* Téléphone : la légende en volet bas, la vue 3D colorée reste visible au-dessus. */
 @media (max-width: 900px) {
-  .sidepanel.circuits-sheet { top: auto; height: 46%; }
+  #stage .sidepanel.circuits-sheet { top: auto; height: 46%; }
 }

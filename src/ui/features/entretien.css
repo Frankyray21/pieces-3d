@@ -1,0 +1,60 @@
+/* Mode « Entretien et graissage » (src/ui/features/entretien.js). Couleurs par type : variables --sys-n
+   (définies pour les modes clair et sombre dans src/ui/atelier.css). */
+.ent-graisseur { --ent: var(--sys-2); }
+.ent-niveau { --ent: var(--sys-1); }
+.ent-filtre { --ent: var(--sys-3); }
+.ent-reniflard { --ent: var(--sys-6); }
+.ent-bouchon, .ent-vidange { --ent: var(--sys-8); }
+.ent-inspection, .ent-plaque { --ent: var(--sys-4); }
+.ent-thermometre { --ent: var(--sys-5); }
+
+/* Repères des pièces masqués : seules les pastilles des points restent. */
+.ent-on .label-layer .balloon { display: none !important; }
+
+/* Pastille numérotée ancrée en 3D. */
+.ent-pin {
+  pointer-events: auto; min-width: 24px; height: 24px; padding: 0 6px; border-radius: 12px;
+  display: grid; place-items: center; font: 700 12px/1 var(--f-mono);
+  background: var(--ent, var(--accent)); color: #fff; border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35); cursor: pointer; transition: transform 0.12s, box-shadow 0.12s;
+}
+.ent-pin.is-approx { border-style: dashed; }
+.ent-pin:hover { transform: scale(1.15); }
+.ent-pin.is-current { transform: scale(1.3); box-shadow: 0 0 0 3px var(--ent, var(--accent)), 0 2px 8px rgba(0, 0, 0, 0.4); z-index: 3; }
+
+/* Panneau latéral. */
+.ent-panel { font-size: 14px; }
+.ent-panel p { margin: 0 0 10px; }
+.ent-intro { line-height: 1.35; }
+.ent-types { display: flex; flex-wrap: wrap; gap: 6px 12px; color: var(--muted); font-size: 12.5px; }
+.ent-type { display: inline-flex; align-items: center; gap: 5px; }
+.ent-type i { width: 10px; height: 10px; border-radius: 50%; background: var(--ent); }
+.ent-list { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 8px; }
+.ent-item { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); overflow: hidden; }
+.ent-item.is-current { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.ent-go {
+  display: flex; gap: 10px; align-items: flex-start; width: 100%; text-align: left; padding: 10px 10px 6px;
+  border: 0; background: none; color: inherit; font: inherit; cursor: pointer;
+}
+.ent-go:hover { background: var(--hover); }
+.ent-num {
+  flex: none; min-width: 26px; height: 26px; padding: 0 6px; border-radius: 13px; display: grid; place-items: center;
+  background: var(--ent, var(--accent)); color: #fff; font: 700 12.5px/1 var(--f-mono);
+}
+.ent-main { display: grid; gap: 2px; min-width: 0; }
+.ent-kind { font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
+.ent-title { font-weight: 650; line-height: 1.25; }
+.ent-where { font-size: 13px; line-height: 1.35; color: var(--ink); overflow-wrap: anywhere; }
+.ent-rule { margin-top: 4px; padding: 5px 8px; border-left: 3px solid var(--accent); background: var(--accent-soft); font-size: 13px; line-height: 1.35; }
+.ent-meta { display: grid; gap: 4px; padding: 0 10px 10px 46px; font-size: 12.5px; color: var(--muted); }
+.ent-asm { display: inline-flex; align-items: center; gap: 4px; }
+.ent-pages { display: flex; flex-wrap: wrap; gap: 4px; }
+.ent-page { font-size: 11.5px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ent-note, .ent-empty { color: var(--muted); font-size: 12.5px; line-height: 1.4; }
+.ent-empty { font-size: 14px; color: var(--ink); }
+
+/* Téléphone : le panneau n'occupe que le bas de la scène, les pastilles restent visibles au-dessus. */
+@media (max-width: 900px) {
+  .sidepanel.ent-side { top: auto; height: 46%; }
+  .ent-meta { padding-left: 10px; }
+}

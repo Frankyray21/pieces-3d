@@ -154,7 +154,7 @@ export default {
           <table class="fiche-dims"><tbody>
             ${m.dims.map((x, i) => `<tr><th>${['Plus grande', 'Moyenne', 'Plus petite'][i]}</th><td class="mono">${fmtMm(x)}</td><td class="mono">${fmtIn(x)}</td></tr>`).join('')}
           </tbody></table>
-          <p class="fiche-sub">${m.mode === 'chacune' ? `Chacune des ${m.n} pièces posées. ` : m.mode === 'ensemble' ? `Encombrement des ${m.n} objets, à l'état affiché. ` : ''}Boîte englobante du modèle 3D, indicative : les cotes qui font foi sont celles du ${e.docWord}.</p>
+          <p class="fiche-sub">${m.mode === 'chacune' ? `Chacune des ${m.n} pièces posées. ` : m.mode === 'ensemble' ? `Encombrement des ${m.n} objets, à l'état affiché. ` : ''}${sub ? 'Sous-ensemble entier, à l\'état affiché (éclaté ou non). ' : ''}Boîte englobante du modèle 3D, indicative : les cotes qui font foi sont celles du ${e.docWord}.</p>
         </section>` : '';
       const sheet = sheetsOf(row)[0];
       const url = sheet ? ctx.pageUrl(sheet) : null;
@@ -222,7 +222,9 @@ export default {
         e.stopImmediatePropagation();
         e.preventDefault();
         drawing.close();
-      } else if (ctx.ui.sidePanel.owner === OWNER && ctx.ui.sidePanel.isOpen && !document.body.classList.contains('page-open')) {
+      } else if (ctx.ui.sidePanel.owner === OWNER && ctx.ui.sidePanel.isOpen
+        && !document.body.classList.contains('page-open') && document.getElementById('modal')?.hidden !== false) {
+        // (Échap ferme d'abord la page plein écran ou la visionneuse des pages.)
         close();
       }
     }, true);
@@ -255,14 +257,17 @@ export default {
       let zoomed = true;
       const layout = () => {
         if (!img.naturalWidth) return;
-        const vw = view.clientWidth, vh = view.clientHeight;
+        // Hauteur de la vue : celle de l'écran (moins l'en-tête), ou la page entière si elle est plus basse.
+        const vw = view.clientWidth, maxH = Math.max(240, window.innerHeight - (ctx.narrow() ? 280 : 220));
         const ratio = img.naturalWidth / img.naturalHeight;
-        const fitW = Math.min(vw, vh * ratio);
-        // Zoom : la zone de la bulle occupe environ un tiers de la largeur de la vue.
-        const width = zoomed ? Math.max(fitW, Math.min(vw * 2.4, img.naturalWidth * 1.2, fitW * 3.5)) : fitW;
-        pageEl.style.width = `${width}px`;
-        const [x, y, w, h] = boxes[idx];
+        const fitW = Math.min(vw, maxH * ratio);
+        // Zoom : le texte de la bulle fait environ 120 px de large (au plus 1,2 × la taille de l'image).
+        const width = zoomed ? Math.max(fitW, Math.min(120 / boxes[idx][2], img.naturalWidth * 1.2)) : fitW;
         const H = width / ratio;
+        const vh = zoomed ? maxH : Math.min(maxH, Math.max(240, H + 2));
+        pageEl.style.width = `${width}px`;
+        view.style.height = `${vh}px`;
+        const [x, y, w, h] = boxes[idx];
         view.scrollTo({ left: (x + w / 2) * width - vw / 2, top: (y + h / 2) * H - vh / 2, behavior: 'instant' });
         el.querySelectorAll('.fiche-ring').forEach((r) => r.classList.toggle('on', Number(r.dataset.i) === idx));
         const zb = el.querySelector('[data-act="zoom"]');
@@ -270,7 +275,8 @@ export default {
       };
       img.addEventListener('load', layout);
       img.addEventListener('error', () => { view.innerHTML = `<p class="fiche-sub" style="padding:16px">Page ${esc(sheet)} non publiée dans cette version.</p>`; });
-      const ro = new ResizeObserver(() => layout());
+      let lastW = 0;
+      const ro = new ResizeObserver(() => { if (view.clientWidth !== lastW) { lastW = view.clientWidth; layout(); } });
       el.querySelector('[data-act="zoom"]').addEventListener('click', () => { zoomed = !zoomed; layout(); });
       el.querySelector('[data-act="next"]')?.addEventListener('click', (ev) => {
         idx = (idx + 1) % boxes.length;

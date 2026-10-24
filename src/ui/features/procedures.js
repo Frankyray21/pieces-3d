@@ -11,6 +11,7 @@
 //
 // Les procédures sont lues au moment de la construction (import.meta.glob) :
 // pas de requête, donc pas d'erreur 404 pour un équipement qui n'en a pas.
+import * as THREE from 'three';
 import './procedures.css';
 
 const FILES = import.meta.glob('../../../public/equipment/*/procedures.json', { eager: true, import: 'default' });
@@ -109,6 +110,46 @@ export default {
       return { steps, stepOf, extras, managed, wasVisible: new Map(managed.map((o) => [o, o.visible])) };
     };
 
+    /**
+     * Marges de cadrage pendant la procédure : la barre en bas, le panneau
+     * latéral à droite (grand écran). Le viewer ne connaît que des marges
+     * symétriques : le cadrage est fait dans la largeur libre, puis décalé
+     * vers la gauche de la moitié du panneau.
+     */
+    const panelW = () => (!ctx.narrow() && ctx.ui.sidePanel.isOpen ? ctx.ui.sidePanel.element.offsetWidth + 12 : 0);
+    const runInsets = (orig) => () => {
+      const b = (typeof orig === 'function' ? orig() : orig) || {};
+      const vp = V()?.container.getBoundingClientRect();
+      const barTop = bar.hidden || !vp ? 0 : vp.bottom - bar.getBoundingClientRect().top + 8;
+      return { ...b, bottom: Math.max(b.bottom || 0, barTop), side: Math.max(b.side || 0, panelW() / 2) };
+    };
+    /** Cadre tout le modèle (paths absent) ou des pièces, dans la partie libre de la scène, avec un mouvement de caméra. */
+    const frameFree = (paths = null) => {
+      const v = V();
+      if (!v?.model) return;
+      const cam = v.camera, ctl = v.controls;
+      const p0 = cam.position.clone(), t0 = ctl.target.clone();
+      if (paths) {
+        const objs = paths.flatMap((p) => v.resolve(ctx.viewer.path3d(p)));
+        if (!objs.length) return;
+        const box = v._atTargets(() => { const b = new THREE.Box3(); objs.forEach((o) => b.expandByObject(o)); return b; });
+        v.frame({ box, instant: true });
+      } else v.frame({ instant: true });
+      const shift = panelW() / 2;
+      if (shift) {
+        const back = cam.position.clone().sub(ctl.target);
+        const upp = (2 * back.length() * Math.tan(THREE.MathUtils.degToRad(cam.fov) / 2)) / (v.container.clientHeight || 1);
+        const right = new THREE.Vector3(0, 1, 0).cross(back.normalize()).normalize().multiplyScalar(shift * upp);
+        cam.position.add(right);
+        ctl.target.add(right);
+      }
+      const p1 = cam.position.clone(), t1 = ctl.target.clone();
+      cam.position.copy(p0);
+      ctl.target.copy(t0);
+      ctl.update();
+      v.lookAt(p1.toArray(), t1.toArray());
+    };
+
     /** Remet chaque pièce à sa place (éclatement du viewer : 0 partout pendant la procédure). */
     const settle = () => {
       if (!run) return;
@@ -171,7 +212,7 @@ export default {
     const mark = () => {
       if (!run) return;
       const st = run.proc.steps[run.n];
-      if (run.focus) ctx.viewer.highlight([run.focus], { frame: true });
+      if (run.focus) { ctx.viewer.highlight([run.focus]); frameFree([run.focus]); }
       else ctx.viewer.highlight(st.parts);
     };
 
@@ -265,7 +306,7 @@ export default {
     });
     const pick = (p) => {
       run.focus = run.focus === p ? null : p;
-      if (!run.focus) ctx.viewer.frame();
+      if (!run.focus) frameFree();
       mark();
       renderPanel();
     };
@@ -323,15 +364,18 @@ export default {
         document.getElementById('btn-assemble')?.click();
       }
       v.explodeAll(0, { animate: false });
-      run = { proc, n: 0, prep: prepare(proc), timer: null, raf: 0, anim: null, focus: null, prevStep: v.step };
+      run = { proc, n: 0, prep: prepare(proc), timer: null, raf: 0, anim: null, focus: null, prevStep: v.step, model: v.model, insets: v.insets };
+      v.insets = runInsets(v.insets);
       v.step = 'procedure'; // bulles des pièces cachées masquées (voir Viewer._refreshLabels)
       stage.classList.add('proc-on');
       bar.hidden = false;
       tool.setAttribute('aria-pressed', 'true');
-      v.frame();
-      show(0);
+      // Sur téléphone, le panneau couvrirait la scène : il s'ouvre par « Détails ».
       if (!ctx.narrow()) openPanel();
-      else ctx.ui.sidePanel.owner === 'procedures' && ctx.ui.sidePanel.close();
+      else if (ctx.ui.sidePanel.owner === 'procedures-list') ctx.ui.sidePanel.close();
+      show(0);
+      frameFree();
+      ctx.emit('procedures:started', { id: proc.id, assembly: proc.assembly });
     };
 
     /** Sortie : modèle rétabli (tout visible, assemblé, rien de mis en évidence). */
@@ -345,6 +389,7 @@ export default {
       if (!gone && v?.model) {
         for (const o of r.prep.managed) o.visible = r.prep.wasVisible.get(o) ?? true;
         v.step = r.prevStep ?? null;
+        v.insets = r.insets;
         v._applyAll();
         ctx.viewer.clear();
         v.labels?.forEach((l) => { l.culled = false; });
@@ -356,6 +401,7 @@ export default {
       bar.hidden = true;
       tool.setAttribute('aria-pressed', 'false');
       if (ctx.ui.sidePanel.owner === 'procedures') ctx.ui.sidePanel.close();
+      ctx.emit('procedures:stopped', { id: r.proc.id });
     };
 
     /** Lance une procédure : ouvre d'abord son assemblage si besoin. */
@@ -441,7 +487,7 @@ export default {
     // ------------------------------------------------------------ changements de vue
     ctx.on('assembly', ({ id, is3d, home }) => {
       // Nouveau modèle (ou dessins du manuel) : la procédure en cours n'a plus d'objet.
-      if (run && (run.proc.assembly !== id || V()?.model !== run.model)) stop({ gone: true });
+      if (run && (run.proc.assembly !== id || V()?.model !== run.model)) stop({ gone: V()?.model !== run.model, quiet: true });
       tool.hidden = !list().length;
       if (pending && pending.assembly === id && is3d && !home) {
         const p = pending;
@@ -452,21 +498,7 @@ export default {
     });
     // La vue affichée change de type (document, contrôle) : on sort.
     ctx.on('view', ({ type, id }) => {
-      if (run && (type !== 'assembly' || id !== run.proc.assembly)) stop({ gone: !ctx.viewer.is3d });
-    });
-    // Mémorise le modèle de la procédure (pour reconnaître un modèle reconstruit).
-    const keepModel = () => { if (run) run.model = V()?.model; };
-    const origStart = start;
-    // eslint-disable-next-line no-func-assign
-    void origStart;
-    ctx.on('procedures:started', keepModel);
-    const _start = start;
-    // start enveloppé : note le modèle et annonce le début aux autres fonctions.
-    // (Les autres fonctions peuvent écouter « procedures:started » / « procedures:stopped ».)
-    Object.assign(api, {
-      start: (p) => { _start(p); if (run) { run.model = V()?.model; ctx.emit('procedures:started', { id: p.id }); } },
+      if (run && (type !== 'assembly' || id !== run.proc.assembly)) stop({ gone: V()?.model !== run.model, quiet: true });
     });
   },
 };
-
-const api = {};

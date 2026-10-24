@@ -38,10 +38,12 @@ function frac(x) {
 /** « 2 3/4 », « 5/8 », « 1.75 », « 0.750 » → décimal. */
 function num(s) {
   s = String(s).trim();
+  // Fractions en pouces : dénominateur 2, 4, 8, 16, 32 ou 64 seulement (« 1 1/12 » est rejeté).
+  const ok = (d) => [2, 4, 8, 16, 32, 64].includes(+d);
   let m = s.match(/^(\d+)\s+(\d+)\/(\d+)$/);
-  if (m) return +m[1] + m[2] / m[3];
+  if (m) return ok(m[3]) ? +m[1] + m[2] / m[3] : NaN;
   m = s.match(/^(\d+)\/(\d+)$/);
-  if (m) return m[1] / m[2];
+  if (m) return ok(m[2]) ? m[1] / m[2] : NaN;
   return parseFloat(s);
 }
 /** Code de taille d'un numéro (« 625 » → 5/8 po, « 75 » → 3/4 po, « 1000 » → 1 po). */
@@ -51,8 +53,9 @@ const EXCLU = /ELBOW|UNION|JIC|FITTING|ADAPT|HOSE|VALVE|SWIVEL|BULKHEAD|CONNECTO
 
 /** Famille de la pièce d'après sa description, sinon d'après son numéro. */
 function famille(desc, pn) {
-  const d = String(desc || '').toUpperCase();
+  const d = String(desc || '').toUpperCase().replace(/VIS-[ÀA]-VIS/g, '');
   if (EXCLU.test(d)) return null;
+  if (/TIRE-FOND|LAG SCREW/.test(d)) return { f: 'vis', t: 'Tire-fond' };
   if (/HAIR ?PIN|COTTER|GOUPILLE/.test(d)) return { f: 'goupille', t: /COTTER/.test(d) ? 'Goupille fendue' : 'Goupille épingle' };
   if (/WASHER|WHASHER|RONDELLE/.test(d)) return { f: 'rondelle', t: /LOCK/.test(d) ? 'Rondelle frein' : /TENSION/.test(d) ? 'Rondelle de tension' : 'Rondelle plate' };
   if (/\bNUTS?\b|[ÉE]CROU/.test(d)) return { f: 'ecrou', t: /JAM/.test(d) ? 'Contre-écrou' : /LOCK|NYL|\bLK\b|STOVER|NYLOC/.test(d) ? 'Écrou de blocage' : /FLANGE/.test(d) ? 'Écrou à embase' : 'Écrou' };
@@ -76,13 +79,13 @@ const FR = String.raw`(\d+\s+\d+\/\d+|\d+\/\d+|\d+(?:\.\d+)?)`;
 function tailleDesc(desc) {
   const s = String(desc || '').replace(/[’′]/g, "'").replace(/''/g, '"');
   let d = null; let filet = ''; let rest = s;
-  let m = s.match(new RegExp(String.raw`(\d+\/\d+|\d+(?:\.\d+)?)\s*"?\s*-?\s*(?:\d{1,2}\s*-?\s*)?(UNC|UNF|NC|NF)\b`, 'i'));
+  let m = s.match(new RegExp(String.raw`${FR}\s*"?\s*-?\s*(?:\d{1,2}\s*-?\s*)?(UNC|UNF|NC|NF)\b`, 'i'));
   if (m) {
     d = num(m[1]); filet = /F$/i.test(m[2]) ? 'UNF' : 'UNC'; rest = s.slice(m.index + m[0].length);
-  } else if ((m = s.match(/(\d+\/\d+|\b1\b)\s*"/)) || (m = s.match(/\b(\d+\/\d+)\b/))) {
+  } else if ((m = s.match(/(\d+\s+\d+\/\d+|\d+\/\d+|\b1\b)\s*"/)) || (m = s.match(/\b(\d+\s+\d+\/\d+|\d+\/\d+)\b/))) {
     d = num(m[1]); rest = s.slice(m.index + m[0].length);
   }
-  if (d == null || !(d > 0) || d > 2) return null;
+  if (d == null || !(d > 0) || d > 2) return null; // NaN (fraction douteuse) compris
   let l = null;
   m = rest.match(new RegExp(String.raw`[xX×]\s*${FR}`)) || rest.match(new RegExp(String.raw`-?\s*${FR}\s*"?\s*LG\b`, 'i'));
   if (m) { const v = num(m[1]); if (v > 0 && v < 40) l = v; }
@@ -119,6 +122,8 @@ function visserie(eq) {
       const ecart = td && tp && (!same(td.d, tp.d) || (td.l != null && tp.l != null && !same(td.l, tp.l)))
         ? `Le numéro ${r.pn} indique ${libTaille(tp)} ; la description, ${libTaille(td)}.` : '';
       if (t && !t.filet && tp?.filet) t = { ...t, filet: tp.filet };
+      // Le filet ne distingue que les vis et les écrous.
+      if (t && (fam.f === 'rondelle' || fam.f === 'goupille')) t = { ...t, filet: '' };
       const q = typeof r.qty === 'number' ? r.qty : /^\d+$/.test(String(r.qty ?? '').trim()) ? +r.qty : null;
       lignes.push({ asm: a, r, fam, t, q, ecart, cle: `${fam.f}|${fam.t}|${t ? `${frac(t.d)}|${t.l ? frac(t.l) : ''}|${t.filet}` : '?'}` });
     }
@@ -269,6 +274,8 @@ export default {
         parAsm.get(l.asm.id).push(l);
       }
       const nb = (n) => n.toLocaleString('fr-CA');
+      // Quantité inscrite ; « ? » quand une liste ne la donne pas.
+      const qte = (g) => (g.inconnu ? (g.qte ? `${nb(g.qte)}<span class="dn-nosrc"> + ?</span>` : '<span class="dn-nosrc" title="Quantité non inscrite à la liste">?</span>') : nb(g.qte));
       const asmBlocks = [...parAsm.entries()].sort((a, b) => a[0].localeCompare(b[0], 'fr', { numeric: true })).map(([id, ls]) => {
         const a = eq.assemblies.get(id);
         const sys = ctx.systemOf(id);
@@ -292,7 +299,7 @@ export default {
                 <th scope="row" class="c-l">${esc(g.fam.t)}</th>
                 <td>${taille(g)}</td>
                 <td>${g.items.map((l) => `<button type="button" class="dn-pn" data-dn-asm="${esc(id)}" data-dn-ref="${esc(l.r.ref)}" title="${esc(`${l.r.desc} — repère ${l.r.label || l.r.ref} : voir dans l’assemblage`)}"><span class="mono">${esc(l.r.pn || '—')}</span><span class="dn-ref">rep. ${esc(l.r.label || l.r.ref)}${l.q != null && g.items.length > 1 ? ` · ${l.q}` : ''}</span></button>${l.ecart ? `<small class="dn-warn">${icon('alerte', { size: 12 })}${esc(l.ecart)}</small>` : ''}`).join('')}</td>
-                <td class="c-q">${nb(g.qte)}${g.inconnu ? '<span class="dn-nosrc"> + ?</span>' : ''}</td>
+                <td class="c-q">${qte(g)}</td>
               </tr>`).join('')}</tbody>
             </table>
             <p class="dn-asmv-foot">${src(a.sheet)} <button type="button" class="btn dn-asm" data-go="${esc(id)}">${icon(ctx.has3d(id) ? 'cube' : 'page', { size: 15 })}<span>Ouvrir l’assemblage</span></button></p>
@@ -315,8 +322,8 @@ export default {
               <th scope="row" class="c-l">${esc(g.fam.t)}</th>
               <td>${taille(g)}</td>
               <td class="mono dn-pns">${esc([...g.pns].join(', ') || '—')}</td>
-              <td class="c-q">${nb(g.qte)}${g.inconnu ? '<span class="dn-nosrc"> + ?</span>' : ''}</td>
-              <td class="dn-asms">${[...g.asms].map((id) => `<button type="button" class="dn-asmchip mono" data-dn-open="${esc(id)}" title="${esc(eq.assemblies.get(id).titleFr || '')}">${esc(id)}</button>`).join('')}</td>
+              <td class="c-q">${qte(g)}</td>
+              <td><div class="dn-asms">${[...g.asms].map((id) => `<button type="button" class="dn-asmchip mono" data-dn-open="${esc(id)}" title="${esc(eq.assemblies.get(id).titleFr || '')}">${esc(id)}</button>`).join('')}</div></td>
             </tr>`).join('')}</tbody>
           </table>
         </div>

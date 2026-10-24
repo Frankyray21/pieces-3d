@@ -167,7 +167,7 @@ export default {
       const c = info(focus);
       const items = list.map((h) => {
         const u = h.userData, own = u.circuit === focus;
-        return `<li class="${h === picked ? 'is-picked' : ''}">${sw(u.circuit)}<div><div class="circuits-hl">${esc(u.circuitLabel || info(u.circuit).name)}${own ? '' : ` <span class="chip">${esc(info(u.circuit).name)}</span>`}${u.partRef ? ` <span class="mono">${esc(u.partRef)}</span>` : ''}</div>
+        return `<li class="${h === picked ? 'is-picked' : ''}">${sw(u.circuit)}<div><div class="circuits-hl">${esc(u.circuitLabel || info(u.circuit).name)}${own ? '' : ` <span class="chip">${esc(info(u.circuit).name)}</span>`}${u.partRef ? ` <span class="mono">rep. ${esc(u.partRef)}</span>` : ''}</div>
           <div class="circuits-ends"><b>De</b> ${esc(u.circuitFrom || '—')}<br><b>À</b> ${esc(u.circuitTo || '—')}</div></div></li>`;
       }).join('');
       return `<section class="circuits-detail card-box" style="--c:${c.color}">
@@ -184,6 +184,8 @@ export default {
     const render = () => {
       panelEl.innerHTML = legend();
       if (ctx.ui.sidePanel.owner === OWNER) ctx.ui.sidePanel.setContent(panelEl);
+      const body = ctx.ui.sidePanel.body;
+      if (body && ctx.ui.sidePanel.owner === OWNER) body.scrollTop = 0; // détail du circuit en tête du panneau
       panelEl.querySelector('.is-picked')?.scrollIntoView?.({ block: 'nearest' });
     };
 

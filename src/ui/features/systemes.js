@@ -53,10 +53,20 @@ export default {
       const n = ctx.viewer.isolate([st.path], { frame: true });
       if (!n) { iso = null; ctx.go(st.target); return; } // pas trouvé en 3D : les dessins de l'assemblage
       iso = st;
-      ctx.viewer.select(st.path);
-      ctx.viewer.isolate([st.path], { frame: true }); // la sélection recadre : l'isolement garde le cadrage du sous-ensemble
       const a = ctx.equipment.assemblies.get(st.target);
       ctx.ui.sidePanel.open({ owner: OWNER, title: a.titleFr, icon: ctx.systemOf(st.target)?.icon || 'cle', content: panelHtml(st) });
+      // Grand écran : le panneau recouvre la droite de la scène ; le cadrage garde
+      // une marge de sa largeur de chaque côté (le sous-ensemble reste visible).
+      const v = ctx.viewer.raw;
+      const orig = v?.insets;
+      const side = ctx.narrow() ? 0 : ctx.ui.sidePanel.element.offsetWidth + 24;
+      if (v && side) v.insets = () => ({ ...((typeof orig === 'function' ? orig() : orig) || {}), side });
+      try {
+        ctx.viewer.select(st.path);
+        ctx.viewer.isolate([st.path], { frame: true }); // la sélection recadre : l'isolement garde le cadrage du sous-ensemble
+      } finally {
+        if (v && side) v.insets = orig;
+      }
     };
 
     document.addEventListener('click', (e) => {
@@ -151,7 +161,7 @@ export default {
             const sub = r.link && eq.assemblies.get(r.link);
             const last = i === sel.path.length - 1;
             out.push({
-              label: sub && !last ? sub.titleFr : `${label(r)} · ${r.desc || r.pn || ''}`,
+              label: sub ? sub.titleFr : `${label(r)} · ${r.desc || r.pn || ''}`,
               title: `Réf. ${label(r)}${r.pn ? ` · ${r.pn}` : ''} · ${r.desc || ''}`,
               act: `sel:${sel.path.slice(0, i + 1).join('>')}`,
               part: true,
@@ -198,18 +208,28 @@ export default {
         nav.innerHTML = parts.join(SEP);
         nav.dataset.hidden = [...hidden].join(',');
       };
+      // Mesure sans rétrécir les maillons : on replie le milieu d'abord, l'ellipse de chaque maillon ensuite.
       const n = current.length;
       const hidden = new Set();
+      nav.classList.add('measure');
       draw(hidden);
       for (let i = 1; nav.scrollWidth > nav.clientWidth + 1 && i < n - 1; i++) {
         hidden.add(i);
         draw(hidden);
       }
+      nav.classList.remove('measure');
     };
 
     const run = (act) => {
-      const [kind, arg] = [act.slice(0, 3), act.slice(4)];
-      if (kind === 'go:') ctx.go(arg);
+      const k = act.indexOf(':');
+      const [kind, arg] = [act.slice(0, k), act.slice(k + 1)];
+      if (kind === 'go' && ctx.view?.type === 'assembly' && ctx.view.id === arg && !document.body.classList.contains('page-open')) {
+        // Niveau de l'assemblage affiché : on remonte à l'ensemble (plus de pièce sélectionnée ni d'isolement).
+        ctx.viewer.select(null);
+        ctx.viewer.clear();
+        ctx.viewer.frame();
+        if (ctx.ui.sidePanel.owner === OWNER) ctx.ui.sidePanel.close();
+      } else if (kind === 'go') ctx.go(arg);
       else if (kind === 'sel') ctx.viewer.select(arg.split('>'));
     };
     nav.addEventListener('click', (e) => {
@@ -227,7 +247,7 @@ export default {
       }
       const l = current[Number(b.dataset.i)];
       if (l && !l.cur) run(l.act);
-      else if (l?.cur && l.act.startsWith('sel')) ctx.viewer.frame(l.act.slice(4).split('>'));
+      else if (l?.cur && l.act.startsWith('sel')) ctx.viewer.frame(l.act.slice(4).split('>')); // « sel:… » : recadrer la pièce
     });
     menu.addEventListener('click', (e) => {
       const b = e.target.closest('button[data-i]');

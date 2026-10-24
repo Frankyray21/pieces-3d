@@ -84,7 +84,7 @@
 /* Le fil remplace celui de l'en-tête (même information, plus la pièce sélectionnée, visible aussi sur téléphone). */
 .shell.sysx-on .topbar .crumbs { visibility: hidden; }
 .sysx-crumbs {
-  position: absolute; left: 12px; right: 12px; top: 10px; z-index: 6; height: 34px; box-sizing: border-box;
+  position: absolute; left: 12px; top: 10px; max-width: calc(100% - 24px); z-index: 6; height: 34px; box-sizing: border-box;
   display: flex; align-items: center; gap: 2px; padding: 0 6px; min-width: 0; overflow: hidden; white-space: nowrap;
   background: color-mix(in srgb, var(--surface) 94%, transparent); border: 1px solid var(--line); border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); font-size: 13px;
@@ -100,6 +100,7 @@
 .sysx-c.eq svg { flex: none; color: var(--accent); }
 .sysx-c.cur { color: var(--ink); font-weight: 600; flex-shrink: 0.4; max-width: 40ch; }
 .sysx-c.part.cur { background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--ink); }
+.sysx-crumbs.measure .sysx-c { flex-shrink: 0; }
 .sysx-c.more { flex: none; min-width: 0; font-weight: 700; color: var(--ink); }
 .sysx-c .dot { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--sys); }
 .sysx-sep { flex: none; color: var(--line-strong, var(--muted)); padding: 0 1px; }
@@ -111,11 +112,10 @@
 .sysx-cmenu .sysx-c { max-width: none; width: 100%; justify-content: flex-start; height: 32px; color: var(--ink); }
 /* Le fil occupe le haut de la scène : outils, dessins et panneau latéral descendent d'autant. */
 .stage.sysx-has-crumbs .tools { top: 52px; }
-.stage.sysx-has-crumbs .docview { padding-top: 104px; }
 .stage.sysx-has-crumbs .sidepanel { top: max(var(--tools-bottom, 12px), 52px); }
 body.stage-full .sysx-crumbs { top: 10px; }
 @media (max-width: 900px) {
-  .sysx-crumbs { left: 8px; right: 8px; top: 8px; font-size: 12.5px; }
+  .sysx-crumbs { left: 8px; top: 8px; max-width: calc(100% - 16px); font-size: 12.5px; }
   .sysx-c { max-width: 18ch; padding: 0 5px; }
   .sysx-c.cur { max-width: 24ch; }
   .sysx-c.eq .t { max-width: 10ch; }
