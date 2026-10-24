@@ -12,12 +12,22 @@
 // Les procédures sont lues au moment de la construction (ctx.equipmentData) :
 // pas de requête, donc pas d'erreur 404 pour un équipement qui n'en a pas.
 // Un clic sur une pièce pendant la procédure la sélectionne : sa fiche se pose
-// par-dessus les détails de l'étape, qui reviennent quand elle se ferme.
+// par-dessus les détails de l'étape, qui reviennent quand elle se ferme. Une
+// pièce d'une étape suivante (sélectionnée par la liste ou la recherche) fait
+// passer à son étape, pour qu'elle soit visible. Échap (après la fiche et la
+// sélection) quitte la procédure.
+//
+// Deux sortes de procédures (champ « kind » de procedures.json) : « montage »,
+// étapes données par le manuel ; « listes », parcours des listes du manuel
+// (pas un ordre de montage).
 import './procedures.css';
 
 const ARRIVE = 900; // durée du mouvement d'une pièce (ms)
 const PAUSE = 2400; // lecture auto : pause après la pose d'une étape (ms)
 const FAR = 1.25; // départ : position éclatée × FAR
+const RM = typeof matchMedia === 'function' ? matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
+/** Libellé de la sorte de procédure. */
+const KIND = { montage: 'Montage d’après le manuel', listes: 'Parcours des listes du manuel (pas un ordre de montage)' };
 
 export default {
   id: 'procedures',
@@ -59,12 +69,12 @@ export default {
       <div class="proc-bar-row">
         <button type="button" class="tbtn proc-prev" title="Étape précédente" aria-label="Étape précédente">${icon('gauche', { size: 16 })}</button>
         <div class="proc-bar-mid">
-          <span class="proc-num"></span>
+          <span class="proc-num" aria-live="polite"></span>
           <span class="proc-bar-title"></span>
         </div>
         <button type="button" class="tbtn proc-next" title="Étape suivante" aria-label="Étape suivante">${icon('droite', { size: 16 })}</button>
       </div>
-      <div class="proc-progress" role="progressbar" aria-label="Progression de la procédure" aria-valuemin="0"><div class="proc-segs"></div></div>
+      <div class="proc-progress"><div class="proc-segs" role="group" aria-label="Étapes de la procédure"></div></div>
       <div class="proc-bar-row proc-bar-actions">
         <button type="button" class="tbtn proc-play" aria-pressed="false" title="Lecture automatique des étapes">Lecture auto</button>
         <button type="button" class="tbtn proc-replay" title="Rejouer la pose de cette étape">Rejouer</button>
@@ -110,7 +120,7 @@ export default {
       ctx.viewer.showParts(shown, true);
       ctx.viewer.showParts(hidden, false);
       const fresh = run.prep.steps[run.n].objs;
-      const total = animate && fresh.length ? ctx.viewer.arriveParts(fresh, { far: FAR, duration: ARRIVE }) : 0;
+      const total = animate && !RM.matches && fresh.length ? ctx.viewer.arriveParts(fresh, { far: FAR, duration: ARRIVE }) : 0;
       mark();
       render();
       if (ctx.ui.sidePanel.owner === 'procedures') ctx.ui.sidePanel.body.scrollTop = 0;
@@ -152,7 +162,20 @@ export default {
         run.timer = setTimeout(playNext, ms + PAUSE);
       } else playNext();
     };
-    const go = (n) => { if (!run) return; stopPlay(); run.focus = null; show(n); };
+    const go = (n, opts) => { if (!run) return; stopPlay(); run.focus = null; show(n, opts); };
+
+    /** Étape où l'objet (ou ses pièces) devient visible : -1 s'il l'est déjà à toutes les étapes. */
+    const stepNeeded = (o) => {
+      const { stepOf, extras } = run.prep;
+      const last = run.proc.steps.length - 1;
+      for (let a = o; a; a = a.parent) {
+        if (stepOf.has(a)) return stepOf.get(a);
+        if (extras.includes(a)) return last;
+      }
+      let need = -1;
+      o.traverse((c) => { if (stepOf.has(c)) need = Math.max(need, stepOf.get(c)); else if (extras.includes(c)) need = last; });
+      return need;
+    };
 
     // ------------------------------------------------------------ panneau latéral
     const panelBody = document.createElement('div');
@@ -177,7 +200,7 @@ export default {
       });
       const thumb = ctx.pageUrl(st.sheet);
       panelBody.innerHTML = `
-        <p class="proc-kicker">${esc(proc.title)}</p>
+        <p class="proc-kicker">${esc(proc.title)}${KIND[proc.kind] ? ` · ${esc(KIND[proc.kind])}` : ''}</p>
         ${n === 0 ? `<p class="proc-intro">${esc(proc.intro || '')}</p>` : ''}
         <h3 class="proc-step-title"><span class="proc-badge">${n + 1}</span>${esc(st.title)}</h3>
         ${st.label ? `<p class="proc-label">${esc(st.label)} · ${esc(pageLabel(st))}</p>` : `<p class="proc-label">${esc(pageLabel(st))}</p>`}
@@ -243,10 +266,7 @@ export default {
       $b('.proc-bar-title').textContent = st.title;
       $b('.proc-prev').disabled = n === 0;
       $b('.proc-next').disabled = n === N - 1;
-      const pr = $b('.proc-progress');
-      pr.setAttribute('aria-valuemax', String(N));
-      pr.setAttribute('aria-valuenow', String(n + 1));
-      $b('.proc-segs').innerHTML = proc.steps.map((s, i) => `<button type="button" class="proc-seg${i < n ? ' done' : ''}${i === n ? ' cur' : ''}" data-i="${i}" title="Étape ${i + 1} : ${esc(s.title)}" aria-label="Étape ${i + 1}"></button>`).join('');
+      $b('.proc-segs').innerHTML = proc.steps.map((s, i) => `<button type="button" class="proc-seg${i < n ? ' done' : ''}${i === n ? ' cur' : ''}" data-i="${i}" title="Étape ${i + 1} : ${esc(s.title)}" aria-label="Étape ${i + 1} : ${esc(s.title)}"${i === n ? ' aria-current="step"' : ''}></button>`).join('');
       if (ctx.ui.sidePanel.has('procedures')) renderPanel(); // aussi sous la fiche d'une pièce
     };
 
@@ -264,18 +284,37 @@ export default {
       if (b) go(Number(b.dataset.i));
     });
     // Flèches du clavier pendant la procédure (hors champs de saisie).
+    // Une couche recouvre la scène (visionneuse, page plein écran, recherche) : les flèches lui reviennent.
+    const covered = () => !document.getElementById('modal')?.hidden || document.body.classList.contains('page-open')
+      || document.body.classList.contains('rch-full') || !!document.querySelector('.rch-pop:not([hidden])');
     document.addEventListener('keydown', (e) => {
-      if (!run || e.altKey || e.ctrlKey || e.metaKey) return;
+      if (!run || e.altKey || e.ctrlKey || e.metaKey || covered()) return;
       const t = e.target;
       if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
       if (e.key === 'ArrowRight' && run.n < run.proc.steps.length - 1) { e.preventDefault(); go(run.n + 1); }
       if (e.key === 'ArrowLeft' && run.n > 0) { e.preventDefault(); go(run.n - 1); }
     });
 
+    // Échap : sous la fiche (60) et la sélection (40), quitte la procédure.
+    ctx.ui.onEscape(() => { if (!run) return false; stop(); return true; }, 30);
+
+    // Pièce sélectionnée (liste, recherche, fiche) qui n'est pas encore posée : on passe à son étape.
+    ctx.on('select', ({ objects }) => {
+      if (!run || !objects?.length || ctx.viewer.model !== run.model) return;
+      let need = -1;
+      for (const o of objects) need = Math.max(need, stepNeeded(o));
+      if (need > run.n) {
+        go(need, { animate: false });
+        ctx.toast(`Pièce posée à l’étape ${need + 1} : la procédure passe à cette étape.`);
+      }
+    });
+
     // ------------------------------------------------------------ début et fin
     const start = (proc) => {
       if (!ctx.viewer.is3d || !ctx.viewer.model) return;
       if (run) stop({ quiet: true });
+      // Pièce sélectionnée avant : désélectionnée (elle pourrait être cachée à l'étape 1).
+      if (ctx.selection) ctx.viewer.select(null);
       // Modèle assemblé tout de suite, sans animation d'éclatement en cours (curseur et liste suivent).
       ctx.viewer.assemble({ animate: false });
       run = { proc, n: 0, prep: prepare(proc), timer: null, focus: null, model: ctx.viewer.model };
@@ -285,8 +324,8 @@ export default {
       ctx.ui.setInsets('procedures', bar);
       tool.setAttribute('aria-pressed', 'true');
       // Le panneau passe à la procédure : les autres modes (circuits, entretien…) s'arrêtent.
-      // Sur téléphone, il couvrirait la scène : il est replié, les détails s'ouvrent par « Détails ».
-      if (!ctx.narrow()) openPanel();
+      // Scène étroite (téléphone, tablette) : il couvrirait la scène ; replié, les détails s'ouvrent par « Détails ».
+      if (!ctx.compact()) openPanel();
       else ctx.ui.sidePanel.closeAll();
       show(0);
       ctx.viewer.frame();
@@ -314,7 +353,10 @@ export default {
 
     /** Lance une procédure : ouvre d'abord son assemblage si besoin. */
     const launch = (proc) => {
-      if (ctx.view?.type === 'assembly' && ctx.view.id === proc.assembly && ctx.viewer.is3d) { start(proc); return; }
+      const here = ctx.view?.type === 'assembly' && ctx.view.id === proc.assembly && ctx.viewer.is3d;
+      // Page plein écran ouverte (page de l'équipement) : on va à l'assemblage, ce qui ferme la page ;
+      // la vue (même déjà affichée dessous) émet « assembly » et la procédure démarre.
+      if (here && !document.body.classList.contains('page-open')) { start(proc); return; }
       pending = proc;
       ctx.go(proc.assembly);
     };
@@ -326,10 +368,11 @@ export default {
       const here = ctx.view?.type === 'assembly' ? ctx.view.id : null;
       const procs = [...list()].sort((a, b) => (b.assembly === here) - (a.assembly === here));
       listBody.innerHTML = procs.length ? `
-        <p class="proc-intro">Montage illustré, étape par étape, d'après les pages du manuel : les pièces posées restent en place, celles de l'étape arrivent depuis la vue éclatée.</p>
+        <p class="proc-intro">Pas à pas en 3D, d'après les pages du manuel : les pièces posées restent en place, celles de l'étape arrivent depuis la vue éclatée. « Montage » : étapes données par le manuel ; « Parcours des listes » : ordre des listes, pas un ordre de montage.</p>
         <ul class="proc-cards">${procs.map((p) => `
           <li><button type="button" class="proc-card" data-id="${esc(p.id)}">
             <span class="proc-card-t">${esc(p.title)}</span>
+            ${KIND[p.kind] ? `<span class="proc-kind proc-kind-${esc(p.kind)}">${esc(KIND[p.kind])}</span>` : ''}
             <span class="proc-card-s">${esc(p.summary || '')}</span>
             <span class="proc-card-m">${p.steps.length} étapes · ${esc(ctx.equipment.assemblies.get(p.assembly)?.titleFr || p.assembly)}${p.assembly === here ? ' · <b>vue affichée</b>' : ''}</span>
           </button></li>`).join('')}
@@ -385,10 +428,11 @@ export default {
       if (!procs.length) { card.replaceChildren(); return; }
       card.innerHTML = `
         <h3 class="proc-home-h">${icon('cle', { size: 18 })} Procédures d'assemblage</h3>
-        <p class="proc-home-p">Montage pas à pas en 3D, d'après les pages du manuel : texte de chaque étape, pièces avec numéros et quantités, vignette de la page.</p>
+        <p class="proc-home-p">Pas à pas en 3D, d'après les pages du manuel : texte de chaque étape, pièces avec numéros et quantités, vignette de la page. « Montage » : étapes données par le manuel ; « Parcours des listes » : ordre des listes du manuel, pas un ordre de montage.</p>
         <ul class="proc-cards">${procs.map((p) => `
           <li><button type="button" class="proc-card" data-proc="${esc(p.id)}">
             <span class="proc-card-t">${esc(p.title)}</span>
+            ${KIND[p.kind] ? `<span class="proc-kind proc-kind-${esc(p.kind)}">${esc(KIND[p.kind])}</span>` : ''}
             <span class="proc-card-s">${esc(p.summary || '')}</span>
             <span class="proc-card-m">${p.steps.length} étapes · ${esc(ctx.equipment.assemblies.get(p.assembly)?.titleFr || p.assembly)}</span>
           </button></li>`).join('')}

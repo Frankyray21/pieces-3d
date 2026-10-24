@@ -46,9 +46,10 @@ const PANE_BACK = { panel: 'Liste des pièces', rail: 'Assemblages' };
 
 /**
  * Crée le contexte des fonctions. app : accès à l'état de main.js
- * ({ state(), viewer(), is3d(), has3d(), go(), follow(), hashFor(), path3d(),
- *   rowAt(), select(), openRow(), assemble(), groups, section, openPage(),
- *   setPane(), pane(), narrow(), toast(), viewToken() }).
+ * ({ state(), viewer(), is3d(), has3d(), go(), navigate(), follow(), hashFor(),
+ *   path3d(), rowAt(), select(), openRow(), assemble(), groups, section,
+ *   openPage(), setPane(), pane(), narrow(), toast(), viewToken(),
+ *   leaveRoute(), exitFullscreen() }).
  */
 export function createHost(app) {
   const bus = createBus();
@@ -74,6 +75,56 @@ export function createHost(app) {
     }
   });
 
+  // ---------------------------------------------------------------- couches et historique
+  // Couches plein écran sans adresse propre (page « Sur le dessin », visionneuse
+  // des pages, recherche plein écran du téléphone) : une entrée d'historique
+  // (même adresse) est ajoutée à l'ouverture, pour que le bouton Retour du
+  // navigateur ferme la couche au lieu de quitter la vue. Fermée par
+  // l'interface (×, ‹, Échap), la couche consomme son entrée (history.back) ;
+  // une navigation lancée juste après attend la fin de ce retour (whenSettled).
+  const layers = []; // { id, onBack }
+  let layerSeq = 0;
+  let backPending = 0;
+  let afterBack = [];
+  const flushBack = () => {
+    backPending = 0;
+    const fns = afterBack;
+    afterBack = [];
+    for (const fn of fns) { try { fn(); } catch (err) { console.error('[fonction] historique', err); } }
+  };
+  /** Ajoute une couche ; onBack : fermeture demandée par le bouton Retour. Retourne release() (fermeture par l'interface). */
+  const historyLayer = (onBack) => {
+    const id = ++layerSeq;
+    history.pushState({ ...(history.state || {}), layer: id }, '');
+    layers.push({ id, onBack });
+    const release = () => {
+      const i = layers.findIndex((l) => l.id === id);
+      if (i < 0) return;
+      layers.splice(i, 1);
+      // Entrée de la couche toujours affichée (pas de navigation entre-temps) : on la consomme
+      // (après un autre retour en cours, s'il y en a un).
+      whenSettled(() => {
+        if (history.state?.layer !== id) return;
+        backPending++;
+        history.back();
+        setTimeout(() => { if (backPending) flushBack(); }, 1000); // filet : retour sans « popstate »
+      });
+    };
+    release.id = id;
+    return release;
+  };
+  window.addEventListener('popstate', (e) => {
+    if (backPending) { flushBack(); return; } // retour demandé par release()
+    const cur = e.state?.layer ?? 0;
+    for (let i = layers.length - 1; i >= 0; i--) {
+      if (layers[i].id <= cur) continue;
+      const [l] = layers.splice(i, 1);
+      try { l.onBack(); } catch (err) { console.error('[fonction] couche', err); }
+    }
+  });
+  /** fn après la fin d'un retour d'historique en cours (couche fermée), sinon tout de suite. */
+  const whenSettled = (fn) => { if (backPending) afterBack.push(fn); else fn(); };
+
   // ---------------------------------------------------------------- panneau latéral droit (dans la scène)
   // Un propriétaire à la fois (owner) : c'est aussi l'arbitrage des modes
   // (circuits, entretien, procédure, sous-ensemble isolé), exclusifs. Une
@@ -89,6 +140,9 @@ export function createHost(app) {
   let top = null; // couche affichée : { owner, title, icon, className, over, from }
   let base = null; // couche recouverte : idem + nodes (son contenu, mis de côté)
   // from : sur téléphone, onglet quitté à l'ouverture de la couche (bouton de retour).
+  // Scène étroite : le panneau devient un volet bas (atelier.css, requête de conteneur sur #stage).
+  const COMPACT_W = 720;
+  const isCompact = () => { const w = $('#stage').clientWidth; return w > 0 && w < COMPACT_W; };
   const setOpen = (on) => {
     sp.hidden = !on;
     $('#stage').classList.toggle('side-open', on);
@@ -300,12 +354,25 @@ export function createHost(app) {
   const wpTitle = wp.querySelector('.wp-title');
   const wpIcon = wp.querySelector('.wp-icon');
   const wpBody = wp.querySelector('.wp-body');
+  wpTitle.tabIndex = -1;
+  // Contenu recouvert par la page : hors de l'ordre de tabulation et des lecteurs d'écran.
+  const COVERED = ['#rail', '#stage', '#panel'];
+  const setCovered = (on) => COVERED.forEach((sel) => { const el = $(sel); if (el) el.inert = on; });
   let routing = null; // jeton d'adresse en cours de traitement (page liée à l'adresse)
-  let page = null; // { routed, onClose }
+  let page = null; // { routed, token, onClose, layer, opener }
   const showPage = (title, content, { icon: ic, onClose } = {}) => {
     const prev = page;
-    page = { routed: routing != null, token: routing, onClose };
+    const routed = routing != null;
+    // La page s'ouvre hors de la scène : la scène quitte le plein écran.
+    app.exitFullscreen?.();
+    page = { routed, token: routing, onClose, opener: prev ? prev.opener : document.activeElement };
     if (prev?.onClose && prev.onClose !== onClose) try { prev.onClose(); } catch (err) { console.error(err); }
+    // Page sans adresse : une entrée d'historique (Retour du navigateur la ferme) ; reprise d'une page à l'autre.
+    if (!routed) {
+      const keep = prev && !prev.routed ? prev.layer : null;
+      const mine = page;
+      page.layer = keep || historyLayer(() => { if (page === mine || page?.layer === mine.layer) hidePage({ fromHistory: true }); });
+    } else prev?.layer?.();
     wpTitle.textContent = title ?? '';
     wpIcon.innerHTML = ic ? icon(ic, { size: 20 }) : '';
     fill(wpBody, content);
@@ -313,24 +380,31 @@ export function createHost(app) {
     wp.scrollTop = 0;
     wpBody.scrollTop = 0;
     document.body.classList.add('page-open');
+    setCovered(true);
+    if (!prev) wpTitle.focus({ preventScroll: true });
     bus.emit('page', { open: true, title, token: page.token });
     return { element: wpBody, close: closePage };
   };
-  /** Ferme la page ; une page liée à l'adresse revient à la vue d'en dessous. */
+  /** Ferme la page ; une page liée à l'adresse revient à la vue d'en dessous (sans ajouter d'entrée d'historique). */
   const closePage = () => {
     if (!page) return;
     const p = page;
     hidePage();
-    if (p.routed) app.go(app.viewToken());
+    if (p.routed) app.leaveRoute();
   };
-  const hidePage = () => {
+  const hidePage = ({ fromHistory = false } = {}) => {
     if (!page) return;
     const p = page;
     page = null;
     wp.hidden = true;
     wpBody.replaceChildren();
     document.body.classList.remove('page-open');
+    setCovered(false);
+    if (!fromHistory) p.layer?.();
     if (p.onClose) try { p.onClose(); } catch (err) { console.error(err); }
+    // Focus rendu à l'élément qui a ouvert la page, s'il est encore là.
+    const o = p.opener;
+    if (o?.isConnected && o !== document.body && !o.closest('[inert]')) o.focus?.({ preventScroll: true });
     bus.emit('page', { open: false, token: p.token });
   };
   wp.querySelector('.wp-close').addEventListener('click', closePage);
@@ -345,9 +419,30 @@ export function createHost(app) {
   // ---------------------------------------------------------------- 3D
   /** Un repère « 3 », un chemin « 1>4 » ou ['1', '4'] → chemin de la liste ['1', '4']. */
   const toPath = (ref) => (ref == null ? [] : Array.isArray(ref) ? ref.map(String) : String(ref).split('>').filter(Boolean));
-  /** Plusieurs pièces : un repère seul, ou une liste de repères / chemins (['1', '2', '3>4', ['5', '2']]). */
+  /**
+   * Plusieurs pièces : un repère seul, ou une liste de repères / chemins (['1', '2', '3>4', ['5', '2']]).
+   * Attention : un tableau seul est une LISTE de repères ; un chemin seul s'écrit « 5>2 » ou [['5', '2']].
+   */
   const toPathList = (refs) => (refs == null ? [] : (Array.isArray(refs) ? refs : [refs]).map(toPath).filter((p) => p.length));
   const live = () => (app.is3d() ? app.viewer() : null);
+  // Variantes estompées des matériaux (setBaseMaterials) : les pièces restent cliquables, contrairement au fantôme.
+  const dimMats = new Map();
+  const dimMaterial = (base, opacity = 0.13) => {
+    if (!base) return base;
+    const key = `${base.uuid}:${opacity}`;
+    let m = dimMats.get(key);
+    if (!m) {
+      m = base.clone();
+      m.transparent = true;
+      m.opacity = opacity;
+      m.depthWrite = false;
+      m.userData = { ...m.userData, fin: null };
+      m.onBeforeCompile = () => {};
+      m.customProgramCacheKey = () => '';
+      dimMats.set(key, m);
+    }
+    return m;
+  };
   const isObjList = (x) => (Array.isArray(x) ? x.length > 0 && x.every((o) => o?.isObject3D) : !!x?.isObject3D);
   /** Objets 3D d'une cible : objet(s) Three.js, ou repère(s) de la liste de l'assemblage affiché. */
   const objectsOf = (target) => {
@@ -404,6 +499,8 @@ export function createHost(app) {
     /** Matériau d'origine d'un maillage (avant setBaseMaterials). */
     originalMaterial(mesh) { return app.viewer()?.originalMaterial(mesh) ?? mesh?.material ?? null; },
     restoreBaseMaterials() { app.viewer()?.restoreBaseMaterials(); },
+    /** Variante estompée (transparente) d'un matériau, pour setBaseMaterials : la pièce reste cliquable. */
+    dimMaterial,
     /** Montre ou masque des pièces (repères ou objets) et leurs bulles ; retourne les objets. */
     showParts(target, visible = true) {
       const v = live();
@@ -453,7 +550,7 @@ export function createHost(app) {
       return { ref: s.selected[s.selected.length - 1], path: [...s.selected], row: app.rowAt(s.selected) };
     },
     viewer,
-    go: (target) => (String(target).startsWith('#') ? (location.hash = target) : app.follow(String(target))),
+    go: (target) => (String(target).startsWith('#') ? app.navigate(String(target)) : app.follow(String(target))),
     hashFor: (token, eqId) => `#${app.hashFor(token, eqId)}`,
     registerRoute(token, handler) {
       if (!/^[a-z][a-z0-9_-]*$/.test(token)) throw new Error(`Jeton d'adresse invalide : « ${token} »`);
@@ -475,6 +572,8 @@ export function createHost(app) {
     esc,
     toast: (msg, ms) => app.toast(msg, ms),
     narrow: () => app.narrow(),
+    /** Scène étroite (téléphone, ou moins de 720 px de scène entre le rail et la liste) : volet bas plutôt que panneau latéral. */
+    compact: () => app.narrow() || isCompact(),
     ui: {
       sidePanel,
       addTool,
@@ -487,6 +586,9 @@ export function createHost(app) {
       stage: $('#stage'),
       setInsets,
       onEscape,
+      historyLayer,
+      /** Quitte le plein écran de la scène (avant d'afficher une couche hors de la scène). */
+      exitFullscreen: () => app.exitFullscreen?.(),
     },
   };
 
@@ -518,6 +620,8 @@ export function createHost(app) {
     loadFeatures,
     hidePage,
     closePage,
+    historyLayer,
+    whenSettled,
     /** Marges de cadrage dues aux fonctions et au panneau latéral (px depuis les bords de la vue). */
     insets,
     get pageOpen() { return !!page; },

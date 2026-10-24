@@ -2,11 +2,11 @@
   "equipement": "stm-1500",
   "note": "Valeurs relevées dans le livre de pièces STM-1500 (Usinage Marcotte, FBRA-002). Chaque ligne cite sa page. Quand le manuel ne donne qu'une unité, l'autre est convertie (marquée « conv. »). Les données absentes du manuel (couples, débits, pressions de service…) ne figurent pas ici.",
   "cles": [
-    { "l": "Poids de la foreuse (sans câble)", "v": "6 000 lb", "s": "2 722 kg", "p": "P005" },
+    { "l": "Poids de la foreuse (sans câble)", "v": "6 000 lb", "s": "2 722 kg", "p": "P005", "conv": "s" },
     { "l": "Course d'avance", "v": "1 808 mm", "s": "71 3/16 po", "p": "P005" },
     { "l": "Vitesse max. à la broche", "v": "1 200 tr/min", "p": "P050" },
     { "l": "Moteur électrique", "v": "125 HP", "s": "575 V · 1 780 tr/min", "p": "P070" },
-    { "l": "Réservoir hydraulique", "v": "110 gal US", "s": "416 L", "p": "P072" },
+    { "l": "Réservoir hydraulique", "v": "110 gal US", "s": "416 L", "p": "P072", "conv": "s" },
     { "l": "Câble du treuil", "v": "10 000 pi", "s": "3 048 m", "p": "P038" }
   ],
   "groupes": [
@@ -25,7 +25,7 @@
             { "l": "Moteur (fiche)", "v": "125 HP, 575 V, 60 Hz", "p": "P002" },
             { "l": "Emplacement des numéros de série", "v": "Voir dessin 1.05", "p": "P009" },
             { "l": "Plaque de n° de série de la tête", "v": "Repérée sur le dessin 2.4", "p": "P050" },
-            { "l": "Plaques rivetées de la console", "v": "12 plaques (UM-064-CA1 à CA14)", "p": "P082" }
+            { "l": "Plaques rivetées de la console", "v": "12 plaques : UM-064-CA1 à CA5, CA7, CA9 à CA14", "p": "P082" }
           ]
         }
       ]
@@ -77,9 +77,7 @@
         },
         {
           "titre": "Masse",
-          "lignes": [
-            { "l": "Poids de la foreuse, sans câble du treuil", "m": "2 722 kg", "i": "6 000 lb", "conv": "m", "p": "P005" }
-          ]
+          "lignes": [{ "l": "Poids de la foreuse, sans câble du treuil", "m": "2 722 kg", "i": "6 000 lb", "conv": "m", "p": "P005" }]
         },
         {
           "titre": "Vérin d'avance supérieur « bazooka » FTD-030-100ZZ (1.12)",
@@ -110,7 +108,7 @@
           "titre": "Tête souterraine Boyles UM-012-100UG",
           "lignes": [
             { "l": "Vitesse max. à la sortie de la broche", "v": "1 200 tr/min", "p": "P050" },
-            { "l": "Transmission", "v": "Funk HMD-2355, 4 vitesses (UM-012-143)", "p": "P048" },
+            { "l": "Transmission", "v": "Funk HMD-2355, 4 vitesses (UM-012-143)", "p": ["P048", "P053"], "n": "« 4 SPEED TRANSMISSION FUNK » (P048) ; type HMD-2355 (P053)." },
             { "l": "Moteur hydraulique", "v": "AA6VM160HD2-63W-VSD520B", "p": "P048" },
             { "l": "Entraînement de la broche", "v": "Chaîne triple UM-012-130", "p": "P048" },
             { "l": "Huile de la boîte", "v": "Huile à engrenages 80W90", "p": "P050" },
@@ -123,7 +121,7 @@
           "lignes": [
             { "l": "Largeur (vue de face)", "m": "770,63 mm", "i": "30 11/32 po", "p": "P047" },
             { "l": "Hauteur (vue de face)", "m": "724,60 mm", "i": "28 17/32 po", "p": "P047" },
-            { "l": "Boîtier et transmission (vue de dessus)", "m": "742,33 mm", "i": "29 7/32 po", "p": "P047" },
+            { "l": "Longueur dans l'axe de la broche, mandrin compris (vue de dessus)", "m": "742,33 mm", "i": "29 7/32 po", "p": "P047" },
             { "l": "Hors tout avec moteur (vue de dessus)", "m": "1 181,76 mm", "i": "46 17/32 po", "p": "P047" },
             { "l": "Cote d'appui (vue de côté)", "m": "209,55 mm", "i": "8 1/4 po", "p": "P047" }
           ]
@@ -131,7 +129,7 @@
         {
           "titre": "Mandrin Boyles H UM-070-142AA",
           "lignes": [
-            { "l": "Hauteur hors tout", "m": "308 mm", "i": "12 1/8 po", "p": "P052" },
+            { "l": "Diamètre hors tout", "m": "308 mm", "i": "12 1/8 po", "p": "P052" },
             { "l": "Longueur", "m": "338 mm", "i": "13 5/16 po", "p": "P052" },
             { "l": "Passage", "m": "Ø 98 mm", "i": "Ø 3 7/8 po", "p": "P052" },
             { "l": "Trousse de joints", "v": "3506577", "p": "P052" }
@@ -156,8 +154,9 @@
             { "l": "Axe → côté gauche / côté droit (volant compris)", "m": "427 mm / 530 mm", "i": "16 3/4 po / 20 7/8 po", "p": "P038" },
             { "l": "Hauteur (vue de face)", "m": "631 mm", "i": "24 7/8 po", "p": "P038" },
             { "l": "Longueur de la base (vue de côté)", "m": "813 mm", "i": "32 po", "p": "P038" },
-            { "l": "Longueur hors tout (vue de côté)", "m": "1 057 mm", "i": "41 5/8 po", "p": "P038" },
-            { "l": "Hauteurs (vue de côté, écran supérieur abaissé)", "m": "533 mm / 642 mm", "i": "21 po / 25 1/4 po", "p": "P038" },
+            { "l": "Longueur hors tout, écran supérieur abaissé (vue de côté)", "m": "1 057 mm", "i": "41 5/8 po", "p": "P038" },
+            { "l": "Hauteur, écran supérieur levé (vue de côté)", "m": "642 mm", "i": "25 1/4 po", "p": "P038" },
+            { "l": "Hauteur, écran supérieur abaissé (vue de côté)", "m": "533 mm", "i": "21 po", "p": "P038" },
             { "l": "Hauteur des tubes du cadre optionnel", "m": "102 mm", "i": "4 po", "p": "P038" }
           ]
         },
@@ -168,7 +167,7 @@
             { "l": "Chaîne du tambour", "v": "Chaîne 80 (« 50 Lg »), pignons 80B14 / 80B28", "p": "P042" },
             { "l": "Chaîne du guide-câble", "v": "Chaîne 35 (46 1/2 po), pignons 35B11 / 35B70", "p": "P040" },
             { "l": "Paliers du tambour", "v": "HCPE211-32", "p": "P042" },
-            { "l": "Réglage des bras", "v": "Positions de 10° à 70°", "p": "P043" }
+            { "l": "Réglage des bras", "v": "Positions de 10° à 40° et de 50° à 70°", "p": ["P043", "P044"] }
           ]
         }
       ]
@@ -204,9 +203,7 @@
         },
         {
           "titre": "Masse",
-          "lignes": [
-            { "l": "Poids du groupe", "m": "2 631 kg", "i": "5 800 lb", "conv": "m", "p": "P067" }
-          ]
+          "lignes": [{ "l": "Poids du groupe", "m": "2 631 kg", "i": "5 800 lb", "conv": "m", "p": "P067" }]
         },
         {
           "titre": "Moteur électrique WEG CT125504NPBBW22 (3.4)",
@@ -270,9 +267,7 @@
         },
         {
           "titre": "Masse",
-          "lignes": [
-            { "l": "Poids de la console", "m": "363 kg", "i": "800 lb", "conv": "m", "p": "P077" }
-          ]
+          "lignes": [{ "l": "Poids de la console", "m": "363 kg", "i": "800 lb", "conv": "m", "p": "P077" }]
         },
         {
           "titre": "Instruments et composants (4.3, 4.4)",
@@ -280,7 +275,8 @@
             { "l": "Manomètres hydrauliques", "v": "4 × Stauff SPG-063-5000S", "p": "P079" },
             { "l": "Manomètre", "m": "103 bar", "i": "1 500 psi", "conv": "m", "p": "P079", "n": "Pitanco 250LFSS22W." },
             { "l": "Accumulateur AM3051003", "m": "3,79 L", "i": "1 gal", "conv": "m", "p": "P079" },
-            { "l": "Accumulateur AM-45-250", "m": "1,89 L", "i": "1/2 gal", "conv": "m", "p": "P079" },
+            { "l": "Accumulateur AM-45-250", "m": "1,89 L", "i": "1/2 gal", "conv": "m", "p": ["P079", "P083"], "n": "La page 4.4.2 (P083) le décrit comme un AccuMight 45 po³ (0,74 L), 3 000 psi." },
+            { "l": "Pression nominale de l'accumulateur AM-45-250", "m": "207 bar", "i": "3 000 psi", "conv": "m", "p": "P083" },
             { "l": "Robinets à bille BKH-1-NPT-1125 (×2)", "m": "345 bar", "i": "5 000 psi", "conv": "m", "p": "P079" },
             { "l": "Réducteurs / limiteurs PRDB-LAN (×2)", "m": "207 bar", "i": "3 000 psi", "conv": "m", "p": "P080" },
             { "l": "Distributeurs", "v": "SD25 (rotation, vissage, avance rapide) · SDS150 (mandrin, serre-tiges, avance lente, treuil)", "p": "P079" },

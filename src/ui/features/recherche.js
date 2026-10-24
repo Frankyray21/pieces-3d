@@ -6,7 +6,10 @@
 //
 // Seule recherche du site : elle prend le champ #q de l'en-tête (index.html).
 // Raccourcis : « / » ou Ctrl+K pour ouvrir, flèches, Entrée, Échap.
-// Sur téléphone, la recherche s'ouvre en plein écran.
+// Sur téléphone, la recherche s'ouvre en plein écran (au toucher du champ, à
+// la frappe ou par Entrée, pas à la simple prise du focus par Tab) ; le reste
+// du site sort alors de la tabulation, et Retour du navigateur la ferme.
+// L'index du catalogue n'est chargé qu'à la première ouverture.
 
 import './recherche.css';
 import { systemOf } from '../systems.js';
@@ -19,7 +22,7 @@ for (const [file, m] of Object.entries(MODS)) MODELS[file.split('/')[3]] = m.def
 // ------------------------------------------------------------------ texte
 
 /** Minuscules sans accents. */
-const fold = (s) => String(s ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+const fold = (s) => String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 /** Numéro de pièce comparable : lettres et chiffres seulement (« hcpe-211 » = « HCPE 211 »). */
 const normPn = (s) => fold(s).replace(/^\*/, '').replace(/[^a-z0-9]/g, '');
 /** Suite de mots repliés, encadrée d'espaces (recherche de préfixes par « includes(' mot') »). */
@@ -33,7 +36,7 @@ const LEX = {
   flexible: ['hose'], boyau: ['hose'], tuyau: ['hose', 'pipe', 'tube'], conduite: ['line', 'pipe', 'tube'],
   filtre: ['filter', 'strainer', 'element'], valve: ['valve'], soupape: ['valve', 'relief'], clapet: ['check', 'valve'],
   distributeur: ['valve', 'directional', 'manifold'], electrovanne: ['solenoid', 'valve'], bobine: ['coil', 'solenoid'],
-  joint: ['seal', 'gasket', 'o-ring', 'oring', 'packing'], garniture: ['packing', 'seal'], roulement: ['bearing'], palier: ['bearing', 'bushing'],
+  joint: ['seal', 'gasket', 'o-ring', 'oring', 'packing'], torique: ['o-ring', 'oring', 'ring'], garniture: ['packing', 'seal'], roulement: ['bearing'], palier: ['bearing', 'bushing'],
   ecrou: ['nut', 'locknut'], boulon: ['bolt', 'hhcs', 'capscrew', 'screw'], vis: ['screw', 'bolt', 'capscrew', 'shcs', 'hhcs'],
   rondelle: ['washer'], raccord: ['fitting', 'adapter', 'adaptor', 'connector', 'union', 'elbow', 'tee', 'nipple', 'coupling'],
   coude: ['elbow'], bouchon: ['plug', 'cap'], couvercle: ['cover', 'cap', 'lid'], reservoir: ['tank', 'reservoir'],
@@ -66,7 +69,9 @@ const LEX = {
   silencieux: ['muffler', 'silencer'], vitesse: ['speed'], debit: ['flow'],
   lubrificateur: ['lubricator'], graisse: ['grease'], air: ['air'], tube: ['tube'], piston: ['piston'], console: ['console'],
 };
-const STOP = new Set(['de', 'du', 'des', 'la', 'le', 'les', 'l', 'd', 'a', 'au', 'aux', 'et', 'en', 'pour', 'sur', 'un', 'une', 'avec']);
+const STOP = new Set(['de', 'du', 'des', 'la', 'le', 'les', 'l', 'd', 'a', 'au', 'aux', 'et', 'en', 'pour', 'sur', 'un', 'une', 'avec', 'page', 'pages', 'p']);
+/** Numéro de page du manuel tel qu'il est imprimé (« 2.4 », « 1.04 », « 4.4.2 »). */
+const PAGE_NUM = /^\d{1,2}(?:\.\d{1,2}){1,2}$/;
 
 const LEX_KEYS = Object.keys(LEX);
 /** Variantes d'un mot de la requête (pluriel, traduction) ; typing : mot en cours de frappe (« filt » → filtre). */
@@ -88,12 +93,16 @@ function parse(q) {
   // « réf 12 », « repère 12 », « #12 » : repère d'un schéma ou d'une liste.
   const m = /^(?:#\s*|(?:ref(?:erence)?|rep(?:ere)?)\.?\s+#?)([a-z0-9]+(?:[-.][a-z0-9]+)?)\b\s*(.*)$/.exec(raw);
   if (m) { ref = m[1].toUpperCase(); words = m[2].split(/[^a-z0-9]+/).filter(Boolean); }
+  // « 2.4 », « page 8.3 » : numéro de page imprimé, comparé au numéro entre parenthèses des titres de page.
+  const pageTok = raw.split(/\s+/).filter((w) => !STOP.has(w));
+  const pageNum = pageTok.length === 1 && PAGE_NUM.test(pageTok[0]) ? pageTok[0] : null;
   const meaningful = words.filter((w) => !STOP.has(w));
   if (meaningful.length) words = meaningful;
   const last = words.length - 1;
   return {
     raw,
     qn: normPn(q),
+    pageNum,
     ref,
     // Les mots courts (≤ 2) doivent être complets, sauf le dernier (en cours de frappe).
     words: words.map((w, i) => ({ alts: variants(w, i === last).map((a) => ` ${a}${w.length <= 2 && i !== last ? ' ' : ''}`) })),
@@ -311,6 +320,13 @@ export default {
           }
           continue;
         }
+        if (P.pageNum) {
+          // Numéro de page imprimé : la page dont le titre le porte (« … (2.4) ») ; trouvée, rien d'autre n'est cherché.
+          const re = new RegExp(`\\(${P.pageNum.replace(/\./g, '\\.')}(?:\\)|\\s|[,;])`);
+          const hits = ix.pages.filter((p) => re.test(p.title));
+          for (const p of hits) out.page.push({ e: p, s: 1000 + here });
+          if (hits.length) continue;
+        }
         for (const e of ix.parts) {
           let s = 0;
           if (n >= 2) {
@@ -477,28 +493,42 @@ export default {
       pop.style.top = `${Math.round(r.bottom + 6)}px`;
       pop.style.width = `${w}px`;
     }
+    let layer = null; // entrée d'historique du plein écran (Retour du navigateur le ferme)
+    const shell = document.getElementById('shell');
     function open({ focus = true } = {}) {
+      const was = !pop.hidden && full;
       full = ctx.narrow();
       pop.classList.toggle('full', full);
       document.body.classList.toggle('rch-full', full);
-      if (full) inner.value = input.value;
+      if (full) {
+        inner.value = input.value;
+        // Plein écran : la scène quitte son propre plein écran, le reste du site sort de la tabulation.
+        ctx.ui.exitFullscreen();
+        if (shell) shell.inert = true;
+        if (!was) layer = ctx.ui.historyLayer(() => close({ fromHistory: true }));
+      } else ctx.ui.exitFullscreen();
       pop.hidden = false;
       place();
       loadAll();
-      if (focus) {
-        if (full) inner.focus();
-        else if (document.activeElement !== input) input.focus();
-      }
+      // Plein écran : le champ de l'en-tête est recouvert (inert), la saisie passe au champ de la couche.
+      if (full) inner.focus();
+      else if (focus && document.activeElement !== input) input.focus();
       if (field().value !== lastQ || !list.childElementCount) render();
       else updateStatus(0);
     }
-    function close({ blur = true } = {}) {
+    function close({ blur = true, fromHistory = false, refocus = false } = {}) {
       if (pop.hidden) return;
       if (full) input.value = inner.value;
       pop.hidden = true;
       document.body.classList.remove('rch-full');
+      if (shell) shell.inert = false;
+      const rel = layer;
+      layer = null;
+      if (!fromHistory) rel?.();
       setExpanded(false);
       if (blur) { input.blur(); inner.blur(); }
+      // Clavier (Échap en plein écran) : le focus revient au champ de l'en-tête, qui ne rouvre plus la couche.
+      if (refocus && full) input.focus({ preventScroll: true });
       full = false;
     }
     window.addEventListener('resize', () => {
@@ -514,7 +544,9 @@ export default {
     };
     input.addEventListener('input', onInput);
     inner.addEventListener('input', onInput);
-    input.addEventListener('focus', () => open({ focus: ctx.narrow() }));
+    // Ordinateur : la liste s'ouvre à la prise du focus. Téléphone : au toucher (ou à la frappe, Entrée) ;
+    // un Tab qui passe par le champ ne doit pas ouvrir le plein écran (il retiendrait le focus).
+    input.addEventListener('focus', () => { if (!ctx.narrow()) open({ focus: false }); });
     input.addEventListener('click', () => { if (pop.hidden) open(); });
     const onKey = (e) => {
       const n = flat.length;
@@ -525,13 +557,21 @@ export default {
       else if (e.key === 'Escape') {
         e.preventDefault();
         e.stopPropagation(); // ne pas désélectionner la pièce ni fermer la page en même temps
-        if (!pop.hidden) close();
+        if (!pop.hidden) close({ refocus: true });
         else { input.value = ''; input.blur(); }
       } else if (e.key === 'Tab' && !full) close({ blur: false });
+      else if (e.key === 'Tab' && full) {
+        // Plein écran : le focus reste dans la couche (retour ‹ ↔ champ).
+        if (e.target === inner) { e.preventDefault(); pop.querySelector('.rch-back').focus(); }
+      }
     };
     input.addEventListener('keydown', onKey);
     inner.addEventListener('keydown', onKey);
     pop.querySelector('.rch-back').addEventListener('click', () => close());
+    pop.querySelector('.rch-back').addEventListener('keydown', (e) => {
+      if (e.key === 'Tab') { e.preventDefault(); inner.focus(); }
+      else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); close({ refocus: true }); }
+    });
     // Échap hors du champ (fenêtre ouverte, focus ailleurs) : la fenêtre d'abord.
     ctx.ui.onEscape(() => { if (pop.hidden) return false; close(); return true; }, 120);
 
@@ -583,7 +623,9 @@ export default {
       pending = null;
       const hash = ctx.hashFor(viewId, eqId);
       const pageOpen = document.body.classList.contains('page-open');
-      if (!pageOpen && ctx.equipment?.id === eqId && ctx.view?.id === viewId && decodeURIComponent(location.hash) === hash) {
+      if (ctx.equipment?.id === eqId && ctx.view?.id === viewId && decodeURIComponent(location.hash) === hash) {
+        // Vue déjà affichée (sous une page sans adresse propre, comme « Sur le dessin ») : la page se ferme.
+        if (pageOpen) ctx.ui.closePage();
         then?.();
         return;
       }
@@ -624,11 +666,6 @@ export default {
       }
     }
 
-    // Prépare l'index en arrière-plan, une fois la page affichée.
-    ctx.once('route', () => {
-      ensureCurrent();
-      const idle = window.requestIdleCallback || ((fn) => setTimeout(fn, 1500));
-      idle(() => loadAll(), { timeout: 4000 });
-    });
+    // Index du catalogue : chargé à la première ouverture de la recherche (open → loadAll), pas avant.
   },
 };

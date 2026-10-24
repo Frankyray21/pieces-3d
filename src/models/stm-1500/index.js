@@ -119,15 +119,15 @@ function P002(api) {
   // Étiquette de circuit hydraulique d'un boyau (outil « Circuits » de l'interface ; sans effet sur la géométrie).
   const circ = (t, circuit, circuitLabel, circuitFrom, circuitTo) => Object.assign(t.userData, { circuit, circuitLabel, circuitFrom, circuitTo }) && t;
   const PACK_CIRC = [
-    ['pression', 'Pression : groupe → console', 'Groupe : bride de refoulement de la pompe A11VO130', 'Console : traversée arrière de la pression (plaque CA12 « PRESSION #1 »)'],
-    ['retour', 'Retour : console → groupe', 'Console : traversée arrière du retour (bloc de retour HA250, repère 43 du schéma)', 'Groupe : entrée n° 2 du filtre de retour RTF-47'],
+    ['pression', 'Pression : groupe → console', 'Groupe : refoulement d\'une pompe (A11VO130 : hypothèse du modèle)', 'Console : traversée arrière de la pression (plaque CA12 « PRESSION #1 »)'],
+    ['retour', 'Retour : console → groupe', 'Console : traversée arrière du retour (bloc de retour HA250, repère 43 du schéma)', 'Groupe : filtre de retour RTF-47 côté console (raccordement : hypothèse du modèle)'],
     ['drain', 'Drain : console → groupe', 'Console : traversée arrière du drain', 'Groupe : collecteur de retour UM-064-600PP (611P, embout coudé)'],
   ];
   const SLED_CIRC = [
     ['avance-treuil', 'Console → sélecteur mât / treuil gauche, raccord avant intérieur', 'Console : traversée arrière (bloc du traîneau)', 'Foreuse : sélecteur DF10-6B-12L gauche, raccord avant intérieur (6400-8-8)'],
     ['avance-treuil', 'Console → sélecteur mât / treuil gauche, raccord avant extérieur', 'Console : traversée arrière (bloc du traîneau)', 'Foreuse : sélecteur DF10-6B-12L gauche, raccord avant extérieur (6400-8-8)'],
-    ['mat', 'Console → sélecteur droit (bascule / relevage), raccord avant intérieur', 'Console : traversée arrière (bloc du traîneau)', 'Foreuse : sélecteur DF10-6B-12L droit, raccord avant intérieur (6400-8-8)'],
-    ['mat', 'Console → sélecteur droit (bascule / relevage), raccord avant extérieur', 'Console : traversée arrière (bloc du traîneau)', 'Foreuse : sélecteur DF10-6B-12L droit, raccord avant extérieur (6400-8-8)'],
+    ['mat', 'Console → sélecteur mât / treuil droit, raccord avant intérieur', 'Console : traversée arrière (bloc du traîneau)', 'Foreuse : sélecteur DF10-6B-12L droit, raccord avant intérieur (6400-8-8)'],
+    ['mat', 'Console → sélecteur mât / treuil droit, raccord avant extérieur', 'Console : traversée arrière (bloc du traîneau)', 'Foreuse : sélecteur DF10-6B-12L droit, raccord avant extérieur (6400-8-8)'],
   ];
   const hoses = [];
   const cBack = D(cons, CON_BACK_N);

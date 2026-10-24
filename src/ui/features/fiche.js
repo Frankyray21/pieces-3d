@@ -1,8 +1,9 @@
 // Fiche de la pièce sélectionnée, dans le panneau latéral (seule fiche du site) :
 // numéro (un par taille), description, quantités, repère, assemblage parent,
 // groupes, actions de la vue 3D (éclater le groupe, coupe, centrer), notes et
-// lignes à vérifier, cotes mesurées sur la 3D, autres listes qui portent le
-// même numéro et vignette de la page du manuel. « Voir sur le dessin » ouvre
+// lignes à vérifier, données techniques du manuel d'un sous-ensemble (relevées
+// dans donnees.json, avec leur page : aucune cote n'est mesurée sur la 3D),
+// autres listes qui portent le même numéro et vignette de la page du manuel. « Voir sur le dessin » ouvre
 // la page du manuel avec la bulle de la pièce entourée d'un cercle animé
 // (positions : public/equipment/<id>/bulles.json, produit par
 // tools/extract_bulles.py ; sans position connue, la page s'ouvre simplement).
@@ -10,62 +11,10 @@
 // La fiche se pose par-dessus le panneau d'un mode (circuits, entretien,
 // procédure, sous-ensemble isolé : sidePanel.open({ over: true })) : le mode
 // reste actif, et revient quand la fiche se ferme (×, « ‹ », Échap).
-import { Box3, Matrix4, Quaternion, Vector3 } from 'three';
 import { normPn, sizeGroups } from '../../data/equipment.js';
 import './fiche.css';
 
 const OWNER = 'fiche';
-
-
-// ------------------------------------------------------------------ cotes mesurées sur la 3D
-
-/** Boîte de l'objet dans son propre repère (rotation de l'objet annulée), en unités du monde (m). */
-function localSize(obj) {
-  obj.updateWorldMatrix(true, true);
-  const pos = new Vector3(), quat = new Quaternion(), scl = new Vector3();
-  obj.matrixWorld.decompose(pos, quat, scl);
-  const inv = new Matrix4().compose(pos, quat, new Vector3(1, 1, 1)).invert();
-  const box = new Box3();
-  const corner = new Vector3();
-  const m = new Matrix4();
-  obj.traverseVisible((o) => {
-    const g = o.geometry;
-    if (!g || !(o.isMesh || o.isLine || o.isPoints)) return;
-    if (!g.boundingBox) g.computeBoundingBox();
-    const b = g.boundingBox;
-    if (!b || b.isEmpty()) return;
-    m.multiplyMatrices(inv, o.matrixWorld);
-    for (let i = 0; i < 8; i++) {
-      corner.set(i & 1 ? b.max.x : b.min.x, i & 2 ? b.max.y : b.min.y, i & 4 ? b.max.z : b.min.z).applyMatrix4(m);
-      box.expandByPoint(corner);
-    }
-  });
-  return box.isEmpty() ? null : box.getSize(new Vector3());
-}
-
-/** Boîte commune de plusieurs objets, axes du monde. */
-function worldSize(objs) {
-  const box = new Box3();
-  for (const o of objs) box.expandByObject(o);
-  return box.isEmpty() ? null : box.getSize(new Vector3());
-}
-
-/** Cotes de la sélection : { dims: [a, b, c] en mm (décroissant), n, mode }. */
-function measure(objects) {
-  const objs = (objects || []).filter(Boolean);
-  if (!objs.length) return null;
-  const sizes = objs.map(localSize).filter(Boolean);
-  if (!sizes.length) return null;
-  const sorted = (v) => [v.x, v.y, v.z].map((x) => x * 1000).sort((a, b) => b - a);
-  const all = sizes.map(sorted);
-  const same = all.every((d) => d.every((x, i) => Math.abs(x - all[0][i]) < 1));
-  if (same) return { dims: all[0], n: objs.length, mode: objs.length > 1 ? 'chacune' : 'piece' };
-  const w = worldSize(objs);
-  return w ? { dims: sorted(w), n: objs.length, mode: 'ensemble' } : null;
-}
-
-const fmtMm = (x) => `${x < 10 ? x.toFixed(1).replace('.', ',') : Math.round(x).toLocaleString('fr-CA')} mm`;
-const fmtIn = (x) => `${(x / 25.4).toFixed(x / 25.4 < 10 ? 2 : 1).replace('.', ',')} po`;
 
 // ------------------------------------------------------------------ module
 
@@ -87,10 +36,31 @@ export default {
       const e = eq();
       return row.source.type === 'assembly' ? e.assemblies.get(row.source.id) : e.documents.get(row.source.id);
     };
-    /** Pages du manuel où chercher la bulle : dessin de l'assemblage d'abord. */
+    /** Pages du manuel où chercher la bulle : dessin de l'assemblage d'abord (pour un schéma, ses dessins avant sa liste). */
     const sheetsOf = (row) => {
       const o = ownerOf(row);
-      return [...new Set([row.source.sheet, ...(o?.sheets || []), ...(o?.lists || [])].filter(Boolean))];
+      const pages = row.source.type === 'document'
+        ? [...(o?.sheets || []), row.source.sheet]
+        : [row.source.sheet, ...(o?.sheets || []), ...(o?.lists || [])];
+      return [...new Set(pages.filter(Boolean))];
+    };
+    /**
+     * Données techniques du manuel d'un sous-ensemble (donnees.json) : tableaux
+     * dont toutes les valeurs viennent de ses pages. Retourne { tables, group }.
+     */
+    const manualData = (asmId) => {
+      const don = ctx.equipmentData('donnees');
+      if (!don || !asmId) return null;
+      const tables = [];
+      let group = null;
+      for (const g of don.groupes || []) {
+        if (g.asm === asmId) group = g;
+        for (const t of g.tableaux || []) {
+          const pages = t.lignes.map((l) => l.p).filter(Boolean);
+          if (pages.length && pages.every((pg) => ctx.sheetOwner(pg) === asmId)) tables.push(t);
+        }
+      }
+      return tables.length || group ? { tables, group } : null;
     };
     /** Page et positions de la bulle de la ligne : { sheet, boxes } (boxes vide si inconnue). */
     const locate = (row) => {
@@ -118,7 +88,7 @@ export default {
       if (v.is3d && v.canCut(path)) {
         btns.push(`<button type="button" class="btn" data-fiche-act="cut">${v.isCut() ? 'Quitter la coupe' : 'Voir en coupe'}</button>`);
       }
-      if (v.is3d && v.objects(path).length) btns.push('<button type="button" class="btn" data-fiche-act="center">Centrer</button>');
+      if (v.is3d && v.objects([path]).length) btns.push('<button type="button" class="btn" data-fiche-act="center">Centrer</button>');
       for (const s of row.see || []) btns.push(`<button type="button" class="btn" data-page="${esc(s)}">Voir ${esc(e.docWord === 'catalogue' ? sheetLabel(s) : s)}</button>`);
       return btns.length ? `<div class="fiche-actions">${btns.join('')}</div>` : '<div class="fiche-actions" hidden></div>';
     };
@@ -167,14 +137,22 @@ export default {
         const t = o.source.type === 'assembly' ? e.assemblies.get(o.source.id)?.titleFr : e.documents.get(o.source.id)?.titleFr;
         return `<li><button type="button" class="fiche-link" data-fiche-row="${esc(o.key)}"><span class="mono">${esc(sheetLabel(o.source.sheet))}</span> ${esc(t || o.source.id)}<span class="fiche-sub">réf. ${esc(refLabel(o))} · qté ${o.qty ?? '—'}</span></button></li>`;
       }).join('');
-      const m = measure(d.objects);
-      const dims = m ? `
+      // Données du manuel du sous-ensemble (valeurs relevées avec leur page ; rien n'est mesuré sur la 3D).
+      const md = sub && row.link && e.assemblies.has(row.link) ? manualData(row.link) : null;
+      const MAXL = 12;
+      const mdLines = md ? md.tables.flatMap((t) => t.lignes.map((l) => ({ t, l }))) : [];
+      const mdVal = (l) => {
+        const conv = (u) => (l.conv === u ? ' <small class="fiche-sub fiche-conv" title="Valeur convertie : le manuel ne donne que l’autre unité">conv.</small>' : '');
+        if (l.m || l.i) return [l.m && `${esc(l.m)}${conv('m')}`, l.i && `${esc(l.i)}${conv('i')}`].filter(Boolean).join(' · ');
+        return esc(l.v ?? '—');
+      };
+      const dims = md ? `
         <section class="fiche-sec">
-          <h4>Cotes mesurées sur la 3D</h4>
-          <table class="fiche-dims"><tbody>
-            ${m.dims.map((x, i) => `<tr><th>${['Plus grande', 'Moyenne', 'Plus petite'][i]}</th><td class="mono">${fmtMm(x)}</td><td class="mono">${fmtIn(x)}</td></tr>`).join('')}
-          </tbody></table>
-          <p class="fiche-sub">${m.mode === 'chacune' ? `Chacune des ${m.n} pièces posées. ` : m.mode === 'ensemble' ? `Encombrement des ${m.n} objets, à l'état affiché. ` : ''}${sub ? 'Sous-ensemble entier, à l\'état affiché (éclaté ou non). ' : ''}Boîte englobante du modèle 3D, indicative : les cotes qui font foi sont celles du ${e.docWord}.</p>
+          <h4>Données du ${e.docWord}</h4>
+          ${mdLines.length ? `<table class="fiche-dims"><tbody>
+            ${mdLines.slice(0, MAXL).map(({ l }) => `<tr><th>${esc(l.l)}</th><td>${mdVal(l)}</td><td>${l.p ? `<button type="button" class="chip" data-page="${esc(l.p)}" title="Ouvrir la page ${esc(l.p)}">${esc(l.p)}</button>` : ''}</td></tr>`).join('')}
+          </tbody></table>` : ''}
+          <p class="fiche-sub">${mdLines.length > MAXL ? `${mdLines.length - MAXL} autres valeurs dans les ` : 'Voir aussi les '}<button type="button" class="fiche-link" data-go="donnees">données techniques${md.group ? ` (${esc(md.group.titre)})` : ''}</button>.</p>
         </section>` : '';
       const sheet = sheetsOf(row)[0];
       const url = sheet ? ctx.pageUrl(sheet) : null;
@@ -203,7 +181,7 @@ export default {
         <dl class="fiche-grid">
           <dt>Quantité</dt><dd>${qtyTxt}${q3d}</dd>
           <dt>Repère</dt><dd>${esc(refLabel(row))}${path.length > 1 ? `<span class="fiche-sub">dans le groupe ${esc(path.slice(0, -1).map((p) => p.replace(/#\d+$/, '')).join(' › '))}</span>` : ''}</dd>
-          <dt>Assemblage</dt><dd><button type="button" class="fiche-link" data-go="${esc(row.source.id)}"><span class="mono">${esc(sheetLabel(row.source.sheet))}</span> ${esc(own?.titleFr || row.source.id)}</button></dd>
+          <dt>${row.source.type === 'document' ? 'Schéma / liste' : 'Assemblage'}</dt><dd><button type="button" class="fiche-link" data-go="${esc(row.source.id)}"><span class="mono">${esc(sheetLabel(row.source.sheet))}</span> ${esc(own?.titleFr || row.source.id)}</button></dd>
           ${sub ? `<dt>Sous-ensemble</dt><dd><button type="button" class="fiche-link" data-go="${esc(row.link)}">Ouvrir ${esc(sheetLabel(sub.sheet || sub.sheets?.[0] || row.link))} ›</button></dd>` : ''}
           ${ids ? `<dt>Autres n°</dt><dd>${ids}</dd>` : ''}
         </dl>
@@ -222,7 +200,7 @@ export default {
         else if (t.dataset.ficheRow) ctx.openRow(t.dataset.ficheRow);
         else if (t.dataset.ficheAct === 'group') ctx.viewer.toggleGroup(path);
         else if (t.dataset.ficheAct === 'cut') ctx.viewer.cut(ctx.viewer.isCut() ? null : path);
-        else if (t.dataset.ficheAct === 'center') ctx.viewer.frame(path);
+        else if (t.dataset.ficheAct === 'center') ctx.viewer.frame([path]); // chemin enveloppé : une seule pièce
       });
       return el;
     };
@@ -252,7 +230,11 @@ export default {
       old.replaceWith(t.content);
     });
     ctx.on('equipment', close);
-    ctx.on('assembly', close);
+    // Autre vue (assemblage, schéma, contrôle des listes) : la fiche se ferme si plus rien n'est
+    // sélectionné ; même assemblage réaffiché (retour d'une page plein écran) : elle reste.
+    const closeIfNone = () => { if (current && !ctx.selection) close(); };
+    ctx.on('assembly', closeIfNone);
+    ctx.on('view', closeIfNone);
     ctx.on('sidepanel', ({ open: o, owner }) => { if (!o && owner === OWNER) { current = null; box = null; } });
 
     // ---------------------------------------------------------------- « Voir sur le dessin »

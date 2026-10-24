@@ -108,6 +108,7 @@ async function init() {
     is3d,
     has3d: (id) => !!(S.eq && (MODELS[S.eq.id] || {})[id]),
     go,
+    navigate,
     follow,
     hashFor: (token, id) => hashFor(token, id ?? S.eq?.id ?? S.index[0]?.id),
     path3d: (path) => (path?.length && S.view ? path3d(path) : []),
@@ -138,6 +139,8 @@ async function init() {
     toast,
     // Vue sous une page plein écran (retour à la fermeture).
     viewToken: () => S.view?.id || S.eq?.root || '',
+    leaveRoute,
+    exitFullscreen: () => { if (fullscreenEl() || document.body.classList.contains('stage-full')) toggleFullscreen(); },
   });
   host.ctx.registerRoute('apercu', (ctx) => showEquipmentHome(ctx));
   // Échap (une couche à la fois, voir host.js) : visionneuse des pages, sélection, scène en plein écran.
@@ -166,7 +169,23 @@ function hashFor(token, id = S.eq.id) {
   return id === S.index[0].id ? token : `${id}.${token}`;
 }
 
+// Rang de l'entrée d'historique dans la session du site (history.state.idx) :
+// une page liée à l'adresse qui n'est pas la première entrée se ferme par un
+// retour d'historique (Retour, Échap), sans empiler d'entrée.
+let lastIdx = -1;
+function stampHistory() {
+  let idx = history.state?.idx;
+  if (idx == null) {
+    idx = lastIdx + 1;
+    history.replaceState({ ...(history.state || {}), idx }, '');
+  }
+  lastIdx = idx;
+}
+
 async function route() {
+  stampHistory();
+  // Visionneuse des pages ouverte : l'adresse change (Retour, lien) ; elle se ferme.
+  if (!$('#modal').hidden) closePage();
   const raw = decodeURIComponent(location.hash.replace(/^#/, ''));
   const m = /^([^./]+)[./](.*)$/.exec(raw);
   const known = !!m && S.index.some((e) => e.id === m[1]);
@@ -200,8 +219,8 @@ async function route() {
   if (!featureRoute) host.hidePage();
   if (home) { document.title = 'Équipements · Pièces 3D'; renderCatalogue(); host.bus.emit('route', { ...info, token: 'catalogue', view: null }); return; }
   if (featureRoute) {
-    // Page d'une fonction (ou page de l'équipement) : la vue d'en dessous reste prête.
-    if (!S.view) await openAssembly(eq.root);
+    // Page d'une fonction (ou page de l'équipement) : affichée tout de suite. Sans vue en
+    // place (lien direct), la vue d'ensemble n'est construite qu'à la fermeture de la page.
     await host.runRoute(token, info);
   } else if (token === 'controle') await openIssues();
   else if (eq.assemblies.has(token)) await openAssembly(token);
@@ -227,10 +246,28 @@ function viewChanged() {
   host.bus.emit('view', { ...S.view, system: sys });
 }
 
+/** Va à une adresse complète (« #du311.P032 ») ; attend la fin d'un retour d'historique en cours (couche fermée). */
+function navigate(h) {
+  host.whenSettled(() => {
+    if (location.hash === h) { route(); return; }
+    // Entrée d'une couche (page « Sur le dessin », visionneuse…) : remplacée, pour ne pas laisser d'entrée morte.
+    if (history.state?.layer) location.replace(h);
+    else location.hash = h;
+  });
+}
+
 function go(token) {
-  const h = `#${hashFor(token)}`;
-  if (location.hash === h) route();
-  else location.hash = h;
+  navigate(`#${hashFor(token)}`);
+}
+
+/** Page liée à l'adresse fermée : retour à l'entrée précédente, sinon (lien direct) la vue d'en dessous à la place. */
+function leaveRoute() {
+  host.whenSettled(() => {
+    if ((history.state?.idx ?? 0) > 0) { history.back(); return; }
+    const h = `#${hashFor(host.ctx.view?.id || S.eq?.root || '')}`;
+    if (location.hash === h) route();
+    else location.replace(h);
+  });
 }
 
 /** Suit un lien vers une page (sur téléphone, on passe à la vue 3D ou au dessin). */
@@ -769,6 +806,7 @@ async function openIssues() {
   if (!S.view) await openAssembly(S.eq.root);
   S.view = { type: 'issues', id: 'controle' };
   S.selected = null;
+  viewer?.setSelected(null);
   renderRail();
   renderPanel();
   viewChanged();
@@ -831,7 +869,7 @@ function renderTitleblock(asm) {
     </button>
     <div class="tb-grid">
     <div><span class="k">Projet</span><span class="v">${esc(eq.name)}</span></div>
-    <div><span class="k">Client</span><span class="v">${esc(eq.manufacturer)}</span></div>
+    <div><span class="k">${eq.document.client ? 'Client' : 'Fabricant'}</span><span class="v">${esc(eq.document.client || eq.manufacturer)}</span></div>
     <div class="wide"><span class="k">Titre</span><span class="v">${esc(asm.title)}</span></div>
     <div><span class="k">${eq.docWord === 'catalogue' ? 'Page' : 'Feuille'}</span><span class="v">${badge(asm.sheet)} · ${asm.parts.length} lignes</span></div>
     <div><span class="k">Préparé</span><span class="v">${esc(eq.document.date)}</span></div>
@@ -981,15 +1019,23 @@ function select(path, { focus = false, from3d = false } = {}) {
   if (p3 && focus && viewer.resolve(p3).length) viewer.focusPath(p3);
 }
 
+/** Nouvelle entrée d'historique pour une vue ouverte directement (Retour revient à la vue d'avant). */
+function pushView(id) {
+  const h = `#${hashFor(id)}`;
+  if (location.hash === h) return;
+  if (history.state?.layer) history.replaceState({ idx: lastIdx }, '', h);
+  else { lastIdx += 1; history.pushState({ idx: lastIdx }, '', h); }
+}
+
 function jumpToRow(key) {
   const eq = S.eq;
   const r = eq.rows.find((x) => x.key === key);
   if (!r) return;
   if (r.source.type === 'assembly') {
     if (isAsmView() && S.view.id === r.source.id) select([r.ref], { focus: true });
-    else { history.replaceState(null, '', `#${hashFor(r.source.id)}`); openAssembly(r.source.id, { select: [r.ref] }); }
+    else { pushView(r.source.id); openAssembly(r.source.id, { select: [r.ref] }); }
   } else {
-    history.replaceState(null, '', `#${hashFor(r.source.id)}`);
+    if (S.view?.type !== 'document' || S.view.id !== r.source.id) pushView(r.source.id);
     openDocument(r.source.id);
     select([r.ref]);
     document.querySelector(`#rows tr[data-key="${CSS.escape(r.ref)}"]`)?.scrollIntoView({ block: 'center' });
@@ -1024,8 +1070,18 @@ function renderSectionBar() {
 // ------------------------------------------------------------------ pages du manuel
 
 let zoom = 'fit';
+let modalLayer = null; // entrée d'historique de la visionneuse (Retour du navigateur la ferme)
+let modalOpener = null;
 function openPage(sheet) {
   const eq = S.eq;
+  const m0 = $('#modal');
+  if (m0.hidden) {
+    // La visionneuse couvre toute la fenêtre : la scène quitte le plein écran, le reste sort de la tabulation.
+    if (fullscreenEl() || document.body.classList.contains('stage-full')) toggleFullscreen();
+    modalOpener = document.activeElement;
+    modalLayer = host.historyLayer(() => closePage({ fromHistory: true }));
+    $('#shell').inert = true;
+  }
   const n = eq.document.sheets;
   const num = Math.min(n, Math.max(1, parseInt(sheet.replace(/^\D+/, ''), 10) || 1));
   const s = eq.sheetId(num);
@@ -1047,7 +1103,8 @@ function openPage(sheet) {
   $('#p-prev').addEventListener('click', () => openPage(eq.sheetId(num - 1)));
   $('#p-next').addEventListener('click', () => openPage(eq.sheetId(num + 1)));
   $('#p-zoom').addEventListener('click', () => { zoom = zoom === 'fit' ? 'full' : 'fit'; openPage(s); });
-  $('#p-close').addEventListener('click', closePage);
+  $('#p-close').addEventListener('click', () => closePage());
+  if (!m.contains(document.activeElement)) $('#p-close').focus({ preventScroll: true });
   $('#p-open')?.addEventListener('click', () => { closePage(); go(owner); });
   const img = $('#p-img');
   // Page absente (publication allégée : pages de liste laissées de côté) : un message à la place.
@@ -1065,7 +1122,18 @@ function openPage(sheet) {
   img.addEventListener('load', fit);
   fit();
 }
-function closePage() { const m = $('#modal'); m.hidden = true; m.innerHTML = ''; }
+function closePage({ fromHistory = false } = {}) {
+  const m = $('#modal');
+  if (m.hidden) return;
+  m.hidden = true;
+  m.innerHTML = '';
+  $('#shell').inert = false;
+  const release = modalLayer;
+  modalLayer = null;
+  if (!fromHistory) release?.();
+  if (modalOpener?.isConnected && modalOpener !== document.body) modalOpener.focus?.({ preventScroll: true });
+  modalOpener = null;
+}
 
 // ------------------------------------------------------------------ catalogue
 

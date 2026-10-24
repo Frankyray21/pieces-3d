@@ -29,7 +29,7 @@
           "label": "Étape 2 du manuel",
           "sheet": "P040",
           "page": "8.2",
-          "text": "Page 8.2 : sur l'arbre du tambour, la bague UM-032-236F et l'anneau SPN-R3000-X237, l'adaptateur UM-032-162F, la clavette UM-032-224F et le pignon 35B11 ; sur la vis-mère, la bague en laiton UM-032-165F et le pignon 35B70 ; enfin la chaîne 35 (46 1/2 po).",
+          "text": "Page 8.2 : sur l'arbre du tambour, le guide de tambour UM-032-236F (« DRUM GUIDE ») et l'anneau SPN-R3000-X237, l'adaptateur UM-032-162F, la clavette UM-032-224F et le pignon 35B11 ; sur la vis-mère, la bague en laiton UM-032-165F et le pignon 35B70 ; enfin la chaîne 35 (46 1/2 po).",
           "parts": ["24>7", "24>1", "24>4", "24>6", "24>2", "24>5", "24>3", "24>8"]
         },
         {
@@ -40,14 +40,15 @@
           "text": "Page 8.1 : goupille SP375-3000 au bout de la vis-mère, carter de chaîne UM-032-103A (boulons 3/8 × 3 1/2 po et rondelles), goupilles SP250-1250, volant UM-032-169F, ressort UM-032-102F, rondelle spéciale UM-032-163F et vis du bout B375-1250. Le treuil est complet.",
           "parts": ["23>4", "23>6", "23>2", "23>9", "23>3", "23>8", "23>5", "23>7", "23>1"]
         }
-      ]
+      ],
+      "kind": "montage"
     },
     {
       "id": "foreuse",
       "assembly": "P010",
       "title": "Foreuse : les sous-ensembles dans l'ordre du manuel",
       "summary": "Du traîneau au treuil, une étape par sous-ensemble (pages 1.1 à 1.22, sections 2 et 8).",
-      "intro": "Le manuel ne donne pas de marche à suivre pour la foreuse complète : ses sous-ensembles ont chacun leur page (index de la foreuse, page 1.0). Les étapes les reprennent dans l'ordre des pages (1.1 à 1.22), la tête (section 2) avant l'émerillon d'eau qu'elle porte (page 1.16), le treuil (section 8) en dernier. Les pièces que la vue 3D ne pose pas (vérin supérieur, garde-corps, jambes, attelage, roues : voir la remarque de la page 1.0) n'y figurent pas.",
+      "intro": "Le manuel ne donne pas de marche à suivre pour la foreuse complète : ses sous-ensembles ont chacun leur page (index de la foreuse, page 1.0). Les étapes les reprennent dans l'ordre des pages (1.1 à 1.22), la tête (section 2) avant l'émerillon d'eau qu'elle porte (page 1.16), le treuil (section 8) en dernier. Les pièces que la vue 3D ne pose pas (vérin supérieur, garde-corps, jambes, attelage, roues : voir la remarque du site sur la page 1.0) n'y figurent pas. C'est un parcours des listes, pas un ordre de montage donné par le manuel.",
       "steps": [
         {
           "title": "Traîneau",
@@ -126,14 +127,15 @@
           "text": "Section 8 : treuil FBRA-002-400HH (repère 4), posé sur l'arrière du traîneau (page 1.01). Son propre montage : procédure « Montage du treuil de câble 10 000 pi ».",
           "parts": ["4"]
         }
-      ]
+      ],
+      "kind": "listes"
     },
     {
       "id": "tete",
       "assembly": "P048",
       "title": "Tête de forage Boyles : les listes du manuel",
       "summary": "Boîte et broche, mandrin, transmission, raccords (pages 2.2, 2.3, 2.5 à 2.7).",
-      "intro": "Le manuel ne donne pas de marche à suivre pour la tête : la page 2.2 est un seul éclaté, avec deux tableaux, et le mandrin (pages 2.5 à 2.7) et les raccords (page 2.3) ont leur liste. Les étapes suivent ces listes dans leur ordre : tableau de droite de la page 2.2 (boîte, broche, mandrin), puis tableau de gauche (transmission Funk, moteur, couvercles, visserie), puis les raccords.",
+      "intro": "Le manuel ne donne pas de marche à suivre pour la tête : la page 2.2 est un seul éclaté, avec deux tableaux, et le mandrin (pages 2.5 à 2.7) et les raccords (page 2.3) ont leur liste. Ordre de présentation proposé, hors manuel : tableau de droite de la page 2.2 (boîte, broche, mandrin), puis tableau de gauche (transmission Funk, moteur, couvercles, visserie), puis les raccords. Dans chaque étape, les pièces suivent l'ordre des repères de la liste. C'est un parcours des listes, pas un ordre de montage.",
       "steps": [
         {
           "title": "Boîte, broche, pignon mené et roulements",
@@ -153,7 +155,7 @@
           "title": "Joints, écrous de broche, manchons et pignon menant",
           "sheet": "P048",
           "page": "2.2",
-          "text": "Page 2.2, fin du tableau de droite (repères 48 à 62) : manchon et joints inférieurs, écrous de broche, manchons BQ et NQ, couvercles, roulements et pignon menant UM-012-103, moteur hydraulique UM-012-139 et ses joints.",
+          "text": "Page 2.2, fin du tableau de droite (repères 48 à 62) : manchon et joints inférieurs, écrous de broche, manchons BQ et NQ, couvercles (dont UM-012-111 « HYDRAULIC PUMP COVER »), roulements et pignon menant UM-012-103, moteur hydraulique UM-012-139 (« HYDRAULIC MOTOR ») et sa clavette UM-012-169, joint de transmission UM-012-125 et son siège UM-012-123 (repères 61 et 62).",
           "parts": ["48", "49", "50", "51", "52", "53", "54", "55", "56", "57", "58", "59", "60", "61", "62"]
         },
         {
@@ -161,7 +163,7 @@
           "sheet": "P048",
           "page": "2.2",
           "text": "Page 2.2, tableau de gauche (repères 1 à 35) : transmission Funk 4 vitesses UM-012-143 et accouplement, chaîne triple, couvercle de la tête, filtres, axe de pivot, moteur AA6VM et ses brides, bouchons, joints toriques et visserie.",
-          "parts": ["2", "3", "6", "4", "1", "16", "7", "8", "9", "10", "11", "13", "14", "15", "17", "34", "35", "20", "5", "12", "18", "19", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33"]
+          "parts": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35"]
         },
         {
           "title": "Raccords et boyaux",
@@ -170,7 +172,8 @@
           "text": "Page 2.3 : raccords et boyaux hydrauliques de la tête (UM-012-100UG-HC-04), dans l'ordre de leur liste.",
           "parts": ["63>1", "63>2", "63>3", "63>4", "63>5", "63>6", "63>7", "63>8", "63>9", "63>10", "63>11", "63>12", "63>13", "63>14", "63>15", "63>16", "63>17", "63>18", "63>19", "63>20", "63>21", "63>22", "63>23", "63>24", "63>25", "63>26", "63>27", "63>28", "63>29", "63>30", "63>31"]
         }
-      ]
+      ],
+      "kind": "listes"
     }
   ]
 }

@@ -6,7 +6,8 @@
  "serial": "STM-1500-128",
  "document": {
   "title": "Part book for STM-1500",
-  "reference": "FBRA-002 (client Machines Roger)",
+  "reference": "FBRA-002",
+  "client": "Machine Roger",
   "preparedBy": "Usinage Marcotte inc., Val-d'Or (M. S. Gignac)",
   "date": "2013-11-26",
   "sheets": 96,
@@ -23,7 +24,7 @@
   ],
   [
    "Pompes",
-   "Rexroth A11VO130 + A10VO45 + A10VO45 en tandem"
+   "A11VO130 + A10VO45K + A10VO45N en tandem (page 3.4)"
   ],
   [
    "Tête de forage",
@@ -212,7 +213,7 @@
      }
     ]
    ],
-   "note": "Prêt à forer, disposé d'après le plan de l'atelier : foreuse à gauche, inclinée vers le trou ; console STM à droite de la foreuse, à plus de 3 m (3,3 m), commandes tournées vers l'opérateur qui se tient entre la console et le groupe et regarde la foreuse par-dessus la console ; groupe hydraulique en haut à droite, à plus de 3 m (5,5 m), raccords au bout tourné vers la console, interrupteur principal accessible du côté bas. Boyaux branchés au sol : groupe → console (pression, retour, drain) et câble de commande ; console → tête (rotation A et B), bloc du traîneau (avance, vérins) et eau vers l'émerillon (par-dessus le moteur de la tête), chaque boyau dans sa voie. Seul le matériel du manuel est en 3D."
+   "note": "Prêt à forer, disposé d'après le plan de l'atelier : foreuse à gauche, inclinée vers le trou ; console STM à droite de la foreuse, à plus de 3 m (3,3 m), commandes tournées vers l'opérateur qui se tient entre la console et le groupe et regarde la foreuse par-dessus la console ; groupe hydraulique en haut à droite, à plus de 3 m (5,5 m), raccords au bout tourné vers la console, interrupteur principal accessible du côté bas. Boyaux branchés au sol : groupe → console (pression, retour, drain) ; console → tête (rotation A et B), bloc du traîneau (avance, vérins) et eau vers l'émerillon (par-dessus le moteur de la tête), chaque boyau dans sa voie. Seul le matériel du manuel est en 3D."
   },
   "P010": {
    "title": "Drill parts",
@@ -2986,7 +2987,7 @@
      "3",
      "SP250-1250",
      4,
-     "SP250-1250",
+     "SPRING PIN 1/2'' x 1 1/4''",
      {
       "qty3d": 2,
       "note": "La liste vaut pour les versions gauche et droite (UM-032-100A_L et _R) : elle indique 4, une machine en porte 2 (en 3D)."
@@ -2996,7 +2997,7 @@
      "4",
      "SP375-3000",
      2,
-     "SP375-3000",
+     "SPRING PIN 3/8'' x 3''",
      {
       "qty3d": 1,
       "note": "La liste vaut pour les versions gauche et droite (UM-032-100A_L et _R) : elle indique 2, une machine en porte 1 (en 3D)."
@@ -3066,7 +3067,7 @@
      "1",
      "SPN-R3000-X237",
      1,
-     "SPN-R3000-X237"
+     "INT. RET. RING SERIWE 3000 (2 3/8 x 0.78)"
     ],
     [
      "2",
@@ -3243,13 +3244,13 @@
      "14",
      "SB206-20",
      2,
-     "SB206-20"
+     "INSERT BEARING 1 1/4''"
     ],
     [
      "15",
      "SPN-R3100-300",
      2,
-     "SPN-R3100-300"
+     "EXT.RET.RING SÉRIE. (3100)"
     ],
     [
      "16",
@@ -5649,7 +5650,7 @@
      "24",
      "AL01_M12X250",
      2,
-     "SD25 ARM SCREW AND"
+     "SD25 ARM"
     ],
     [
      "25",

@@ -575,7 +575,8 @@ export function P010(api) {
 
   // 16 — Serre-tiges Boyles 12HH UM-079-100A-12 (P031, P032) : corps Ø 313 mm entre les plaques d'about, moyeux dans
   // leurs ouvertures, bride avant à trois têtes B750 ; poignée en U et levier côté −Z, deux pattes de pied (boulons à
-  // œil de la base), oreille d'articulation à 160 mm de l'axe et 105 mm sous l'axe, sur l'axe 850B de la base (+Z).
+  // œil de la base), oreille d'articulation à 160 mm de l'axe et 105 mm sous l'axe, sur l'axe 850B de la base (+Z) ;
+  // graisseur du dessus du corps (page 1.04, détail F : sous la plaque qui porte le support du vérin supérieur).
   const CR = 0.1565, PATTE_Z = -0.22;
   P('UM-079-100A-12', group(
     at(lathe([[0.049, -0.1715], [0.12, -0.1715], [0.12, -0.144], [CR - 0.01, -0.144], [CR, -0.134], [CR, 0.134], [CR - 0.01, 0.144], [0.12, 0.144], [0.12, 0.1715], [0.049, 0.1715]], 'red', { axis: 'x', seg: 48 }), [HX, AXIS_Y, 0]),
@@ -587,6 +588,8 @@ export function P010(api) {
     ...[-1, 1].map((s) => profilY(rect(HX + s * 0.045 - 0.02, -0.255, HX + s * 0.045 + 0.02, -0.09), [[HX + s * 0.0475, PATTE_Z, 0.007]], 0.03, 1.115)),
     at(ring(0.03, 0.0135, 0.2, 'red', { axis: 'x', seg: 24 }), [HX, AXIS_Y - 0.105, 0.16]),
     at(box(0.2, 0.03, 0.03, 'red'), [HX, AXIS_Y - 0.105, 0.122]),
+    // Graisseur ZNPT250 (P032, repère 17) sur le dessus du corps, sous la plaque du boîtier : page 1.04, détail F.
+    entretien(at(group(nut(0.011, 0.007, 'brass'), cyl(0.0035, 0.01, 'brass', { pos: [0, 0.008, 0] }), at(api.S.ball(0.0045, 'brass'), [0, 0.014, 0])), [HX, AXIS_Y + CR, 0]), 'graisseur', 'F'),
   ), [0.35, 0.6, 0]);
 
   // 15 — Base pivotante du serre-tiges UM-064-800B (P014) : table 807B en travers de la poutre sur la plateforme, deux
@@ -884,17 +887,19 @@ export function P010(api) {
   ];
   // Étiquettes de circuit hydraulique (outil « Circuits » de l'interface ; sans effet sur la géométrie).
   const circ = (t, circuit, circuitLabel, circuitFrom, circuitTo) => Object.assign(t.userData, { circuit, circuitLabel, circuitFrom, circuitTo });
+  // Les deux sélecteurs sont des « SWITCH VALVE MAST TO WIRE LINE » (page 1.1) ; le manuel n'a pas de schéma
+  // hydraulique : les branches bascule et relevage du sélecteur droit sont une hypothèse du modèle.
   const SG = 'Sélecteur DF10-6B-12L gauche', SD = 'Sélecteur DF10-6B-12L droit';
   circ(feedRecul, 'recul', 'Recul : sélecteur gauche → tige arrière du vérin d\'avance', `${SG} : vanne à bille intérieure BKH-12NPT`, 'Vérin d\'avance UM-064-100Z : tige creuse arrière (raccord du connecteur)');
   circ(feedAvance, 'avance', 'Avance : sélecteur gauche → tige avant du vérin d\'avance', `${SG} : vanne à bille extérieure BKH-12NPT`, 'Vérin d\'avance UM-064-100Z : tige creuse avant (raccord de la plaque de pied)');
   circ(motorHoses[0], 'treuil', 'Treuil : moteur White ↔ sélecteur gauche (orifice avant)', `${SG} : raccord arrière intérieur (6400-8-8)`, 'Moteur White du treuil : orifice avant (6400-12-12)');
   circ(motorHoses[1], 'treuil', 'Treuil : moteur White ↔ sélecteur gauche (orifice arrière)', `${SG} : raccord arrière extérieur (6400-8-8)`, 'Moteur White du treuil : orifice arrière (6400-12-12)');
-  circ(tiltHoses[0], 'bascule', 'Bascule : sélecteur droit → vérin de bascule droit', `${SD} : raccord extérieur du dessus (6400-8-8)`, 'Vérin de bascule droit : bloc YEJ (6801F-8-8)');
-  circ(tiltHoses[1], 'bascule', 'Bascule : sélecteur droit → vérin de bascule gauche', `${SD} : raccord intérieur du dessus (6400-8-8)`, 'Vérin de bascule gauche : bloc YEJ (6801F-8-8)');
-  circ(tiltHoses[2], 'bascule', 'Bascule : liaison entre les deux vérins', 'Vérin de bascule droit : bloc YEJ, second raccord (6801F-8-8)', 'Vérin de bascule gauche : bloc YEJ, second raccord (6801F-8-8)');
-  circ(dumpHoses[0], 'relevage', 'Relevage : sélecteur droit → bloc YEJ du vérin de relevage', `${SD} : raccord arrière intérieur (6400-8-8)`, 'Vérin de relevage UM-064-300Z : dessous du bloc YEJ (6801F-8-8)');
-  circ(dumpHoses[1], 'relevage', 'Relevage : sélecteur droit → bloc YEJ du vérin de relevage', `${SD} : raccord arrière extérieur (6400-8-8)`, 'Vérin de relevage UM-064-300Z : dessous du bloc YEJ (6801F-8-8)');
-  circ(dumpHoses[2], 'relevage', 'Relevage : bloc YEJ → orifice de la tige', 'Vérin de relevage UM-064-300Z : bloc YEJ (6801F-8-8)', 'Vérin de relevage UM-064-300Z : orifice de la tige (coude 2501F-08-08)');
+  circ(tiltHoses[0], 'bascule', 'Bascule (hypothèse du modèle) : sélecteur droit → vérin de bascule droit', `${SD} : raccord extérieur du dessus (6400-8-8)`, 'Vérin de bascule droit : bloc YEJ (6801F-8-8)');
+  circ(tiltHoses[1], 'bascule', 'Bascule (hypothèse du modèle) : sélecteur droit → vérin de bascule gauche', `${SD} : raccord intérieur du dessus (6400-8-8)`, 'Vérin de bascule gauche : bloc YEJ (6801F-8-8)');
+  circ(tiltHoses[2], 'bascule', 'Bascule (hypothèse du modèle) : liaison entre les deux vérins', 'Vérin de bascule droit : bloc YEJ, second raccord (6801F-8-8)', 'Vérin de bascule gauche : bloc YEJ, second raccord (6801F-8-8)');
+  circ(dumpHoses[0], 'relevage', 'Relevage (hypothèse du modèle) : sélecteur droit → bloc YEJ du vérin de relevage', `${SD} : raccord arrière intérieur (6400-8-8)`, 'Vérin de relevage UM-064-300Z : dessous du bloc YEJ (6801F-8-8)');
+  circ(dumpHoses[1], 'relevage', 'Relevage (hypothèse du modèle) : sélecteur droit → bloc YEJ du vérin de relevage', `${SD} : raccord arrière extérieur (6400-8-8)`, 'Vérin de relevage UM-064-300Z : dessous du bloc YEJ (6801F-8-8)');
+  circ(dumpHoses[2], 'relevage', 'Relevage (hypothèse du modèle) : bloc YEJ → orifice de la tige', 'Vérin de relevage UM-064-300Z : bloc YEJ (6801F-8-8)', 'Vérin de relevage UM-064-300Z : orifice de la tige (coude 2501F-08-08)');
   api.add(group(feedRecul, feedAvance, ...motorHoses, ...tiltHoses, ...dumpHoses));
   return { view: { dir: [0.75, 0.5, 1.0] } };
 }

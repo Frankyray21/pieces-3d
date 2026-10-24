@@ -35,14 +35,31 @@ export function systemOf(eq, id) {
   return sys.find((s) => s.id === a.id) || null;
 }
 
+/** Au-delà, la racine est une table des matières (catalogue d'outils) plutôt qu'une machine en systèmes. */
+export const MAX_SYSTEMS = 12;
+
+/** Assemblages directs de la racine (enfants dont elle est le parent), dans l'ordre de sa liste. */
+export function rootChildren(eq) {
+  const root = eq?.assemblies.get(eq.root);
+  const ids = [];
+  for (const p of root?.parts || []) {
+    const a = p.link && eq.assemblies.get(p.link);
+    if (a && a.parent === eq.root && !ids.includes(p.link)) ids.push(p.link);
+  }
+  return ids;
+}
+
 const cache = new WeakMap();
-/** Systèmes de l'équipement, dans l'ordre de la liste de la racine. */
+/**
+ * Systèmes de l'équipement, dans l'ordre de la liste de la racine. Aucun pour
+ * un catalogue ou une racine de plus de MAX_SYSTEMS assemblages (table des
+ * matières : pas de couleur par système).
+ */
 export function systems(eq) {
   if (!eq) return [];
   if (cache.has(eq)) return cache.get(eq);
-  const root = eq.assemblies.get(eq.root);
-  const ids = [];
-  for (const p of root?.parts || []) if (p.link && eq.assemblies.has(p.link) && !ids.includes(p.link)) ids.push(p.link);
+  let ids = rootChildren(eq);
+  if (eq.docWord === 'catalogue' || ids.length > MAX_SYSTEMS) ids = [];
   const out = ids.map((id, i) => {
     const a = eq.assemblies.get(id);
     const n = (i % PALETTE_SIZE) + 1;
@@ -126,8 +143,11 @@ export function systemTiles(eq) {
       sheet: a.sheet || (a.sheets || [])[0] || id,
       pieces: pieceLines(eq, ids),
       subs: ids.size - 1,
-      children: depth < 2 ? childrenOf(eq, id).filter((c) => c !== eq.root).map((c) => tile(c, sys, depth + 1)) : [],
+      // Sous-tuiles : sans la racine ni un autre système (déjà présenté pour lui-même).
+      children: depth < 2 ? childrenOf(eq, id).filter((c) => c !== eq.root && !sysIds.has(c)).map((c) => tile(c, sys, depth + 1)) : [],
     };
   };
-  return systems(eq).map((s) => tile(s.id, s, 0));
+  const list = systems(eq);
+  const sysIds = new Set(list.map((s) => s.id));
+  return list.map((s) => tile(s.id, s, 0));
 }

@@ -342,9 +342,11 @@ function variant(base, kind, cut) {
     v.emissive = new THREE.Color(0xff7a10);
     v.emissiveIntensity = 0.32;
   } else if (kind === 'mark') {
-    // Pièces mises en évidence par une fonction de l'interface (Viewer.setMarked) : bleu-vert, distinct du survol et de la sélection.
+    // Pièces mises en évidence par une fonction de l'interface (Viewer.setMarked) : bleu-vert, distinct du survol et
+    // de la sélection. La couleur de base est elle-même teintée (sinon une pièce rouge paraît rose saumon).
+    if (v.color) v.color = v.color.clone().lerp(new THREE.Color(0x12a39a), 0.65);
     v.emissive = new THREE.Color(0x12a39a);
-    v.emissiveIntensity = 0.55;
+    v.emissiveIntensity = 0.45;
   } else if (kind === 'ghost') {
     v.transparent = true;
     v.opacity = 0.1;

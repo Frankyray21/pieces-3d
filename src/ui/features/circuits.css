@@ -5,13 +5,16 @@
 .circuits-list, .circuits-hoses { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
 .circuits-sw {
   flex: none; width: 14px; height: 14px; margin-top: 2px; border-radius: 4px; background: var(--c);
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25);
+  /* Liseré visible dans les deux thèmes (pastilles claires sur fond blanc, foncées sur fond sombre). */
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 45%, transparent);
 }
 .circuits-item {
   width: 100%; display: flex; gap: 10px; align-items: flex-start; text-align: left; cursor: pointer;
   padding: 7px 8px; border: 1px solid transparent; border-radius: 8px; background: none; color: var(--ink); font: inherit;
 }
 .circuits-item:hover { background: var(--hover); }
+.circuits-item:focus-visible { outline-offset: -2px; }
+.circuits-list li, .circuits-hoses li { scroll-margin: 6px; }
 .circuits-item[aria-pressed="true"] { border-color: var(--line-strong); background: var(--surface-2); }
 .circuits-txt { min-width: 0; flex: 1; display: grid; grid-template-columns: 1fr auto; column-gap: 8px; }
 .circuits-name { font-weight: 600; }
@@ -30,3 +33,4 @@
 .circuits-hl { font-size: 13px; font-weight: 600; overflow-wrap: anywhere; }
 .circuits-hl .chip { font-size: 11px; padding: 0 6px; }
 .circuits-hl .mono { font-size: 11px; color: var(--muted); font-weight: 400; }
+.circuits-warn { margin: 0; padding: 6px 9px; border-left: 3px solid var(--warn); background: var(--warn-soft); border-radius: 0 6px 6px 0; font-size: 12.5px; line-height: 1.4; }

@@ -7,20 +7,38 @@
 // dans la vue 3D de l'ensemble qui le contient (src/ui/features/systemes.js).
 
 import { icon } from './icons.js';
-import { systems, systemTiles, refPath } from './systems.js';
+import { systems, systemTiles, refPath, rootChildren } from './systems.js';
 import { esc } from './host.js';
+
+/**
+ * Vrai si le chemin de repères mène à un sous-ensemble posé dans la vue 3D de
+ * « from » : aucune ligne du chemin n'est marquée « non monté en 3D » (no3d),
+ * et chaque niveau intermédiaire a son propre modèle 3D (sinon ses pièces ne
+ * sont pas des groupes de la vue).
+ */
+function isoIn3d(eq, from, path, has3d) {
+  let asm = eq.assemblies.get(from);
+  for (let i = 0; i < path.length; i++) {
+    const row = asm?.parts.find((r) => r.ref === path[i]);
+    if (!row || row.no3d) return false;
+    if (i < path.length - 1 && !has3d(row.link)) return false;
+    asm = eq.assemblies.get(row.link);
+  }
+  return true;
+}
 
 /**
  * Action d'une tuile : l'assemblage lui-même s'il a un modèle 3D (ou s'il n'a
  * que les dessins du manuel) ; sinon l'ensemble 3D le plus proche qui le
- * contient (hors page d'accueil de l'équipement), avec ce sous-ensemble isolé.
+ * contient (hors page d'accueil de l'équipement), avec ce sous-ensemble isolé
+ * — seulement s'il y est posé en 3D (sinon : ses dessins, sans détour).
  */
 function tileAction(eq, id, has3d) {
   if (has3d(id)) return `data-go="${esc(id)}"`;
   for (let a = eq.assemblies.get(eq.assemblies.get(id)?.parent); a && a.id !== eq.root; a = eq.assemblies.get(a.parent)) {
     if (!has3d(a.id)) continue;
     const path = refPath(eq, a.id, id);
-    if (path?.length) return `data-sysx-iso="${esc(id)}" data-sysx-from="${esc(a.id)}" data-sysx-path="${esc(path.join('>'))}"`;
+    if (path?.length && isoIn3d(eq, a.id, path, has3d)) return `data-sysx-iso="${esc(id)}" data-sysx-from="${esc(a.id)}" data-sysx-path="${esc(path.join('>'))}"`;
     break;
   }
   return `data-go="${esc(id)}"`;
@@ -76,6 +94,11 @@ export function renderEquipmentHome(eq, { has3d, badge, slot }) {
   const stat = (n, label, extra = '') => `<div class="stat${extra}"><span class="num">${esc(n)}</span><span class="lbl">${esc(label)}</span></div>`;
   const sys = systems(eq);
   const cards = systemTiles(eq).map((t, i) => renderSystem(eq, t, { has3d, badge, pageUrl: eq.pageUrl }, i + 1)).join('');
+  // Sans systèmes (catalogue, table des matières) : grille compacte des assemblages de la racine.
+  const toc = sys.length ? '' : rootChildren(eq).map((id) => {
+    const a = eq.assemblies.get(id);
+    return `<button type="button" class="doccard" data-go="${esc(id)}">${icon(has3d(id) ? 'cube' : 'page', { size: 18 })}<span class="mono">${esc(badge(a.sheet || id))}</span><span class="t">${esc(a.titleFr || a.title)}</span></button>`;
+  }).join('');
   const docs = [...eq.documents.values()].map((d) => `<button type="button" class="doccard" data-go="${esc(d.id)}">
       ${icon('page', { size: 18 })}<span class="mono">${esc(badge(d.sheets[d.sheets.length - 1]))}</span><span class="t">${esc(d.titleFr)}</span></button>`).join('');
   const specs = [...(eq.specs || []), ...(eq.weights || [])];
@@ -99,6 +122,7 @@ export function renderEquipmentHome(eq, { has3d, badge, slot }) {
       ${errors ? stat(errors, 'numéros à vérifier', ' warn') : ''}
     </section>
     ${sys.length ? `<section class="eqh-sec"><h3>${icon('cle', { size: 16 })}Systèmes</h3><div class="sysx">${cards}</div></section>` : ''}
+    ${toc ? `<section class="eqh-sec"><h3>${icon('liste', { size: 16 })}${esc(eq.assemblies.get(eq.root)?.titleFr || 'Assemblages')}</h3><div class="doccards">${toc}</div></section>` : ''}
     ${docs ? `<section class="eqh-sec"><h3>${icon('liste', { size: 16 })}${esc(eq.labels?.documents || 'Schémas et listes')}</h3><div class="doccards">${docs}</div></section>` : ''}
     ${specs.length ? `<section class="eqh-sec"><h3>${icon('engrenage', { size: 16 })}Fiche technique</h3>
       <dl class="card specs-card">${specs.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl></section>` : ''}`;

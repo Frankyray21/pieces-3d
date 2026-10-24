@@ -54,11 +54,11 @@
     {
       "id": "F",
       "type": "graisseur",
-      "titre": "Mandrin Boyles H",
-      "lieu": "Dessus du mandrin, sous la plaque du vérin supérieur : graisseur 1/8 NPT ZNPT250",
-      "assemblage": "P052",
-      "pages": ["P008", "P052"],
-      "source": "Page 1.04, détail F ; liste du mandrin (ZNPT250)"
+      "titre": "Serre-tiges de pied Boyles 12HH",
+      "lieu": "Dessus du corps du serre-tiges (2920455), sous la plaque du boîtier FTD-148-300TF qui porte le support FTD-148-800K du vérin supérieur : graisseur ZNPT250 (1/4 NPT selon la liste)",
+      "assemblage": "P032",
+      "pages": ["P008", "P031", "P032", "P028"],
+      "source": "Page 1.04, détail F ; pages 1.20 à 1.22 (ZNPT250) ; page 1.15, détail A"
     },
     {
       "id": "pivot-poulie",
@@ -161,5 +161,9 @@
       "pages": ["P072"],
       "source": "Page 3.6"
     }
-  ]
+  ],
+  "renvoi": {
+    "texte": "Les points de graissage de la machine sont à la page 1.04 ; voir aussi la tête (2.x) et le réservoir (3.6, 3.7).",
+    "pages": ["P008"]
+  }
 }

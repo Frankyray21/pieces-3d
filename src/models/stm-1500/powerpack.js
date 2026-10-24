@@ -721,8 +721,8 @@ export function P068(api) {
     ['drain', 'Drain du carter de la pompe A11VO130', 'Pompe A11VO130 : 6400-12-12', `${COL_N} : 602P`],
     ['drain', 'Drain du carter de la pompe A10VO45K', 'Pompe A10VO45K : 6400-8-8', `${COL_N} : 601P`],
     ['drain', 'Collecteur de retour → réservoir', `${COL_N} : 603P`, 'Réservoir : bouchon de remplissage (coude 2501-16-20)'],
-    ['pilotage', 'Pilotage de la vanne de démarrage', 'Vanne de démarrage DTDA-MHN-GAI : 6400-6-6 coudé', 'Pompe A11VO130 : 6801F-06-06 de la bride de refoulement'],
-    ['retour', 'Retour du refroidisseur → filtre', 'Refroidisseur AB-1202 du haut : bossage d\'huile côté pompes', 'Filtre de retour RTF-47 : entrée n° 1'],
+    ['pilotage', 'Pilotage de la vanne de démarrage (tracé : hypothèse du modèle)', 'Vanne de démarrage DTDA-MHN-GAI : 6400-6-6 coudé', 'Pompe A11VO130 : 6801F-06-06 de la bride de refoulement'],
+    ['retour', 'Retour du refroidisseur → filtre', 'Refroidisseur AB-1202 du haut : bossage d\'huile côté pompes', 'Filtre de retour RTF-47 côté refroidisseur (raccordement : hypothèse du modèle)'],
   ];
   const tuyaux = group(
     // Aspiration 3 po : de la vanne (côté +Z) sous les pompes jusqu'à l'about du coude de l'A11VO130 (côté −Z).

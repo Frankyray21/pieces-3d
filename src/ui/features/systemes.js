@@ -53,7 +53,13 @@ export default {
 
     const panelEl = document.createElement('div'); // contenu du panneau (gardé sous la fiche d'une pièce)
     const showIsolated = (st) => {
-      if (!ctx.viewer.objects([st.path]).length) { iso = null; ctx.go(st.target); return; } // pas trouvé en 3D : les dessins de l'assemblage
+      if (!ctx.viewer.objects([st.path]).length) {
+        // Pas trouvé en 3D : les dessins de l'assemblage, à la place de l'entrée de l'ensemble (Retour revient d'où l'on vient).
+        iso = null;
+        history.replaceState(history.state, '', ctx.hashFor(st.target));
+        ctx.go(st.target);
+        return;
+      }
       iso = st;
       const a = ctx.equipment.assemblies.get(st.target);
       // Sous-ensemble sélectionné (fil d'Ariane), puis sa liste dans le panneau, qui remplace sa fiche.
@@ -77,9 +83,16 @@ export default {
       if (ctx.narrow()) ctx.ui.setPane('stage');
     });
 
+    /** Vrai si la vue affichée est l'ensemble où le sous-ensemble est isolé. */
+    const isoShown = () => !!iso && ctx.view?.type === 'assembly' && ctx.view.id === iso.from;
+    const endIso = () => {
+      iso = null;
+      ctx.ui.sidePanel.release(OWNER);
+    };
+
     // Panneau : une ligne sélectionne la pièce dans la vue (chemin depuis l'ensemble affiché).
     panelEl.addEventListener('click', (e) => {
-      if (!iso) return;
+      if (!isoShown()) return;
       if (e.target.closest('[data-sysx-act="all"]')) { ctx.viewer.clear(); ctx.viewer.frame(); return; }
       const tr = e.target.closest('tr[data-sysx-ref]');
       if (tr) ctx.viewer.select([...iso.path, tr.dataset.sysxRef]);
@@ -93,10 +106,11 @@ export default {
         return;
       }
       pending = null;
-      if (iso && iso.from !== id) {
-        iso = null;
-        ctx.ui.sidePanel.release(OWNER);
-      }
+      if (iso && iso.from !== id) endIso();
+    });
+    // Autre vue (schéma, contrôle des listes, autre assemblage) : fin de l'isolement, le panneau se ferme.
+    ctx.on('view', ({ type, id }) => {
+      if (iso && (type !== 'assembly' || id !== iso.from)) endIso();
     });
     ctx.on('equipment', () => {
       pending = null;
@@ -199,7 +213,7 @@ export default {
         let folded = false;
         current.forEach((l, i) => {
           if (hidden.has(i)) {
-            if (!folded) { parts.push(`<button type="button" class="sysx-c more" data-more="1" title="Niveaux masqués" aria-haspopup="true">…</button>`); folded = true; }
+            if (!folded) { parts.push(`<button type="button" class="sysx-c more" data-more="1" title="Niveaux masqués" aria-label="Niveaux masqués" aria-haspopup="true" aria-expanded="false">…</button>`); folded = true; }
             return;
           }
           parts.push(item(l, i));
@@ -224,10 +238,10 @@ export default {
       const [kind, arg] = [act.slice(0, k), act.slice(k + 1)];
       if (kind === 'go' && ctx.view?.type === 'assembly' && ctx.view.id === arg && !document.body.classList.contains('page-open')) {
         // Niveau de l'assemblage affiché : on remonte à l'ensemble (plus de pièce sélectionnée ni d'isolement).
+        // Seul l'isolement de ce module est effacé : les marques d'un autre mode (entretien, procédure) restent.
         ctx.viewer.select(null);
-        ctx.viewer.clear();
+        if (iso && ctx.ui.sidePanel.has(OWNER)) { ctx.viewer.clear(); ctx.ui.sidePanel.release(OWNER); }
         ctx.viewer.frame();
-        ctx.ui.sidePanel.release(OWNER);
       } else if (kind === 'go') ctx.go(arg);
       else if (kind === 'sel') ctx.viewer.select(arg.split('>'));
     };
@@ -242,11 +256,12 @@ export default {
         menu.style.left = `${Math.max(8, Math.min(r.left - s.left, s.width - 268))}px`;
         menu.style.top = `${r.bottom - s.top + 6}px`;
         menu.hidden = !menu.hidden;
+        b.setAttribute('aria-expanded', String(!menu.hidden));
         return;
       }
       const l = current[Number(b.dataset.i)];
       if (l && !l.cur) run(l.act);
-      else if (l?.cur && l.act.startsWith('sel')) ctx.viewer.frame(l.act.slice(4).split('>')); // « sel:… » : recadrer la pièce
+      else if (l?.cur && l.act.startsWith('sel')) ctx.viewer.frame([l.act.slice(4).split('>')]); // « sel:… » : recadrer la pièce (un seul chemin)
     });
     menu.addEventListener('click', (e) => {
       const b = e.target.closest('button[data-i]');

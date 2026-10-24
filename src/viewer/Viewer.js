@@ -8,6 +8,8 @@ import { featureEdges } from './shapes.js';
 import { disposeObject } from './assembly.js';
 
 const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+// Mouvement réduit (préférence du système) : animations (éclatement, caméra, arrivée des pièces) posées tout de suite.
+const RM = typeof matchMedia === 'function' ? matchMedia('(prefers-reduced-motion: reduce)') : null;
 // Matrices égales à l'arrondi près : les contrôles d'orbite déplacent parfois la
 // caméra d'un dernier chiffre à chaque image (aller-retour en coordonnées
 // sphériques) ; une égalité stricte la croirait toujours en mouvement (rendu
@@ -322,7 +324,7 @@ export class Viewer {
     this.camera = camera;
 
     const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
+    controls.enableDamping = !RM?.matches; // inertie de la caméra, sauf en mouvement réduit
     controls.dampingFactor = 0.09;
     controls.screenSpacePanning = true;
     controls.maxPolarAngle = Math.PI * 0.95;
@@ -1303,11 +1305,14 @@ export class Viewer {
     this.labels = [];
   }
 
+  /**
+   * Bulles des repères affichées ou non, une à une (_refreshLabels) : la couche
+   * reste affichée pour les pastilles des fonctions (entretien) qui la partagent.
+   */
   setLabels(on) {
     this.labelsVisible = !!on;
     this._cullDirty = true;
     this._refreshLabels();
-    this.labelRenderer.domElement.style.display = on ? '' : 'none';
   }
 
   // ------------------------------------------------------------ contours
@@ -1495,7 +1500,8 @@ export class Viewer {
       r.render(this.overlay, this.camera);
       r.autoClear = true;
     }
-    if (this.labelsVisible) this.labelRenderer.render(this.scene, this.camera);
+    // Toujours rendue : sans les repères, elle porte encore les pastilles des fonctions.
+    this.labelRenderer.render(this.scene, this.camera);
   }
 
   /** Dégradation progressive si les images en mouvement sont trop lentes. */
@@ -1593,7 +1599,7 @@ export class Viewer {
     let exploding = false;
     if (this.tweens.length) {
       this.tweens = this.tweens.filter((tw) => {
-        const k = Math.min(1, (now - tw.start) / tw.dur);
+        const k = RM?.matches ? 1 : Math.min(1, (now - tw.start) / tw.dur);
         if (tw.kind === 'explode') {
           tw.node.userData.explodeT = tw.from + (tw.to - tw.from) * ease(k);
           exploding = true;

@@ -14,27 +14,30 @@ import './circuits.css';
 import * as THREE from 'three';
 
 // Circuits connus : couleur (conventions usuelles : pression rouge, retour bleu,
-// drain vert, aspiration cyan…), nom, description tirée des modèles (commentaires
-// d'après le manuel). branches : circuits alimentés par ce tronçon commun.
+// drain vert, aspiration cyan… ; teintes revues pour rester distinctes en
+// deutéranopie), nom, description. Le manuel ne contient pas le schéma
+// hydraulique (pages 4.14 et 4.15 citées mais absentes) : les raccordements qui
+// ne sont pas dans les listes sont des hypothèses du modèle, signalées comme
+// telles. branches : circuits alimentés par ce tronçon commun.
 const CIRCUITS = [
-  { id: 'pression', color: '#e02424', name: 'Pression', desc: 'Groupe → console : refoulement de la pompe A11VO130 (boyau de 1 po).' },
-  { id: 'retour', color: '#1d5fd6', name: 'Retour', desc: 'Retour d\'huile au réservoir par les filtres RTF-47 (console → filtre n° 2 ; refroidisseur → filtre n° 1).' },
+  { id: 'pression', color: '#e02424', name: 'Pression', desc: 'Groupe → console, traversée de la plaque CA12 « PRESSION #1 » (plaques de la console, P082). Pompe qui l\'alimente : hypothèse du modèle (A11VO130).' },
+  { id: 'retour', color: '#1d5fd6', name: 'Retour', desc: 'Retour d\'huile au réservoir par les deux filtres RTF-47 : de la console, et du refroidisseur (raccordement : hypothèse du modèle).' },
   { id: 'drain', color: '#14923f', name: 'Drain', desc: 'Drains des carters et de la console vers le collecteur de retour UM-064-600PP, puis le réservoir.' },
   { id: 'aspiration', color: '#0fa3a3', name: 'Aspiration', desc: 'Vannes du réservoir → aspirations des pompes.' },
-  { id: 'pilotage', color: '#f07c12', name: 'Pilotage', desc: 'Vanne de démarrage DTDA-MHN-GAI ↔ bride de refoulement de l\'A11VO130.' },
+  { id: 'pilotage', color: '#f07c12', name: 'Pilotage', desc: 'Vanne de démarrage DTDA-MHN-GAI ↔ bride de refoulement de l\'A11VO130 (tracé : hypothèse du modèle).' },
   { id: 'rotation-a', color: '#c026d3', name: 'Rotation A', desc: 'Console (distributeur SD25, section rotation) → orifice A du moteur de la tête.' },
-  { id: 'rotation-b', color: '#7444e0', name: 'Rotation B', desc: 'Console (distributeur SD25, section rotation) → orifice B du moteur de la tête.' },
-  { id: 'avance-treuil', color: '#b8860b', name: 'Avance / treuil (commun)', desc: 'Console → sélecteur mât / treuil gauche, qui envoie l\'huile au vérin d\'avance (vannes à bille) ou au moteur du treuil.', branches: ['avance', 'recul', 'treuil'] },
+  { id: 'rotation-b', color: '#532f6f', name: 'Rotation B', desc: 'Console (distributeur SD25, section rotation) → orifice B du moteur de la tête.' },
+  { id: 'avance-treuil', color: '#fbd298', name: 'Sélecteur mât / treuil gauche', desc: 'Console → sélecteur DF10-6B-12L gauche (« SWITCH VALVE MAST TO WIRE LINE », page 1.1), qui envoie l\'huile au vérin d\'avance (vannes à bille) ou au moteur du treuil.', branches: ['avance', 'recul', 'treuil'] },
   { id: 'avance', color: '#e8c20c', name: 'Avance', desc: 'Sélecteur gauche → tige creuse avant du vérin d\'avance UM-064-100Z.' },
-  { id: 'recul', color: '#8a6d1f', name: 'Recul', desc: 'Sélecteur gauche → tige creuse arrière du vérin d\'avance UM-064-100Z.' },
-  { id: 'treuil', color: '#9a4a14', name: 'Treuil', desc: 'Sélecteur gauche ↔ moteur White du treuil de câble.' },
-  { id: 'mat', color: '#d0367a', name: 'Bascule / relevage (commun)', desc: 'Console → sélecteur droit, qui envoie l\'huile aux vérins de bascule ou au vérin de relevage.', branches: ['bascule', 'relevage'] },
-  { id: 'bascule', color: '#f47cb4', name: 'Bascule', desc: 'Sélecteur droit → blocs YEJ des deux vérins de bascule HBU-3010.' },
-  { id: 'relevage', color: '#8f1d4a', name: 'Relevage', desc: 'Sélecteur droit → bloc YEJ du vérin de relevage UM-064-300Z.' },
+  { id: 'recul', color: '#533c1d', name: 'Recul', desc: 'Sélecteur gauche → tige creuse arrière du vérin d\'avance UM-064-100Z.' },
+  { id: 'treuil', color: '#903e0e', name: 'Treuil', desc: 'Sélecteur gauche ↔ moteur White du treuil de câble.' },
+  { id: 'mat', color: '#d0367a', name: 'Sélecteur mât / treuil droit', desc: 'Console → sélecteur DF10-6B-12L droit (« SWITCH VALVE MAST TO WIRE LINE », page 1.1). Hypothèse du modèle : ses sorties vont aux vérins de bascule et de relevage (aucune page ne les relie).', branches: ['bascule', 'relevage'] },
+  { id: 'bascule', color: '#f47cb4', name: 'Bascule (hypothèse)', desc: 'Hypothèse du modèle : sélecteur droit → blocs YEJ des deux vérins de bascule HBU-3010.' },
+  { id: 'relevage', color: '#820d49', name: 'Relevage (hypothèse)', desc: 'Hypothèse du modèle : sélecteur droit → bloc YEJ du vérin de relevage UM-064-300Z.' },
   { id: 'eau', color: '#3cb4f0', name: 'Eau', desc: 'Bloc d\'eau 3 voies de la console → émerillon d\'eau de la tête.' },
-  { id: 'lubrification', color: '#7cbf1a', name: 'Lubrification', desc: 'Tête : pompe 139 → filtre → refroidisseur → régulateur NDV-10-N → transmission et roulements (page 2.3).', branches: ['lubrification-retour'] },
-  { id: 'lubrification-retour', color: '#4f6d12', name: 'Lubrification — aspiration', desc: 'Tête : carter, transmission et boîte → vanne 3 voies → pompe 139 (page 2.3).' },
-  { id: 'event', color: '#8c9aab', name: 'Évent', desc: 'Tête : rangée d\'évent, couvercle et reniflard (page 2.3).' },
+  { id: 'lubrification', color: '#b4dfbf', name: 'Lubrification', desc: 'Tête : UM-012-139 (« HYDRAULIC MOTOR » à la liste, pompe d\'aspiration de la page 2.3) → filtre → refroidisseur → régulateur NDV-10-N → transmission et roulements inférieur et supérieur (page 2.3).', branches: ['lubrification-retour'] },
+  { id: 'lubrification-retour', color: '#81b474', name: 'Lubrification — aspiration', desc: 'Tête : carter, transmission et boîte → vanne 3 voies → UM-012-139 (page 2.3).' },
+  { id: 'event', color: '#5a6472', name: 'Couvercle et reniflard', desc: 'Tête : transmission → couvercle (H23C, « TRANSMISSION/COVER ») et transmission → reniflard (H08C, « FOR BREATHER »), page 2.3.' },
 ];
 const BY_ID = new Map(CIRCUITS.map((c) => [c.id, c]));
 const info = (id) => BY_ID.get(id) || { id, color: '#8c9aab', name: id, desc: '' };
@@ -58,24 +61,6 @@ const colorMat = (hex, strong) => {
   }
   return m;
 };
-const dimMats = new Map();
-/** Variante estompée d'un matériau (comme le fantôme de la visionneuse, un peu plus visible). */
-const dimMat = (base, opacity = 0.13) => {
-  const key = `${base.uuid}:${opacity}`;
-  let m = dimMats.get(key);
-  if (!m) {
-    m = base.clone();
-    m.transparent = true;
-    m.opacity = opacity;
-    m.depthWrite = false;
-    m.userData = { ...m.userData, fin: null };
-    m.onBeforeCompile = () => {};
-    m.customProgramCacheKey = () => '';
-    dimMats.set(key, m);
-  }
-  return m;
-};
-
 export default {
   id: 'circuits',
   order: 60,
@@ -105,11 +90,11 @@ export default {
         const lit = h && (!fam || fam.has(h.userData.circuit));
         if (h === o) {
           const hex = info(o.userData.circuit).color;
-          map.set(o, lit ? colorMat(hex, !!focus) : dimMat(colorMat(hex, false), 0.22));
+          map.set(o, lit ? colorMat(hex, !!focus) : ctx.viewer.dimMaterial(colorMat(hex, false), 0.22));
         } else if (h) {
-          if (!lit) map.set(o, dimMat(orig(o)));
+          if (!lit) map.set(o, ctx.viewer.dimMaterial(orig(o)));
         } else {
-          map.set(o, dimMat(orig(o)));
+          map.set(o, ctx.viewer.dimMaterial(orig(o)));
         }
       });
       return map;
@@ -138,7 +123,7 @@ export default {
       const org = uniq(u.map((t) => t.split(' : ')[0]));
       return `${org.map(esc).join(' ; ')} <span class="circuits-k">(${u.length} raccords)</span>`;
     };
-    const sw = (id) => `<span class="circuits-sw" style="--c:${info(id).color}"></span>`;
+    const sw = (id) => `<span class="circuits-sw" style="--c:${info(id).color}" aria-hidden="true"></span>`;
     const legend = () => {
       const gs = groups();
       const rows = gs.map(([id, list]) => {
@@ -148,7 +133,9 @@ export default {
           <span class="circuits-n">${list.length} boyau${list.length > 1 ? 'x' : ''}</span>
           <span class="circuits-ends"><b>De</b> ${ends(list, 'circuitFrom')}<br><b>À</b> ${ends(list, 'circuitTo')}</span></span></button></li>`;
       }).join('');
-      return `<div class="circuits">${focus ? detail() : `<p class="circuits-hint">Boyaux colorés selon leur circuit, le reste de la machine estompé. Cliquez un circuit ci-dessous ou un boyau dans la vue pour le suivre d'un bout à l'autre.</p>`}
+      const verb = ctx.narrow() || matchMedia('(pointer: coarse)').matches ? 'Touchez' : 'Cliquez';
+      return `<div class="circuits">${focus ? detail() : `<p class="circuits-hint">Boyaux colorés selon leur circuit, le reste de la machine estompé. ${verb} un circuit ci-dessous ou un boyau dans la vue pour le suivre d'un bout à l'autre.</p>`}
+        <p class="circuits-warn">Le manuel ne contient pas le schéma hydraulique : les raccordements absents des listes sont des hypothèses du modèle, signalées comme telles.</p>
         <h4 class="circuits-h">Légende · ${hoses.length} boyaux</h4><ul class="circuits-list">${rows}</ul></div>`;
     };
     const detail = () => {
@@ -197,8 +184,10 @@ export default {
       panelEl.innerHTML = legend();
       openPanel();
       apply();
+      // Modèle recadré dans la partie de la scène que la légende (panneau ou volet bas) ne couvre pas.
+      requestAnimationFrame(() => { if (active) ctx.viewer.frame(); });
     };
-    const stop = () => {
+    const stop = ({ reframe = true } = {}) => {
       if (!active) return;
       active = false;
       focus = null;
@@ -206,6 +195,8 @@ export default {
       btn.setAttribute('aria-pressed', 'false');
       ctx.ui.sidePanel.release(OWNER);
       apply();
+      // Légende fermée : le modèle reprend toute la scène.
+      if (reframe) ctx.viewer.frame();
     };
     // Le panneau est pris par un autre mode, ou replié : le mode s'arrête (couleurs rétablies).
     ctx.on('sidepanel', ({ open, owner }) => { if (owner === OWNER && !open) stop(); });
@@ -220,7 +211,7 @@ export default {
       root = model?.root ?? null;
       hoses = scan(root);
       btn.style.display = hoses.length ? '' : 'none';
-      if (!hoses.length) { stop(); return; }
+      if (!hoses.length) { stop({ reframe: false }); return; }
       if (active) {
         if (focus && !hoses.some((h) => family(focus).has(h.userData.circuit))) focus = null;
         if (picked && !hoses.includes(picked)) picked = null;
@@ -237,7 +228,7 @@ export default {
     // sinon au dernier remplacement : de nouveaux boyaux peuvent faire paraître l'outil).
     ctx.on('model-update', ({ model, done }) => { if (model === ctx.viewer.model && (active || done)) rescan(model); });
     ctx.on('view', ({ type }) => {
-      if (type !== 'assembly') { btn.style.display = 'none'; stop(); }
+      if (type !== 'assembly') { btn.style.display = 'none'; stop({ reframe: false }); }
     });
     // Pièce sélectionnée pendant le mode : gardée à ses couleurs (sa fiche s'ouvre par-dessus la légende).
     ctx.on('select', ({ objects }) => {
@@ -251,14 +242,29 @@ export default {
     const ray = new THREE.Raycaster();
     const ndc = new THREE.Vector2();
     let down = null;
+    /** Boyau sous le pointeur ; au doigt (pointeur grossier), tolérance de TOUCH_R px autour du point touché. */
+    const TOUCH_R = 14;
     const hoseAt = (e) => {
       const cam = ctx.viewer.camera, canvas = ctx.viewer.canvas;
       if (!cam || !canvas) return null;
       const rect = canvas.getBoundingClientRect();
-      ndc.set(((e.clientX - rect.left) / rect.width) * 2 - 1, -((e.clientY - rect.top) / rect.height) * 2 + 1);
-      ray.setFromCamera(ndc, cam);
       const shown = hoses.filter((h) => { for (let a = h; a; a = a.parent) if (!a.visible) return false; return true; });
-      return ray.intersectObjects(shown, false)[0]?.object ?? null;
+      const at = (x, y) => {
+        ndc.set(((x - rect.left) / rect.width) * 2 - 1, -((y - rect.top) / rect.height) * 2 + 1);
+        ray.setFromCamera(ndc, cam);
+        return ray.intersectObjects(shown, false)[0]?.object ?? null;
+      };
+      const hit = at(e.clientX, e.clientY);
+      if (hit || !(e.pointerType === 'touch' || e.pointerType === 'pen' || matchMedia('(pointer: coarse)').matches)) return hit;
+      // Cercles de 7 puis 14 px : le premier boyau trouvé, le plus près du point touché.
+      for (const r of [TOUCH_R / 2, TOUCH_R]) {
+        for (let k = 0; k < 8; k++) {
+          const t = (k / 8) * Math.PI * 2;
+          const h = at(e.clientX + r * Math.cos(t), e.clientY + r * Math.sin(t));
+          if (h) return h;
+        }
+      }
+      return null;
     };
     const onCanvas = (e) => active && !!ctx.viewer.canvas && e.target === ctx.viewer.canvas;
     document.addEventListener('pointerdown', (e) => { down = onCanvas(e) && e.isPrimary ? { x: e.clientX, y: e.clientY } : null; }, true);
@@ -267,7 +273,11 @@ export default {
       down = null;
       const h = hoseAt(e);
       if (!h) return;
+      // Le clic n'atteint pas la vue (pas de sélection de la pièce qui contient le boyau) ; les commandes de la
+      // caméra, qui ont capturé le pointeur, sont relâchées par un « pointercancel » (sinon la vue tourne au
+      // moindre mouvement de la souris).
       e.stopPropagation();
+      ctx.viewer.canvas.dispatchEvent(new PointerEvent('pointercancel', { pointerId: e.pointerId, pointerType: e.pointerType, isPrimary: e.isPrimary, clientX: e.clientX, clientY: e.clientY }));
       // Le boyau prend la main : plus de pièce sélectionnée, la légende revient par-dessus la fiche.
       if (ctx.selection) ctx.viewer.select(null);
       if (ctx.ui.sidePanel.owner !== OWNER) openPanel();

@@ -232,7 +232,7 @@ export function P048(api) {
     ring(0.12, 0.049, 0.015, 'red', { axis: 'x', seg: 40, pos: [-0.4455, SPY, 0] }),
     ...Array.from({ length: 6 }, (_, i) => { const a = (i * Math.PI) / 3; const y = SPY + 0.09 * Math.cos(a), z = 0.09 * Math.sin(a); return group(cyl(0.013, 0.011, 'red', { axis: 'x', pos: [-0.4585, y, z] }), at(nut(0.019, 0.012, 'blackOxide', { axis: 'x' }), [-0.47, y, z])); }),
     pose(THREE, coude, [-0.262, SPY + 0.154 + 0.006, 0], [0, 1, 0], [-1, 0, 0]),
-    entretien(pose(THREE, graisseur, [-0.215, SPY + 0.154 + 0.0035, 0], [0, 1, 0]), 'graisseur', 'F'), // page 1.04, détail F
+    pose(THREE, graisseur, [-0.215, SPY + 0.154 + 0.0035, 0], [0, 1, 0]), // graisseur ZNPT250 de la liste du mandrin (P052, repère 1)
   ), [-0.95, 0, 0]);
   each(P, 'UM-012-189', [0, 1, 2].map((i) => { const a = Math.PI / 2 + (i * 2 * Math.PI) / 3; return at(box(0.05, 0.012, 0.012, 'darkSteel'), [-0.41, SPY + 0.042 * Math.cos(a), 0.042 * Math.sin(a)], [a, 0, 0]); }), [-1.15, 0, 0]);
 
@@ -408,27 +408,27 @@ export function P048(api) {
 
 // P049 — Raccords et boyaux de lubrification de la tête (page 2.3), dans le repère de P048. Circuit :
 // carter → boyaux d'aspiration H15C (avant, forage vers le bas) et H16C (arrière, par le té du bout +Z,
-// forage vers le haut) → vanne 3 voies BKH → pompe 139 → H20C → filtre → H17C → bas du refroidisseur →
+// forage vers le haut) → vanne 3 voies BKH → UM-012-139 (« HYDRAULIC MOTOR » à la liste, pompe d'aspiration) → H20C → filtre → H17C → bas du refroidisseur →
 // haut du refroidisseur → H18C → té avant du régulateur NDV-10-N (H21C vers la rangée laiton du dessus de
-// la transmission) → régulateur → té arrière (H24C vers le roulement avant par le couvercle 114, H25C vers
-// le roulement arrière par le couvercle 121). Transmission ↔ boîte : H22C, H10C, H11C ; évent : rangée
+// la transmission) → régulateur → té arrière (H24C vers le roulement inférieur, « LOWER BEARING », par le couvercle 114, H25C vers
+// le roulement supérieur, « UPPER BEARING », par le couvercle 121). Transmission ↔ boîte : H22C, H10C, H11C ; évent : rangée
 // 6602 / 2601 / 6500 sur la tour de transmission, H23C (rangée → couvercle) et H08C (rangée → reniflard). Boyaux 3/8 gris (H11C 1/2), raccords JIC laiton (2404, 2501, 2601,
 // 5000) ou zingués (6402, 6500, 66xx, 6801).
 // Circuits des boyaux de P049 (d'après le circuit décrit ci-dessus, page 2.3) : [circuit, rôle, départ, arrivée].
 const LUB_CIRC = {
-  'UM-012-H20C-UG': ['lubrification', 'refoulement de la pompe → filtre', 'Pompe 139 : refoulement (coude 6801-6-8)', 'Filtre : entrée (coude 2501-6-6)'],
+  'UM-012-H20C-UG': ['lubrification', 'refoulement de UM-012-139 → filtre (« PRESSION IN/FILTER »)', 'UM-012-139 (« HYDRAULIC MOTOR » à la liste, pompe d\'aspiration de la page 2.3) : refoulement (coude 6801-6-8)', 'Filtre : entrée (coude 2501-6-6)'],
   'UM-012-H17C-UG': ['lubrification', 'filtre → refroidisseur', 'Filtre : sortie (coude 2501-6-8)', 'Refroidisseur : coude bas 2501-6-8'],
   'UM-012-H18C-UG': ['lubrification', 'refroidisseur → régulateur', 'Refroidisseur : coude haut 2501-6-8', 'Régulateur NDV-10-N : té avant 6600-06-06-06'],
   'UM-012-H21C-UG': ['lubrification', 'régulateur → transmission', 'Régulateur NDV-10-N : té avant 6600-06-06-06', 'Transmission : rangée laiton du dessus (adaptateur 6500-06-06)'],
-  'UM-012-H24C-UG': ['lubrification', 'régulateur → roulement avant', 'Régulateur NDV-10-N : té arrière 6600-06-06-06', 'Couvercle 114 du roulement avant (2404-6-4)'],
-  'UM-012-H25C-UG': ['lubrification', 'régulateur → roulement arrière', 'Régulateur NDV-10-N : té arrière 6600-06-06-06', 'Couvercle 121 du roulement arrière (2404-6-4)'],
+  'UM-012-H24C-UG': ['lubrification', 'régulateur → roulement inférieur (« REGULATOR/LOWER BEARING »)', 'Régulateur NDV-10-N : té arrière 6600-06-06-06', 'Roulement inférieur : couvercle 114 (2404-6-4)'],
+  'UM-012-H25C-UG': ['lubrification', 'régulateur → roulement supérieur (« REGULATOR/UPPER BEARING »)', 'Régulateur NDV-10-N : té arrière 6600-06-06-06', 'Roulement supérieur : couvercle 121 (2404-6-4)'],
   'UM-012-H15C-UG': ['lubrification-retour', 'aspiration avant, carter → vanne 3 voies', 'Boîte : orifice bas de la face avant (coude 2501-8-8)', 'Vanne 3 voies BKH : entrée A (coude 2501-6-6)'],
-  'UM-012-H16C-UG': ['lubrification-retour', 'aspiration arrière, té → vanne 3 voies', 'Té 6600-8-8-8 de la rangée d\'évent', 'Vanne 3 voies BKH : entrée B (coude 2501-6-6)'],
+  'UM-012-H16C-UG': ['lubrification-retour', 'aspiration arrière, té → vanne 3 voies', 'Té 6600-8-8-8 de la rangée de la tour de transmission', 'Vanne 3 voies BKH : entrée B (coude 2501-6-6)'],
   'UM-012-H11C': ['lubrification-retour', 'transmission → té de la ligne d\'aspiration arrière', 'Transmission : coude long 2501LL-8-8 du haut', 'Té 6600-8-8-8'],
   'UM-012-H22C-UG': ['lubrification-retour', 'transmission ↔ boîte (haut)', 'Transmission : 6500-06-06 du haut', 'Boîte : 6500-06-06 du haut'],
   'UM-012-H10C': ['lubrification-retour', 'transmission ↔ boîte (milieu)', 'Transmission : coude 2501-06-04', 'Boîte : 6500-06-06 du milieu'],
-  'UM-012-H23C-UG': ['event', 'rangée d\'évent → couvercle', 'Rangée d\'évent : té 6602-06-06-06', 'Couvercle : bossage +Z (2404-6-4)'],
-  'UM-012-H08C': ['event', 'transmission → reniflard', 'Transmission : coude 2501-6-8 au pied du levier', 'Reniflard A-1199-R-4048 (manchon 5000-6-6)'],
+  'UM-012-H23C-UG': ['event', 'transmission → couvercle (« TRANSMISSION/COVER »)', 'Transmission : rangée de la tour, té 6602-06-06-06', 'Couvercle : bossage +Z (2404-6-4)'],
+  'UM-012-H08C': ['event', 'transmission → reniflard (« FOR BREATHER »)', 'Transmission : coude 2501-6-8 au pied du levier', 'Reniflard A-1199-R-4048 (manchon 5000-6-6)'],
 };
 
 export function P049(api) {
