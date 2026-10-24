@@ -398,7 +398,7 @@ export default {
     // ------------------------------------------------------------ changements de vue
     ctx.on('assembly', ({ id, is3d, home }) => {
       // Nouveau modèle (ou dessins du manuel) : la procédure en cours n'a plus d'objet.
-      if (run && (run.proc.assembly !== id || ctx.viewer.raw?.model !== run.model)) stop({ gone: ctx.viewer.raw?.model !== run.model, quiet: true });
+      if (run && (run.proc.assembly !== id || ctx.viewer.model !== run.model)) stop({ gone: ctx.viewer.model !== run.model, quiet: true });
       tool.hidden = !list().length;
       if (pending && pending.assembly === id && is3d && !home) {
         const p = pending;
@@ -409,7 +409,7 @@ export default {
     });
     // La vue affichée change de type (document, contrôle) : on sort.
     ctx.on('view', ({ type, id }) => {
-      if (run && (type !== 'assembly' || id !== run.proc.assembly)) stop({ gone: ctx.viewer.raw?.model !== run.model, quiet: true });
+      if (run && (type !== 'assembly' || id !== run.proc.assembly)) stop({ gone: ctx.viewer.model !== run.model, quiet: true });
     });
   },
 };

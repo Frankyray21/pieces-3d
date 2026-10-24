@@ -181,6 +181,7 @@ export function createHost(app) {
       setOpen(false);
       top = null;
       fromPane = null;
+      renderBack();
       emitPanel(false, t?.owner ?? null);
     },
     /** Ferme tout le panneau (couche affichée et couche recouverte). */
@@ -190,6 +191,7 @@ export function createHost(app) {
       base = null;
       top = null;
       fromPane = null;
+      renderBack();
       setOpen(false);
       owners.forEach((o) => emitPanel(false, o));
     },

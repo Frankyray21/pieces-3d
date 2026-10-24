@@ -58,9 +58,11 @@ horizontal). Classes prêtes à l'emploi : `btn`, `btn primary`, `tbtn`, `chip`,
 | `'equipment'` | `{ equipment, id }` | un autre équipement est chargé (avant l'affichage de sa vue) |
 | `'assembly'` | `{ id, assembly, is3d, home, model, equipment }` | un assemblage est affiché, en 3D (`is3d`) ou avec les dessins du manuel ; `home` : page d'accueil 3D de l'équipement (outils cliquables) ; `model` : modèle 3D (`{ root, view }`) ou `null` |
 | `'view'` | `{ type, id, is3d?, home?, system }` | toute vue affichée : `type` = `'assembly'`, `'document'` (schéma / liste) ou `'issues'` (contrôle des listes) ; `system` : voir `ctx.systemOf` |
-| `'select'` | `{ ref, path, row, pn, path3d, objects, source }` | pièce cliquée en 3D (`source: '3d'`) ou ligne de liste / recherche (`'list'`) ; désélection : `ref`, `path`, `row` à `null`. `path` : chemin de repères depuis l'assemblage affiché (`['1', '4']` = repère 4 du sous-groupe 1) ; `path3d` : chemin résolu en 3D ; `objects` : objets Three.js sélectionnés |
+| `'select'` | `{ ref, path, row, pn, path3d, objects, source }` | pièce cliquée en 3D (`source: '3d'`) ou ligne de liste / recherche (`'list'`) ; désélection : `ref`, `path`, `row` à `null`. `path` : chemin de repères depuis l'assemblage affiché (`['1', '4']` = repère 4 du sous-groupe 1) ; `path3d` : chemin résolu en 3D ; `objects` : objets Three.js sélectionnés. Émis avant le cadrage de la pièce (qui tient compte du panneau ouvert par la fiche) |
+| `'view-state'` | `{ explode, expanded, section }` | éclatement, groupes éclatés (clés de chemins `'1>4'`) ou coupe changés |
+| `'model-update'` | `{ model, old, part, done }` | la vue d'ensemble a remplacé un sous-assemblage simplifié (`old`) par sa version détaillée (`part`) : refaire les marques posées sur le modèle (pastilles, couleurs…) ; `done` : dernier remplacement |
 | `'route'` | `{ hash, equipmentId, token, view }` | après chaque changement d'adresse traité (`token` : `'catalogue'`, id d'assemblage, de document, `'controle'`, `'apercu'` ou adresse d'une fonction) |
-| `'sidepanel'` | `{ open, owner }` | panneau latéral ouvert / fermé (`owner` : propriétaire donné à `open`) |
+| `'sidepanel'` | `{ open, owner, over?, base?, restored? }` | panneau latéral : couche ouverte / fermée (`owner` : propriétaire donné à `open` ; `over` : couche posée par-dessus un mode ; `base` : propriétaire recouvert ; `restored` : couche recouverte revenue). Voir « Panneau latéral et modes » |
 | `'page'` | `{ open, title?, token }` | page plein écran affichée / fermée |
 
 ### Données
@@ -76,6 +78,7 @@ horizontal). Classes prêtes à l'emploi : `btn`, `btn primary`, `tbtn`, `chip`,
 | `ctx.systems()` | systèmes de l'équipement : `[{ id, title, index, color, icon }]` (sous-assemblages directs de la racine) |
 | `ctx.systemOf(assemblyId)` | système d'un assemblage (le sien ou celui de son ancêtre) ; `null` pour la racine et les documents. `color` vaut `'var(--sys-n)'`, `icon` un nom de `icons.js` |
 | `ctx.has3d(assemblyId)` | vrai si l'assemblage a un modèle 3D |
+| `ctx.equipmentData(nom, equipmentId?)` | données complémentaires `public/equipment/<id>/<nom>.json` (`'bulles'`, `'donnees'`, `'entretien'`, `'procedures'`) de l'équipement chargé, ou `null`. Lues à la construction du site (`src/data/extras.js`) : aucune requête, donc aucune erreur 404 pour un équipement qui n'en a pas, et disponibles dans la publication en Artifact. Un nouveau nom de fichier s'ajoute au motif de `src/data/extras.js` |
 
 **Équipement** (`ctx.equipment`, normalisé par `src/data/equipment.js` à partir
 de `public/equipment/<id>/data.json`) :
@@ -104,7 +107,8 @@ de `public/equipment/<id>/data.json`) :
 | `ctx.go(cible)` | `cible` : jeton de l'équipement courant (`'P042'`, `'apercu'`, `'controle'`, adresse d'une fonction) ou adresse complète (`'#du311.P032'`) |
 | `ctx.hashFor(token, equipmentId?) → '#…'` | adresse d'un jeton (le premier équipement du catalogue n'a pas de préfixe) |
 | `ctx.registerRoute(token, handler(ctx, info))` | adresse d'une fonction : `#<équipement>.<token>` (`token` en minuscules, `[a-z][a-z0-9_-]*`). La vue d'en dessous est ouverte d'abord ; un `showPage` appelé dans `handler` est lié à l'adresse (Retour / Échap reviennent à la vue) |
-| `ctx.pageUrl(feuille) → url` | image d'une page du manuel (`'P042'`) |
+| `ctx.openRow(clé)` | ouvre la ligne d'une liste (`row.key`, ex. `'P042:9'`, `row.usedIn[i].key`, `flag.refs[i].key`) : son assemblage ou son document, la ligne sélectionnée |
+| `ctx.pageUrl(feuille) → url \| null` | image d'une page du manuel (`'P042'`) ; `null` si la page n'est pas publiée avec cette version du site (publication allégée en Artifact) : afficher un message plutôt qu'une image |
 | `ctx.openPage(feuille)` | ouvre la page du manuel dans la visionneuse de pages |
 | `ctx.sheetTitle(feuille)` | titre de la page |
 | `ctx.sheetOwner(feuille)` | id de l'assemblage ou du document de la page |
@@ -121,21 +125,39 @@ du manuel), les méthodes ne font rien et retournent 0.
 | `ctx.viewer.is3d` | vrai si la vue courante est un modèle 3D |
 | `ctx.viewer.raw` | instance `Viewer` (src/viewer/Viewer.js) ou `null` |
 | `ctx.viewer.scene` / `.camera` / `.model` | scène Three.js, caméra, modèle affiché (`{ root, view }`) |
+| `ctx.viewer.canvas` | toile WebGL (clics, pointeur) |
+| `ctx.viewer.objects(repères) → Object3D[]` | objets 3D des repères (plusieurs exemplaires possibles) |
 | `ctx.viewer.highlight(repères, { ghost = false, frame = false }) → n` | met en évidence (bleu-vert) ; `repères` : un repère ou une liste (`['1', '2', '3>4']`) ; `ghost` : estompe les autres ; `frame` : cadre ces pièces ; retourne le nombre d'objets trouvés. Remplace la mise en évidence précédente ; effacée au changement d'assemblage |
 | `ctx.viewer.isolate(repères, { frame }) → n` | = `highlight(repères, { ghost: true })` |
+| `ctx.viewer.markObjects(objets, { ghost, frame }) → n` | comme `highlight`, pour des objets 3D quelconques du modèle (graisseurs, boyaux…) ; `ghost` estompe tout le reste, même avec une liste vide |
 | `ctx.viewer.clear()` | plus rien de mis en évidence |
-| `ctx.viewer.frame(repères?)` | cadre ces pièces, ou tout le modèle sans argument |
+| `ctx.viewer.frame(cible?)` | cadre tout le modèle (sans argument), des repères, des objets 3D ou une boîte `THREE.Box3`, dans la partie de la scène laissée libre (voir `ctx.ui.setInsets`) |
+| `ctx.viewer.lookAt([x, y, z], [x, y, z])` | caméra à une position, vers une cible |
 | `ctx.viewer.select(repère)` | sélectionne comme un clic dans la liste (fiche, liste, 3D) ; `null` désélectionne |
 | `ctx.viewer.path3d(repère) → string[]` | chemin 3D résolu (`'1\|2\|3'` pour un ensemble) |
+| `ctx.viewer.setBaseMaterials(entrées)` / `.restoreBaseMaterials()` | recolore des maillages : `Map` ou liste de `[maillage, matériau]`, qui remplace le jeu précédent (les autres maillages retrouvent leur matériau) ; survol, sélection, estompage et coupe s'appliquent par-dessus ; oublié au changement de modèle. `ctx.viewer.originalMaterial(maillage)` : matériau d'origine |
+| `ctx.viewer.showParts(cible, visible) → Object3D[]` / `.restoreParts()` | montre ou masque des pièces (repères ou objets) avec leurs bulles de repère ; `restoreParts` rend les visibilités d'origine |
+| `ctx.viewer.arriveParts(cible, { far, duration, gap }) → ms` / `.settleParts()` | montage pas à pas : chaque pièce apparaît à son tour depuis sa position éclatée × `far` et glisse à sa place ; `settleParts` arrête et pose tout |
+| `ctx.viewer.assemble({ animate })` | tout rassembler (comme « Assembler » : curseur, groupes éclatés et liste suivent) |
+| `ctx.viewer.isGroup(r)` / `.isGroupOpen(r)` / `.toggleGroup(r, force?)` | groupe éclatable sur place (double-clic) : état, bascule |
+| `ctx.viewer.canCut(r)` / `.isCut()` / `.cut(r \| null)` | vue en coupe de la pièce (sélectionnée au besoin), ou fin de la coupe |
+| `ctx.viewer.invalidate()` | demande une image (après un changement fait directement sur la scène) |
+
+Les modules n'utilisent que cette API (pas les membres internes de `Viewer`
+préfixés par `_`, ni `markObjs`, `insets`, `step` ou `userData.baseMaterial`).
 
 ### Emplacements d'interface (`ctx.ui`)
 
 | Signature | Rôle |
 |---|---|
-| `ctx.ui.sidePanel.open({ title, content, owner, icon })` | panneau latéral droit, posé sur la scène (plein écran de la scène sur téléphone, où l'onglet « Vue » est affiché). `content` : élément DOM ou HTML (à échapper) ; `owner` : id de la fonction |
-| `ctx.ui.sidePanel.close()` / `.toggle(opts)` | replier ; `toggle` replie si le même `owner` l'occupe |
-| `ctx.ui.sidePanel.setTitle(t)` / `.setContent(c)` | changer le titre, le contenu |
-| `ctx.ui.sidePanel.isOpen` / `.owner` / `.body` / `.element` | état, propriétaire, élément du contenu, panneau |
+| `ctx.ui.sidePanel.open({ title, content, owner, icon, className, over, reveal })` | panneau latéral droit, posé sur la scène (volet bas sur téléphone, où l'onglet « Vue » est affiché si `reveal`, par défaut). `content` : élément DOM ou HTML (à échapper) ; `owner` : id de la fonction ; `className` : classe du panneau (mise en page propre, gardée d'une ouverture à l'autre) ; `over` : se pose par-dessus le panneau d'un mode (voir ci-dessous) |
+| `ctx.ui.sidePanel.close()` / `.closeAll()` / `.toggle(opts)` | replie la couche affichée (une couche recouverte revient) / tout ; `toggle` replie si le même `owner` l'occupe |
+| `ctx.ui.sidePanel.release(owner)` | rend le panneau si `owner` l'occupe, affiché ou recouvert (à l'arrêt d'un mode) |
+| `ctx.ui.sidePanel.setTitle(t, owner?)` / `.setContent(c, owner?)` | changer le titre, le contenu ; avec `owner` d'une couche recouverte, son contenu est remplacé sous la couche du dessus |
+| `ctx.ui.sidePanel.isOpen` / `.owner` / `.base` / `.has(owner)` / `.body` / `.element` | état, propriétaire affiché, propriétaire recouvert, `owner` présent (affiché ou recouvert), élément du contenu, panneau |
+| `ctx.ui.setInsets(id, marges \| fonction \| élément \| null)` | parties de la scène couvertes par l'interface d'une fonction (`{ top, right, bottom, left }` en px, fonction qui les retourne, ou élément posé sur la scène, dégagé par son côté le plus économique) : le cadrage (`frame`, sélection, « Recadrer ») place le modèle dans le reste. Le panneau latéral est pris en compte d'office ; `null` retire les marges |
+| `ctx.ui.onEscape(fn, ordre) → off()` | couche fermée par Échap : `fn()` retourne vrai si elle a fermé quelque chose (voir « Touche Échap ») |
+| `ctx.ui.stage` | la scène (`#stage`) : élément où poser barres et calques |
 | `ctx.ui.addTool(bouton \| { id, label, title, icon, pressed, onClick }) → bouton` | bouton dans la barre d'outils de la vue 3D (groupe des fonctions, après « Plein écran ») ; reçoit la classe `tbtn` ; `pressed` → `aria-pressed`. La barre n'est affichée que pour une vue 3D |
 | `ctx.ui.searchSlot` | élément de l'en-tête, à droite du champ de recherche (fond sombre : boutons `btn` déjà adaptés) |
 | `ctx.ui.equipmentHome` | élément affiché en bas de la page de l'équipement (`#<équipement>.apercu`), après systèmes, schémas et fiche technique ; le même élément sert pour tous les équipements : le remplir à l'événement `'equipment'` |
@@ -155,3 +177,46 @@ du manuel), les méthodes ne font rien et retournent 0.
 
 Les boutons et liens portant `data-go="<jeton>"` (navigation) ou
 `data-page="<feuille>"` (page du manuel) sont gérés par le site, partout dans la page.
+
+## Panneau latéral et modes
+
+Le panneau latéral a **un propriétaire à la fois** (`owner`) ; c'est aussi
+l'arbitrage des **modes**, exclusifs : circuits (`'circuits'`), entretien
+(`'entretien'`), procédure (`'procedures'`, `'procedures-list'`),
+sous-ensemble isolé (`'systemes'`).
+
+- Un mode qui ouvre le panneau le prend : l'ancien propriétaire reçoit
+  `'sidepanel' { open: false, owner }` et se désactive proprement (couleurs,
+  marques, pastilles, visibilités rétablies). Une procédure en cours s'arrête
+  aussi quand un autre mode prend le panneau (sa barre n'en dépend pas).
+- La **fiche de la pièce** (`'fiche'`) s'ouvre avec `over: true` : elle se
+  pose par-dessus le panneau d'un mode, qui **reste actif** ; l'en-tête montre
+  « ‹ <titre du mode> » ; la fiche fermée (×, « ‹ », Échap, désélection), le
+  panneau du mode revient. Un clic sur une pièce pendant un mode la sélectionne
+  donc (fiche par-dessus) sans arrêter le mode ; un clic sur un boyau
+  (circuits) ou une pastille (entretien) ferme la fiche et ramène le mode.
+- Replier le panneau d'un mode arrête le mode. Un mode qui s'arrête appelle
+  `sidePanel.release(owner)` (son panneau peut être recouvert par la fiche).
+- Un mode recouvert qui rouvre son panneau (`open` avec son `owner`) passe
+  devant : la couche du dessus se ferme.
+
+Sur téléphone, le panneau est un volet bas (la vue reste visible au-dessus,
+la pièce y est cadrée) ; ouvert depuis l'onglet « Pièces » ou « Assemblages »,
+il bascule sur « Vue » et son en-tête offre « ‹ Liste des pièces » (ou
+« ‹ Assemblages ») pour y revenir.
+
+## Touche Échap
+
+Une seule couche est fermée par appui, de la plus haute à la plus basse :
+fenêtres surgissantes des fonctions (recherche 120, menu du fil d'Ariane 110),
+visionneuse des pages (100), page plein écran (80), panneau latéral (60 : la
+couche du dessus, la fiche avant le mode recouvert), sélection (40), scène en
+plein écran (20). Une fonction ajoute sa couche avec `ctx.ui.onEscape(fn,
+ordre)`.
+
+## Publication allégée (Artifact)
+
+`npm run build:artifact` publie certaines pages du manuel sans leur image (au
+plus 511 fichiers). La liste est inscrite dans la page (`#publication`) :
+`ctx.pageUrl` retourne `null` pour ces pages, aucune requête n'est faite, et la
+visionneuse affiche un message avec un lien vers la version complète du site.
