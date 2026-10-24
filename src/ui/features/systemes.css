@@ -1,0 +1,124 @@
+/* Navigation par systèmes (page de l'équipement) et fil d'Ariane de la vue. */
+
+/* ---------------------------------------------------------------- tuiles des systèmes */
+.sysx { display: grid; gap: 18px; }
+.sysx-sys { display: grid; gap: 10px; min-width: 0; }
+.sysx-main {
+  position: relative; display: flex; align-items: center; gap: 14px; min-width: 0; padding: 12px 14px 12px 18px; text-align: left;
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden;
+  box-shadow: inset 6px 0 0 var(--sys);
+}
+.sysx-main:hover { border-color: var(--sys); }
+.sysx-main .chev { flex: none; color: var(--muted); }
+.sysx-body { flex: 1; min-width: 0; display: grid; gap: 3px; }
+.sysx-kicker { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--sys); }
+.sysx-body strong { font: 700 22px/1.05 var(--f-display); text-transform: uppercase; letter-spacing: 0.01em; overflow-wrap: anywhere; }
+.sysx-meta { font-size: 12px; color: var(--muted); }
+.sysx-meta .mono { color: var(--ink); }
+.sysx-ico {
+  flex: none; width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center;
+  color: var(--sys); background: color-mix(in srgb, var(--sys) 13%, transparent);
+}
+.sysx-ico.big { width: 46px; height: 46px; border-radius: 11px; }
+.sysx-main .sysx-thumb { flex: none; width: 112px; height: 72px; border-radius: 8px; }
+.sysx .tag3d.iso { border-style: dashed; }
+
+/* Vignette : la page du manuel (dessin), recadrée. */
+.sysx-thumb {
+  display: block; overflow: hidden; background: #fff; border: 1px solid var(--line);
+}
+.sysx-thumb img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 45%; }
+.sysx-thumb.none { display: none; }
+
+.sysx-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr)); gap: 10px; padding-left: 10px; border-left: 2px solid color-mix(in srgb, var(--sys) 35%, transparent); }
+.sysx-tile {
+  display: flex; flex-direction: column; min-width: 0; overflow: hidden;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px; border-top: 4px solid var(--sys);
+}
+.sysx-tile:hover { border-color: var(--sys); }
+.sysx-open { display: grid; gap: 6px; padding: 0 0 10px; min-width: 0; text-align: left; border: 0; background: none; color: inherit; }
+.sysx-open .sysx-thumb { height: 92px; border: 0; border-bottom: 1px solid var(--line); }
+.sysx-head { display: flex; align-items: center; gap: 8px; padding: 0 10px; min-width: 0; }
+.sysx-head strong { flex: 1; min-width: 0; font-size: 14px; line-height: 1.2; overflow-wrap: anywhere; }
+.sysx-open .sysx-meta { padding: 0 10px; }
+.sysx-chips { display: flex; flex-wrap: wrap; gap: 4px; padding: 8px 10px 10px; border-top: 1px dashed var(--line); margin-top: auto; }
+.sysx-chip {
+  display: inline-flex; align-items: center; gap: 4px; max-width: 100%; min-width: 0; padding: 3px 7px; border-radius: 999px;
+  border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); font-size: 12px;
+}
+.sysx-chip svg { flex: none; color: var(--sys); }
+.sysx-chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sysx-chip:hover { border-color: var(--sys); }
+.sysx-more { padding-left: 12px; }
+.sysx-more summary { cursor: pointer; font-size: 13px; color: var(--muted); padding: 4px 0 8px; }
+.sysx-more summary:hover { color: var(--ink); }
+@media (max-width: 600px) {
+  .sysx-main { flex-wrap: wrap; }
+  .sysx-main .sysx-thumb { display: none; }
+  .sysx-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding-left: 8px; }
+  .sysx-open .sysx-thumb { height: 64px; }
+  .sysx-head strong { font-size: 13px; }
+  .sysx-head .sysx-ico { width: 26px; height: 26px; }
+}
+
+/* ---------------------------------------------------------------- panneau latéral : sous-ensemble isolé */
+.sysx-panel { display: grid; gap: 10px; }
+.sysx-pmeta { margin: 0; font-size: 12px; color: var(--muted); }
+.sysx-pbtns { display: flex; flex-wrap: wrap; gap: 6px; }
+.sysx-pbtns .btn { height: 32px; }
+.sysx-note { margin: 0; padding: 8px 10px; font-size: 12.5px; line-height: 1.4; border-radius: 8px; background: color-mix(in srgb, var(--sys) 9%, var(--surface)); }
+.sysx-rows { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.sysx-rows th { text-align: left; font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); padding: 4px 4px 6px; border-bottom: 1px solid var(--line); }
+.sysx-rows td { padding: 6px 4px; border-bottom: 1px solid var(--line); vertical-align: top; overflow-wrap: anywhere; }
+.sysx-rows .q { text-align: right; }
+.sysx-rows tbody tr { cursor: pointer; }
+.sysx-rows tbody tr:hover { background: var(--hover); }
+.sysx-rows tbody tr.on { background: color-mix(in srgb, var(--sys) 16%, transparent); }
+.sysx-ref {
+  display: inline-grid; place-items: center; min-width: 20px; height: 20px; padding: 0 4px; border-radius: 10px;
+  border: 1.5px solid var(--ink); font: 600 10.5px/1 var(--f-mono);
+}
+.sysx-sub { display: inline-flex; align-items: center; gap: 2px; font: 500 11px var(--f-mono); color: var(--sys); }
+
+/* ---------------------------------------------------------------- fil d'Ariane en haut de la vue */
+/* Le fil remplace celui de l'en-tête (même information, plus la pièce sélectionnée, visible aussi sur téléphone). */
+.shell.sysx-on .topbar .crumbs { visibility: hidden; }
+.sysx-crumbs {
+  position: absolute; left: 12px; right: 12px; top: 10px; z-index: 6; height: 34px; box-sizing: border-box;
+  display: flex; align-items: center; gap: 2px; padding: 0 6px; min-width: 0; overflow: hidden; white-space: nowrap;
+  background: color-mix(in srgb, var(--surface) 94%, transparent); border: 1px solid var(--line); border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); font-size: 13px;
+}
+.sysx-crumbs[hidden] { display: none; }
+.sysx-c {
+  display: inline-flex; align-items: center; gap: 6px; flex: 0 1 auto; min-width: 2.5em; max-width: 26ch; height: 26px; padding: 0 7px;
+  border: 0; border-radius: 6px; background: none; color: var(--muted); font: inherit;
+}
+.sysx-c .t { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.sysx-c:hover { background: var(--hover); color: var(--ink); }
+.sysx-c.eq { color: var(--ink); font-weight: 600; }
+.sysx-c.eq svg { flex: none; color: var(--accent); }
+.sysx-c.cur { color: var(--ink); font-weight: 600; flex-shrink: 0.4; max-width: 40ch; }
+.sysx-c.part.cur { background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--ink); }
+.sysx-c.more { flex: none; min-width: 0; font-weight: 700; color: var(--ink); }
+.sysx-c .dot { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--sys); }
+.sysx-sep { flex: none; color: var(--line-strong, var(--muted)); padding: 0 1px; }
+.sysx-cmenu {
+  position: absolute; z-index: 8; width: 260px; max-width: calc(100% - 16px); display: grid; gap: 2px; padding: 6px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow);
+}
+.sysx-cmenu[hidden] { display: none; }
+.sysx-cmenu .sysx-c { max-width: none; width: 100%; justify-content: flex-start; height: 32px; color: var(--ink); }
+/* Le fil occupe le haut de la scène : outils, dessins et panneau latéral descendent d'autant. */
+.stage.sysx-has-crumbs .tools { top: 52px; }
+.stage.sysx-has-crumbs .docview { padding-top: 104px; }
+.stage.sysx-has-crumbs .sidepanel { top: max(var(--tools-bottom, 12px), 52px); }
+body.stage-full .sysx-crumbs { top: 10px; }
+@media (max-width: 900px) {
+  .sysx-crumbs { left: 8px; right: 8px; top: 8px; font-size: 12.5px; }
+  .sysx-c { max-width: 18ch; padding: 0 5px; }
+  .sysx-c.cur { max-width: 24ch; }
+  .sysx-c.eq .t { max-width: 10ch; }
+  .stage.sysx-has-crumbs .tools { top: 48px; }
+  .stage.sysx-has-crumbs .sidepanel { top: max(var(--tools-bottom, 8px), 48px); }
+}

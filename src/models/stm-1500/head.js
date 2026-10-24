@@ -19,7 +19,7 @@
 // filtre et refroidisseur du côté +Z (à gauche vu du bout des manchons, page
 // 2.1), mandrin et moteur vers −X.
 import { buildProcedural } from '../../viewer/assembly.js';
-import { lister, each } from './layout.js';
+import { lister, each, entretien } from './layout.js';
 
 export const SPY = 0.235; // axe de la broche au-dessus de la face de la table (dessous des tubes de charnière), page P005
 // Axe des tubes de charnière Ø 50 : leur dessous repose sur la face d'appui (origine).
@@ -156,11 +156,11 @@ export function P048(api) {
   ], (i) => (i < 10 ? [0, 0.35, 0] : [0.22, 0, 0.1]));
   // 5 — Bouchons 1 po carrés : l'un sur le bossage du couvercle, l'autre en bas du bout −Z (vidange).
   each(P, 'UM-012-131', [
-    at(group(box(0.022, 0.012, 0.022, 'steel', { r: 0.002 }), cyl(0.016, 0.008, 'steel', { pos: [0, -0.01, 0] })), [0, TOP + 0.036, -0.05]),
-    at(group(box(0.022, 0.022, 0.012, 'steel', { r: 0.002 }), cyl(0.016, 0.008, 'steel', { axis: 'z', pos: [0, 0, 0.01] })), [0.062, SPY - 0.15, BOX.z0 - 0.006]),
+    entretien(at(group(box(0.022, 0.012, 0.022, 'steel', { r: 0.002 }), cyl(0.016, 0.008, 'steel', { pos: [0, -0.01, 0] })), [0, TOP + 0.036, -0.05]), 'bouchon', 'tete-bouchons'),
+    entretien(at(group(box(0.022, 0.022, 0.012, 'steel', { r: 0.002 }), cyl(0.016, 0.008, 'steel', { axis: 'z', pos: [0, 0, 0.01] })), [0.062, SPY - 0.15, BOX.z0 - 0.006]), 'bouchon', 'tete-bouchons'),
   ], (i) => (i ? [0, 0, -0.2] : [0, 0.45, 0]));
   // 12 — Bouchons 3/8 NPT (niveaux d'huile à 90° et à 45°) sous la plaque « Oil level » du bout −Z.
-  each(P, 'UM-102-132', [-0.02, 0.02].map((x) => at(nut(0.016, 0.008, 'steel', { axis: 'z' }), [x, SPY - 0.045, BOX.z0 - 0.004])), [0, 0, -0.2]);
+  each(P, 'UM-102-132', [-0.02, 0.02].map((x) => entretien(at(nut(0.016, 0.008, 'steel', { axis: 'z' }), [x, SPY - 0.045, BOX.z0 - 0.004]), 'niveau', 'tete-niveau')), [0, 0, -0.2]);
 
   // 37, 38 — Broche creuse : Ø 117 aux portées, Ø 125 sous le pignon, de l'intérieur du mandrin à l'écrou de
   // blocage 115 ; alésage Ø 98. Deux clavettes sous le pignon mené.
@@ -232,7 +232,7 @@ export function P048(api) {
     ring(0.12, 0.049, 0.015, 'red', { axis: 'x', seg: 40, pos: [-0.4455, SPY, 0] }),
     ...Array.from({ length: 6 }, (_, i) => { const a = (i * Math.PI) / 3; const y = SPY + 0.09 * Math.cos(a), z = 0.09 * Math.sin(a); return group(cyl(0.013, 0.011, 'red', { axis: 'x', pos: [-0.4585, y, z] }), at(nut(0.019, 0.012, 'blackOxide', { axis: 'x' }), [-0.47, y, z])); }),
     pose(THREE, coude, [-0.262, SPY + 0.154 + 0.006, 0], [0, 1, 0], [-1, 0, 0]),
-    pose(THREE, graisseur, [-0.215, SPY + 0.154 + 0.0035, 0], [0, 1, 0]),
+    entretien(pose(THREE, graisseur, [-0.215, SPY + 0.154 + 0.0035, 0], [0, 1, 0]), 'graisseur', 'F'), // page 1.04, détail F
   ), [-0.95, 0, 0]);
   each(P, 'UM-012-189', [0, 1, 2].map((i) => { const a = Math.PI / 2 + (i * 2 * Math.PI) / 3; return at(box(0.05, 0.012, 0.012, 'darkSteel'), [-0.41, SPY + 0.042 * Math.cos(a), 0.042 * Math.sin(a)], [a, 0, 0]); }), [-1.15, 0, 0]);
 
@@ -354,11 +354,11 @@ export function P048(api) {
 
   // 7, 8 — Filtre de tête : tête 177 sous la console en D (deux B250-750), orifices sur ses côtés ±Z ;
   // cartouche blanche Ø 80 × 89.
-  P('UM-012-177', group(
+  P('UM-012-177', entretien(group(
     at(box(0.07, 0.026, 0.07, 'castAlu', { r: 0.006 }), [FIL.x, FIL.y, FIL.z]),
     ...[-1, 1].map((s) => cyl(0.011, 0.008, 'castAlu', { axis: 'z', pos: [FIL.x, FIL.y, FIL.z + s * 0.039] })),
-  ), [0.25, 0.2, 0]);
-  P('UM-012-178', lathe([[0, 0], [0.036, 0], [0.04, 0.008], [0.04, 0.083], [0.037, 0.089], [0, 0.089]], 'white', { seg: 32, pos: [FIL.x, SPY + 0.06, FIL.z] }), [0.3, -0.05, 0]);
+  ), 'filtre', 'tete-filtre'), [0.25, 0.2, 0]);
+  P('UM-012-178', entretien(lathe([[0, 0], [0.036, 0], [0.04, 0.008], [0.04, 0.083], [0.037, 0.089], [0, 0.089]], 'white', { seg: 32, pos: [FIL.x, SPY + 0.06, FIL.z] }), 'filtre', 'tete-filtre'), [0.3, -0.05, 0]);
 
   // Refroidisseur (sans ligne propre, dessiné aux pages 2.1 à 2.4) entre ses deux pattes ; 28, 27 — deux
   // B312-1000 + W312 par patte, deux autres sur le couvercle de vessie 121P.
@@ -414,6 +414,23 @@ export function P048(api) {
 // le roulement arrière par le couvercle 121). Transmission ↔ boîte : H22C, H10C, H11C ; évent : rangée
 // 6602 / 2601 / 6500 sur la tour de transmission, H23C (rangée → couvercle) et H08C (rangée → reniflard). Boyaux 3/8 gris (H11C 1/2), raccords JIC laiton (2404, 2501, 2601,
 // 5000) ou zingués (6402, 6500, 66xx, 6801).
+// Circuits des boyaux de P049 (d'après le circuit décrit ci-dessus, page 2.3) : [circuit, rôle, départ, arrivée].
+const LUB_CIRC = {
+  'UM-012-H20C-UG': ['lubrification', 'refoulement de la pompe → filtre', 'Pompe 139 : refoulement (coude 6801-6-8)', 'Filtre : entrée (coude 2501-6-6)'],
+  'UM-012-H17C-UG': ['lubrification', 'filtre → refroidisseur', 'Filtre : sortie (coude 2501-6-8)', 'Refroidisseur : coude bas 2501-6-8'],
+  'UM-012-H18C-UG': ['lubrification', 'refroidisseur → régulateur', 'Refroidisseur : coude haut 2501-6-8', 'Régulateur NDV-10-N : té avant 6600-06-06-06'],
+  'UM-012-H21C-UG': ['lubrification', 'régulateur → transmission', 'Régulateur NDV-10-N : té avant 6600-06-06-06', 'Transmission : rangée laiton du dessus (adaptateur 6500-06-06)'],
+  'UM-012-H24C-UG': ['lubrification', 'régulateur → roulement avant', 'Régulateur NDV-10-N : té arrière 6600-06-06-06', 'Couvercle 114 du roulement avant (2404-6-4)'],
+  'UM-012-H25C-UG': ['lubrification', 'régulateur → roulement arrière', 'Régulateur NDV-10-N : té arrière 6600-06-06-06', 'Couvercle 121 du roulement arrière (2404-6-4)'],
+  'UM-012-H15C-UG': ['lubrification-retour', 'aspiration avant, carter → vanne 3 voies', 'Boîte : orifice bas de la face avant (coude 2501-8-8)', 'Vanne 3 voies BKH : entrée A (coude 2501-6-6)'],
+  'UM-012-H16C-UG': ['lubrification-retour', 'aspiration arrière, té → vanne 3 voies', 'Té 6600-8-8-8 de la rangée d\'évent', 'Vanne 3 voies BKH : entrée B (coude 2501-6-6)'],
+  'UM-012-H11C': ['lubrification-retour', 'transmission → té de la ligne d\'aspiration arrière', 'Transmission : coude long 2501LL-8-8 du haut', 'Té 6600-8-8-8'],
+  'UM-012-H22C-UG': ['lubrification-retour', 'transmission ↔ boîte (haut)', 'Transmission : 6500-06-06 du haut', 'Boîte : 6500-06-06 du haut'],
+  'UM-012-H10C': ['lubrification-retour', 'transmission ↔ boîte (milieu)', 'Transmission : coude 2501-06-04', 'Boîte : 6500-06-06 du milieu'],
+  'UM-012-H23C-UG': ['event', 'rangée d\'évent → couvercle', 'Rangée d\'évent : té 6602-06-06-06', 'Couvercle : bossage +Z (2404-6-4)'],
+  'UM-012-H08C': ['event', 'transmission → reniflard', 'Transmission : coude 2501-6-8 au pied du levier', 'Reniflard A-1199-R-4048 (manchon 5000-6-6)'],
+};
+
 export function P049(api) {
   const S = api.S, THREE = api.THREE;
   const { box, cyl, group, at, rod, ball, nut } = S;
@@ -446,11 +463,15 @@ export function P049(api) {
     P(pn, group(...parts), B.clone().multiplyScalar(-0.06).toArray());
     return tips;
   };
-  // Boyau entre deux bouts de raccords (sortie a.dir, entrée b.dir), passant par les points via.
+  // Boyau entre deux bouts de raccords (sortie a.dir, entrée b.dir), passant par les points via ; étiquette de
+  // circuit (LUB_CIRC, outil « Circuits » de l'interface, sans effet sur la géométrie).
   const boyau = (pn, a, b, via, r = 0.0095) => {
     const A = V(a.tip), B = V(b.tip);
     const pts = [A, A.clone().addScaledVector(V(a.dir).normalize(), 0.022), ...via.map(V), B.clone().addScaledVector(V(b.dir).normalize(), 0.022), B];
-    P(pn, S.hose(pts.map((q) => q.toArray()), r, { material: 'grey', endMaterial: 'steel' }), [0, 0.12, 0.1]);
+    const h = S.hose(pts.map((q) => q.toArray()), r, { material: 'grey', endMaterial: 'steel' });
+    const c = LUB_CIRC[pn];
+    if (c) Object.assign(h.userData, { circuit: c[0], circuitLabel: `${pn} : ${c[1]}`, circuitFrom: c[2], circuitTo: c[3] });
+    P(pn, h, [0, 0.12, 0.1]);
   };
   const Y = SPY;
 
@@ -529,11 +550,11 @@ export function P049(api) {
   // 2501-6-8 vissé sur le dessus de la plaque de transmission, au pied du levier, côté −Z de la tour.
   const rn = { x: -0.07, y: Y + 0.215, z: 0.495 };
   P('5000-6-6', at(group(nut(0.022, 0.02, 'brass', { axis: 'z' }), cyl(0.0075, 0.006, 'brass', { axis: 'z', pos: [0, 0, -0.013] })), [rn.x, rn.y, rn.z + 0.012]), [0, 0, 0.1]);
-  P('A-1199-R-4048', group(
+  P('A-1199-R-4048', entretien(group(
     nut(0.022, 0.008, 'steel', { axis: 'z', pos: [rn.x, rn.y, rn.z + 0.026] }),
     cyl(0.013, 0.044, 'chrome', { axis: 'z', pos: [rn.x, rn.y, rn.z + 0.052], seg: 20 }),
     cyl(0.009, 0.004, 'white', { axis: 'z', pos: [rn.x, rn.y, rn.z + 0.076] }),
-  ), [0, 0, 0.15]);
+  ), 'reniflard', 'tete-reniflard'), [0, 0, 0.15]);
   const lvE = fit('2501-6-8', 'coude', 6, 'brass', [-0.123, Y + 0.175, 0.245], [0, 1, 0], [0, 0, 1]);
   boyau('UM-012-H08C', lvE, { tip: [rn.x, rn.y, rn.z - 0.004], dir: [0, 0, -1] }, [[-0.115, Y + 0.212, 0.36], [-0.1, Y + 0.225, 0.45], [-0.105, Y + 0.35, 0.478], [-0.085, Y + 0.4, 0.465], [-0.07, Y + 0.33, 0.458], [-0.07, Y + 0.25, 0.455]]);
   // Transmission ↔ boîte, sur le flanc +Z de la transmission et le bout +Z de la boîte : H22C du 6500 du

@@ -40,6 +40,16 @@ export function lister(api, id) {
   };
 }
 
+/**
+ * Étiquette d'entretien (mode « Entretien » de l'interface, src/ui/features/entretien.js) posée sur un objet
+ * existant, sans rien changer à sa géométrie : type (graisseur, niveau, filtre, reniflard, bouchon, inspection,
+ * thermometre) et id du point dans public/equipment/stm-1500/entretien.json.
+ */
+export function entretien(obj, type, id) {
+  obj.userData.entretien = { type, id };
+  return obj;
+}
+
 /** Plusieurs objets identiques d'une même ligne (vis, rondelles…). */
 export function each(P, pn, objs, explode) {
   objs.forEach((o, i) => P(pn, o, typeof explode === 'function' ? explode(i) : explode));

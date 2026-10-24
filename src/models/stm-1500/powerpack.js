@@ -14,7 +14,7 @@
 // Repère : origine au sol au centre du cadre, X vers le bout des pompes et des
 // panneaux, Y vers le haut, Z vers le flanc des refoulements des pompes.
 import { buildProcedural } from '../../viewer/assembly.js';
-import { lister, each, grid, IN } from './layout.js';
+import { lister, each, grid, IN, entretien } from './layout.js';
 
 // Cadre FMX-005-200PP : corps entre les faces extérieures des poteaux d'angle (85 11/16 × 44 po),
 // dessus des longerons du haut (55 5/16 po), sommet des oreilles (60 15/16 po), tube carré 2 po.
@@ -482,21 +482,21 @@ export function P068(api) {
     at(box(TANK.x1 - TANK.x0, tt - TANK.y0, TANK.w, 'red', { r: 0.012 }), [tx, (tt + TANK.y0) / 2, 0]),
     ...[0.31, 0.79].flatMap((x) => [
       at(cyl(0.18, 0.025, 'red', { axis: 'y', seg: 40 }), [x, tt + 0.0125, 0]),
-      at(lathe([[0, 0], [0.155, 0], [0.155, 0.008], [0.12, 0.022], [0.06, 0.03], [0, 0.032]], 'red', { seg: 40 }), [x, tt + 0.025, 0]),
+      entretien(at(lathe([[0, 0], [0.155, 0], [0.155, 0.008], [0.12, 0.022], [0.06, 0.03], [0, 0.032]], 'red', { seg: 40 }), [x, tt + 0.025, 0]), 'inspection', 'reservoir-trappes'),
       at(bolt(0.0127, 0.02, 'steel', { washer: true }), [x, tt + 0.057, 0]),
     ]),
     ...FILTERS.flatMap(({ x, z }) => [
       at(box(0.15, 0.025, 0.15, 'red', { r: 0.006 }), [x, tt + 0.0125, z]),
-      at(box(0.13, 0.093, 0.13, 'castAlu', { r: 0.008 }), [x, tt + 0.025 + 0.0465, z]),
+      entretien(at(box(0.13, 0.093, 0.13, 'castAlu', { r: 0.008 }), [x, tt + 0.025 + 0.0465, z]), 'filtre', 'reservoir-filtres'),
       S.boltSet([-1, 1].flatMap((a) => [-1, 1].map((b) => [x + a * 0.05, tt + 0.118, z + b * 0.05])), 0.008, 0.016, 'steel'),
     ]),
     seated(S, 0.04, 0.07, F_IN[0], '-x'), seated(S, 0.04, 0.07, F_IN[1], 'z'),
     ...capAt(0.32, 0.39), at(cyl(0.03, 0.03, 'steel', { axis: 'y', seg: 18 }), [0.32, tt + 0.046, 0.39]),
     at(fitting(0.03, 0.05, 'steel', { elbow: true }), [0.32, tt + 0.061 + 0.007, 0.39], [0, -Math.PI / 2, 0]),
     ...capAt(0.02, -0.33), at(cyl(0.022, 0.025, 'steel', { axis: 'y', seg: 18 }), [0.02, tt + 0.0435, -0.33]),
-    at(lathe([[0, 0], [0.035, 0], [0.035, 0.05], [0.028, 0.065], [0, 0.068]], 'grey', { seg: 28 }), [0.02, tt + 0.056, -0.33]),
+    entretien(at(lathe([[0, 0], [0.035, 0], [0.035, 0.05], [0.028, 0.065], [0, 0.068]], 'grey', { seg: 28 }), [0.02, tt + 0.056, -0.33]), 'reniflard', 'reservoir-reniflard'),
     at(box(0.012, 0.19, 0.05, 'darkSteel', { r: 0.004 }), [TANK.x1 + 0.006, TANK.y0 + 0.24, -0.4]),
-    at(box(0.004, 0.15, 0.02, 'glass'), [TANK.x1 + 0.014, TANK.y0 + 0.24, -0.4]),
+    entretien(at(box(0.004, 0.15, 0.02, 'glass'), [TANK.x1 + 0.014, TANK.y0 + 0.24, -0.4]), 'thermometre', 'reservoir-thermometre'),
     at(box(0.07, 0.01, TANK.w - 0.04, 'red'), [0.555, TANK.y0 - 0.0049, 0]), // bande d'appui sous le fond (pages 3.01 et 3.1)
     ...VALVES.flatMap(({ x, z, s, d, len, nr, vy, F, a, plug }) => [
       at(cyl(nr, 0.05, 'steel', { axis: 'y', seg: 20 }), [x, TANK.y0 - 0.025, z]),
@@ -710,7 +710,21 @@ export function P068(api) {
     return h;
   };
   const [V0, V1, V2] = VALVES, [S0, S1, S2] = SUC;
-  api.add(group(
+  // Étiquettes de circuit hydraulique des boyaux ci-dessous, dans leur ordre (outil « Circuits » de l'interface ;
+  // sans effet sur la géométrie) : [circuit, libellé, raccord de départ, raccord d'arrivée].
+  const COL_N = 'Collecteur de retour UM-064-600PP';
+  const CIRC = [
+    ['aspiration', 'Aspiration de la pompe A11VO130 (3 po)', 'Réservoir : vanne 3 po 306TD (about cannelé 318TD)', 'Pompe A11VO130 : coude de rue 3 po et mamelon cannelé'],
+    ['aspiration', 'Aspiration de la pompe A10VO45K (1 1/2 po)', 'Réservoir : vanne 1 1/2 po 307TD (about cannelé 317TD)', 'Pompe A10VO45K : raccord 2501-24-24'],
+    ['aspiration', 'Aspiration de la pompe A10VO45N (1 1/2 po)', 'Réservoir : vanne 1 1/2 po 307TD (about cannelé 317TD)', 'Pompe A10VO45N : coude 6801-24-24'],
+    ['drain', 'Drain du carter de la pompe A10VO45N', 'Pompe A10VO45N : 6400-8-8 et coude 6500-08-08', `${COL_N} : 601P`],
+    ['drain', 'Drain du carter de la pompe A11VO130', 'Pompe A11VO130 : 6400-12-12', `${COL_N} : 602P`],
+    ['drain', 'Drain du carter de la pompe A10VO45K', 'Pompe A10VO45K : 6400-8-8', `${COL_N} : 601P`],
+    ['drain', 'Collecteur de retour → réservoir', `${COL_N} : 603P`, 'Réservoir : bouchon de remplissage (coude 2501-16-20)'],
+    ['pilotage', 'Pilotage de la vanne de démarrage', 'Vanne de démarrage DTDA-MHN-GAI : 6400-6-6 coudé', 'Pompe A11VO130 : 6801F-06-06 de la bride de refoulement'],
+    ['retour', 'Retour du refroidisseur → filtre', 'Refroidisseur AB-1202 du haut : bossage d\'huile côté pompes', 'Filtre de retour RTF-47 : entrée n° 1'],
+  ];
+  const tuyaux = group(
     // Aspiration 3 po : de la vanne (côté +Z) sous les pompes jusqu'à l'about du coude de l'A11VO130 (côté −Z).
     clamp({ E: V0.p, n: [0, -1, 0], rm: 0.0345, a: 0.05, b: 0.09 }, { E: S0.p, n: S0.n, rm: 0.0445, a: 0.05, b: 0.09 },
       [[0.8, 0.3, 0.25], [0.66, 0.235, 0.17], [0.5, 0.21, 0.02], [0.36, 0.205, -0.09], [0.22, 0.205, -0.2], [0.13, 0.215, -0.19]], S0.r),
@@ -734,6 +748,8 @@ export function P068(api) {
       [-0.31, 1.32, -0.09], [-0.22, 1.30, -0.12], ...into(F_TIP[0], [-1, 0, 0], 0.03, 0.06)], 0.014),
     // Embout coudé du boyau de drain de la console sur le 611P (sortie vers +Z).
     at(fitting(0.02, 0.045, 'steel', { elbow: true }), DR_ELBOW, [0, 0, Math.PI]),
-  ));
+  );
+  CIRC.forEach(([circuit, circuitLabel, circuitFrom, circuitTo], i) => Object.assign(tuyaux.children[i].userData, { circuit, circuitLabel, circuitFrom, circuitTo }));
+  api.add(tuyaux);
   return { view: { dir: [1, 0.55, 0.9] } };
 }

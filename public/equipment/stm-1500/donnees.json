@@ -1,0 +1,295 @@
+{
+  "equipement": "stm-1500",
+  "note": "Valeurs relevées dans le livre de pièces STM-1500 (Usinage Marcotte, FBRA-002). Chaque ligne cite sa page. Quand le manuel ne donne qu'une unité, l'autre est convertie (marquée « conv. »). Les données absentes du manuel (couples, débits, pressions de service…) ne figurent pas ici.",
+  "cles": [
+    { "l": "Poids de la foreuse (sans câble)", "v": "6 000 lb", "s": "2 722 kg", "p": "P005" },
+    { "l": "Course d'avance", "v": "1 808 mm", "s": "71 3/16 po", "p": "P005" },
+    { "l": "Vitesse max. à la broche", "v": "1 200 tr/min", "p": "P050" },
+    { "l": "Moteur électrique", "v": "125 HP", "s": "575 V · 1 780 tr/min", "p": "P070" },
+    { "l": "Réservoir hydraulique", "v": "110 gal US", "s": "416 L", "p": "P072" },
+    { "l": "Câble du treuil", "v": "10 000 pi", "s": "3 048 m", "p": "P038" }
+  ],
+  "groupes": [
+    {
+      "id": "identification",
+      "titre": "Identification",
+      "icone": "page",
+      "tableaux": [
+        {
+          "titre": "Fiche de la machine et plaques",
+          "lignes": [
+            { "l": "N° de série de la foreuse", "v": "STM-1500-128", "p": "P002" },
+            { "l": "N° de série (fiche)", "v": "1021208880", "p": "P002" },
+            { "l": "Client", "v": "Machine Roger", "p": "P002" },
+            { "l": "Réf. hydraulique", "v": "90490", "p": "P002" },
+            { "l": "Moteur (fiche)", "v": "125 HP, 575 V, 60 Hz", "p": "P002" },
+            { "l": "Emplacement des numéros de série", "v": "Voir dessin 1.05", "p": "P009" },
+            { "l": "Plaque de n° de série de la tête", "v": "Repérée sur le dessin 2.4", "p": "P050" },
+            { "l": "Plaques rivetées de la console", "v": "12 plaques (UM-064-CA1 à CA14)", "p": "P082" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "foreuse",
+      "titre": "Foreuse",
+      "icone": "structure",
+      "asm": "P010",
+      "tableaux": [
+        {
+          "titre": "Cotes hors tout — foreuse à 0° (dessin 1.01)",
+          "lignes": [
+            { "l": "Longueur", "m": "4 202 mm", "i": "165 7/16 po", "p": "P005" },
+            { "l": "Longueur avec rallonge", "m": "5 608 mm", "i": "220 13/16 po", "p": "P005" },
+            { "l": "Hauteur", "m": "1 731 mm", "i": "68 1/8 po", "p": "P005" },
+            { "l": "Hauteur de l'axe de broche", "m": "1 235 mm", "i": "48 5/8 po", "p": "P005" },
+            { "l": "Largeur à la base (vue de bout)", "m": "864 mm", "i": "34 po", "p": "P005" },
+            { "l": "Course d'avance", "m": "1 808 mm", "i": "71 3/16 po", "p": "P005" },
+            { "l": "Cotes de détail du traîneau", "m": "89 mm · 191 mm · 800 mm", "i": "3 1/2 po · 7 1/2 po · 31 1/2 po", "p": "P005" }
+          ]
+        },
+        {
+          "titre": "Cotes selon l'inclinaison (dessin 1.01)",
+          "lignes": [
+            { "l": "45° vers le bas — longueur", "m": "4 288 mm", "i": "168 13/16 po", "p": "P005" },
+            { "l": "45° vers le bas — hauteur", "m": "4 361 mm", "i": "171 11/16 po", "p": "P005" },
+            { "l": "45° vers le haut — longueur", "m": "4 076 mm", "i": "160 7/16 po", "p": "P005" },
+            { "l": "45° vers le haut — hauteur", "m": "2 921 mm", "i": "115 po", "p": "P005" },
+            { "l": "90° vers le bas (avec rallonge) — longueur", "m": "3 757 mm", "i": "147 7/8 po", "p": "P005" },
+            { "l": "90° vers le bas (avec rallonge) — hauteur max.", "m": "5 405 mm", "i": "212 13/16 po", "p": "P005" },
+            { "l": "90° vers le haut — longueur", "m": "3 321 mm", "i": "130 3/4 po", "p": "P005" },
+            { "l": "90° vers le haut — hauteur max.", "m": "3 578 mm", "i": "140 7/8 po", "p": "P005" },
+            { "l": "90° vers le haut — dépassement sous la base", "m": "468 mm", "i": "18 7/16 po", "p": "P005" }
+          ]
+        },
+        {
+          "titre": "Options : roues et timon (1.02), plateforme rotative (1.03)",
+          "lignes": [
+            { "l": "Avec roues et timon — longueur", "m": "4 412,67 mm", "i": "173 23/32 po", "p": "P006" },
+            { "l": "Avec roues et timon — hauteur", "m": "2 047,06 mm", "i": "80 19/32 po", "p": "P006" },
+            { "l": "Avec roues et timon — largeur aux roues", "m": "1 537,97 mm", "i": "60 9/16 po", "p": "P006" },
+            { "l": "Avec roues et timon — largeur du timon", "m": "1 270,35 mm", "i": "50 po", "p": "P006" },
+            { "l": "Avec plateforme rotative — longueur", "m": "3 756,67 mm", "i": "147 29/32 po", "p": "P007" },
+            { "l": "Avec plateforme rotative — largeur", "m": "1 467,28 mm", "i": "57 25/32 po", "p": "P007" },
+            { "l": "Avec plateforme rotative, 90° vers le bas — hauteur", "m": "4 335,91 mm", "i": "170 23/32 po", "p": "P007" },
+            { "l": "Avec plateforme rotative — hauteur de la plateforme", "m": "234,95 mm", "i": "9 1/4 po", "p": "P007" }
+          ]
+        },
+        {
+          "titre": "Masse",
+          "lignes": [
+            { "l": "Poids de la foreuse, sans câble du treuil", "m": "2 722 kg", "i": "6 000 lb", "conv": "m", "p": "P005" }
+          ]
+        },
+        {
+          "titre": "Vérin d'avance supérieur « bazooka » FTD-030-100ZZ (1.12)",
+          "lignes": [
+            { "l": "Longueur fermé", "m": "2 018 mm", "i": "79 7/16 po", "conv": "m", "p": "P022" },
+            { "l": "Longueur sorti", "m": "3 829 mm", "i": "150 3/4 po", "conv": "m", "p": "P022" },
+            { "l": "Course", "m": "1 834 mm", "i": "72 3/16 po", "conv": "m", "p": "P022" },
+            { "l": "Embout de tige", "v": "Rotule PREMM-16-1 (1 po), contre-écrou 1-14 UNF", "p": "P022" },
+            { "l": "Trousse de joints", "v": "FTD-030-KP100Z", "p": "P022" }
+          ]
+        },
+        {
+          "titre": "Serre-tiges de pied Boyles 12HH UM-079-100AA",
+          "lignes": [
+            { "l": "Passage", "m": "Ø 97 mm", "i": "Ø 3 13/16 po", "p": "P032" },
+            { "l": "Trousse de joints", "v": "2920241", "p": "P032" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tete",
+      "titre": "Tête de forage",
+      "icone": "engrenage",
+      "asm": "P048",
+      "tableaux": [
+        {
+          "titre": "Tête souterraine Boyles UM-012-100UG",
+          "lignes": [
+            { "l": "Vitesse max. à la sortie de la broche", "v": "1 200 tr/min", "p": "P050" },
+            { "l": "Transmission", "v": "Funk HMD-2355, 4 vitesses (UM-012-143)", "p": "P048" },
+            { "l": "Moteur hydraulique", "v": "AA6VM160HD2-63W-VSD520B", "p": "P048" },
+            { "l": "Entraînement de la broche", "v": "Chaîne triple UM-012-130", "p": "P048" },
+            { "l": "Huile de la boîte", "v": "Huile à engrenages 80W90", "p": "P050" },
+            { "l": "Vidange", "v": "Toutes les 300 heures", "p": "P050" },
+            { "l": "Chaîne", "v": "Maillon de raccord riveté ou soudé seulement", "p": "P050" }
+          ]
+        },
+        {
+          "titre": "Cotes hors tout (dessin 2.1)",
+          "lignes": [
+            { "l": "Largeur (vue de face)", "m": "770,63 mm", "i": "30 11/32 po", "p": "P047" },
+            { "l": "Hauteur (vue de face)", "m": "724,60 mm", "i": "28 17/32 po", "p": "P047" },
+            { "l": "Boîtier et transmission (vue de dessus)", "m": "742,33 mm", "i": "29 7/32 po", "p": "P047" },
+            { "l": "Hors tout avec moteur (vue de dessus)", "m": "1 181,76 mm", "i": "46 17/32 po", "p": "P047" },
+            { "l": "Cote d'appui (vue de côté)", "m": "209,55 mm", "i": "8 1/4 po", "p": "P047" }
+          ]
+        },
+        {
+          "titre": "Mandrin Boyles H UM-070-142AA",
+          "lignes": [
+            { "l": "Hauteur hors tout", "m": "308 mm", "i": "12 1/8 po", "p": "P052" },
+            { "l": "Longueur", "m": "338 mm", "i": "13 5/16 po", "p": "P052" },
+            { "l": "Passage", "m": "Ø 98 mm", "i": "Ø 3 7/8 po", "p": "P052" },
+            { "l": "Trousse de joints", "v": "3506577", "p": "P052" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "treuil",
+      "titre": "Treuil de câble",
+      "icone": "cable",
+      "asm": "P042",
+      "tableaux": [
+        {
+          "titre": "Treuil 10 000 pi UM-032-100A (dessin 8.0)",
+          "lignes": [
+            { "l": "Capacité de câble", "m": "3 048 m", "i": "10 000 pi", "p": "P038" },
+            { "l": "Versions", "v": "UM-032-100A_L (surface, mécanique inversée) · UM-032-100A_R", "p": "P038" },
+            { "l": "Longueur (vue de dessus)", "m": "965 mm", "i": "38 po", "p": "P038" },
+            { "l": "Longueur avec cadre pour foreuse souterraine (option)", "m": "1 677 mm", "i": "66 po", "p": "P038" },
+            { "l": "Largeur du bâti", "m": "699 mm", "i": "27 1/2 po", "p": "P038" },
+            { "l": "Axe → côté gauche / côté droit (volant compris)", "m": "427 mm / 530 mm", "i": "16 3/4 po / 20 7/8 po", "p": "P038" },
+            { "l": "Hauteur (vue de face)", "m": "631 mm", "i": "24 7/8 po", "p": "P038" },
+            { "l": "Longueur de la base (vue de côté)", "m": "813 mm", "i": "32 po", "p": "P038" },
+            { "l": "Longueur hors tout (vue de côté)", "m": "1 057 mm", "i": "41 5/8 po", "p": "P038" },
+            { "l": "Hauteurs (vue de côté, écran supérieur abaissé)", "m": "533 mm / 642 mm", "i": "21 po / 25 1/4 po", "p": "P038" },
+            { "l": "Hauteur des tubes du cadre optionnel", "m": "102 mm", "i": "4 po", "p": "P038" }
+          ]
+        },
+        {
+          "titre": "Entraînement",
+          "lignes": [
+            { "l": "Moteur hydraulique", "v": "White RE12 (UMV-10MW-12)", "p": "P042" },
+            { "l": "Chaîne du tambour", "v": "Chaîne 80 (« 50 Lg »), pignons 80B14 / 80B28", "p": "P042" },
+            { "l": "Chaîne du guide-câble", "v": "Chaîne 35 (46 1/2 po), pignons 35B11 / 35B70", "p": "P040" },
+            { "l": "Paliers du tambour", "v": "HCPE211-32", "p": "P042" },
+            { "l": "Réglage des bras", "v": "Positions de 10° à 70°", "p": "P043" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "groupe",
+      "titre": "Groupe hydraulique",
+      "icone": "goutte",
+      "asm": "P068",
+      "tableaux": [
+        {
+          "titre": "Cotes hors tout (dessin 3.1)",
+          "lignes": [
+            { "l": "Longueur, panneaux fermés", "m": "2 460,5 mm", "i": "96 7/8 po", "p": "P067" },
+            { "l": "Largeur, panneaux fermés", "m": "1 225,1 mm", "i": "48 1/4 po", "p": "P067" },
+            { "l": "Hauteur, panneaux fermés", "m": "1 547,8 mm", "i": "60 15/16 po", "p": "P067" },
+            { "l": "Longueur, panneaux ouverts", "m": "3 388,3 mm", "i": "133 3/8 po", "p": "P067" },
+            { "l": "Largeur, panneaux ouverts", "m": "1 968,4 mm", "i": "77 1/2 po", "p": "P067" },
+            { "l": "Hauteur, capot ouvert", "m": "2 652,8 mm", "i": "104 7/16 po", "p": "P067" },
+            { "l": "Hauteur des patins", "m": "88,9 mm", "i": "3 1/2 po", "p": "P067" },
+            { "l": "Passages de fourche", "m": "241,3 mm · 1 041,4 mm", "i": "9 1/2 po · 41 po", "p": "P067" }
+          ]
+        },
+        {
+          "titre": "Option roues et timon (dessin 3.01)",
+          "lignes": [
+            { "l": "Longueur avec timon", "m": "3 600,40 mm", "i": "141 3/4 po", "p": "P065" },
+            { "l": "Longueur du cadre", "m": "2 471,20 mm", "i": "97 9/32 po", "p": "P065" },
+            { "l": "Hauteur sur roues", "m": "1 759,20 mm", "i": "69 1/4 po", "p": "P065" },
+            { "l": "Largeur aux roues", "m": "1 734,71 mm", "i": "68 9/32 po", "p": "P065" },
+            { "l": "Largeur du timon", "m": "1 270,35 mm", "i": "50 po", "p": "P065" }
+          ]
+        },
+        {
+          "titre": "Masse",
+          "lignes": [
+            { "l": "Poids du groupe", "m": "2 631 kg", "i": "5 800 lb", "conv": "m", "p": "P067" }
+          ]
+        },
+        {
+          "titre": "Moteur électrique WEG CT125504NPBBW22 (3.4)",
+          "lignes": [
+            { "l": "Puissance", "m": "93,2 kW", "i": "125 HP", "conv": "m", "p": "P070" },
+            { "l": "Vitesse", "v": "1 780 tr/min", "p": "P070" },
+            { "l": "Tension", "v": "575 V, triphasé", "p": "P070" },
+            { "l": "Intensité", "v": "184 A", "p": "P070" },
+            { "l": "Carcasse", "v": "444/5TC", "p": "P070" },
+            { "l": "Alimentation du groupe (titre)", "v": "600 V, 60 Hz", "p": "P068" }
+          ]
+        },
+        {
+          "titre": "Pompes hydrauliques en tandem (3.4)",
+          "lignes": [
+            { "l": "Pompe A11VO130 (réf. 3)", "v": "AA11VO130DRS10LNSD62K02", "p": "P070", "n": "La liste 3.3 (P069) inscrit A11VO130DSF10LNSD62K04." },
+            { "l": "Pompe A10VO45K (réf. 2)", "v": "A10VO45DFR52LPUC62K68", "p": "P070" },
+            { "l": "Pompe A10VO45N (réf. 4)", "v": "A10VO45DFR/52LPSC62N00", "p": "P070", "n": "La liste 3.3 (P069) inscrit A10VO45DFR52LPUC64N00." },
+            { "l": "Cloche moteur-pompe", "v": "BH447-SAED", "p": "P069" }
+          ]
+        },
+        {
+          "titre": "Réservoir, filtration, refroidissement",
+          "lignes": [
+            { "l": "Réservoir UM-064-301TD", "m": "416 L", "i": "110 gal US", "conv": "m", "p": "P072" },
+            { "l": "Filtres de retour", "v": "2 × RTF-47", "p": "P072" },
+            { "l": "Élément filtrant", "v": "RTF-47-07", "p": "P073" },
+            { "l": "Thermomètre, reniflard", "v": "UM-064-334TD, UMV-10SM-N12", "p": "P072" },
+            { "l": "Refroidisseurs", "v": "2 × AB-1202 (COOLER AB-1002-BA-TP)", "p": "P068" },
+            { "l": "Pompe de remplissage manuelle", "v": "Fill-Rite FR150", "p": "P068" }
+          ]
+        },
+        {
+          "titre": "Électricité (schéma du panneau 600 V 125 HP)",
+          "lignes": [
+            { "l": "Panneau de commande", "v": "600 V c.a., 125 HP", "p": "P095" },
+            { "l": "Calibre d'entrée (câble d'alimentation)", "v": "225 A", "p": "P095" },
+            { "l": "Démarreur progressif", "v": "WEG SSW-07", "p": "P095" },
+            { "l": "Transformateur de commande", "v": "3 kVA, 380 / 120-240 V", "p": "P095" },
+            { "l": "Boîte électrique", "v": "Hoffman A30HS2412GQRLP", "p": "P068" },
+            { "l": "Transformateur (liste)", "v": "DX3000", "p": "P068" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "console",
+      "titre": "Console de commande",
+      "icone": "panneau",
+      "asm": "P078",
+      "tableaux": [
+        {
+          "titre": "Cotes hors tout (dessin 4.1)",
+          "lignes": [
+            { "l": "Largeur", "m": "790,58 mm", "i": "31 1/8 po", "p": "P077" },
+            { "l": "Hauteur", "m": "1 496,39 mm", "i": "58 29/32 po", "p": "P077" },
+            { "l": "Profondeur à la base", "m": "778,11 mm", "i": "30 5/8 po", "p": "P077" },
+            { "l": "Profondeur hors tout, leviers compris (vue de côté)", "m": "975,38 mm", "i": "38 13/32 po", "p": "P077" },
+            { "l": "Profondeur, leviers compris (vue de dessus)", "m": "968,70 mm", "i": "38 1/8 po", "p": "P077" }
+          ]
+        },
+        {
+          "titre": "Masse",
+          "lignes": [
+            { "l": "Poids de la console", "m": "363 kg", "i": "800 lb", "conv": "m", "p": "P077" }
+          ]
+        },
+        {
+          "titre": "Instruments et composants (4.3, 4.4)",
+          "lignes": [
+            { "l": "Manomètres hydrauliques", "v": "4 × Stauff SPG-063-5000S", "p": "P079" },
+            { "l": "Manomètre", "m": "103 bar", "i": "1 500 psi", "conv": "m", "p": "P079", "n": "Pitanco 250LFSS22W." },
+            { "l": "Accumulateur AM3051003", "m": "3,79 L", "i": "1 gal", "conv": "m", "p": "P079" },
+            { "l": "Accumulateur AM-45-250", "m": "1,89 L", "i": "1/2 gal", "conv": "m", "p": "P079" },
+            { "l": "Robinets à bille BKH-1-NPT-1125 (×2)", "m": "345 bar", "i": "5 000 psi", "conv": "m", "p": "P079" },
+            { "l": "Réducteurs / limiteurs PRDB-LAN (×2)", "m": "207 bar", "i": "3 000 psi", "conv": "m", "p": "P080" },
+            { "l": "Distributeurs", "v": "SD25 (rotation, vissage, avance rapide) · SDS150 (mandrin, serre-tiges, avance lente, treuil)", "p": "P079" },
+            { "l": "Électrovanne", "v": "SWH-G02-C2D12-20, D03 12 V", "p": "P079" },
+            { "l": "Contrôleur de sécurité", "v": "UM-CIT-SC-UG", "p": "P079" },
+            { "l": "Fusibles du contrôleur", "v": "10 A et 0,5 A (5 × 20 mm)", "p": "P084" }
+          ]
+        }
+      ]
+    }
+  ]
+}

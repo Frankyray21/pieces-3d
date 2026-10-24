@@ -116,17 +116,32 @@ function P002(api) {
     t.userData.hose = { pts, r }; // tracé gardé pour les ponts des boyaux posés ensuite
     return t;
   };
+  // Étiquette de circuit hydraulique d'un boyau (outil « Circuits » de l'interface ; sans effet sur la géométrie).
+  const circ = (t, circuit, circuitLabel, circuitFrom, circuitTo) => Object.assign(t.userData, { circuit, circuitLabel, circuitFrom, circuitTo }) && t;
+  const PACK_CIRC = [
+    ['pression', 'Pression : groupe → console', 'Groupe : bride de refoulement de la pompe A11VO130', 'Console : traversée arrière de la pression (plaque CA12 « PRESSION #1 »)'],
+    ['retour', 'Retour : console → groupe', 'Console : traversée arrière du retour (bloc de retour HA250, repère 43 du schéma)', 'Groupe : entrée n° 2 du filtre de retour RTF-47'],
+    ['drain', 'Drain : console → groupe', 'Console : traversée arrière du drain', 'Groupe : collecteur de retour UM-064-600PP (611P, embout coudé)'],
+  ];
+  const SLED_CIRC = [
+    ['avance-treuil', 'Console → sélecteur mât / treuil gauche, raccord avant intérieur', 'Console : traversée arrière (bloc du traîneau)', 'Foreuse : sélecteur DF10-6B-12L gauche, raccord avant intérieur (6400-8-8)'],
+    ['avance-treuil', 'Console → sélecteur mât / treuil gauche, raccord avant extérieur', 'Console : traversée arrière (bloc du traîneau)', 'Foreuse : sélecteur DF10-6B-12L gauche, raccord avant extérieur (6400-8-8)'],
+    ['mat', 'Console → sélecteur droit (bascule / relevage), raccord avant intérieur', 'Console : traversée arrière (bloc du traîneau)', 'Foreuse : sélecteur DF10-6B-12L droit, raccord avant intérieur (6400-8-8)'],
+    ['mat', 'Console → sélecteur droit (bascule / relevage), raccord avant extérieur', 'Console : traversée arrière (bloc du traîneau)', 'Foreuse : sélecteur DF10-6B-12L droit, raccord avant extérieur (6400-8-8)'],
+  ];
   const hoses = [];
   const cBack = D(cons, CON_BACK_N);
   // Groupe → console : pression (1 po), retour, drain, chacun sur son raccord, par les tracés imposés des deux
   // appareils (voies imbriquées, sans croisement). Pas de câble de commande : le manuel n'en montre aucun.
-  PP_VIA.forEach((via, i) => hoses.push(run({ via: CON_PACK_VIA[2 - i].map((q) => W(cons, q)) }, { via: via.map((q) => W(pack, q)) }, i === 0 ? 0.022 : 0.017)));
+  PP_VIA.forEach((via, i) => hoses.push(circ(run({ via: CON_PACK_VIA[2 - i].map((q) => W(cons, q)) }, { via: via.map((q) => W(pack, q)) }, i === 0 ? 0.022 : 0.017), ...PACK_CIRC[i])));
   // Console → tête : rotation A et B (1 po), par-dessus le bout arrière de la poutre jusqu'aux coudes du moteur.
   const rot = HEAD_VIA.map((via, i) => run({ p: W(cons, CON_ROT[i]), n: cBack }, { via: via.map((q) => W(drill, q)) }, 0.022));
+  rot.forEach((t, i) => circ(t, i ? 'rotation-b' : 'rotation-a', `Rotation ${'AB'[i]} : console → moteur de la tête`,
+    `Console : traversée arrière de la rotation ${'AB'[i]} (plaque CA11 « ROTATION A & B »)`, `Tête : coude 290T de l'orifice ${'AB'[i]} du moteur de rotation`));
   hoses.push(...rot);
   // Console → raccords avant des deux sélecteurs mât / treuil du traîneau (tracés imposés : par-dessus le longeron
   // gauche, devant les poteaux avant).
-  SLED_VIA.forEach((via, i) => hoses.push(run({ p: W(cons, CON_SLED[i]), n: cBack }, { via: via.map((q) => W(drill, q)) }, 0.016)));
+  SLED_VIA.forEach((via, i) => hoses.push(circ(run({ p: W(cons, CON_SLED[i]), n: cBack }, { via: via.map((q) => W(drill, q)) }, 0.016), ...SLED_CIRC[i])));
   // Eau : traversée de la console → entrée axiale au bout de l'émerillon (raccord tourné vers l'arrière), montée côté
   // console devant les boyaux de rotation, passage au-dessus du flanc −Z de la poutre, arrivée dans l'axe de la broche.
   const [sx, sy, sz] = SWIVEL_PORT, wr = 0.02, x0 = sx - 0.16;
@@ -143,7 +158,8 @@ function P002(api) {
   if (side.dot(wFoot.clone().sub(fa)) < 0) side.negate(); // du côté du pied de la montée
   const off = side.dot(toB) > 0 ? 0.17 : 0.1; // au-delà de la rotation B si elle est de ce côté
   const wpt = fa.clone().addScaledVector(dir, 0.35).addScaledVector(side, off).setY(FLOOR + wr);
-  hoses.push(run({ via: [wpt, ...CON_WATER_VIA.map((q) => W(cons, q))] }, { via: swivel.map((q) => W(drill, q)) }, wr, 'hose', rot.map((t) => t.userData.hose)));
+  hoses.push(circ(run({ via: [wpt, ...CON_WATER_VIA.map((q) => W(cons, q))] }, { via: swivel.map((q) => W(drill, q)) }, wr, 'hose', rot.map((t) => t.userData.hose)),
+    'eau', 'Eau : console → émerillon', 'Console : vanne haute du bloc d\'eau 3 voies UM-020-643P (2404-16-16)', 'Foreuse : entrée axiale de l\'émerillon d\'eau UM-106-100AA'));
 
   api.part('1', drill, [-1.2, 0, 0]);
   api.part('3', cons, [0, 0.6, 0]);

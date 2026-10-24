@@ -1,0 +1,81 @@
+/* Fiche de la pièce (panneau latéral) et page « Voir sur le dessin ». */
+
+.fiche { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.fiche-head { display: flex; gap: 12px; align-items: flex-start; min-width: 0; }
+.fiche-ref {
+  flex: none; min-width: 40px; height: 40px; padding: 0 8px; border-radius: 20px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--sys, var(--accent)); color: #fff;
+  font: 700 18px/1 var(--f-display);
+}
+.fiche-id { min-width: 0; flex: 1; }
+.fiche-pn { font-size: 20px; font-weight: 600; line-height: 1.2; overflow-wrap: anywhere; }
+.fiche-desc { margin-top: 2px; font-weight: 600; overflow-wrap: anywhere; }
+.fiche-fr { margin-top: 2px; color: var(--muted); font-style: italic; overflow-wrap: anywhere; }
+.fiche-sub { display: block; color: var(--muted); font-size: 12.5px; line-height: 1.35; margin: 2px 0 0; }
+
+.fiche-grid {
+  display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 12px; margin: 0;
+  padding: 10px 12px; border: 1px solid var(--line); border-radius: var(--radius, 8px); background: var(--surface-2);
+}
+.fiche-grid dt { color: var(--muted); font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.03em; padding-top: 2px; }
+.fiche-grid dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+
+.fiche-link {
+  border: 0; background: none; padding: 0; margin: 0; font: inherit; color: var(--accent); text-align: left;
+  cursor: pointer; overflow-wrap: anywhere;
+}
+.fiche-link:hover { text-decoration: underline; }
+.fiche-link .mono { color: var(--ink); font-size: 12.5px; margin-right: 4px; }
+.fiche-link .fiche-sub { display: block; }
+
+.fiche-trail { font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+
+.fiche-sec h4 {
+  margin: 0 0 6px; font: 700 14px/1.2 var(--f-display); text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted);
+}
+.fiche-note { margin: 0 0 6px; padding: 6px 10px; border-left: 3px solid var(--warn); background: var(--warn-soft); border-radius: 0 6px 6px 0; font-size: 13.5px; }
+
+.fiche-dims { width: 100%; border-collapse: collapse; font-size: 14px; }
+.fiche-dims th { text-align: left; font-weight: 500; color: var(--muted); padding: 3px 8px 3px 0; }
+.fiche-dims td { text-align: right; padding: 3px 0 3px 8px; white-space: nowrap; }
+.fiche-dims tr + tr th, .fiche-dims tr + tr td { border-top: 1px solid var(--line); }
+
+.fiche-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; max-height: 220px; overflow: auto; }
+
+.fiche-thumb {
+  display: block; width: 100%; padding: 0; border: 1px solid var(--line); border-radius: var(--radius, 8px);
+  background: #fff; overflow: hidden; cursor: zoom-in; text-align: left; color: var(--ink);
+}
+.fiche-thumb:hover { border-color: var(--accent); }
+.fiche-thumb img { display: block; width: 100%; height: auto; aspect-ratio: 1.545; object-fit: contain; background: #fff; }
+.fiche-thumb-cap { display: block; padding: 6px 10px; font-size: 12.5px; background: var(--surface-2); border-top: 1px solid var(--line); }
+.fiche-draw { margin-top: 10px; width: 100%; justify-content: center; display: inline-flex; align-items: center; gap: 6px; }
+
+/* ---------------------------------------------------------------- page « Voir sur le dessin » */
+.fiche-dw { display: flex; flex-direction: column; height: 100%; min-height: 0; gap: 8px; }
+.fiche-dw-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; min-width: 0; }
+.fiche-dw-pn { font-weight: 700; font-size: 16px; }
+.fiche-dw-t { flex: 1 1 200px; min-width: 0; color: var(--muted); font-size: 13.5px; overflow-wrap: anywhere; }
+.fiche-dw-view {
+  position: relative; flex: 1; min-height: 320px; height: calc(100vh - 220px); overflow: auto;
+  border: 1px solid var(--line); border-radius: var(--radius, 8px); background: #fff;
+}
+.fiche-dw-sheet { position: relative; margin: 0 auto; }
+.fiche-dw-sheet img { display: block; width: 100%; height: auto; }
+.fiche-dw-foot { margin: 0; }
+
+.fiche-ring {
+  position: absolute; width: max(calc(var(--rw) + 2.2%), 34px); aspect-ratio: 1; transform: translate(-50%, -50%);
+  border: 3px solid var(--accent); border-radius: 50%; pointer-events: none; opacity: 0.55;
+}
+.fiche-ring.on { opacity: 1; animation: fiche-pulse 1.4s ease-out infinite; box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.8); }
+.fiche-ring.on::after {
+  content: ''; position: absolute; inset: -3px; border-radius: 50%; border: 3px solid var(--accent);
+  animation: fiche-wave 1.4s ease-out infinite;
+}
+@keyframes fiche-pulse { 0%, 100% { transform: translate(-50%, -50%) scale(1); } 50% { transform: translate(-50%, -50%) scale(1.08); } }
+@keyframes fiche-wave { from { transform: scale(1); opacity: 0.9; } to { transform: scale(1.7); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .fiche-ring.on, .fiche-ring.on::after { animation: none; }
+}

@@ -51,3 +51,83 @@ export function systems(eq) {
   cache.set(eq, out);
   return out;
 }
+
+// ------------------------------------------------------------------ tuiles par système
+// Navigation plus fine que les systèmes racine : chaque système, puis ses
+// sous-assemblages directs (traîneau, avance, treuil, tête…), puis leurs
+// propres sous-assemblages en raccourcis. Tout est déduit de la hiérarchie
+// des listes (parent / children, lignes « link ») : rien n'est propre à un
+// équipement.
+
+/** Assemblages sous id (compris), en profondeur. */
+export function subtree(eq, id, out = new Set()) {
+  if (out.has(id) || !eq.assemblies.has(id)) return out;
+  out.add(id);
+  for (const c of eq.assemblies.get(id).children) subtree(eq, c, out);
+  return out;
+}
+
+/** Enfants d'un assemblage, dans l'ordre de sa liste (lignes « link »), sans doublon. */
+export function childrenOf(eq, id) {
+  const a = eq.assemblies.get(id);
+  if (!a) return [];
+  const ids = [];
+  for (const p of a.parts) if (p.link && p.link !== id && eq.assemblies.has(p.link) && !ids.includes(p.link)) ids.push(p.link);
+  for (const c of a.children || []) if (eq.assemblies.has(c) && !ids.includes(c)) ids.push(c);
+  return ids;
+}
+
+/**
+ * Chemin de repères de l'assemblage « from » jusqu'au sous-assemblage « to »
+ * (ex. ['5', '2']), ou null si « to » n'est pas sous « from ».
+ */
+export function refPath(eq, from, to) {
+  const path = [];
+  let id = to;
+  const seen = new Set();
+  while (id && id !== from) {
+    if (seen.has(id)) return null;
+    seen.add(id);
+    const a = eq.assemblies.get(id);
+    const parent = a && eq.assemblies.get(a.parent);
+    if (!parent) return null;
+    const row = parent.parts.find((r) => r.link === id);
+    if (!row) return null;
+    path.unshift(row.ref);
+    id = parent.id;
+  }
+  return id === from ? path : null;
+}
+
+/** Lignes de pièces (hors renvois vers un sous-assemblage) d'un ensemble d'assemblages. */
+function pieceLines(eq, ids) {
+  let n = 0;
+  for (const id of ids) for (const r of eq.assemblies.get(id).parts) if (!r.link) n++;
+  return n;
+}
+
+/**
+ * Tuiles des systèmes : [{ id, title, icon, color, index, sheet, pieces, subs,
+ * children: [tuile…] }] — profondeur 2 sous chaque système (enfants avec
+ * leurs propres enfants en raccourcis). « pieces » : lignes de pièces des
+ * listes du manuel, sous-ensembles compris ; « subs » : nombre de sous-ensembles.
+ */
+export function systemTiles(eq) {
+  const tile = (id, sys, depth) => {
+    const a = eq.assemblies.get(id);
+    const ids = subtree(eq, id);
+    return {
+      id,
+      title: a.titleFr || a.title,
+      icon: depth ? iconFor(a.titleFr, a.title) : sys.icon,
+      color: sys.color,
+      index: sys.index,
+      system: sys.id,
+      sheet: a.sheet || (a.sheets || [])[0] || id,
+      pieces: pieceLines(eq, ids),
+      subs: ids.size - 1,
+      children: depth < 2 ? childrenOf(eq, id).filter((c) => c !== eq.root).map((c) => tile(c, sys, depth + 1)) : [],
+    };
+  };
+  return systems(eq).map((s) => tile(s.id, s, 0));
+}

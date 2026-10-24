@@ -29,7 +29,7 @@
 // page 8.0), cable (false : sans le bout de câble sorti du guide,
 // la foreuse trace le câble jusqu'à la poulie double), cadre (true : cadre
 // « underground » devant le bâti, comme sur la foreuse).
-import { lister, each } from './layout.js';
+import { lister, each, entretien } from './layout.js';
 
 // Bâti (page 8.0) : longueur 813, largeur 699 ; tubes du bas 2 × 4 po ; longerons supérieurs
 // 3 1/2 × 2 1/2 po débordant vers l'extérieur (Z 301 à 389 mm), jusqu'à 297 mm devant le centre.
@@ -638,7 +638,7 @@ export function P041(api, opts = {}) {
     at(cyl(0.008, sy1 - 0.016, 'steel', { seg: 14 }), [0, (sy1 + 0.016) / 2, zg]),
     at(nut(0.022, sy1 - sy0, 'steel'), [0, (sy0 + sy1) / 2, zg]),
   )), [-0.2, 0.3, 0]);
-  P('', K.frame(K.haut(at(cyl(0.004, 0.012, 'zinc', { seg: 8 }), [0, sy1 + 0.006, zg]))), [-0.25, 0.3, 0]);
+  P('', K.frame(K.haut(entretien(at(cyl(0.004, 0.012, 'zinc', { seg: 8 }), [0, sy1 + 0.006, zg]), 'graisseur', 'treuil-guide'))), [-0.25, 0.3, 0]);
   // Cadre à rouleaux (repère « position haute ») : semelle percée au passage de la tête de la goupille et de la
   // lumière du câble ; joues triangulaires (pied sur la semelle, sommet arrondi autour de l'axe du rouleau
   // d'enroulement) ; joues de dessous, paliers des rouleaux d'axe X.

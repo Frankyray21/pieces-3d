@@ -1,0 +1,35 @@
+/* Circuits hydrauliques en couleur (src/ui/features/circuits.js). */
+.circuits { display: flex; flex-direction: column; gap: 10px; }
+.circuits-hint { margin: 0; color: var(--muted); font-size: 13px; }
+.circuits-h { margin: 4px 0 0; font: 700 13px/1.2 var(--f-display); text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
+.circuits-list, .circuits-hoses { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.circuits-sw {
+  flex: none; width: 14px; height: 14px; margin-top: 2px; border-radius: 4px; background: var(--c);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25);
+}
+.circuits-item {
+  width: 100%; display: flex; gap: 10px; align-items: flex-start; text-align: left; cursor: pointer;
+  padding: 7px 8px; border: 1px solid transparent; border-radius: 8px; background: none; color: var(--ink); font: inherit;
+}
+.circuits-item:hover { background: var(--hover); }
+.circuits-item[aria-pressed="true"] { border-color: var(--line-strong); background: var(--surface-2); }
+.circuits-txt { min-width: 0; flex: 1; display: grid; grid-template-columns: 1fr auto; column-gap: 8px; }
+.circuits-name { font-weight: 600; }
+.circuits-n { color: var(--muted); font-size: 12px; white-space: nowrap; }
+.circuits-ends { grid-column: 1 / -1; color: var(--muted); font-size: 12px; line-height: 1.35; overflow-wrap: anywhere; }
+.circuits-ends b { color: var(--ink); font-weight: 600; }
+.circuits-detail { padding: 10px 12px; border-left: 4px solid var(--c); }
+.circuits-dh { display: flex; align-items: center; gap: 8px; }
+.circuits-dh strong { flex: 1; min-width: 0; font: 700 17px/1.1 var(--f-display); text-transform: uppercase; }
+.circuits-dh .btn { padding: 4px 8px; font-size: 12px; }
+.circuits-desc { margin: 6px 0 8px; font-size: 13px; }
+.circuits-hoses li { display: flex; gap: 8px; padding: 6px; border-radius: 6px; }
+.circuits-hoses li > div { min-width: 0; }
+.circuits-hoses li.is-picked { background: var(--accent-soft); }
+.circuits-hl { font-size: 13px; font-weight: 600; overflow-wrap: anywhere; }
+.circuits-hl .chip { font-size: 11px; padding: 0 6px; }
+.circuits-hl .mono { font-size: 11px; color: var(--muted); font-weight: 400; }
+/* Téléphone : la légende en volet bas, la vue 3D colorée reste visible au-dessus. */
+@media (max-width: 900px) {
+  .sidepanel.circuits-sheet { top: auto; height: 46%; }
+}

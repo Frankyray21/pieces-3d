@@ -31,7 +31,7 @@
 // YEJ des vérins de bascule (le second branchement d'un vérin à l'autre) et du vérin de relevage. Sans le
 // garde-corps grillagé (P023) ni le vérin supérieur (P022, P028). Tout en rouge comme le groupe hydraulique, vérins
 // et moteurs hydrauliques noirs. Repère : layout.js.
-import { lister, each, SLED, AXIS_Y, BEAM, PIVOT, FOOT_X } from './layout.js';
+import { lister, each, entretien, SLED, AXIS_Y, BEAM, PIVOT, FOOT_X } from './layout.js';
 import { SPY, HEAD_PORTS as HEAD_LOCAL, HEAD_PORT_N } from './head.js';
 import { BASE as WB, AXE as W_AXE, PAD as W_PAD, MOTOR_PORTS, CAPOT_HAUT, cableGuide, tangente, arcPts, hull, circle } from './winch.js';
 
@@ -331,7 +331,7 @@ export function P010(api) {
         sled.push(at(washer(0.016, 0.0102, 0.005, 'steel'), [px + dx, PALIER.y1 + 0.0025, s * PLZ]));
         sled.push(at(bolt(0.019, 0.076, 'steel'), [px + dx, PALIER.y1 + 0.005, s * PLZ]));
       }
-      sled.push(at(cyl(0.0045, 0.014, 'zinc', { seg: 10 }), [px, PALIER.y1 + 0.007, s * PLZ]));
+      sled.push(entretien(at(cyl(0.0045, 0.014, 'zinc', { seg: 10 }), [px, PALIER.y1 + 0.007, s * PLZ]), 'graisseur', 'E')); // page 1.04, détail E
       sled.push(chainette([px + 0.06, PALIER.y1 - 0.012, s * (POTEAU.z[1] + 0.006)], 4));
     }
     sled.push(strut([0.905, 0.464], [0.586, RT], 0.07, 0.06, s * PZ, 0.05));
@@ -719,8 +719,8 @@ export function P010(api) {
       at(ring(0.025, 0.0128, 0.036, 'black', { axis: 'z', seg: 24 }), [...TILT.foot, z]),
       at(cyl(0.0127, 0.09, 'steel', { axis: 'z', seg: 14 }), [...TILT.foot, z]),
       at(torus(0.012, 0.0018, 'steel', { axis: 'z' }), [TILT.foot[0], TILT.foot[1] - 0.012, z + s * 0.042]),
-      R(cyl(0.004, 0.012, 'zinc', { seg: 8 }), 0.03, 0.034),
-      at(ring(rr * 1.5, rr * 0.68, rr * 1.3, 'darkSteel', { axis: 'z', seg: 24 }), [...TILT.head, z]),
+      entretien(R(cyl(0.004, 0.012, 'zinc', { seg: 8 }), 0.03, 0.034), 'graisseur', 'B'), // page 1.04, détail B
+      entretien(at(ring(rr * 1.5, rr * 0.68, rr * 1.3, 'darkSteel', { axis: 'z', seg: 24 }), [...TILT.head, z]), 'graisseur', 'A'), // page 1.04, détail A
       R(nut(rr * 1.7, rr * 0.45, 'darkSteel', { axis: 'x' }), TILT.L - 0.9 * rr - rr * 0.95, 0),
       at(cyl(0.0127, 0.085, 'steel', { axis: 'z', seg: 14 }), [...TILT.head, z]),
     );
@@ -882,6 +882,19 @@ export function P010(api) {
     hose([[px1, py, pyz], [px1, py - 0.035, pyz + 0.005], [px1 - 0.022, 0.45, 0.18], [px1 - 0.04, 0.3, 0.27], [0.7, 0.2, r1], [0.73, 0.163, r1], [back, DF_MID, r1]], 0.012),
     hose([[0.132, ey, 0.065], [0.2, ey, 0.068], [0.45, ey, 0.08], [DUMP_YEJ.x[0] - 0.06, ey, pyz], [DUMP_YEJ.x[0] - 0.027, ey, pyz]], 0.012),
   ];
+  // Étiquettes de circuit hydraulique (outil « Circuits » de l'interface ; sans effet sur la géométrie).
+  const circ = (t, circuit, circuitLabel, circuitFrom, circuitTo) => Object.assign(t.userData, { circuit, circuitLabel, circuitFrom, circuitTo });
+  const SG = 'Sélecteur DF10-6B-12L gauche', SD = 'Sélecteur DF10-6B-12L droit';
+  circ(feedRecul, 'recul', 'Recul : sélecteur gauche → tige arrière du vérin d\'avance', `${SG} : vanne à bille intérieure BKH-12NPT`, 'Vérin d\'avance UM-064-100Z : tige creuse arrière (raccord du connecteur)');
+  circ(feedAvance, 'avance', 'Avance : sélecteur gauche → tige avant du vérin d\'avance', `${SG} : vanne à bille extérieure BKH-12NPT`, 'Vérin d\'avance UM-064-100Z : tige creuse avant (raccord de la plaque de pied)');
+  circ(motorHoses[0], 'treuil', 'Treuil : moteur White ↔ sélecteur gauche (orifice avant)', `${SG} : raccord arrière intérieur (6400-8-8)`, 'Moteur White du treuil : orifice avant (6400-12-12)');
+  circ(motorHoses[1], 'treuil', 'Treuil : moteur White ↔ sélecteur gauche (orifice arrière)', `${SG} : raccord arrière extérieur (6400-8-8)`, 'Moteur White du treuil : orifice arrière (6400-12-12)');
+  circ(tiltHoses[0], 'bascule', 'Bascule : sélecteur droit → vérin de bascule droit', `${SD} : raccord extérieur du dessus (6400-8-8)`, 'Vérin de bascule droit : bloc YEJ (6801F-8-8)');
+  circ(tiltHoses[1], 'bascule', 'Bascule : sélecteur droit → vérin de bascule gauche', `${SD} : raccord intérieur du dessus (6400-8-8)`, 'Vérin de bascule gauche : bloc YEJ (6801F-8-8)');
+  circ(tiltHoses[2], 'bascule', 'Bascule : liaison entre les deux vérins', 'Vérin de bascule droit : bloc YEJ, second raccord (6801F-8-8)', 'Vérin de bascule gauche : bloc YEJ, second raccord (6801F-8-8)');
+  circ(dumpHoses[0], 'relevage', 'Relevage : sélecteur droit → bloc YEJ du vérin de relevage', `${SD} : raccord arrière intérieur (6400-8-8)`, 'Vérin de relevage UM-064-300Z : dessous du bloc YEJ (6801F-8-8)');
+  circ(dumpHoses[1], 'relevage', 'Relevage : sélecteur droit → bloc YEJ du vérin de relevage', `${SD} : raccord arrière extérieur (6400-8-8)`, 'Vérin de relevage UM-064-300Z : dessous du bloc YEJ (6801F-8-8)');
+  circ(dumpHoses[2], 'relevage', 'Relevage : bloc YEJ → orifice de la tige', 'Vérin de relevage UM-064-300Z : bloc YEJ (6801F-8-8)', 'Vérin de relevage UM-064-300Z : orifice de la tige (coude 2501F-08-08)');
   api.add(group(feedRecul, feedAvance, ...motorHoses, ...tiltHoses, ...dumpHoses));
   return { view: { dir: [0.75, 0.5, 1.0] } };
 }
@@ -920,7 +933,7 @@ export function P015(api) {
   ), [-0.15, -0.05, 0]);
   each(P, 'CS750-1500', [0.152, 0.262].flatMap((y) => [-0.065, 0.065].map((z) => at(cyl(0.017, 0.0015, 'darkSteel', { axis: 'x', seg: 18 }), [xr - 0.00075, y, z]))), [-0.1, 0, 0]);
   P('UM-064-1004DD', group(at(cyl(0.0125, 0.215, 'steel', { axis: 'z', seg: 16 }), [0, 0, -0.0075]), at(cyl(0.02, 0.008, 'steel', { axis: 'z', seg: 20 }), [0, 0, 0.104])), [0, 0, 0.25]);
-  P('UM-064-1014D', at(cyl(0.004, 0.01, 'zinc', { axis: 'z', seg: 10 }), [0, 0, 0.113]), [0, 0, 0.35]);
+  P('UM-064-1014D', entretien(at(cyl(0.004, 0.01, 'zinc', { axis: 'z', seg: 10 }), [0, 0, 0.113]), 'graisseur', 'pivot-poulie'), [0, 0, 0.35]);
   P('UM-064-1017D', at(torus(0.0142, 0.0015, 'steel', { axis: 'z' }), [0, 0, -0.108]), [0, 0, -0.25]);
   P('UM-064-1003DD', group(
     at(nut(0.03, 0.016, 'grey', { axis: 'x' }), [lx(0.097), S[0], S[1]]),
@@ -949,7 +962,7 @@ export function P016(api) {
     at(box(2 * H, 0.0125, 2 * CON.zl, 'red', { r: 0.002 }), [0, -0.086 - 0.00625, 0]),
   ), [0, 0.3, 0]);
   P('UM-064-130C', at(cyl(0.01, 0.3, 'steel', { axis: 'z', seg: 14 }), [0, 0, 0]), [0, 0, 0.3]);
-  P('UM-064-140C', at(cyl(0.004, 0.012, 'zinc', { axis: 'z', seg: 8 }), [0, 0, 0.156]), [0, 0, 0.4]);
+  P('UM-064-140C', entretien(at(cyl(0.004, 0.012, 'zinc', { axis: 'z', seg: 8 }), [0, 0, 0.156]), 'graisseur', 'guide-tiges'), [0, 0, 0.4]);
   P('UM-064-102C', at(torus(0.0117, 0.0015, 'steel', { axis: 'z' }), [0, 0, -0.145]), [0, 0, -0.35]);
   P('UM-066-500GR', at(lathe([[0.0105, -0.125], [0.042, -0.125], [0.0445, -0.122], [0.0445, -0.095], [0.033, -0.004], [0.033, 0.004], [0.0445, 0.095],
     [0.0445, 0.122], [0.042, 0.125], [0.0105, 0.125], [0.0105, -0.125]], 'rubber', { axis: 'z', seg: 36 }), [0, 0, 0]), [0, 0.15, 0]);
