@@ -141,9 +141,12 @@ export default {
       return [...map.entries()].sort((a, b) => order(a[0]) - order(b[0]));
     };
     const uniq = (list) => [...new Set(list.filter(Boolean))];
+    // Raccords d'un bout des boyaux d'un circuit : le raccord s'il est unique, sinon les organes (avant « : »).
     const ends = (list, key) => {
       const u = uniq(list.map((h) => h.userData[key]));
-      return u.length > 2 ? `${esc(u[0])} ; ${esc(u[1])} ; + ${u.length - 2} autre${u.length > 3 ? 's' : ''}` : u.map(esc).join(' ; ');
+      if (u.length <= 1) return esc(u[0] || '—');
+      const org = uniq(u.map((t) => t.split(' : ')[0]));
+      return `${org.map(esc).join(' ; ')} <span class="circuits-k">(${u.length} raccords)</span>`;
     };
     const sw = (id) => `<span class="circuits-sw" style="--c:${info(id).color}"></span>`;
     const legend = () => {

@@ -1,0 +1,165 @@
+{
+  "titre": "Entretien et graissage — STM-1500",
+  "note": "Points tirés du manuel de pièces (page 1.04 « Grease position » et pages des assemblages). Le manuel ne donne ni lubrifiant ni intervalle pour les graisseurs ; seule la tête a une huile et un intervalle de vidange (page 2.4).",
+  "points": [
+    {
+      "id": "A",
+      "type": "graisseur",
+      "titre": "Œil de tige des vérins de bascule",
+      "lieu": "Œil de tige dans les joues de la patte avant du support d'avance (un par vérin, de chaque côté)",
+      "assemblage": "P019",
+      "pages": ["P008", "P019"],
+      "source": "Page 1.04, détail A"
+    },
+    {
+      "id": "B",
+      "type": "graisseur",
+      "titre": "Fond des vérins de bascule",
+      "lieu": "Bloc du fond du vérin HBU-3010, sur la chape du longeron du traîneau : graisseur 1/8 NPT Z125-S (un par vérin)",
+      "assemblage": "P019",
+      "pages": ["P008", "P019"],
+      "source": "Page 1.04, détail B ; page 1.9 (Z125-S)"
+    },
+    {
+      "id": "C",
+      "type": "graisseur",
+      "titre": "Table de la tête — graisseur C",
+      "lieu": "Table de la tête UM-064-200DS : graisseur 1/8 NPT Z125 et boyau de graissage UM-064-210DS (non modélisés, position approchée)",
+      "assemblage": "P018",
+      "pages": ["P008", "P018"],
+      "source": "Page 1.04, détail C ; page 1.8 (Z125 ×2, UM-064-210DS ×2)",
+      "approx": true,
+      "marqueurs": [{ "assemblage": "P010", "repere": "11", "pos": [0.555, 0.966, 0.345] }]
+    },
+    {
+      "id": "D",
+      "type": "graisseur",
+      "titre": "Table de la tête — graisseur D",
+      "lieu": "Table de la tête UM-064-200DS, près des plaques de poussée grises : graisseur 1/8 NPT Z125 (non modélisé, position approchée)",
+      "assemblage": "P018",
+      "pages": ["P008", "P018"],
+      "source": "Page 1.04, détail D ; page 1.8 (Z125 ×2, UM-064-210DS ×2)",
+      "approx": true,
+      "marqueurs": [{ "assemblage": "P010", "repere": "11", "pos": [0.555, 0.966, -0.345] }]
+    },
+    {
+      "id": "E",
+      "type": "graisseur",
+      "titre": "Paliers des pivots du support d'avance",
+      "lieu": "Dessus des paliers fendus des quatre poteaux du traîneau : graisseurs 1/4-UNF Z250NF (4)",
+      "assemblage": "P011",
+      "pages": ["P008", "P011"],
+      "source": "Page 1.04, détail E ; page 1.1 (Z250NF ×4)"
+    },
+    {
+      "id": "F",
+      "type": "graisseur",
+      "titre": "Mandrin Boyles H",
+      "lieu": "Dessus du mandrin, sous la plaque du vérin supérieur : graisseur 1/8 NPT ZNPT250",
+      "assemblage": "P052",
+      "pages": ["P008", "P052"],
+      "source": "Page 1.04, détail F ; liste du mandrin (ZNPT250)"
+    },
+    {
+      "id": "pivot-poulie",
+      "type": "graisseur",
+      "titre": "Pivot de poulie",
+      "lieu": "Axe du pivot de poulie de la rallonge : graisseur 1/4-UNF UM-064-1014D",
+      "assemblage": "P015",
+      "pages": ["P015"],
+      "source": "Page 1.5"
+    },
+    {
+      "id": "guide-tiges",
+      "type": "graisseur",
+      "titre": "Rouleau du guide de tiges",
+      "lieu": "Axe du rouleau du guide de tiges : graisseur 1/8 NPT UM-064-140C",
+      "assemblage": "P016",
+      "pages": ["P016"],
+      "source": "Page 1.6"
+    },
+    {
+      "id": "treuil-guide",
+      "type": "graisseur",
+      "titre": "Guide-câble du treuil",
+      "lieu": "Bloc du guide-câble, au-dessus de la vis à double hélice : graisseur (repère 21)",
+      "assemblage": "P041",
+      "pages": ["P041"],
+      "source": "Page 8.3 (Grease Zerk)"
+    },
+    {
+      "id": "tete-niveau",
+      "type": "niveau",
+      "titre": "Niveau d'huile de la tête",
+      "lieu": "Bout de la boîte côté poignée : deux bouchons 3/8 NPT UM-102-132 sous la plaque « Oil level — at 90° / at 45° »",
+      "assemblage": "P048",
+      "pages": ["P047", "P048", "P050"],
+      "source": "Page 2.1 (plaque « Oil level ») ; page 2.2",
+      "consigne": "Huile à engrenage 80W90 ; vidange d'huile aux 300 heures (page 2.4)."
+    },
+    {
+      "id": "tete-bouchons",
+      "type": "bouchon",
+      "titre": "Bouchons 1 po de la boîte de la tête",
+      "lieu": "Bouchons 1 po NPT UM-012-131 (2) : l'un sur le couvercle, l'autre en bas du bout de la boîte (usage non précisé au manuel)",
+      "assemblage": "P048",
+      "pages": ["P048"],
+      "source": "Page 2.2"
+    },
+    {
+      "id": "tete-filtre",
+      "type": "filtre",
+      "titre": "Filtre de la tête",
+      "lieu": "Tête de filtre UM-012-177 et cartouche UM-012-178, sur la face avant de la boîte (circuit de lubrification de la page 2.3)",
+      "assemblage": "P048",
+      "pages": ["P048", "P049"],
+      "source": "Pages 2.2 et 2.3"
+    },
+    {
+      "id": "tete-reniflard",
+      "type": "reniflard",
+      "titre": "Reniflard de la tête",
+      "lieu": "Reniflard A-1199-R-4048 sur manchon 5000-6-6, au bout de la boîte côté transmission (boyau UM-012-H08C)",
+      "assemblage": "P049",
+      "pages": ["P049"],
+      "source": "Page 2.3"
+    },
+    {
+      "id": "reservoir-filtres",
+      "type": "filtre",
+      "titre": "Filtres de retour RTF-47",
+      "lieu": "Dessus du réservoir hydraulique : deux filtres de retour RTF-47 (élément RTF-47-07)",
+      "assemblage": "P072",
+      "pages": ["P072", "P073"],
+      "source": "Pages 3.6 et 3.7",
+      "consigne": "En retirant le filtre, retirer ensemble la cuve en plastique et l'élément pour garder les contaminants dans la cuve (avertissement de la page 3.6)."
+    },
+    {
+      "id": "reservoir-reniflard",
+      "type": "reniflard",
+      "titre": "Reniflard du réservoir",
+      "lieu": "Dessus du réservoir : reniflard UMV-10SM-N12 sur bouchon UM-064-304TD (filtre UM-064-312A dessous)",
+      "assemblage": "P072",
+      "pages": ["P072"],
+      "source": "Page 3.6"
+    },
+    {
+      "id": "reservoir-thermometre",
+      "type": "thermometre",
+      "titre": "Thermomètre du réservoir",
+      "lieu": "Face avant du réservoir : thermomètre UM-064-334TD",
+      "assemblage": "P072",
+      "pages": ["P072"],
+      "source": "Page 3.6"
+    },
+    {
+      "id": "reservoir-trappes",
+      "type": "inspection",
+      "titre": "Trappes d'inspection du réservoir",
+      "lieu": "Dessus du réservoir : deux couvercles d'inspection UM-064-314A",
+      "assemblage": "P072",
+      "pages": ["P072"],
+      "source": "Page 3.6"
+    }
+  ]
+}

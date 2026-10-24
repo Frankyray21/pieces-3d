@@ -18,6 +18,7 @@
 .circuits-n { color: var(--muted); font-size: 12px; white-space: nowrap; }
 .circuits-ends { grid-column: 1 / -1; color: var(--muted); font-size: 12px; line-height: 1.35; overflow-wrap: anywhere; }
 .circuits-ends b { color: var(--ink); font-weight: 600; }
+.circuits-k { white-space: nowrap; }
 .circuits-detail { padding: 10px 12px; border-left: 4px solid var(--c); }
 .circuits-dh { display: flex; align-items: center; gap: 8px; }
 .circuits-dh strong { flex: 1; min-width: 0; font: 700 17px/1.1 var(--f-display); text-transform: uppercase; }

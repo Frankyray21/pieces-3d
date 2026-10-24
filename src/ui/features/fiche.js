@@ -259,7 +259,7 @@ export default {
         const ratio = img.naturalWidth / img.naturalHeight;
         const fitW = Math.min(vw, vh * ratio);
         // Zoom : la zone de la bulle occupe environ un tiers de la largeur de la vue.
-        const width = zoomed ? Math.max(fitW, Math.min(vw * 3, img.naturalWidth * 1.2, fitW * 4)) : fitW;
+        const width = zoomed ? Math.max(fitW, Math.min(vw * 2.4, img.naturalWidth * 1.2, fitW * 3.5)) : fitW;
         pageEl.style.width = `${width}px`;
         const [x, y, w, h] = boxes[idx];
         const H = width / ratio;
