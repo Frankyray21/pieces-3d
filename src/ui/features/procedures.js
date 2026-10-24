@@ -301,6 +301,15 @@ export default {
       const tr = e.target.closest('tr[data-path]');
       if (tr && run) pick(tr.dataset.path);
     });
+    // Page absente (version publiée sans les pages du manuel) : la vignette laisse place à un mot.
+    panelBody.addEventListener('error', (e) => {
+      const img = e.target;
+      if (img.tagName !== 'IMG') return;
+      const span = document.createElement('span');
+      span.className = 'proc-nopage';
+      span.textContent = 'Image de la page absente de cette version du site.';
+      img.replaceWith(span);
+    }, true);
     panelBody.addEventListener('keydown', (e) => {
       const tr = e.target.closest('tr[data-path]');
       if (tr && run && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); pick(tr.dataset.path); }

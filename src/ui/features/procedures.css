@@ -68,6 +68,7 @@
   color: var(--ink); cursor: zoom-in; text-align: left; font-size: 12px;
 }
 .proc-thumb img { width: 100%; height: auto; max-height: 260px; object-fit: contain; background: #fff; border-radius: 4px; }
+.proc-nopage { padding: 12px; color: var(--muted); font-style: italic; }
 .proc-thumb:hover { border-color: var(--mark); }
 .proc-foot { padding-top: 4px; }
 .proc-foot .btn { display: inline-flex; align-items: center; gap: 6px; }
