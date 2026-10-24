@@ -171,7 +171,7 @@ export default {
       const b = e.target.closest('[data-circuit]');
       if (b) setFocus(b.dataset.circuit === focus ? null : b.dataset.circuit, { frame: true });
     });
-    const openPanel = () => ctx.ui.sidePanel.open({ owner: OWNER, title: 'Circuits hydrauliques', icon: 'goutte', content: panelEl, className: 'circuits-sheet' });
+    const openPanel = () => ctx.ui.sidePanel.open({ owner: OWNER, title: 'Circuits hydrauliques', icon: 'goutte', content: panelEl });
     const render = () => {
       panelEl.innerHTML = legend(); // aussi quand la fiche d'une pièce recouvre la légende
       if (ctx.ui.sidePanel.owner !== OWNER) return;

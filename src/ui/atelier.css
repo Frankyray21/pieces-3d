@@ -185,6 +185,6 @@ body.page-open .workspace .resizer { display: none; }
   .eqh-hero { padding: 16px; }
   .sidepanel { right: 8px; left: 8px; bottom: 8px; width: auto; }
   /* Téléphone : volet bas ; la vue reste visible au-dessus (la pièce y est cadrée). */
-  #stage .sidepanel { top: auto; height: min(56%, calc(100% - var(--tools-bottom, 8px) - 8px)); }
+  #stage .sidepanel { top: auto; height: min(46%, calc(100% - var(--tools-bottom, 8px) - 8px)); }
   .tb-grid { width: 190px; }
 }

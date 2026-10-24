@@ -233,7 +233,7 @@ export default {
       if (ctx.selection) ctx.viewer.select(null); // la fiche se ferme : la liste revient dessous
       if (ctx.ui.sidePanel.owner !== OWNER) openPanel(panel());
     };
-    const openPanel = (content) => ctx.ui.sidePanel.open({ owner: OWNER, title: 'Entretien et graissage', icon: 'cle', content, className: 'ent-side' });
+    const openPanel = (content) => ctx.ui.sidePanel.open({ owner: OWNER, title: 'Entretien et graissage', icon: 'cle', content });
 
     // ------------------------------------------------------------ marche / arrêt
     const build = () => {

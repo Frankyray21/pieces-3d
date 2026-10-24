@@ -86,9 +86,9 @@ export function createHost(app) {
   const spIcon = sp.querySelector('.sp-icon');
   const spBody = sp.querySelector('.sp-body');
   const spBack = sp.querySelector('.sp-back');
-  let top = null; // couche affichée : { owner, title, icon, className, over }
+  let top = null; // couche affichée : { owner, title, icon, className, over, from }
   let base = null; // couche recouverte : idem + nodes (son contenu, mis de côté)
-  let fromPane = null; // téléphone : onglet quitté à l'ouverture (bouton de retour)
+  // from : sur téléphone, onglet quitté à l'ouverture de la couche (bouton de retour).
   const setOpen = (on) => {
     sp.hidden = !on;
     $('#stage').classList.toggle('side-open', on);
@@ -96,7 +96,7 @@ export function createHost(app) {
     // La scène garde sa taille (le panneau la recouvre) ; seule la mise en page des outils change.
   };
   const renderBack = () => {
-    const label = base ? base.title : fromPane && app.narrow() ? PANE_BACK[fromPane] : null;
+    const label = base ? base.title : top?.from && app.narrow() ? PANE_BACK[top.from] : null;
     spBack.hidden = !label;
     if (label) {
       spBack.querySelector('span').textContent = label;
@@ -151,15 +151,12 @@ export function createHost(app) {
         if (base && !(over && top?.over)) { closed.push(base.owner); base = null; }
       }
       top = layer;
+      // Téléphone : la vue s'affiche ; l'onglet quitté reste à portée (bouton « ‹ »).
+      layer.from = same?.from ?? null;
+      if (app.narrow() && reveal && app.pane() !== 'stage') { layer.from = app.pane(); app.setPane('stage'); }
       if (content !== undefined) fill(spBody, content);
       show(layer);
       setOpen(true);
-      if (app.narrow() && reveal) {
-        const pane = app.pane();
-        if (pane !== 'stage') { fromPane = pane; app.setPane('stage'); }
-        else if (!wasOpen) fromPane = null;
-      } else if (!wasOpen) fromPane = null;
-      renderBack();
       for (const o of closed) if (o !== owner) emitPanel(false, o);
       emitPanel(true, owner, { over: !!over, base: base?.owner ?? null });
     },
@@ -180,7 +177,6 @@ export function createHost(app) {
       }
       setOpen(false);
       top = null;
-      fromPane = null;
       renderBack();
       emitPanel(false, t?.owner ?? null);
     },
@@ -190,7 +186,6 @@ export function createHost(app) {
       const owners = [top?.owner ?? null, ...(base ? [base.owner] : [])];
       base = null;
       top = null;
-      fromPane = null;
       renderBack();
       setOpen(false);
       owners.forEach((o) => emitPanel(false, o));
@@ -231,7 +226,7 @@ export function createHost(app) {
   sp.querySelector('.sp-close').addEventListener('click', () => sidePanel.close());
   spBack.addEventListener('click', () => {
     if (base) { sidePanel.close(); return; }
-    if (fromPane) { const p = fromPane; fromPane = null; renderBack(); app.setPane(p); }
+    if (top?.from) { const p = top.from; top.from = null; renderBack(); app.setPane(p); }
   });
   // Le panneau commence sous la barre d'outils de la scène (qui garde toute sa largeur).
   const tools = $('#tools');
