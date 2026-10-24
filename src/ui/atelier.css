@@ -105,6 +105,9 @@
 }
 .sp-back span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sp-back:hover { border-color: var(--accent); }
+/* Avec le bouton de retour, le titre garde sa place : icône masquée, titre plus petit. */
+.sp-back:not([hidden]) ~ .sp-icon { display: none; }
+.sp-back:not([hidden]) ~ .sp-title { font-size: 16px; }
 .sp-close { border: 0; background: none; color: var(--muted); padding: 4px; border-radius: 6px; display: inline-flex; }
 .sp-close:hover { background: var(--hover); color: var(--ink); }
 .sp-body { flex: 1; min-height: 0; overflow: auto; padding: 12px 14px 16px; }
