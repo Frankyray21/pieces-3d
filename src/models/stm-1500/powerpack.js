@@ -505,7 +505,7 @@ export function P068(api) {
     ]),
   ), [0, 0.7, 0]);
 
-  // 15 — Collecteur de retour (page 3.5) : bloc Lynch H2505H09003SF en acier gris, dressé contre sa platine et
+  // 15 — Collecteur de retour (page 3.5) : bloc Lynch H2505H09003SFU en acier gris, dressé contre sa platine et
   // serré par deux vis 607P en diagonale (rondelles 609P et écrous 608P côté platine) ; raccords en laiton :
   // 601P, 602P et 601P sur la face −Z (drains des pompes), 603P dessus, 611P dessous, 604P bouchonné par 610P et
   // deux bouchons 605P sur la face +X.

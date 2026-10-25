@@ -72,7 +72,7 @@ ASM = {
     'P014': ('Foot clamp base', 'Base du serre-tiges de pied', 'UM-064-800B', ['P014']),
     'P015': ('Pulley pivot', 'Pivot de poulie', 'UM-064-1000DD', ['P015']),
     'P016': ('Rod guide', 'Guide de tiges', 'UM-064-155C', ['P016']),
-    'P017': ('Swivel pulley', 'Poulie pivotante', 'UM-064-180C', ['P017']),
+    'P017': ('Swivel pulley', 'Poulie pivotante', 'UM-064-180C_1', ['P017']),
     'P018': ('Head table', 'Table de la tête', 'UM-064-200DS', ['P018']),
     'P019': ('Feed frame and tilt cylinders', 'Vérins de bascule et de relevage', 'FBRA-002-515ZZ', ['P019']),
     'P020': ('Legs & removable hitch', 'Jambes et attelage amovible', 'UM-064-400D', ['P020']),
@@ -83,7 +83,7 @@ ASM = {
     'P025': ('Safety switch and Telemecanique', 'Interrupteur de sécurité et câble', 'UM-064-1300SS', ['P025']),
     'P027': ('Drill rotative platform', 'Plateforme rotative (option)', 'UM-064-800AA', ['P027']),
     'P028': ('Top feed cylinder rod end adjustment', 'Réglage de l\'œil du vérin supérieur', 'FTD-148-800K', ['P028']),
-    'P029': ('Water swivel assembly', 'Émerillon d\'eau', 'UM-106-100AA', ['P029']),
+    'P029': ('Water swivel assembly', 'Émerillon d\'eau', 'UM-106-10011-UG', ['P029']),
     'P030': ('Wheel & hub', 'Roue et moyeu (option)', 'UM-064-1601RM', ['P030']),
     'P032': ('Rod clamp 12 HH', 'Serre-tiges de pied Boyles 12HH', 'UM-079-100AA', ['P032', 'P031']),
     'P034': ('Mud mixer', 'Malaxeur à boue', 'UM-024-100A', ['P034', 'P033', 'P035']),
@@ -128,7 +128,7 @@ PSEUDO = {
              ['UM-064-FMX-005-100PPP', 1, 'POWER PACK 125HP-600V-60H', 'P068'],
              ['UM-051-300P-FMC-036', 1, 'HYDRAULIC CONTROL CONSOLE', 'P078']],
     'P010': [['UM-064-1200GG', None, 'UNDERGROUND GUARD COMPLETE ASSEMBLY (page 1.13)', 'P023'],
-             ['UM-106-100AA', 1, 'WATER SWIVEL ASSEMBLY (page 1.16)', 'P029'],
+             ['UM-106-10011-UG', 1, 'WATER SWIVEL ASSEMBLY (page 1.16)', 'P029'],
              ['UM-064-1601RM', None, 'WHEEL & HUB — OPTION (page 1.02)', 'P030']],
     'P042': [['STEP 1', None, 'HANDWHEELS AND CHAIN GUARDS (page 8.1)', 'P039'],
              ['STEP 2', None, 'SPROCKETS AND CHAIN 35 (page 8.2)', 'P040'],
@@ -140,9 +140,10 @@ PSEUDO = {
 }
 NOTES = {
     'P002': "Prêt à forer, disposé d'après le plan de l'atelier : foreuse à gauche, inclinée vers le trou ; console STM à droite de la foreuse, à plus de 3 m (3,3 m), commandes tournées vers l'opérateur qui se tient entre la console et le groupe et regarde la foreuse par-dessus la console ; groupe hydraulique en haut à droite, à plus de 3 m (5,5 m), raccords au bout tourné vers la console, interrupteur principal accessible du côté bas. Boyaux branchés au sol : groupe → console (pression, retour, drain) ; console → tête (rotation A et B), bloc du traîneau (avance, vérins) et eau vers l'émerillon (par-dessus le moteur de la tête), chaque boyau dans sa voie. Seul le matériel du manuel est en 3D.",
-    'P010': "Avance à 0° (horizontale) comme sur la page 1.01, sans le garde-corps grillagé ni le vérin supérieur ; le vérin d'avance double est logé dans la poutre. Treuil de câble posé sur l'arrière du traîneau, capot en position haute comme à la page 1.01 (volant sous la poutre) ; vérins de bascule de la chape des longerons à la patte avant du support d'avance, vérin de relevage couché dans le support, sous la poutre ; jambes et attelage non posés (page 1.01). Les sous-ensembles qui ont leur liste ouvrent leur page (dessins du manuel).",
+    'P010': "Avance à 0° (horizontale) comme sur la page 1.01. Garde-corps grillagé (page 1.13) et vérin d'avance supérieur (pages 1.12 et 1.15) retirés du modèle 3D à la demande de l'utilisateur ; le vérin d'avance UM-064-100Z (page 1.11) est dans la poutre. Treuil de câble posé sur l'arrière du traîneau, capot en position haute comme à la page 1.01 (volant sous la poutre) ; vérins de bascule de la chape des longerons à la patte avant du support d'avance, vérin de relevage couché dans le support, sous la poutre ; jambes et attelage non posés (page 1.01). Les sous-ensembles qui ont leur liste ouvrent leur page (dessins du manuel).",
     'P068': "Groupe posé sur ses patins : roues, moyeux et timon (options, pages 3.01 et 3.2) ne sont pas montés en 3D.",
-    'P012': "Liste de débit (matériaux et longueurs en pouces) ; quantités illisibles pour trois lignes.",
+    'P012': "Liste de débit (matériaux, longueur et largeur en pouces).",
+    'P029': "Le manuel donne deux assemblages : UM-106-100AA-SC (surface compacte) et UM-106-10011-UG (sous terre compacte) ; dessin UM-106-100AAA. La foreuse étant souterraine, c'est le second qui est retenu.",
     'P042': "Treuil en position haute (page 8.0 : 642 mm hors tout), câble enroulé sur le tambour. Les listes des pages 8.1 à 8.4 valent pour les versions gauche et droite (UM-032-100A_L et _R) : une machine porte un tambour, une transmission par chaîne 80 et un moteur White ; côté transmissions comme sur la foreuse (page 1.01). Le cadre « option underground » de la page 8.0 (hors liste) n'est pas monté.",
 }
 
@@ -183,12 +184,12 @@ PSEUDO_3D = {'P039', 'P040', 'P041', 'P049', 'P079'}
 # ------------------------------------------------------------------ transcriptions à la main
 HAND = {
     'P012': [
-        ('3-16 LINK', 24, 'CHAIN 3/16 LINK'), ('FBRA-001-101B', None, 'P.L. 1/2" 44W — 2 1/2 in'),
-        ('FBRA-001-201B', None, 'PL 3/4 in, 44W — 23 in'), ('FBRA-001-202B', 4, 'F.B. 1/2 in X 2 1/2 — 10 3/4 in'),
-        ('FBRA-001-203B', 8, 'PL 1/2 in, 44W — 5 1/2 x 3 in'), ('FBRA-001-204B', None, 'PL 1/4 in 44W — 6 in'),
-        ('UM-064-200B', 2, 'B.P.SHC 80 3 in (PIVOT TUBE) — 33 3/8 in'), ('UM-064-204B', 4, 'FB3 in X 1 in — 9 1/2 in'),
+        ('3-16 LINK', 24, 'CHAIN 3/16 LINK'), ('FBRA-001-101B', 8, 'P.L. 1/2" 44W — 2 1/2 x 2 1/2 in'),
+        ('FBRA-001-201B', 1, 'PL 3/4 in, 44W — 23 x 13 in'), ('FBRA-001-202B', 4, 'F.B. 1/2 in X 2 1/2 — 10 3/4 in'),
+        ('FBRA-001-203B', 8, 'PL 1/2 in, 44W — 5 1/2 x 3 in'), ('FBRA-001-204B', 4, 'PL 1/4 in 44W — 6 x 3 in'),
+        ('UM-064-200B', 2, 'B.P.SHC 80 3 in — 33 3/8 in'), ('UM-064-204B', 4, 'FB3 in X 1 in — 9 1/2 in'),
         ('UM-064-207B', 4, 'FA 2 1/2 in X 2 1/2 in X 1/2 in — 27 1/2 in'), ('UM-064-210B', 2, 'HSS 5 in X 3 in X 1/4 in — 47 in'),
-        ('UM-064-211B', 4, 'ACIER À CLÉ 4 1/2 x 1 1/2 (CLAMP) — 9 1/2 in'), ('UM-064-213B', 2, 'PL 3/4 in, 44W — 2 x 2 1/8 in'),
+        ('UM-064-211B', 4, 'ACIER À CLÉ 4 1/2 x 1 1/2 — 9 1/2 in'), ('UM-064-213B', 2, 'PL 3/4 in, 44W — 2 x 2 1/8 in'),
         ('UM-064-218B', 2, 'FB1 1/2 in X 5/8 in — 47 in'), ('UM-064-220B', 1, 'PL 1/2 in, 44W — 8 3/4 x 8 1/2 in'),
     ],
     'P049': [
@@ -272,7 +273,6 @@ JUNK = re.compile(r'COMPLETE|C:\\|OVERALL DIMENSION|HEIGHT:|WIDTH:|LENGTH:|GOOD 
 PN = re.compile(r'^(?=.*[\d-])[A-Z0-9][A-Z0-9#._/()+-]*$')
 # N° absents du brouillon (cachés par le dessin ou hors colonne), par page : description → n°.
 PNFIX = {
-    'P071': {'MANIFOLD LYNCH U': 'H2505H09003SFU'},
     'P080': {'SECURITY BLOCK #2': 'UMV-10VS-2009F03', 'INLET COVER': 'SDS150_AC(YG3)', 'SPRING RETURN KIT': 'V8-MDS10-11-16',
              'INLET C COVER WITH RELIEF': 'FE-SD25'},
     'P081': {'PLUGGED BODY': '654512-06744-51'},
@@ -290,9 +290,20 @@ DESCFIX = {
     'P039': {'SP250-1250': "SPRING PIN 1/2'' x 1 1/4''", 'SP375-3000': "SPRING PIN 3/8'' x 3''"},
     'P040': {'SPN-R3000-X237': 'INT. RET. RING SERIWE 3000 (2 3/8 x 0.78)'},
     'P041': {'SB206-20': "INSERT BEARING 1 1/4''", 'SPN-R3100-300': 'EXT.RET.RING SÉRIE. (3100)'},
-    'P080': {'AL01_M12X250': 'SD25 ARM'},
+    'P080': {'AL01_M12X250': 'SD25 ARM',
+             # « LOW FEED » et « V11.SD10-11-16 (DETENT) » sont des étiquettes du dessin, collées par le brouillon.
+             'V8-MDS10-11-16': 'SPRING RETURN KIT'},
     # Titre de la page (« BOÎTE DE SÉCURITÉ … ASSEMBLY: UM-CIT-SC-UG ») collé à la dernière ligne.
     'P085': {'ZB4BZ102': 'BASE AND CONTACT BLOCK'},
+}
+# Cellules ITEM écrites sur deux lignes : la suite du n° (« U », « -BW », « AND 44C-H ») est collée par le brouillon à
+# la désignation. Relues sur la page : n° du brouillon → (n°, désignation).
+ITEMFIX = {
+    'P071': {'H2505H09003SF': ('H2505H09003SFU', 'MANIFOLD LYNCH')},  # bulle et tableau OLD/NEW : H2505H09003SFU
+    'P052': {'UM-021-06HH-06C': ('UM-021-06HH-06C-BW', 'BUSHING GUIDE ROD'),
+             'UM-021-06HH-04C': ('UM-021-06HH-04C AND 44C-H', 'BUSHING GUIDE ROD AND SHELL'),
+             'UM-021-06HH-03C': ('UM-021-06HH-03C AND 33C-N', 'BUSHING GUIDE ROD AND SHELL'),
+             'UM-021-06HH-02C': ('UM-021-06HH-02C AND 22C-B', 'BUSHING GUIDE ROD AND SHELL')},
 }
 # N° de la colonne ITEM écrits en plusieurs mots (P025, P029, P084, P085) : le premier mot seul désignerait une
 # autre pièce (six connecteurs C016 différents ; l'écrou XCS-ZR5902 NUT n'est pas l'interrupteur XCS-ZR5902).
@@ -350,6 +361,8 @@ def clean(page, tables):
         if not r['pn']:
             r['pn'] = PNFIX.get(page, {}).get(r['desc'], '')
         r['pn'] = r['pn'].replace('-----', '')
+        if r['pn'] in ITEMFIX.get(page, {}):
+            r['pn'], r['desc'] = ITEMFIX[page][r['pn']]
         if r['pn'] in DESCFIX.get(page, {}):
             r['desc'] = DESCFIX[page][r['pn']]
     return rows
@@ -377,7 +390,7 @@ for aid, (title, fr, pn, sheets) in ASM.items():
         if r['qty'] is None and 'KIT' in r['desc'].upper():
             extra['kit'] = True
         if aid == 'P010' and r['pn'] in ('FTD-030-100ZZ', 'FTD-148-800K'):
-            extra['note'] = 'Non monté en 3D : l\'avance se fait par le vérin double logé dans la poutre (UM-064-100Z).'
+            extra['note'] = 'Non monté en 3D : retiré du modèle à la demande de l\'utilisateur (voir les pages 1.12 et 1.15).'
             extra['no3d'] = True
         if aid == 'P010' and r['pn'] == 'UM-064-351D':
             extra['note'] = 'Non monté en 3D : la page 1.01 ne le montre posé dans aucune vue (voir 1.10).'

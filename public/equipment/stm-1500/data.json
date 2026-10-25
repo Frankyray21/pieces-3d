@@ -276,7 +276,7 @@
      "TOP FEED CYLINDER",
      {
       "link": "P022",
-      "note": "Non monté en 3D : l'avance se fait par le vérin double logé dans la poutre (UM-064-100Z).",
+      "note": "Non monté en 3D : retiré du modèle à la demande de l'utilisateur (voir les pages 1.12 et 1.15).",
       "no3d": true
      }
     ],
@@ -293,7 +293,7 @@
      "TOP FEED CYLINDER BRAKET",
      {
       "link": "P028",
-      "note": "Non monté en 3D : l'avance se fait par le vérin double logé dans la poutre (UM-064-100Z).",
+      "note": "Non monté en 3D : retiré du modèle à la demande de l'utilisateur (voir les pages 1.12 et 1.15).",
       "no3d": true
      }
     ],
@@ -401,7 +401,7 @@
     ],
     [
      "20",
-     "UM-106-100AA",
+     "UM-106-10011-UG",
      1,
      "WATER SWIVEL ASSEMBLY (page 1.16)",
      {
@@ -421,7 +421,7 @@
      }
     ]
    ],
-   "note": "Avance à 0° (horizontale) comme sur la page 1.01, sans le garde-corps grillagé ni le vérin supérieur ; le vérin d'avance double est logé dans la poutre. Treuil de câble posé sur l'arrière du traîneau, capot en position haute comme à la page 1.01 (volant sous la poutre) ; vérins de bascule de la chape des longerons à la patte avant du support d'avance, vérin de relevage couché dans le support, sous la poutre ; jambes et attelage non posés (page 1.01). Les sous-ensembles qui ont leur liste ouvrent leur page (dessins du manuel)."
+   "note": "Avance à 0° (horizontale) comme sur la page 1.01. Garde-corps grillagé (page 1.13) et vérin d'avance supérieur (pages 1.12 et 1.15) retirés du modèle 3D à la demande de l'utilisateur ; le vérin d'avance UM-064-100Z (page 1.11) est dans la poutre. Treuil de câble posé sur l'arrière du traîneau, capot en position haute comme à la page 1.01 (volant sous la poutre) ; vérins de bascule de la chape des longerons à la patte avant du support d'avance, vérin de relevage couché dans le support, sous la poutre ; jambes et attelage non posés (page 1.01). Les sous-ensembles qui ont leur liste ouvrent leur page (dessins du manuel)."
   },
   "P011": {
    "title": "Frame",
@@ -516,14 +516,14 @@
     [
      "2",
      "FBRA-001-101B",
-     null,
-     "P.L. 1/2\" 44W — 2 1/2 in"
+     8,
+     "P.L. 1/2\" 44W — 2 1/2 x 2 1/2 in"
     ],
     [
      "3",
      "FBRA-001-201B",
-     null,
-     "PL 3/4 in, 44W — 23 in"
+     1,
+     "PL 3/4 in, 44W — 23 x 13 in"
     ],
     [
      "4",
@@ -540,14 +540,14 @@
     [
      "6",
      "FBRA-001-204B",
-     null,
-     "PL 1/4 in 44W — 6 in"
+     4,
+     "PL 1/4 in 44W — 6 x 3 in"
     ],
     [
      "7",
      "UM-064-200B",
      2,
-     "B.P.SHC 80 3 in (PIVOT TUBE) — 33 3/8 in"
+     "B.P.SHC 80 3 in — 33 3/8 in"
     ],
     [
      "8",
@@ -571,7 +571,7 @@
      "11",
      "UM-064-211B",
      4,
-     "ACIER À CLÉ 4 1/2 x 1 1/2 (CLAMP) — 9 1/2 in"
+     "ACIER À CLÉ 4 1/2 x 1 1/2 — 9 1/2 in"
     ],
     [
      "12",
@@ -592,7 +592,7 @@
      "PL 1/2 in, 44W — 8 3/4 x 8 1/2 in"
     ]
    ],
-   "note": "Liste de débit (matériaux et longueurs en pouces) ; quantités illisibles pour trois lignes."
+   "note": "Liste de débit (matériaux, longueur et largeur en pouces)."
   },
   "P013": {
    "title": "Feed frame assembly",
@@ -982,7 +982,7 @@
   "P017": {
    "title": "Swivel pulley",
    "titleFr": "Poulie pivotante",
-   "pn": "UM-064-180C",
+   "pn": "UM-064-180C_1",
    "sheets": [
     "P017"
    ],
@@ -2110,7 +2110,7 @@
   "P029": {
    "title": "Water swivel assembly",
    "titleFr": "Émerillon d'eau",
-   "pn": "UM-106-100AA",
+   "pn": "UM-106-10011-UG",
    "sheets": [
     "P029"
    ],
@@ -2163,7 +2163,8 @@
      1,
      "REPAIR KIT (O-RINGS, SPINDLE, PACKING)"
     ]
-   ]
+   ],
+   "note": "Le manuel donne deux assemblages : UM-106-100AA-SC (surface compacte) et UM-106-10011-UG (sous terre compacte) ; dessin UM-106-100AAA. La foreuse étant souterraine, c'est le second qui est retenu."
   },
   "P030": {
    "title": "Wheel & hub",
@@ -3942,27 +3943,27 @@
     ],
     [
      "6",
-     "UM-021-06HH-06C",
+     "UM-021-06HH-06C-BW",
      1,
-     "BUSHING GUIDE ROD -BW"
+     "BUSHING GUIDE ROD"
     ],
     [
      "7",
-     "UM-021-06HH-04C",
+     "UM-021-06HH-04C AND 44C-H",
      1,
-     "BUSHING GUIDE ROD AND AND 44C-H SHELL"
+     "BUSHING GUIDE ROD AND SHELL"
     ],
     [
      "8",
-     "UM-021-06HH-03C",
+     "UM-021-06HH-03C AND 33C-N",
      1,
-     "BUSHING GUIDE ROD AND AND 33C-N SHELL"
+     "BUSHING GUIDE ROD AND SHELL"
     ],
     [
      "9",
-     "UM-021-06HH-02C",
+     "UM-021-06HH-02C AND 22C-B",
      1,
-     "BUSHING GUIDE ROD AND AND 22C-B SHELL"
+     "BUSHING GUIDE ROD AND SHELL"
     ],
     [
      "10",
@@ -4767,9 +4768,9 @@
     ],
     [
      "8",
-     "H2505H09003SF",
+     "H2505H09003SFU",
      1,
-     "MANIFOLD LYNCH U"
+     "MANIFOLD LYNCH"
     ],
     [
      "9",
@@ -5608,7 +5609,7 @@
      "16",
      "V8-MDS10-11-16",
      1,
-     "SPRING RETURN KIT LOW FEED V11.SD10-11-16 (DETENT) V11.SD10-11-16"
+     "SPRING RETURN KIT"
     ],
     [
      "17",

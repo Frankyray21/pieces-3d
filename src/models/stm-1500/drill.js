@@ -826,10 +826,10 @@ export function P010(api) {
     P('UM-064-200C', group(c), [-0.6, 0.3, 0]);
   }
 
-  // 20 — Émerillon d'eau UM-106-100AA (page 1.16) au bout arrière de la broche : rallonge de broche 104A en acier
-  // (Ø 45 × 67) contre la broche, corps 105A (Ø 86 × 73), chapeau souterrain 100A-UG (Ø 71) à bout bombé et deux
+  // 20 — Émerillon d'eau UM-106-10011-UG (page 1.16, « sous terre compacte ») au bout arrière de la broche :
+  // rallonge de broche 104A en acier (Ø 45 × 67) contre la broche, corps 105A (Ø 86 × 73), chapeau souterrain 100A-UG (Ø 71) à bout bombé et deux
   // méplats, entrée d'eau axiale taraudée au bout (raccord laiton vers −X).
-  P('UM-106-100AA', group(
+  P('UM-106-10011-UG', group(
     at(lathe([[0.012, 0.158], [0.0225, 0.158], [0.0225, 0.225], [0.012, 0.225]], 'steel', { axis: 'x', seg: 24 }), [SW_X - 0.225, AXIS_Y, 0]),
     at(lathe([[0.011, 0], [0.022, 0.003], [0.027, 0.008], [0.028, 0.012], [0.028, 0.046], [0.0355, 0.05], [0.0355, 0.085], [0.043, 0.085], [0.043, 0.158], [0.011, 0.158]], 'red', { axis: 'x', seg: 32 }), [SW_X - 0.225, AXIS_Y, 0]),
     at(box(0.034, 0.068, 0.058, 'red', { r: 0.01 }), [SW_X - 0.196, AXIS_Y, 0]), // bout à deux méplats (z ±0,029)

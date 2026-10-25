@@ -63,9 +63,13 @@ export default {
 
     // Barre de commande, posée sur la scène.
     const stage = ctx.ui.stage;
-    /** Une couche recouvre la scène : visionneuse des pages, page plein écran, recherche. */
+    /**
+     * La scène n'est pas visible : couche par-dessus (visionneuse des pages, page plein écran, recherche) ou scène
+     * masquée par un onglet du téléphone (« Pièces », « Assemblages »).
+     */
     const covered = () => !document.getElementById('modal')?.hidden || document.body.classList.contains('page-open')
-      || document.body.classList.contains('rch-full') || !!document.querySelector('.rch-pop:not([hidden])');
+      || document.body.classList.contains('rch-full') || !!document.querySelector('.rch-pop:not([hidden])')
+      || !stage.offsetWidth || !stage.offsetHeight;
     const bar = document.createElement('div');
     bar.className = 'proc-bar';
     bar.hidden = true;
@@ -159,8 +163,8 @@ export default {
     const playNext = () => {
       if (!run) return;
       const last = run.proc.steps.length - 1;
-      // Une couche recouvre la scène (visionneuse, page plein écran, recherche) : les étapes défileraient sans être
-      // vues ; la lecture s'arrête (« Lecture auto » la reprend).
+      // Scène recouverte (visionneuse, page plein écran, recherche) ou masquée par un onglet du téléphone : les étapes
+      // défileraient sans être vues ; la lecture s'arrête (« Lecture auto » la reprend).
       if (run.n >= last || covered()) { stopPlay(); return; }
       run.focus = null;
       const ms = show(run.n + 1);
@@ -360,16 +364,17 @@ export default {
       stopPlay();
       const r = run;
       run = null;
+      // Barre et panneau retirés d'abord : le recadrage tient compte de la scène libérée (marges du socle à jour).
       ctx.ui.setInsets('procedures', null);
+      stage.classList.remove('proc-on');
+      bar.hidden = true;
+      tool.setAttribute('aria-pressed', 'false');
+      ctx.ui.sidePanel.release('procedures');
       if (!gone) {
         ctx.viewer.restoreParts(); // visibilités d'origine, arrivées en cours posées
         ctx.viewer.clear();
         if (!quiet) ctx.viewer.frame();
       }
-      stage.classList.remove('proc-on');
-      bar.hidden = true;
-      tool.setAttribute('aria-pressed', 'false');
-      ctx.ui.sidePanel.release('procedures');
       ctx.emit('procedures:stopped', { id: r.proc.id });
     };
 

@@ -159,7 +159,7 @@ function P002(api) {
   const off = side.dot(toB) > 0 ? 0.17 : 0.1; // au-delà de la rotation B si elle est de ce côté
   const wpt = fa.clone().addScaledVector(dir, 0.35).addScaledVector(side, off).setY(FLOOR + wr);
   hoses.push(circ(run({ via: [wpt, ...CON_WATER_VIA.map((q) => W(cons, q))] }, { via: swivel.map((q) => W(drill, q)) }, wr, 'hose', rot.map((t) => t.userData.hose)),
-    'eau', 'Eau : console → émerillon', 'Console : vanne haute du bloc d\'eau 3 voies UM-020-643P (2404-16-16)', 'Foreuse : entrée axiale de l\'émerillon d\'eau UM-106-100AA'));
+    'eau', 'Eau : console → émerillon', 'Console : vanne haute du bloc d\'eau 3 voies UM-020-643P (2404-16-16)', 'Foreuse : entrée axiale de l\'émerillon d\'eau UM-106-10011-UG'));
 
   api.part('1', drill, [-1.2, 0, 0]);
   api.part('3', cons, [0, 0.6, 0]);
