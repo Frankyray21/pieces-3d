@@ -19,12 +19,19 @@
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35); cursor: pointer; transition: transform 0.12s, box-shadow 0.12s;
 }
 .ent-pin.is-approx { border-style: dashed; }
+/* Lettre du type (G, N, F, R, B, I, T…) en exposant : le type ne dépend pas que de la couleur. */
+.ent-pin::after {
+  content: attr(data-t); position: absolute; top: -8px; right: -8px; min-width: 14px; height: 14px; padding: 0 2px; box-sizing: border-box;
+  border-radius: 7px; border: 1px solid var(--ent, var(--accent)); background: #fff; color: #16202b;
+  font: 700 9px/12px var(--f-body); text-align: center; pointer-events: none;
+}
+.ent-pin[data-t=""]::after { display: none; }
 /* Pastille qui en regroupe d'autres (« 3 +2 ») : un clic cadre le groupe. */
 .ent-pin.is-group { padding: 0 7px; box-shadow: 0 0 0 2px var(--ent, var(--accent)), 0 1px 4px rgba(0, 0, 0, 0.35); }
 /* Doigt : zone de toucher agrandie sans grossir la pastille. */
 @media (pointer: coarse) {
   .ent-pin::before { content: ''; position: absolute; inset: -8px; border-radius: 50%; }
-  .ent-page { min-height: 36px; display: inline-flex; align-items: center; }
+  .ent-page { min-height: 40px; display: inline-flex; align-items: center; }
 }
 .ent-pin:hover { transform: scale(1.15); }
 .ent-pin.is-current { transform: scale(1.3); box-shadow: 0 0 0 3px var(--ent, var(--accent)), 0 2px 8px rgba(0, 0, 0, 0.4); z-index: 3; }
@@ -35,7 +42,10 @@
 .ent-intro { line-height: 1.35; }
 .ent-types { display: flex; flex-wrap: wrap; gap: 6px 12px; color: var(--muted); font-size: 12.5px; }
 .ent-type { display: inline-flex; align-items: center; gap: 5px; }
-.ent-type i { width: 10px; height: 10px; border-radius: 50%; background: var(--ent); }
+.ent-type i {
+  min-width: 16px; height: 16px; padding: 0 3px; border-radius: 8px; background: var(--ent); color: var(--on-sys, #fff);
+  font: 700 10px/16px var(--f-body); font-style: normal; text-align: center;
+}
 .ent-list { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 8px; }
 .ent-item { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); overflow: hidden; }
 .ent-item.is-current { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }

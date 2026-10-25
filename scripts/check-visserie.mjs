@@ -5,10 +5,15 @@
 //  - « d DIA » (diamètre d'épaulement ou de corps) : d ne doit pas être pris pour la longueur ;
 //  - « #n » (vis à jauge) : la taille doit être la jauge n, pas une fraction ;
 //  - « M14 » (filet métrique) : taille « non précisée ».
+// Il signale aussi les lignes mal triées :
+//  - omission : description qui nomme de la visserie (HHCS, FHCS, BHCS, SHCS, WSHR, BOLT, SCREW, NUT, WASHER)
+//    rejetée sans motif d'exclusion (raccord, collier, bielle…) ;
+//  - intrus : collier (CLAMP), bielle (CONNECTING ROD) ou tige (ROD, sauf « ROD BOLT », « ROD NUT » : la vis et
+//    l'écrou de la bielle) comptés comme visserie.
 // Usage : node scripts/check-visserie.mjs [--verbose]
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { visserie, libTaille, same } from '../src/data/visserie.js';
+import { visserie, libTaille, same, famille, exclusion } from '../src/data/visserie.js';
 
 const ROOT = join(import.meta.dirname, '..', 'public', 'equipment');
 const verbose = process.argv.includes('--verbose');
@@ -32,6 +37,21 @@ for (const id of readdirSync(ROOT).sort()) {
   }]));
   const lignes = visserie({ assemblies });
   total += lignes.length;
+  for (const a of assemblies.values()) {
+    for (const r of a.parts) {
+      if (r.pseudo) continue;
+      const d = String(r.desc).toUpperCase();
+      const fam = famille(r.desc, r.pn);
+      if (!fam && /\b(?:HHCS|FHCS|BHCS|SHCS|WSHR|BOLTS?|SCREWS?|NUTS?|WASHERS?)\b/.test(d) && !exclusion(r.desc)) {
+        problems++;
+        console.log(`✗ ${id} ${a.id} rep. ${r.ref} ${r.pn} « ${r.desc} » : visserie omise (aucune famille, aucun motif d'exclusion)`);
+      }
+      if (fam && /CLAMP|CONNECTING ROD|\bROD\b(?!\s+(?:BOLT|NUT))/.test(d)) {
+        problems++;
+        console.log(`✗ ${id} ${a.id} rep. ${r.ref} ${r.pn} « ${r.desc} » : compté comme ${fam.t} (collier ou tige)`);
+      }
+    }
+  }
   for (const l of lignes) {
     const d = String(l.r.desc).replace(/''/g, '"');
     const t = l.t;
@@ -39,7 +59,8 @@ for (const id of readdirSync(ROOT).sort()) {
     const lg = d.match(new RegExp(String.raw`${FR}\s*"?\s*(?:LG|LONG|LENGTH)\b`, 'i'));
     const dia = d.match(new RegExp(String.raw`${FR}\s*"?\s*DIA\b`, 'i'));
     const gauge = d.match(/#\s*(\d{1,2})\b/);
-    const metric = /\bM\d{1,2}(?:\s*[xX×]|\b)/.test(d);
+    // « WSHR,NL-0.312(M8) » : la cote en pouces est donnée, l'équivalent métrique entre parenthèses n'est pas un filet.
+    const metric = /\bM\d{1,2}(?:\s*[xX×]|\b)/.test(d.replace(/\d*\.\d+\s*\(M\d{1,2}\)/g, ''));
     if (!lg && !dia && !gauge && !metric) continue;
     checked++;
     if (metric && t) why.push('filet métrique lu comme une taille en pouces');

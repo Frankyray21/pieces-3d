@@ -46,6 +46,7 @@
       "manufacturer": "Usinage Marcotte",
       "category": "Foreuse souterraine",
       "thumbnail": "equipment/stm-1500/thumbnail.webp",
+      "extras": ["bulles", "donnees", "entretien", "procedures"],
       "status": "Manuel de pièces s/n STM-1500-128 (96 pages) : 42 assemblages et 7 documents ; 3D réaliste de la foreuse (traîneau, avance à 0°, tête Boyles, serre-tiges, vérins, treuil), du groupe hydraulique 125 HP et de la console ; rendus Blender"
     }
   ]

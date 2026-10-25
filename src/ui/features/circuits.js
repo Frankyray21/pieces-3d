@@ -116,11 +116,25 @@ export default {
       return [...map.entries()].sort((a, b) => order(a[0]) - order(b[0]));
     };
     const uniq = (list) => [...new Set(list.filter(Boolean))];
-    // Raccords d'un bout des boyaux d'un circuit : le raccord s'il est unique, sinon les organes (avant « : »).
+    /**
+     * Organe d'un raccord : le texte avant le premier « : » hors parenthèses (« Groupe : filtre… » → « Groupe »),
+     * sinon le texte sans ses parenthèses ; une hypothèse du modèle reste signalée (« … (hypothèse) »).
+     */
+    const organ = (t) => {
+      let depth = 0, cut = -1;
+      for (let i = 0; i < t.length && cut < 0; i++) {
+        if (t[i] === '(') depth++;
+        else if (t[i] === ')') depth = Math.max(0, depth - 1);
+        else if (!depth && t.startsWith(' : ', i)) cut = i;
+      }
+      const o = (cut >= 0 ? t.slice(0, cut) : t.replace(/\s*\([^)]*\)/g, '')).trim();
+      return /hypoth[eè]se/i.test(t) ? `${o} (hypothèse)` : o;
+    };
+    // Raccords d'un bout des boyaux d'un circuit : le raccord s'il est unique, sinon les organes.
     const ends = (list, key) => {
       const u = uniq(list.map((h) => h.userData[key]));
       if (u.length <= 1) return esc(u[0] || '—');
-      const org = uniq(u.map((t) => t.split(' : ')[0]));
+      const org = uniq(u.map(organ));
       return `${org.map(esc).join(' ; ')} <span class="circuits-k">(${u.length} raccords)</span>`;
     };
     const sw = (id) => `<span class="circuits-sw" style="--c:${info(id).color}" aria-hidden="true"></span>`;
@@ -168,15 +182,20 @@ export default {
     };
 
     const setFocus = (id, { frame = false, hose = null } = {}) => {
+      const was = focus;
       focus = id;
       picked = hose;
       apply();
       render();
       if (frame && id) { const fam = family(id); ctx.viewer.frame(hoses.filter((h) => fam.has(h.userData.circuit))); }
+      // « Tous les circuits » (ou second clic sur le circuit cadré) : tout le modèle de nouveau, comme à l'entrée du mode.
+      else if (!id && was) ctx.viewer.frame();
     };
 
     const start = () => {
       if (!hoses.length) return;
+      // La légende prend le panneau : la pièce sélectionnée (et sa fiche) est relâchée, comme au clic sur un boyau.
+      if (ctx.selection) ctx.viewer.select(null);
       active = true;
       focus = null;
       picked = null;
@@ -252,7 +271,9 @@ export default {
       const at = (x, y) => {
         ndc.set(((x - rect.left) / rect.width) * 2 - 1, -((y - rect.top) / rect.height) * 2 + 1);
         ray.setFromCamera(ndc, cam);
-        return ray.intersectObjects(shown, false)[0]?.object ?? null;
+        // Vue en coupe : la partie coupée (invisible) d'un boyau ne compte pas, comme pour le choix d'une pièce.
+        const cut = (i) => [].concat(i.object.material).some((m) => (m?.clippingPlanes || []).some((pl) => pl.distanceToPoint(i.point) < 0));
+        return ray.intersectObjects(shown, false).find((i) => !cut(i))?.object ?? null;
       };
       const hit = at(e.clientX, e.clientY);
       if (hit || !(e.pointerType === 'touch' || e.pointerType === 'pen' || matchMedia('(pointer: coarse)').matches)) return hit;

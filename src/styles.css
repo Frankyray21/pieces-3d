@@ -320,7 +320,8 @@ table.parts { width: 100%; border-collapse: collapse; font-size: 13px; }
 .docview .missing { margin: 0; padding: 18px 20px; color: #3a4552; line-height: 1.5; }
 
 /* ---------------------------------------------------------------- catalogue */
-.catalogue { position: fixed; inset: 0; z-index: 45; background: var(--bg); overflow: auto; padding: 32px 16px 48px; padding-top: calc(32px + env(safe-area-inset-top, 0px)); }
+/* Sous l'en-tête (marque et recherche restent visibles et utilisables sur la page d'accueil). */
+.catalogue { position: fixed; inset: var(--top-h) 0 0; z-index: 45; background: var(--bg); overflow: auto; padding: 32px 16px 48px; }
 .cat-inner { max-width: 1100px; margin: 0 auto; display: grid; gap: 22px; }
 .cat-inner h1 { margin: 0; font: 700 clamp(30px, 5vw, 46px)/1 var(--f-display); text-transform: uppercase; letter-spacing: 0.01em; }
 .cat-inner > p { margin: 0; max-width: 65ch; color: var(--muted); }
@@ -334,8 +335,10 @@ table.parts { width: 100%; border-collapse: collapse; font-size: 13px; }
 .card.add { border-style: dashed; place-content: center; padding: 22px; color: var(--muted); }
 .card.add ol { margin: 6px 0 0; padding-left: 18px; font-size: 13px; display: grid; gap: 4px; }
 
+/* Message bref : il ne prend pas les clics (les boutons dessous restent utilisables). */
 .toast {
-  position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 60;
+  position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 60; pointer-events: none;
+  max-width: calc(100vw - 32px);
   background: var(--ink); color: var(--surface); padding: 9px 14px; border-radius: 8px; font-size: 13px; box-shadow: var(--shadow);
 }
 
@@ -364,20 +367,15 @@ table.parts { width: 100%; border-collapse: collapse; font-size: 13px; }
   }
   .mtabs button { height: 48px; border: 0; background: none; font-weight: 500; color: var(--muted); }
   .mtabs button.on { color: var(--accent); box-shadow: inset 0 2px 0 var(--accent); }
+  /* Message bref au-dessus des onglets. */
+  .toast { bottom: calc(60px + env(safe-area-inset-bottom, 0px)); }
   .titleblock { font-size: 9.5px; }
   .tb-grid { width: 200px; }
   .tb-page svg { width: 22px; height: 22px; }
   .tb-page strong { font-size: 12px; }
   .titleblock .dwg { font-size: 12px; }
-  /* Outils sur une seule rangée qui défile au doigt (fondu sur le bord où il en reste : atelier.css). */
-  .tools {
-    flex-wrap: nowrap; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; pointer-events: auto;
-    left: 0; right: 0; padding: 0 max(8px, env(safe-area-inset-right, 0px)) 2px max(8px, env(safe-area-inset-left, 0px)); scroll-padding: 0 24px;
-  }
-  .tools::-webkit-scrollbar { display: none; }
-  .tools > * { flex: none; }
-  .tools .tgroup, .tools .explode { flex-wrap: nowrap; }
-  .explode input { width: 90px; }
+  /* Outils : rangée de l'éclatement, puis groupe d'outils sur une rangée qui défile (atelier.css). */
+  .tools { left: max(8px, env(safe-area-inset-left, 0px)); right: max(8px, env(safe-area-inset-right, 0px)); }
   .tgroup .tbtn { padding: 0 8px; }
   /* Téléphone : le panneau du montage prend la largeur, le cartouche s'efface. */
   .stepsbar { left: 8px; right: 8px; bottom: 8px; width: auto; box-sizing: border-box; }

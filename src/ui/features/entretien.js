@@ -31,6 +31,9 @@ const TYPES = {
   vidange: 'Vidange',
   plaque: 'Plaque',
 };
+// Lettre du type sur chaque pastille : le type ne dépend pas que de la couleur (niveau et trappe d'inspection, bouchon
+// et reniflard se confondent en deutéranopie).
+const LETTRE = { graisseur: 'G', niveau: 'N', filtre: 'F', reniflard: 'R', bouchon: 'B', inspection: 'I', thermometre: 'T', vidange: 'V', plaque: 'P' };
 const OWNER = 'entretien';
 
 export default {
@@ -105,6 +108,7 @@ export default {
       el.type = 'button';
       el.className = `ent-pin ent-${pt.def.type}${pt.def.approx ? ' is-approx' : ''}`;
       el.textContent = String(pt.n);
+      el.dataset.t = LETTRE[pt.def.type] || '';
       el.title = `${pt.n}. ${pt.def.titre}${pt.def.approx ? ' (position approchée)' : ''}`;
       el.setAttribute('aria-label', `Point ${pt.n} : ${TYPES[pt.def.type] || pt.def.type}, ${pt.def.titre}${pt.def.approx ? ' (position approchée)' : ''}`);
       el.dataset.ent = pt.def.id;
@@ -113,9 +117,10 @@ export default {
         e.stopPropagation();
         reveal();
         const pin = pins.find((p) => p.el === el);
-        // Pastille qui en regroupe d'autres : on cadre le groupe (elles se séparent à l'écran).
-        if (pin?.cluster?.length > 1) { focus(pt.def.id, { frame: false, scroll: true }); frameLabels(pin.cluster.map((p) => p.label)); }
-        else focus(pt.def.id, { frame: false, scroll: true });
+        // Pastille qui regroupe d'autres points : on cadre le groupe (elles se séparent à l'écran). Groupe d'un seul
+        // point (ses exemplaires, ex. deux bouchons de niveau) : ce point, comme une pastille seule.
+        if (pin?.points > 1) { focus(pt.def.id, { frame: false, scroll: true }); frameLabels(pin.cluster.map((p) => p.label)); }
+        else focus(pt.def.id, { frame: true, scroll: true });
       });
       const label = new CSS2DObject(el);
       label.center.set(0.5, 0.5);
@@ -151,6 +156,7 @@ export default {
           pins.push({ label, el: label.element, point: pt });
         }
       }
+      relayout();
       ctx.viewer.invalidate();
     };
 
@@ -197,7 +203,7 @@ export default {
       points.forEach((p) => { counts[p.def.type] = (counts[p.def.type] || 0) + 1; });
       wrap.innerHTML = `
         <p class="ent-intro"><strong>${points.length} point${points.length > 1 ? 's' : ''} à vérifier</strong>${a ? ` — ${esc(a.titleFr || a.title)}` : ''}</p>
-        <p class="ent-types">${Object.entries(counts).map(([t, n]) => `<span class="ent-type ent-${esc(t)}"><i></i>${esc(TYPES[t] || t)} · ${n}</span>`).join('')}</p>
+        <p class="ent-types">${Object.entries(counts).map(([t, n]) => `<span class="ent-type ent-${esc(t)}"><i aria-hidden="true">${esc(LETTRE[t] || '')}</i>${esc(TYPES[t] || t)} · ${n}</span>`).join('')}</p>
         <ol class="ent-list">${points.map((p) => `
           <li class="ent-item" data-ent="${esc(p.def.id)}">
             <button type="button" class="ent-go" title="Cadrer ce point dans la vue 3D">
@@ -236,6 +242,7 @@ export default {
       });
       if (scroll && item) item.scrollIntoView({ block: 'nearest', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
       if (frame) frameOn(id);
+      relayout(); // les pastilles du point choisi passent en tête des groupes (jamais cachées)
       ctx.viewer.invalidate();
     };
 
@@ -279,6 +286,8 @@ export default {
 
     const start = () => {
       if (!usable()) return;
+      // La liste prend le panneau : la pièce sélectionnée (et sa fiche) est relâchée, comme au clic sur une pastille.
+      if (ctx.selection) ctx.viewer.select(null);
       active = true;
       btn.setAttribute('aria-pressed', 'true');
       current = null;
@@ -349,42 +358,59 @@ export default {
     });
 
     // ------------------------------------------------------------ pastilles qui se chevauchent
-    // Toutes les 250 ms (caméra immobile ou non) : les pastilles trop proches à l'écran sont regroupées
-    // sous la première (« 3 +2 ») ; les autres sont masquées. Au doigt, le rayon est plus grand.
+    // Toutes les 250 ms (si la caméra a bougé) : les pastilles qui se recouvrent à l'écran (largeur réelle de chaque
+    // pastille, marge plus grande au doigt) sont regroupées sous une seule (« 3 +2 » : le point 3 et 2 autres points) ;
+    // les autres sont masquées. Les pastilles du point choisi passent en premier : elles ne sont jamais masquées.
+    // Plusieurs exemplaires d'un même point (deux bouchons de niveau) ne comptent que pour un point.
     let declutterTimer = 0;
     let lastCam = '';
     const v3 = new THREE.Vector3();
+    const labelOf = (p) => {
+      const ids = new Set(p.cluster.map((q) => q.point.def.id));
+      p.points = ids.size;
+      const n = ids.size - 1;
+      p.el.textContent = n ? `${p.point.n} +${n}` : String(p.point.n);
+      p.el.classList.toggle('is-group', n > 0);
+      const label = `Point ${p.point.n} : ${TYPES[p.point.def.type] || p.point.def.type}, ${p.point.def.titre}${p.point.def.approx ? ' (position approchée)' : ''}`;
+      p.el.setAttribute('aria-label', n ? `${label} — et ${n} autre${n > 1 ? 's' : ''} point${n > 1 ? 's' : ''} au même endroit : cadrer le groupe` : label);
+    };
     const declutter = () => {
       const cam = ctx.viewer.camera, canvas = ctx.viewer.canvas;
       if (!active || !pins.length || !cam || !canvas) return;
-      const key = cam.matrixWorld.elements.map((x) => x.toFixed(4)).join(',') + canvas.clientWidth + 'x' + canvas.clientHeight;
+      const key = `${cam.matrixWorld.elements.map((x) => x.toFixed(4)).join(',')}${canvas.clientWidth}x${canvas.clientHeight}|${current}`;
       if (key === lastCam) return;
       lastCam = key;
       const w = canvas.clientWidth, h = canvas.clientHeight;
-      const R = matchMedia('(pointer: coarse)').matches ? 34 : 24;
+      const M = matchMedia('(pointer: coarse)').matches ? 10 : 4; // marge entre deux pastilles (doigt : zone de toucher)
       const xy = pins.map((p) => { p.label.getWorldPosition(v3).project(cam); return [(v3.x + 1) * w / 2, (1 - v3.y) * h / 2, v3.z <= 1]; });
-      const leader = pins.map(() => -1);
-      for (let i = 0; i < pins.length; i++) {
-        if (leader[i] >= 0) continue;
-        leader[i] = i;
-        pins[i].cluster = [pins[i]];
-        if (!xy[i][2]) continue;
-        for (let j = i + 1; j < pins.length; j++) {
-          if (leader[j] >= 0 || !xy[j][2]) continue;
-          if (Math.hypot(xy[i][0] - xy[j][0], xy[i][1] - xy[j][1]) < R) { leader[j] = i; pins[i].cluster.push(pins[j]); }
+      // Ordre : pastilles du point choisi d'abord, puis l'ordre des points.
+      const order = pins.map((_, i) => i).sort((a, b) => (pins[b].point.def.id === current) - (pins[a].point.def.id === current) || a - b);
+      const size = (i) => [Math.max(24, pins[i].el.offsetWidth || 24), Math.max(24, pins[i].el.offsetHeight || 24)];
+      const overlap = (i, j, wi, wj) => Math.abs(xy[i][0] - xy[j][0]) < (wi + wj) / 2 + M && Math.abs(xy[i][1] - xy[j][1]) < 24 + M;
+      // Deux passes : regroupement avec les largeurs affichées, puis avec celles des étiquettes (« 14 +4 », plus large).
+      for (let pass = 0; pass < 2; pass++) {
+        const leader = pins.map(() => -1);
+        const widths = pins.map((_, i) => size(i)[0]);
+        for (const i of order) {
+          if (leader[i] >= 0) continue;
+          leader[i] = i;
+          pins[i].cluster = [pins[i]];
+          if (!xy[i][2]) continue;
+          for (const j of order) {
+            if (leader[j] >= 0 || !xy[j][2]) continue;
+            if (overlap(i, j, widths[i], widths[j])) { leader[j] = i; pins[i].cluster.push(pins[j]); }
+          }
         }
+        pins.forEach((p, i) => {
+          const lead = leader[i] === i;
+          p.el.hidden = !lead;
+          if (!lead) { p.cluster = null; p.points = 0; return; }
+          labelOf(p);
+        });
       }
-      pins.forEach((p, i) => {
-        const lead = leader[i] === i;
-        p.el.hidden = !lead;
-        if (!lead) { p.cluster = null; return; }
-        const n = p.cluster.length - 1;
-        p.el.textContent = n ? `${p.point.n} +${n}` : String(p.point.n);
-        p.el.classList.toggle('is-group', n > 0);
-        const label = `Point ${p.point.n} : ${TYPES[p.point.def.type] || p.point.def.type}, ${p.point.def.titre}`;
-        p.el.setAttribute('aria-label', n ? `${label} — et ${n} autre${n > 1 ? 's' : ''} point${n > 1 ? 's' : ''} au même endroit : cadrer le groupe` : label);
-      });
     };
+    /** Regroupement refait tout de suite (point choisi, pastilles reposées). */
+    const relayout = () => { lastCam = ''; declutter(); };
     const startDeclutter = () => { stopDeclutter(); lastCam = ''; declutterTimer = setInterval(declutter, 250); declutter(); };
     const stopDeclutter = () => { clearInterval(declutterTimer); declutterTimer = 0; };
   },

@@ -95,8 +95,10 @@ export function createHost(app) {
   /** Ajoute une couche ; onBack : fermeture demandée par le bouton Retour. Retourne release() (fermeture par l'interface). */
   const historyLayer = (onBack) => {
     const id = ++layerSeq;
-    history.pushState({ ...(history.state || {}), layer: id }, '');
     layers.push({ id, onBack });
+    // Une couche fermée juste avant (« Sur le dessin » → visionneuse, recherche → page du manuel) consomme encore son
+    // entrée : la nouvelle entrée n'est ajoutée qu'après ce retour, sinon il l'emporterait (et quitterait la vue).
+    whenSettled(() => { if (layers.some((l) => l.id === id)) history.pushState({ ...(history.state || {}), layer: id }, ''); });
     const release = () => {
       const i = layers.findIndex((l) => l.id === id);
       if (i < 0) return;
@@ -329,10 +331,26 @@ export function createHost(app) {
   };
 
   // ---------------------------------------------------------------- outils de la scène
-  // Outils des fonctions : dans le groupe principal de la barre (après « Plein écran » et un séparateur), sans
-  // rangée à part ; sur téléphone, toute la barre tient sur une rangée qui défile.
+  // Barre d'outils en deux rangées au besoin : l'éclatement, puis le groupe d'outils (outils du site, puis ceux des
+  // fonctions après un séparateur). Scène étroite (téléphone, ou moins de 600 px de scène) : le groupe tient sur une
+  // rangée qui défile (glisser, molette, boutons ‹ ›), outils des fonctions en tête pour qu'ils se voient d'emblée.
   const mainGroup = tools.querySelector('.tgroup');
+  const feat = document.createElement('span'); // outils des fonctions (display: contents : éléments du groupe)
+  feat.className = 'tfeat';
   let sep = null;
+  const TOOLS_SCROLL_W = 600; // même seuil que la requête de conteneur de atelier.css
+  const toolsScroll = () => { const w = $('#stage').clientWidth; return app.narrow() || (w > 0 && w < TOOLS_SCROLL_W); };
+  /** Outils des fonctions : après ceux du site (séparateur devant), ou en tête de la rangée défilante (séparateur après). */
+  const placeFeat = () => {
+    if (!sep) return;
+    if (toolsScroll()) {
+      if (feat.lastChild !== sep) feat.append(sep);
+      if (mainGroup.firstChild !== feat) mainGroup.prepend(feat);
+    } else {
+      if (feat.firstChild !== sep) feat.prepend(sep);
+      if (mainGroup.lastChild !== feat) mainGroup.append(feat);
+    }
+  };
   const addTool = (btn) => {
     let el = btn;
     if (!(btn instanceof Element)) {
@@ -351,22 +369,41 @@ export function createHost(app) {
       sep = document.createElement('span');
       sep.className = 'tsep';
       sep.setAttribute('aria-hidden', 'true');
-      mainGroup.appendChild(sep);
+      feat.append(sep);
     }
-    mainGroup.appendChild(el);
+    if (feat.lastChild === sep && feat.firstChild !== sep) feat.insertBefore(el, sep);
+    else feat.append(el);
+    placeFeat();
     return el;
   };
-  // Rangée défilante (téléphone) : fondu sur le bord où il reste des outils ; l'outil qui prend le focus est montré.
+  new ResizeObserver(placeFeat).observe($('#stage'));
+  // Rangée défilante : fondu et bouton ‹ › sur le bord où il reste des outils ; molette verticale convertie en
+  // défilement horizontal ; l'outil qui prend le focus est montré.
+  const moreL = tools.querySelector('.tmore.l');
+  const moreR = tools.querySelector('.tmore.r');
+  const overflowing = () => mainGroup.scrollWidth > mainGroup.clientWidth + 1;
   const toolEdges = () => {
-    const over = tools.scrollWidth > tools.clientWidth + 1;
-    tools.classList.toggle('more-l', over && tools.scrollLeft > 2);
-    tools.classList.toggle('more-r', over && tools.scrollLeft + tools.clientWidth < tools.scrollWidth - 2);
+    const over = overflowing();
+    const l = over && mainGroup.scrollLeft > 2;
+    const r = over && mainGroup.scrollLeft + mainGroup.clientWidth < mainGroup.scrollWidth - 2;
+    mainGroup.classList.toggle('more-l', l);
+    mainGroup.classList.toggle('more-r', r);
+    if (moreL) moreL.hidden = !l;
+    if (moreR) moreR.hidden = !r;
   };
-  tools.addEventListener('scroll', toolEdges, { passive: true });
-  new ResizeObserver(toolEdges).observe(tools);
-  new MutationObserver(toolEdges).observe(tools, { subtree: true, childList: true, attributes: true, attributeFilter: ['hidden', 'style'] });
-  tools.addEventListener('focusin', (e) => {
-    if (tools.scrollWidth > tools.clientWidth + 1) e.target.scrollIntoView?.({ block: 'nearest', inline: 'nearest' });
+  mainGroup.addEventListener('scroll', toolEdges, { passive: true });
+  new ResizeObserver(toolEdges).observe(mainGroup);
+  new MutationObserver(toolEdges).observe(mainGroup, { subtree: true, childList: true, attributes: true, attributeFilter: ['hidden', 'style'] });
+  mainGroup.addEventListener('wheel', (e) => {
+    if (!overflowing() || e.ctrlKey || Math.abs(e.deltaX) >= Math.abs(e.deltaY)) return;
+    e.preventDefault();
+    mainGroup.scrollLeft += e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? mainGroup.clientWidth : 1);
+  }, { passive: false });
+  const scrollTools = (dir) => mainGroup.scrollBy({ left: dir * mainGroup.clientWidth * 0.7, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  moreL?.addEventListener('click', () => scrollTools(-1));
+  moreR?.addEventListener('click', () => scrollTools(1));
+  mainGroup.addEventListener('focusin', (e) => {
+    if (overflowing()) e.target.scrollIntoView?.({ block: 'nearest', inline: 'nearest' });
   });
 
   // ---------------------------------------------------------------- page plein écran (sur l'espace de travail)

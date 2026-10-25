@@ -224,12 +224,15 @@ function analyze(eq) {
   }
   eq.byPn = byPn;
   const linked = (a, b) => a.link === b.source.id || b.link === a.source.id;
+  // Description qui ne fait que répéter le numéro (« 6400-16-16 ») : rien à comparer, pas de conflit.
+  const bare = (x) => String(x || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+  const pnOnly = (r) => !!bare(r.desc) && r.pns.some((p) => bare(p) === bare(r.desc));
   for (const r of eq.rows) r.usedIn = [];
   for (const [, rows] of byPn) {
     for (const r of rows) {
       const others = rows.filter((o) => o !== r);
       r.usedIn.push(...others.filter((o) => !r.usedIn.includes(o)));
-      const conflicts = others.filter((o) => !linked(r, o) && !similar(r.desc, o.desc));
+      const conflicts = others.filter((o) => !linked(r, o) && !pnOnly(r) && !pnOnly(o) && !similar(r.desc, o.desc));
       if (conflicts.length && !r.flags.some((f) => f.level === 'error')) {
         r.flags.push({ level: 'error', text: 'Ce numéro figure ailleurs avec une description différente — vérifier avant de commander.', refs: conflicts });
       }

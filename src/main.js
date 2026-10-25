@@ -2,6 +2,7 @@ import './styles.css';
 import { Viewer } from './viewer/Viewer.js';
 import { buildProcedural } from './viewer/assembly.js';
 import { loadIndex, loadEquipment, sourceLabel, sheetLabel, sizeGroups, isPnText } from './data/equipment.js';
+import { loadExtras } from './data/extras.js';
 import cubexModels from './models/cubex-mri-5200/index.js';
 import du311Models from './models/du311/index.js';
 import du311StdModels, { overview as du311StdOverview } from './models/du311-std/index.js';
@@ -14,6 +15,7 @@ import { createHost } from './ui/host.js';
 import { renderEquipmentHome } from './ui/eqhome.js';
 import { systemOf } from './ui/systems.js';
 import { icon } from './ui/icons.js';
+import { keyRows } from './ui/rows.js';
 
 // Fonctions de l'interface : chaque fichier src/ui/features/<nom>.js est chargé
 // tout seul (export par défaut { id, order, init(ctx) }) ; ceux dont le nom
@@ -196,7 +198,9 @@ async function route() {
   const token = known ? m[2] : raw;
   if (S.eq?.id !== id) {
     try {
-      S.eq = await loadEquipment(id);
+      // Données complémentaires déclarées par l'index (bulles, données, entretien, procédures), avec la liste.
+      const [eq] = await Promise.all([loadEquipment(id), loadExtras(id, S.index.find((e) => e.id === id)?.extras || [])]);
+      S.eq = eq;
     } catch (err) {
       loadError(err);
       return;
@@ -769,8 +773,10 @@ function bindFullscreen() {
 function openDocument(id) {
   const eq = S.eq;
   const doc = eq.documents.get(id);
+  // Même schéma réaffiché (retour d'une page plein écran) : la pièce sélectionnée et sa fiche restent, comme pour un assemblage.
+  const same = S.view?.type === 'document' && S.view.id === id;
   S.view = { type: 'document', id };
-  S.selected = null;
+  if (!same) S.selected = null;
   S.filter = '';
   document.title = `${doc.titleFr} · ${eq.name} · Pièces 3D`;
   $('#viewport').hidden = true;
@@ -778,10 +784,11 @@ function openDocument(id) {
   $('#sectionbar').hidden = true;
   $('#hint').hidden = true;
   $('#titleblock').hidden = true;
-  showSheets(doc.sheets);
+  if (!same) showSheets(doc.sheets);
   renderRail();
   renderPanel();
   viewChanged();
+  if (same && S.selected) select(S.selected);
 }
 
 // Pages du manuel affichées dans la scène (schémas, ou dessins d'un assemblage sans 3D).
@@ -995,6 +1002,8 @@ function renderRows() {
     tr.addEventListener('mouseleave', () => viewer?.setHover(null));
   });
   tb.querySelectorAll('[data-tog]').forEach((b) => b.addEventListener('click', () => toggleGroup(byKey.get(b.dataset.tog).path)));
+  // Clavier : flèches entre les lignes, Entrée ou Espace pour ouvrir la fiche (comme un clic).
+  keyRows(tb, 'tr[data-key]', (tr) => tr.click());
 }
 
 function markRow(path, cls) {

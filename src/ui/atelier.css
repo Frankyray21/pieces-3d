@@ -93,13 +93,42 @@
 .explode, .tgroup, .sectionbar { border-radius: var(--radius); }
 .tbtn.ftool { display: inline-flex; align-items: center; gap: 6px; }
 .balloon.is-mark { background: var(--mark); border-color: var(--mark); color: var(--on-sys); }
-/* Outils des fonctions dans le groupe principal, après un séparateur. */
+/* Outils des fonctions dans le groupe principal, après un séparateur (en tête de la rangée défilante : host.js). */
+.tfeat { display: contents; }
 .tgroup .tsep { flex: none; width: 1px; align-self: stretch; margin: 4px 2px; background: var(--line); }
-/* Barre d'outils plus large que la scène (une rangée défilante) : fondu sur le bord où il reste des outils. */
-.tools.more-r { -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 36px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 36px), transparent); }
-.tools.more-l { -webkit-mask-image: linear-gradient(90deg, transparent, #000 36px); mask-image: linear-gradient(90deg, transparent, #000 36px); }
-.tools.more-l.more-r { -webkit-mask-image: linear-gradient(90deg, transparent, #000 36px, #000 calc(100% - 36px), transparent); mask-image: linear-gradient(90deg, transparent, #000 36px, #000 calc(100% - 36px), transparent); }
 .tgroup .tbtn:focus-visible { outline-offset: -2px; }
+/* Barre d'outils : rangée de l'éclatement, puis groupe d'outils (sur deux lignes au besoin). Scène étroite (moins de
+   600 px) ou téléphone : le groupe d'outils tient sur une rangée qui défile (glisser, molette, boutons ‹ ›), avec un
+   fondu sur le bord où il reste des outils. */
+.tscroll { position: relative; display: flex; min-width: 0; max-width: 100%; }
+.tgroup { min-width: 0; max-width: 100%; }
+.tmore {
+  position: absolute; top: 1px; bottom: 1px; z-index: 1; width: 30px; display: grid; place-items: center; padding: 0; border: 0;
+  background: color-mix(in srgb, var(--surface) 96%, transparent); color: var(--ink);
+}
+.tmore:hover { color: var(--accent-text); }
+.tmore.l { left: 1px; border-radius: var(--radius) 0 0 var(--radius); }
+.tmore.r { right: 1px; border-radius: 0 var(--radius) var(--radius) 0; }
+.tgroup.more-r { -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 44px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 44px), transparent); }
+.tgroup.more-l { -webkit-mask-image: linear-gradient(90deg, transparent, #000 44px); mask-image: linear-gradient(90deg, transparent, #000 44px); }
+.tgroup.more-l.more-r { -webkit-mask-image: linear-gradient(90deg, transparent, #000 44px, #000 calc(100% - 44px), transparent); mask-image: linear-gradient(90deg, transparent, #000 44px, #000 calc(100% - 44px), transparent); }
+@container stage (max-width: 599px) {
+  .tools { left: 8px; right: 8px; }
+  .tscroll { flex: 1 1 240px; }
+  .tgroup { flex-wrap: nowrap; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; scroll-padding: 0 34px; }
+  .tgroup::-webkit-scrollbar { display: none; }
+  .tgroup > *, .tfeat > * { flex: none; }
+  .explode { max-width: 100%; flex-wrap: nowrap; }
+  .explode input { flex: 1 1 90px; width: auto; min-width: 48px; }
+}
+@media (max-width: 900px) {
+  .tscroll { flex: 1 1 240px; }
+  .tgroup { flex-wrap: nowrap; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; scroll-padding: 0 34px; }
+  .tgroup::-webkit-scrollbar { display: none; }
+  .tgroup > *, .tfeat > * { flex: none; }
+  .explode { max-width: 100%; flex-wrap: nowrap; }
+  .explode input { flex: 1 1 90px; width: auto; min-width: 48px; }
+}
 
 /* Panneau latéral droit des fonctions (ctx.ui.sidePanel), posé sur la scène. */
 .sidepanel {
@@ -129,23 +158,20 @@
    Dessins du manuel (vue sans 3D) : la page se décale pour rester lisible à côté du panneau. */
 @media (min-width: 901px) {
   .stage.side-open .titleblock, .stage.side-open .loading-detail { right: calc(min(var(--side-w), 100% - 24px) + 24px); }
-  #stage.side-open .docview { padding-right: calc(min(var(--side-w), 100% - 24px) + 24px); }
+  /* La page garde sa taille (elle reste lisible) ; elle défile vers la gauche pour sortir de sous le panneau. */
+  #stage.side-open .docview { padding-right: calc(min(var(--side-w), 100% - 24px) + 24px); justify-items: start; }
+  #stage.side-open .docview figure { width: min(calc(100cqw - 32px), 1400px); }
+  #stage.side-open .docview figure.portrait { width: min(calc(100cqw - 32px), 860px); }
 }
 /* La disposition suit la largeur de la scène (requête de conteneur), pas celle de la fenêtre : entre le rail et
    la liste, une scène de moins de 720 px (tablette, petit portable) prend le volet bas du téléphone. */
 .stage { container: stage / inline-size; }
 @container stage (max-width: 719px) {
-  /* Outils sur une seule rangée qui défile (comme sur téléphone). */
-  .tools {
-    flex-wrap: nowrap; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; pointer-events: auto;
-    left: 0; right: 0; padding: 0 8px 2px; scroll-padding: 0 24px;
-  }
-  .tools::-webkit-scrollbar { display: none; }
-  .tools > * { flex: none; }
-  .tools .tgroup, .tools .explode { flex-wrap: nowrap; }
   #stage .sidepanel { left: 8px; right: 8px; bottom: 8px; top: auto; width: auto; height: min(46%, calc(100% - var(--tools-bottom, 8px) - 8px)); }
   #stage.side-open .titleblock, #stage.side-open .loading-detail { display: none; }
-  #stage.side-open .docview { padding-right: 16px; padding-bottom: 50vh; }
+  #stage.side-open .docview { padding-right: 16px; padding-bottom: 50vh; justify-items: center; }
+  #stage.side-open .docview figure { width: min(100%, 1400px); }
+  #stage.side-open .docview figure.portrait { width: min(100%, 860px); }
 }
 
 /* ---------------------------------------------------------------- page plein écran (ctx.ui.showPage) */

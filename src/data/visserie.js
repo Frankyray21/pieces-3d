@@ -32,17 +32,26 @@ function num(s) {
 /** Code de taille d'un numéro (« 625 » → 5/8 po, « 75 » → 3/4 po, « 1000 » → 1 po). */
 const code = (c) => (c.length <= 2 ? +c / 100 : +c / 1000);
 
-// Pas de la visserie : raccords, robinets, ensembles (trousses, brides fendues), manilles, et pièces usinées qui ne
-// portent un mot de visserie que dans leur nom (vis-mère, bague, axe, bras de distributeur, clavette).
-const EXCLU = /ELBOW|UNION|JIC|FITTING|ADAPT|HOSE|VALVE|SWIVEL|BULKHEAD|CONNECTOR|ZERK|GREASE|\bTEE\b|PLUG|NIPPLE|W\/ ?NUT|WITH NUT|CAP NUT|RECEPTACLE|BACKUP|\bKIT\b|SHACKLE|ANCHOR|LEAD SCREW|\bARM\b|\bKEY\b/;
+// Pas de la visserie : raccords, robinets, ensembles (trousses, brides fendues), manilles, colliers de boyau
+// (« CLAMP, T-BOLT »), coudes de tube (« SW.NUT BENT TUBE ELB.LG »), bielles (« CONNECTING ROD AND CAP (INC. 2 BOLTS
+// & NUTS) ») et pièces usinées qui ne portent un mot de visserie que dans leur nom (vis-mère, bague, axe, bras de
+// distributeur, clavette).
+export const EXCLU = /ELBOW|\bELB\b|ELB\.|BENT TUBE|UNION|JIC|FITTING|ADAPT|HOSE|VALVE|SWIVEL|BULKHEAD|CONNECTOR|ZERK|GREASE|\bTEE\b|PLUG|NIPPLE|W\/ ?NUT|WITH NUT|CAP NUT|RECEPTACLE|BACKUP|\bKIT\b|SHACKLE|ANCHOR|CLAMP|COLLIER|CONNECTING ROD|LEAD SCREW|\bARM\b|\bKEY\b/;
+
+/** Description en majuscules, sans la mention d'un ensemble (« PART OF THE … KIT », sans effet sur la famille). */
+const net = (desc) => String(desc || '').toUpperCase().replace(/VIS-[ÀA]-VIS/g, '').trim();
+/** Motif d'exclusion de la description (raccord, collier, bielle…), ou null. */
+export function exclusion(desc) {
+  const d = net(desc).replace(/\([^)]*(?:\bKIT\b|PART OF)[^)]*\)/g, ' ').replace(/\s[—–-]\s.*PART OF.*$/, '');
+  return d.match(EXCLU)?.[0] ?? null;
+}
 // Goupilles du commerce ; un « PIN » nu n'en est une que suivi de ses cotes (« PIN 3/4 x 4 1/2" Lg. »).
 const GOUPILLE = /HAIR ?PIN|COTTER|CUTTER PIN|SPRING PIN|ROLL PIN|DOWEL PIN|CLEVIS PIN|PIN, CLEVIS|GOUPILLE|^PIN\b[\s,-]*(?:Ø\s*)?\d/;
 
 /** Famille de la pièce d'après sa description, sinon d'après son numéro : { f, t } ou null. */
 export function famille(desc, pn) {
-  const d = String(desc || '').toUpperCase().replace(/VIS-[ÀA]-VIS/g, '').trim();
-  // Mention d'un ensemble (« PART OF THE … KIT », entre parenthèses ou après un tiret) : sans effet sur la famille.
-  if (EXCLU.test(d.replace(/\([^)]*(?:\bKIT\b|PART OF)[^)]*\)/g, ' ').replace(/\s[—–-]\s.*PART OF.*$/, ''))) return null;
+  const d = net(desc);
+  if (exclusion(desc)) return null;
   if (/TIRE-FOND|LAG SCREW/.test(d)) return { f: 'vis', t: 'Tire-fond' };
   if (GOUPILLE.test(d)) {
     // Épingle avant fendue (« COTTERS, HAIRPIN 1 in » est une goupille épingle).
@@ -51,6 +60,11 @@ export function famille(desc, pn) {
         : /CLEVIS/.test(d) ? 'Axe de chape' : /GOUPILLE/.test(d) ? 'Goupille' : 'Axe';
     return { f: 'goupille', t };
   }
+  // Abréviations des catalogues Sandvik : « WSHR,FLT SAE-0.250 », « WSHR,SL-0.375 », « WSHR,NL-… » ; « HHCS,0.375UNC-1.000 ».
+  if (/\bWSHR\b/.test(d)) return { f: 'rondelle', t: /\bNL\b/.test(d) ? 'Rondelle de blocage' : /\bSL\b|LOCK/.test(d) ? 'Rondelle frein' : 'Rondelle plate' };
+  if (/\bHHCS\b/.test(d)) return { f: 'vis', t: 'Vis à tête hexagonale' };
+  if (/\bFHCS\b/.test(d)) return { f: 'vis', t: 'Vis à tête fraisée' };
+  if (/\bBHCS\b/.test(d)) return { f: 'vis', t: 'Vis à tête bombée' };
   if (/WASHER|WHASHER|RONDELLE/.test(d)) return { f: 'rondelle', t: /LOCK/.test(d) ? 'Rondelle frein' : /TENSION/.test(d) ? 'Rondelle de tension' : 'Rondelle plate' };
   if (/\bNUTS?\b|[ÉE]CROU/.test(d)) return { f: 'ecrou', t: /JAM/.test(d) ? 'Contre-écrou' : /LOCK|NYL|\bLK\b|STOVER|NYLOC/.test(d) ? 'Écrou de blocage' : /FLANGE/.test(d) ? 'Écrou à embase' : 'Écrou' };
   if (/BOLT|SCREW|SHCS|COUNTERSUNK|\bVIS\b|BOULON/.test(d)) {
@@ -81,12 +95,18 @@ const jauge = (n) => 0.06 + 0.013 * n;
  */
 export function tailleDesc(desc) {
   const s = String(desc || '').replace(/[’′]/g, "'").replace(/''/g, '"');
+  // Cotes décimales des catalogues Sandvik : « HHCS,0.375UNC-1.000 » (diamètre, filet, longueur après le tiret),
+  // « WSHR,FLT SAE-0.250 », « WSHR,NL-0.312(M8) » (diamètre de la rondelle, équivalent métrique entre parenthèses).
+  let m = s.match(/(\d*\.\d+)\s*(UNC|UNF)\s*-\s*(\d*\.\d+)(?![\d.])/i);
+  if (m && +m[1] > 0 && +m[1] <= 2) return { d: +m[1], l: +m[3] > 0 && +m[3] < 40 ? +m[3] : null, filet: m[2].toUpperCase() };
+  m = s.match(/^WSHR\b.*?-\s*(\d*\.\d+)(?![\d.])/i);
+  if (m && +m[1] > 0 && +m[1] <= 2) return { d: +m[1], l: null, filet: '' };
   if (/\bM\d{1,2}(?:\s*[xX×]|\b)/.test(s)) return null;
   // Longueur explicite « 4.0 LG. », « 2 1/4 LG », « 3.000 LG. ».
   const lg = s.match(new RegExp(String.raw`(?:[xX×]\s*)?${FR}\s*"?\s*(?:LG|LONG|LENGTH)\b`, 'i'));
   const lgVal = lg ? num(lg[1]) : null;
   // Jauge : « #12-24 », « #10 ».
-  let m = s.match(/#\s*(\d{1,2})(?:\s*-\s*(\d{2}))?\b/);
+  m = s.match(/#\s*(\d{1,2})(?:\s*-\s*(\d{2}))?\b/);
   if (m) {
     const n = +m[1];
     let l = lgVal;
@@ -114,7 +134,15 @@ export function tailleDesc(desc) {
   return { d, l, filet };
 }
 
-/** Taille déduite du numéro (B625-2750 → 5/8 × 2 3/4, W500 → 1/2). */
+/** Longueur seule d'un tire-fond (« Tire-fond 6 po : … » : 6 po ; le diamètre n'est pas donné). */
+function longueurSeule(desc) {
+  const m = String(desc || '').match(new RegExp(String.raw`${FR}\s*(?:po|in|")(?![a-z])`, 'i'));
+  const l = m ? num(m[1]) : NaN;
+  return l > 0 && l < 40 ? { d: null, l, filet: '' } : null;
+}
+
+/** Taille déduite du numéro (B625-2750 → 5/8 × 2 3/4, W500 → 1/2). Les numéros Sandvik « SH00012-1.000 » ne portent
+ * qu'un code de diamètre (pas une cote) : leur taille vient de la description. */
 export function taillePn(pn) {
   const p = String(pn || '').toUpperCase();
   let m = p.match(/^(?:B|BS|SH|SHC|SHCS|CS|SS|CTP-?)(\d{2,4})-(\d{3,5})/);
@@ -127,13 +155,19 @@ export function taillePn(pn) {
 }
 
 export const same = (a, b) => Math.abs(a - b) < 1 / 64 + 1e-9;
-/** Libellé de la taille : « 5/8 × 2 3/4 po », « n° 12 × 1 po ». */
+/** Libellé de la taille : « 5/8 × 2 3/4 po », « n° 12 × 1 po », « × 6 po » (longueur seule d'un tire-fond). */
 export const libTaille = (t) => {
   if (!t) return '';
   if (t.jauge != null) return `n° ${t.jauge}${t.l ? ` × ${frac(t.l)} po` : ''}`;
+  if (t.d == null) return t.l ? `× ${frac(t.l)} po` : '';
   return `${frac(t.d)}${t.l ? ` × ${frac(t.l)}` : ''} po`;
 };
-export const libMm = (t) => (t ? `${(t.d * 25.4).toFixed(1).replace('.', ',')}${t.l ? ` × ${(t.l * 25.4).toFixed(1).replace('.', ',')}` : ''} mm` : '');
+const mm = (x) => (x * 25.4).toFixed(1).replace('.', ',');
+export const libMm = (t) => {
+  if (!t) return '';
+  if (t.d == null) return t.l ? `× ${mm(t.l)} mm` : '';
+  return `${mm(t.d)}${t.l ? ` × ${mm(t.l)}` : ''} mm`;
+};
 const ORDRE = { vis: 0, ecrou: 1, rondelle: 2, goupille: 3 };
 
 /** Lignes de visserie de toutes les listes d'assemblage (équipement normalisé : assemblies → parts { ref, pn, qty, desc }). */
@@ -144,18 +178,18 @@ export function visserie(eq) {
       if (r.pseudo) continue;
       const fam = famille(r.desc, r.pn);
       if (!fam) continue;
-      const td = tailleDesc(r.desc);
+      const td = tailleDesc(r.desc) || (fam.t === 'Tire-fond' ? longueurSeule(r.desc) : null);
       // Jauge ou filet métrique dans la description : le numéro ne dit rien de plus sûr.
       const tp = td?.jauge != null ? null : taillePn(r.pn);
       let t = td || tp;
-      if (td && tp && td.l == null && tp.l != null && same(td.d, tp.d)) t = { ...td, l: tp.l };
-      const ecart = td && tp && (!same(td.d, tp.d) || (td.l != null && tp.l != null && !same(td.l, tp.l)))
+      if (td && tp && td.d != null && td.l == null && tp.l != null && same(td.d, tp.d)) t = { ...td, l: tp.l };
+      const ecart = td && tp && td.d != null && (!same(td.d, tp.d) || (td.l != null && tp.l != null && !same(td.l, tp.l)))
         ? `Le numéro ${r.pn} indique ${libTaille(tp)} ; la description, ${libTaille(td)}.` : '';
       if (t && !t.filet && tp?.filet) t = { ...t, filet: tp.filet };
       // Le filet ne distingue que les vis et les écrous.
       if (t && (fam.f === 'rondelle' || fam.f === 'goupille')) t = { ...t, filet: '' };
       const q = typeof r.qty === 'number' ? r.qty : /^\d+$/.test(String(r.qty ?? '').trim()) ? +r.qty : null;
-      const dim = t ? `${t.jauge != null ? `#${t.jauge}` : frac(t.d)}|${t.l ? frac(t.l) : ''}|${t.filet}` : '?';
+      const dim = t ? `${t.jauge != null ? `#${t.jauge}` : t.d != null ? frac(t.d) : ''}|${t.l ? frac(t.l) : ''}|${t.filet}` : '?';
       lignes.push({ asm: a, r, fam, t, q, ecart, cle: `${fam.f}|${fam.t}|${dim}` });
     }
   }
@@ -163,4 +197,4 @@ export function visserie(eq) {
 }
 
 export const tri = (a, b) => ORDRE[a.fam.f] - ORDRE[b.fam.f] || a.fam.t.localeCompare(b.fam.t, 'fr')
-  || (a.t ? a.t.d : 99) - (b.t ? b.t.d : 99) || (a.t?.l ?? 0) - (b.t?.l ?? 0);
+  || (a.t?.d ?? 99) - (b.t?.d ?? 99) || (a.t?.l ?? 0) - (b.t?.l ?? 0);

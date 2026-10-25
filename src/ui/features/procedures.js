@@ -9,7 +9,7 @@
 // (mouvement amorti), les suivantes sont cachées. En sortant, le modèle est
 // rétabli (tout visible, assemblé, rien de mis en évidence).
 //
-// Les procédures sont lues au moment de la construction (ctx.equipmentData) :
+// Les procédures sont chargées avec l'équipement qui les déclare (ctx.equipmentData) :
 // pas de requête, donc pas d'erreur 404 pour un équipement qui n'en a pas.
 // Un clic sur une pièce pendant la procédure la sélectionne : sa fiche se pose
 // par-dessus les détails de l'étape, qui reviennent quand elle se ferme. Une
@@ -60,6 +60,9 @@ export default {
 
     // Barre de commande, posée sur la scène.
     const stage = ctx.ui.stage;
+    /** Une couche recouvre la scène : visionneuse des pages, page plein écran, recherche. */
+    const covered = () => !document.getElementById('modal')?.hidden || document.body.classList.contains('page-open')
+      || document.body.classList.contains('rch-full') || !!document.querySelector('.rch-pop:not([hidden])');
     const bar = document.createElement('div');
     bar.className = 'proc-bar';
     bar.hidden = true;
@@ -83,7 +86,11 @@ export default {
       </div>`;
     stage.appendChild(bar);
     const $b = (s) => bar.querySelector(s);
-    new ResizeObserver(() => stage.style.setProperty('--proc-bar-h', `${bar.offsetHeight + 16}px`)).observe(bar);
+    // Hauteur de la barre : le panneau latéral (téléphone) et les messages brefs (hors de la scène) se posent au-dessus.
+    new ResizeObserver(() => {
+      stage.style.setProperty('--proc-bar-h', `${bar.offsetHeight + 16}px`);
+      document.documentElement.style.setProperty('--proc-bar-h', `${bar.offsetHeight + 16}px`);
+    }).observe(bar);
 
     // ------------------------------------------------------------ 3D (API publique du visualiseur : ctx.viewer)
     /** Prépare le modèle : objets de chaque étape, conteneurs, objets hors procédure (posés à la fin). */
@@ -146,7 +153,9 @@ export default {
     const playNext = () => {
       if (!run) return;
       const last = run.proc.steps.length - 1;
-      if (run.n >= last) { stopPlay(); return; }
+      // Une couche recouvre la scène (visionneuse, page plein écran, recherche) : les étapes défileraient sans être
+      // vues ; la lecture s'arrête (« Lecture auto » la reprend).
+      if (run.n >= last || covered()) { stopPlay(); return; }
       run.focus = null;
       const ms = show(run.n + 1);
       run.timer = setTimeout(playNext, ms + PAUSE);
@@ -287,8 +296,8 @@ export default {
     });
     // Flèches du clavier pendant la procédure (hors champs de saisie).
     // Une couche recouvre la scène (visionneuse, page plein écran, recherche) : les flèches lui reviennent.
-    const covered = () => !document.getElementById('modal')?.hidden || document.body.classList.contains('page-open')
-      || document.body.classList.contains('rch-full') || !!document.querySelector('.rch-pop:not([hidden])');
+    // Une page plein écran qui s'ouvre arrête aussi la lecture automatique.
+    ctx.on('page', ({ open }) => { if (open) stopPlay(); });
     document.addEventListener('keydown', (e) => {
       if (!run || e.altKey || e.ctrlKey || e.metaKey || covered()) return;
       const t = e.target;
@@ -397,8 +406,11 @@ export default {
         if (run) { stop(); return; }
         const here = ctx.view?.type === 'assembly' ? forAsm(ctx.view.id) : null;
         if (here && ctx.viewer.is3d && !ctx.view.home) { start(here); return; }
+        if (ctx.ui.sidePanel.owner === 'procedures-list') { ctx.ui.sidePanel.close(); return; }
+        // La liste prend le panneau : la pièce sélectionnée (et sa fiche) est relâchée.
+        if (ctx.selection) ctx.viewer.select(null);
         renderList();
-        ctx.ui.sidePanel.toggle({ title: 'Procédures', content: listBody, owner: 'procedures-list', icon: 'cle' });
+        ctx.ui.sidePanel.open({ title: 'Procédures', content: listBody, owner: 'procedures-list', icon: 'cle' });
       },
     });
     tool.hidden = true;

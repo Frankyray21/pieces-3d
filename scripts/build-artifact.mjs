@@ -26,8 +26,8 @@ const walk = (dir) => readdirSync(dir).flatMap((f) => {
 // Si cela ne suffit pas, les derniers équipements du catalogue sont publiés sans
 // les pages de leur manuel (listes, recherche et 3D restent complètes ; la page
 // renvoie alors à la version complète du site).
-// Données complémentaires (bulles, donnees, entretien, procedures) : déjà dans le module (src/data/extras.js),
-// jamais demandées ; elles ne sont pas publiées (limite de fichiers).
+// Données complémentaires (bulles, donnees, entretien, procedures, déclarées par index.json) : inscrites dans la
+// page (<script id="extras">, lu par src/data/extras.js) ; elles ne sont pas publiées (limite de fichiers).
 const EXTRAS = /\/(?:bulles|donnees|entretien|procedures)\.json$/;
 const all = walk(join(dist, 'equipment')).map((p) => p.slice(dist.length + 1)).filter((p) => !EXTRAS.test(p)).sort();
 const catalogue = JSON.parse(readFileSync(join(dist, 'equipment', 'index.json'), 'utf8')).equipment;
@@ -69,6 +69,11 @@ for (const { id } of catalogue) {
   pagesAbsentes[id] = missing.map((f) => f.slice(prefix.length + before.length, f.length - after.length)).sort();
 }
 const publication = JSON.stringify({ pagesAbsentes }).replace(/</g, '\\u003c');
+const extras = {};
+for (const { id, extras: names = [] } of catalogue) {
+  for (const name of names) extras[`${id}/${name}`] = JSON.parse(readFileSync(join(dist, 'equipment', id, `${name}.json`), 'utf8'));
+}
+const extrasJson = JSON.stringify(extras).replace(/</g, '\\u003c');
 
 // Déclaration d'encodage en tête : servie sans « charset » (aperçu local, serveur statique), la page reste lue en
 // UTF-8 (sinon les textes et les expressions régulières du module seraient mal décodés).
@@ -79,6 +84,7 @@ const page = `<meta charset="utf-8">
 ${fonts}
 <style>${css}</style>
 <script type="application/json" id="publication">${publication}</script>
+<script type="application/json" id="extras">${extrasJson}</script>
 ${app.trim()}
 <script type="module">${js.replace(/<\/script/gi, '<\\/script')}</script>
 `;

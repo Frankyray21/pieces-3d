@@ -3,9 +3,9 @@
 // - Valeurs relevées dans le manuel, groupées par système (foreuse, tête,
 //   treuil, groupe, console…), une valeur par ligne, unités métriques et
 //   impériales, colonne « Source » qui ouvre la page du manuel. Elles viennent
-//   de public/equipment/<id>/donnees.json (ctx.equipmentData('donnees'), lu à
-//   la construction : aucune requête) ; sans ce fichier, la fiche technique de
-//   data.json (specs, weights) est reprise telle quelle, sans page source.
+//   de public/equipment/<id>/donnees.json (ctx.equipmentData('donnees'), chargé
+//   avec l'équipement) ; sans ce fichier, la fiche technique de data.json (specs ;
+//   weights : valeurs avec une unité de masse) est reprise telle quelle, sans page source.
 // - Tableau « Visserie par assemblage » calculé depuis les listes de pièces
 //   (boulons, vis, écrous, rondelles, goupilles) : quantité par taille.
 // Rien n'est inventé : une donnée absente du manuel n'apparaît pas.
@@ -19,6 +19,33 @@ const RM = typeof matchMedia === 'function' ? matchMedia('(prefers-reduced-motio
 const smooth = () => (RM.matches ? 'auto' : 'smooth');
 /** Texte de recherche : minuscules sans accents, « × » lu comme « x ». */
 const norm = (s) => String(s ?? '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/×/g, 'x');
+// Taille dans le filtre de la visserie (« 5/8 x 2 », « 3/8 x 1 1/4 », « 5/8 x ») : comparée au début de la taille de
+// la ligne, pas mot à mot (« 2 » ne doit pas trouver le « 625 » de B625-1750, ni « x » le « × » de toutes les tailles).
+const COTE = String.raw`(?:\d+\s+\d+\/\d+|\d+\/\d+|\d+(?:[.,]\d+)?)`;
+const TAILLE = new RegExp(String.raw`(?:^|\s)(${COTE})\s*x\s*(${COTE})?(?=\s|$)`);
+// Fraction seule (« 5/8 », « 1 1/4 ») : diamètre, comparé lui aussi au début de la taille.
+const DIAM = /(?:^|\s)(\d+\s+\d+\/\d+|\d+\/\d+)(?=\s|$)/;
+/** Filtre : { size : « 5/8 x 2 », « 5/8 » ou null, words : autres mots }. */
+function lireFiltre(raw) {
+  let q = norm(raw).trim();
+  let size = null;
+  let m = q.match(TAILLE);
+  if (m) size = `${m[1]} x${m[2] ? ` ${m[2]}` : ''}`;
+  else if ((m = q.match(DIAM))) size = m[1];
+  if (m) {
+    size = size.replace(/\s+/g, ' ').replace(',', '.');
+    q = `${q.slice(0, m.index)} ${q.slice(m.index + m[0].length)}`;
+  }
+  return { size, words: q.split(/\s+/).filter(Boolean) };
+}
+/** La taille d'une ligne (« 5/8 x 2 1/4 po ») commence par celle du filtre, jusqu'à une limite de cote. */
+const tailleOk = (label, size) => {
+  if (!size) return true;
+  const l = String(label || '').replace(/\s+/g, ' ').replace(/^n°\s*/, ''); // jauge « n° 12 × 1 po » : « 12 x 1 »
+  return l.startsWith(size) && !/^[\d/.]/.test(l.slice(size.length));
+};
+/** Valeur avec une unité de masse (« 6 000 lb », « 2 722 kg ») : sa place est sous « Masses ». */
+const MASSE = /\d\s*(?:lb|lbs|kg|t|tonnes?)\b/i;
 
 // ------------------------------------------------------------------ module
 export default {
@@ -82,7 +109,8 @@ export default {
       el.innerHTML = render(eq, don);
       wire(el, eq);
       document.title = `Données techniques · ${eq.name} · Pièces 3D`;
-      ctx.ui.showPage(`Données techniques — ${eq.name}`, el, { icon: 'liste' });
+      const page = ctx.ui.showPage(`Données techniques — ${eq.name}`, el, { icon: 'liste' });
+      restore(el, page.element);
     });
 
     // ---------------------------------------------------------------- rendu
@@ -108,11 +136,20 @@ export default {
         ${vis.length ? visserieHtml(eq, vis) : ''}`;
     }
 
-    /** Fiche technique de data.json, sans page source (équipement sans donnees.json). */
+    /**
+     * Fiche technique de data.json, sans page source (équipement sans donnees.json). Seules les valeurs avec une
+     * unité de masse vont sous « Masses » ; une autre ligne de « weights » (consigne du plancher : « Toujours
+     * transporter les grosses pièces de bois · à deux ») reste dans la fiche technique, sous « Consignes ».
+     */
     function fiche(eq) {
       const out = [];
-      if (eq.specs?.length) out.push({ id: 'fiche', titre: 'Fiche technique', icone: 'engrenage', tableaux: [{ titre: 'Caractéristiques', lignes: eq.specs.map(([l, v]) => ({ l, v })) }] });
-      if (eq.weights?.length) out.push({ id: 'masses', titre: 'Masses', icone: 'structure', tableaux: [{ titre: 'Poids', lignes: eq.weights.map(([l, v]) => ({ l, v })) }] });
+      const masses = (eq.weights || []).filter(([, v]) => MASSE.test(v));
+      const consignes = (eq.weights || []).filter(([, v]) => !MASSE.test(v));
+      const tabs = [];
+      if (eq.specs?.length) tabs.push({ titre: 'Caractéristiques', lignes: eq.specs.map(([l, v]) => ({ l, v })) });
+      if (consignes.length) tabs.push({ titre: 'Consignes', lignes: consignes.map(([l, v]) => ({ l, v })) });
+      if (tabs.length) out.push({ id: 'fiche', titre: 'Fiche technique', icone: 'engrenage', tableaux: tabs });
+      if (masses.length) out.push({ id: 'masses', titre: 'Masses', icone: 'structure', tableaux: [{ titre: 'Poids', lignes: masses.map(([l, v]) => ({ l, v })) }] });
       return out;
     }
 
@@ -183,13 +220,13 @@ export default {
         }
         const rows = [...m.values()].sort(tri);
         const total = ls.reduce((n, l) => n + (l.q || 0), 0);
-        const search = ls.map((l) => `${l.r.pn} ${l.r.desc} ${l.fam.t} ${libTaille(l.t)}`).join(' ');
+        const search = ls.map((l) => `${l.r.pn} ${l.r.desc} ${l.fam.t}`).join(' ');
         return `<details class="dn-asmv" data-asm="${esc(id)}" data-search="${esc(norm(`${id} ${a.titleFr || ''} ${a.title || ''} ${search}`))}" style="--sys:${sys?.color || 'var(--sys-0)'}">
           <summary><span class="mono dn-asm-id">${esc(id)}</span><span class="dn-asm-t">${esc(a.titleFr || a.title)}</span><span class="dn-asm-n">${rows.length} taille${rows.length > 1 ? 's' : ''} · ${nb(total)} pce${total > 1 ? 's' : ''}</span></summary>
           <div class="dn-asmv-body">
             <table class="dn-t dn-vt">
               <thead><tr><th scope="col">Pièce</th><th scope="col">Taille</th><th scope="col">Numéro · repère</th><th scope="col" class="c-q">Qté</th></tr></thead>
-              <tbody>${rows.map((g) => `<tr data-search="${esc(norm(g.items.map((l) => `${l.r.pn} ${l.r.desc} ${l.fam.t} ${libTaille(l.t)}`).join(' ')))}">
+              <tbody>${rows.map((g) => `<tr data-size="${esc(norm(libTaille(g.t)))}" data-search="${esc(norm(g.items.map((l) => `${l.r.pn} ${l.r.desc} ${l.fam.t}`).join(' ')))}">
                 <th scope="row" class="c-l">${esc(g.fam.t)}</th>
                 <td>${taille(g)}</td>
                 <td>${g.items.map((l) => `<button type="button" class="dn-pn" data-dn-asm="${esc(id)}" data-dn-ref="${esc(l.r.ref)}" title="${esc(`${l.r.desc} — repère ${l.r.label || l.r.ref} : voir dans l’assemblage`)}"><span class="mono">${esc(l.r.pn || '—')}</span><span class="dn-ref">rep. ${esc(l.r.label || l.r.ref)}${l.q != null && g.items.length > 1 ? ` · ${l.q}` : ''}</span></button>${l.ecart ? `<small class="dn-warn">${icon('alerte', { size: 12 })}${esc(l.ecart)}</small>` : ''}`).join('')}</td>
@@ -212,7 +249,7 @@ export default {
           <table class="dn-t dn-tot">
             <caption>Total par taille — <span class="dn-cap">${tailles(totaux.length, totalPieces)}</span></caption>
             <thead><tr><th scope="col">Pièce</th><th scope="col">Taille</th><th scope="col">Numéros</th><th scope="col" class="c-q">Qté</th><th scope="col">Assemblages</th></tr></thead>
-            <tbody>${totaux.map((g) => `<tr data-search="${esc(norm(`${g.fam.t} ${libTaille(g.t)} ${[...g.pns].join(' ')} ${[...g.asms].join(' ')} ${[...g.descs].join(' ')}`))}" data-qte="${g.qte}">
+            <tbody>${totaux.map((g) => `<tr data-size="${esc(norm(libTaille(g.t)))}" data-search="${esc(norm(`${g.fam.t} ${[...g.pns].join(' ')} ${[...g.asms].join(' ')} ${[...g.descs].join(' ')}`))}" data-qte="${g.qte}">
               <th scope="row" class="c-l">${esc(g.fam.t)}</th>
               <td>${taille(g)}</td>
               <td class="mono dn-pns">${esc([...g.pns].join(', ') || '—')}</td>
@@ -257,24 +294,57 @@ export default {
       const totRows = [...el.querySelectorAll('.dn-tot tbody tr')];
       const blocks = [...el.querySelectorAll('.dn-asmv')];
       const nb = (n) => n.toLocaleString('fr-CA');
-      input.addEventListener('input', () => {
-        const q = norm(input.value.trim());
-        const words = q.split(/\s+/).filter(Boolean);
+      const filtrer = () => {
+        const { size, words } = lireFiltre(input.value);
+        const on = !!size || words.length > 0;
         const hit = (s) => words.every((w) => s.includes(w));
+        // Ligne retenue : sa taille commence par celle du filtre, et les autres mots sont dans sa description,
+        // son numéro ou sa famille (ou dans le numéro de l'assemblage, pour un bloc).
+        const ok = (tr, head = false) => tailleOk(tr.dataset.size, size) && (head || hit(tr.dataset.search));
         let n = 0, pcs = 0;
-        for (const tr of totRows) { const ok = !words.length || hit(tr.dataset.search); tr.hidden = !ok; if (ok) { n++; pcs += +tr.dataset.qte || 0; } }
+        for (const tr of totRows) { const k = !on || ok(tr); tr.hidden = !k; if (k) { n++; pcs += +tr.dataset.qte || 0; } }
         // Légende du tableau : tailles et pièces affichées.
-        if (cap) cap.textContent = words.length ? `${nb(n)} taille${n > 1 ? 's' : ''} sur ${capAll.split(' ')[0]}, ${nb(pcs)} pièce${pcs > 1 ? 's' : ''}` : capAll;
+        if (cap) cap.textContent = on ? `${nb(n)} taille${n > 1 ? 's' : ''} sur ${capAll.split(' ')[0]}, ${nb(pcs)} pièce${pcs > 1 ? 's' : ''}` : capAll;
         for (const d of blocks) {
           const rows = [...d.querySelectorAll('tbody tr')];
-          const head = hit(norm(d.dataset.asm));
+          const head = words.length > 0 && hit(norm(d.dataset.asm));
           let k = 0;
-          for (const tr of rows) { const ok = !words.length || head || hit(tr.dataset.search); tr.hidden = !ok; if (ok) k++; }
-          d.hidden = words.length > 0 && !k;
-          d.open = words.length > 0 && k > 0 && blocks.length > 1 ? true : d.open && !!words.length;
+          for (const tr of rows) { const v = !on || ok(tr, head); tr.hidden = !v; if (v) k++; }
+          d.hidden = on && !k;
+          d.open = on && k > 0 && blocks.length > 1 ? true : d.open && on;
         }
-        count.textContent = words.length ? `${n} taille${n > 1 ? 's' : ''}` : '';
-      });
+        count.textContent = on ? `${n} taille${n > 1 ? 's' : ''}` : '';
+      };
+      input.addEventListener('input', filtrer);
+      el.dnFiltrer = filtrer; // filtre rétabli au retour sur la page (restore)
+    }
+
+    // ---------------------------------------------------------------- retour sur la page
+    // La page sert de point de départ vers les assemblages : avant de la quitter (numéro d'une pièce, « Voir
+    // l'assemblage », « Ouvrir l'assemblage »), sa position, ses blocs ouverts et son filtre sont inscrits dans
+    // l'entrée d'historique ; Précédent les rétablit.
+    const KEY = 'donnees';
+    const here = () => decodeURIComponent(location.hash) === decodeURIComponent(ctx.hashFor(ID));
+    function snapshot(el, body) {
+      if (!here() || !el.isConnected) return;
+      const open = [...el.querySelectorAll('.dn-asmv[open]')].map((d) => d.dataset.asm);
+      const filtre = el.querySelector('.dn-filter input')?.value || '';
+      try { history.replaceState({ ...(history.state || {}), [KEY]: { top: body.scrollTop, open, filtre } }, ''); } catch { /* état non enregistré */ }
+    }
+    function restore(el, body) {
+      // Avant de quitter la page : l'état est inscrit (clic en phase de capture, avant la navigation du site).
+      el.addEventListener('click', (e) => { if (e.target.closest('[data-go], [data-dn-ref]')) snapshot(el, body); }, true);
+      let t = 0;
+      const later = () => { clearTimeout(t); t = setTimeout(() => snapshot(el, body), 250); };
+      body.addEventListener('scroll', later, { passive: true });
+      el.addEventListener('toggle', later, true);
+      el.querySelector('.dn-filter input')?.addEventListener('input', later);
+      const st = here() ? history.state?.[KEY] : null;
+      if (!st) return;
+      const input = el.querySelector('.dn-filter input');
+      if (input && st.filtre) { input.value = st.filtre; el.dnFiltrer?.(); }
+      for (const id of st.open || []) { const d = el.querySelector(`.dn-asmv[data-asm="${CSS.escape(id)}"]`); if (d) d.open = true; }
+      requestAnimationFrame(() => { if (el.isConnected) body.scrollTop = st.top || 0; });
     }
   },
 };

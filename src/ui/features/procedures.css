@@ -117,3 +117,9 @@
   .proc-bar .tbtn { min-height: 40px; }
   .proc-prev, .proc-next { width: 44px; }
 }
+
+/* Message bref (« Pièce posée à l'étape … ») pendant une procédure : au-dessus de la barre, sans la masquer. */
+body:has(#stage.proc-on) .toast { bottom: calc(var(--proc-bar-h, 140px) + 12px); }
+@media (max-width: 900px) {
+  body:has(#stage.proc-on) .toast { bottom: calc(var(--proc-bar-h, 140px) + 56px + env(safe-area-inset-bottom, 0px)); }
+}

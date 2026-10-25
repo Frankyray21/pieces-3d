@@ -580,8 +580,10 @@ export default {
     // Échap hors du champ (fenêtre ouverte, focus ailleurs) : la fenêtre d'abord.
     ctx.ui.onEscape(() => { if (pop.hidden) return false; close(); return true; }, 120);
 
-    // Raccourcis globaux : « / » (hors champ de saisie) ou Ctrl+K / Cmd+K.
+    // Raccourcis globaux : « / » (hors champ de saisie) ou Ctrl+K / Cmd+K. Visionneuse des pages ouverte (fenêtre
+    // modale : le champ de l'en-tête est hors d'atteinte, #shell inerte) : rien.
     document.addEventListener('keydown', (e) => {
+      if (shell?.inert && pop.hidden) return;
       const t = e.target;
       const typing = t instanceof HTMLElement && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName));
       if ((e.key === 'k' || e.key === 'K') && (e.ctrlKey || e.metaKey) && !e.altKey) {
@@ -647,11 +649,22 @@ export default {
       }
       ctx.go(hash);
     }
+    /** Après un choix au clavier, le focus va au résultat (titre de la fiche, ligne choisie ou liste) plutôt qu'au <body>. */
+    function focusResult() {
+      const a = document.activeElement;
+      if (a && a !== document.body && a !== input && !a.closest('[inert]')) return; // déjà placé (visionneuse, page)
+      const el = (ctx.ui.sidePanel.isOpen && ctx.ui.sidePanel.owner === 'fiche' && ctx.ui.sidePanel.element.querySelector('.sp-title'))
+        || document.querySelector('#rows tr.sel') || document.querySelector('#panel .phead h1');
+      if (!el || !el.isConnected || el.closest('[inert]') || !el.getClientRects().length) return;
+      if (!el.hasAttribute('tabindex')) el.tabIndex = -1;
+      el.focus({ preventScroll: true });
+    }
     function selectUse(u) {
       // La fiche de la pièce s'ouvre (sur téléphone : volet bas de la vue, la pièce cadrée au-dessus).
       ctx.viewer.select(u.ref);
       document.querySelector('#rows tr.sel')?.scrollIntoView({ block: 'center' });
       if (ctx.narrow() && !ctx.ui.sidePanel.isOpen) ctx.ui.setPane(ctx.viewer.is3d ? 'stage' : 'panel');
+      focusResult();
     }
     function pick(i, useIdx = null) {
       const r = flat[i];
@@ -664,7 +677,7 @@ export default {
         const u = useIdx != null ? e.uses[useIdx] : r.use || bestUse(e);
         openView(e.eq.id, u.id, () => selectUse(u));
       } else if (e.kind === 'asm') {
-        openView(e.eq.id, e.id, () => { if (ctx.narrow()) ctx.ui.setPane(ctx.viewer.is3d ? 'stage' : 'panel'); });
+        openView(e.eq.id, e.id, () => { if (ctx.narrow()) ctx.ui.setPane(ctx.viewer.is3d ? 'stage' : 'panel'); focusResult(); });
       } else if (e.kind === 'page') {
         if (e.eq.id === ctx.equipment?.id) ctx.openPage(e.sheet);
         else openView(e.eq.id, e.owner || e.eq.root, () => ctx.openPage(e.sheet));

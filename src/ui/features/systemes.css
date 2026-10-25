@@ -37,6 +37,10 @@
 }
 .sysx-tile:hover { border-color: var(--sys); }
 .sysx-open { display: grid; gap: 6px; padding: 0 0 10px; min-width: 0; text-align: left; border: 0; background: none; color: inherit; }
+/* Focus clavier : la tuile coupe ce qui dépasse (overflow) ; le contour est donc tracé autour de la tuile entière. */
+.sysx-open:focus-visible { outline: none; }
+.sysx-tile:has(> .sysx-open:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+.sysx-chip:focus-visible { outline-offset: 1px; }
 .sysx-open .sysx-thumb { height: 92px; border: 0; border-bottom: 1px solid var(--line); }
 .sysx-head { display: flex; align-items: center; gap: 8px; padding: 0 10px; min-width: 0; }
 .sysx-head strong { flex: 1; min-width: 0; font-size: 14px; line-height: 1.2; overflow-wrap: anywhere; }
@@ -74,6 +78,12 @@
 .sysx-rows tbody tr { cursor: pointer; }
 .sysx-rows tbody tr:hover { background: var(--hover); }
 .sysx-rows tbody tr.on { background: color-mix(in srgb, var(--sys) 16%, transparent); }
+.sysx-rows tbody tr:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+/* Ligne sans objet 3D propre (sous-ensemble dessiné d'un bloc) : texte atténué ; sa fiche s'ouvre quand même. */
+.sysx-rows tbody tr.sysx-no3d td { color: var(--muted); }
+.sysx-rows tbody tr.sysx-no3d .sysx-ref { border-style: dashed; border-color: var(--muted); }
+.sysx-legend { margin: 0; display: flex; align-items: baseline; gap: 6px; font-size: 12px; line-height: 1.4; color: var(--muted); }
+.sysx-no3d-key { flex: none; width: 10px; height: 10px; border-radius: 50%; border: 1.5px dashed var(--muted); transform: translateY(1px); }
 .sysx-ref {
   display: inline-grid; place-items: center; min-width: 20px; height: 20px; padding: 0 4px; border-radius: 10px;
   border: 1.5px solid var(--ink); font: 600 10.5px/1 var(--f-mono);
@@ -114,6 +124,11 @@
 .stage.sysx-has-crumbs .tools { top: 52px; }
 .stage.sysx-has-crumbs .sidepanel { top: max(var(--tools-bottom, 12px), 52px); }
 body.stage-full .sysx-crumbs { top: 10px; }
+/* Doigt : puces des sous-ensembles et « Afficher les … autres » d'au moins 40 px de haut. */
+@media (pointer: coarse) {
+  .sysx-chip { min-height: 40px; padding: 6px 10px; }
+  .sysx-more summary { min-height: 40px; display: flex; align-items: center; padding: 0; }
+}
 @media (max-width: 900px) {
   /* Fil plus haut au doigt (maillons de 40 px) ; les outils descendent d'autant. */
   .sysx-crumbs { left: max(8px, env(safe-area-inset-left, 0px)); top: 8px; max-width: calc(100% - 16px); height: 44px; font-size: 12.5px; }

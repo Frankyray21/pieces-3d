@@ -44,20 +44,30 @@ export default {
         : [row.source.sheet, ...(o?.sheets || []), ...(o?.lists || [])];
       return [...new Set(pages.filter(Boolean))];
     };
+    /** Pages d'une valeur de donnees.json : « P048 » ou ["P048", "P053"]. */
+    const pagesOf = (l) => [].concat(l.p || []).filter(Boolean);
+    /** Vrai si l'assemblage id est asmId ou l'un de ses sous-assemblages (pages d'étape du treuil, mandrin de la tête…). */
+    const under = (id, asmId) => {
+      for (let a = ctx.equipment.assemblies.get(id), n = 0; a && n < 20; a = ctx.equipment.assemblies.get(a.parent), n++) if (a.id === asmId) return true;
+      return false;
+    };
     /**
-     * Données techniques du manuel d'un sous-ensemble (donnees.json) : tableaux
-     * dont toutes les valeurs viennent de ses pages. Retourne { tables, group }.
+     * Données techniques du manuel d'un sous-ensemble (donnees.json) : tableaux dont chaque valeur vient de ses
+     * pages (ou de celles de ses sous-assemblages), une page de renvoi vers un document (P053 : transmission Funk)
+     * étant tolérée à côté. Retourne { tables, group }.
      */
     const manualData = (asmId) => {
       const don = ctx.equipmentData('donnees');
       if (!don || !asmId) return null;
+      const docs = ctx.equipment.documents;
+      const mine = (pg) => under(ctx.sheetOwner(pg), asmId);
       const tables = [];
       let group = null;
       for (const g of don.groupes || []) {
         if (g.asm === asmId) group = g;
         for (const t of g.tableaux || []) {
-          const pages = t.lignes.map((l) => l.p).filter(Boolean);
-          if (pages.length && pages.every((pg) => ctx.sheetOwner(pg) === asmId)) tables.push(t);
+          const lines = t.lignes.filter((l) => pagesOf(l).length);
+          if (lines.length && lines.every((l) => pagesOf(l).some(mine) && pagesOf(l).every((pg) => mine(pg) || docs.has(ctx.sheetOwner(pg))))) tables.push(t);
         }
       }
       return tables.length || group ? { tables, group } : null;
@@ -124,7 +134,12 @@ export default {
       // Remarques et lignes à vérifier (avec les lignes en cause, cliquables).
       const rowChip = (o, extra = '') => `<button type="button" class="chip" data-fiche-row="${esc(o.key)}">${esc(sheetLabel(o.source.sheet))} réf. ${esc(refLabel(o))}${extra}</button>`;
       const flags = (row.flags || []).filter((f) => f.level !== 'info' || f.text !== row.note);
+      // Vue 3D où la pièce n'a pas d'objet propre (sous-ensemble dessiné d'un bloc dans la vue de l'ensemble, ligne d'un
+      // ensemble isolé) : on le dit, plutôt que de laisser croire qu'elle est mise en évidence.
+      const v3 = ctx.viewer;
+      const not3d = v3.is3d && !ctx.view?.home && !row.no3d && !row.pseudo && !v3.objects([path]).length;
       const notes = [
+        not3d ? `<p class="fiche-note info">Pièce non représentée séparément dans la vue 3D : voir le dessin du ${e.docWord}.</p>` : '',
         row.note ? `<p class="fiche-note info">${esc(row.note)}</p>` : '',
         row.mirrorOf ? `<p class="fiche-note info">Pièce symétrique (côté gauche) : la 3D met en évidence la pièce droite, réf. ${esc(row.mirrorOf)}.</p>` : '',
         ...flags.map((f) => `<div class="fiche-note ${esc(f.level)}">${esc(f.text)}${f.refs?.length ? `<span class="fiche-chips">${f.refs.map((o) => rowChip(o, ` · ${esc(o.desc)}`)).join('')}</span>` : ''}</div>`),
@@ -150,18 +165,20 @@ export default {
         <section class="fiche-sec">
           <h4>Données du ${e.docWord}</h4>
           ${mdLines.length ? `<table class="fiche-dims"><tbody>
-            ${mdLines.slice(0, MAXL).map(({ l }) => `<tr><th>${esc(l.l)}</th><td>${mdVal(l)}</td><td>${l.p ? `<button type="button" class="chip" data-page="${esc(l.p)}" title="Ouvrir la page ${esc(l.p)}">${esc(l.p)}</button>` : ''}</td></tr>`).join('')}
+            ${mdLines.slice(0, MAXL).map(({ l }) => `<tr><th>${esc(l.l)}</th><td>${mdVal(l)}</td><td>${pagesOf(l).map((pg) => `<button type="button" class="chip" data-page="${esc(pg)}" title="Ouvrir la page ${esc(pg)}">${esc(pg)}</button>`).join(' ')}</td></tr>`).join('')}
           </tbody></table>` : ''}
           <p class="fiche-sub">${mdLines.length > MAXL ? `${mdLines.length - MAXL} autres valeurs dans les ` : 'Voir aussi les '}<button type="button" class="fiche-link" data-go="donnees">données techniques${md.group ? ` (${esc(md.group.titre)})` : ''}</button>.</p>
         </section>` : '';
       const sheet = sheetsOf(row)[0];
       const url = sheet ? ctx.pageUrl(sheet) : null;
+      // Vue des dessins du manuel (assemblage sans 3D, schéma) : la page est déjà à côté, pas de vignette en double.
+      const drawings = !ctx.viewer.is3d;
       const pageSec = !sheet ? '' : url ? `<section class="fiche-sec">
           <h4>Page du ${e.docWord}</h4>
-          <button type="button" class="fiche-thumb" data-fiche-draw title="Voir la pièce sur le dessin">
+          ${drawings ? `<p class="fiche-sub"><span class="mono">${esc(sheetLabel(sheet))}</span> ${esc(ctx.sheetTitle(sheet))}</p>` : `<button type="button" class="fiche-thumb" data-fiche-draw title="Voir la pièce sur le dessin">
             <img src="${esc(url)}" alt="Page ${esc(sheet)} du ${e.docWord}" loading="lazy">
             <span class="fiche-thumb-cap"><span class="mono">${esc(sheetLabel(sheet))}</span> ${esc(ctx.sheetTitle(sheet))}</span>
-          </button>
+          </button>`}
           <button type="button" class="btn primary fiche-draw" data-fiche-draw>${icon('page', { size: 16 })}<span>${locate(row).boxes.length ? 'Voir sur le dessin' : 'Ouvrir la page'}</span></button>
         </section>` : `<section class="fiche-sec">
           <h4>Page du ${e.docWord}</h4>

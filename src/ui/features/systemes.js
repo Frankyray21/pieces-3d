@@ -12,6 +12,7 @@
 //    largeur : les maillons du milieu se replient derrière « … ».
 
 import './systemes.css';
+import { keyRows } from '../rows.js';
 
 const OWNER = 'systemes';
 
@@ -29,16 +30,26 @@ export default {
     let pending = null; // { from, path, target } en attente de l'ouverture de « from »
     let iso = null; // sous-ensemble isolé affiché : { from, path, target }
 
+    // Lignes sans objet 3D propre : dans la vue de l'ensemble, le sous-ensemble est souvent un seul bloc (ses
+    // pièces ne sont pas dessinées à part) ; la ligne ouvre quand même sa fiche, et l'isolement reste visible.
+    const NO3D = 'Non dessinée à part en 3D : le sous-ensemble entier est mis en évidence';
     const panelHtml = (st) => {
       const eq = ctx.equipment;
       const a = eq.assemblies.get(st.target);
       const sys = ctx.systemOf(st.target);
+      let n3d = 0;
       const rows = a.parts.map((r) => {
         const sub = r.link && eq.assemblies.get(r.link);
-        return `<tr data-sysx-ref="${esc(r.ref)}"><td><span class="sysx-ref">${esc(label(r))}</span></td>
+        const has = ctx.viewer.objects([[...st.path, r.ref]]).length > 0;
+        if (has) n3d++;
+        return `<tr data-sysx-ref="${esc(r.ref)}"${has ? '' : ` class="sysx-no3d" title="${esc(NO3D)}"`}><td><span class="sysx-ref">${esc(label(r))}</span></td>
           <td class="mono">${esc(r.pn || '—')}</td><td class="q">${esc(r.qty ?? '')}</td>
           <td>${esc(r.desc || '')}${sub ? ` <span class="sysx-sub">${icon('droite', { size: 12 })}${esc(badge(sub.sheet))}</span>` : ''}</td></tr>`;
       }).join('');
+      const none = a.parts.length - n3d;
+      const legend = !none ? '' : n3d
+        ? `<p class="sysx-legend"><span class="sysx-no3d-key" aria-hidden="true"></span>${none} ligne${none > 1 ? 's' : ''} en gris : pièce${none > 1 ? 's' : ''} non dessinée${none > 1 ? 's' : ''} à part en 3D ; leur fiche s’ouvre, le sous-ensemble reste mis en évidence.</p>`
+        : `<p class="sysx-legend">Le sous-ensemble est un seul bloc dans la vue 3D de l’ensemble : ses pièces n’y sont pas dessinées à part. Une ligne ouvre sa fiche (et « Voir sur le dessin ») ; le sous-ensemble reste mis en évidence.</p>`;
       return `<div class="sysx-panel" style="--sys:${sys?.color || 'var(--accent)'}">
         <p class="sysx-pmeta"><span class="mono">${esc(badge(a.sheet))}</span> · ${a.parts.length} ligne${a.parts.length > 1 ? 's' : ''} · isolé dans « ${esc(eq.assemblies.get(st.from).titleFr)} »</p>
         <div class="sysx-pbtns">
@@ -47,6 +58,7 @@ export default {
           <button type="button" class="btn" data-sysx-act="all">${icon('cube', { size: 15 })}Tout afficher</button>
         </div>
         ${a.note ? `<p class="sysx-note">${esc(a.note)}</p>` : ''}
+        ${legend}
         <table class="sysx-rows"><thead><tr><th>Réf.</th><th>N° pièce</th><th class="q">Qté</th><th>Description</th></tr></thead><tbody>${rows}</tbody></table>
       </div>`;
     };
@@ -65,6 +77,7 @@ export default {
       // Sous-ensemble sélectionné (fil d'Ariane), puis sa liste dans le panneau, qui remplace sa fiche.
       ctx.viewer.select(st.path);
       panelEl.innerHTML = panelHtml(st);
+      keyRows(panelEl.querySelector('tbody'), 'tr[data-sysx-ref]', (tr) => tr.click());
       ctx.ui.sidePanel.open({ owner: OWNER, title: a.titleFr, icon: ctx.systemOf(st.target)?.icon || 'cle', content: panelEl });
       // Cadrage dans la partie de la scène que le panneau ne couvre pas (marges du socle).
       ctx.viewer.isolate([st.path], { frame: true });
@@ -95,7 +108,10 @@ export default {
       if (!isoShown()) return;
       if (e.target.closest('[data-sysx-act="all"]')) { ctx.viewer.clear(); ctx.viewer.frame(); return; }
       const tr = e.target.closest('tr[data-sysx-ref]');
-      if (tr) ctx.viewer.select([...iso.path, tr.dataset.sysxRef]);
+      if (!tr) return;
+      ctx.viewer.select([...iso.path, tr.dataset.sysxRef]);
+      // Pièce sans objet 3D propre : sa fiche s'ouvre, le sous-ensemble isolé reste en évidence (rien n'est sélectionné en 3D).
+      if (tr.classList.contains('sysx-no3d')) ctx.viewer.isolate([iso.path]);
     });
 
     ctx.on('assembly', ({ id }) => {
@@ -117,9 +133,14 @@ export default {
       iso = null;
     });
     // Panneau replié ou pris par un autre mode : fin de l'isolement (pièces de nouveau toutes visibles).
+    // La vue de l'ensemble est recadrée : le modèle reprend la place du panneau (comme à la sortie des autres modes).
     ctx.on('sidepanel', ({ open, owner }) => {
       if (open || owner !== OWNER) return;
-      if (iso && ctx.view?.type === 'assembly' && ctx.view.id === iso.from) ctx.viewer.clear();
+      if (iso && ctx.view?.type === 'assembly' && ctx.view.id === iso.from) {
+        ctx.viewer.clear();
+        if (ctx.selection) ctx.viewer.select(null); // sous-ensemble (ou pièce) sélectionné pour le fil d'Ariane
+        ctx.viewer.frame();
+      }
       iso = null;
     });
     ctx.on('select', ({ path }) => {
