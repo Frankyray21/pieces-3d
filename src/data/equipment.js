@@ -146,8 +146,13 @@ function trigrams(s) {
   return out;
 }
 
+/** Description comparable : majuscules, espaces réduits. */
+const squash = (d) => String(d ?? '').toUpperCase().replace(/\s+/g, ' ').trim();
+
 /** Deux descriptions désignent-elles vraisemblablement la même pièce ? */
 function similar(a, b) {
+  // Même description (« 6400-12-12 » sur P042 et P069 : le manuel répète le numéro, sans mot ni trigramme à comparer).
+  if (squash(a) && squash(a) === squash(b)) return true;
   const ta = tokens(a), tb = tokens(b);
   for (const t of ta) if (tb.has(t)) return true;
   const ga = trigrams(a), gb = trigrams(b);

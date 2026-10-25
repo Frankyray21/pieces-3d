@@ -84,7 +84,8 @@
           "lignes": [
             { "l": "Longueur fermé", "m": "2 018 mm", "i": "79 7/16 po", "conv": "m", "p": "P022" },
             { "l": "Longueur sorti", "m": "3 829 mm", "i": "150 3/4 po", "conv": "m", "p": "P022" },
-            { "l": "Course", "m": "1 834 mm", "i": "72 3/16 po", "conv": "m", "p": "P022" },
+            { "l": "Tige sortie, de l'about du corps à l'œil", "m": "1 834 mm", "i": "72 3/16 po", "conv": "m", "p": "P022" },
+            { "l": "Tige visible, vérin rentré", "m": "22 mm", "i": "7/8 po", "conv": "m", "p": "P022" },
             { "l": "Embout de tige", "v": "Rotule PREMM-16-1 (1 po), contre-écrou 1-14 UNF", "p": "P022" },
             { "l": "Trousse de joints", "v": "FTD-030-KP100Z", "p": "P022" }
           ]
@@ -240,7 +241,7 @@
           "titre": "Électricité (schéma du panneau 600 V 125 HP)",
           "lignes": [
             { "l": "Panneau de commande", "v": "600 V c.a., 125 HP", "p": "P095" },
-            { "l": "Calibre d'entrée (câble d'alimentation)", "v": "225 A", "p": "P095" },
+            { "l": "Interrupteur d'entrée tripolaire, après le câble d'alimentation (« trailing cable »)", "v": "225 A", "p": "P095" },
             { "l": "Démarreur progressif", "v": "WEG SSW-07", "p": "P095" },
             { "l": "Transformateur de commande", "v": "3 kVA, 380 / 120-240 V", "p": "P095" },
             { "l": "Boîte électrique", "v": "Hoffman A30HS2412GQRLP", "p": "P068" },

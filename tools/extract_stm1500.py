@@ -291,10 +291,16 @@ DESCFIX = {
     'P040': {'SPN-R3000-X237': 'INT. RET. RING SERIWE 3000 (2 3/8 x 0.78)'},
     'P041': {'SB206-20': "INSERT BEARING 1 1/4''", 'SPN-R3100-300': 'EXT.RET.RING SÉRIE. (3100)'},
     'P080': {'AL01_M12X250': 'SD25 ARM'},
+    # Titre de la page (« BOÎTE DE SÉCURITÉ … ASSEMBLY: UM-CIT-SC-UG ») collé à la dernière ligne.
+    'P085': {'ZB4BZ102': 'BASE AND CONTACT BLOCK'},
 }
-PNPREFIX = {'10D003 806 12': 'C016 10D003 806 12', '20C003 100 12': 'C016 20C003 100 12', '20F003 100 12': 'C016 20F003 100 12',
-            '20G003 100 12': 'C016 20G003 100 12', '20H003 110 12': 'C016 20H003 110 12', 'GRADE 8 BOLT 1/2-UNC x 6 1/2': 'B500-6500GR8',
-            'GRADE 8 BOLT 1/2-UNC x 8': 'B500-8000GR8'}
+# N° de la colonne ITEM écrits en plusieurs mots (P025, P029, P084, P085) : le premier mot seul désignerait une
+# autre pièce (six connecteurs C016 différents ; l'écrou XCS-ZR5902 NUT n'est pas l'interrupteur XCS-ZR5902).
+MULTIPN = re.compile(r'^(C016 \d{2}[A-Z]\d{3} \d{3} \d{2}|XCS-ZR5902 NUT|3206 A-2RS1_MT33|3-16 link)\s+')
+# Pages dont la liste a une colonne « REF.# » (n° des composants hydrauliques, P079 : « REF. # = HYDRAULIC
+# COMPONENTS REFERENCE NUMBER », schéma page 4.14) entre ITEM et NOM/NAME : le nombre de tête de la désignation
+# est ce repère, pas une partie du nom.
+REFCOL = {'P072'}
 
 
 def clean(page, tables):
@@ -325,13 +331,15 @@ def clean(page, tables):
                     rows[-1]['desc'] += ' ' + text
                 continue
             pn, desc = '', text
-            for pre, full in PNPREFIX.items():
-                if text.startswith(pre):
-                    pn, desc = full, text[len(pre):].strip() or text
-                    break
-            else:
-                if toks and PN.match(toks[0]) and toks[0] not in ('1/2"', '90°'):
-                    pn, desc = toks[0], ' '.join(toks[1:]) or toks[0]
+            m = MULTIPN.match(text)
+            if m:
+                pn, desc = m.group(1), text[m.end():].strip() or text
+            elif toks and PN.match(toks[0]) and toks[0] not in ('1/2"', '90°'):
+                pn, desc = toks[0], ' '.join(toks[1:]) or toks[0]
+            if page in REFCOL:
+                m = re.match(r'(\d{1,3})\s+(.+)$', desc)
+                if m:
+                    hyd, desc = int(m.group(1)), m.group(2)
             rows.append({'pn': pn, 'qty': qty, 'desc': desc, 'hyd': hyd})
     for r in rows:
         r['desc'] = re.sub(r'\s+', ' ', r['desc']).strip()
@@ -420,11 +428,11 @@ data = {
     'id': 'stm-1500',
     'name': 'Usinage Marcotte STM-1500',
     'manufacturer': 'Usinage Marcotte',
-    'category': 'Foreuse aux diamants souterraine',
+    'category': 'Foreuse souterraine',
     'serial': 'STM-1500-128',
     'document': {'title': 'Part book for STM-1500', 'reference': 'FBRA-002', 'client': 'Machine Roger', 'preparedBy': 'Usinage Marcotte inc., Val-d\'Or (M. S. Gignac)',
-                 'date': '2013-11-26', 'sheets': 96, 'pagePattern': 'pages/{sheet}.webp'},
-    'specs': [['Modèle', 'STM-1500 (foreuse aux diamants souterraine, avance à vérin « top feed »)'],
+                 'sheets': 96, 'pagePattern': 'pages/{sheet}.webp'},
+    'specs': [['Modèle', 'STM-1500 (foreuse souterraine, avance à vérin « top feed »)'],
               ['Moteur électrique', 'WEG 125 HP, 575 V, 60 Hz, 1 780 tr/min, 184 A (CT125504NPBBW22)'],
               ['Pompes', 'A11VO130 + A10VO45K + A10VO45N en tandem (page 3.4)'],
               ['Tête de forage', 'UM-012-100UG Boyles, transmission Funk HMD-2355 4 vitesses, moteur A6VM160, 1 200 tr/min max'],

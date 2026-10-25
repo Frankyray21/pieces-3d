@@ -2,21 +2,20 @@
  "id": "stm-1500",
  "name": "Usinage Marcotte STM-1500",
  "manufacturer": "Usinage Marcotte",
- "category": "Foreuse aux diamants souterraine",
+ "category": "Foreuse souterraine",
  "serial": "STM-1500-128",
  "document": {
   "title": "Part book for STM-1500",
   "reference": "FBRA-002",
   "client": "Machine Roger",
   "preparedBy": "Usinage Marcotte inc., Val-d'Or (M. S. Gignac)",
-  "date": "2013-11-26",
   "sheets": 96,
   "pagePattern": "pages/{sheet}.webp"
  },
  "specs": [
   [
    "Modèle",
-   "STM-1500 (foreuse aux diamants souterraine, avance à vérin « top feed »)"
+   "STM-1500 (foreuse souterraine, avance à vérin « top feed »)"
   ],
   [
    "Moteur électrique",
@@ -1926,9 +1925,9 @@
     ],
     [
      "10",
-     "XCS-ZR5902",
+     "XCS-ZR5902 NUT",
      2,
-     "NUT SAFETY SWITCH NUT"
+     "SAFETY SWITCH NUT"
     ],
     [
      "11",
@@ -1968,9 +1967,9 @@
     ],
     [
      "17",
-     "3-16",
+     "3-16 link",
      9,
-     "link CHAIN 3/16 LINK"
+     "CHAIN 3/16 LINK"
     ]
    ]
   },
@@ -2118,9 +2117,9 @@
    "parts": [
     [
      "1",
-     "3206",
+     "3206 A-2RS1_MT33",
      1,
-     "A-2RS1_MT33 SKF-ANGULAR CONTACT BALL BEARING, DOUBLE ROW"
+     "SKF-ANGULAR CONTACT BALL BEARING, DOUBLE ROW"
     ],
     [
      "2",
@@ -4894,16 +4893,20 @@
      "9",
      "RTF47",
      2,
-     "7 RETURN LINE FILTER",
+     "RETURN LINE FILTER",
      {
-      "link": "P073"
+      "link": "P073",
+      "note": "Repère 7 du schéma hydraulique."
      }
     ],
     [
      "10",
      "UM-064-301TD",
      1,
-     "1 TANK (110 GAL U.S)"
+     "TANK (110 GAL U.S)",
+     {
+      "note": "Repère 1 du schéma hydraulique."
+     }
     ],
     [
      "11",
@@ -4945,7 +4948,10 @@
      "17",
      "UM-064-312A",
      2,
-     "9 FILTER"
+     "FILTER",
+     {
+      "note": "Repère 9 du schéma hydraulique."
+     }
     ],
     [
      "18",
@@ -5839,15 +5845,15 @@
     ],
     [
      "4",
-     "C016",
+     "C016 10D003 806 12",
      1,
-     "10D003 806 12 FEMALE CABLE CONNECTOR STRAIGHT WITH CLAMPING RING"
+     "FEMALE CABLE CONNECTOR STRAIGHT WITH CLAMPING RING"
     ],
     [
      "5",
-     "C016",
+     "C016 20C003 100 12",
      1,
-     "20C003 100 12 MALE RECEPTACLE, SCREW TERMINATION"
+     "MALE RECEPTACLE, SCREW TERMINATION"
     ],
     [
      "6",
@@ -5867,27 +5873,27 @@
    "parts": [
     [
      "1",
-     "C016",
+     "C016 20C003 100 12",
      1,
-     "20C003 100 12 MALE RECEPTACLE, SCREW TERMINATION"
+     "MALE RECEPTACLE, SCREW TERMINATION"
     ],
     [
      "2",
-     "C016",
+     "C016 20F003 100 12",
      1,
-     "20F003 100 12 FEMALE CABLE CONNECTOR RIGHT ANGLED"
+     "FEMALE CABLE CONNECTOR RIGHT ANGLED"
     ],
     [
      "3",
-     "C016",
+     "C016 20G003 100 12",
      2,
-     "20G003 100 12 FEMALE RECEPTACLE, SCREW TERMINATION"
+     "FEMALE RECEPTACLE, SCREW TERMINATION"
     ],
     [
      "4",
-     "C016",
+     "C016 20H003 110 12",
      2,
-     "20H003 110 12 MALE CABLE CONNECTOR STRAIGHT"
+     "MALE CABLE CONNECTOR STRAIGHT"
     ],
     [
      "5",
@@ -5947,7 +5953,7 @@
      "14",
      "ZB4BZ102",
      1,
-     "BASE AND CONTACT BLOCK BOÎTE DE SÉCURITÉ (SOUS-TERRE) SECURITY BOX (UNDERGROUND) ASSEMBLY: UM-CIT-SC-UG"
+     "BASE AND CONTACT BLOCK"
     ]
    ]
   }

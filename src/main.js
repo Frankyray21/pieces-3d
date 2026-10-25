@@ -877,8 +877,8 @@ function renderTitleblock(asm) {
     <div><span class="k">Projet</span><span class="v">${esc(eq.name)}</span></div>
     <div><span class="k">${eq.document.client ? 'Client' : 'Fabricant'}</span><span class="v">${esc(eq.document.client || eq.manufacturer)}</span></div>
     <div class="wide"><span class="k">Titre</span><span class="v">${esc(asm.title)}</span></div>
-    <div><span class="k">${eq.docWord === 'catalogue' ? 'Page' : 'Feuille'}</span><span class="v">${badge(asm.sheet)} · ${asm.parts.length} lignes</span></div>
-    <div><span class="k">Préparé</span><span class="v">${esc(eq.document.date)}</span></div>
+    <div${eq.document.date ? '' : ' class="wide"'}><span class="k">${eq.docWord === 'catalogue' ? 'Page' : 'Feuille'}</span><span class="v">${badge(asm.sheet)} · ${asm.parts.length} lignes</span></div>
+    ${eq.document.date ? `<div><span class="k">Préparé</span><span class="v">${esc(eq.document.date)}</span></div>` : ''}
     <div class="wide"><span class="v dwg">${asm.pn ? `${esc(asm.pn)}${asm.rev ? ` rév. ${esc(asm.rev)}` : ''}` : `${esc(ref)}-${asm.sheet}${eq.docWord === 'catalogue' ? '' : '-03'}`}</span></div>
     </div>`;
 }

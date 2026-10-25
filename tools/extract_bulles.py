@@ -83,16 +83,24 @@ def main():
         w, h, rot = page_info(n)
         W, H = (h, w) if rot in (90, 270) else (w, h)
         words = words_of(n)
-        # Mots seuls, puis paires de mots voisins sur une ligne (« UM-032 -100A »).
+        # Mots seuls, puis suites de 2 à 4 mots voisins sur une ligne (« UM-032 -100A », « XCS-ZR5902 NUT »,
+        # « C016 20F003 100 12 ») ; à une même place, on garde le plus long qui est un numéro.
         cands = []
         for i, wd in enumerate(words):
-            cands.append(dict(wd, n=norm(wd['t'])))
-            if i + 1 < len(words):
-                nx = words[i + 1]
-                if abs(nx['y0'] - wd['y0']) < 2 and 0 <= nx['x0'] - wd['x1'] < 6:
-                    cands.append({'x0': wd['x0'], 'y0': min(wd['y0'], nx['y0']), 'x1': nx['x1'],
-                                  'y1': max(wd['y1'], nx['y1']), 'n': norm(wd['t'] + nx['t'])})
+            cands.append(dict(wd, n=norm(wd['t']), k=1))
+            cur = dict(wd, t=wd['t'])
+            for k in range(2, 5):
+                if i + k - 1 >= len(words):
+                    break
+                nx = words[i + k - 1]
+                if not (abs(nx['y0'] - cur['y0']) < 2 and 0 <= nx['x0'] - cur['x1'] < 6):
+                    break
+                cur = {'x0': cur['x0'], 'y0': min(cur['y0'], nx['y0']), 'x1': nx['x1'],
+                       'y1': max(cur['y1'], nx['y1']), 't': cur['t'] + nx['t']}
+                cands.append(dict(cur, n=norm(cur['t']), k=k))
         hits = [c for c in cands if c['n'] in pns and len(c['n']) >= 4]
+        inside = lambda a, b: a is not b and b['k'] > a['k'] and abs(a['y0'] - b['y0']) < 2 and b['x0'] - 0.5 <= a['x0'] and a['x1'] <= b['x1'] + 0.5
+        hits = [c for c in hits if not any(inside(c, o) for o in hits)]
         rows = [c for c in hits if in_list(c, hits)]
         # Cadre de chaque colonne de numéros (numéros suivis d'un texte, ex. « B500-6500 GRADE 8 », compris).
         cols = []
@@ -117,13 +125,19 @@ def main():
             cols.append({'cx': cx0, 'x0': cx0 - 40, 'x1': cx0 + 40, 'y0': it['y0'], 'y1': y1 - 30})
         # Cartouche : numéro du dessin (« # DRAFT: », « NO. DESSIN: »).
         stamps = [x for x in words if x['t'] in ('DRAFT:', 'DESSIN:', 'DESSIN')]
+        # Listes à points de conduite (« 9. Louver.......107-0004.......Stock: », P074) : numéros d'une ligne, pas des bulles.
+        dotted = [x for x in words if re.search(r'\.{3,}', x['t'])]
         found = {}
         for c in hits:
+            if any(abs(d['y0'] - c['y0']) < 2 and (0 <= c['x0'] - d['x1'] < 8 or 0 <= d['x0'] - c['x1'] < 8) for d in dotted):
+                continue
             if any(abs(st['y0'] - c['y0']) < 4 and 0 <= c['x0'] - st['x1'] < 120 for st in stamps):
                 continue
             cx, cy = (c['x0'] + c['x1']) / 2, (c['y0'] + c['y1']) / 2
-            # Colonne de numéros de la liste, ou autre colonne d'une de ses lignes (description, ancien numéro).
-            if c in rows or any(abs(r['y0'] - c['y0']) < 3 and c['x0'] > r['x0'] - 120 for r in rows):
+            # Colonne de numéros de la liste, ou autre colonne de la même ligne du tableau, juste à droite du numéro
+            # (description qui répète le numéro). Une bulle du dessin à la même hauteur qu'une ligne d'un tableau
+            # (à gauche du tableau, ou loin à droite) reste une bulle.
+            if c in rows or any(abs(r['y0'] - c['y0']) < 3 and r['x1'] <= c['x0'] and c['x0'] - r['x1'] < 200 for r in rows):
                 continue
             if any(k['x0'] - 12 <= cx <= k['x1'] + 12 and k['y0'] - 4 <= cy <= k['y1'] + 30 for k in cols):
                 continue
