@@ -169,6 +169,94 @@ export const libMm = (t) => {
   return `${mm(t.d)}${t.l ? ` × ${mm(t.l)}` : ''} mm`;
 };
 const ORDRE = { vis: 0, ecrou: 1, rondelle: 2, goupille: 3 };
+/** Type par défaut de chaque famille (« BOLT », « NUT » sans précision) : tout autre type est plus précis. */
+const GENERIQUE = { vis: 'Boulon', ecrou: 'Écrou', rondelle: 'Rondelle plate', goupille: 'Axe' };
+
+/** Numéro comparable d'une ligne (majuscules, sans espaces) ; '' s'il est trop court pour désigner une pièce. */
+export const cleNum = (pn) => {
+  const p = String(pn || '').toUpperCase().replace(/\s+/g, '');
+  return p.length >= 4 && /\d/.test(p) ? p : '';
+};
+/** Partie « taille » de la clé de regroupement. */
+const dimOf = (t) => (t ? `${t.jauge != null ? `#${t.jauge}` : t.d != null ? frac(t.d) : ''}|${t.l ? frac(t.l) : ''}|${t.filet}` : '?');
+/** Deux tailles compatibles : même diamètre (ou jauge) ; longueur et filet identiques, ou absents de l'une. */
+function compatibles(a, b) {
+  if ((a.jauge ?? null) !== (b.jauge ?? null)) return false;
+  if (a.d != null && b.d != null && !same(a.d, b.d)) return false;
+  if (a.l != null && b.l != null && !same(a.l, b.l)) return false;
+  return !(a.filet && b.filet && a.filet !== b.filet);
+}
+const fusion = (a, b) => ({ ...a, d: a.d ?? b.d, l: a.l ?? b.l, filet: a.filet || b.filet, ...(a.jauge ?? b.jauge) != null ? { jauge: a.jauge ?? b.jauge } : {} });
+const libFilet = (t) => `${libTaille(t)}${t.filet ? ` ${t.filet}` : ''}`;
+const ids = (ls) => [...new Set(ls.map((l) => l.asm.id))].join(', ');
+
+/**
+ * Un numéro = une pièce : les lignes d'un même numéro (sur plusieurs pages) reçoivent la même taille et le même type.
+ * Tailles compatibles (« HHCS 3/8-16 », « HHCS 3/8-16 x 1 1/4 », « HHCS 3/8 - 16 UNC x 1 1/4 ») : la plus complète, et
+ * le type le plus précis, avec une note qui dit d'où elle vient. Tailles contradictoires (« 7/8 - 9 UNC » sur une page,
+ * « 3/4 - 10 UNC » sur une autre) : une seule ligne « tailles différentes selon les pages », chaque taille citée.
+ */
+function unifier(lignes) {
+  const parNum = new Map();
+  for (const l of lignes) {
+    const k = cleNum(l.r.pn);
+    if (!k) continue;
+    if (!parNum.has(k)) parNum.set(k, []);
+    parNum.get(k).push(l);
+  }
+  for (const [k, ls] of parNum) {
+    if (ls.length < 2 || new Set(ls.map((l) => l.cle)).size < 2) continue;
+    const familles = new Set(ls.map((l) => l.fam.f));
+    const precis = [...new Set(ls.filter((l) => l.fam.t !== GENERIQUE[l.fam.f]).map((l) => l.fam.t))];
+    let t = null;
+    let tailleOk = true;
+    for (const l of ls) {
+      if (!tailleOk || !l.t) continue;
+      if (!t) t = l.t;
+      else if (compatibles(t, l.t)) t = fusion(t, l.t);
+      else tailleOk = false;
+    }
+    const typeOk = familles.size === 1 && precis.length <= 1;
+    if (tailleOk && typeOk) {
+      const f = ls[0].fam.f;
+      const fam = { f, t: precis[0] || GENERIQUE[f] };
+      const cle = `${f}|${fam.t}|${dimOf(t)}`;
+      const sourcesType = ls.filter((l) => l.fam.t === fam.t);
+      for (const l of ls) {
+        if (l.cle === cle) continue;
+        const notes = [];
+        // Lignes qui donnent ce que celle-ci ne dit pas (diamètre, longueur, filet).
+        const apport = ls.filter((x) => x !== l && x.t && ((l.t?.d == null && x.t.d != null) || (l.t?.l == null && x.t.l != null) || (!l.t?.filet && x.t.filet)));
+        if (dimOf(l.t) !== dimOf(t)) notes.push(`taille ${libFilet(t)} d’après ${ids(apport)}`);
+        if (l.fam.t !== fam.t) notes.push(`type « ${fam.t} » d’après ${ids(sourcesType)}`);
+        l.complete = `Même numéro ailleurs : ${notes.join(' ; ')}.`;
+        l.fam = fam;
+        l.t = t;
+        l.cle = cle;
+      }
+    } else {
+      // Contradiction du catalogue : une seule ligne, chaque taille avec ses assemblages.
+      const tailles = new Map();
+      for (const l of ls) {
+        const lib = `${l.fam.t}${l.t ? ` ${libFilet(l.t)}` : ', taille non précisée'}`;
+        if (!tailles.has(lib)) tailles.set(lib, []);
+        tailles.get(lib).push(l);
+      }
+      const conflit = [...tailles.entries()].map(([lib, xs]) => `${lib} (${ids(xs)})`);
+      // Pièce : le type, ou les types quand ils diffèrent aussi.
+      const types = [...new Set(ls.map((l) => l.fam.t))];
+      const fam = { f: ls[0].fam.f, t: types.join(' / ') };
+      const quoi = tailleOk ? 'Désignations différentes' : 'Tailles différentes';
+      const texte = `${quoi} selon les pages pour le numéro ${ls[0].r.pn} : ${conflit.join(' ; ')}.`;
+      for (const l of ls) {
+        l.conflit = conflit;
+        l.ecart = l.ecart ? `${l.ecart} ${texte}` : texte;
+        l.fam = fam;
+        l.cle = `${fam.f}|conflit|${k}`;
+      }
+    }
+  }
+}
 
 /** Lignes de visserie de toutes les listes d'assemblage (équipement normalisé : assemblies → parts { ref, pn, qty, desc }). */
 export function visserie(eq) {
@@ -189,10 +277,11 @@ export function visserie(eq) {
       // Le filet ne distingue que les vis et les écrous.
       if (t && (fam.f === 'rondelle' || fam.f === 'goupille')) t = { ...t, filet: '' };
       const q = typeof r.qty === 'number' ? r.qty : /^\d+$/.test(String(r.qty ?? '').trim()) ? +r.qty : null;
-      const dim = t ? `${t.jauge != null ? `#${t.jauge}` : t.d != null ? frac(t.d) : ''}|${t.l ? frac(t.l) : ''}|${t.filet}` : '?';
+      const dim = dimOf(t);
       lignes.push({ asm: a, r, fam, t, q, ecart, cle: `${fam.f}|${fam.t}|${dim}` });
     }
   }
+  unifier(lignes);
   return lignes;
 }
 

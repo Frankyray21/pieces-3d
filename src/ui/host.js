@@ -145,10 +145,28 @@ export function createHost(app) {
   // Scène étroite : le panneau devient un volet bas (atelier.css, requête de conteneur sur #stage).
   const COMPACT_W = 720;
   const isCompact = () => { const w = $('#stage').clientWidth; return w > 0 && w < COMPACT_W; };
+  // Volet bas (téléphone, scène étroite) : une entrée d'historique tant qu'il est ouvert, comme pour la visionneuse
+  // et les pages ; le bouton Retour du navigateur ferme la couche du dessus (la fiche, puis le mode qu'elle
+  // recouvrait) et revient à l'onglet quitté à l'ouverture, sans quitter l'assemblage. Une seule entrée pour toute la
+  // pile ; fermé par l'interface (×, Échap…) ou caché par un autre onglet (« Liste des pièces »), le volet consomme son
+  // entrée, reprise quand l'onglet « Vue » le remontre.
+  let spLayer = null; // release() de l'entrée d'historique du volet
+  const holdHistory = () => {
+    if (spLayer || sp.hidden || !(app.narrow() || isCompact()) || (app.narrow() && app.pane() !== 'stage')) return;
+    spLayer = historyLayer(() => {
+      spLayer = null;
+      if (sp.hidden) return;
+      const from = top?.from;
+      sidePanel.close();
+      if (from && app.narrow() && app.pane() === 'stage') app.setPane(from);
+      holdHistory(); // un mode reste ouvert sous la fiche fermée : une entrée pour lui
+    });
+  };
+  const dropHistory = () => { const release = spLayer; spLayer = null; release?.(); };
   const setOpen = (on) => {
     sp.hidden = !on;
     $('#stage').classList.toggle('side-open', on);
-    if (on) placePanel();
+    if (on) { placePanel(); holdHistory(); } else dropHistory();
     // La scène garde sa taille (le panneau la recouvre) ; seule la mise en page des outils change.
   };
   const renderBack = () => {
@@ -280,6 +298,9 @@ export function createHost(app) {
     },
   };
   sp.querySelector('.sp-close').addEventListener('click', () => sidePanel.close());
+  // Onglet du téléphone : volet visible (« Vue ») avec son entrée d'historique, ou caché sous un autre onglet sans.
+  new MutationObserver(() => { if (app.pane() === 'stage') holdHistory(); else if (app.narrow()) dropHistory(); })
+    .observe($('#workspace'), { attributes: true, attributeFilter: ['data-pane'] });
   spBack.addEventListener('click', () => {
     if (base) { sidePanel.close(); return; }
     if (top?.from) { const p = top.from; top.from = null; renderBack(); app.setPane(p); }

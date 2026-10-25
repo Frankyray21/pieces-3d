@@ -62,7 +62,8 @@ function chipTitle(title, parent) {
 function renderSystem(eq, t, { has3d, badge, pageUrl }, n) {
   // Vignette : la page du manuel (aucune si la page n'est pas publiée avec cette version du site).
   const thumb = (sheet, alt) => (pageUrl(sheet) ? `<span class="sysx-thumb"><img data-src="${esc(pageUrl(sheet))}" alt="${esc(alt)}" decoding="async"></span>` : '');
-  const meta = (x) => `<span class="mono">${esc(badge(x.sheet))}</span> · ${plural(x.pieces, 'pièce')}${x.subs ? ` · ${plural(x.subs, 'sous-ensemble')}` : ''}`;
+  // Lignes des listes (comme « N lignes » en tête de la page de l'assemblage), sous-ensembles compris.
+  const meta = (x) => `<span class="mono">${esc(badge(x.sheet))}</span> · ${plural(x.lines, 'ligne')}${x.subs ? `, ${plural(x.subs, 'sous-ensemble')} compris` : ''}`;
   // Badge « 3D » : plein (vue 3D propre) ou en pointillés (montré isolé dans la vue 3D de l'ensemble) ; le sens est
   // aussi donné en texte (lecteurs d'écran, doigt sans survol) et par la légende de la section.
   const tag3d = (id, iso) => (has3d(id) ? '<span class="tag3d">3D</span>' : iso ? '<span class="tag3d iso" title="Isolé dans la vue 3D de l’ensemble">3D<span class="sr"> (isolé dans la vue de l’ensemble)</span></span>' : '');

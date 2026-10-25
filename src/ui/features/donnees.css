@@ -89,6 +89,9 @@
 .dn-pn:hover { border-color: var(--accent); }
 .dn-ref { font-size: 11px; color: var(--muted); }
 .dn-warn { display: flex; align-items: center; gap: 4px; font-size: 11.5px; color: var(--warn); margin: 0 0 4px; }
+.dn-conflit { font-size: 12.5px; font-weight: 600; margin: 0 0 2px; }
+/* Taille ou type complétés d'après une autre page qui donne le même numéro. */
+.dn-done { display: block; font-size: 11.5px; color: var(--muted); margin: 0 0 4px; }
 
 .dn-asmlist { display: grid; gap: 8px; }
 .dn-asmv { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: inset 4px 0 0 var(--sys); scroll-margin-top: 12px; min-width: 0; }
@@ -109,7 +112,8 @@
   .dn-key-v { font-size: 28px; }
   .dn-keys { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
   .dn-key { padding: 12px; }
-  .dn .btn.dn-asm span { display: none; }
+  /* Bouton d'en-tête en icône seule (nom accessible : aria-label) ; celui du pied de bloc garde son texte. */
+  .dn .btn.dn-asm:not(.dn-asm-foot) span { display: none; }
   .dn-t thead { display: none; }
   .dn-t, .dn-t tbody { display: block; }
   .dn-t caption { display: block; }

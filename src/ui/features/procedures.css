@@ -96,20 +96,36 @@
   .proc-home .proc-cards { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
 }
 
-/* Téléphone : barre sur toute la largeur ; le panneau des détails s'arrête au-dessus d'elle et reste bas, pour
-   laisser voir le modèle (titre de l'étape sur deux lignes plutôt que coupé). */
+/* Téléphone : barre sur toute la largeur ; le panneau des détails (ou la fiche) s'arrête au-dessus d'elle et reste
+   bas, en laissant au moins 120 px de vue au modèle (titre de l'étape sur deux lignes plutôt que coupé). La procédure
+   gère l'assemblage : la rangée de l'éclatement s'efface (une seule rangée d'outils), la progression aussi quand le
+   volet est ouvert. */
 @media (max-width: 900px) {
   .proc-bar { left: max(8px, env(safe-area-inset-left, 0px)); right: max(8px, env(safe-area-inset-right, 0px)); bottom: 8px; width: auto; padding: 8px 10px; gap: 6px; }
   .proc-bar-title { font-size: 15px; white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .proc-bar-actions { flex-wrap: nowrap; gap: 6px; }
   .proc-bar-actions .tbtn { padding-left: 8px; padding-right: 8px; }
-  #stage.proc-on .sidepanel { bottom: var(--proc-bar-h, 140px); height: min(38%, calc(100% - var(--tools-bottom, 8px) - var(--proc-bar-h, 140px) - 8px)); }
+  #stage.proc-on .tools .explode { display: none; }
+  #stage.proc-on.side-open .proc-progress { display: none; }
+  #stage.proc-on .sidepanel { bottom: var(--proc-bar-h, 140px); height: min(38%, calc(100% - var(--tools-bottom, 8px) - var(--proc-bar-h, 140px) - 120px)); }
 }
 /* Scène étroite sur ordinateur ou tablette (moins de 720 px entre le rail et la liste) : même disposition. */
 @container stage (max-width: 719px) {
   .proc-bar, .stage.side-open .proc-bar { left: 8px; right: 8px; bottom: 8px; width: auto; }
   .proc-bar-title { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
-  #stage.proc-on .sidepanel { bottom: var(--proc-bar-h, 140px); height: min(38%, calc(100% - var(--tools-bottom, 8px) - var(--proc-bar-h, 140px) - 8px)); }
+  .proc-bar-actions { flex-wrap: nowrap; gap: 6px; }
+  .stage.proc-on .tools .explode { display: none; }
+  .stage.proc-on.side-open .proc-progress { display: none; }
+  #stage.proc-on .sidepanel { bottom: var(--proc-bar-h, 140px); height: min(38%, calc(100% - var(--tools-bottom, 8px) - var(--proc-bar-h, 140px) - 120px)); }
 }
+/* Portrait étroit : les quatre commandes sur une rangée, en icônes (leur nom reste dans le titre et l'étiquette
+   accessible) ; « Détails » garde son mot. La lecture en cours se voit à la couleur du bouton. */
+@media (max-width: 520px) {
+  .proc-bar-actions .tbtn:not(.proc-details) span { display: none; }
+  .proc-bar-actions .tbtn:not(.proc-details) { flex: 1 1 0; min-width: 40px; padding: 0; }
+  .proc-bar-actions .proc-details { flex: 1.6 1 0; }
+}
+.proc-play[aria-pressed="true"] { background: color-mix(in srgb, var(--mark) 18%, var(--surface)); border-color: var(--mark); color: var(--ink); }
 /* Doigt : segments de progression et flèches d'au moins 40 px de haut (le trait reste fin). */
 @media (pointer: coarse) {
   .proc-seg, .proc-seg.done, .proc-seg.cur { height: 40px; padding: 16px 0; background-clip: content-box; }

@@ -21,8 +21,8 @@ for (const [file, m] of Object.entries(MODS)) MODELS[file.split('/')[3]] = m.def
 
 // ------------------------------------------------------------------ texte
 
-/** Minuscules sans accents. */
-const fold = (s) => String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+/** Minuscules sans accents (« œ » et « æ » écrits « oe », « ae »). */
+const fold = (s) => String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/œ/g, 'oe').replace(/æ/g, 'ae');
 /** Numéro de pièce comparable : lettres et chiffres seulement (« hcpe-211 » = « HCPE 211 »). */
 const normPn = (s) => fold(s).replace(/^\*/, '').replace(/[^a-z0-9]/g, '');
 /** Suite de mots repliés, encadrée d'espaces (recherche de préfixes par « includes(' mot') »). */
@@ -68,17 +68,24 @@ const LEX = {
   avance: ['feed'], foreuse: ['drill'], forage: ['drill'], boue: ['mud'], carburant: ['fuel'], echappement: ['exhaust'],
   silencieux: ['muffler', 'silencer'], vitesse: ['speed'], debit: ['flow'],
   lubrificateur: ['lubricator'], graisse: ['grease'], air: ['air'], tube: ['tube'], piston: ['piston'], console: ['console'],
+  vanne: ['valve'], robinet: ['valve', 'ball valve', 'cock'], reniflard: ['breather'], thermometre: ['thermometer'],
+  transformateur: ['transformator', 'transformer'], broche: ['spindle'], capot: ['shield', 'cover', 'guard'], mamelon: ['nipple'],
+  manchon: ['sleeve', 'coupling'], bati: ['frame', 'base frame'], detendeur: ['reducer', 'reducing'], chape: ['clevis'],
+  embrayage: ['clutch'], trappe: ['inspection', 'cover', 'hatch'], inspection: ['inspection'], cartouche: ['cartridge', 'element'],
+  oeil: ['eye', 'rod end'], rouleau: ['roller'], poteau: ['post', 'column'], chapeau: ['cap'], poussee: ['thrust'], helice: ['propeller', 'impeller', 'helix'],
+  guide: ['guide'], palan: ['hoist'], soufflet: ['bellows', 'boot'], jauge: ['gauge', 'gage', 'dipstick'],
 };
 const STOP = new Set(['de', 'du', 'des', 'la', 'le', 'les', 'l', 'd', 'a', 'au', 'aux', 'et', 'en', 'pour', 'sur', 'un', 'une', 'avec', 'page', 'pages', 'p']);
 /** Numéro de page du manuel tel qu'il est imprimé (« 2.4 », « 1.04 », « 4.4.2 »). */
 const PAGE_NUM = /^\d{1,2}(?:\.\d{1,2}){1,2}$/;
 
 const LEX_KEYS = Object.keys(LEX);
+/** Formes du mot tel qu'il est saisi : le mot et son singulier (« pompes » → pompe). */
+const literal = (w) => (w.length > 4 && w.endsWith('s') ? [w, w.slice(0, -1)] : [w]);
 /** Variantes d'un mot de la requête (pluriel, traduction) ; typing : mot en cours de frappe (« filt » → filtre). */
 function variants(w, typing = false) {
-  const out = new Set([w]);
-  const sing = w.length > 4 && w.endsWith('s') ? w.slice(0, -1) : null;
-  if (sing) out.add(sing);
+  const out = new Set(literal(w));
+  const sing = literal(w)[1] || null;
   const keys = [w, sing];
   if (typing && w.length >= 4) keys.push(...LEX_KEYS.filter((k) => k !== w && k.startsWith(w)));
   for (const k of keys) for (const t of LEX[k] || []) out.add(fold(t).replace(/[^a-z0-9]+/g, ' '));
@@ -105,10 +112,18 @@ function parse(q) {
     pageNum,
     ref,
     // Les mots courts (≤ 2) doivent être complets, sauf le dernier (en cours de frappe).
-    words: words.map((w, i) => ({ alts: variants(w, i === last).map((a) => ` ${a}${w.length <= 2 && i !== last ? ' ' : ''}`) })),
+    // lit : le mot tel qu'il est saisi (et son singulier), sans les traductions du lexique.
+    words: words.map((w, i) => {
+      const edge = (a) => ` ${a}${w.length <= 2 && i !== last ? ' ' : ''}`;
+      return { alts: variants(w, i === last).map(edge), lit: literal(w).map(edge) };
+    }),
   };
 }
 const matchAll = (hay, words) => words.length > 0 && words.every((w) => w.alts.some((a) => hay.includes(a)));
+/** Tous les mots trouvés sous leur forme saisie (« pompe » dans « Pompe à eau »), pas seulement par une traduction. */
+const matchLit = (hay, words) => words.length > 0 && words.every((w) => w.lit.some((a) => hay.includes(a)));
+/** Bonus d'une correspondance par la forme saisie : à score égal, elle passe devant une traduction (« pompe » → PUMP). */
+const LIT = 60;
 
 // ------------------------------------------------------------------ données
 
@@ -299,6 +314,32 @@ export default {
 
     // ---------------------------------------------------------------- recherche
     const LIMITS = { part: 30, asm: 12, page: 10 };
+    // Places gardées à chaque autre équipement avant la coupe (tour à tour) : à score égal, l'ordre de l'index ne doit
+    // pas évincer un équipement entier (« pompe » depuis l'accueil). L'équipement affiché passe d'abord.
+    const PER_EQ = { part: 4, asm: 3, page: 2 };
+    // « Afficher plus » : résultats ajoutés à chaque groupe (remis à zéro à chaque nouvelle requête).
+    const more = { part: 0, asm: 0, page: 0 };
+    /** Résultats gardés d'un groupe : l'équipement affiché d'abord, puis les autres tour à tour, puis par score. */
+    function keep(list, k, cur) {
+      list.sort((a, b) => b.s - a.s);
+      const limit = LIMITS[k] + more[k];
+      if (list.length <= limit) return list;
+      const byEq = new Map();
+      for (const r of list) {
+        const id = r.e.eq.id;
+        if (!byEq.has(id)) byEq.set(id, []);
+        byEq.get(id).push(r);
+      }
+      const mine = byEq.get(cur) || [];
+      byEq.delete(cur);
+      const room = limit - Math.min(mine.length, limit); // places laissées aux autres équipements
+      const chosen = new Set();
+      for (let rank = 0; rank < PER_EQ[k] && chosen.size < room; rank++) {
+        for (const g of byEq.values()) if (g[rank] && chosen.size < room) chosen.add(g[rank]);
+      }
+      for (const r of list) { if (chosen.size >= limit) break; chosen.add(r); }
+      return list.filter((r) => chosen.has(r));
+    }
     function find(q) {
       const P = parse(q);
       const cur = ctx.equipment?.id;
@@ -340,7 +381,7 @@ export default {
               if (v > s) s = v;
             }
           }
-          if (!s && matchAll(e.hay, P.words)) s = 300 + (e.hay.startsWith(P.words[0].alts[0]) ? 20 : 0);
+          if (!s && matchAll(e.hay, P.words)) s = 300 + (e.hay.startsWith(P.words[0].alts[0]) ? 20 : 0) + (matchLit(e.hay, P.words) ? LIT : 0);
           else if (!s && P.words.length > 1 && matchAll(e.ctxHay, P.words)) s = 150;
           if (s) out.part.push({ e, s: s + here + (e.has3d ? 5 : 0) });
         }
@@ -348,21 +389,22 @@ export default {
           let s = 0;
           if (n >= 2 && (a.idn === P.qn || (a.key && a.key === P.qn))) s = 1000;
           else if (n >= 3 && a.key && a.key.startsWith(P.qn)) s = 700;
-          else if (matchAll(a.hay, P.words)) s = 400;
+          else if (matchAll(a.hay, P.words)) s = 400 + (matchLit(a.hay, P.words) ? LIT : 0);
           if (s) out.asm.push({ e: a, s: s + here + (a.doc ? 0 : 3) });
         }
         for (const p of ix.pages) {
           let s = 0;
           if (n >= 2 && p.idn === P.qn) s = 1000;
-          else if (matchAll(p.hay, P.words)) s = 300;
+          else if (matchAll(p.hay, P.words)) s = 300 + (matchLit(p.hay, P.words) ? LIT : 0);
           if (s) out.page.push({ e: p, s: s + here });
         }
       }
+      const total = {};
       for (const k of Object.keys(out)) {
-        out[k].sort((a, b) => b.s - a.s);
-        out[k] = out[k].slice(0, LIMITS[k]);
+        total[k] = out[k].length;
+        out[k] = keep(out[k], k, cur);
       }
-      return { P, out };
+      return { P, out, total };
     }
 
     // ---------------------------------------------------------------- affichage
@@ -370,6 +412,7 @@ export default {
     let ordre = []; // indices dans l'ordre affiché
     let active = -1;
     let lastQ = null;
+    let focusAfter = null; // « Afficher plus » : option à activer après le nouveau rendu ({ group, n })
     const hl = (text, P) => {
       let h = esc(text);
       const ws = P.words.flatMap((w) => w.alts.map((a) => a.trim())).filter((a) => a.length >= 2 && /^[a-z0-9 -]+$/.test(a));
@@ -403,12 +446,25 @@ export default {
         setExpanded(true);
         return;
       }
-      const { P, out } = find(q);
+      // Nouvelle requête : les groupes reprennent leur longueur d'origine.
+      if (q !== lastQ) Object.keys(more).forEach((k) => { more[k] = 0; });
+      const { P, out, total } = find(q);
       pop.dataset.find = (performance.now() - t0).toFixed(1);
       const html = { part: [], asm: [], page: [] };
+      /** Nombre affiché dans l'en-tête d'un groupe : « 12 sur 40 » quand la liste est coupée. */
+      const count = (k) => `${out[k].length}${total[k] > out[k].length ? ` sur ${total[k]}` : ''}`;
+      /** Dernière option d'un groupe coupé : « Afficher plus ». */
+      const moreOpt = (k) => {
+        const left = total[k] - out[k].length;
+        if (left <= 0) return;
+        const i = flat.push({ more: k, n: out[k].length }) - 1;
+        html[k].push(`<div class="rch-opt rch-moreopt" role="option" id="rch-o${i}" data-i="${i}" aria-selected="false">
+            <span class="rch-ico">${icon('droite', { size: 16 })}</span>
+            <div class="rch-main"><div class="rch-l1"><span class="rch-title">Afficher ${Math.min(left, LIMITS[k])} de plus</span><span class="rch-qty">${left} autre${left > 1 ? 's' : ''}</span></div></div></div>`);
+      };
       let groups = html.part;
       if (out.part.length) {
-        groups.push(`<div class="rch-group" role="presentation">${P.ref ? `Repère ${esc(P.ref)}` : 'Pièces'} <span>${out.part.length}${out.part.length >= LIMITS.part ? '+' : ''}</span></div>`);
+        groups.push(`<div class="rch-group" role="presentation">${P.ref ? `Repère ${esc(P.ref)}` : 'Pièces'} <span>${count('part')}</span></div>`);
         for (const r of out.part) {
           const { e } = r;
           const i = flat.push(r) - 1;
@@ -423,10 +479,11 @@ export default {
               <div class="rch-uses">${r.use ? `<span class="rch-use" data-use="${e.uses.indexOf(r.use)}">${esc(sheetLabel(e.eq, r.use.sheet))} · ${esc(r.use.title)} · réf. ${esc(r.use.label)}</span>` : usesHtml(e, e.eq)}</div>
             </div></div>`);
         }
+        moreOpt('part');
       }
       groups = html.asm;
       if (out.asm.length) {
-        groups.push(`<div class="rch-group" role="presentation">Assemblages et schémas <span>${out.asm.length}</span></div>`);
+        groups.push(`<div class="rch-group" role="presentation">Assemblages et schémas <span>${count('asm')}</span></div>`);
         for (const r of out.asm) {
           const a = r.e;
           const i = flat.push(r) - 1;
@@ -437,10 +494,11 @@ export default {
               <div class="rch-uses">${a.doc ? 'Schéma / liste' : 'Assemblage'} · ${a.n} ligne${a.n > 1 ? 's' : ''}${a.pn ? ` · <span class="mono">${esc(a.pn)}</span>` : ''}${a.sub ? ` · ${esc(a.sub)}` : ''}${a.sys ? ` · ${esc(a.sys.title)}` : ''}</div>
             </div></div>`);
         }
+        moreOpt('asm');
       }
       groups = html.page;
       if (out.page.length) {
-        groups.push(`<div class="rch-group" role="presentation">Pages du manuel <span>${out.page.length}</span></div>`);
+        groups.push(`<div class="rch-group" role="presentation">Pages du manuel <span>${count('page')}</span></div>`);
         for (const r of out.page) {
           const p = r.e;
           const i = flat.push(r) - 1;
@@ -450,6 +508,7 @@ export default {
               <div class="rch-l1"><span class="rch-sheet mono">${esc(sheetLabel(p.eq, p.sheet))}</span><span class="rch-title">${hl(p.title, P)}</span>${eqTag(p.eq)}</div>
             </div></div>`);
         }
+        moreOpt('page');
       }
       // Groupes dans l'ordre de leur meilleur résultat (à égalité : pièces, assemblages, pages).
       const order = ['part', 'asm', 'page'].filter((k) => out[k].length).sort((a, b) => (out[b][0].s - out[a][0].s) || 0);
@@ -458,10 +517,19 @@ export default {
       list.innerHTML = all
         || `<div class="rch-empty">Rien trouvé pour « ${esc(q)} ». Essayez un numéro partiel, un autre mot de la description ou « réf 12 » pour un repère de schéma.</div>`;
       const shown = [...list.querySelectorAll('.rch-opt')].map((o) => +o.dataset.i);
-      if (shown.length) setActive(shown[0], false); // sans défilement : pas de mise en page forcée à chaque frappe
       ordre = shown;
-      list.scrollTop = 0;
       lastQ = q;
+      // Après « Afficher plus » : le premier résultat ajouté devient l'option active, la liste garde sa position.
+      const after = focusAfter;
+      focusAfter = null;
+      const next = after && flat.findIndex((r) => !r.more && out[after.group].indexOf(r) === after.n);
+      if (after && next >= 0) {
+        list.scrollTop = after.top;
+        setActive(next, true);
+      } else {
+        if (shown.length) setActive(shown[0], false); // sans défilement : pas de mise en page forcée à chaque frappe
+        list.scrollTop = 0;
+      }
       updateStatus(performance.now() - t0);
       setExpanded(true);
     }
@@ -671,6 +739,13 @@ export default {
     function pick(i, useIdx = null) {
       const r = flat[i];
       if (!r) return;
+      if (r.more) {
+        // « Afficher plus » : le groupe s'allonge, la recherche reste ouverte.
+        more[r.more] += LIMITS[r.more];
+        focusAfter = { group: r.more, n: r.n, top: list.scrollTop };
+        render();
+        return;
+      }
       const e = r.e;
       close();
       input.value = '';

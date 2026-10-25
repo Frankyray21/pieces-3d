@@ -56,6 +56,9 @@
   .rch-use { min-height: 40px; display: inline-flex; align-items: center; padding: 6px 10px; }
 }
 .rch-more { align-self: center; }
+/* « Afficher plus » : dernière option d'un groupe coupé. */
+.rch-moreopt .rch-title { color: var(--accent); }
+.rch-moreopt .rch-ico { color: var(--accent); }
 .rch-help, .rch-empty { padding: 10px 12px; color: var(--muted); }
 .rch-help p { margin: 0 0 6px; color: var(--ink); }
 .rch-help ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
@@ -88,7 +91,9 @@
   border: 1px solid var(--head-line, var(--line)); background: var(--head-field, var(--surface-2)); color: var(--head-ink, var(--ink));
 }
 .rch-input:focus { outline: none; border-color: var(--accent); }
-.rch-pop.full .rch-list { padding: 6px 8px; }
+/* Téléphone à l'horizontale avec encoche : la liste reste dans les marges sûres (viewport-fit=cover). */
+.rch-pop.full .rch-list { padding: 6px max(8px, env(safe-area-inset-right, 0px)) 6px max(8px, env(safe-area-inset-left, 0px)); }
+.rch-pop.full .rch-foot { padding-left: max(12px, env(safe-area-inset-left, 0px)); padding-right: max(12px, env(safe-area-inset-right, 0px)); }
 .rch-pop.full .rch-opt { padding: 10px 8px; }
 .rch-pop.full .rch-keys { display: none; }
 body.rch-full { overflow: hidden; }

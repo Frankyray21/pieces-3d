@@ -116,18 +116,22 @@ export function refPath(eq, from, to) {
   return id === from ? path : null;
 }
 
-/** Lignes de pièces (hors renvois vers un sous-assemblage) d'un ensemble d'assemblages. */
-function pieceLines(eq, ids) {
+/**
+ * Lignes des listes du manuel d'un ensemble d'assemblages, sans les renvois vers l'un d'eux (un sous-ensemble est
+ * compté par les lignes de sa propre liste). Assemblage sans sous-ensemble : ses lignes, comme l'en-tête de sa page.
+ */
+function listLines(eq, ids) {
   let n = 0;
-  for (const id of ids) for (const r of eq.assemblies.get(id).parts) if (!r.link) n++;
+  for (const id of ids) for (const r of eq.assemblies.get(id).parts) if (!(r.link && ids.has(r.link))) n++;
   return n;
 }
 
 /**
- * Tuiles des systèmes : [{ id, title, icon, color, index, sheet, pieces, subs,
+ * Tuiles des systèmes : [{ id, title, icon, color, index, sheet, lines, subs,
  * children: [tuile…] }] — profondeur 2 sous chaque système (enfants avec
- * leurs propres enfants en raccourcis). « pieces » : lignes de pièces des
- * listes du manuel, sous-ensembles compris ; « subs » : nombre de sous-ensembles.
+ * leurs propres enfants en raccourcis). « lines » : lignes des listes du
+ * manuel, sous-ensembles compris (une ligne n'est pas une pièce : la quantité
+ * de chaque ligne n'est pas sommée) ; « subs » : nombre de sous-ensembles.
  */
 export function systemTiles(eq) {
   const tile = (id, sys, depth) => {
@@ -141,7 +145,7 @@ export function systemTiles(eq) {
       index: sys.index,
       system: sys.id,
       sheet: a.sheet || (a.sheets || [])[0] || id,
-      pieces: pieceLines(eq, ids),
+      lines: listLines(eq, ids),
       subs: ids.size - 1,
       // Sous-tuiles : sans la racine ni un autre système (déjà présenté pour lui-même).
       children: depth < 2 ? childrenOf(eq, id).filter((c) => c !== eq.root && !sysIds.has(c)).map((c) => tile(c, sys, depth + 1)) : [],

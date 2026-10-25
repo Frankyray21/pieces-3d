@@ -10,10 +10,12 @@
 //    rejetée sans motif d'exclusion (raccord, collier, bielle…) ;
 //  - intrus : collier (CLAMP), bielle (CONNECTING ROD) ou tige (ROD, sauf « ROD BOLT », « ROD NUT » : la vis et
 //    l'écrou de la bielle) comptés comme visserie.
+// Et un numéro = une clé : toutes les lignes d'un même numéro tombent dans la même ligne de « Total par taille »
+// (taille complétée d'après une autre page, ou ligne « tailles différentes selon les pages »).
 // Usage : node scripts/check-visserie.mjs [--verbose]
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { visserie, libTaille, same, famille, exclusion } from '../src/data/visserie.js';
+import { visserie, libTaille, same, famille, exclusion, cleNum } from '../src/data/visserie.js';
 
 const ROOT = join(import.meta.dirname, '..', 'public', 'equipment');
 const verbose = process.argv.includes('--verbose');
@@ -37,6 +39,18 @@ for (const id of readdirSync(ROOT).sort()) {
   }]));
   const lignes = visserie({ assemblies });
   total += lignes.length;
+  const cles = new Map();
+  for (const l of lignes) {
+    const k = cleNum(l.r.pn);
+    if (!k) continue;
+    if (!cles.has(k)) cles.set(k, new Set());
+    cles.get(k).add(l.cle);
+  }
+  for (const [k, set] of cles) {
+    if (set.size < 2) continue;
+    problems++;
+    console.log(`✗ ${id} numéro ${k} : ${set.size} lignes dans « Total par taille » (${[...set].join(' ; ')})`);
+  }
   for (const a of assemblies.values()) {
     for (const r of a.parts) {
       if (r.pseudo) continue;

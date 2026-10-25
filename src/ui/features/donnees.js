@@ -161,7 +161,7 @@ export default {
         <div class="dn-grp-head">
           <span class="dn-grp-ico">${icon(g.icone || sys?.icon || 'cle', { size: 20 })}</span>
           <h3>${esc(g.titre)}</h3>
-          ${asm ? `<button type="button" class="btn dn-asm" data-go="${esc(g.asm)}" title="${esc(asm.titleFr || asm.title)}">${icon(ctx.has3d(g.asm) ? 'cube' : 'page', { size: 15 })}<span>Voir l’assemblage</span></button>` : ''}
+          ${asm ? `<button type="button" class="btn dn-asm" data-go="${esc(g.asm)}" title="${esc(`Voir l’assemblage — ${asm.titleFr || asm.title}`)}" aria-label="${esc(`Voir l’assemblage ${g.asm} — ${asm.titleFr || asm.title}`)}">${icon(ctx.has3d(g.asm) ? 'cube' : 'page', { size: 15 })}<span>Voir l’assemblage</span></button>` : ''}
         </div>
         ${g.tableaux.map((t) => tableau(t)).join('')}
       </section>`;
@@ -197,7 +197,9 @@ export default {
         g.asms.add(l.asm.id);
       }
       const totaux = [...tot.values()].sort(tri);
-      const taille = (l) => (l.t ? `<span class="dn-sz">${esc(libTaille(l.t))}${l.t.filet ? ` <span class="dn-th">${esc(l.t.filet)}</span>` : ''}</span><small class="dn-mm">${esc(libMm(l.t))}</small>` : '<span class="dn-nosrc">non précisée</span>');
+      // Taille ; numéro décrit avec des tailles différentes selon les pages : chaque taille, avec ses assemblages.
+      const taille = (l) => (l.conflit ? `<span class="dn-warn dn-conflit">${icon('alerte', { size: 12 })}Différente selon les pages</span>${l.conflit.map((c) => `<small class="dn-mm">${esc(c)}</small>`).join('')}`
+        : l.t ? `<span class="dn-sz">${esc(libTaille(l.t))}${l.t.filet ? ` <span class="dn-th">${esc(l.t.filet)}</span>` : ''}</span><small class="dn-mm">${esc(libMm(l.t))}</small>` : '<span class="dn-nosrc">non précisée</span>');
       const parAsm = new Map();
       for (const l of lignes) {
         if (!parAsm.has(l.asm.id)) parAsm.set(l.asm.id, []);
@@ -229,11 +231,11 @@ export default {
               <tbody>${rows.map((g) => `<tr data-size="${esc(norm(libTaille(g.t)))}" data-search="${esc(norm(g.items.map((l) => `${l.r.pn} ${l.r.desc} ${l.fam.t}`).join(' ')))}">
                 <th scope="row" class="c-l">${esc(g.fam.t)}</th>
                 <td>${taille(g)}</td>
-                <td>${g.items.map((l) => `<button type="button" class="dn-pn" data-dn-asm="${esc(id)}" data-dn-ref="${esc(l.r.ref)}" title="${esc(`${l.r.desc} — repère ${l.r.label || l.r.ref} : voir dans l’assemblage`)}"><span class="mono">${esc(l.r.pn || '—')}</span><span class="dn-ref">rep. ${esc(l.r.label || l.r.ref)}${l.q != null && g.items.length > 1 ? ` · ${l.q}` : ''}</span></button>${l.ecart ? `<small class="dn-warn">${icon('alerte', { size: 12 })}${esc(l.ecart)}</small>` : ''}`).join('')}</td>
+                <td>${g.items.map((l) => `<button type="button" class="dn-pn" data-dn-asm="${esc(id)}" data-dn-ref="${esc(l.r.ref)}" title="${esc(`${l.r.desc} — repère ${l.r.label || l.r.ref} : voir dans l’assemblage`)}"><span class="mono">${esc(l.r.pn || '—')}</span><span class="dn-ref">rep. ${esc(l.r.label || l.r.ref)}${l.q != null && g.items.length > 1 ? ` · ${l.q}` : ''}</span></button>${l.ecart ? `<small class="dn-warn">${icon('alerte', { size: 12 })}${esc(l.ecart)}</small>` : ''}${l.complete ? `<small class="dn-done">${esc(l.complete)}</small>` : ''}`).join('')}</td>
                 <td class="c-q">${qte(g)}</td>
               </tr>`).join('')}</tbody>
             </table>
-            <p class="dn-asmv-foot">${src(a.sheet)} <button type="button" class="btn dn-asm" data-go="${esc(id)}">${icon(ctx.has3d(id) ? 'cube' : 'page', { size: 15 })}<span>Ouvrir l’assemblage</span></button></p>
+            <p class="dn-asmv-foot">${src(a.sheet)} <button type="button" class="btn dn-asm dn-asm-foot" data-go="${esc(id)}" title="${esc(`Ouvrir l’assemblage ${id} — ${a.titleFr || a.title}`)}" aria-label="${esc(`Ouvrir l’assemblage ${id} — ${a.titleFr || a.title}`)}">${icon(ctx.has3d(id) ? 'cube' : 'page', { size: 15 })}<span>Ouvrir l’assemblage</span></button></p>
           </div>
         </details>`;
       }).join('');
