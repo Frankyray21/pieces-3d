@@ -87,7 +87,7 @@ pièces (numéro, quantité, page du manuel).
   porte son numéro d'étape (`userData.step`) pour animer le montage
   (vidéo de formation).
 
-- **Usinage Marcotte STM-1500** (`stm-1500`, foreuse aux diamants souterraine
+- **Usinage Marcotte STM-1500** (`stm-1500`, foreuse souterraine
   s/n STM-1500-128, manuel de pièces de Machines Roger, 96 pages) : 42
   assemblages et 7 documents (transmission Funk, refroidisseur, accumulateur,
   contrôleur de sécurité, schéma électrique). En 3D : l'ensemble prêt à forer
