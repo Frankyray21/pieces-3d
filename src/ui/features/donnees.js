@@ -107,10 +107,10 @@ export default {
       const el = document.createElement('div');
       el.className = 'dn';
       el.innerHTML = render(eq, don);
-      wire(el, eq);
+      const filtrer = wire(el, eq);
       document.title = `Données techniques · ${eq.name} · Pièces 3D`;
       const page = ctx.ui.showPage(`Données techniques — ${eq.name}`, el, { icon: 'liste' });
-      restore(el, page.element);
+      restore(el, page.element, filtrer);
     });
 
     // ---------------------------------------------------------------- rendu
@@ -316,7 +316,7 @@ export default {
         count.textContent = on ? `${n} taille${n > 1 ? 's' : ''}` : '';
       };
       input.addEventListener('input', filtrer);
-      el.dnFiltrer = filtrer; // filtre rétabli au retour sur la page (restore)
+      return filtrer; // filtre rétabli au retour sur la page (restore)
     }
 
     // ---------------------------------------------------------------- retour sur la page
@@ -331,7 +331,7 @@ export default {
       const filtre = el.querySelector('.dn-filter input')?.value || '';
       try { history.replaceState({ ...(history.state || {}), [KEY]: { top: body.scrollTop, open, filtre } }, ''); } catch { /* état non enregistré */ }
     }
-    function restore(el, body) {
+    function restore(el, body, filtrer) {
       // Avant de quitter la page : l'état est inscrit (clic en phase de capture, avant la navigation du site).
       el.addEventListener('click', (e) => { if (e.target.closest('[data-go], [data-dn-ref]')) snapshot(el, body); }, true);
       let t = 0;
@@ -342,7 +342,7 @@ export default {
       const st = here() ? history.state?.[KEY] : null;
       if (!st) return;
       const input = el.querySelector('.dn-filter input');
-      if (input && st.filtre) { input.value = st.filtre; el.dnFiltrer?.(); }
+      if (input && st.filtre) { input.value = st.filtre; filtrer?.(); }
       for (const id of st.open || []) { const d = el.querySelector(`.dn-asmv[data-asm="${CSS.escape(id)}"]`); if (d) d.open = true; }
       requestAnimationFrame(() => { if (el.isConnected) body.scrollTop = st.top || 0; });
     }

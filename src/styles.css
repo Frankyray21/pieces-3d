@@ -102,16 +102,16 @@ button { cursor: pointer; }
 }
 .node:hover { background: var(--hover); }
 .node.cur { background: var(--accent-soft); }
-.node.cur .sheet { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.node.cur .sheet { background: var(--accent-text); color: var(--accent-ink); border-color: var(--accent-text); }
 .sheet {
   font: 600 11px/1 var(--f-mono); padding: 4px 0; text-align: center; border-radius: 4px;
   border: 1px solid var(--line-strong); color: var(--muted);
 }
-.sheet.m3d { border-color: var(--accent); color: var(--accent); }
+.sheet.m3d { border-color: var(--accent); color: var(--accent-text); }
 .rail .legend { display: flex; align-items: center; gap: 8px; margin: 0 8px 6px; font-size: 11px; color: var(--muted); }
 .rail .legend .sheet { flex: none; width: 3.1em; }
 .rail .legend { align-items: flex-start; line-height: 1.45; }
-.rail .legend .lnk { display: block; margin-top: 3px; text-align: left; border: 0; background: none; padding: 0; color: var(--accent); font: inherit; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
+.rail .legend .lnk { display: block; margin-top: 3px; text-align: left; border: 0; background: none; padding: 0; color: var(--accent-text); font: inherit; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
 .node .n { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .node .t { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .node .alert { color: var(--error); font-weight: 600; }
@@ -132,7 +132,7 @@ details.more summary { cursor: pointer; margin: 0 6px; color: var(--muted); font
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25); transition: transform 0.12s, background 0.12s;
 }
 .balloon:hover, .balloon.is-hover { background: var(--hover); transform: scale(1.15); }
-.balloon.is-selected { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); transform: scale(1.25); z-index: 2; }
+.balloon.is-selected { background: var(--accent-text); border-color: var(--accent-text); color: var(--accent-ink); transform: scale(1.25); z-index: 2; }
 .balloon.is-dim { opacity: 0.25; }
 .balloon.lvl-1 { width: 19px; height: 19px; font-size: 10px; border-style: dashed; }
 .balloon.lvl-2, .balloon.lvl-3 { width: 17px; height: 17px; font-size: 9.5px; border-style: dotted; }
@@ -165,14 +165,15 @@ details.more summary { cursor: pointer; margin: 0 6px; color: var(--muted); font
 .tgroup { gap: 4px; }
 .tgroup .tbtn { padding: 0 8px; }
 .tbtn[aria-pressed="true"] { background: var(--ink); color: var(--surface); }
-.tbtn.strong { background: var(--accent); color: var(--accent-ink); font-weight: 600; }
-.tbtn.strong:hover { filter: brightness(1.06); background: var(--accent); }
+/* Texte clair sur l'accent : teinte foncée en clair (--accent-text : 5,5:1), accent vif en sombre (texte foncé). */
+.tbtn.strong { background: var(--accent-text); color: var(--accent-ink); font-weight: 600; }
+.tbtn.strong:hover { filter: brightness(1.06); background: var(--accent-text); }
 .tbtn:disabled { opacity: 0.45; cursor: not-allowed; }
 .sectionbar {
   display: flex; align-items: center; flex-wrap: wrap; gap: 6px; padding: 5px 8px; border-radius: 10px;
   background: color-mix(in srgb, var(--surface) 92%, transparent); border: 1px solid var(--accent); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
-.sectionbar .lbl { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
+.sectionbar .lbl { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent-text); }
 .sectionbar .seg { display: flex; gap: 2px; }
 .sectionbar input { width: 130px; accent-color: var(--accent); }
 /* Plein écran : la scène seule (API Fullscreen, ou toute la fenêtre quand elle n'existe pas). */
@@ -181,7 +182,7 @@ details.more summary { cursor: pointer; margin: 0 6px; color: var(--muted); font
 body.stage-full .stage { position: fixed; inset: 0; z-index: 50; width: auto; height: auto; }
 body.stage-full .topbar, body.stage-full .mtabs { display: none; }
 /* Annotations du montage par étapes : légende en accent, sous le point visé. */
-.balloon.caption.note { max-width: 15em; border-color: var(--accent); color: var(--accent-ink); background: var(--accent); pointer-events: none; }
+.balloon.caption.note { max-width: 15em; border-color: var(--accent-text); color: var(--accent-ink); background: var(--accent-text); pointer-events: none; }
 /* Montage par étapes (plancher de foreuse) : panneau en bas à gauche de la scène. */
 .stepsbar {
   position: absolute; left: 12px; right: 12px; bottom: 12px; max-width: 640px; box-sizing: border-box; padding: 8px 12px 10px; border-radius: 10px;
@@ -190,7 +191,7 @@ body.stage-full .topbar, body.stage-full .mtabs { display: none; }
 }
 .st-head { display: flex; align-items: center; gap: 6px; }
 .st-head input { flex: 1; min-width: 60px; accent-color: var(--accent); }
-.st-num { min-width: 92px; text-align: center; font: 600 13px/1 var(--f-body); color: var(--accent); white-space: nowrap; }
+.st-num { min-width: 92px; text-align: center; font: 600 13px/1 var(--f-body); color: var(--accent-text); white-space: nowrap; }
 .st-title { font-size: 15px; line-height: 1.25; }
 .st-text { margin: 0; font-size: 13px; line-height: 1.4; color: var(--ink); }
 .st-page { justify-self: start; font-size: 12px; color: var(--muted); background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; }
@@ -207,7 +208,7 @@ body.stage-full .topbar, body.stage-full .mtabs { display: none; }
   flex: none; align-self: stretch; aspect-ratio: 1; display: grid; place-content: center; justify-items: center; gap: 3px;
   padding: 6px; border: 0; border-right: 1.5px solid var(--ink); background: var(--surface-2); color: var(--ink);
 }
-.tb-page:hover { background: var(--accent); color: var(--accent-ink); }
+.tb-page:hover { background: var(--accent-text); color: var(--accent-ink); }
 .tb-page svg { width: 30px; height: 30px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linejoin: round; }
 .tb-page strong { font: 600 14px/1 var(--f-mono); }
 .tb-page small { font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase; }
@@ -257,7 +258,7 @@ button.chip:hover { border-color: var(--accent); }
   font-weight: 500; display: inline-flex; align-items: center; gap: 6px;
 }
 .btn:hover { border-color: var(--ink); }
-.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.primary { background: var(--accent-text); border-color: var(--accent-text); color: var(--accent-ink); }
 .btn.primary:hover { filter: brightness(1.06); }
 .tablewrap { overflow: auto; flex: 1; min-height: 0; }
 table.parts { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -274,15 +275,16 @@ table.parts { width: 100%; border-collapse: collapse; font-size: 13px; }
 .tog {
   border: 1px solid var(--line-strong); border-radius: 5px; background: var(--surface); font-size: 10px; line-height: 1; padding: 0;
 }
-.tog:hover { border-color: var(--accent); color: var(--accent); }
-.tog[aria-expanded="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.tog:hover { border-color: var(--accent); color: var(--accent-text); }
+.tog[aria-expanded="true"] { background: var(--accent-text); border-color: var(--accent-text); color: var(--accent-ink); }
 .parts tr.nested { background: color-mix(in srgb, var(--surface-2) 75%, transparent); }
 .parts tr.nested .refb { border-style: dashed; }
 .parts .c-ref .refb {
   display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding: 0 4px; border-radius: 11px;
   border: 1.5px solid var(--ink); font: 600 11px/1 var(--f-mono);
 }
-.parts tr.sel .c-ref .refb { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.parts tr.sel .c-ref .refb { background: var(--accent-text); border-color: var(--accent-text); color: var(--accent-ink); }
+.parts tbody tr:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
 .parts .c-pn { font-family: var(--f-mono); white-space: nowrap; font-size: 12.5px; }
 .parts .c-qty { text-align: right; font-variant-numeric: tabular-nums; width: 3em; }
 .q3d { display: block; font-size: 10px; line-height: 1.2; color: var(--muted); white-space: nowrap; }
@@ -298,7 +300,7 @@ table.parts { width: 100%; border-collapse: collapse; font-size: 13px; }
 .ico { font-weight: 700; margin-left: 4px; }
 .ico.error { color: var(--error); }
 .ico.warn { color: var(--warn); }
-.linkchip { color: var(--accent); font-weight: 600; font-size: 12px; white-space: nowrap; border: 0; background: none; padding: 0 2px; }
+.linkchip { color: var(--accent-text); font-weight: 600; font-size: 12px; white-space: nowrap; border: 0; background: none; padding: 0 2px; }
 .linkchip:hover { text-decoration: underline; }
 .issues { list-style: none; margin: 0; padding: 0; }
 .issues li { border-bottom: 1px solid var(--line); }

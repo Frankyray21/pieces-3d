@@ -893,6 +893,7 @@ export class Viewer {
    * matériau d'origine. Oublié au changement de modèle.
    */
   setBaseMaterials(entries) {
+    this._dimParts = null;
     const next = new Map(entries || []);
     for (const [o, m] of this._baseOrig) if (!next.has(o)) { o.userData.baseMaterial = m; this._baseOrig.delete(o); }
     for (const [o, m] of next) {
@@ -918,6 +919,28 @@ export class Viewer {
   _restoreBase() {
     for (const [o, m] of this._baseOrig) o.userData.baseMaterial = m;
     this._baseOrig.clear();
+    this._dimParts = null;
+  }
+
+  /**
+   * Contours des pièces dont tous les maillages sont estompés par setBaseMaterials (matériaux transparents des modes
+   * Circuits et Entretien). Calculé une fois par jeu de matériaux et de contours.
+   */
+  _dimEdges() {
+    if (this._dimParts) return this._dimParts;
+    const list = [];
+    const dim = (m) => !!m && m.transparent && m.opacity < 0.5;
+    this.model.root.traverse((e) => {
+      if (!e.userData.isEdges || !e.parent) return;
+      let any = false, all = true;
+      e.parent.traverse((o) => {
+        if (!all || !o.isMesh || o.userData.isEdges) return;
+        any = true;
+        if (!dim(o.userData.baseMaterial)) all = false;
+      });
+      if (any && all) list.push(e);
+    });
+    return (this._dimParts = list);
   }
 
   /**
@@ -1022,6 +1045,14 @@ export class Viewer {
     for (const o of this.markObjs) if (!sel.includes(o)) applyState(o, 'mark', cutAll);
     for (const o of this.hoverObjs) if (!sel.includes(o)) applyState(o, 'hover', cutAll);
     for (const o of sel) applyState(o, cutSel ? 'base' : 'select', cutAll || cutSel);
+    // Pièces estompées par une fonction : leurs contours s'estompent avec elles, comme ceux du fantôme (sinon, avec
+    // « Contours », la machine devient un fil de fer opaque au lieu d'un voile).
+    if (this._baseOrig.size) {
+      for (const e of this._dimEdges()) {
+        const cut = !!e.material.clippingPlanes?.length;
+        if (e.material === edgeMaterial('base', cut)) e.material = edgeMaterial('ghost', cut);
+      }
+    }
     this._refreshLabels();
     this.invalidate();
   }
@@ -1390,10 +1421,12 @@ export class Viewer {
     lines.raycast = () => {}; // jamais sélectionnables
     lines.visible = this.edgesVisible;
     part.add(lines);
+    this._dimParts = null;
   }
 
   _clearEdges() {
     this._edgeQueue = [];
+    this._dimParts = null;
     if (!this.model) return;
     const list = [];
     this.model.root.traverse((o) => { if (o.userData.isEdges) list.push(o); });

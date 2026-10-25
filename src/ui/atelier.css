@@ -114,7 +114,7 @@
 .tgroup.more-l.more-r { -webkit-mask-image: linear-gradient(90deg, transparent, #000 44px, #000 calc(100% - 44px), transparent); mask-image: linear-gradient(90deg, transparent, #000 44px, #000 calc(100% - 44px), transparent); }
 @container stage (max-width: 599px) {
   .tools { left: 8px; right: 8px; }
-  .tscroll { flex: 1 1 240px; }
+  .tscroll { flex: 1 1 100%; }
   .tgroup { flex-wrap: nowrap; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; scroll-padding: 0 34px; }
   .tgroup::-webkit-scrollbar { display: none; }
   .tgroup > *, .tfeat > * { flex: none; }
@@ -122,12 +122,16 @@
   .explode input { flex: 1 1 90px; width: auto; min-width: 48px; }
 }
 @media (max-width: 900px) {
-  .tscroll { flex: 1 1 240px; }
+  .tscroll { flex: 1 1 100%; }
   .tgroup { flex-wrap: nowrap; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; scroll-padding: 0 34px; }
   .tgroup::-webkit-scrollbar { display: none; }
   .tgroup > *, .tfeat > * { flex: none; }
   .explode { max-width: 100%; flex-wrap: nowrap; }
   .explode input { flex: 1 1 90px; width: auto; min-width: 48px; }
+}
+/* Téléphone à l'horizontale (peu de hauteur) : outils sur la rangée de l'éclatement quand la place le permet. */
+@media (max-width: 900px) and (max-height: 500px) {
+  .tscroll { flex-basis: 240px; }
 }
 
 /* Panneau latéral droit des fonctions (ctx.ui.sidePanel), posé sur la scène. */
@@ -202,7 +206,7 @@ body.page-open .workspace .resizer { display: none; }
 .eqh-hero { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 16px; padding: 18px 20px; text-align: left; }
 .eqh-hero:hover { border-color: var(--line); }
 .eqh-id { display: grid; gap: 4px; flex: 1 1 320px; min-width: 0; }
-.eqh .kicker { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
+.eqh .kicker { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent-text); }
 .eqh h2 { margin: 0; font: 700 clamp(28px, 4.4vw, 42px)/1 var(--f-display); text-transform: uppercase; letter-spacing: 0.01em; overflow-wrap: anywhere; }
 .eqh .sub { color: var(--muted); font-size: 13px; }
 .eqh-actions { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -214,8 +218,10 @@ body.page-open .workspace .resizer { display: none; }
 .stat.warn .num { color: var(--error); }
 .eqh-sec { display: grid; gap: 10px; }
 .eqh-sec h3 { margin: 0; display: flex; align-items: center; gap: 8px; font: 600 12px/1 var(--f-body); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
-/* Onglet actif du téléphone : texte en accent foncé (contraste du petit texte). */
+/* Onglet actif du téléphone : texte en accent foncé (contraste du petit texte). Focus clavier tracé à l'intérieur
+   (le bas de la fenêtre couperait un contour extérieur), comme pour le bouton « page du manuel » du cartouche. */
 .mtabs button.on { color: var(--accent-text); }
+.mtabs button:focus-visible, .tb-page:focus-visible { outline-offset: -3px; }
 .tag3d { flex: none; font: 600 11px/1 var(--f-mono); padding: 4px 6px; border-radius: 5px; border: 1px solid var(--accent); color: var(--accent-text); }
 .doccards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 8px; }
 .doccard {
@@ -263,12 +269,51 @@ body.page-open .workspace .resizer { display: none; }
 /* ---------------------------------------------------------------- pointeur grossier (doigt) : cibles d'au moins 40 px */
 @media (pointer: coarse) {
   .tbtn, .btn { min-height: 40px; }
-  .chip { min-height: 36px; }
+  .chip { min-height: 40px; }
+  .filter { height: 40px; }
+  .node { min-height: 40px; }
+  .rail .legend .lnk { padding: 12px 0; margin-top: 0; }
+  .brand { min-height: 44px; min-width: 44px; }
+  .explode input, .sectionbar input, .st-head input { min-height: 40px; }
+  /* Bulles des repères (22 px) : zone de toucher agrandie, sans grossir la bulle. */
+  .balloon::before { content: ''; position: absolute; inset: -9px; border-radius: 50%; }
 }
-/* Téléphone à l'horizontale (peu de hauteur) : la liste défile avec son en-tête, le cartouche s'efface. */
+/* Visionneuse des pages au téléphone : « Fermer » en icône de 44 px en haut à droite, titre sur sa propre ligne,
+   « Taille réelle » et « Ouvrir en 3D » dessous ; marges des bords non sûrs (encoche). */
+.modal .bar #p-close svg { display: none; }
+@media (max-width: 600px) {
+  .modal .bar {
+    flex-wrap: wrap; row-gap: 6px; column-gap: 8px;
+    padding-left: max(12px, env(safe-area-inset-left, 0px)); padding-right: max(12px, env(safe-area-inset-right, 0px));
+  }
+  .modal .bar #p-prev { order: 1; } .modal .bar strong { order: 2; } .modal .bar #p-next { order: 3; }
+  .modal .bar .sp { order: 4; }
+  .modal .bar #p-close { order: 5; width: 44px; height: 44px; padding: 0; justify-content: center; }
+  .modal .bar #p-close span { display: none; }
+  .modal .bar #p-close svg { display: block; }
+  .modal .bar .p-title { order: 6; flex: 1 1 100%; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .modal .bar #p-zoom, .modal .bar #p-open { order: 7; }
+  .modal .bar #p-prev, .modal .bar #p-next { min-width: 44px; justify-content: center; }
+}
+/* Téléphone à l'horizontale (peu de hauteur) : la liste défile avec son en-tête, le cartouche s'efface. Le volet
+   latéral (fiche, modes) passe à droite sur toute la hauteur de la scène, plutôt qu'en bas : le modèle, les outils, le
+   fil d'Ariane et la barre de procédure gardent la partie gauche. */
 @media (max-height: 500px) and (max-width: 900px) {
   .workspace[data-pane="panel"] > .panel { display: block; overflow-y: auto; }
   .panel .tablewrap { overflow: visible; flex: none; min-height: 0; }
   .phead .note { max-height: 4.4em; overflow: auto; }
   .titleblock { display: none; }
+  #stage .sidepanel, #stage.sysx-has-crumbs .sidepanel, #stage.proc-on .sidepanel {
+    top: 8px; bottom: 8px; left: auto; right: max(8px, env(safe-area-inset-right, 0px)); width: min(380px, 48%); height: auto;
+  }
+  #stage.side-open .tools { right: calc(min(380px, 48%) + 16px + env(safe-area-inset-right, 0px)); }
+  #stage.side-open .sysx-crumbs { max-width: calc(52% - 24px - env(safe-area-inset-right, 0px)); }
+  #stage.side-open .proc-bar { right: calc(min(380px, 48%) + 16px + env(safe-area-inset-right, 0px)); }
+  #stage.side-open .docview { padding-right: calc(min(380px, 48%) + 24px); padding-bottom: 16px; }
+  /* Barre de procédure sur une rangée (étape, titre, commandes) ; la progression s'efface (« Étape n / N » reste). */
+  #stage .proc-bar { display: flex; flex-wrap: wrap; align-items: center; column-gap: 8px; row-gap: 4px; padding: 6px 8px; }
+  #stage .proc-bar > .proc-bar-row:first-child { flex: 1 1 280px; }
+  #stage .proc-progress { display: none; }
+  #stage .proc-bar-title { display: block; white-space: nowrap; }
+  #stage .proc-bar-actions { flex: 0 1 auto; flex-wrap: nowrap; }
 }

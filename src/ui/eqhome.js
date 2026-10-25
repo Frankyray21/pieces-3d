@@ -63,7 +63,9 @@ function renderSystem(eq, t, { has3d, badge, pageUrl }, n) {
   // Vignette : la page du manuel (aucune si la page n'est pas publiée avec cette version du site).
   const thumb = (sheet, alt) => (pageUrl(sheet) ? `<span class="sysx-thumb"><img data-src="${esc(pageUrl(sheet))}" alt="${esc(alt)}" decoding="async"></span>` : '');
   const meta = (x) => `<span class="mono">${esc(badge(x.sheet))}</span> · ${plural(x.pieces, 'pièce')}${x.subs ? ` · ${plural(x.subs, 'sous-ensemble')}` : ''}`;
-  const tag3d = (id, iso) => (has3d(id) ? '<span class="tag3d">3D</span>' : iso ? '<span class="tag3d iso" title="Isolé dans la vue 3D de l’ensemble">3D</span>' : '');
+  // Badge « 3D » : plein (vue 3D propre) ou en pointillés (montré isolé dans la vue 3D de l'ensemble) ; le sens est
+  // aussi donné en texte (lecteurs d'écran, doigt sans survol) et par la légende de la section.
+  const tag3d = (id, iso) => (has3d(id) ? '<span class="tag3d">3D</span>' : iso ? '<span class="tag3d iso" title="Isolé dans la vue 3D de l’ensemble">3D<span class="sr"> (isolé dans la vue de l’ensemble)</span></span>' : '');
   const tile = (c) => {
     const act = tileAction(eq, c.id, has3d);
     const chips = c.children.map((g) => `<button type="button" class="sysx-chip" ${tileAction(eq, g.id, has3d)} title="${esc(g.title)} · ${esc(badge(g.sheet))}">${icon(g.icon, { size: 14 })}<span>${esc(chipTitle(g.title, c.title))}</span></button>`).join('');
@@ -130,7 +132,9 @@ export function renderEquipmentHome(eq, { has3d, badge, slot }) {
       ${stat(eq.document.sheets, `pages du ${eq.docWord}`)}
       ${errors ? stat(errors, 'numéros à vérifier', ' warn') : ''}
     </section>
-    ${sys.length ? `<section class="eqh-sec"><h3>${icon('cle', { size: 16 })}Systèmes</h3><div class="sysx">${cards}</div></section>` : ''}
+    ${sys.length ? `<section class="eqh-sec"><h3>${icon('cle', { size: 16 })}Systèmes</h3>
+      ${cards.includes('tag3d iso') ? '<p class="sysx-key"><span class="tag3d" aria-hidden="true">3D</span> vue 3D propre · <span class="tag3d iso" aria-hidden="true">3D</span> en pointillés : montré isolé dans la vue 3D de l’ensemble</p>' : ''}
+      <div class="sysx">${cards}</div></section>` : ''}
     ${toc ? `<section class="eqh-sec"><h3>${icon('liste', { size: 16 })}${esc(eq.assemblies.get(eq.root)?.titleFr || 'Assemblages')}</h3><div class="doccards">${toc}</div></section>` : ''}
     ${docs ? `<section class="eqh-sec"><h3>${icon('liste', { size: 16 })}${esc(eq.labels?.documents || 'Schémas et listes')}</h3><div class="doccards">${docs}</div></section>` : ''}
     ${specs.length ? `<section class="eqh-sec"><h3>${icon('engrenage', { size: 16 })}Fiche technique</h3>

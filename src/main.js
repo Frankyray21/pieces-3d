@@ -1109,12 +1109,12 @@ function openPage(sheet) {
   m.innerHTML = `
     <div class="bar">
       <button type="button" class="btn" id="p-prev" ${num <= 1 ? 'disabled' : ''} aria-label="Page précédente">‹</button>
-      <strong>${s}</strong><span>${esc(eq.sheetTitles[s] || '')}</span>
+      <strong>${s}</strong><span class="p-title">${esc(eq.sheetTitles[s] || '')}</span>
       <button type="button" class="btn" id="p-next" ${num >= n ? 'disabled' : ''} aria-label="Page suivante">›</button>
       <span class="sp"></span>
       <button type="button" class="btn" id="p-zoom">${zoom === 'fit' ? 'Taille réelle' : 'Ajuster'}</button>
       ${owner ? `<button type="button" class="btn" id="p-open">${owner3d ? 'Ouvrir en 3D' : 'Ouvrir la liste'}</button>` : ''}
-      <button type="button" class="btn" id="p-close">Fermer</button>
+      <button type="button" class="btn" id="p-close" aria-label="Fermer la page"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg><span>Fermer</span></button>
     </div>
     <div class="canvas">${eq.pageUrl(s) ? `<img src="${esc(eq.pageUrl(s))}" alt="Page ${s} du ${eq.docWord}" id="p-img">` : ''}</div>`;
   $('#p-prev').addEventListener('click', () => openPage(eq.sheetId(num - 1)));
@@ -1131,6 +1131,7 @@ function openPage(sheet) {
   img.addEventListener('error', missing);
   const fit = () => {
     const c = m.querySelector('.canvas');
+    if (!c || !img.isConnected) return; // visionneuse fermée (ou autre page) avant la fin du chargement
     const ratio = img.naturalHeight ? img.naturalWidth / img.naturalHeight : 1.5;
     if (zoom === 'fit') {
       const w = Math.min(c.clientWidth - 32, (c.clientHeight - 16) * ratio);

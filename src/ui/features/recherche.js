@@ -650,11 +650,13 @@ export default {
       ctx.go(hash);
     }
     /** Après un choix au clavier, le focus va au résultat (titre de la fiche, ligne choisie ou liste) plutôt qu'au <body>. */
-    function focusResult() {
+    function focusResult(kind = 'part') {
       const a = document.activeElement;
       if (a && a !== document.body && a !== input && !a.closest('[inert]')) return; // déjà placé (visionneuse, page)
-      const el = (ctx.ui.sidePanel.isOpen && ctx.ui.sidePanel.owner === 'fiche' && ctx.ui.sidePanel.element.querySelector('.sp-title'))
-        || document.querySelector('#rows tr.sel') || document.querySelector('#panel .phead h1');
+      const title = document.querySelector('#panel .phead h1');
+      const el = kind === 'asm' ? title
+        : (ctx.ui.sidePanel.isOpen && ctx.ui.sidePanel.owner === 'fiche' && ctx.ui.sidePanel.element.querySelector('.sp-title'))
+          || document.querySelector('#rows tr.sel') || title;
       if (!el || !el.isConnected || el.closest('[inert]') || !el.getClientRects().length) return;
       if (!el.hasAttribute('tabindex')) el.tabIndex = -1;
       el.focus({ preventScroll: true });
@@ -677,7 +679,7 @@ export default {
         const u = useIdx != null ? e.uses[useIdx] : r.use || bestUse(e);
         openView(e.eq.id, u.id, () => selectUse(u));
       } else if (e.kind === 'asm') {
-        openView(e.eq.id, e.id, () => { if (ctx.narrow()) ctx.ui.setPane(ctx.viewer.is3d ? 'stage' : 'panel'); focusResult(); });
+        openView(e.eq.id, e.id, () => { if (ctx.narrow()) ctx.ui.setPane(ctx.viewer.is3d ? 'stage' : 'panel'); focusResult('asm'); });
       } else if (e.kind === 'page') {
         if (e.eq.id === ctx.equipment?.id) ctx.openPage(e.sheet);
         else openView(e.eq.id, e.owner || e.eq.root, () => ctx.openPage(e.sheet));

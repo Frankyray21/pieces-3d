@@ -385,12 +385,12 @@ export default {
       const xy = pins.map((p) => { p.label.getWorldPosition(v3).project(cam); return [(v3.x + 1) * w / 2, (1 - v3.y) * h / 2, v3.z <= 1]; });
       // Ordre : pastilles du point choisi d'abord, puis l'ordre des points.
       const order = pins.map((_, i) => i).sort((a, b) => (pins[b].point.def.id === current) - (pins[a].point.def.id === current) || a - b);
-      const size = (i) => [Math.max(24, pins[i].el.offsetWidth || 24), Math.max(24, pins[i].el.offsetHeight || 24)];
+      const width = (i) => Math.max(24, pins[i].el.offsetWidth || 24);
       const overlap = (i, j, wi, wj) => Math.abs(xy[i][0] - xy[j][0]) < (wi + wj) / 2 + M && Math.abs(xy[i][1] - xy[j][1]) < 24 + M;
       // Deux passes : regroupement avec les largeurs affichées, puis avec celles des étiquettes (« 14 +4 », plus large).
       for (let pass = 0; pass < 2; pass++) {
         const leader = pins.map(() => -1);
-        const widths = pins.map((_, i) => size(i)[0]);
+        const widths = pins.map((_, i) => width(i));
         for (const i of order) {
           if (leader[i] >= 0) continue;
           leader[i] = i;

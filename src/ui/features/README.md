@@ -170,7 +170,7 @@ préfixés par `_`, ni `markObjs`, `insets`, `step` ou `userData.baseMaterial`).
 | `ctx.ui.equipmentHome` | élément affiché en bas de la page de l'équipement (`#<équipement>.apercu`), après systèmes, schémas et fiche technique ; le même élément sert pour tous les équipements : le remplir à l'événement `'equipment'` |
 | `ctx.ui.showPage(titre, contenu, { icon, onClose }) → { element, close }` | page plein écran sur l'espace de travail (en-tête et onglets du téléphone restent visibles) ; Retour ou Échap la ferme. Le contenu recouvert (rail, scène, liste) sort de la tabulation (`inert`), le focus passe au titre. Une page sans adresse propre ajoute une entrée d'historique : le bouton Retour du navigateur la ferme. La scène en plein écran le quitte |
 | `ctx.ui.closePage()` | ferme la page ; liée à une adresse, elle revient à l'entrée d'historique précédente (lien direct : la vue d'en dessous remplace l'adresse), sans empiler d'entrée |
-| `ctx.ui.historyLayer(surRetour) → release()` | couche plein écran sans adresse (recherche du téléphone…) : une entrée d'historique est ajoutée, `surRetour()` est appelé si le bouton Retour du navigateur la ferme ; `release()` à la fermeture par l'interface consomme l'entrée |
+| `ctx.ui.historyLayer(surRetour) → release()` | couche plein écran sans adresse (recherche du téléphone…) : une entrée d'historique est ajoutée (après la fin d'un retour en cours, quand une autre couche vient de se fermer : « Sur le dessin » → visionneuse), `surRetour()` est appelé si le bouton Retour du navigateur la ferme ; `release()` à la fermeture par l'interface consomme l'entrée |
 | `ctx.ui.exitFullscreen()` | quitte le plein écran de la scène (avant d'afficher une couche hors de la scène) |
 | `ctx.ui.setPane('rail' \| 'stage' \| 'panel')` | onglet affiché sur téléphone |
 
@@ -199,6 +199,12 @@ sous-ensemble isolé (`'systemes'`).
   `'sidepanel' { open: false, owner }` et se désactive proprement (couleurs,
   marques, pastilles, visibilités rétablies). Une procédure en cours s'arrête
   aussi quand un autre mode prend le panneau (sa barre n'en dépend pas).
+- Un mode qui démarre (circuits, entretien, procédure, liste des procédures)
+  relâche d'abord la pièce sélectionnée (`ctx.viewer.select(null)`) : sa
+  fiche se ferme avec elle, et le panneau du mode s'affiche (pas de pièce
+  restée orange sans fiche). Le sous-ensemble isolé (`'systemes'`), lui,
+  sélectionne son sous-ensemble (fil d'Ariane) et le relâche à sa sortie, où
+  la vue de l'ensemble est recadrée.
 - La **fiche de la pièce** (`'fiche'`) se ferme quand une autre vue
   s'affiche sans pièce sélectionnée (schéma, contrôle des listes, autre
   assemblage) ; le même assemblage réaffiché (retour d'une page plein écran)

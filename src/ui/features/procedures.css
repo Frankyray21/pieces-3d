@@ -99,7 +99,7 @@
 /* Téléphone : barre sur toute la largeur ; le panneau des détails s'arrête au-dessus d'elle et reste bas, pour
    laisser voir le modèle (titre de l'étape sur deux lignes plutôt que coupé). */
 @media (max-width: 900px) {
-  .proc-bar { left: 8px; right: 8px; bottom: 8px; width: auto; padding: 8px 10px; gap: 6px; }
+  .proc-bar { left: max(8px, env(safe-area-inset-left, 0px)); right: max(8px, env(safe-area-inset-right, 0px)); bottom: 8px; width: auto; padding: 8px 10px; gap: 6px; }
   .proc-bar-title { font-size: 15px; white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
   .proc-bar-actions .tbtn { padding-left: 8px; padding-right: 8px; }
   #stage.proc-on .sidepanel { bottom: var(--proc-bar-h, 140px); height: min(38%, calc(100% - var(--tools-bottom, 8px) - var(--proc-bar-h, 140px) - 8px)); }

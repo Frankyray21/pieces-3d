@@ -135,5 +135,5 @@
 .dn-key .dn-srcs { justify-self: start; margin-top: 4px; justify-content: flex-start; }
 .dn-key-v .dn-conv, .dn-key-s .dn-conv { vertical-align: 3px; }
 @media (pointer: coarse) {
-  .dn-src, .dn-asmchip, .dn-nav .chip, .dn-pn { min-height: 36px; display: inline-flex; align-items: center; }
+  .dn-src, .dn-asmchip, .dn-nav .chip, .dn-pn { min-height: 40px; display: inline-flex; align-items: center; }
 }

@@ -21,7 +21,8 @@
 }
 .sysx-ico.big { width: 46px; height: 46px; border-radius: 11px; }
 .sysx-main .sysx-thumb { flex: none; width: 112px; height: 72px; border-radius: 8px; }
-.sysx .tag3d.iso { border-style: dashed; }
+.sysx .tag3d.iso, .sysx-key .tag3d.iso { border-style: dashed; }
+.sysx-key { margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 12.5px; color: var(--muted); }
 
 /* Vignette : la page du manuel (dessin), recadrée. */
 .sysx-thumb {

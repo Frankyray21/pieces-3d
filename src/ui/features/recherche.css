@@ -53,7 +53,7 @@
 }
 .rch-use:hover { border-color: var(--accent); color: var(--ink); }
 @media (pointer: coarse) {
-  .rch-use { padding: 6px 9px; }
+  .rch-use { min-height: 40px; display: inline-flex; align-items: center; padding: 6px 10px; }
 }
 .rch-more { align-self: center; }
 .rch-help, .rch-empty { padding: 10px 12px; color: var(--muted); }
