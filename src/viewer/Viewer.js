@@ -449,13 +449,22 @@ export class Viewer {
 
   _applyAll() {
     for (const node of this.nodes) {
-      const t = node.userData.explodeT;
       for (const p of node.userData.parts) {
-        const k = p.userData.isAssembly ? 1 + SPREAD * p.userData.explodeT : 1;
-        p.position.copy(p.userData.basePos).addScaledVector(p.userData.explode, t * k);
+        // Pièce en cours d'arrivée (arriveParts) : sa position est donnée par son mouvement, qui vise la place
+        // calculée ici (l'éclatement peut changer pendant l'arrivée).
+        if (this._arriving?.has(p)) continue;
+        this._restPos(p, p.position);
       }
     }
     this.invalidate();
+  }
+
+  /** Place d'une pièce pour l'éclatement actuel de son groupe (dans out), ou null si ce n'est pas une pièce de groupe. */
+  _restPos(p, out = new THREE.Vector3()) {
+    const node = p.parent;
+    if (!p.userData.basePos || !node?.userData.isAssembly) return null;
+    const k = p.userData.isAssembly ? 1 + SPREAD * p.userData.explodeT : 1;
+    return out.copy(p.userData.basePos).addScaledVector(p.userData.explode, (node.userData.explodeT || 0) * k);
   }
 
   /**
@@ -991,15 +1000,23 @@ export class Viewer {
     const step = gap ?? Math.max(40, Math.min(260, 3200 / list.length));
     const now = performance.now();
     this.showParts(list, false);
+    if (!this._arriving) this._arriving = new Set();
+    const to = new THREE.Vector3(), from = new THREE.Vector3();
     list.forEach((o, i) => {
-      const to = o.position.clone();
+      // Cible recalculée à chaque image (place pour l'éclatement du moment : « Éclater » ou « Assembler » pendant
+      // l'arrivée) ; objet hors des groupes : sa position actuelle.
+      const fixed = o.position.clone();
       const ex = o.userData.explode;
-      const from = ex ? to.clone().addScaledVector(ex, far) : to.clone();
-      o.position.copy(from);
+      const target = () => this._restPos(o, to) || to.copy(fixed);
+      const start = () => (ex ? from.copy(target()).addScaledVector(ex, far) : from.copy(target()));
+      o.position.copy(start());
+      this._arriving.add(o);
       this.tweens.push({ kind: 'arrive', node: o, start: now + i * step, dur: duration, step: (k) => {
-        if (k < 0) return;
+        if (k < 0) { o.position.copy(start()); return; }
         if (!o.visible) { o.visible = true; this._refreshLabels(); }
-        o.position.lerpVectors(from, to, 1 - Math.pow(1 - k, 3));
+        start();
+        o.position.lerpVectors(from, target(), 1 - Math.pow(1 - k, 3));
+        if (k >= 1) this._arriving.delete(o);
       } });
     });
     return (list.length - 1) * step + duration;
@@ -1009,6 +1026,7 @@ export class Viewer {
   settleParts() {
     if (!this.tweens.some((tw) => tw.kind === 'arrive')) return;
     this.tweens = this.tweens.filter((tw) => tw.kind !== 'arrive');
+    this._arriving?.clear();
     this._applyAll();
     this._cullDirty = true;
     this._refreshLabels();
