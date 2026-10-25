@@ -377,6 +377,7 @@ export class Viewer {
     this.section.on = false;
     this.planeHelper.visible = false;
     this.tweens = this.tweens.filter((t) => t.kind === 'camera');
+    this._arriving?.clear();
     this.scene.add(model.root);
     this._applyAll();
     this._computeEnvironment();
@@ -417,6 +418,7 @@ export class Viewer {
       this.nodes.push(o);
     });
     this.tweens = this.tweens.filter((tw) => !gone.has(tw.node));
+    for (const o of gone) this._arriving?.delete(o);
     this._edgeQueue = (this._edgeQueue || []).filter((p) => !gone.has(p));
     if (this.edgesVisible && this.model.root.userData.edgesQueued) {
       const walk = (node) => {
