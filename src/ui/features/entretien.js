@@ -15,7 +15,9 @@
 // par-dessus la liste des points (le mode reste actif) ; un clic sur une
 // pastille ramène la liste. Sans point dans le modèle affiché, l'outil est
 // masqué (et rien n'est estompé si le mode est déjà actif). Les pastilles qui
-// se chevauchent à l'écran sont regroupées (« 3 +2 ») ; un clic cadre le groupe.
+// se chevauchent à l'écran sont regroupées (« 3 +2 ») ; un clic cadre le groupe
+// au plus près ; s'il reste groupé (points presque au même endroit), le clic
+// suivant ouvre la liste de ses points, chacun cadré à son tour.
 import './entretien.css';
 import * as THREE from 'three';
 import { CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer.js';
@@ -35,6 +37,9 @@ const TYPES = {
 // et reniflard se confondent en deutéranopie).
 const LETTRE = { graisseur: 'G', niveau: 'N', filtre: 'F', reniflard: 'R', bouchon: 'B', inspection: 'I', thermometre: 'T', vidange: 'V', plaque: 'P' };
 const OWNER = 'entretien';
+/** Côté minimal de la boîte cadrée : un point seul reste dans son contexte ; un groupe, lui, est serré au plus près. */
+const MIN_POINT = 0.6;
+const MIN_GROUP = 0.05;
 
 export default {
   id: 'entretien',
@@ -117,10 +122,22 @@ export default {
         e.stopPropagation();
         reveal();
         const pin = pins.find((p) => p.el === el);
-        // Pastille qui regroupe d'autres points : on cadre le groupe (elles se séparent à l'écran). Groupe d'un seul
-        // point (ses exemplaires, ex. deux bouchons de niveau) : ce point, comme une pastille seule.
-        if (pin?.points > 1) { focus(pt.def.id, { frame: false, scroll: true }); frameLabels(pin.cluster.map((p) => p.label)); }
-        else focus(pt.def.id, { frame: true, scroll: true });
+        // Pastille qui regroupe d'autres points : on cadre le groupe au plus près (les pastilles se séparent à l'écran).
+        // Le groupe est relevé avant tout : focus() refait les groupes, et la pastille cliquée peut y perdre le sien
+        // (autre exemplaire du point en tête d'un groupe voisin). Même groupe cliqué de nouveau, toujours groupé :
+        // liste de ses points. Groupe d'un seul point (ses exemplaires, ex. deux bouchons de niveau) : ce point.
+        const members = pin?.points > 1 ? (pin.cluster || [pin]).slice() : null;
+        if (members) {
+          const ids = [...new Set(members.map((p) => p.point.def.id))];
+          const key = groupKey(members);
+          if (key === lastGroup) { chooser(el, ids); return; }
+          lastGroup = key;
+          focus(pt.def.id, { frame: false, scroll: true });
+          frameLabels(members.map((p) => p.label), MIN_GROUP);
+        } else {
+          lastGroup = '';
+          focus(pt.def.id, { frame: true, scroll: true });
+        }
       });
       const label = new CSS2DObject(el);
       label.center.set(0.5, 0.5);
@@ -252,16 +269,76 @@ export default {
       const mine = id == null ? pins : pins.filter((p) => p.point.def.id === id);
       frameLabels(mine.map((p) => p.label));
     };
-    const frameLabels = (labels) => {
+    const frameLabels = (labels, min = MIN_POINT) => {
       if (!labels.length) return;
       const box = new THREE.Box3();
       const w = new THREE.Vector3();
       for (const label of labels) box.expandByPoint(label.getWorldPosition(w));
-      // Au moins 60 cm de côté : un point seul reste dans son contexte.
-      const size = box.getSize(new THREE.Vector3()).max(new THREE.Vector3(0.6, 0.6, 0.6));
+      // Au moins 60 cm de côté pour un point (il reste dans son contexte) ; 5 cm pour un groupe (il se sépare).
+      const size = box.getSize(new THREE.Vector3()).max(new THREE.Vector3(min, min, min));
       box.setFromCenterAndSize(box.getCenter(new THREE.Vector3()), size);
       ctx.viewer.frame(box);
     };
+
+    // ------------------------------------------------------------ liste des points d'un groupe resté groupé
+    let lastGroup = ''; // groupe déjà cadré au plus près (ids de ses points)
+    const groupKey = (members) => [...new Set(members.map((p) => p.point.def.id))].sort().join('|');
+    const menu = document.createElement('div');
+    menu.className = 'ent-choose';
+    menu.setAttribute('role', 'menu');
+    menu.hidden = true;
+    ctx.ui.stage.appendChild(menu);
+    let menuFor = null; // pastille qui a ouvert la liste (le focus y revient)
+    const closeMenu = ({ refocus = false } = {}) => {
+      if (menu.hidden) return false;
+      menu.hidden = true;
+      menu.replaceChildren();
+      if (refocus && menuFor?.isConnected && !menuFor.hidden) menuFor.focus({ preventScroll: true });
+      menuFor = null;
+      return true;
+    };
+    /** Liste des points d'une pastille de groupe, posée près d'elle ; chaque point est cadré à son tour. */
+    const chooser = (el, ids) => {
+      const list = ids.map((id) => points.find((p) => p.def.id === id)).filter(Boolean).sort((a, b) => a.n - b.n);
+      menu.innerHTML = `<p class="ent-choose-h">Points au même endroit</p>${list.map((p) => `
+        <button type="button" role="menuitem" class="ent-choose-i" data-ent="${esc(p.def.id)}">
+          <span class="ent-num ent-${esc(p.def.type)}">${p.n}</span>
+          <span><b>${esc(p.def.titre)}</b><small>${esc(TYPES[p.def.type] || p.def.type)}${p.def.approx ? ' · position approchée' : ''}</small></span>
+        </button>`).join('')}`;
+      menuFor = el;
+      menu.hidden = false;
+      // Près de la pastille, dans la scène (sans en sortir).
+      const st = ctx.ui.stage.getBoundingClientRect();
+      const r = el.getBoundingClientRect();
+      const w = menu.offsetWidth, h = menu.offsetHeight;
+      const x = Math.max(8, Math.min(r.left - st.left + r.width / 2 - w / 2, st.width - w - 8));
+      const below = r.bottom - st.top + 8;
+      const y = below + h <= st.height - 8 ? below : Math.max(8, r.top - st.top - h - 8);
+      menu.style.left = `${Math.round(x)}px`;
+      menu.style.top = `${Math.round(y)}px`;
+      menu.querySelector('button')?.focus({ preventScroll: true });
+    };
+    menu.addEventListener('pointerdown', (e) => e.stopPropagation());
+    menu.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const b = e.target.closest('[data-ent]');
+      if (!b) return;
+      closeMenu();
+      lastGroup = '';
+      focus(b.dataset.ent, { frame: true, scroll: true });
+    });
+    menu.addEventListener('keydown', (e) => {
+      const items = [...menu.querySelectorAll('[data-ent]')];
+      const i = items.indexOf(document.activeElement);
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        items[(i + (e.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length]?.focus();
+      } else if (e.key === 'Tab') closeMenu();
+    });
+    // Échap ferme la liste d'abord (au-dessus du panneau latéral).
+    ctx.ui.onEscape(() => closeMenu({ refocus: true }), 115);
+    document.addEventListener('pointerdown', (e) => { if (!menu.hidden && !menu.contains(e.target)) closeMenu(); });
+    ctx.ui.stage.addEventListener('wheel', () => closeMenu(), { passive: true });
 
     /** Le panneau de la liste revient (la fiche d'une pièce le recouvrait). */
     const reveal = () => {
@@ -300,6 +377,8 @@ export default {
     };
 
     const teardown = () => {
+      closeMenu();
+      lastGroup = '';
       clearPins();
       stopDeclutter();
       ctx.ui.stage.classList.remove('ent-on');
@@ -408,6 +487,10 @@ export default {
           labelOf(p);
         });
       }
+      // Groupe cadré qui s'est séparé : un nouveau clic sur un groupe le cadre d'abord. Pastille de la liste ouverte
+      // cachée ou séparée de son groupe (la vue a bougé) : la liste se ferme.
+      if (lastGroup && !pins.some((p) => p.points > 1 && groupKey(p.cluster) === lastGroup)) lastGroup = '';
+      if (menuFor && (menuFor.hidden || !menuFor.classList.contains('is-group'))) closeMenu();
     };
     /** Regroupement refait tout de suite (point choisi, pastilles reposées). */
     const relayout = () => { lastCam = ''; declutter(); };

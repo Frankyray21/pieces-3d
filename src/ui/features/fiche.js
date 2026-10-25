@@ -70,7 +70,9 @@ export default {
           if (lines.length && lines.every((l) => pagesOf(l).some(mine) && pagesOf(l).every((pg) => mine(pg) || docs.has(ctx.sheetOwner(pg))))) tables.push(t);
         }
       }
-      return tables.length || group ? { tables, group } : null;
+      // Section de la page Données où ouvrir le lien : celle de l'assemblage, sinon celle du premier tableau repris.
+      const section = (group || (don.groupes || []).find((g) => (g.tableaux || []).includes(tables[0])))?.id ?? null;
+      return tables.length || group ? { tables, group, section } : null;
     };
     /** Page et positions de la bulle de la ligne : { sheet, boxes } (boxes vide si inconnue). */
     const locate = (row) => {
@@ -167,7 +169,7 @@ export default {
           ${mdLines.length ? `<table class="fiche-dims"><tbody>
             ${mdLines.slice(0, MAXL).map(({ l }) => `<tr><th>${esc(l.l)}</th><td>${mdVal(l)}</td><td>${pagesOf(l).map((pg) => `<button type="button" class="chip" data-page="${esc(pg)}" title="Ouvrir la page ${esc(pg)}">${esc(pg)}</button>`).join(' ')}</td></tr>`).join('')}
           </tbody></table>` : ''}
-          <p class="fiche-sub">${mdLines.length > MAXL ? `${mdLines.length - MAXL} autres valeurs dans les ` : 'Voir aussi les '}<button type="button" class="fiche-link" data-go="donnees">données techniques${md.group ? ` (${esc(md.group.titre)})` : ''}</button>.</p>
+          <p class="fiche-sub">${mdLines.length > MAXL ? `${mdLines.length - MAXL} autres valeurs dans les ` : 'Voir aussi les '}<button type="button" class="fiche-link" data-go="donnees"${md.section ? ` data-dn-section="${esc(md.section)}"` : ''}>données techniques${md.group ? ` (${esc(md.group.titre)})` : ''}</button>.</p>
         </section>` : '';
       const sheet = sheetsOf(row)[0];
       const url = sheet ? ctx.pageUrl(sheet) : null;

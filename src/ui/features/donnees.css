@@ -35,6 +35,9 @@
 
 /* Groupes (un par système) */
 .dn-grp { display: grid; gap: 12px; scroll-margin-top: 12px; min-width: 0; }
+/* Section ouverte par un lien (fiche d'une pièce) : mise en évidence un instant. */
+.dn-grp.dn-hl { animation: dn-hl 1.8s ease-out; border-radius: var(--radius); }
+@keyframes dn-hl { from { box-shadow: 0 0 0 3px var(--sys), 0 0 0 9px color-mix(in srgb, var(--sys) 25%, transparent); } to { box-shadow: 0 0 0 3px transparent, 0 0 0 9px transparent; } }
 .dn-grp-head { display: flex; align-items: center; gap: 10px; padding-bottom: 8px; border-bottom: 3px solid var(--sys); min-width: 0; }
 .dn-grp-ico { flex: none; width: 36px; height: 36px; border-radius: 9px; display: grid; place-items: center; color: var(--sys); background: color-mix(in srgb, var(--sys) 14%, transparent); }
 .dn-grp h3 { margin: 0; flex: 1; min-width: 0; font: 700 22px/1.1 var(--f-display); text-transform: uppercase; letter-spacing: 0.01em; }

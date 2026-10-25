@@ -187,6 +187,8 @@ préfixés par `_`, ni `markObjs`, `insets`, `step` ou `userData.baseMaterial`).
 
 Les boutons et liens portant `data-go="<jeton>"` (navigation) ou
 `data-page="<feuille>"` (page du manuel) sont gérés par le site, partout dans la page.
+Avec `data-go="donnees"`, `data-dn-section="<id de groupe>"` ouvre la page des données
+techniques sur cette section (mise en évidence un instant).
 
 ## Panneau latéral et modes
 
@@ -223,12 +225,17 @@ sous-ensemble isolé (`'systemes'`).
 Sur téléphone, le panneau est un volet bas (la vue reste visible au-dessus,
 la pièce y est cadrée) ; ouvert depuis l'onglet « Pièces » ou « Assemblages »,
 il bascule sur « Vue » et son en-tête offre « ‹ Liste des pièces » (ou
-« ‹ Assemblages ») pour y revenir.
+« ‹ Assemblages ») pour y revenir. Volet bas ouvert (téléphone, scène étroite),
+une entrée d'historique est ajoutée : le bouton Retour du navigateur ferme la
+couche du dessus (la fiche, puis le mode) et revient à l'onglet quitté, sans
+quitter l'assemblage ; fermé par ×, Échap ou caché par un autre onglet, le
+volet consomme son entrée.
 
 ## Touche Échap
 
 Une seule couche est fermée par appui, de la plus haute à la plus basse :
-fenêtres surgissantes des fonctions (recherche 120, menu du fil d'Ariane 110),
+fenêtres surgissantes des fonctions (recherche 120, liste des points d'une
+pastille groupée de l'entretien 115, menu du fil d'Ariane 110),
 visionneuse des pages (100), page plein écran (80), panneau latéral (60 : la
 couche du dessus, la fiche avant le mode recouvert), sélection (40),
 procédure en cours (30), scène en plein écran (20). Une fonction ajoute sa couche avec `ctx.ui.onEscape(fn,

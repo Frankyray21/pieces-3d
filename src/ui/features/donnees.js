@@ -99,6 +99,14 @@ export default {
       card.hidden = false;
     });
 
+    // --- lien vers une section de la page (data-dn-section, ex. « données techniques (Tête de forage) » de la
+    // fiche) : la page s'ouvre sur cette section, mise en évidence un instant.
+    let section = null;
+    document.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-dn-section]');
+      if (b) section = { id: b.dataset.dnSection, t: Date.now() };
+    }, true);
+
     // --- page plein écran
     ctx.registerRoute(ID, () => {
       const eq = ctx.equipment;
@@ -111,6 +119,17 @@ export default {
       document.title = `Données techniques · ${eq.name} · Pièces 3D`;
       const page = ctx.ui.showPage(`Données techniques — ${eq.name}`, el, { icon: 'liste' });
       restore(el, page.element, filtrer);
+      // Section demandée par le lien qui vient d'ouvrir la page (une nouvelle entrée d'historique : rien à rétablir).
+      const want = section && Date.now() - section.t < 5000 ? el.querySelector(`#dn-${CSS.escape(section.id)}`) : null;
+      section = null;
+      if (want) {
+        requestAnimationFrame(() => {
+          if (!want.isConnected) return;
+          want.scrollIntoView({ block: 'start' });
+          want.classList.add('dn-hl');
+          setTimeout(() => want.classList.remove('dn-hl'), 1800);
+        });
+      }
     });
 
     // ---------------------------------------------------------------- rendu
