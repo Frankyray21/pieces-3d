@@ -288,11 +288,13 @@ export function createHost(app) {
   const tools = $('#tools');
   const placePanel = () => {
     const st = $('#stage').getBoundingClientRect();
+    if (!st.width || !st.height) return; // scène masquée (onglet du téléphone) : la dernière valeur reste juste
     const tb = tools.getBoundingClientRect();
     const below = !tools.hidden && tb.height ? Math.round(tb.bottom - st.top + 8) : 12;
     $('#stage').style.setProperty('--tools-bottom', `${below}px`);
   };
   new ResizeObserver(placePanel).observe(tools);
+  new ResizeObserver(placePanel).observe($('#stage')); // scène de nouveau affichée (onglet « Vue » du téléphone)
   new MutationObserver(placePanel).observe(tools, { attributes: true, attributeFilter: ['hidden'] });
 
   // ---------------------------------------------------------------- marges de cadrage de la vue 3D

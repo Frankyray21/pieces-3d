@@ -26,6 +26,9 @@ const ARRIVE = 900; // durée du mouvement d'une pièce (ms)
 const PAUSE = 2400; // lecture auto : pause après la pose d'une étape (ms)
 const FAR = 1.25; // départ : position éclatée × FAR
 const RM = typeof matchMedia === 'function' ? matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
+// Icônes des commandes de la barre (seules visibles sur un téléphone à l'horizontale, où la barre tient sur une rangée).
+const PLAY = '<svg class="ico-svg" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M7 5v14l12-7z"/></svg>';
+const REPLAY = '<svg class="ico-svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4h4"/></svg>';
 /** Libellé de la sorte de procédure. */
 const KIND = { montage: 'Montage d’après le manuel', listes: 'Parcours des listes du manuel (pas un ordre de montage)' };
 
@@ -79,15 +82,18 @@ export default {
       </div>
       <div class="proc-progress"><div class="proc-segs" role="group" aria-label="Étapes de la procédure"></div></div>
       <div class="proc-bar-row proc-bar-actions">
-        <button type="button" class="tbtn proc-play" aria-pressed="false" title="Lecture automatique des étapes">Lecture auto</button>
-        <button type="button" class="tbtn proc-replay" title="Rejouer la pose de cette étape">Rejouer</button>
-        <button type="button" class="tbtn proc-details" aria-pressed="false" title="Texte, pièces et page du manuel">Détails</button>
+        <button type="button" class="tbtn proc-play" aria-pressed="false" title="Lecture automatique des étapes">${PLAY}<span>Lecture auto</span></button>
+        <button type="button" class="tbtn proc-replay" title="Rejouer la pose de cette étape">${REPLAY}<span>Rejouer</span></button>
+        <button type="button" class="tbtn proc-details" aria-pressed="false" title="Texte, pièces et page du manuel">${icon('liste', { size: 14 })}<span>Détails</span></button>
         <button type="button" class="tbtn proc-quit" title="Quitter la procédure (modèle rétabli)">${icon('fermer', { size: 14 })}<span>Quitter</span></button>
       </div>`;
     stage.appendChild(bar);
     const $b = (s) => bar.querySelector(s);
     // Hauteur de la barre : le panneau latéral (téléphone) et les messages brefs (hors de la scène) se posent au-dessus.
+    // Barre masquée (pas de procédure, ou scène cachée sous l'onglet « Pièces » du téléphone) : la dernière hauteur est
+    // gardée, pour que le volet et le cadrage soient justes dès que la scène réapparaît.
     new ResizeObserver(() => {
+      if (!bar.offsetHeight) return;
       stage.style.setProperty('--proc-bar-h', `${bar.offsetHeight + 16}px`);
       document.documentElement.style.setProperty('--proc-bar-h', `${bar.offsetHeight + 16}px`);
     }).observe(bar);
@@ -148,7 +154,7 @@ export default {
       clearTimeout(run.timer);
       run.timer = null;
       $b('.proc-play').setAttribute('aria-pressed', 'false');
-      $b('.proc-play').textContent = 'Lecture auto';
+      $b('.proc-play span').textContent = 'Lecture auto';
     };
     const playNext = () => {
       if (!run) return;
@@ -164,7 +170,7 @@ export default {
       if (!run) return;
       if (run.timer) { stopPlay(); return; }
       $b('.proc-play').setAttribute('aria-pressed', 'true');
-      $b('.proc-play').textContent = 'Pause';
+      $b('.proc-play span').textContent = 'Pause';
       run.focus = null;
       if (run.n >= run.proc.steps.length - 1) {
         const ms = show(0);
@@ -331,8 +337,13 @@ export default {
       run = { proc, n: 0, prep: prepare(proc), timer: null, focus: null, model: ctx.viewer.model };
       stage.classList.add('proc-on');
       bar.hidden = false;
-      // Cadrage au-dessus de la barre (et hors du panneau latéral, pris en compte par le socle).
-      ctx.ui.setInsets('procedures', bar);
+      // Cadrage au-dessus de la barre (et hors du panneau latéral, pris en compte par le socle). Barre posée en colonne
+      // à droite (téléphone à l'horizontale) : c'est le côté droit qui est dégagé, le modèle garde toute la hauteur.
+      ctx.ui.setInsets('procedures', (vp) => {
+        const r = bar.getBoundingClientRect();
+        if (bar.hidden || !r.width) return null;
+        return r.left > vp.left + vp.width / 2 ? { right: vp.right - r.left + 8 } : { bottom: vp.bottom - r.top + 8 };
+      });
       tool.setAttribute('aria-pressed', 'true');
       // Le panneau passe à la procédure : les autres modes (circuits, entretien…) s'arrêtent.
       // Scène étroite (téléphone, tablette) : il couvrirait la scène ; replié, les détails s'ouvrent par « Détails ».

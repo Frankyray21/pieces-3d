@@ -270,7 +270,7 @@ body.page-open .workspace .resizer { display: none; }
 @media (pointer: coarse) {
   .tbtn, .btn { min-height: 40px; }
   .chip { min-height: 40px; }
-  .filter { height: 40px; }
+  .filter, .search input { height: 40px; }
   .node { min-height: 40px; }
   .rail .legend .lnk { padding: 12px 0; margin-top: 0; }
   .brand { min-height: 44px; min-width: 44px; }
@@ -295,25 +295,28 @@ body.page-open .workspace .resizer { display: none; }
   .modal .bar #p-zoom, .modal .bar #p-open { order: 7; }
   .modal .bar #p-prev, .modal .bar #p-next { min-width: 44px; justify-content: center; }
 }
-/* Téléphone à l'horizontale (peu de hauteur) : la liste défile avec son en-tête, le cartouche s'efface. Le volet
-   latéral (fiche, modes) passe à droite sur toute la hauteur de la scène, plutôt qu'en bas : le modèle, les outils, le
-   fil d'Ariane et la barre de procédure gardent la partie gauche. */
+/* Téléphone à l'horizontale (peu de hauteur) : la liste défile avec son en-tête, le cartouche s'efface. Volet latéral
+   (fiche, modes) et barre de procédure en colonne à droite, sous les outils : le modèle garde la partie gauche de la
+   scène sur toute sa hauteur. La barre tient sur une rangée (étape, titre, commandes en icônes), sans la progression. */
 @media (max-height: 500px) and (max-width: 900px) {
   .workspace[data-pane="panel"] > .panel { display: block; overflow-y: auto; }
   .panel .tablewrap { overflow: visible; flex: none; min-height: 0; }
   .phead .note { max-height: 4.4em; overflow: auto; }
   .titleblock { display: none; }
-  #stage .sidepanel, #stage.sysx-has-crumbs .sidepanel, #stage.proc-on .sidepanel {
-    top: 8px; bottom: 8px; left: auto; right: max(8px, env(safe-area-inset-right, 0px)); width: min(380px, 48%); height: auto;
+  #stage .sidepanel, #stage.sysx-has-crumbs .sidepanel {
+    top: var(--tools-bottom, 8px); bottom: 8px; left: auto; right: max(8px, env(safe-area-inset-right, 0px)); width: min(380px, 48%); height: auto;
   }
-  #stage.side-open .tools { right: calc(min(380px, 48%) + 16px + env(safe-area-inset-right, 0px)); }
-  #stage.side-open .sysx-crumbs { max-width: calc(52% - 24px - env(safe-area-inset-right, 0px)); }
-  #stage.side-open .proc-bar { right: calc(min(380px, 48%) + 16px + env(safe-area-inset-right, 0px)); }
+  #stage.proc-on .sidepanel { top: var(--tools-bottom, 8px); bottom: var(--proc-bar-h, 64px); left: auto; width: min(380px, 48%); height: auto; }
   #stage.side-open .docview { padding-right: calc(min(380px, 48%) + 24px); padding-bottom: 16px; }
-  /* Barre de procédure sur une rangée (étape, titre, commandes) ; la progression s'efface (« Étape n / N » reste). */
-  #stage .proc-bar { display: flex; flex-wrap: wrap; align-items: center; column-gap: 8px; row-gap: 4px; padding: 6px 8px; }
-  #stage .proc-bar > .proc-bar-row:first-child { flex: 1 1 280px; }
+  #stage .proc-bar, #stage.side-open .proc-bar {
+    left: auto; right: max(8px, env(safe-area-inset-right, 0px)); width: min(380px, 48%);
+    display: flex; flex-wrap: nowrap; align-items: center; gap: 4px; padding: 4px 6px;
+  }
+  #stage .proc-bar > .proc-bar-row:first-child { flex: 1 1 auto; min-width: 0; gap: 2px; }
   #stage .proc-progress { display: none; }
-  #stage .proc-bar-title { display: block; white-space: nowrap; }
-  #stage .proc-bar-actions { flex: 0 1 auto; flex-wrap: nowrap; }
+  #stage .proc-bar-title { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 13px; }
+  #stage .proc-prev, #stage .proc-next { width: 36px; }
+  #stage .proc-bar-actions { flex: none; flex-wrap: nowrap; gap: 2px; }
+  #stage .proc-bar-actions .tbtn { flex: none; width: 38px; padding: 0; }
+  #stage .proc-bar-actions .tbtn span { display: none; }
 }
