@@ -443,7 +443,7 @@
      "8",
      "",
      2,
-     "Blocage de jonction 3 × 8 (24 po) à plat en travers sur le 6 × 6 de jonction, à l’intérieur contre le madrier de rive de chaque côté du plancher, à cheval sur le joint, vissé aux deux sections",
+     "Blocage de jonction 3 × 8 (24 po) sur le chant, contre le madrier de rive de chaque côté du plancher, à cheval sur le joint, vissé aux deux sections",
      {
       "pnText": "3 × 8 brut"
      }
@@ -452,7 +452,7 @@
      "9",
      "",
      4,
-     "Tire-fond 6 po : blocage de jonction vissé de part et d’autre du joint",
+     "Tire-fond 6 po : blocage de jonction vissé dans le madrier de chaque section",
      {
       "pnText": "Tire-fond 6 po",
       "qty3d": 2
