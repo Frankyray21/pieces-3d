@@ -88,14 +88,15 @@ export function P10(api, opts = {}) {
   joistZ.forEach((z) => put('1', lumber(S, [SEC, B66, B66], [SEC * 1.5, B66 / 2, z]), [0, 0.75, 0], 11));
   // Chaque madrier vissé dans le bout de 6 × 6 de jonction, comme celui de la section 1.
   put('7', lagScrews(S, joistZ.map((z) => [JOINT_X + 1.5 * IN, B66, z])), [0, 0.9, 0], 11);
-  // Blocage de jonction (p. 6) : un 3 × 8 de 24 po posé sur le chant contre
-  // la face extérieure du madrier de rive, de chaque côté du plancher, à
-  // cheval sur le joint ; vissé dans les deux sections (un tire-fond dans
-  // chaque madrier), il les tient ensemble et les empêche de bouger.
+  // Blocage de jonction (photo p. 6) : un 3 × 8 de 24 po posé à plat sur le
+  // 6 × 6 de jonction, à l'intérieur, contre le madrier de rive de chaque côté
+  // du plancher, à cheval sur le joint ; vissé dans les deux sections (un
+  // tire-fond dans chaque madrier), il les tient ensemble et les empêche de bouger.
   const half = 12 * IN;
   const sides = [-1, 1];
-  sides.forEach((s) => put('8', lumber(S, [2 * half, P8, P3], [JOINT_X, B66 - P8 / 2, s * (W / 2 + P3 / 2)]), [0, 0, s * 0.6], 11, { seq: 3 }));
-  sides.forEach((s) => put('9', S.boltSet([[JOINT_X - 6 * IN, B66 / 2, s * (W / 2 + P3)], [JOINT_X + 6 * IN, B66 / 2, s * (W / 2 + P3)]], 0.375 * IN, 6 * IN, 'zinc', { axis: s > 0 ? 'z' : '-z', washer: true }), [0, 0, s * 1.0], 11, { seq: 4 }));
+  const zin = W / 2 - B66; // face intérieure du madrier de rive
+  sides.forEach((s) => put('8', lumber(S, [2 * half, P3, P8], [JOINT_X, P3 / 2, s * (zin - P8 / 2)]), [0, 0.6, 0], 11, { seq: 3 }));
+  sides.forEach((s) => put('9', S.boltSet([[JOINT_X - 6 * IN, P3 / 2, s * (zin - P8)], [JOINT_X + 6 * IN, P3 / 2, s * (zin - P8)]], 0.375 * IN, 6 * IN, 'zinc', { axis: s > 0 ? '-z' : 'z', washer: true }), [0, 1.0, 0], 11, { seq: 4 }));
   // Soutiens 6 × 6 de 16 pi (selon Z) ; le dernier, à 16 pi de la section 1, est le madrier guide.
   SLEEPERS_X.forEach((x, k) => {
     const guide = k === SLEEPERS_X.length - 1;
