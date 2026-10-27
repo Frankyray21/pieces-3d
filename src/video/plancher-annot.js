@@ -74,12 +74,12 @@ export const ANNOTATIONS = {
     { v: 57.4, type: 'dim', a: [0, 0.02, zN], b: [0, 0.02, zP], off: [-0.45, 0, 0], text: '16 pi', sub: 'largeur' },
   ],
   e2: [
-    { v: 60.8, type: 'note', at: [-0.35, 0.15, -W / 2 + 0.6], text: 'Niveau au laser Bosch', dir: 'up' },
+    { v: 60.8, type: 'note', at: [0.25, 0.15, -W / 2 + 0.6], text: 'Niveau au laser Bosch', dir: 'up' },
     { v: 62.6, type: 'note', at: [HIGH.x, HIGH.y + 0.05, HIGH.z], text: 'Point le plus haut du sol', dir: 'up' },
     { v: 65.2, type: 'note', at: [0.08, ground(0.08, 0.6) + 0.02, 0.6], text: 'Le 1er madrier repose ici, sur le sol', dir: 'down' },
   ],
   e3: [
-    { v: 72.6, type: 'arrow', a: [2.6, B66 + 0.05, 0.9], b: [-0.6, B66 + 0.05, 0.9], text: 'Sens du forage : vers le front' },
+    { v: 72.6, type: 'arrow', a: [2.6, B66 + 0.05, 0.9], b: [-0.05, B66 + 0.05, 0.9], text: 'Sens du forage : vers le front' },
     { v: 74.0, type: 'dim', a: [0, 0, zN], b: [0, B66, zN], off: [-0.3, 0, -0.1], text: '6 po', sub: 'madrier 6 × 6' },
     { v: 76.8, type: 'note', at: [1.6, B66, joistZ[0]], text: '1er madrier le long de la galerie, sur la ligne', dir: 'up' },
   ],

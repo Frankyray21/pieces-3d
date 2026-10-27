@@ -483,7 +483,7 @@ export function guides(S, high) {
     g.position.set(x, ground(x, z), z);
     return g;
   };
-  only(S.group(plane(-0.4, 16 * FT + 0.3), tool(-0.35, -W / 2 + 0.6)), [2, 3]);
+  only(S.group(plane(-0.1, 16 * FT + 0.3), tool(0.25, -W / 2 + 0.6)), [2, 3]);
   only(S.group(plane(16 * FT - 0.1, L + 0.3), tool(16 * FT - 0.05, W / 2 + 0.05)), [9, 10]);
   const mark = S.group(
     S.box(0.36, 0.006, 0.04, 'fluoRed'),

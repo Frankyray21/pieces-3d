@@ -149,7 +149,7 @@ export function dimensions() {
   at([1], dim([0, 0.03, zP], [L, 0.03, zP], '32 pi', [0, 0, 0.45]));
   at([1], dim([0, 0.03, zN], [0, 0.03, zP], '16 pi', [-0.45, 0, 0]));
   // Étape 3 : sens du forage (les patins de la foreuse croisent les 6 × 6).
-  at([3], bigArrow([2.2, B66 + 0.05, 0.6], [-0.6, B66 + 0.05, 0.6], 'Sens du forage'));
+  at([3], bigArrow([2.2, B66 + 0.05, 0.6], [-0.05, B66 + 0.05, 0.6], 'Sens du forage'));
   at([3], dim([0, 0, zN], [0, B66, zN], '6 po', [-0.3, 0, -0.1]));
   // Étape 4 : cadrage 16 × 16 pi, madriers à environ 32 po centre.
   at([4], dim([0, B66, zN], [0, B66, zP], '16 pi', [-0.45, 0, 0]));

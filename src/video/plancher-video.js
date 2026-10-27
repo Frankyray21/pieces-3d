@@ -207,7 +207,7 @@ function laserTool(x, z) {
   return g;
 }
 const extras = {
-  laser: S.group(laserPlane(-0.4, SEC + 0.3), laserTool(-0.35, -W / 2 + 0.6)),
+  laser: S.group(laserPlane(-0.1, SEC + 0.3), laserTool(0.25, -W / 2 + 0.6)),
   laser2: S.group(laserPlane(SEC - 0.1, L + 0.3), laserTool(SEC - 0.05, W / 2 + 0.05)),
   highMark: S.group(
     S.box(0.36, 0.006, 0.04, 'fluoRed', { pos: [0, 0, 0] }),

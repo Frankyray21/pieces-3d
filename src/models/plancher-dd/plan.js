@@ -55,7 +55,7 @@ export const GUIDE_X = SLEEPERS_X[5];
 // (étape 17 : grillage de 24 po au bas du mur). Front de taille (fond de la
 // galerie) à FACE_X, devant le bout X = 0 du plancher.
 export const GAL = 9 * FT; // demi-largeur
-export const FACE_X = -0.95;
+export const FACE_X = -0.12; // plancher collé au front de taille
 export const GAL_X0 = FACE_X - 0.1;
 export const GAL_X1 = L + 8.6;
 export const WALL_H = 2.7; // murs coupés à cette hauteur (vue en écorché)
@@ -232,7 +232,7 @@ export const TIGHT = 10; // planche vissée devant les coins de serrage (étape 
 export const NOTES = [
   { steps: [1], pos: [0, 0.05, -1.2], text: 'Ligne de référence en peinture' },
   { steps: [2], pos: [HIGH.x, HIGH.y + 0.45, HIGH.z], text: 'Point le plus haut : le 1er madrier repose sur le sol' },
-  { steps: [2, 9], pos: [-0.35, 0.25, -W / 2 + 0.6], text: 'Niveau au laser Bosch' },
+  { steps: [2, 9], pos: [0.25, 0.25, -W / 2 + 0.6], text: 'Niveau au laser Bosch' },
   { steps: [3], pos: [1.2, B66 + 0.05, joistZ[0]], text: '1er madrier 6 × 6 sur la ligne de peinture' },
   { steps: [4], pos: [1.2, B66 + 0.05, joistZ[JOISTS - 1]], text: 'Madrier à 16 pi du premier' },
   { steps: [5], pos: [SUPPORTS_X[2], -0.02, joistZ[1] + 0.25], text: 'Blocage + coin, en sens contraire' },
