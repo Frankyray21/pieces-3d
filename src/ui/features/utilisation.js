@@ -215,7 +215,7 @@ export default {
       input.addEventListener('focus', () => { texteDe(eq.id).catch(() => {}); }, { once: true });
 
       document.title = `Manuel d'opération · ${eq.name} · Pièces 3D`;
-      ctx.ui.showPage(`${man.titre} — ${eq.name}`, el, { icon: 'page' });
+      ctx.ui.showPage(`${man.titre} — ${eq.name}`, el, { icon: 'page', repli: 'apercu' });
       show(page, { focus: true });
     });
 

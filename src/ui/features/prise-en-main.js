@@ -85,28 +85,38 @@ export default {
       const d = ctx.equipmentData(ID);
       if (!d) return;
       const u = ui(ctx.equipment.id);
-      if (b.dataset.pemEtape) u.etape = b.dataset.pemEtape;
-      if (!b.closest('.pem')) ctx.go(ID);
+      if (b.closest('.pem')) return; // dans la page : géré par la page (adresse de l'étape)
+      ctx.go(b.dataset.pemEtape ? `${ID}-${b.dataset.pemEtape}` : ID);
     });
 
     // --- page
     let arret = null; // arrête la boucle du simulateur et le clavier
-    ctx.on('page', ({ open, token }) => { if ((!open || token !== ID) && arret) { arret(); arret = null; } });
+    ctx.on('page', ({ open, token }) => { if ((!open || !String(token || '').startsWith(ID)) && arret) { arret(); arret = null; } });
 
-    ctx.registerRoute(ID, () => {
+    // Une adresse par étape (#<équipement>.prise-en-main-<étape>) : changer d'étape ajoute une entrée d'historique,
+    // Retour (bouton de la page ou du navigateur) revient à l'étape précédente au lieu de quitter la formation ;
+    // depuis un lien direct, Retour mène à la page de l'équipement (repli « apercu »), pas à la vue 3D.
+    // « #<équipement>.prise-en-main » reprend à l'étape en cours (ou la première non faite).
+    ctx.registerRoute(ID, () => afficher(null));
+    for (const etape of ['console', 'manettes', 'voyants', 'simulateur', 'alarmes', 'quiz']) ctx.registerRoute(`${ID}-${etape}`, () => afficher(etape));
+
+    function afficher(demandee) {
       const eq = ctx.equipment;
       const d = eq && ctx.equipmentData(ID, eq.id);
       if (!d) return;
       const u = ui(eq.id);
       const prog = () => lire(eq.id);
+      if (demandee && d.etapes.some((e) => e.id === demandee)) u.etape = demandee;
       if (!u.etape) u.etape = d.etapes.find((e) => !prog().etapes[e.id])?.id || d.etapes[0].id;
+      // Adresse sans étape : l'adresse affichée nomme l'étape (sans nouvelle entrée d'historique).
+      if (!demandee) try { history.replaceState(history.state, '', ctx.hashFor(`${ID}-${u.etape}`)); } catch { /* adresse inchangée */ }
       const img = (p) => `equipment/${eq.id}/${p}`;
       const alarmes = new Map(d.alarmes.map((a) => [a.n, a]));
 
       const el = document.createElement('div');
       el.className = 'pem';
       document.title = `Prise en main · ${eq.name} · Pièces 3D`;
-      ctx.ui.showPage(`Prise en main — ${eq.name}`, el, { icon: 'cle' });
+      ctx.ui.showPage(`Prise en main — ${eq.name}`, el, { icon: 'cle', repli: 'apercu' });
 
       const rendre = () => {
         if (arret) { arret(); arret = null; }
@@ -136,10 +146,8 @@ export default {
 
       el.addEventListener('click', (ev) => {
         const b = ev.target.closest('.pem [data-pem-etape]');
-        if (!b || !b.dataset.pemEtape) return;
-        u.etape = b.dataset.pemEtape;
-        rendre();
-        el.closest('.wp-body')?.scrollTo({ top: 0, behavior: RM.matches ? 'auto' : 'smooth' });
+        if (!b || !b.dataset.pemEtape || b.dataset.pemEtape === u.etape) return;
+        ctx.go(`${ID}-${b.dataset.pemEtape}`);
       });
 
       // ------------------------------------------------------------ 1. la console
@@ -668,7 +676,8 @@ export default {
       }
 
       rendre();
-    });
+      el.closest('.wp-body')?.scrollTo({ top: 0 });
+    }
 
     /** Croix directionnelle d'une manette : flèches (avec leur fonction) et ● pour relâcher. */
     function pad(side, labels, { pos = null, simple = false } = {}) {

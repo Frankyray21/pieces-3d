@@ -440,12 +440,14 @@ export function createHost(app) {
   const setCovered = (on) => COVERED.forEach((sel) => { const el = $(sel); if (el) el.inert = on; });
   let routing = null; // jeton d'adresse en cours de traitement (page liée à l'adresse)
   let page = null; // { routed, token, onClose, layer, opener }
-  const showPage = (title, content, { icon: ic, onClose } = {}) => {
+  // repli : jeton ouvert par Retour quand la page a été ouverte par un lien direct (pas d'entrée précédente dans
+  // l'historique) ; sans repli, c'est la vue d'en dessous.
+  const showPage = (title, content, { icon: ic, onClose, repli = null } = {}) => {
     const prev = page;
     const routed = routing != null;
     // La page s'ouvre hors de la scène : la scène quitte le plein écran.
     app.exitFullscreen?.();
-    page = { routed, token: routing, onClose, opener: prev ? prev.opener : document.activeElement };
+    page = { routed, token: routing, onClose, repli, opener: prev ? prev.opener : document.activeElement };
     if (prev?.onClose && prev.onClose !== onClose) try { prev.onClose(); } catch (err) { console.error(err); }
     // Page sans adresse : une entrée d'historique (Retour du navigateur la ferme) ; reprise d'une page à l'autre.
     if (!routed) {
@@ -470,7 +472,7 @@ export function createHost(app) {
     if (!page) return;
     const p = page;
     hidePage();
-    if (p.routed) app.leaveRoute();
+    if (p.routed) app.leaveRoute(p.repli);
   };
   const hidePage = ({ fromHistory = false } = {}) => {
     if (!page) return;

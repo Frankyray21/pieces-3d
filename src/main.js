@@ -270,11 +270,14 @@ function go(token) {
   navigate(`#${hashFor(token)}`);
 }
 
-/** Page liée à l'adresse fermée : retour à l'entrée précédente, sinon (lien direct) la vue d'en dessous à la place. */
-function leaveRoute() {
+/**
+ * Page liée à l'adresse fermée : retour à l'entrée précédente, sinon (lien direct) la vue d'en dessous à la place,
+ * ou la page de repli de la page fermée (ex. « apercu » : page de l'équipement).
+ */
+function leaveRoute(repli = null) {
   host.whenSettled(() => {
     if ((history.state?.idx ?? 0) > 0) { history.back(); return; }
-    const h = `#${hashFor(host.ctx.view?.id || S.eq?.root || '')}`;
+    const h = `#${hashFor(repli || host.ctx.view?.id || S.eq?.root || '')}`;
     if (location.hash === h) route();
     else location.replace(h);
   });
