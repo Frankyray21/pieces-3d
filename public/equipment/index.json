@@ -22,6 +22,7 @@
       "manufacturer": "Sandvik",
       "category": "Foreuse sur roues",
       "thumbnail": "equipment/du311-std/thumbnail.webp",
+      "extras": ["utilisation", "prise-en-main"],
       "status": "3D détaillée : 189 assemblages sur 189, jusqu'à la plus petite pièce (porteur Pegasus, cabine, moteur, pont avant, distributeurs, pont arrière et surpresseur, glissière, MCP, avance 6 pi à carrousel, extinction d'incendie, autocollants ISO) — 29 schémas et listes électriques"
     },
     {

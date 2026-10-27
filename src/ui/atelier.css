@@ -238,6 +238,8 @@ body.page-open .workspace .resizer { display: none; }
 .specs-card dd { margin: 0; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
 .eqh-slot { display: grid; gap: 16px; }
 .eqh-slot:empty { display: none; }
+/* Emplacement du haut sans carte visible (équipement sans formation ni manuel de l'utilisateur) : pas d'espace vide. */
+.eqh-slot-top:not(:has(> :not([hidden]))) { display: none; }
 
 /* ---------------------------------------------------------------- catalogue */
 .card { border-radius: 14px; }

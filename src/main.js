@@ -243,7 +243,7 @@ async function route() {
 function showEquipmentHome(ctx) {
   const eq = S.eq;
   document.title = `${eq.name} · Pièces 3D`;
-  ctx.ui.showPage(eq.name, renderEquipmentHome(eq, { has3d: ctx.has3d, badge, slot: ctx.ui.equipmentHome }), { icon: 'accueil' });
+  ctx.ui.showPage(eq.name, renderEquipmentHome(eq, { has3d: ctx.has3d, badge, slot: ctx.ui.equipmentHome, top: ctx.ui.equipmentHomeTop }), { icon: 'accueil' });
 }
 
 /** Signale la vue affichée aux fonctions et applique la couleur de son système. */

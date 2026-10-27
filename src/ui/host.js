@@ -495,6 +495,9 @@ export function createHost(app) {
   const searchSlot = $('#searchslot');
   const equipmentHome = document.createElement('div');
   equipmentHome.className = 'eqh-slot';
+  // Emplacement en tête de la page de l'équipement (sous les chiffres clés) : formations, manuels d'utilisation.
+  const equipmentHomeTop = document.createElement('div');
+  equipmentHomeTop.className = 'eqh-slot eqh-slot-top';
 
   // ---------------------------------------------------------------- 3D
   /** Un repère « 3 », un chemin « 1>4 » ou ['1', '4'] → chemin de la liste ['1', '4']. */
@@ -659,6 +662,7 @@ export function createHost(app) {
       addTool,
       searchSlot,
       equipmentHome,
+      equipmentHomeTop,
       showPage,
       closePage,
       setPane: (p) => app.setPane(p),

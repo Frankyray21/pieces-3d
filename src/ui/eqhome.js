@@ -96,9 +96,10 @@ function renderSystem(eq, t, { has3d, badge, pageUrl }, n) {
 }
 
 /**
- * Contenu de la page. opts : { has3d(id), badge(sheet), slot (élément des fonctions) }.
+ * Contenu de la page. opts : { has3d(id), badge(sheet), slot (élément des fonctions, en bas), top (élément des
+ * fonctions, sous les chiffres clés) }.
  */
-export function renderEquipmentHome(eq, { has3d, badge, slot }) {
+export function renderEquipmentHome(eq, { has3d, badge, slot, top }) {
   const el = document.createElement('div');
   el.className = 'eqh';
   const n3d = [...eq.assemblies.keys()].filter(has3d).length;
@@ -167,6 +168,7 @@ export function renderEquipmentHome(eq, { has3d, badge, slot }) {
     if (pagesOk.get(eq.id) === true) start();
     probe.src = probe.dataset.src;
   }
+  if (top) el.querySelector('.stats').after(top);
   el.appendChild(slot);
   return el;
 }

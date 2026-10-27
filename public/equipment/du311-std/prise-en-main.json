@@ -1,0 +1,905 @@
+{
+ "titre": "Prise en main de la console ERIS",
+ "sousTitre": "Premier contact avec la foreuse DU311 : console, écran, modes et premières manœuvres",
+ "pages": [
+  121,
+  147
+ ],
+ "console": "eris",
+ "avertissement": "Formation d'initiation seulement : elle ne remplace ni la lecture complète du manuel de l'utilisateur, ni la formation sur la machine avec un opérateur qualifié, ni les procédures du site.",
+ "etapes": [
+  {
+   "id": "console",
+   "titre": "La console",
+   "duree": "2 min",
+   "page": 121
+  },
+  {
+   "id": "manettes",
+   "titre": "Les manettes",
+   "duree": "2 min",
+   "page": 122
+  },
+  {
+   "id": "voyants",
+   "titre": "L'écran et ses voyants",
+   "duree": "3 min",
+   "page": 123
+  },
+  {
+   "id": "simulateur",
+   "titre": "Simulateur et missions",
+   "duree": "15 min",
+   "page": 124
+  },
+  {
+   "id": "alarmes",
+   "titre": "Alarmes et arrêts",
+   "duree": "5 min",
+   "page": 131
+  },
+  {
+   "id": "quiz",
+   "titre": "Quiz final",
+   "duree": "5 min",
+   "page": 121
+  }
+ ],
+ "figureConsole": {
+  "image": "prise-en-main/console.webp",
+  "w": 1009,
+  "h": 864,
+  "page": 121,
+  "points": [
+   {
+    "n": 1,
+    "x": 0.625,
+    "y": 0.828,
+    "nom": "Interrupteur marche/arrêt",
+    "texte": "Allume ou éteint la console de l'opérateur. Au démarrage, l'écran affiche le mode SYSTEM, couche Start (démarrage)."
+   },
+   {
+    "n": 2,
+    "x": 0.225,
+    "y": 0.306,
+    "nom": "Manette gauche",
+    "texte": "Axes LX (gauche-droite) et LY (haut-bas). Son bouton extérieur est la touche Mode : en la maintenant et en déplaçant la manette vers la gauche ou la droite, on change de mode. Ses boutons choisissent la couche active (liste en bas à gauche de l'écran)."
+   },
+   {
+    "n": 3,
+    "x": 0.541,
+    "y": 0.453,
+    "nom": "Manette droite",
+    "texte": "Axes RX (gauche-droite) et RY (haut-bas). Ses boutons activent les fonctions listées en bas à droite de l'écran (ex. Control, Hydraulic Pump, Drill Air, Water)."
+   },
+   {
+    "n": 4,
+    "x": 0.361,
+    "y": 0.552,
+    "nom": "Bouton d'arrêt d'urgence",
+    "texte": "Bouton-poussoir rouge sur fond jaune. Enfoncé, il arrête toutes les fonctions en cours (alarme « Arrêt d'urgence ERIS activé »). Il reste actionné jusqu'à sa réinitialisation manuelle (tourner ou tirer le bouton) ; la réinitialisation ne redémarre pas la machine, elle permet seulement de la redémarrer (p. 44 à 46)."
+   },
+   {
+    "n": 5,
+    "x": 0.447,
+    "y": 0.617,
+    "nom": "Actionneur du système extincteur automatique",
+    "texte": "Déclenche le système extincteur automatique. Une fois déployé, l'alarme « Système extincteur automatique activé » arrête l'unité de forage : l'alimentation des pièces mobiles est coupée, les feux, les indicateurs et les capteurs restent actifs (p. 131)."
+   },
+   {
+    "n": 0,
+    "x": 0.62,
+    "y": 0.31,
+    "nom": "Écran ERIS",
+    "texte": "Affiche l'heure, le mode actif (SYSTEM, TRAM, SETUP, DRILL, en haut à droite), les voyants CANBUS, DRILL et CONTROL, les couches de la manette gauche (en bas à gauche) et les fonctions de la manette droite (en bas à droite). Les erreurs et avertissements actifs défilent en bas de l'écran."
+   }
+  ],
+  "defi": [
+   1,
+   4,
+   5,
+   2,
+   3
+  ]
+ },
+ "figureManettes": {
+  "image": "prise-en-main/manettes.webp",
+  "w": 637,
+  "h": 500,
+  "page": 122,
+  "texte": [
+   "La plupart des opérations et des descriptions du manuel font référence aux opérations de la manette.",
+   "LX correspond à l'axe gauche-droite ; LY correspond à l'axe haut-bas. RX et RY font référence aux mêmes actions sur la manette droite.",
+   "Repère 1 : touche Mode (bouton extérieur de la manette gauche)."
+  ]
+ },
+ "voyants": [
+  {
+   "groupe": "CANBUS",
+   "titre": "Affichage de l'état CANBUS",
+   "aide": "Connexion entre la console de l'opérateur et la foreuse (contrôleurs VMM).",
+   "etats": [
+    {
+     "img": "prise-en-main/voyant-1.webp",
+     "texte": "La communication avec tous les contrôleurs VMM est correcte.",
+     "court": "Tout est correct",
+     "ok": true
+    },
+    {
+     "img": "prise-en-main/voyant-2.webp",
+     "texte": "Aucune communication avec aucun contrôleur VMM.",
+     "court": "Aucune communication"
+    },
+    {
+     "img": "prise-en-main/voyant-3.webp",
+     "texte": "La communication avec certains contrôleurs VMM est correcte, mais pas avec tous.",
+     "court": "Communication partielle"
+    },
+    {
+     "img": "prise-en-main/voyant-4.webp",
+     "texte": "La communication avec tous les contrôleurs VMM est correcte, mais un ou plusieurs contrôleurs présentent un défaut de sortie.",
+     "court": "Défaut de sortie"
+    },
+    {
+     "img": "prise-en-main/voyant-5.webp",
+     "texte": "La communication avec certains contrôleurs VMM est correcte, mais pas avec tous, et un ou plusieurs contrôleurs présentent un défaut de sortie.",
+     "court": "Partielle + défaut de sortie"
+    },
+    {
+     "img": "prise-en-main/voyant-6.webp",
+     "texte": "La communication avec tous les contrôleurs VMM est correcte, mais un ou plusieurs contrôleurs sont manipulés par un dispositif de programmation.",
+     "court": "Dispositif de programmation"
+    },
+    {
+     "img": "prise-en-main/voyant-7.webp",
+     "texte": "La communication avec certains contrôleurs VMM est correcte, mais pas avec tous, et un ou plusieurs contrôleurs sont manipulés par un dispositif de programmation.",
+     "court": "Partielle + programmation"
+    }
+   ]
+  },
+  {
+   "groupe": "DRILL",
+   "titre": "Affichage de l'état du chariot",
+   "aide": "Qui commande l'unité : le panneau ERIS ou la conduite.",
+   "etats": [
+    {
+     "img": "prise-en-main/voyant-8.webp",
+     "texte": "Forage sélectionné. L'unité peut être contrôlée par le panneau de commande à distance ERIS.",
+     "court": "DRILL : ERIS peut commander",
+     "ok": true
+    },
+    {
+     "img": "prise-en-main/voyant-9.webp",
+     "texte": "Conduite sélectionnée. L'unité ne peut pas être contrôlée par le panneau de commande à distance ERIS.",
+     "court": "DRIVE : ERIS ne peut pas commander"
+    }
+   ]
+  },
+  {
+   "groupe": "CONTROL",
+   "titre": "Affichage de l'état de la commande",
+   "aide": "Si cette console a pris le contrôle de la machine.",
+   "etats": [
+    {
+     "img": "prise-en-main/voyant-10.webp",
+     "texte": "Commande inactive. Les modes Déplacement, Mise en place ou Forage ne peuvent pas être sélectionnés.",
+     "court": "Commande inactive"
+    },
+    {
+     "img": "prise-en-main/voyant-11.webp",
+     "texte": "Commande active. Les modes Déplacement, Mise en place ou Forage peuvent être sélectionnés.",
+     "court": "Commande active",
+     "ok": true
+    },
+    {
+     "img": "prise-en-main/voyant-12.webp",
+     "texte": "Commande à distance active. L'unité est contrôlée par une autre station de commande ERIS. Les modes Déplacement, Mise en place ou Forage ne peuvent pas être sélectionnés.",
+     "court": "REMOTE : autre station ERIS"
+    }
+   ]
+  }
+ ],
+ "missions": [
+  {
+   "id": "demarrer",
+   "titre": "Allumer et prendre le contrôle",
+   "page": 125,
+   "but": "Allumer la console, prendre le contrôle de la machine et démarrer la pompe hydraulique et le compresseur.",
+   "etapes": [
+    {
+     "t": "Allumer la console avec l'interrupteur marche/arrêt.",
+     "si": {
+      "power": true
+     },
+     "page": 121
+    },
+    {
+     "t": "En mode SYSTEM, couche Start : appuyer sur Control pour prendre le contrôle. Le voyant CONTROL devient orange.",
+     "si": {
+      "control": true
+     },
+     "page": 125
+    },
+    {
+     "t": "Appuyer sur Hydraulic Pump pour activer le circuit hydraulique.",
+     "si": {
+      "pompe": true
+     },
+     "page": 125
+    },
+    {
+     "t": "Appuyer sur Compressor pour activer le compresseur.",
+     "si": {
+      "compresseur": true
+     },
+     "page": 125
+    }
+   ]
+  },
+  {
+   "id": "modes",
+   "titre": "Changer de mode",
+   "page": 124,
+   "but": "Passer d'un mode à l'autre avec la touche Mode et la manette gauche.",
+   "etapes": [
+    {
+     "t": "Maintenir la touche Mode (bouton extérieur de la manette gauche).",
+     "si": {
+      "modeKey": true
+     },
+     "page": 124
+    },
+    {
+     "t": "Déplacer la manette gauche vers la droite jusqu'au mode SETUP.",
+     "si": {
+      "mode": "setup"
+     },
+     "page": 124
+    },
+    {
+     "t": "Revenir au mode SYSTEM (manette gauche vers la gauche, touche Mode maintenue).",
+     "si": {
+      "mode": "system",
+      "visite": "setup"
+     },
+     "page": 124
+    },
+    {
+     "t": "Relâcher la touche Mode.",
+     "si": {
+      "modeKey": false,
+      "visite": "setup",
+      "mode": "system"
+     },
+     "page": 124
+    }
+   ]
+  },
+  {
+   "id": "deplacer",
+   "titre": "Déplacer la foreuse",
+   "page": 137,
+   "but": "En mode TRAM, déplacer l'unité en gardant Tram Enable enfoncé.",
+   "etapes": [
+    {
+     "t": "Passer en mode TRAM.",
+     "si": {
+      "mode": "tram"
+     },
+     "page": 137
+    },
+    {
+     "t": "Maintenir le bouton Tram Enable (activation du déplacement) : les pointeurs apparaissent.",
+     "si": {
+      "tramEnable": true
+     },
+     "page": 138
+    },
+    {
+     "t": "Pousser la manette vers l'avant : l'unité s'éloigne de l'opérateur (Tram Reverse à l'écran).",
+     "si": {
+      "action": "tram-reverse"
+     },
+     "page": 138
+    },
+    {
+     "t": "Tirer la manette vers l'arrière : l'unité vient vers l'opérateur (Tram Forward à l'écran).",
+     "si": {
+      "action": "tram-forward"
+     },
+     "page": 138
+    },
+    {
+     "t": "Relâcher Tram Enable : les pointeurs disparaissent, le déplacement est désactivé.",
+     "si": {
+      "tramEnable": false,
+      "visite": "tram-forward"
+     },
+     "page": 138
+    }
+   ]
+  },
+  {
+   "id": "mettre-en-place",
+   "titre": "Mettre le mât en place",
+   "page": 139,
+   "but": "En mode SETUP, abaisser les stabilisateurs, orienter le mât et l'appuyer sur la surface de forage.",
+   "etapes": [
+    {
+     "t": "Passer en mode SETUP.",
+     "si": {
+      "mode": "setup"
+     },
+     "page": 139
+    },
+    {
+     "t": "Choisir la couche Outrigger (stabilisateur) et abaisser le stabilisateur avant (Front Outrigger Down).",
+     "si": {
+      "action": "front-outrigger-down"
+     },
+     "page": 140
+    },
+    {
+     "t": "Choisir la couche Feed (avance) et régler le balancement (Swing) : les angles s'affichent en temps réel.",
+     "si": {
+      "actionDebut": "swing"
+     },
+     "page": 139
+    },
+    {
+     "t": "Régler le déchargement (Dump Up ou Dump Down).",
+     "si": {
+      "actionDebut": "dump"
+     },
+     "page": 139
+    },
+    {
+     "t": "Sortir l'extension d'avance (Feed Extend) pour mettre le mât en contact avec la surface de forage.",
+     "si": {
+      "action": "feed-extend"
+     },
+     "page": 171
+    }
+   ]
+  },
+  {
+   "id": "forer",
+   "titre": "Forer en mode manuel avec verrouillage",
+   "page": 145,
+   "but": "En mode DRILL, sous-mode Forage manuel, engager la fonction Verrouillage de la foreuse (Drill Lock).",
+   "etapes": [
+    {
+     "t": "Passer en mode DRILL.",
+     "si": {
+      "mode": "drill"
+     },
+     "page": 141
+    },
+    {
+     "t": "Appuyer sur Manual Drilling (forage manuel) : la couche Pulldown/Holdback (abaissement/retenue) devient la couche par défaut de la manette gauche.",
+     "si": {
+      "manual": true
+     },
+     "page": 144
+    },
+    {
+     "t": "Activer l'alimentation en air (Drill Air) et en eau (Water) de la foreuse.",
+     "si": {
+      "air": true,
+      "eau": true
+     },
+     "page": 145
+    },
+    {
+     "t": "Appliquer la rotation vers l'avant avec la manette droite (Rotation Forward) et la garder.",
+     "si": {
+      "rotAvant": true
+     },
+     "page": 145
+    },
+    {
+     "t": "Appliquer l'avance vers l'avant (Feed Forward) en gardant la rotation.",
+     "si": {
+      "rotAvant": true,
+      "avanceAvant": true
+     },
+     "page": 145
+    },
+    {
+     "t": "Tout en maintenant l'avance et la rotation, appuyer sur Drill Lock (verrouillage de la foreuse).",
+     "si": {
+      "lock": true
+     },
+     "page": 145
+    },
+    {
+     "t": "Relâcher la manette droite : la vitesse d'avance devient automatique.",
+     "si": {
+      "lock": true,
+      "Rcentre": true
+     },
+     "page": 145
+    },
+    {
+     "t": "Laisser forer jusqu'à la profondeur prédéfinie : le forage s'arrête et l'avance recule pendant deux secondes.",
+     "si": {
+      "profondeurAtteinte": true
+     },
+     "page": 137
+    }
+   ]
+  },
+  {
+   "id": "alarme",
+   "titre": "Lire et réinitialiser une alarme",
+   "page": 130,
+   "but": "Une alarme apparaît pendant le travail : la lire dans la couche Error, puis la réinitialiser.",
+   "declencheur": 3,
+   "etapes": [
+    {
+     "t": "Déclencher l'exercice : l'alarme défile en bas de l'écran.",
+     "si": {
+      "alarmes": true
+     },
+     "page": 124
+    },
+    {
+     "t": "Passer en mode SYSTEM et choisir la couche Error (erreur).",
+     "si": {
+      "mode": "system",
+      "couche": "error"
+     },
+     "page": 130
+    },
+    {
+     "t": "Couper l'alarme sonore (Silence). Le silence et la réinitialisation ne se font que depuis cet écran.",
+     "si": {
+      "silence": true
+     },
+     "page": 130
+    },
+    {
+     "t": "Réinitialiser l'alarme (Reset).",
+     "si": {
+      "alarmes": false,
+      "visite": "reset"
+     },
+     "page": 130
+    }
+   ]
+  },
+  {
+   "id": "arret-urgence",
+   "titre": "Arrêt d'urgence",
+   "page": 46,
+   "but": "Arrêter la machine avec l'arrêt d'urgence de la console, puis la remettre en état de redémarrer.",
+   "etapes": [
+    {
+     "t": "Enfoncer le bouton d'arrêt d'urgence : toutes les fonctions en cours s'arrêtent.",
+     "si": {
+      "estop": true
+     },
+     "page": 44
+    },
+    {
+     "t": "Relâcher le bouton en le tournant ou en le tirant.",
+     "si": {
+      "estop": false,
+      "visite": "estop"
+     },
+     "page": 46
+    },
+    {
+     "t": "Réinitialiser l'alarme « Arrêt d'urgence ERIS 1 activé » dans la couche Error.",
+     "si": {
+      "alarmes": false,
+      "visite": "reset-estop"
+     },
+     "page": 130
+    },
+    {
+     "t": "Redémarrer la pompe hydraulique : la réinitialisation permet seulement de redémarrer, elle ne redémarre pas la machine.",
+     "si": {
+      "pompe": true,
+      "visite": "reset-estop"
+     },
+     "page": 45
+    }
+   ]
+  }
+ ],
+ "alarmes": [
+  {
+   "n": 1,
+   "nom": "Séquence de phase",
+   "effet": "Arrête la pompe hydraulique et le moteur du compresseur",
+   "detail": "Activé lorsque les connexions électriques ont été mal installées ou que la tension est incorrecte."
+  },
+  {
+   "n": 2,
+   "nom": "Système extincteur automatique activé",
+   "effet": "Arrête l'unité de forage",
+   "detail": "Activé lorsque le système extincteur automatique a été déployé. Coupe l'alimentation électrique des pièces mobiles de la machine. Les feux et les indicateurs restent allumés, et les capteurs restent actifs."
+  },
+  {
+   "n": 3,
+   "nom": "Bas niveau d'eau de la mine",
+   "effet": "Arrête la pompe à eau",
+   "detail": "S'il est équipé d'un compresseur d'air à piston, le compresseur s'arrête également. Il y a un délai avant l'arrêt. Généralement de 30 s. Activé lorsque la pression de l'eau de la mine chute à 25 psi ou moins. Réinitialisation requise."
+  },
+  {
+   "n": 4,
+   "nom": "Basse pression d'entrée d'air",
+   "effet": "Éteint le compresseur",
+   "detail": "Activé lorsque la pression d'entrée d'air chute à 60 psi ou moins. Réinitialisation requise."
+  },
+  {
+   "n": 5,
+   "nom": "Pression différentielle du filtre d'admission",
+   "effet": "Éteint le compresseur",
+   "detail": "Activé lorsque la pression différentielle du filtre d'admission atteint 10 psi. Réinitialisation requise."
+  },
+  {
+   "n": 6,
+   "nom": "Dévidoir de câble aux 3 derniers enroulements",
+   "effet": "Indicateur d'avertissement",
+   "detail": "Activé à l'approche de l'extrémité du câble électrique dans le dévidoir de câble."
+  },
+  {
+   "n": 7,
+   "nom": "Extrémité du câble",
+   "effet": "Indicateur d'avertissement",
+   "detail": "Désactive le déplacement vers l'avant. Activé lorsque l'extrémité du câble électrique est atteinte."
+  },
+  {
+   "n": 8,
+   "nom": "Arrêt d'urgence du panneau d'alimentation principal activé",
+   "effet": "Arrête l'unité de forage",
+   "detail": "Activé lorsque le bouton d'arrêt d'urgence du panneau d'alimentation principal est enfoncé. Coupe l'alimentation électrique des pièces mobiles de la machine. Les feux et les indicateurs restent allumés, et les capteurs restent actifs."
+  },
+  {
+   "n": 9,
+   "nom": "Arrêt d'urgence de la cabine activé (uniquement pour les unités articulées)",
+   "effet": "Arrête l'unité de forage",
+   "detail": "Activé lorsque le bouton d'arrêt d'urgence de la cabine est enfoncé. Coupe l'alimentation électrique des pièces mobiles de la machine. Les feux et les indicateurs restent allumés, et les capteurs restent actifs."
+  },
+  {
+   "n": 10,
+   "nom": "Arrêt d'urgence ERIS 1 activé",
+   "effet": "Arrête l'unité de forage",
+   "detail": "Activé lorsque le bouton d'arrêt d'urgence ERIS est enfoncé. Coupe l'alimentation électrique des pièces mobiles de la machine. Les feux et les indicateurs restent allumés, et les capteurs restent actifs."
+  },
+  {
+   "n": 11,
+   "nom": "Arrêt d'urgence ERIS 2 activé",
+   "effet": "Arrête l'unité de forage",
+   "detail": "Activé lorsque le bouton d'arrêt d'urgence ERIS est enfoncé. Coupe l'alimentation électrique des pièces mobiles de la machine. Les feux et les indicateurs restent allumés, et les capteurs restent actifs."
+  },
+  {
+   "n": 12,
+   "nom": "Arrêt de sécurité du mât activé",
+   "effet": "Arrête l'unité de forage",
+   "detail": "Activé lorsque le câble d'arrêt d'urgence du mât est tiré. Coupe l'alimentation électrique des pièces mobiles de la machine. Les feux et les indicateurs restent allumés, et les capteurs restent actifs."
+  },
+  {
+   "n": 13,
+   "nom": "Surcharge de la pompe hydraulique",
+   "effet": "Arrête la pompe hydraulique",
+   "detail": "Activé lorsque la pompe hydraulique est surchargée. Réinitialisation requise."
+  },
+  {
+   "n": 14,
+   "nom": "Erreur de retour de la pompe hydraulique",
+   "effet": "Arrête la pompe hydraulique",
+   "detail": "Activé lorsqu'il n'y a pas de retour du contacteur sur la pompe hydraulique. Réinitialisation requise."
+  },
+  {
+   "n": 15,
+   "nom": "Température de l'huile hydraulique élevée",
+   "effet": "Arrête la pompe hydraulique",
+   "detail": "Activé lorsque la température de l'huile hydraulique atteint 200 °F. Réinitialisation requise."
+  },
+  {
+   "n": 16,
+   "nom": "Bas niveau d'huile hydraulique",
+   "effet": "Arrête la pompe hydraulique",
+   "detail": "Activé lorsque l'huile hydraulique chute en dessous du niveau acceptable. Réinitialisation requise."
+  },
+  {
+   "n": 17,
+   "nom": "Surcharge du compresseur",
+   "effet": "Éteint le compresseur",
+   "detail": "Activé lorsque le compresseur est surchargé. Réinitialisation requise."
+  },
+  {
+   "n": 18,
+   "nom": "Défaut de retour du compresseur",
+   "effet": "Éteint le compresseur",
+   "detail": "Activé lorsqu'il n'y a pas de retour du contacteur sur le compresseur. Réinitialisation requise."
+  },
+  {
+   "n": 19,
+   "nom": "Surcharge du ventilateur de refroidissement",
+   "effet": "Éteint le compresseur",
+   "detail": "Activé lorsque le ventilateur de refroidissement est surchargé. Réinitialisation requise. Si l'unité est équipée de deux ventilateurs de refroidissement, le numéro du ventilateur (1 ou 2) sera spécifié."
+  },
+  {
+   "n": 20,
+   "nom": "Erreur de retour du ventilateur de refroidissement",
+   "effet": "Éteint le compresseur",
+   "detail": "Activée lorsqu'il n'y a pas de retour du contacteur sur le ventilateur de refroidissement ; nécessite une réinitialisation. Si l'unité est équipée de deux ventilateurs de refroidissement, le numéro du ventilateur (1 ou 2) sera spécifié."
+  },
+  {
+   "n": 21,
+   "nom": "Basse pression d'huile du compresseur",
+   "effet": "Éteint le compresseur",
+   "detail": "Compresseur à piston : activé lorsque la pression d'huile du compresseur chute à 10 psi ou moins. Réinitialisation requise. Compresseur à vis : s'arrête si la pression d'huile chute à 120 psi ou moins. S'arrête également si la pression d'huile chute à moins de 2/3 de la pression du réservoir."
+  },
+  {
+   "n": 22,
+   "nom": "Basse pression d'arrêt d'huile du compresseur",
+   "effet": "Éteint le compresseur",
+   "detail": "Uniquement sur les compresseurs à vis. Activé lorsque la pression d'arrêt de niveau d'huile basse chute à une valeur trop basse. Réinitialisation requise."
+  },
+  {
+   "n": 23,
+   "nom": "Température élevée du compresseur",
+   "effet": "Éteint le compresseur",
+   "detail": "Compresseur à piston : activé lorsque la température du compresseur atteint 375 °F. Réinitialisation requise."
+  },
+  {
+   "n": 24,
+   "nom": "Pression du réservoir élevée",
+   "effet": "Éteint le compresseur",
+   "detail": "Activé lorsque la pression du réservoir collecteur augmente trop. Réinitialisation requise."
+  },
+  {
+   "n": 25,
+   "nom": "Pression différentielle du réservoir élevée",
+   "effet": "Éteint le compresseur",
+   "detail": "Compresseur à vis uniquement. Activé lorsque la pression différentielle sur le filtre de réservoir augmente trop. Nécessite une réinitialisation et un remplacement du filtre."
+  },
+  {
+   "n": 26,
+   "nom": "Température de décharge élevée 1",
+   "effet": "Éteint le compresseur",
+   "detail": "Compresseur à vis uniquement. Activé lorsque la température de l'air de décharge augmente trop. Réinitialisation requise."
+  },
+  {
+   "n": 27,
+   "nom": "Température de décharge élevée 2",
+   "effet": "Éteint le compresseur",
+   "detail": "Compresseur à vis uniquement. Activé lorsque la température de l'air de décharge augmente trop. Réinitialisation requise."
+  },
+  {
+   "n": 28,
+   "nom": "Température du réservoir élevée 1",
+   "effet": "Éteint le compresseur",
+   "detail": "Compresseur à vis uniquement. Activé lorsque la température du réservoir augmente trop. Réinitialisation requise."
+  },
+  {
+   "n": 29,
+   "nom": "Température du réservoir élevée 2",
+   "effet": "Éteint le compresseur",
+   "detail": "Compresseur à vis uniquement. Activé lorsque la température du réservoir augmente trop. Réinitialisation requise."
+  },
+  {
+   "n": 30,
+   "nom": "Surintensité du circuit d'arrêt d'urgence",
+   "effet": "Arrête l'unité de forage",
+   "detail": "Activé lorsque le circuit d'arrêt d'urgence est surchargé. Coupe l'alimentation électrique des pièces mobiles de la machine. Les feux et les indicateurs restent allumés, et les capteurs restent actifs. La réinitialisation nécessite de couper l'alimentation électrique principale."
+  },
+  {
+   "n": 31,
+   "nom": "Surintensité du circuit de feux stop",
+   "effet": "Indicateur d'avertissement",
+   "detail": "Activé lorsque le circuit de feux stop est surchargé. La réinitialisation nécessite de couper l'alimentation électrique principale."
+  },
+  {
+   "n": 32,
+   "nom": "Surintensité du circuit d'allumage",
+   "effet": "Indicateur d'avertissement",
+   "detail": "Activé lorsque le circuit d'allumage est surchargé. La réinitialisation nécessite de couper l'alimentation électrique principale."
+  },
+  {
+   "n": 33,
+   "nom": "Surintensité du circuit de démarrage du moteur",
+   "effet": "Indicateur d'avertissement",
+   "detail": "Activé lorsque le circuit de démarrage du moteur est surchargé. La réinitialisation nécessite de couper l'alimentation électrique principale."
+  },
+  {
+   "n": 34,
+   "nom": "Surintensité du circuit de commande des freins",
+   "effet": "Indicateur d'avertissement",
+   "detail": "Activé lorsque le circuit de commande des freins est surchargé. La réinitialisation nécessite de couper l'alimentation électrique principale."
+  },
+  {
+   "n": 35,
+   "nom": "Pression différentielle du filtre à huile du compresseur élevée",
+   "effet": "Arrête l'unité de forage",
+   "detail": "Activé lorsque la pression différentielle sur le filtre à huile du compresseur augmente trop. Nécessite une réinitialisation et un remplacement du filtre."
+  },
+  {
+   "n": 36,
+   "nom": "Surintensité du circuit d'alimentation du mât",
+   "effet": "Indicateur d'avertissement",
+   "detail": "Activé lorsque le circuit d'alimentation du mât est surchargé. La réinitialisation nécessite de couper l'alimentation électrique principale."
+  },
+  {
+   "n": 37,
+   "nom": "Arrêt d'urgence arrière droit",
+   "effet": "Arrête l'unité de forage",
+   "detail": "Activé lorsque le bouton d'arrêt d'urgence sur le côté arrière droit est enfoncé. Coupe l'alimentation électrique des pièces mobiles de la machine. Les feux et les indicateurs restent allumés, et les capteurs restent actifs."
+  },
+  {
+   "n": 38,
+   "nom": "Arrêt d'urgence avant droit",
+   "effet": "Arrête l'unité de forage",
+   "detail": "Activé lorsque le bouton d'arrêt d'urgence sur le côté avant droit est enfoncé. Coupe l'alimentation électrique des pièces mobiles de la machine. Les feux et les indicateurs restent allumés, et les capteurs restent actifs."
+  },
+  {
+   "n": 39,
+   "nom": "Arrêt d'urgence avant gauche",
+   "effet": "Arrête l'unité de forage",
+   "detail": "Activé lorsque le bouton d'arrêt d'urgence sur le côté avant gauche est enfoncé. Coupe l'alimentation électrique des pièces mobiles de la machine. Les feux et les indicateurs restent allumés, et les capteurs restent actifs."
+  },
+  {
+   "n": 40,
+   "nom": "Arrêt d'urgence arrière gauche",
+   "effet": "Arrête l'unité de forage",
+   "detail": "Activé lorsque le bouton d'arrêt d'urgence sur le côté arrière gauche est enfoncé. Coupe l'alimentation électrique des pièces mobiles de la machine. Les feux et les indicateurs restent allumés, et les capteurs restent actifs."
+  },
+  {
+   "n": 41,
+   "nom": "Défaut de démarrage progressif du compresseur (en option)",
+   "effet": "Éteint le compresseur",
+   "detail": "Activé en cas de surcharge du moteur ou de défaut interne au niveau du démarrage progressif. Réinitialisation requise. Défaut général. Pour obtenir des informations sur un défaut spécifique, ouvrir le panneau et lire le défaut spécifique sur l'unité de démarrage progressif."
+  },
+  {
+   "n": 42,
+   "nom": "Erreur de retour de démarrage progressif du compresseur (en option)",
+   "effet": "Éteint le compresseur",
+   "detail": "Activé lorsqu'il n'y a pas de retour du contacteur sur le démarrage progressif. Réinitialisation requise."
+  },
+  {
+   "n": 43,
+   "nom": "Température inter-étage du compresseur élevée (en option)",
+   "effet": "Éteint le compresseur",
+   "detail": "Activé lorsque la température inter-étage du compresseur augmente trop. Réinitialisation requise."
+  }
+ ],
+ "quiz": [
+  {
+   "q": "Comment passe-t-on d'un mode à l'autre (SYSTEM, TRAM, SETUP, DRILL) ?",
+   "r": [
+    "En maintenant le bouton extérieur de la manette gauche et en déplaçant la manette vers la gauche ou la droite",
+    "En touchant le nom du mode à l'écran",
+    "Avec l'interrupteur marche/arrêt",
+    "En maintenant Control sur la manette droite"
+   ],
+   "ok": 0,
+   "page": 124
+  },
+  {
+   "q": "Le voyant CONTROL est gris. Que peut-on faire ?",
+   "r": [
+    "Rien en Déplacement, Mise en place ou Forage : ces modes ne peuvent pas être sélectionnés",
+    "Forer seulement",
+    "Se déplacer seulement",
+    "Tout : CONTROL gris est normal"
+   ],
+   "ok": 0,
+   "page": 123
+  },
+  {
+   "q": "Le voyant affiche DRIVE au lieu de DRILL. Qu'est-ce que cela signifie ?",
+   "r": [
+    "Conduite sélectionnée : l'unité ne peut pas être contrôlée par le panneau ERIS",
+    "Le forage est en cours",
+    "La commande à distance est active",
+    "Le compresseur est arrêté"
+   ],
+   "ok": 0,
+   "page": 123
+  },
+  {
+   "q": "En mode TRAM, que se passe-t-il si on relâche le bouton Tram Enable ?",
+   "r": [
+    "Les pointeurs disparaissent et le déplacement est désactivé",
+    "La foreuse continue à la même vitesse",
+    "La foreuse freine puis recule",
+    "Le mode SYSTEM s'affiche"
+   ],
+   "ok": 0,
+   "page": 138
+  },
+  {
+   "q": "L'opérateur est devant l'unité et lui fait face. Il pousse la manette vers l'avant. L'unité…",
+   "r": [
+    "s'éloigne de l'opérateur",
+    "vient vers l'opérateur",
+    "tourne vers la gauche",
+    "ne bouge pas"
+   ],
+   "ok": 0,
+   "page": 138
+  },
+  {
+   "q": "Dans quel ordre engage-t-on le verrouillage de la foreuse (forage manuel) ?",
+   "r": [
+    "Air/eau, rotation avant, avance avant, puis Drill Lock en maintenant avance et rotation",
+    "Drill Lock, puis air/eau, puis rotation",
+    "Avance avant, Drill Lock, puis rotation",
+    "Rotation arrière, avance arrière, Drill Lock"
+   ],
+   "ok": 0,
+   "page": 145
+  },
+  {
+   "q": "La profondeur de trou prédéfinie est atteinte. Que fait la foreuse ?",
+   "r": [
+    "Le forage s'arrête automatiquement et l'avance est ramenée en arrière pendant deux secondes",
+    "Elle continue jusqu'à ce qu'on relâche la manette",
+    "Elle s'arrête et le compresseur s'éteint",
+    "Elle ajoute une tige automatiquement"
+   ],
+   "ok": 0,
+   "page": 137
+  },
+  {
+   "q": "D'où peut-on faire le silence et la réinitialisation des alarmes ?",
+   "r": [
+    "Seulement depuis l'écran Error (mode SYSTEM)",
+    "De n'importe quel écran",
+    "Depuis le mode DRILL",
+    "Avec le bouton d'arrêt d'urgence"
+   ],
+   "ok": 0,
+   "page": 130
+  },
+  {
+   "q": "Sur l'écran du mode Forage, un bouton s'affiche en orange. Cela veut dire…",
+   "r": [
+    "que la fonction est active",
+    "qu'il y a une erreur",
+    "que la fonction n'est pas disponible",
+    "qu'il faut un mot de passe"
+   ],
+   "ok": 0,
+   "page": 141
+  },
+  {
+   "q": "Avant de remettre à zéro l'angle de balancement/déchargement, il faut…",
+   "r": [
+    "placer le mât exactement à la verticale sur les deux axes avec un instrument de précision",
+    "abaisser les stabilisateurs",
+    "arrêter le compresseur",
+    "passer en mode TRAM"
+   ],
+   "ok": 0,
+   "page": 129
+  },
+  {
+   "q": "On a enfoncé le bouton d'arrêt d'urgence, puis on l'a réinitialisé. La machine…",
+   "r": [
+    "ne redémarre pas seule : la réinitialisation permet seulement de la redémarrer",
+    "redémarre là où elle s'était arrêtée",
+    "redémarre en mode TRAM",
+    "s'éteint complètement et doit être réparée"
+   ],
+   "ok": 0,
+   "page": 45
+  },
+  {
+   "q": "Où obtient-on le mot de passe de la configuration ?",
+   "r": [
+    "Auprès d'un concessionnaire local",
+    "Il est écrit sur la console",
+    "C'est 000000",
+    "Aucun mot de passe n'est requis"
+   ],
+   "ok": 0,
+   "page": 128
+  }
+ ]
+}

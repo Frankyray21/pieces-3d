@@ -47,6 +47,19 @@ pièces (numéro, quantité, page du manuel).
   son émerillon d'air (P052) et sa boîte d'engrenages (P054) sont repris du
   TVK (même numéro, même liste ; voir `src/models/reuse.js`). Le PDF
   d'origine (101 Mo) est dans la release GitHub `manuel-du311-std`.
+  **Manuel de l'utilisateur** (manuel d'opération DU311 - Tier3, fr-FR 7,
+  2026-08-04, 264 pages ; PDF dans la release `operation-du311` du dépôt
+  `manuel-du311`) : lecteur de pages avec sommaire et recherche plein texte
+  (`#du311-std.utilisation`, `src/ui/features/utilisation.js`, données
+  produites par `tools/extract_utilisation.py`). **Prise en main de la
+  console ERIS** (`#du311-std.prise-en-main`, pages 121 à 147 du manuel) :
+  parcours en 6 étapes pour un nouveau travailleur — console (repères
+  cliquables et défi), manettes, voyants CANBUS / DRILL / CONTROL (exercice),
+  simulateur de l'écran ERIS avec 7 missions guidées (démarrer, changer de
+  mode, se déplacer, mettre le mât en place, forer avec verrouillage, lire et
+  réinitialiser une alarme, arrêt d'urgence), les 43 alarmes et un quiz ;
+  simulateur dans `src/ui/features/prise-en-main/`, textes dans
+  `public/equipment/du311-std/prise-en-main.json`.
 
 - **Epiroc — outils de carottage ITH** (`epiroc-ith`, catalogue « Core
   Drilling Tools — In-The-Hole », 108 pages en planches doubles) : 78
@@ -165,7 +178,9 @@ sont préfixées : `#du311.P032`, `#du311-std.P050`, `#epiroc-ith.P019`.
 Site en ligne : https://frankyray21.github.io/pieces-3d/ (republié
 automatiquement à chaque push sur la branche `main`, voir
 `.github/workflows/pages.yml`). DU311-TVK : https://frankyray21.github.io/pieces-3d/#du311.P010 ;
-DU311 : https://frankyray21.github.io/pieces-3d/#du311-std.P010
+DU311 : https://frankyray21.github.io/pieces-3d/#du311-std.P010 ; prise en main :
+https://frankyray21.github.io/pieces-3d/#du311-std.prise-en-main ; manuel de
+l'utilisateur : https://frankyray21.github.io/pieces-3d/#du311-std.utilisation
 
 ## Démarrer
 
