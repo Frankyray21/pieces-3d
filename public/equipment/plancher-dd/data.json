@@ -440,6 +440,25 @@
      }
     ],
     [
+     "8",
+     "",
+     7,
+     "Blocage de jonction 3 × 8 (24 po), en travers sur le joint des madriers, vissé aux deux sections",
+     {
+      "pnText": "3 × 8 brut"
+     }
+    ],
+    [
+     "9",
+     "",
+     14,
+     "Tire-fond 6 po : blocage de jonction vissé dans chaque section",
+     {
+      "pnText": "Tire-fond 6 po",
+      "qty3d": 1
+     }
+    ],
+    [
      "G",
      "",
      null,

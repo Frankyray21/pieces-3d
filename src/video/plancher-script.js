@@ -206,7 +206,7 @@ export const SEGMENTS = [
       [1, 'Dans un creux comme celui-là, on monte une cage : des bouts de vingt-quatre à trente-six pouces, empilés croisés.'],
     ],
     // Cage (cas spécial) : gros plan, plancher en transparence, montée couche par couche.
-    reveal: [{ cue: 'joists2', v: 194.4, vspan: 3.6 }, { cue: 'cribFocus', v: 204.0, vspan: 9.6 }, { cue: 'cribOther', v: 214.4, vspan: 1.6 }],
+    reveal: [{ cue: 'joists2', v: 194.4, vspan: 3.6 }, { cue: 'jointBlocks', v: 199.0, vspan: 2.0 }, { cue: 'cribFocus', v: 204.0, vspan: 9.6 }, { cue: 'cribOther', v: 214.4, vspan: 1.6 }],
     ghost: { vfrom: 203.2, vto: 230 },
     cams: [{ v: 194.0, ...C.s2 }, { v: 202.6, pos: [SEC * 1.5 + 3.4, 1.5, 4.4], tgt: [SEC * 1.5 + 0.6, -0.3, 0.9] }, { v: 205.2, ...C.cageA }, { v: 212.5, ...C.cageB }, { v: 217.6, ...C.cageC }],
   },

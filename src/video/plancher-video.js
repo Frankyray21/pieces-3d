@@ -123,7 +123,7 @@ function cueOf({ asm, ref, obj, crib }) {
     P02: { G: 'always', 1: 'line', 9: 'drill', 10: 'barricade', 11: 'cabinet', 12: 'ext' },
     P04: { 1: 'joist1', 2: 'joists1', 3: 'support1', 4: 'support1', 5: 'support1', 6: 'joint1', 7: 'joint1', 8: 'joint1' },
     P07: { 1: 'deck1', 2: 'joinPlanks', 3: 'screws1', 4: 'screwsT', 5: 'joinScrews' },
-    P10: { 1: 'joists2', 2: 'sleepers', 3: 'support2', 4: 'support2', 5: 'support2', 6: 'crib', 7: 'joists2' },
+    P10: { 1: 'joists2', 2: 'sleepers', 3: 'support2', 4: 'support2', 5: 'support2', 6: 'crib', 7: 'joists2', 8: 'jointBlocks', 9: 'jointBlocks' },
     P13: { 1: 'deck2', 2: 'screws2', 3: 'screws2' },
     P14: { 1: 'stairs', 2: 'stairs', 3: 'stairs', 4: 'handrails', 5: 'handrails' },
     P16: { 1: 'guards', 2: 'guards', 3: 'guards', 4: 'guards', 5: 'guards', 6: 'grille' },
