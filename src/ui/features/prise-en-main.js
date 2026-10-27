@@ -12,6 +12,7 @@
 import './prise-en-main.css';
 import { createSim, T } from './prise-en-main/eris.js';
 import { ecran, court } from './prise-en-main/ecran.js';
+import { creerConsole3D } from './prise-en-main/console3d.js';
 
 const ID = 'prise-en-main';
 const RM = typeof matchMedia === 'function' ? matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
@@ -31,7 +32,7 @@ export default {
     /** État de l'interface par équipement (conservé quand on revient d'une page du manuel). */
     const UI = new Map();
     const ui = (eqId) => {
-      if (!UI.has(eqId)) UI.set(eqId, { etape: null, mission: null, fr: false, defi: null, voy: null, quiz: null, essais: new Set(), sim: createSim(), info: null });
+      if (!UI.has(eqId)) UI.set(eqId, { etape: null, mission: null, fr: false, vue: '3d', defi: null, voy: null, quiz: null, essais: new Set(), sim: createSim(), info: null });
       return UI.get(eqId);
     };
 
@@ -314,14 +315,36 @@ export default {
             </aside>
             <div class="pem-console">
               <div class="pem-now" aria-live="polite"></div>
-              <label class="pem-fr"><input type="checkbox" ${u.fr ? 'checked' : ''}> Traduire l’écran en français (sur la machine, l’écran est en anglais)</label>
-              <div class="pem-screen"><div class="pem-screen-in"></div></div>
+              <div class="pem-opts">
+                <div class="pem-tabs" role="group" aria-label="Affichage"><button type="button" class="chip" data-vue="3d" aria-pressed="${u.vue === '3d'}">Console 3D</button><button type="button" class="chip" data-vue="2d" aria-pressed="${u.vue === '2d'}">Écran 2D</button></div>
+                <label class="pem-fr"><input type="checkbox" ${u.fr ? 'checked' : ''}> Traduire l’écran en français (sur la machine, l’écran est en anglais)</label>
+              </div>
+              <div class="pem-3d"${u.vue === '3d' ? '' : ' hidden'}></div>
+              <p class="pem-small pem-3d-aide"${u.vue === '3d' ? '' : ' hidden'}>3D : glisser une manette pour l’incliner (elle reste en place ; la toucher sans glisser la recentre) · toucher la touche Mode, l’arrêt d’urgence, l’interrupteur à droite · toucher un nom à l’écran = appuyer sur son bouton · glisser ailleurs pour tourner la vue.</p>
+              <div class="pem-screen"${u.vue === '2d' ? '' : ' hidden'}><div class="pem-screen-in"></div></div>
               <div class="pem-msg" aria-live="polite"></div>
               <div class="pem-deck"></div>
               <p class="pem-small pem-keys">Clavier : manette gauche W A S D, manette droite ← ↑ → ↓, touche Mode : M (maintenir). À la souris ou au doigt, une flèche touchée reste maintenue : la toucher de nouveau (ou ●) pour relâcher.</p>
             </div>
           </div>`;
-        const scr = body.querySelector('.pem-screen-in');
+        const scr2d = body.querySelector('.pem-screen-in');
+        const zone3d = body.querySelector('.pem-3d');
+        let c3 = null;
+        const ouvrir3d = () => {
+          if (c3 || u.vue !== '3d') return;
+          try {
+            c3 = creerConsole3D(zone3d, sim, { agir: () => tout() });
+            const r = document.createElement('button');
+            r.type = 'button'; r.className = 'btn pem-3d-reset'; r.dataset.recentrer = ''; r.textContent = 'Recentrer';
+            zone3d.appendChild(r);
+          } catch (err) {
+            console.error(err);
+            u.vue = '2d';
+            zone3d.hidden = true;
+            body.querySelector('.pem-screen').hidden = false;
+          }
+        };
+        const scr = { set innerHTML(h) { (c3 && u.vue === '3d' ? c3.ecran : scr2d).innerHTML = h; } };
         const now = body.querySelector('.pem-now');
         const deck = body.querySelector('.pem-deck');
         const msgEl = body.querySelector('.pem-msg');
@@ -442,6 +465,21 @@ export default {
           }
           if (t.closest('[data-power]')) { sim.power(); tout(); return; }
           if (t.closest('[data-estop]')) { sim.estop(!sim.s.estop); tout(); return; }
+          const v = t.closest('[data-vue]');
+          if (v) {
+            u.vue = v.dataset.vue;
+            body.querySelectorAll('[data-vue]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.vue === u.vue)));
+            zone3d.hidden = u.vue !== '3d';
+            body.querySelector('.pem-3d-aide').hidden = u.vue !== '3d';
+            body.querySelector('.pem-screen').hidden = u.vue !== '2d';
+            if (u.vue === '3d') ouvrir3d(); else if (c3) { c3.arreter(); c3 = null; }
+            dessinerEcran();
+            return;
+          }
+          if (t.closest('[data-recentrer]')) { c3?.recentrer(); return; }
+          // Nom touché à l'écran (2D ou 3D) : même effet que le bouton de la manette.
+          const li = t.closest('[data-er-id]');
+          if (li) { sim.bouton(li.dataset.erSide, li.dataset.erId); tout(); return; }
           if (t.closest('[data-ext]')) {
             sim.s.message = { texte: 'Actionneur du système extincteur automatique : à n’utiliser qu’en cas d’incendie. Une fois déployé, l’unité de forage s’arrête (alarme 2). Non déclenché dans le simulateur.', ton: 'warn', page: 131, t: Date.now() };
             dessinerMsg();
@@ -499,7 +537,8 @@ export default {
           raf = requestAnimationFrame(boucle);
         };
         raf = requestAnimationFrame(boucle);
-        arret = () => { cancelAnimationFrame(raf); document.removeEventListener('keydown', kd); document.removeEventListener('keyup', ku); };
+        arret = () => { cancelAnimationFrame(raf); document.removeEventListener('keydown', kd); document.removeEventListener('keyup', ku); c3?.arreter(); c3 = null; };
+        ouvrir3d();
 
         dessinerMissions();
         tout();

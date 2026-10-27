@@ -400,3 +400,27 @@
 @keyframes er-blink { 50% { color: #ff5c5c; } }
 @media (prefers-reduced-motion: reduce) { .er-ticker.blink { animation: none; color: #ff5c5c; } }
 .er-horn { position: absolute; top: 14%; left: 50%; translate: -50% 0; padding: 0.5cqw 1.6cqw; border-radius: 0.6cqw; background: #e08a1e; color: #1b1004; font-size: 1.6cqw; font-weight: 600; }
+
+/* ---------------------------------------------------------------- console 3D (prise-en-main/console3d.js) */
+.pem-opts { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; }
+.pem-opts .pem-tabs .chip[aria-pressed='true'] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink, #fff); }
+.pem-3d {
+  position: relative; aspect-ratio: 16 / 11; min-height: 340px; max-height: 78vh; width: 100%; overflow: hidden; border-radius: 14px; touch-action: none;
+  background: radial-gradient(ellipse at 50% 35%, color-mix(in srgb, var(--surface) 70%, #9aa7b4), var(--surface-2) 75%); border: 1px solid var(--line);
+}
+@media (max-width: 700px) { .pem-3d { aspect-ratio: 3 / 4; } }
+.pem-3d .c3-gl, .pem-3d .c3-css { position: absolute; inset: 0; width: 100% !important; height: 100% !important; }
+.pem-3d .c3-css, .pem-3d .c3-css * { pointer-events: none; }
+.pem-3d .c3-css .c3-ecran, .pem-3d .c3-css .c3-ecran * { pointer-events: auto; }
+.c3-ecran { container-type: inline-size; border-radius: 4px; overflow: hidden; background: #0b0c0d; }
+.c3-ecran .er { border-radius: 0; }
+.c3-ecran [data-er-id], .pem-screen [data-er-id] { cursor: pointer; }
+.c3-ecran [data-er-id]:hover, .pem-screen [data-er-id]:hover { color: #ffb347; }
+.c3-flash-L .er-left, .c3-flash-R .er-right { animation: c3-flash 0.5s 3; }
+@keyframes c3-flash { 50% { color: #fff; text-shadow: 0 0 1cqw #e08a1e; } }
+.c3-tip {
+  position: absolute; z-index: 2; pointer-events: none; padding: 4px 8px; border-radius: 6px; font-size: 12px; white-space: nowrap;
+  background: var(--ink); color: var(--surface); box-shadow: var(--shadow);
+}
+.pem-3d-reset { position: absolute; right: 10px; top: 10px; z-index: 2; height: 32px; border-radius: 8px; }
+.pem-3d-aide { margin: -4px 0 0; }

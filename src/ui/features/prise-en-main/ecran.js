@@ -46,7 +46,7 @@ export function ecran(sim, { fr = false, alarmes = new Map(), img = (p) => p } =
   const heure = `${String(d.getHours()).padStart(2, '0')} : ${String(d.getMinutes()).padStart(2, '0')}`;
   const liste = (ids, side) => ids.map((id) => {
     const on = side === 'L' ? (id === c || sim.actif(id)) : sim.actif(id);
-    return `<li class="${on ? 'on' : ''}">${lib(id, fr)}</li>`;
+    return `<li class="${on ? 'on' : ''}" data-er-side="${side}" data-er-id="${esc(id)}" title="${esc(T[id]?.[1] || '')}">${lib(id, fr)}</li>`;
   }).join('');
   const voyant = (n, alt) => `<img src="${esc(img(`prise-en-main/voyant-${n}.webp`))}" alt="${esc(alt)}">`;
   let centre = '';
