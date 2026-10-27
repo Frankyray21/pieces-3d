@@ -126,6 +126,7 @@ export const ANNOTATIONS = {
     { v: 195.0, type: 'dim', a: [SEC * 1.5, B66 + 0.02, joistZ[2]], b: [SEC * 1.5, B66 + 0.02, joistZ[3]], off: [0, 0.1, 0], text: '32 po', sub: 'centre à centre' },
     { v: 197.4, type: 'note', at: [JOINT_X + 0.15, B66, joistZ[2]], text: 'Dans le prolongement de la section 1', dir: 'up', until: 202.0 },
     { v: 199.4, type: 'note', at: [SLEEPERS_X[2], -B66, joistZ[2]], text: 'Soutiens vis-à-vis les croisements', dir: 'up' },
+    { v: 201.0, type: 'note', at: [JOINT_X, B66 - P8 / 2, W / 2 + P3], text: 'Blocage 3 × 8 vissé de chaque côté : joint les 2 sections', dir: 'down', until: 204.0 },
     // Cage, montée couche par couche.
     { v: 204.8, type: 'note', at: [CRIB.x - 0.305, CRIB.y1, CRIB.z - 0.3], text: 'Couche 1 : deux 6 × 6 parallèles', dir: 'down', until: 209.6 },
     { v: 207.4, type: 'note', at: [CRIB.x, CRIB.y2, CRIB.z + 0.38], text: 'Couche 2 : croisée', dir: 'right', until: 212.4 },
