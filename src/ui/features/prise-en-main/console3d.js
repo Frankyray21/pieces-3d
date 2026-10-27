@@ -137,10 +137,11 @@ function bandeau() {
 
 /**
  * Crée la console dans `conteneur`. sim : createSim() ; opts.agir(evt) : appelé après une action (pour redessiner
- * le reste de la page) ; opts.info(texte) : nom de la commande survolée. Retourne { ecran (élément HTML de
+ * le reste de la page) ; opts.info(texte) : nom de la commande survolée ; opts.surCible(cible) : remplace l'action
+ * des commandes touchées (découverte de la console) ; opts.plein : élément mis en plein écran (par défaut, la vue). Retourne { ecran (élément HTML de
  * l'écran), maj(), arreter() }.
  */
-export function creerConsole3D(conteneur, sim, { agir = () => {}, info = () => {} } = {}) {
+export function creerConsole3D(conteneur, sim, { agir = () => {}, info = () => {}, surCible = null, plein = conteneur } = {}) {
   const materiaux = {
     orange: mat(ORANGE, { roughness: 0.45 }), noir: mat(NOIR, { roughness: 0.8 }), caoutchouc: mat(0x151515, { roughness: 0.9 }),
     poignee: mat(0x202226, { roughness: 0.6 }), acier: mat(ACIER, { metalness: 0.6, roughness: 0.4 }),
@@ -158,6 +159,36 @@ export function creerConsole3D(conteneur, sim, { agir = () => {}, info = () => {
   const css = new CSS3DRenderer();
   css.domElement.className = 'c3-css';
   conteneur.append(renderer.domElement, css.domElement);
+  // Plein écran : API du navigateur, sinon (iPhone) l'élément couvre la fenêtre (classe c3-plein).
+  const btnPlein = document.createElement('button');
+  btnPlein.type = 'button';
+  btnPlein.className = 'btn c3-plein-btn';
+  const natif = () => document.fullscreenElement === plein || document.webkitFullscreenElement === plein;
+  const estPlein = () => natif() || plein.classList.contains('c3-plein');
+  const majPlein = () => {
+    btnPlein.textContent = estPlein() ? '✕ Quitter le plein écran' : '⛶ Plein écran';
+    btnPlein.setAttribute('aria-pressed', String(estPlein()));
+    document.documentElement.classList.toggle('c3-plein-ouvert', plein.classList.contains('c3-plein'));
+  };
+  const basculer = async () => {
+    if (estPlein()) {
+      if (natif()) await (document.exitFullscreen || document.webkitExitFullscreen)?.call(document);
+      plein.classList.remove('c3-plein');
+    } else {
+      const req = plein.requestFullscreen || plein.webkitRequestFullscreen;
+      try { if (req) await req.call(plein, { navigationUI: 'hide' }); else throw new Error('non pris en charge'); } catch { plein.classList.add('c3-plein'); }
+    }
+    majPlein();
+  };
+  btnPlein.addEventListener('click', basculer);
+  const surChangement = () => majPlein();
+  document.addEventListener('fullscreenchange', surChangement);
+  document.addEventListener('webkitfullscreenchange', surChangement);
+  const echap = (ev) => { if (ev.key === 'Escape' && plein.classList.contains('c3-plein')) { ev.stopPropagation(); basculer(); } };
+  document.addEventListener('keydown', echap, true);
+  conteneur.appendChild(btnPlein);
+  majPlein();
+
   const bulle = document.createElement('div');
   bulle.className = 'c3-tip';
   bulle.hidden = true;
@@ -326,6 +357,8 @@ export function creerConsole3D(conteneur, sim, { agir = () => {}, info = () => {
     if (!c) return;
     ev.preventDefault();
     ev.stopPropagation();
+    // Mode découverte (étape « La console ») : la commande touchée est seulement signalée, sans action.
+    if (surCible) { surCible(c); return; }
     controls.enabled = false;
     if (c.type === 'manette') {
       drag = { side: c.side, x0: ev.clientX, y0: ev.clientY, moved: false, pos0: { ...sim.s[c.side] } };
@@ -448,6 +481,12 @@ export function creerConsole3D(conteneur, sim, { agir = () => {}, info = () => {
     arreter() {
       cancelAnimationFrame(raf);
       ro.disconnect();
+      if (natif()) (document.exitFullscreen || document.webkitExitFullscreen)?.call(document);
+      plein.classList.remove('c3-plein');
+      document.documentElement.classList.remove('c3-plein-ouvert');
+      document.removeEventListener('fullscreenchange', surChangement);
+      document.removeEventListener('webkitfullscreenchange', surChangement);
+      document.removeEventListener('keydown', echap, true);
       window.removeEventListener('pointerup', onUp);
       controls.dispose();
       scene.traverse((o) => {

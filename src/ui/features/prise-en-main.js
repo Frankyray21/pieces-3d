@@ -146,9 +146,14 @@ export default {
       function etapeConsole(body, titre) {
         const f = d.figureConsole;
         const pts = f.points;
-        body.innerHTML = `${titre('La console de l’opérateur', 'Touchez chaque repère pour savoir à quoi sert la commande. Puis relevez le défi : retrouver les commandes les plus importantes.', f.page)}
+        body.innerHTML = `${titre('La console de l’opérateur', 'Touchez chaque commande pour savoir à quoi elle sert. Puis relevez le défi : retrouver les commandes les plus importantes.', f.page)}
+          <div class="pem-tabs" role="group" aria-label="Affichage de la console"><button type="button" class="chip" data-vc="3d" aria-pressed="${u.vueConsole !== 'fig'}">Console 3D</button><button type="button" class="chip" data-vc="fig" aria-pressed="${u.vueConsole === 'fig'}">Figure du manuel</button></div>
           <div class="pem-two">
-            <figure class="pem-fig">
+            <div class="pem-c3"${u.vueConsole === 'fig' ? ' hidden' : ''}>
+              <div class="pem-3d"></div>
+              <p class="pem-small">Touchez une commande sur la console 3D (glisser pour tourner la vue, molette ou deux doigts pour zoomer). Les commandes s’utilisent pour de vrai à l’étape « Simulateur et missions ».</p>
+            </div>
+            <figure class="pem-fig"${u.vueConsole === 'fig' ? '' : ' hidden'}>
               <div class="pem-fig-in" style="aspect-ratio:${f.w}/${f.h}">
                 <img src="${esc(img(f.image))}" alt="Console de l’opérateur ERIS (figure du manuel, page ${f.page})">
                 ${pts.map((pt) => `<button type="button" class="pem-dot" data-n="${pt.n}" style="left:${pt.x * 100}%;top:${pt.y * 100}%" aria-label="${esc(pt.nom)}"><span>${pt.n || 'É'}</span></button>`).join('')}
@@ -162,6 +167,26 @@ export default {
           </div>`;
         const panel = body.querySelector('.pem-panel');
         const vus = new Set();
+        // Console 3D : chaque commande touchée vaut le repère correspondant de la figure.
+        const REPERE = { power: 1, manette: (c) => (c.side === 'L' ? 2 : 3), estop: 4, ext: 5, bouton: (c) => (c.side === 'L' ? 2 : 3) };
+        let c3 = null;
+        const ouvrir3d = () => {
+          if (c3 || u.vueConsole === 'fig') return;
+          try {
+            c3 = creerConsole3D(body.querySelector('.pem-c3 .pem-3d'), createSim(), {
+              plein: body.querySelector('.pem-two'),
+              surCible: (c) => { const r = REPERE[c.type]; if (r != null) choisir(typeof r === 'function' ? r(c) : r, null); },
+            });
+            c3.ecran.addEventListener('click', () => choisir(0, null));
+            c3.ecran.innerHTML = '<div class="er er-off"><span>Écran ERIS</span></div>';
+            arret = () => { c3?.arreter(); c3 = null; };
+          } catch (err) {
+            console.error(err);
+            u.vueConsole = 'fig';
+            body.querySelector('.pem-c3').hidden = true;
+            body.querySelector('.pem-fig').hidden = false;
+          }
+        };
         let mode = u.defi ? 'defi' : 'explorer';
         const montrer = (n) => {
           const pt = pts.find((x) => x.n === n);
@@ -179,11 +204,11 @@ export default {
             return;
           }
           const cible = pts.find((x) => x.n === q.ordre[q.i]);
-          panel.innerHTML = `<div class="pem-quest"><span class="pem-small">Question ${q.i + 1} / ${q.ordre.length}</span><p>Touchez sur la figure :</p><h3>${esc(cible.nom)}</h3>${q.retour ? `<p class="pem-fb ${q.retour.ok ? 'ok' : 'ko'}">${esc(q.retour.t)}</p>` : ''}</div>`;
+          panel.innerHTML = `<div class="pem-quest"><span class="pem-small">Question ${q.i + 1} / ${q.ordre.length}</span><p>Touchez sur la console :</p><h3>${esc(cible.nom)}</h3>${q.retour ? `<p class="pem-fb ${q.retour.ok ? 'ok' : 'ko'}">${esc(q.retour.t)}</p>` : ''}</div>`;
         };
         const setMode = (m) => {
           mode = m;
-          body.querySelectorAll('.pem-tabs .chip').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.mode === m)));
+          body.querySelectorAll('.pem-tabs [data-mode]').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.mode === m)));
           body.querySelectorAll('.pem-dot').forEach((b) => b.classList.remove('on', 'ko', 'ok'));
           if (m === 'defi') {
             if (!u.defi || u.defi.i >= u.defi.ordre.length) u.defi = { ordre: melange(f.defi), i: 0, score: 0, retour: null };
@@ -192,29 +217,43 @@ export default {
           } else {
             u.defi = null;
             body.classList.remove('pem-defi');
-            panel.innerHTML = '<p class="pem-small">Touchez un repère numéroté sur la figure.</p>';
+            panel.innerHTML = '<p class="pem-small">Touchez une commande sur la console 3D ou un repère numéroté sur la figure.</p>';
           }
         };
-        body.addEventListener('click', (ev) => {
-          const t = ev.target.closest('[data-mode]');
-          if (t) { setMode(t.dataset.mode); return; }
-          if (ev.target.closest('[data-defi]')) { u.defi = null; setMode('defi'); return; }
-          const dot = ev.target.closest('.pem-dot');
-          if (!dot) return;
-          const n = Number(dot.dataset.n);
+        /** Repère n choisi (sur la figure : dot ; en 3D : null). */
+        function choisir(n, dot) {
           if (mode === 'explorer') { montrer(n); return; }
           const q = u.defi;
           if (!q || q.i >= q.ordre.length) return;
           const ok = n === q.ordre[q.i];
           const bonne = pts.find((x) => x.n === q.ordre[q.i]);
-          dot.classList.add(ok ? 'ok' : 'ko');
-          setTimeout(() => dot.classList.remove('ok', 'ko'), 700);
+          if (dot) {
+            dot.classList.add(ok ? 'ok' : 'ko');
+            setTimeout(() => dot.classList.remove('ok', 'ko'), 700);
+          }
           if (ok) q.score += 1;
           q.retour = { ok, t: ok ? `Exact : ${bonne.nom}.` : `Non : c’était le repère ${bonne.n}.` };
           q.i += 1;
           defi();
+        }
+        body.addEventListener('click', (ev) => {
+          const vc = ev.target.closest('[data-vc]');
+          if (vc) {
+            u.vueConsole = vc.dataset.vc;
+            body.querySelectorAll('[data-vc]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.vc === u.vueConsole)));
+            body.querySelector('.pem-c3').hidden = u.vueConsole === 'fig';
+            body.querySelector('.pem-fig').hidden = u.vueConsole !== 'fig';
+            if (u.vueConsole === 'fig') { c3?.arreter(); c3 = null; } else ouvrir3d();
+            return;
+          }
+          const t = ev.target.closest('[data-mode]');
+          if (t) { setMode(t.dataset.mode); return; }
+          if (ev.target.closest('[data-defi]')) { u.defi = null; setMode('defi'); return; }
+          const dot = ev.target.closest('.pem-dot');
+          if (dot) choisir(Number(dot.dataset.n), dot);
         });
         setMode(mode);
+        ouvrir3d();
       }
 
       // ------------------------------------------------------------ 2. les manettes
@@ -333,7 +372,7 @@ export default {
         const ouvrir3d = () => {
           if (c3 || u.vue !== '3d') return;
           try {
-            c3 = creerConsole3D(zone3d, sim, { agir: () => tout() });
+            c3 = creerConsole3D(zone3d, sim, { agir: () => tout(), plein: body.querySelector('.pem-console') });
             const r = document.createElement('button');
             r.type = 'button'; r.className = 'btn pem-3d-reset'; r.dataset.recentrer = ''; r.textContent = 'Recentrer';
             zone3d.appendChild(r);
