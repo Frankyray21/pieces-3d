@@ -10,9 +10,13 @@ export async function loadIndex() {
 }
 
 export async function loadEquipment(id) {
+  // Données d'atelier (systèmes, entretien, consignes, bulles des planches) : facultatives.
+  const atelier = fetch(`${BASE}${id}/atelier.json`).then((r) => (r.ok ? r.json() : null)).catch(() => null);
   const res = await fetch(`${BASE}${id}/data.json`);
   if (!res.ok) throw new Error(`Données de l'équipement « ${id} » introuvables (${res.status})`);
-  return normalize(await res.json());
+  const eq = normalize(await res.json());
+  eq.atelier = await atelier;
+  return eq;
 }
 
 const isPnText = (v) => /^\d[\d -]{5,12}\d$/.test(String(v || ''));
@@ -260,12 +264,31 @@ export function sheetLabel(eq, s) {
   return eq.docWord === 'catalogue' ? `p. ${parseInt(String(s).replace(/^\D+/, ''), 10)}` : s;
 }
 
-/** Recherche plein texte (numéro, description, fournisseur). */
+// Mots d'atelier en français → termes anglais des manuels (les descriptions sont en anglais).
+const FR_EN = {
+  FILTRE: ['FILTER', 'ELEMENT'], GRAISSEUR: ['GREASE NIPPLE', 'GREASE FITTING', 'ZERK'], JOINT: ['SEAL', 'GASKET', 'O-RING'],
+  VERIN: ['CYLINDER'], POMPE: ['PUMP'], MOTEUR: ['MOTOR', 'ENGINE'], FLEXIBLE: ['HOSE'], TUYAU: ['HOSE', 'PIPE', 'TUBE'],
+  VANNE: ['VALVE'], DISTRIBUTEUR: ['VALVE BANK', 'VALVE'], CLAPET: ['CHECK VALVE', 'VALVE'], ROULEMENT: ['BEARING'],
+  COURROIE: ['BELT'], CAPTEUR: ['SENSOR', 'TRANSDUCER'], INTERRUPTEUR: ['SWITCH'], RESERVOIR: ['TANK', 'RESERVOIR'],
+  BOULON: ['BOLT', 'SCREW'], VIS: ['SCREW', 'BOLT'], ECROU: ['NUT'], RONDELLE: ['WASHER'], RESSORT: ['SPRING'],
+  TROUSSE: ['KIT'], FEU: ['LIGHT', 'LAMP'], PHARE: ['LIGHT', 'LAMP'], BATTERIE: ['BATTERY'], RADIATEUR: ['RADIATOR'],
+  PNEU: ['TIRE', 'TYRE'], ROUE: ['WHEEL'], FREIN: ['BRAKE'], CHENILLE: ['TRACK'], MANOMETRE: ['GAUGE'], JAUGE: ['GAUGE', 'LEVEL'],
+  ACCOUPLEMENT: ['COUPLING'], RACCORD: ['FITTING', 'ADAPTER', 'COUPLING'], COLLIER: ['CLAMP'], SUPPORT: ['BRACKET', 'MOUNT'],
+  AUTOCOLLANT: ['DECAL', 'LABEL'], ETIQUETTE: ['DECAL', 'LABEL'], CABLE: ['CABLE', 'WIRE'], FAISCEAU: ['HARNESS'],
+  BOITIER: ['BOX', 'HOUSING'], SIEGE: ['SEAT'], CAPOT: ['COVER', 'HOOD'], GLISSIERE: ['SLIDE'], MAT: ['MAST'], AVANCE: ['FEED'],
+  CARROUSEL: ['CAROUSEL'], COMPRESSEUR: ['COMPRESSOR'], SURPRESSEUR: ['BOOSTER'], ACCUMULATEUR: ['ACCUMULATOR'],
+  REFROIDISSEUR: ['COOLER'], ECHAPPEMENT: ['EXHAUST', 'MUFFLER'], CARBURANT: ['FUEL'], HUILE: ['OIL'], GRAISSE: ['GREASE'],
+  EAU: ['WATER'], AIR: ['AIR'], ARBRE: ['SHAFT'], BAGUE: ['BUSHING', 'RING'], CALE: ['SHIM'], GOUPILLE: ['PIN'], AXE: ['PIN', 'SHAFT'],
+};
+const fold = (s) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+const alts = (w) => { const k = fold(w).replace(/S$/, ''); return [w, ...(FR_EN[k] || FR_EN[fold(w)] || [])]; };
+
+/** Recherche plein texte (numéro, description, fournisseur ; mots français traduits). */
 export function search(eq, q) {
   q = q.trim().toUpperCase();
   if (q.length < 2) return [];
   const qn = q.replace(/\s/g, '');
-  const words = q.split(/\s+/);
+  const words = q.split(/\s+/).map(alts);
   return eq.rows
     .map((r) => {
       const pns = r.pns.map(normPn);
@@ -274,7 +297,7 @@ export function search(eq, q) {
       if (pns.includes(qn)) score = 100;
       else if (pns.some((pn) => pn.includes(qn))) score = 60;
       else if (sup && sup.includes(qn)) score = 50;
-      else if (words.every((w) => r.desc.toUpperCase().includes(w))) score = 30;
+      else if (words.every((w) => w.some((a) => r.desc.toUpperCase().includes(a)))) score = 30;
       return { r, score };
     })
     .filter((x) => x.score > 0)

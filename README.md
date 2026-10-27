@@ -102,6 +102,18 @@ sont préfixées : `#du311.P032`, `#du311-std.P050`, `#epiroc-ith.P019`.
   différentes, les numéros presque identiques (erreurs de saisie probables),
   les lignes et numéros absents.
 - Chaque page du manuel original reste consultable (bouton « Page du manuel »).
+- **Documentation d'atelier**, tirée seulement du manuel : navigation par
+  système (pictogramme et couleur par système, fil d'Ariane équipement ›
+  système › composant), données techniques (capacités, moteurs, pompes,
+  pressions, vérins, couples et réglages imprimés sur les dessins), plan
+  d'entretien (graisseurs, filtres, liquides, trousses, outillage), consignes
+  des dessins traduites avec leur extrait de planche, schémas en couleur par
+  circuit (bulles des schémas hydrauliques et pneumatiques, étiquettes des
+  schémas électriques, renvois d'échelons cliquables), bulles cliquables sur
+  toutes les planches (fiche de la pièce) et recherche globale (pièces,
+  systèmes, pages, données, consignes ; mots français traduits). Ce que le
+  manuel de pièces ne contient pas (procédures pas à pas, intervalles, codes
+  de diagnostic) est dit tel quel.
 
 Site en ligne : https://frankyray21.github.io/pieces-3d/ (republié
 automatiquement à chaque push sur la branche `main`, voir
@@ -140,6 +152,13 @@ src/main.js, src/ui/                        interface
 tools/extract_parts.py                      extraction des listes depuis le PDF
 tools/extract_sandvik.py                    extraction complète d'un manuel Sandvik
 tools/extract_epiroc.py                     extraction du catalogue Epiroc (tableaux, pages)
+public/equipment/<id>/atelier.json          documentation d'atelier (produite, voir plus bas)
+src/ui/atelier.js, src/ui/icons.js          vues d'atelier, pictogrammes des systèmes
+tools/ocr_pages.py, tools/bulles.py         OCR des planches (texte, bulles de repère)
+tools/atelier_review.py                     planches de relecture des textes lus
+tools/build_atelier.py                      production de atelier.json
+tools/atelier/ocr/<id>.jsonl.gz             résultats de l'OCR
+tools/atelier/<id>.json                     relecture : texte exact, traduction, couples, valeurs
 ```
 
 ## Simulation mécanique (développement, hors site)
@@ -228,6 +247,18 @@ effet sur le rendu du site.
    manuel. Une variante d'une machine déjà modélisée reprend les modèles des
    assemblages identiques avec `reuse()` (`src/models/reuse.js`).
 
+5. Documentation d'atelier (facultative) :
+   `python3 tools/ocr_pages.py public/equipment/<id>/pages sortie.jsonl P001 P002 …`
+   (OCR, ~6 s par planche ; `pip install rapidocr-onnxruntime`), résultat
+   compressé dans `tools/atelier/ocr/<id>.jsonl.gz` ; puis
+   `python3 tools/atelier_review.py <id> relecture/ tools/atelier/ocr/<id>.jsonl.gz`
+   découpe chaque consigne, réglage et titre de schéma lu, pour la relecture
+   à l'œil qui donne `tools/atelier/<id>.json` (format en tête du script) ;
+   enfin `python3 tools/build_atelier.py <id> tools/atelier/ocr/<id>.jsonl.gz
+   > public/equipment/<id>/atelier.json`. Le rangement par système se règle
+   dans `STRONG` / `OVERRIDES` du script. Seuls les textes relus sont publiés
+   comme consignes traduites, couples et réglages.
+
 Un catalogue d'outils (Epiroc) suit le même schéma : `tools/extract_epiroc.py
 catalogue.pdf > data.json` lit les tableaux (cases fusionnées recopiées,
 colonnes de tailles), la description de chaque page étant dans `PAGES` ;
@@ -252,6 +283,13 @@ page.
   l'adaptateur de taille P (p. 30), et des numéros mal imprimés (9460705061,
   946705120, 3460017234, « 376 011016 »).
 
+- Documentation d'atelier : les schémas hydrauliques sont des planches
+  numérisées tournées dont le texte est trop fin pour l'OCR ; la couleur des
+  circuits y passe par les bulles lues (une partie seulement) et par la liste
+  des composants, pas par le tracé des conduites. Les bulles des planches
+  sont lues automatiquement et validées par la liste : quelques-unes manquent.
+  Les intervalles d'entretien, procédures et codes de diagnostic ne figurent
+  pas dans les manuels de pièces.
 - Les modèles 3D sont des **reconstitutions paramétriques** fidèles à la
   disposition et aux proportions des dessins, pas les fichiers CAO du
   fabricant. Les numéros de pièces, eux, viennent du manuel.

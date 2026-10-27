@@ -1,0 +1,142 @@
+{
+ "notes": {
+  "F04-232-691": {
+   "drop": true
+  },
+  "F04-496-130": {
+   "drop": true
+  },
+  "F04-665-248": {
+   "drop": true
+  },
+  "F05-520-840": {
+   "drop": true
+  },
+  "F05-871-098": {
+   "drop": true
+  },
+  "F08-894-095": {
+   "drop": true
+  },
+  "F11-875-099": {
+   "drop": true
+  },
+  "F13-860-098": {
+   "drop": true
+  },
+  "F16-846-091": {
+   "drop": true
+  },
+  "F16-846-138": {
+   "drop": true
+  }
+ },
+ "settings": {
+  "F13-860-192": {
+   "en": "COMPRESSOR OIL PRESSURE GAUGE 0-300 PSI",
+   "fr": "Manomètre de pression d'huile du compresseur 0-300 PSI",
+   "values": [
+    {
+     "max": 300,
+     "min": 0,
+     "unit": "psi",
+     "what": "Plage du manomètre de pression d'huile du compresseur"
+    }
+   ]
+  },
+  "F20-367-107": {
+   "en": "PRESSURE TRANSMITTER MBS 1250, 40 BAR (x4); ROTATION PRESSURE TRANSMITTER MBS 1250, 400 BAR; PULL DOWN PRESSURE TRANSMITTER MBS 1250, 40 BAR; HOLDBACK PRESSURE TRANSMITTER MBS 1250, 400 BAR; ELECTRIC MOTOR 115 HP, 1000V, 50HZ; FEED CYLINDER 33 000 LB",
+   "fr": "Transmetteurs de pression MBS 1250, 40 bar (x4) ; transmetteur de pression de rotation MBS 1250, 400 bar ; transmetteur de pression de poussée (pull down) MBS 1250, 40 bar ; transmetteur de pression de retenue (holdback) MBS 1250, 400 bar ; moteur électrique 115 HP, 1000 V, 50 Hz ; vérin d'avance 33 000 lb",
+   "values": [
+    {
+     "min": 40,
+     "unit": "bar",
+     "what": "Transmetteur de pression MBS 1250 (4 unités) — calibre"
+    },
+    {
+     "min": 400,
+     "unit": "bar",
+     "what": "Transmetteur de pression de rotation MBS 1250 — calibre"
+    },
+    {
+     "min": 40,
+     "unit": "bar",
+     "what": "Transmetteur de pression de poussée (pull down) MBS 1250 — calibre"
+    },
+    {
+     "min": 400,
+     "unit": "bar",
+     "what": "Transmetteur de pression de retenue (holdback) MBS 1250 — calibre"
+    }
+   ]
+  },
+  "F21-789-094": {
+   "en": "SAFETY VALVE 400 PSI (CP 41018-001); WATER PRESSURE TRANSMITTER 0-40 BAR",
+   "fr": "Soupape de sûreté 400 PSI (CP 41018-001) ; transmetteur de pression d'eau 0-40 bar",
+   "values": [
+    {
+     "min": 400,
+     "unit": "psi",
+     "what": "Soupape de sûreté (CP 41018-001) — pression de tarage"
+    },
+    {
+     "max": 40,
+     "min": 0,
+     "unit": "bar",
+     "what": "Transmetteur de pression d'eau — plage"
+    }
+   ]
+  },
+  "F21-797-094": {
+   "en": "RECEIVER PRESSURE TRANSMITTER 0-40 BAR; LOW MINE AIR PRESSURE TRANSDUCER SHUT OFF 0-40 BAR",
+   "fr": "Transmetteur de pression du réservoir d'air 0-40 bar ; transducteur d'arrêt sur basse pression d'air de la mine 0-40 bar",
+   "values": [
+    {
+     "max": 40,
+     "min": 0,
+     "unit": "bar",
+     "what": "Transmetteur de pression du réservoir d'air — plage"
+    },
+    {
+     "max": 40,
+     "min": 0,
+     "unit": "bar",
+     "what": "Transducteur d'arrêt sur basse pression d'air de la mine — plage"
+    }
+   ]
+  },
+  "F21-798-427": {
+   "drop": true
+  },
+  "F21-822-434": {
+   "en": "PRESSURE GAUGE 0-300 PSI (x2); PRESSURE GAUGE 0-600 PSI",
+   "fr": "Manomètres 0-300 PSI (x2) ; manomètre 0-600 PSI (circuit non précisé dans la liste)",
+   "values": [
+    {
+     "max": 300,
+     "min": 0,
+     "unit": "psi",
+     "what": "Manomètre de pression (2 unités, circuit non précisé) — plage"
+    },
+    {
+     "max": 600,
+     "min": 0,
+     "unit": "psi",
+     "what": "Manomètre de pression (circuit non précisé) — plage"
+    }
+   ]
+  },
+  "F25-482-193": {
+   "en": "MOTOR 115 HP, 1000V, 1500 RPM, 50 Hz; EATON BREAKER 1000 VOLTS, 150 AMPS",
+   "fr": "Moteur 115 HP, 1000 V, 1500 tr/min, 50 Hz ; disjoncteur Eaton 1000 V, 150 A",
+   "values": [
+    {
+     "min": 1500,
+     "unit": "rpm",
+     "what": "Moteur électrique 115 HP, 1000 V, 50 Hz — vitesse nominale"
+    }
+   ]
+  }
+ },
+ "titles": {}
+}

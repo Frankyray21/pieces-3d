@@ -7,6 +7,8 @@ import du311Models from './models/du311/index.js';
 import du311StdModels, { overview as du311StdOverview } from './models/du311-std/index.js';
 import epirocModels from './models/epiroc-ith/index.js';
 import './ui/resize.js';
+import { createAtelier, isAtelierToken } from './ui/atelier.js';
+import { icon } from './ui/icons.js';
 
 // Modèles 3D disponibles par équipement (builders procéduraux).
 const MODELS = { 'cubex-mri-5200': cubexModels, du311: du311Models, 'du311-std': du311StdModels, 'epiroc-ith': epirocModels };
@@ -66,11 +68,23 @@ const S = {
   isolate: false,
   explode: 0,
   section: { on: false, axis: 'z', pos: 0.5, flip: false, scope: 'all' },
+  railTab: 'sys', // sommaire : « sys » (par système) ou « asm » (arbre des assemblages)
+  atlSel: null, // élément d'atelier sélectionné (« t:3 », « n:P084-… ») et sa vue
+  atlSelView: null,
+  atlSys: null, // filtre par système des vues d'atelier
+  atlKind: null, // filtre par type des consignes
 };
 let viewer = null;
 
 try { S.labels = localStorage.getItem('pieces3d.labels') !== '0'; } catch { /* préférence non disponible */ }
 try { S.edges = localStorage.getItem('pieces3d.contours') === '1'; } catch { /* préférence non disponible */ }
+try { S.railTab = localStorage.getItem('pieces3d.sommaire') || 'sys'; } catch { /* préférence non disponible */ }
+
+// Documentation d'atelier (systèmes, données techniques, entretien, consignes, schémas).
+const atl = createAtelier({
+  S, $, esc, badge, go, follow, openPage, jumpToRow, setPane, narrow,
+  has3d: (id) => !!(MODELS[S.eq?.id] || {})[id],
+});
 
 // ------------------------------------------------------------------ démarrage
 
@@ -98,6 +112,7 @@ function hashFor(token, id = S.eq.id) {
 }
 
 async function route() {
+  if (!$('#modal').hidden) closePage(); // retour arrière avec une page ouverte : on la ferme
   const raw = decodeURIComponent(location.hash.replace(/^#/, ''));
   const m = /^([^./]+)[./](.*)$/.exec(raw);
   const known = !!m && S.index.some((e) => e.id === m[1]);
@@ -112,6 +127,9 @@ async function route() {
     }
     S.view = null;
     S.selected = null;
+    S.atlSel = null;
+    S.atlSys = null;
+    S.atlKind = null;
     const doc = S.eq.docWord === 'catalogue' ? 'catalogue' : 'manuel';
     $('#btn-page').textContent = `Page du ${doc}`;
     $('#btn-page').title = `Voir la page du ${doc}`;
@@ -123,6 +141,7 @@ async function route() {
   $('#catalogue').hidden = !home;
   if (home) { document.title = 'Équipements · Pièces 3D'; renderCatalogue(); return; }
   if (token === 'controle') return openIssues();
+  if (eq.atelier && isAtelierToken(token)) return openAtelier(token);
   if (eq.assemblies.has(token)) return openAssembly(token);
   if (eq.documents.has(token)) return openDocument(token);
   openAssembly(eq.root);
@@ -136,7 +155,7 @@ function go(token) {
 
 /** Suit un lien vers une page (sur téléphone, on passe à la vue 3D ou au dessin). */
 function follow(token) {
-  if ((S.eq?.assemblies.has(token) || S.eq?.documents.has(token)) && narrow()) setPane('stage');
+  if ((S.eq?.assemblies.has(token) || S.eq?.documents.has(token) || isAtelierToken(token)) && narrow()) setPane('stage');
   go(token);
 }
 
@@ -469,27 +488,37 @@ function openDocument(id) {
   $('#sectionbar').hidden = true;
   $('#hint').hidden = true;
   $('#titleblock').hidden = true;
-  showSheets(doc.sheets);
+  showSheets(doc.sheets, { doc: id });
   renderRail();
   renderCrumbs();
   renderPanel();
 }
 
-// Pages du manuel affichées dans la scène (schémas, ou dessins d'un assemblage sans 3D).
-function showSheets(sheets) {
+// Pages du manuel affichées dans la scène (schémas, ou dessins d'un assemblage sans 3D),
+// avec les bulles cliquables des repères et, pour un schéma, la couleur des circuits.
+function showSheets(sheets, { doc = null } = {}) {
   const eq = S.eq;
   const dv = $('#docview');
   dv.hidden = false;
-  dv.innerHTML = sheets.map((s) => `
-    <figure>
-      <img src="${esc(eq.pageUrl(s))}" alt="Page ${s} du ${eq.docWord} : ${esc(eq.sheetTitles[s] || '')}" data-sheet="${s}" loading="lazy">
-      <figcaption><span class="mono">${eq.docWord === 'catalogue' ? sheetLabel(eq, s) : `${eq.document.reference.split(',')[0]}-${s}`}</span> · ${esc(eq.sheetTitles[s] || '')} — cliquez pour agrandir</figcaption>
-    </figure>`).join('') || `<p class="sub">Aucun dessin pour cette liste au ${eq.docWord}.</p>`;
+  dv.classList.remove('atl-view');
+  dv.dataset.iso = '';
+  const legend = doc ? atl.legend(doc) : '';
+  dv.innerHTML = legend + (sheets.map((s) => `
+    <figure data-sheet="${s}">
+      <div class="pg"><img src="${esc(eq.pageUrl(s))}" alt="Page ${s} du ${eq.docWord} : ${esc(eq.sheetTitles[s] || '')}" data-sheet="${s}" loading="lazy">${atl.overlay(s)}</div>
+      <figcaption><span class="mono">${eq.docWord === 'catalogue' ? sheetLabel(eq, s) : `${eq.document.reference.split(',')[0]}-${s}`}</span> · ${esc(atl.sheetTitle(s) || eq.sheetTitles[s] || '')} — cliquez pour agrandir${atl.has() && eq.atelier.hotspots?.[s] ? ', ou une bulle pour voir la pièce' : ''}</figcaption>
+    </figure>`).join('') || `<p class="sub">Aucun dessin pour cette liste au ${eq.docWord}.</p>`);
   dv.querySelectorAll('img').forEach((img) => {
     img.addEventListener('click', () => openPage(img.dataset.sheet));
     img.addEventListener('load', () => img.closest('figure').classList.toggle('portrait', img.naturalHeight > img.naturalWidth));
     img.addEventListener('error', () => { img.closest('figure').innerHTML = missingPage(img.dataset.sheet); });
   });
+  dv.querySelectorAll('.ovl .hs').forEach((b) => b.addEventListener('click', (e) => {
+    e.stopPropagation();
+    select([b.dataset.hs], { from3d: true });
+  }));
+  dv.querySelectorAll('.ovl .xr').forEach((b) => b.addEventListener('click', (e) => { e.stopPropagation(); atl.gotoRung(+b.dataset.rung, b.dataset.doc); }));
+  dv.querySelectorAll('.legend-bar [data-circ]').forEach((b) => b.addEventListener('click', () => atl.isolate(dv, b.dataset.circ)));
   dv.scrollTop = 0;
 }
 
@@ -497,6 +526,25 @@ function showSheets(sheets) {
 function missingPage(s, extra = '') {
   const full = location.href.startsWith(SITE) ? '' : ` <a href="${SITE}${esc(location.hash)}" target="_blank" rel="noopener">Voir la version complète du site</a>.`;
   return `<p class="missing">La page ${s} n'est pas incluse dans cette version du site.${extra}${full}</p>`;
+}
+
+/** Vue d'atelier : données techniques, entretien, consignes, schémas, ou page d'un système. */
+async function openAtelier(token) {
+  const eq = S.eq;
+  // Une sélection n'a de sens que dans la vue où elle a été faite.
+  if (S.atlSelView !== token) S.atlSel = null;
+  if (token.startsWith('sys-')) S.atlSys = null;
+  S.view = { type: 'atelier', id: token };
+  S.selected = null;
+  document.title = `${atl.title(token)} · ${eq.name} · Pièces 3D`;
+  $('#viewport').hidden = true;
+  $('#tools').hidden = true;
+  $('#sectionbar').hidden = true;
+  $('#hint').hidden = true;
+  $('#titleblock').hidden = true;
+  atl.render();
+  renderRail();
+  renderCrumbs();
 }
 
 async function openIssues() {
@@ -539,18 +587,34 @@ function renderRail() {
   const open3d = tops.length <= 8
     ? ` Ouvrir : ${tops.map((a) => `<button type="button" class="lnk" data-go="${a.id}">${badge(a.sheet)} ${esc(a.titleFr)}</button>`).join('')}`
     : ' Leur numéro de page est encadré dans la liste.';
-  $('#rail').innerHTML = `
-    <div class="equip"><strong>${esc(eq.name)}</strong><span>${esc(eq.category)} · ${eq.serial ? `n° de série ${esc(eq.serial)}` : esc(eq.document.title)}</span></div>
+  const asmTree = `
     <div><h2>Assemblages${n3d && !partial ? ' 3D' : ''}</h2>${partial ? `<p class="legend"><span class="sheet m3d">3D</span><span>${n3d} assemblages en 3D, les autres avec les dessins du ${eq.docWord}.${open3d}</span></p>` : ''}<ul class="tree">${node(eq.root)}</ul></div>
-    <div><h2>${esc(eq.labels?.documents || 'Schémas et listes')}</h2><ul class="tree">${docs}</ul></div>
+    <div><h2>${esc(eq.labels?.documents || 'Schémas et listes')}</h2><ul class="tree">${docs}</ul></div>`;
+  const manual = `
     <div><h2>${eq.docWord === 'catalogue' ? 'Catalogue' : 'Manuel'}</h2><ul class="tree">
       <li><button type="button" class="node ${cur === 'controle' ? 'cur' : ''}" data-go="controle"><span class="sheet">QC</span><span class="t">Contrôle des listes</span><span class="n">${errors ? `<span class="alert">${errors}</span> / ` : ''}${eq.issues.length}</span></button></li>
       <li><button type="button" class="node" data-page="${eq.sheetId(1)}"><span class="sheet">PDF</span><span class="t">Pages du ${eq.docWord} (${eq.document.sheets})</span><span class="n"></span></button></li>
-    </ul></div>
-    <details class="more"><summary>Fiche technique</summary>
-      <dl class="specs">${eq.specs.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}
-      ${eq.weights.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl>
-    </details>`;
+    </ul></div>`;
+  const head = `<div class="equip"><strong>${esc(eq.name)}</strong><span>${esc(eq.category)} · ${eq.serial ? `n° de série ${esc(eq.serial)}` : esc(eq.document.title)}</span></div>`;
+  const a = atl.railHtml();
+  if (!a) {
+    $('#rail').innerHTML = `${head}${asmTree}${manual}
+      <details class="more"><summary>Fiche technique</summary>
+        <dl class="specs">${eq.specs.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}
+        ${eq.weights.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl>
+      </details>`;
+    return;
+  }
+  // Sommaire d'atelier : vues transversales, puis navigation par système ou par assemblage.
+  const tab = S.railTab === 'asm' ? 'asm' : 'sys';
+  $('#rail').innerHTML = `${head}
+    <div><h2>Atelier</h2>${a.nav}</div>
+    <div class="railtabs" role="tablist" aria-label="Navigation">
+      <button type="button" role="tab" data-rtab="sys" aria-selected="${tab === 'sys'}">${icon('general')}Systèmes</button>
+      <button type="button" role="tab" data-rtab="asm" aria-selected="${tab === 'asm'}">${icon('page')}Assemblages</button>
+    </div>
+    ${tab === 'sys' ? `<div role="tabpanel">${a.systems}</div>` : `<div role="tabpanel" class="rpanel">${asmTree}</div>`}
+    ${manual}`;
 }
 
 function renderCrumbs() {
@@ -561,7 +625,15 @@ function renderCrumbs() {
     while (id) { chain.unshift(id); id = eq.assemblies.get(id).parent; }
   }
   const items = [`<button type="button" data-go="${eq.root}">${esc(eq.name)}</button>`];
-  if (isAsmView()) {
+  // Fil d'Ariane d'atelier : équipement › système › composant (ses parents du même système).
+  const sys = atl.crumbSystem();
+  if (sys) items.push(`<button type="button" class="sys ${S.view.type === 'atelier' ? 'cur' : ''}" data-go="sys-${sys.id}">${sys.chip}${esc(sys.name)}</button>`);
+  if (S.view.type === 'atelier') {
+    if (!S.view.id.startsWith('sys-')) items.push(`<button type="button" class="cur" data-go="${S.view.id}">${esc(atl.title(S.view.id))}</button>`);
+  } else if (isAtelierCrumbs(sys)) {
+    const own = chain.filter((id, i) => i === chain.length - 1 || atl.sysOf(id) === sys.id);
+    own.forEach((id, i) => items.push(`<button type="button" class="${i === own.length - 1 ? 'cur' : ''}" data-go="${id}">${badge(eq.assemblies.get(id).sheet)} · ${esc(eq.assemblies.get(id).titleFr)}</button>`));
+  } else if (isAsmView()) {
     chain.forEach((id, i) => items.push(`<button type="button" class="${i === chain.length - 1 ? 'cur' : ''}" data-go="${id}">${badge(eq.assemblies.get(id).sheet)} · ${esc(eq.assemblies.get(id).titleFr)}</button>`));
   } else if (S.view.type === 'document') {
     const d = eq.documents.get(S.view.id);
@@ -570,6 +642,11 @@ function renderCrumbs() {
     items.push('<button type="button" class="cur" data-go="controle">Contrôle des listes</button>');
   }
   $('#crumbs').innerHTML = items.join('<span class="sep">›</span>');
+}
+
+/** Fil d'Ariane par système (pas pour la vue d'ensemble, racine de l'arbre). */
+function isAtelierCrumbs(sys) {
+  return !!sys && isAsmView() && S.view.id !== S.eq.root;
 }
 
 function renderTitleblock(asm) {
@@ -595,6 +672,7 @@ function renderTitleblock(asm) {
 function renderPanel() {
   const eq = S.eq;
   const panel = $('#panel');
+  if (S.view.type === 'atelier') { atl.renderPanel(); return; }
   if (S.view.type === 'issues') {
     const groups = eq.issues.slice().sort((a, b) => sevRank(b) - sevRank(a));
     panel.innerHTML = `
@@ -617,6 +695,12 @@ function renderPanel() {
   const sheets = shown.length > 3 ? `${shown[0]} à ${shown[shown.length - 1]}` : shown.join(' / ');
   const sub = [`${cat ? (shown.length > 1 ? 'Pages' : 'Page') : 'Feuille'} ${sheets}`, src.pn && `N° ${src.pn}`,
     src.sizes && `Tailles : ${src.sizes.join(', ')}`, src.title !== src.titleFr && src.title].filter(Boolean);
+  // Schéma électrique sans liste de pièces : le panneau donne ses circuits, planche par planche.
+  const circuits = !isAsm && !src.parts.length ? atl.sheetList(src.id) : '';
+  if (circuits) {
+    panel.innerHTML = `<div class="phead"><h1>${esc(src.titleFr)}</h1><span class="sub">${sub.map(esc).join(' · ')} · circuit par circuit : touchez une planche pour y aller.</span></div><div class="tablewrap">${circuits}</div>`;
+    return;
+  }
   panel.innerHTML = `
     <div class="phead">
       <h1>${esc(src.titleFr)}</h1>
@@ -672,10 +756,11 @@ function renderRows() {
     const refTxt = sub ? '↳' : esc(refLabel(r));
     const pn = pnHtml(r) ?? (r.nss ? '<span title="Non vendu séparément">NSS</span>' : r.supplier ? `<span title="N° fournisseur">${esc(r.supplier)}</span>` : r.pseudo ? '' : '<span class="ico warn">—</span>');
     const key = keyOf(path);
+    const circ = S.view.type === 'document' ? atl.rowCircuit(S.view.id, r.label ?? r.ref) : '';
     const tog = group
       ? `<button type="button" class="tog" data-tog="${esc(key)}" aria-expanded="${open}" title="${open ? 'Rassembler ce groupe' : 'Éclater ce groupe sur place'}" aria-label="${open ? 'Rassembler' : 'Éclater'} le groupe ${esc(r.desc)}">${open ? '▾' : '▸'}</button>`
       : '<span class="tog-sp"></span>';
-    return `<tr data-key="${esc(key)}" data-key3d="${esc(keyOf(path3d(path)))}" class="${sub ? 'sub-row' : ''} ${depth ? 'nested' : ''} ${key === selKey ? 'sel' : ''}">
+    return `<tr data-key="${esc(key)}" data-key3d="${esc(keyOf(path3d(path)))}" class="${sub ? 'sub-row' : ''} ${depth ? 'nested' : ''} ${key === selKey ? 'sel' : ''} ${circ ? `circ ${circ}` : ''}">
       <td class="c-ref" style="--d:${depth}">${tog}<span class="refb ${r.link ? 'link' : ''}">${refTxt}</span></td>
       <td class="c-pn">${pn}${ico}</td>
       <td class="c-qty">${r.qty ?? '—'}${r.qty3d != null && r.qty3d !== r.qty ? `<span class="q3d" title="Le dessin du ${S.eq.docWord} en montre ${r.qty3d}">${r.qty3d} en 3D</span>` : ''}</td>
@@ -720,6 +805,11 @@ function select(path, { focus = false, from3d = false } = {}) {
     const p3 = row ? path3d(S.selected) : null;
     viewer.setSelected(p3);
     if (row && focus && viewer.resolve(p3).length && !narrow()) viewer.focusPath(p3);
+  } else {
+    // Dessins affichés : la bulle du repère sélectionné est mise en évidence.
+    const dv = $('#docview');
+    atl.markHotspots(dv, row && S.selected.length === 1 ? (row.label ?? row.ref) : null);
+    if (row && focus && !from3d) dv.querySelector('.ovl .hs.sel')?.scrollIntoView({ block: 'center', behavior: 'smooth' });
   }
   renderDetail();
   renderSectionBar();
@@ -750,6 +840,7 @@ function renderDetail() {
   const p3 = is3d() ? path3d(path) : null;
   const cutHere = p3 && !S.view.home && viewer?.hasInterior(p3);
   const cutActive = S.section.on && S.section.scope === 'selection';
+  const hsSheet = atl.hotspotSheet(row);
   box.innerHTML = `
     <div class="row1">
       <span class="ref ${long ? 'long' : ''}">${esc(refLabel(row))}</span>
@@ -766,6 +857,7 @@ function renderDetail() {
       ${is3d() ? '<button type="button" class="btn" id="d-focus">Centrer</button>' : ''}
       ${row.link ? `<button type="button" class="btn" data-go="${row.link}">Ouvrir ${eq.docWord === 'catalogue' ? sheetLabel(eq, eq.assemblies.get(row.link)?.sheet || eq.documents.get(row.link)?.sheets[0] || row.link) : row.link} ›</button>` : ''}
       ${row.see ? row.see.map((s) => `<button type="button" class="btn" data-page="${s}">Voir ${eq.docWord === 'catalogue' ? sheetLabel(eq, s) : s}</button>`).join('') : ''}
+      ${hsSheet ? `<button type="button" class="btn" data-page="${hsSheet}" data-ref="${esc(refLabel(row))}" title="Ouvrir la planche, le repère mis en évidence">Voir sur la planche</button>` : ''}
     </div>`;
   $('#d-close').addEventListener('click', () => select(null));
   $('#d-tog')?.addEventListener('click', () => toggleGroup(path));
@@ -827,24 +919,39 @@ function bindSearch() {
   const box = $('#results');
   let hits = [];
   let idx = -1;
+  // Recherche globale : systèmes, composants, pages, données, consignes et schémas (atelier), puis pièces.
   const render = () => {
     const q = input.value;
     if (q.trim().length < 2) { box.hidden = true; return; }
-    hits = search(S.eq, q);
+    const more = atl.search(q);
+    const parts = search(S.eq, q);
+    hits = [...more.map((x) => ({ atl: x })), ...parts.map((r) => ({ r }))];
     idx = -1;
     box.hidden = false;
-    box.innerHTML = hits.length ? hits.map((r, i) => `<button type="button" class="res" data-i="${i}">
-      <span class="pn">${esc(r.pns.join(' / ') || r.supplier || r.pnText || '—')}</span><span>${esc(r.desc)}</span>
-      <span class="where">${esc(sourceLabel(S.eq, r.source))} · réf. ${esc(refLabel(r))}${r.qty != null ? ` · qté ${r.qty}` : ''}</span></button>`).join('')
-      : `<div class="empty">Aucune pièce trouvée pour « ${esc(q)} ». Essayez un numéro partiel ou un mot de la description (en anglais, comme au ${S.eq.docWord}).</div>`;
+    const head = (t) => `<div class="rhead">${t}</div>`;
+    const html = hits.map((h, i) => {
+      if (h.atl) {
+        const x = h.atl;
+        return `<button type="button" class="res atl ${x.act ? '' : 'info'}" data-i="${i}" ${x.act ? '' : 'disabled'}>
+          <span class="pn tag">${esc(x.tag)}</span><span>${esc(x.label)}</span>${x.sub ? `<span class="where">${esc(x.sub)}</span>` : ''}</button>`;
+      }
+      const r = h.r;
+      return `<button type="button" class="res" data-i="${i}">
+        <span class="pn">${esc(r.pns.join(' / ') || r.supplier || r.pnText || '—')}</span><span>${esc(r.desc)}</span>
+        <span class="where">${esc(sourceLabel(S.eq, r.source))} · réf. ${esc(refLabel(r))}${r.qty != null ? ` · qté ${r.qty}` : ''}</span></button>`;
+    });
+    if (more.length && parts.length) html.splice(more.length, 0, head(`Pièces (${parts.length})`));
+    box.innerHTML = hits.length ? html.join('')
+      : `<div class="empty">Rien trouvé pour « ${esc(q)} ». Essayez un numéro partiel, un numéro de page (P224) ou un mot de la description (en anglais, comme au ${S.eq.docWord}).</div>`;
     box.querySelectorAll('[data-i]').forEach((b) => b.addEventListener('mousedown', (e) => { e.preventDefault(); pick(+b.dataset.i); }));
   };
   const pick = (i) => {
-    const r = hits[i];
-    if (!r) return;
+    const h = hits[i];
+    if (!h || (h.atl && !h.atl.act)) return;
     box.hidden = true;
     input.blur();
-    jumpToRow(r.key);
+    if (h.atl) h.atl.act();
+    else jumpToRow(h.r.key);
   };
   input.addEventListener('input', render);
   input.addEventListener('focus', render);
@@ -864,7 +971,11 @@ function bindSearch() {
 // ------------------------------------------------------------------ pages du manuel
 
 let zoom = 'fit';
-function openPage(sheet) {
+/**
+ * Page du manuel en grand. opts.ref : repère à mettre en évidence (bulle) ;
+ * opts.box : zone [x, y, l, h] à encadrer (consigne, valeur relevée).
+ */
+function openPage(sheet, opts = {}) {
   const eq = S.eq;
   const n = eq.document.sheets;
   const num = Math.min(n, Math.max(1, parseInt(sheet.replace(/^\D+/, ''), 10) || 1));
@@ -883,8 +994,31 @@ function openPage(sheet) {
       ${owner ? `<button type="button" class="btn" id="p-open">${owner3d ? 'Ouvrir en 3D' : 'Ouvrir la liste'}</button>` : ''}
       <button type="button" class="btn" id="p-close">Fermer</button>
     </div>
-    <div class="canvas"><img src="${esc(eq.pageUrl(s))}" alt="Page ${s} du ${eq.docWord}" id="p-img"></div>`;
+    <div class="canvas"><div class="pg" id="p-pg"><img src="${esc(eq.pageUrl(s))}" alt="Page ${s} du ${eq.docWord}" id="p-img">${atl.overlay(s)}${opts.box ? `<span class="hlbox" style="left:${opts.box[0] * 100}%;top:${opts.box[1] * 100}%;width:${opts.box[2] * 100}%;height:${opts.box[3] * 100}%"></span>` : ''}</div></div>
+    <div class="hsfiche" id="p-fiche" hidden></div>`;
   const img = $('#p-img');
+  const pg = $('#p-pg');
+  // Bulles : fiche de la pièce (n°, description, quantité) et lien vers la liste ou la 3D.
+  const fiche = (ref) => {
+    atl.markHotspots(pg, ref);
+    const row = owner ? (eq.assemblies.get(owner) || eq.documents.get(owner))?.parts.find((r) => (r.label ?? r.ref) === ref) : null;
+    const box = $('#p-fiche');
+    if (!row) { box.hidden = true; return; }
+    box.hidden = false;
+    box.innerHTML = `<span class="ref">${esc(ref)}</span><div class="fb"><strong>${esc(row.desc)}</strong>
+      <span class="mono">${esc(row.pns.join(' / ') || row.pnText || row.supplier || '—')}</span><span class="meta">Qté ${row.qty ?? '—'} · ${esc(sourceLabel(eq, row.source))}</span></div>
+      <button type="button" class="btn primary" id="p-row">${owner3d ? 'Voir en 3D' : 'Voir dans la liste'}</button><button type="button" class="btn" id="p-fclose" aria-label="Fermer la fiche">×</button>`;
+    $('#p-row').addEventListener('click', () => { closePage(); jumpToRow(row.key); });
+    $('#p-fclose').addEventListener('click', () => { box.hidden = true; atl.markHotspots(pg, null); });
+  };
+  pg.querySelectorAll('.ovl .hs').forEach((b) => b.addEventListener('click', () => fiche(b.dataset.hs)));
+  pg.querySelectorAll('.ovl .xr').forEach((b) => b.addEventListener('click', () => { closePage(); atl.gotoRung(+b.dataset.rung, b.dataset.doc); }));
+  if (opts.ref) fiche(opts.ref);
+  // En taille réelle, la zone ou la bulle demandée est amenée au centre.
+  const focusMark = () => {
+    const t = pg.querySelector('.hlbox') || pg.querySelector('.ovl .hs.sel');
+    if (t && zoom !== 'fit') t.scrollIntoView({ block: 'center', inline: 'center' });
+  };
   // Page absente (publication allégée : pages de liste laissées de côté).
   img.addEventListener('error', () => {
     m.querySelector('.canvas').innerHTML = missingPage(s, owner ? ' Sa liste de pièces est reprise dans « Ouvrir la liste ».' : '');
@@ -897,11 +1031,11 @@ function openPage(sheet) {
       img.style.width = `${Math.max(200, w)}px`;
     } else img.style.width = `${img.naturalWidth || 2200}px`;
   };
-  img.addEventListener('load', fit);
+  img.addEventListener('load', () => { fit(); focusMark(); });
   fit();
   $('#p-prev').addEventListener('click', () => openPage(eq.sheetId(num - 1)));
   $('#p-next').addEventListener('click', () => openPage(eq.sheetId(num + 1)));
-  $('#p-zoom').addEventListener('click', () => { zoom = zoom === 'fit' ? 'full' : 'fit'; openPage(s); });
+  $('#p-zoom').addEventListener('click', () => { zoom = zoom === 'fit' ? 'full' : 'fit'; openPage(s, opts); });
   $('#p-close').addEventListener('click', closePage);
   $('#p-open')?.addEventListener('click', () => { closePage(); go(owner); });
 }
@@ -943,8 +1077,20 @@ function bindChrome() {
     const h = e.target.closest('[data-hash]');
     if (h) { e.preventDefault(); location.hash = h.dataset.hash; return; }
     const p = e.target.closest('[data-page]');
-    if (p) { e.preventDefault(); openPage(p.dataset.page); }
+    if (p) {
+      e.preventDefault();
+      openPage(p.dataset.page, { box: p.dataset.box ? p.dataset.box.split(',').map(Number) : null, ref: p.dataset.ref || null });
+      return;
+    }
+    const t = e.target.closest('[data-rtab]');
+    if (t) {
+      S.railTab = t.dataset.rtab;
+      try { localStorage.setItem('pieces3d.sommaire', S.railTab); } catch { /* ignoré */ }
+      renderRail();
+      $(`#rail [data-rtab="${S.railTab}"]`)?.focus();
+    }
   });
+  atl.bind();
   $('#brand').addEventListener('click', () => go('catalogue'));
   document.querySelectorAll('#mtabs button').forEach((b) => b.addEventListener('click', () => setPane(b.dataset.pane)));
 
