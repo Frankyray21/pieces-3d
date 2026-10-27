@@ -165,6 +165,7 @@ export const ANNOTATIONS = {
     { v: 283.0, type: 'dim', a: [sp.x1 + 0.02, DECK, sp.z1], b: [sp.x1 + 0.02, DECK + B66 + P3, sp.z1], off: [0.25, 0, 0.2], text: '9 po', sub: '12 po max.' },
     { v: 284.8, type: 'note', at: [(sp.x0 + sp.x1) / 2, DECK + B66 + P3, sp.z1], text: 'Aucun morceau en porte-à-faux', dir: 'down' },
     { v: 287.2, type: 'note', at: [sp.x0 + B66 / 2, DECK + B66 + P3, sp.z0 + P8 / 2], text: '2 planches vissées près de la foreuse', dir: 'up' },
+    { v: 289.6, type: 'note', at: [sp.x1 - B66 / 2, DECK + B66 + P3, sp.z1 - P8 / 2], text: 'Tire-fonds aux 4 coins', dir: 'right' },
   ],
 };
 

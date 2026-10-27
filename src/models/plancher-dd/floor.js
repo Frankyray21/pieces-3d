@@ -269,8 +269,9 @@ export function P17(api) {
   for (let k = 0; k < 4; k++) {
     const z = z0 + (k + 0.5) * P8;
     put('2', lumber(S, [x1 - x0, P3, P8], [(x0 + x1) / 2, DECK + B66 + P3 / 2, z]), [0, 0.45 + 0.05 * k, 0], 18, { seq: 2 });
-    // Les deux planches les plus près de la foreuse sont vissées.
-    if (k < 2) for (const x of [x0 + B66 / 2, x1 - B66 / 2]) screws.push([x, DECK + B66 + P3, z]);
+    // Les deux planches les plus près de la foreuse sont vissées (procédure), et
+    // la dernière aussi : un tire-fond à chacun des quatre coins du plancher.
+    if (k < 2 || k === 3) for (const x of [x0 + B66 / 2, x1 - B66 / 2]) screws.push([x, DECK + B66 + P3, z]);
   }
   put('3', lagScrews(S, screws), [0, 0.75, 0], 18, { seq: 3 });
   return { view: { dir: [1.2, 1.0, 0.6] } };
