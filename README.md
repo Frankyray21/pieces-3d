@@ -55,7 +55,10 @@ pièces (numéro, quantité, page du manuel).
   console ERIS** (`#du311-std.prise-en-main`, pages 121 à 147 du manuel) :
   parcours en 6 étapes pour un nouveau travailleur — console (repères
   cliquables et défi), manettes, voyants CANBUS / DRILL / CONTROL (exercice),
-  console ERIS en 3D manipulable (manettes à incliner, touche Mode, arrêt
+  console ERIS en 3D manipulable (manettes à incliner, boutons des têtes de
+  manette fonctionnels — correspondance bouton/fonction relevée sur les
+  vignettes de manette des copies d'écran, `BOUTON` dans
+  `prise-en-main/eris.js`, bouton actif allumé —, touche Mode, arrêt
   d'urgence, interrupteur, écran ERIS vivant dans le boîtier, dont on touche
   les noms ; `prise-en-main/console3d.js`) et écran 2D au choix, avec 7
   missions guidées (démarrer, changer de

@@ -78,6 +78,31 @@ export const T = {
 };
 
 export const MODES = ['system', 'tram', 'setup', 'drill'];
+
+/**
+ * Bouton physique de chaque nom de liste, relevé sur les vignettes de manette des copies d'écran (coins en bas de
+ * l'écran, p. 122 à 147) : un trait relie chaque nom à un bouton de la tête, et le bouton de la couche ou de la
+ * fonction active y est orange. Tête vue par l'opérateur : HG, HD (rangée du haut), MG, MD (rangée du milieu),
+ * B (bouton du bas) et C (bouton du côté extérieur ; à gauche, c'est la touche Mode).
+ */
+export const BOUTON = {
+  L: {
+    diagnostic: 'MG', start: 'HG', configuration: 'MD', error: 'HD', hole: 'B',
+    'tram-enable': 'B',
+    outrigger: 'MG', feed: 'HG', stinger: 'HD',
+    'carousel-wrench': 'MG', 'carousel-water': 'MG', accrafeed: 'HG', 'arm-clamp': 'MD', 'pulldown-holdback': 'HD', pulldown: 'HD', 'slip-centralizer': 'B',
+  },
+  R: {
+    control: 'C', compressor: 'MD', 'hydraulic-pump': 'HD', horn: 'MG', 'drill-light': 'HG',
+    'can-bus': 'HG', 'log-off': 'C',
+    silence: 'C', 'bottom-alarm': 'MD', 'top-alarm': 'HD', 'alarm-history': 'MG', 'current-alarm': 'HG', reset: 'B',
+    'reset-total-depth': 'C', 'reset-hole-depth': 'HG',
+    laser: 'B', 'deck-slide': 'MG', 'mast-slide': 'HG',
+    'makeup-breakout': 'C', 'drill-lock': 'C', 'drill-air': 'MD', 'spline-piston': 'HD', 'reverse-drilling': 'HD', 'collar-air': 'MG', 'manual-drilling': 'HG', water: 'B',
+  },
+};
+/** Nom d'une position de bouton. */
+export const POSITION = { HG: 'en haut à gauche', HD: 'en haut à droite', MG: 'au milieu à gauche', MD: 'au milieu à droite', B: 'en bas', C: 'sur le côté extérieur' };
 /** Fonctions qui restent actives (bascule) ; les autres agissent à l'appui. */
 const BASCULE = new Set(['control', 'compressor', 'hydraulic-pump', 'drill-light', 'laser', 'mast-slide', 'makeup-breakout', 'drill-air', 'manual-drilling', 'water', 'drill-lock', 'reverse-drilling', 'accrafeed']);
 const HOLE_FIELDS = ['Hole Number', 'Preset Depth', 'Rod Length'];
@@ -474,6 +499,21 @@ export function createSim() {
     }
   }
 
+  /** Fonction (ou couche) du bouton physique `pos` de la manette `side` dans l'écran affiché, ou null. */
+  function fonctionBouton(side, pos) {
+    const ids = side === 'L' ? couches() : fonctions();
+    return ids.find((id) => BOUTON[side][id] === pos) || null;
+  }
+
+  /** Appui sur un bouton physique de manette. */
+  function appuyer(side, pos) {
+    if (!s.power) { msg('La console est éteinte : interrupteur marche/arrêt.', 'warn', 121); return; }
+    if (side === 'L' && pos === 'C') { modeKey(!s.modeKey); return; }
+    const id = fonctionBouton(side, pos);
+    if (!id) { msg(`Ce bouton (${POSITION[pos]}) n’a pas de fonction dans cet écran.`, 'info', 124); return; }
+    bouton(side, id);
+  }
+
   /** État résumé pour les missions. */
   function etat() {
     return {
@@ -495,5 +535,5 @@ export function createSim() {
     }
   }
 
-  return { s, T, couche, couches, fonctions, axes, actif, power, estop, modeKey, stick, bouton, tick, etat, alarme, preparer, holes: HOLES, holeFields: HOLE_FIELDS, bascule: BASCULE };
+  return { s, T, couche, couches, fonctions, axes, actif, power, estop, modeKey, stick, bouton, appuyer, fonctionBouton, tick, etat, alarme, preparer, holes: HOLES, holeFields: HOLE_FIELDS, bascule: BASCULE };
 }

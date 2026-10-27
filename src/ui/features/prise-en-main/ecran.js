@@ -1,7 +1,7 @@
 // Écran ERIS du simulateur (HTML) : disposition des copies d'écran du manuel (p. 122 à 147) — heure et modes en
 // haut, voyants à droite, couches de la manette gauche en bas à gauche, fonctions de la manette droite en bas à
 // droite, fonctions des axes autour des deux manettes dessinées, alarmes qui défilent en bas.
-import { T, MODES } from './eris.js';
+import { T, MODES, BOUTON, POSITION } from './eris.js';
 
 const esc = (v) => String(v ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 /** Libellé court en français (première partie de la traduction). */
@@ -21,6 +21,28 @@ function manette(axes, pos, fr, cls) {
     <svg viewBox="0 0 60 100" class="er-stick-svg" aria-hidden="true"><path d="M22 8c6-6 18-4 20 4l-2 10c4 2 6 6 4 10l-6 30h6v4H16v-4h6l-6-38c-1-6 1-12 6-16Z" /><rect x="12" y="70" width="36" height="5" rx="1"/><rect x="10" y="78" width="40" height="5" rx="1"/><rect x="12" y="86" width="36" height="5" rx="1"/><rect x="8" y="94" width="44" height="5" rx="1"/></svg>
     ${fl('up', up)}${fl('down', down)}${fl('left', left)}${fl('right', right)}
   </div>`;
+}
+
+/**
+ * Vignette de manette d'un coin de l'écran : boutons de la tête utilisés dans cet écran, l'actif en orange
+ * (comme sur les copies d'écran du manuel). ids : noms de la liste ; actif(id) : couche ou fonction active.
+ */
+const POS = {
+  L: { HG: [36, 30], HD: [62, 24], MG: [32, 50], MD: [60, 45], B: [42, 66], C: [10, 38] },
+  R: { HG: [40, 30], HD: [66, 24], MG: [42, 51], MD: [70, 45], B: [62, 66], C: [92, 38] },
+};
+function vignette(side, ids, actif, modeKey) {
+  const pos = POS[side];
+  const util = new Set(ids.map((id) => BOUTON[side][id]).filter(Boolean));
+  const on = new Set(ids.filter(actif).map((id) => BOUTON[side][id]));
+  if (side === 'L') { util.add('C'); if (modeKey) on.add('C'); }
+  const el = [...util].map((k) => {
+    const [x, y] = pos[k];
+    return k === 'C' ? `<rect x="${x - 3}" y="${y - 7}" width="6" height="14" rx="3" class="${on.has(k) ? 'on' : ''}"/>`
+      : `<ellipse cx="${x}" cy="${y}" rx="10" ry="7" class="${on.has(k) ? 'on' : ''}"/>`;
+  }).join('');
+  const contour = side === 'L' ? 'M14 18 Q50 4 86 14 L80 74 Q50 86 20 76 Z' : 'M14 14 Q50 4 86 18 L80 76 Q50 86 20 74 Z';
+  return `<svg class="er-vig er-vig-${side}" viewBox="0 0 100 90" aria-hidden="true"><path class="er-vig-c" d="${contour}"/>${el}</svg>`;
 }
 
 /** Cadran (indications du simulateur, sans valeurs chiffrées). */
@@ -46,7 +68,7 @@ export function ecran(sim, { fr = false, alarmes = new Map(), img = (p) => p } =
   const heure = `${String(d.getHours()).padStart(2, '0')} : ${String(d.getMinutes()).padStart(2, '0')}`;
   const liste = (ids, side) => ids.map((id) => {
     const on = side === 'L' ? (id === c || sim.actif(id)) : sim.actif(id);
-    return `<li class="${on ? 'on' : ''}" data-er-side="${side}" data-er-id="${esc(id)}" title="${esc(T[id]?.[1] || '')}">${lib(id, fr)}</li>`;
+    return `<li class="${on ? 'on' : ''}" data-er-side="${side}" data-er-id="${esc(id)}" title="${esc(`${T[id]?.[1] || ''} — bouton ${POSITION[BOUTON[side][id]] || ''}`)}">${lib(id, fr)}</li>`;
   }).join('');
   const voyant = (n, alt) => `<img src="${esc(img(`prise-en-main/voyant-${n}.webp`))}" alt="${esc(alt)}">`;
   let centre = '';
@@ -122,6 +144,8 @@ export function ecran(sim, { fr = false, alarmes = new Map(), img = (p) => p } =
     ${manettes ? `<div class="er-sticks">${manette(L, s.L, fr, 'g')}${manette(R, s.R, fr, 'd')}</div>` : ''}
     <ul class="er-list er-left">${liste(sim.couches(), 'L')}</ul>
     <ul class="er-list er-right">${liste(sim.fonctions(), 'R')}</ul>
+    ${vignette('L', sim.couches(), (id) => id === c || sim.actif(id), s.modeKey)}
+    ${vignette('R', sim.fonctions(), (id) => sim.actif(id), false)}
     ${s.klaxon > 0 ? '<div class="er-horn">HORN</div>' : ''}
     ${ticker}
   </div>`;

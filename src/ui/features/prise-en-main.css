@@ -299,9 +299,14 @@
 .er-list { position: absolute; bottom: 3%; list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5cqw; font-size: 1.45cqw; }
 .er-list li { position: relative; white-space: nowrap; }
 .er-list li.on { color: #e08a1e; }
-.er-left { left: 2.5%; padding-left: 2.2cqw; border-left: 1px solid #888; }
+.er-left { left: 7%; padding-left: 2.2cqw; border-left: 1px solid #888; }
 .er-left li::before { content: ''; position: absolute; left: -2.2cqw; top: 50%; width: 1.8cqw; border-top: 1px solid #888; }
-.er-right { right: 2.5%; padding-right: 2.2cqw; border-right: 1px solid #888; text-align: right; }
+.er-right { right: 7%; padding-right: 2.2cqw; border-right: 1px solid #888; text-align: right; }
+.er-vig { position: absolute; bottom: 0.6%; width: 6.4cqw; height: auto; }
+.er-vig-L { left: 0.4%; } .er-vig-R { right: 0.4%; }
+.er-vig-c { fill: none; stroke: #bbb; stroke-width: 2.5; }
+.er-vig ellipse, .er-vig rect { fill: #f2f2f2; }
+.er-vig .on { fill: #e08a1e; }
 .er-right li::after { content: ''; position: absolute; right: -2.2cqw; top: 50%; width: 1.8cqw; border-top: 1px solid #888; }
 .er-left li.on::before, .er-right li.on::after { border-color: #e08a1e; }
 .er-centre { position: absolute; left: 3%; right: 12%; top: 14%; bottom: 30%; }

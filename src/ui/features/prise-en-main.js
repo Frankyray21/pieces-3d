@@ -10,7 +10,7 @@
 // quiz ; le simulateur (prise-en-main/eris.js) suit les pages 121 à 147 du manuel. Progression gardée dans le
 // navigateur (localStorage, facultatif). Sans prise-en-main.json, rien n'apparaît.
 import './prise-en-main.css';
-import { createSim, T } from './prise-en-main/eris.js';
+import { createSim, T, BOUTON, POSITION } from './prise-en-main/eris.js';
 import { ecran, court } from './prise-en-main/ecran.js';
 import { creerConsole3D } from './prise-en-main/console3d.js';
 
@@ -320,7 +320,7 @@ export default {
                 <label class="pem-fr"><input type="checkbox" ${u.fr ? 'checked' : ''}> Traduire l’écran en français (sur la machine, l’écran est en anglais)</label>
               </div>
               <div class="pem-3d"${u.vue === '3d' ? '' : ' hidden'}></div>
-              <p class="pem-small pem-3d-aide"${u.vue === '3d' ? '' : ' hidden'}>3D : glisser une manette pour l’incliner (elle reste en place ; la toucher sans glisser la recentre) · toucher la touche Mode, l’arrêt d’urgence, l’interrupteur à droite · toucher un nom à l’écran = appuyer sur son bouton · glisser ailleurs pour tourner la vue.</p>
+              <p class="pem-small pem-3d-aide"${u.vue === '3d' ? '' : ' hidden'}>3D : glisser une manette pour l’incliner (elle reste en place ; la toucher sans glisser la recentre) · appuyer sur les boutons des têtes de manette (survoler un bouton affiche sa fonction ; l’actif s’allume en orange) · touche Mode sur le côté gauche de la manette gauche · arrêt d’urgence, interrupteur à droite · toucher un nom à l’écran = appuyer sur son bouton · glisser ailleurs pour tourner la vue.</p>
               <div class="pem-screen"${u.vue === '2d' ? '' : ' hidden'}><div class="pem-screen-in"></div></div>
               <div class="pem-msg" aria-live="polite"></div>
               <div class="pem-deck"></div>
@@ -411,7 +411,8 @@ export default {
           const { L, R } = sim.axes();
           const btns = (ids, side) => ids.map((id) => {
             const on = side === 'L' ? (id === sim.couche() || sim.actif(id)) : sim.actif(id);
-            return `<button type="button" class="pem-key${on ? ' on' : ''}" data-side="${side}" data-id="${esc(id)}" title="${esc(T[id]?.[1] || id)}"><b>${esc(T[id]?.[0] || id)}</b><span>${esc(court(id))}</span></button>`;
+            const pos = BOUTON[side][id];
+            return `<button type="button" class="pem-key${on ? ' on' : ''}" data-side="${side}" data-id="${esc(id)}" title="${esc(`${T[id]?.[1] || id}${pos ? ` — bouton ${POSITION[pos]} de la manette` : ''}`)}"><b>${esc(T[id]?.[0] || id)}</b><span>${esc(court(id))}</span></button>`;
           }).join('');
           deck.innerHTML = `
             <div class="pem-js">

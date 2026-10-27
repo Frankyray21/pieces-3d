@@ -10,12 +10,13 @@
 // touchent comme les boutons correspondants. Interactions : glisser une manette l'incline (fonction de l'axe à
 // l'écran), toucher sa tête la recentre ; toucher la touche Mode, l'arrêt d'urgence (tourner pour le relâcher),
 // l'interrupteur, l'actionneur de l'extincteur ; glisser ailleurs fait tourner la vue. Les boutons des têtes de
-// manette ne sont pas associés un à un aux fonctions (le manuel ne donne pas cette correspondance) : leur nom
-// s'affiche à l'écran, où on le touche.
+// manette font ce que leur nom indique à l'écran : correspondance relevée sur les vignettes de manette des copies
+// d'écran (eris.js, BOUTON) ; le bouton de la couche ou de la fonction active s'allume en orange.
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer.js';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
+import { T, POSITION } from './eris.js';
 
 const ORANGE = 0xe2531a;
 const NOIR = 0x1d1f22;
@@ -84,32 +85,39 @@ function manette(side, materiaux, cibles) {
   const bloc = new THREE.Mesh(new RoundedBoxGeometry(0.06, 0.03, 0.075, 3, 0.012), materiaux.poignee);
   tete.add(bloc);
   // Boutons : deux jaunes, deux rouges, un blanc (figures p. 121 et 122).
+  // Positions des vignettes de manette de l'écran (eris.js, BOUTON) : HG, HD, MG, MD, B ; le bouton blanc du bas est du
+  // côté intérieur sur chaque manette.
   const boutons = [
-    [-0.014, -0.022, materiaux.jaune], [0.014, -0.022, materiaux.jaune],
-    [-0.014, 0.0, materiaux.rouge], [0.014, 0.0, materiaux.rouge],
-    [-0.01, 0.022, materiaux.blanc],
+    ['HG', -0.014, -0.022, materiaux.jaune], ['HD', 0.014, -0.022, materiaux.jaune],
+    ['MG', -0.014, 0.0, materiaux.rouge], ['MD', 0.014, 0.0, materiaux.rouge],
+    ['B', side === 'L' ? -0.01 : 0.01, 0.022, materiaux.blanc],
   ];
-  for (const [x, z, m] of boutons) {
-    const b = new THREE.Mesh(new THREE.CylinderGeometry(0.0085, 0.0085, 0.008, 18), m);
-    b.position.set(x * (side === 'L' ? 1 : -1), 0.017, z);
-    b.userData.cible = { type: 'bouton', side, nom: side === 'L' ? 'Bouton de couche (manette gauche)' : 'Bouton de fonction (manette droite)' };
+  const parPos = {};
+  for (const [pos, x, z, m] of boutons) {
+    const b = new THREE.Mesh(new THREE.CylinderGeometry(0.0085, 0.0085, 0.008, 18), m.clone());
+    b.position.set(x, 0.017, z);
+    b.userData.cible = { type: 'bouton', side, pos };
+    b.userData.base = m.emissive.getHex();
+    b.userData.couleur = m.color.getHex();
     tete.add(b);
     cibles.push(b);
+    parPos[pos] = b;
   }
   // Touche Mode : bouton extérieur de la manette gauche (repère 1, p. 122).
-  let mode = null;
-  if (side === 'L') {
-    mode = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, 0.008, 18), materiaux.mode.clone());
-    mode.rotation.z = Math.PI / 2;
-    mode.position.set(-0.033, 0.004, -0.012);
-    mode.userData.cible = { type: 'mode', nom: 'Touche Mode (maintenir + manette gauche à gauche/droite)' };
-    tete.add(mode);
-    cibles.push(mode);
-  }
+  // Bouton du côté extérieur : touche Mode à gauche (repère 1, p. 122) ; à droite, Control, Makeup/Breakout, Drill
+  // Lock… selon l'écran (vignettes de manette).
+  const mode = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, 0.008, 18), materiaux.mode.clone());
+  mode.rotation.z = Math.PI / 2;
+  mode.position.set(side === 'L' ? -0.033 : 0.033, 0.004, -0.012);
+  mode.userData.cible = { type: 'bouton', side, pos: 'C' };
+  mode.userData.couleur = mode.material.color.getHex();
+  tete.add(mode);
+  cibles.push(mode);
+  parPos.C = mode;
   const cm = { type: 'manette', side, nom: side === 'L' ? 'Manette gauche (LX, LY) : glisser pour incliner' : 'Manette droite (RX, RY) : glisser pour incliner' };
   for (const m of [poignee, bloc]) { m.userData.cible = cm; cibles.push(m); }
   prise(new THREE.CapsuleGeometry(0.05, 0.2, 4, 10), cm, pivot, cibles, [0.006 * sens, 0.12, 0.03]);
-  return { groupe: g, pivot, mode };
+  return { groupe: g, pivot, boutons: parPos };
 }
 
 /** Bandeau jaune sous l'écran (pictogrammes d'arrêt d'urgence et d'extincteur, figure p. 122). */
@@ -324,15 +332,12 @@ export function creerConsole3D(conteneur, sim, { agir = () => {}, info = () => {
       renderer.domElement.setPointerCapture?.(ev.pointerId);
       return;
     }
-    if (c.type === 'mode') sim.modeKey(!sim.s.modeKey);
-    else if (c.type === 'estop') sim.estop(!sim.s.estop);
+    if (c.type === 'estop') sim.estop(!sim.s.estop);
     else if (c.type === 'power') sim.power();
     else if (c.type === 'ext') {
       sim.s.message = { texte: 'Actionneur du système extincteur automatique : à n’utiliser qu’en cas d’incendie. Une fois déployé, l’unité de forage s’arrête (alarme 2). Non déclenché dans le simulateur.', ton: 'warn', page: 131, t: Date.now() };
     } else if (c.type === 'bouton') {
-      sim.s.message = { texte: `${c.side === 'L' ? 'Boutons de la manette gauche : ils choisissent la couche listée en bas à gauche de l’écran' : 'Boutons de la manette droite : ils activent les fonctions listées en bas à droite de l’écran'}. Touchez le nom voulu à l’écran (le manuel ne donne pas la position de chaque fonction sur la tête).`, ton: 'info', page: 124, t: Date.now() };
-      ecranEl.classList.add('c3-flash', `c3-flash-${c.side}`);
-      setTimeout(() => ecranEl.classList.remove('c3-flash', 'c3-flash-L', 'c3-flash-R'), 1600);
+      sim.appuyer(c.side, c.pos);
     }
     controls.enabled = true;
     agir();
@@ -353,11 +358,17 @@ export function creerConsole3D(conteneur, sim, { agir = () => {}, info = () => {
     renderer.domElement.style.cursor = c ? (c.type === 'manette' ? 'grab' : 'pointer') : '';
     if (c) {
       const r = conteneur.getBoundingClientRect();
-      bulle.textContent = c.nom;
+      let nom = c.nom;
+      if (c.type === 'bouton') {
+        const id = c.side === 'L' && c.pos === 'C' ? null : sim.fonctionBouton(c.side, c.pos);
+        nom = c.side === 'L' && c.pos === 'C' ? 'Touche Mode (maintenir + manette gauche à gauche/droite)'
+          : `Manette ${c.side === 'L' ? 'gauche' : 'droite'}, bouton ${POSITION[c.pos]} : ${id ? `${T[id][0]} (${T[id][1]})` : 'aucune fonction dans cet écran'}`;
+      }
+      bulle.textContent = nom;
       bulle.style.left = `${ev.clientX - r.left + 14}px`;
       bulle.style.top = `${ev.clientY - r.top + 14}px`;
       bulle.hidden = false;
-      info(c.nom);
+      info(nom);
     } else bulle.hidden = true;
   };
   const onUp = () => {
@@ -404,7 +415,16 @@ export function creerConsole3D(conteneur, sim, { agir = () => {}, info = () => {
     champi.position.y += ((s.estop ? 0.018 : 0.03) - champi.position.y) * 0.3;
     interLevier.rotation.z = s.power ? -0.5 : 0.5;
     voyant.material.emissive.setHex(s.power ? 0x1f9d55 : 0x000000);
-    if (mg.mode) mg.mode.material.emissive.setHex(s.modeKey ? 0x8a6a00 : 0x000000);
+    // Bouton de la couche ou de la fonction active allumé (comme en orange sur la vignette de l'écran).
+    for (const [side, m] of [['L', mg], ['R', md]]) {
+      for (const [pos, b] of Object.entries(m.boutons)) {
+        const id = side === 'L' && pos === 'C' ? null : sim.fonctionBouton(side, pos);
+        const on = s.power && (side === 'L' && pos === 'C' ? s.modeKey : id && (side === 'L' ? id === sim.couche() || sim.actif(id) : sim.actif(id)));
+        b.material.color.setHex(on ? 0xff7a00 : b.userData.couleur);
+        b.material.emissive.setHex(on ? 0xff5a00 : b.userData.base || 0);
+        b.material.emissiveIntensity = on ? 0.8 : 1;
+      }
+    }
     // Écran caché quand on le regarde par la tranche ou par derrière (le HTML ne serait pas masqué par la 3D).
     ecranObj.getWorldPosition(v);
     normale.set(0, 0, 1).applyQuaternion(boitier.getWorldQuaternion(new THREE.Quaternion()));
@@ -415,8 +435,15 @@ export function creerConsole3D(conteneur, sim, { agir = () => {}, info = () => {
   };
   raf = requestAnimationFrame(boucle);
 
-  return {
+  const api = {
     ecran: ecranEl,
+    /** Position à l'écran (px, dans le conteneur) d'un bouton de manette : contrôles automatiques et aides. */
+    positionBouton(side, pos) {
+      const b = (side === 'L' ? mg : md).boutons[pos];
+      if (!b) return null;
+      const w = b.getWorldPosition(new THREE.Vector3()).project(camera);
+      return { x: (w.x + 1) / 2 * conteneur.clientWidth, y: (1 - w.y) / 2 * conteneur.clientHeight };
+    },
     recentrer() { camera.position.set(0, 0.78, 1.3); controls.target.set(0, 0.17, -0.02); controls.update(); },
     arreter() {
       cancelAnimationFrame(raf);
@@ -431,6 +458,9 @@ export function creerConsole3D(conteneur, sim, { agir = () => {}, info = () => {
       });
       renderer.dispose();
       conteneur.replaceChildren();
+      delete conteneur.c3;
     },
   };
+  conteneur.c3 = api;
+  return api;
 }
