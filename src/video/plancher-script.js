@@ -285,7 +285,9 @@ export const SEGMENTS = [
     lines: [
       [1, 'À côté de la tour de la foreuse, le plancher secondaire : au moins trente-deux par soixante-douze pouces, douze pouces de haut au maximum, rien en porte-à-faux.'],
       [1, 'Les deux planches les plus proches sont vissées, la dernière arrive à trois pouces de la tour. À chaque changement d\'angle, on les ajuste. Pis pas de bois plané sur les planchers.'],
-      [1, 'S\'il faut deux marches, la première a seize pouces de profondeur pis neuf pouces de haut. Un côté sans marche, c\'est un garde-corps bien fixé. Pis quand on déplace la foreuse, on ajuste les garde-corps pour fermer les ouvertures.'],
+      [1, 'S\'il faut deux marches, la première a seize pouces de profondeur pis neuf pouces de haut.'],
+      [2, 'Pis le côté où il y a pas de marche ?'],
+      [1, 'Là, un garde-corps est obligatoire, fixé solidement. Pis quand on déplace la foreuse, on ajuste les garde-corps pour fermer les ouvertures.'],
     ],
     reveal: [{ cue: 'secondary', at: 0.15, span: 0.45 }],
     cams: [{ t: 0.2, ...C.ov }, { t: 0.5, ...C.second }, { t: 1, pos: [2.9, 1.5, 1.9], tgt: [0.8, 0.4, 0.2] }],
