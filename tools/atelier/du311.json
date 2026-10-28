@@ -1,0 +1,495 @@
+{
+ "notes": {
+  "P034-326-860": {
+   "en": "NOTES: 1. HOSE KITS, SAFETY TIES, QUICK DISCONNECTS W/ PLUGS AND CAPS ARE NOT SHOWN",
+   "fr": "Notes : 1. Les trousses de flexibles, les attaches de sécurité et les raccords rapides avec bouchons et capuchons ne sont pas représentés.",
+   "kind": "note",
+   "torques": [],
+   "values": []
+  },
+  "P034-416-784": {
+   "en": "ENSURE UPPER PIPE CLAMP ASSEMBLY IS INSTALLED IN LOWER LOCATION FOR 5' LG PIPE",
+   "fr": "Pour les tiges de 5' de long, s'assurer que l'ensemble de collier de tige supérieur est installé à l'emplacement inférieur.",
+   "kind": "reglage",
+   "torques": [],
+   "values": []
+  },
+  "P036-202-878": {
+   "drop": true
+  },
+  "P036-260-610": {
+   "en": "NOTE: - MOUNTING HARDWARE WILL VARY DEPENDING ON WHICH MAST FOOT THE ROCK DEFLECTOR IS BEING MOUNTED TO - SEE ILLUSTRATIONS BELOW FOR THE TWO DIFFERENT MOUNTING OPTIONS - ALL HARDWARE SUPPLIED FOR BOTH MOUNTING OPTIONS",
+   "fr": "Note : – La quincaillerie de fixation varie selon le pied de mât sur lequel le déflecteur de roches est monté ; voir les illustrations ci-dessous pour les deux options de montage. – Toute la quincaillerie est fournie pour les deux options de montage.",
+   "kind": "note",
+   "torques": [],
+   "values": []
+  },
+  "P036-528-878": {
+   "drop": true
+  },
+  "P046-482-219": {
+   "en": "NOTE: REMOVE (9) IF TOP DRIVE SPEED SENSE MOTOR IS REQUIRED",
+   "fr": "Note : retirer le repère (9) si un moteur à capteur de vitesse de la tête de rotation est requis.",
+   "kind": "note",
+   "torques": [],
+   "values": []
+  },
+  "P046-616-413": {
+   "en": "NOTE: ITEM (5) IS ONLY REQUIRED FOR THE 6245 TOP DRIVE",
+   "fr": "Note : le repère (5) n'est requis que pour la tête de rotation 6245.",
+   "kind": "note",
+   "torques": [],
+   "values": []
+  },
+  "P062-290-598": {
+   "en": "NOTE: 1. TAG BOTH ENDS OF HOSE ASSEMBLY WITH \"HA\" PART NUMBER",
+   "fr": "Note : 1. Étiqueter les deux extrémités du flexible avec le numéro de pièce « HA ».",
+   "kind": "note",
+   "torques": [],
+   "values": []
+  },
+  "P070-285-186": {
+   "en": "NOTES: 1. CX034961-500 (Ø5\" PIPE ARM JAW SET) IS STANDARD AND INCLUDED WITH EVERY V30 SINGLE AXIS PIPE ARM. ALTERNATE SIZED SETS ARE TO BE OFFERED IN ADDITION TO CX034961-500 WHEN REQUIRED.",
+   "fr": "Notes : 1. Le CX034961-500 (jeu de mâchoires Ø5\" pour bras de manutention de tiges) est standard et fourni avec chaque bras de manutention de tiges V30 à axe unique. Au besoin, des jeux d'autres dimensions sont proposés en plus du CX034961-500.",
+   "kind": "trousse",
+   "torques": [],
+   "values": [
+    {
+     "min": 5,
+     "unit": "in",
+     "what": "Diamètre de tige du jeu de mâchoires standard CX034961-500"
+    }
+   ]
+  },
+  "P076-196-679": {
+   "en": "GREASE ADAPTERS ARE FACING UP",
+   "fr": "Les adaptateurs de graissage sont orientés vers le haut.",
+   "kind": "graissage",
+   "torques": [],
+   "values": []
+  },
+  "P076-213-304": {
+   "en": "GREASE ADAPTERS ARE FACING DOWN",
+   "fr": "Les adaptateurs de graissage sont orientés vers le bas.",
+   "kind": "graissage",
+   "torques": [],
+   "values": []
+  },
+  "P076-388-131": {
+   "drop": true
+  },
+  "P076-461-474": {
+   "en": "GREASE ADAPTER IS FACING DOWN",
+   "fr": "L'adaptateur de graissage est orienté vers le bas.",
+   "kind": "graissage",
+   "torques": [],
+   "values": []
+  },
+  "P076-474-845": {
+   "en": "GREASE ADAPTER IS FACING UP",
+   "fr": "L'adaptateur de graissage est orienté vers le haut.",
+   "kind": "graissage",
+   "torques": [],
+   "values": []
+  },
+  "P076-658-866": {
+   "en": "GREASE ADAPTER IS FACING UP",
+   "fr": "L'adaptateur de graissage est orienté vers le haut.",
+   "kind": "graissage",
+   "torques": [],
+   "values": []
+  },
+  "P076-670-497": {
+   "en": "GREASE ADAPTER IS FACING DOWN",
+   "fr": "L'adaptateur de graissage est orienté vers le bas.",
+   "kind": "graissage",
+   "torques": [],
+   "values": []
+  },
+  "P078-198-177": {
+   "en": "NOTES: 1. ROLL STAMP CYLINDER BARREL WITH THE FOLLOWING INFORMATION: - CUBEX P/N: CM78807 - MANUFACTURER NAME - DATE OF MANUFACTURE (MONTH & YEAR) 2. WORKING PRESSURE: 2550PSI",
+   "fr": "Notes : 1. Marquer au rouleau sur le corps du vérin les informations suivantes : – n° de pièce Cubex : CM78807 – nom du fabricant – date de fabrication (mois et année). 2. Pression de service : 2550 PSI.",
+   "kind": "note",
+   "torques": [],
+   "values": [
+    {
+     "min": 2550,
+     "unit": "psi",
+     "what": "Pression de service du vérin"
+    }
+   ]
+  },
+  "P098-228-507": {
+   "en": "OPTIONS - CENTRALISER JAW KITS - PART NUMBER CORRESPONDING TO SANDVIK DTH DRI…: ITEM A SLIP PLATE: Ø3-1/8\" (79mm) CX031065, Ø3-1/2\" (89mm) CX031066, Ø4\" (102mm) CX031066, Ø4-1/2\" (114mm) CX031068…; ITEM B CENTRALISER JAW KIT: Ø3-1/8\" (79mm) CX034953-313, Ø3-1/2\" (89mm) CX034953-350, Ø4\" (102mm) CX034953-400, Ø4-1/2\" (114mm) CX034953-4… * NOTE: - THIS CHART CORRESPONDS TO THE DRILL PIPE AND FLAT SIZES AS PER SANDVIK ROCK… - SPECIAL APPLICATION DRILL PIPE MAY HAVE ALTERNATE FLAT SIZES - DRILL PIPE FROM OTHER SUPPLIERS MAY HAVE ALTERNATE FLAT SIZES - CONTACT SANDVIK FOR ADDITIONAL OPTIONS NOT SHOWN HERE NOTE: - MOUNT CYLINDER (ITEM 4) FIRST BEFORE ADDING HYDRAULIC ADAPTERS (ITEMS 15…",
+   "fr": "Options – trousses de mâchoires de centreur (n° de pièce selon la tige DTH Sandvik…) : repère A, plaque de glissement : Ø3-1/8\" (79mm) CX031065, Ø3-1/2\" (89mm) CX031066, Ø4\" (102mm) CX031066, Ø4-1/2\" (114mm) CX031068… ; repère B, trousse de mâchoires de centreur : Ø3-1/8\" (79mm) CX034953-313, Ø3-1/2\" (89mm) CX034953-350, Ø4\" (102mm) CX034953-400, Ø4-1/2\" (114mm) CX034953-4… * Note : – ce tableau correspond aux dimensions de tiges et de méplats selon Sandvik Rock… – les tiges pour applications spéciales peuvent avoir d'autres dimensions de méplats – les tiges d'autres fournisseurs peuvent avoir d'autres dimensions de méplats – contacter Sandvik pour d'autres options non présentées ici. Note : – monter d'abord le vérin (repère (4)) avant d'ajouter les adaptateurs hydrauliques (repères (15)…",
+   "kind": "trousse",
+   "torques": [],
+   "values": []
+  },
+  "P100-228-507": {
+   "en": "OPTIONS - CENTRALISER JAW KITS - PART NUMBER CORRESPONDING TO SANDVIK DTH DRI…: ITEM A SLIP PLATE: Ø3-1/8\" (79mm) CX031065, Ø3-1/2\" (89mm) CX031066, Ø4\" (102mm) CX031066, Ø4-1/2\" (114mm) CX031068…; ITEM B CENTRALISER JAW KIT: Ø3-1/8\" (79mm) CX034953-313, Ø3-1/2\" (89mm) CX034953-350, Ø4\" (102mm) CX034953-400, Ø4-1/2\" (114mm) CX034953-4… * NOTE: - THIS CHART CORRESPONDS TO THE DRILL PIPE AND FLAT SIZES AS PER SANDVIK ROCK… - SPECIAL APPLICATION DRILL PIPE MAY HAVE ALTERNATE FLAT SIZES - DRILL PIPE FROM OTHER SUPPLIERS MAY HAVE ALTERNATE FLAT SIZES - CONTACT SANDVIK FOR ADDITIONAL OPTIONS NOT SHOWN HERE NOTE: - MOUNT CYLINDER (ITEM 4) FIRST BEFORE ADDING HYDRAULIC ADAPTERS (ITEMS 15…",
+   "fr": "Options – trousses de mâchoires de centreur (n° de pièce selon la tige DTH Sandvik…) : repère A, plaque de glissement : Ø3-1/8\" (79mm) CX031065, Ø3-1/2\" (89mm) CX031066, Ø4\" (102mm) CX031066, Ø4-1/2\" (114mm) CX031068… ; repère B, trousse de mâchoires de centreur : Ø3-1/8\" (79mm) CX034953-313, Ø3-1/2\" (89mm) CX034953-350, Ø4\" (102mm) CX034953-400, Ø4-1/2\" (114mm) CX034953-4… * Note : – ce tableau correspond aux dimensions de tiges et de méplats selon Sandvik Rock… – les tiges pour applications spéciales peuvent avoir d'autres dimensions de méplats – les tiges d'autres fournisseurs peuvent avoir d'autres dimensions de méplats – contacter Sandvik pour d'autres options non présentées ici. Note : – monter d'abord le vérin (repère (4)) avant d'ajouter les adaptateurs hydrauliques (repères (15)…",
+   "kind": "trousse",
+   "torques": [],
+   "values": []
+  },
+  "P134-173-714": {
+   "en": "*ORIENTATION SPECIFIC* INSTALL WEAR BLOCK WITH WIDE PORTION FACING ADJUSTMENT BOLTS",
+   "fr": "*Orientation impérative* : installer le bloc d'usure avec la partie large tournée vers les boulons de réglage.",
+   "kind": "reglage",
+   "torques": [],
+   "values": []
+  },
+  "P138-179-243": {
+   "en": "NOTE: USE LOCTITE FLANGE SEALANT 518 GASKET ELIMINATOR - TYP BOTH MOTORS",
+   "fr": "Note : utiliser le produit d'étanchéité pour brides Loctite 518 Gasket Eliminator – identique pour les deux moteurs.",
+   "kind": "freinage",
+   "torques": [],
+   "values": []
+  },
+  "P138-460-656": {
+   "en": "REPLACEMENT KIT: CX034047 - KIT, SPLINE PISTON #28",
+   "fr": "Trousse de remplacement : CX034047 – trousse, piston cannelé #28.",
+   "kind": "trousse",
+   "torques": [],
+   "values": []
+  },
+  "P140-166-126": {
+   "en": "NOTE: 1. THE ORIENTATION OF THE BEARINGS IS IMPORTANT. POSITION THE BEARINGS AS SHOWN WITH BEARING NUMBERS FACING AWAY FROM EACH OTHER. 2. SEAL KIT CP16303-SK CONSISTS OF ITEM # 12, 13, 14, 15, 16, 18, 25 & 26. 3. SEAL KIT & BEARING KIT CM16303-SK CONSISTS OF ITEM # 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 25 & 26.",
+   "fr": "Note : 1. L'orientation des roulements est importante : les positionner comme illustré, les numéros des roulements tournés à l'opposé l'un de l'autre. 2. La trousse de joints CP16303-SK comprend les repères 12, 13, 14, 15, 16, 18, 25 et 26. 3. La trousse de joints et de roulements CM16303-SK comprend les repères 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 25 et 26.",
+   "kind": "reglage",
+   "torques": [],
+   "values": []
+  },
+  "P142-522-766": {
+   "en": "NOTE: - THE LOWER ITEM (20) MOUNTS ON THE SAVER SUB",
+   "fr": "Note : – le repère (20) inférieur se monte sur le raccord économiseur (saver sub).",
+   "kind": "note",
+   "torques": [],
+   "values": []
+  },
+  "P154-387-862": {
+   "en": "14\" MINIMUM LENGTH FOR INSTALLATION",
+   "fr": "Longueur minimale de 14\" pour l'installation.",
+   "kind": "note",
+   "torques": [],
+   "values": [
+    {
+     "min": 14,
+     "unit": "in",
+     "what": "Longueur minimale pour l'installation"
+    }
+   ]
+  },
+  "P158-176-337": {
+   "en": "REMOVE CAP (11) WHEN TOP DRIVE SPEED SENSE MOTORS ARE REQUIRED",
+   "fr": "Retirer le capuchon, repère (11), lorsque des moteurs à capteur de vitesse de la tête de rotation sont requis.",
+   "kind": "note",
+   "torques": [],
+   "values": []
+  },
+  "P164-229-407": {
+   "drop": true
+  },
+  "P164-230-617": {
+   "drop": true
+  },
+  "P176-128-204": {
+   "en": "NOTE: • MAX. OPERATING PRESSURE: 5000 PSI • USE 2 DROPS OF LOCTITE BLUE 242 WHEN INSTALLING ITEM (10). • USE 20 DROPS OF LOCTITE BLUE 243 EACH ON BOTH ITEMS (11) & (13) ON THEIR FIRST 3 TO 5 THREADS TO LOCK THEM TO ROD.",
+   "fr": "Note : • Pression de service max. : 5000 PSI • Appliquer 2 gouttes de Loctite bleu 242 lors de l'installation du repère (10). • Appliquer 20 gouttes de Loctite bleu 243 sur chacun des repères (11) et (13), sur leurs 3 à 5 premiers filets, pour les bloquer sur la tige.",
+   "kind": "freinage",
+   "torques": [],
+   "values": [
+    {
+     "min": 5000,
+     "unit": "psi",
+     "what": "Pression de service maximale"
+    }
+   ]
+  },
+  "P190-531-337": {
+   "en": "NOTE: 1. SEALS NOT SHOWN, BOLT KIT IS INCLUDED IN SEAL KIT",
+   "fr": "Note : 1. Joints non représentés ; la trousse de boulons est incluse dans la trousse de joints.",
+   "kind": "trousse",
+   "torques": [],
+   "values": []
+  },
+  "P194-604-465": {
+   "en": "NOTE: 1. SEALS NOT SHOWN, BOLT KIT IS INCLUDED IN SEAL KIT",
+   "fr": "Note : 1. Joints non représentés ; la trousse de boulons est incluse dans la trousse de joints.",
+   "kind": "trousse",
+   "torques": [],
+   "values": []
+  },
+  "P196-094-654": {
+   "en": "NOTE: SEALS NOT SHOWN, BOLT KIT IS INCLUDED IN SEAL KIT",
+   "fr": "Note : joints non représentés ; la trousse de boulons est incluse dans la trousse de joints.",
+   "kind": "trousse",
+   "torques": [],
+   "values": []
+  },
+  "P216-529-126": {
+   "en": "NOTE: 1. SEALS NOT SHOWN, BOLT KIT IS INCLUDED IN SEAL KIT",
+   "fr": "Note : 1. Joints non représentés ; la trousse de boulons est incluse dans la trousse de joints.",
+   "kind": "trousse",
+   "torques": [],
+   "values": []
+  },
+  "P218-324-236": {
+   "drop": true
+  },
+  "P218-357-691": {
+   "en": "(CP006385 \"PLUG VENT\" SUPPLIED W/ GREASE PUMP)",
+   "fr": "(Bouchon d'évent CP006385 fourni avec la pompe à graisse.)",
+   "kind": "note",
+   "torques": [],
+   "values": []
+  },
+  "P218-610-676": {
+   "en": "(CHECK ASSEMBLY QTY 1 IS SUPPLIED W/ GREASE PUMP)",
+   "fr": "(Ensemble clapet anti-retour, qté 1, fourni avec la pompe à graisse.)",
+   "kind": "note",
+   "torques": [],
+   "values": []
+  },
+  "P218-643-348": {
+   "drop": true
+  },
+  "P286-465-271": {
+   "en": "USE FLANGE, CP48001-0718M AS DRILL GUIDE: INSTALL FLANGE WITHOUT GASKET DRILL Ø11/16 THRU CRANK CASE REMOVE FLANGE AND THOROUGHLY CLEAN",
+   "fr": "Utiliser la bride CP48001-0718M comme guide de perçage : installer la bride sans joint, percer Ø11/16 à travers le carter, puis retirer la bride et nettoyer soigneusement.",
+   "kind": "note",
+   "torques": [],
+   "values": []
+  },
+  "P318-483-662": {
+   "en": "NOTE: 1. 50' OF HOSE IS SUPPLIED WITH CX036431 BUT IS NOT SHOWN ON DRAWING",
+   "fr": "Note : 1. 50' de flexible sont fournis avec le CX036431 mais ne sont pas représentés sur le dessin.",
+   "kind": "note",
+   "torques": [],
+   "values": []
+  },
+  "P318-507-690": {
+   "en": "2. GREASE NOZZLE IS INCLUDED WITH CP18313-2 BUT IS NOT SHOWN ON DRAWING",
+   "fr": "2. Le graisseur est inclus avec le CP18313-2 mais n'est pas représenté sur le dessin.",
+   "kind": "note",
+   "torques": [],
+   "values": []
+  },
+  "P354-237-490": {
+   "en": "ONE CORNER AT A TIME, REPLACE A SOCKET HEAD SCREW WITH (5) & (6) AND TIGHTEN BEFORE REMOVING ANOTHER SOCKET HEAD SCREW. ELECTRIC MOTOR AND PUMP ASSEMBLY MUST NOT BECOME LOOSE.",
+   "fr": "Un coin à la fois, remplacer une vis à tête creuse par les repères (5) et (6) et serrer avant de retirer une autre vis à tête creuse. L'ensemble moteur électrique et pompe ne doit pas se desserrer.",
+   "kind": "note",
+   "torques": [],
+   "values": []
+  },
+  "P354-624-411": {
+   "en": "GUIDE (3) OVER ELECTRIC MOTOR AND ALIGN WITH FOUR SOCKET HEAD SCREWS",
+   "fr": "Engager le repère (3) par-dessus le moteur électrique et l'aligner sur les quatre vis à tête creuse.",
+   "kind": "reglage",
+   "torques": [],
+   "values": []
+  },
+  "P368-658-299": {
+   "drop": true
+  },
+  "P370-100-587": {
+   "en": "(4) REPLACES RUBBER GASKET THAT COMES WITH GREASE PUMP",
+   "fr": "Le repère (4) remplace le joint en caoutchouc fourni avec la pompe à graisse.",
+   "kind": "note",
+   "torques": [],
+   "values": []
+  },
+  "P412-364-780": {
+   "en": "NOTE: - ITEM MARKED \"*\" IS USED WITH AUTO FIRE SUPPRESSION ONLY FIRE SUPPRESSION KITS: - MANUAL (BASIC) CX35743 - AUTO (ADD TO MANUAL) CXD35742",
+   "fr": "Note : – le repère marqué « * » ne sert qu'avec l'extinction automatique. Trousses d'extinction d'incendie : – manuelle (de base) CX35743 – automatique (à ajouter à la manuelle) CXD35742",
+   "kind": "trousse",
+   "torques": [],
+   "values": []
+  }
+ },
+ "settings": {
+  "P176-149-211": {
+   "en": "MAX. OPERATING PRESSURE: 5000 PSI",
+   "fr": "Pression de service max. : 5000 PSI",
+   "values": [
+    {
+     "min": 5000,
+     "unit": "psi",
+     "what": "Pression de service maximale"
+    }
+   ]
+  },
+  "P418-734-526": {
+   "drop": true
+  },
+  "P420-734-526": {
+   "drop": true
+  },
+  "P422-734-526": {
+   "drop": true
+  }
+ },
+ "titles": {
+  "P463": {
+   "en": "MAIN POWER PANEL INTERFACE TO DC CONTROLS",
+   "fr": "Panneau d'alimentation principal – interface vers commandes CC"
+  },
+  "P464": {
+   "en": "BATTERY / STARTER / ALTERNATOR",
+   "fr": "Batterie / démarreur / alternateur"
+  },
+  "P465": {
+   "en": "ENGINE CONTROL PANEL VMM 3",
+   "fr": "Panneau de commande moteur VMM 3"
+  },
+  "P466": {
+   "en": "ENGINE CONTROL PANEL INPUT VMM 3",
+   "fr": "Panneau de commande moteur – entrées VMM 3"
+  },
+  "P467": {
+   "en": "ENGINE CONTROL PANEL OUTPUT VMM 3",
+   "fr": "Panneau de commande moteur – sorties VMM 3"
+  },
+  "P468": {
+   "en": "ENGINE CONTROL PANEL / TRAM CONTROL PANEL",
+   "fr": "Panneau de commande moteur / panneau de commande de translation"
+  },
+  "P469": {
+   "en": "ENGINE CONTROL PANEL / TRAM CONTROL PANEL",
+   "fr": "Panneau de commande moteur / panneau de commande de translation"
+  },
+  "P470": {
+   "en": "TRAM CONTROL PANEL VMM 4",
+   "fr": "Panneau de commande de translation VMM 4"
+  },
+  "P471": {
+   "en": "TRAM CONTROL PANEL INPUT VMM 4",
+   "fr": "Panneau de commande de translation – entrées VMM 4"
+  },
+  "P472": {
+   "en": "TRAM CONTROL PANEL OUTPUT VMM 4",
+   "fr": "Panneau de commande de translation – sorties VMM 4"
+  },
+  "P473": {
+   "en": "TRAM CONTROL PANEL / MAIN CONTROL PANEL",
+   "fr": "Panneau de commande de translation / panneau de commande principal"
+  },
+  "P474": {
+   "en": "MAIN CONTROL PANEL VMM7",
+   "fr": "Panneau de commande principal VMM7"
+  },
+  "P475": {
+   "en": "MAIN CONTROL PANEL INPUT VMM 7",
+   "fr": "Panneau de commande principal – entrées VMM 7"
+  },
+  "P476": {
+   "en": "MAIN CONTROL PANEL OUTPUT VMM 7",
+   "fr": "Panneau de commande principal – sorties VMM 7"
+  },
+  "P477": {
+   "en": "MAIN CONTROL PANEL VMM8",
+   "fr": "Panneau de commande principal VMM8"
+  },
+  "P478": {
+   "en": "MAIN CONTROL PANEL INPUT VMM 8",
+   "fr": "Panneau de commande principal – entrées VMM 8"
+  },
+  "P479": {
+   "en": "MAIN CONTROL PANEL OUTPUT VMM 8",
+   "fr": "Panneau de commande principal – sorties VMM 8"
+  },
+  "P480": {
+   "en": "COMPUTER REMOTE / MAIN CONTROL PANEL VMM9",
+   "fr": "Poste informatique à distance / panneau de commande principal VMM9"
+  },
+  "P481": {
+   "en": "MAIN CONTROL PANEL INPUT VMM 9",
+   "fr": "Panneau de commande principal – entrées VMM 9"
+  },
+  "P482": {
+   "en": "MAIN CONTROL PANEL OUTPUT VMM 9",
+   "fr": "Panneau de commande principal – sorties VMM 9"
+  },
+  "P483": {
+   "en": "MAIN CONTROL PANEL VMM10",
+   "fr": "Panneau de commande principal VMM10"
+  },
+  "P484": {
+   "en": "MAIN CONTROL PANEL INPUT VMM 10",
+   "fr": "Panneau de commande principal – entrées VMM 10"
+  },
+  "P485": {
+   "en": "MAIN CONTROL PANEL OUTPUT VMM 10",
+   "fr": "Panneau de commande principal – sorties VMM 10"
+  },
+  "P486": {
+   "en": "MAIN CONTROL PANEL VMM12",
+   "fr": "Panneau de commande principal VMM12"
+  },
+  "P487": {
+   "en": "MAIN CONTROL PANEL INPUT VMM 12",
+   "fr": "Panneau de commande principal – entrées VMM 12"
+  },
+  "P488": {
+   "en": "MAIN CONTROL PANEL OUTPUT VMM 12",
+   "fr": "Panneau de commande principal – sorties VMM 12"
+  },
+  "P489": {
+   "en": "MAIN CONTROL PANEL MOTORIZED RELIEFS",
+   "fr": "Panneau de commande principal – soupapes de décharge motorisées"
+  },
+  "P490": {
+   "en": "COMPUTER REMOTE STATION ERIS 1",
+   "fr": "Poste informatique à distance ERIS 1"
+  },
+  "P491": {
+   "en": "COMPUTER REMOTE STATION ERIS 2",
+   "fr": "Poste informatique à distance ERIS 2"
+  },
+  "P492": {
+   "en": "MAST SENSOR JBOX INTERCONNECTION",
+   "fr": "Interconnexion du boîtier de jonction des capteurs du mât"
+  },
+  "P493": {
+   "en": "MAST SENSOR JBOX INTERCONNECTION",
+   "fr": "Interconnexion du boîtier de jonction des capteurs du mât"
+  },
+  "P494": {
+   "en": "MAST VALVE J-BOX VMM13",
+   "fr": "Boîtier de jonction des valves du mât VMM13"
+  },
+  "P495": {
+   "en": "CAROUSEL VALVE JBOX INPUT VMM 13",
+   "fr": "Boîtier de jonction des valves du carrousel – entrées VMM 13"
+  },
+  "P496": {
+   "en": "CAROUSEL VALVE JBOX OUTPUT VMM 13",
+   "fr": "Boîtier de jonction des valves du carrousel – sorties VMM 13"
+  },
+  "P502": {
+   "en": "MAIN POWER PANEL INPUT VMM 1",
+   "fr": "Panneau d'alimentation principal – entrées VMM 1"
+  },
+  "P503": {
+   "en": "MAIN POWER PANEL OUTPUT VMM 1",
+   "fr": "Panneau d'alimentation principal – sorties VMM 1"
+  },
+  "P504": {
+   "en": "MAIN POWER PANEL VMM 2 SUPPLY/CAN",
+   "fr": "Panneau d'alimentation principal VMM 2 – alimentation / CAN"
+  },
+  "P505": {
+   "en": "MAIN POWER PANEL INPUT VMM 2",
+   "fr": "Panneau d'alimentation principal – entrées VMM 2"
+  },
+  "P506": {
+   "en": "MAIN POWER PANEL OUTPUT VMM 2",
+   "fr": "Panneau d'alimentation principal – sorties VMM 2"
+  },
+  "P507": {
+   "en": "MAIN POWER PANEL INTERFACE TO DC CTRLS",
+   "fr": "Panneau d'alimentation principal – interface vers commandes CC"
+  }
+ }
+}

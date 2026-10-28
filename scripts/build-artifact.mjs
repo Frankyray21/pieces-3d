@@ -26,10 +26,13 @@ const walk = (dir) => readdirSync(dir).flatMap((f) => {
 // Si cela ne suffit pas, les derniers équipements du catalogue sont publiés sans
 // les pages de leur manuel (listes, recherche et 3D restent complètes ; la page
 // renvoie alors à la version complète du site).
-// Données complémentaires (bulles, donnees, entretien, procedures, déclarées par index.json) : inscrites dans la
+// Données complémentaires (bulles, donnees, entretien, procedures, utilisation, prise-en-main, déclarées par index.json) : inscrites dans la
 // page (<script id="extras">, lu par src/data/extras.js) ; elles ne sont pas publiées (limite de fichiers).
-const EXTRAS = /\/(?:bulles|donnees|entretien|procedures)\.json$/;
-const all = walk(join(dist, 'equipment')).map((p) => p.slice(dist.length + 1)).filter((p) => !EXTRAS.test(p)).sort();
+const EXTRAS = /\/(?:bulles|donnees|entretien|procedures|consignes|schemas|systemes|utilisation|prise-en-main)\.json$/;
+// Pages du manuel de l'utilisateur (utilisation/U001.webp…) : jamais publiées (limite de fichiers) ; le lecteur
+// affiche un message avec un lien vers la version complète. Le texte (recherche) et le sommaire restent.
+const MANUEL_UTILISATION = /^equipment\/([^/]+)\/utilisation\//;
+const all = walk(join(dist, 'equipment')).map((p) => p.slice(dist.length + 1)).filter((p) => !EXTRAS.test(p) && !MANUEL_UTILISATION.test(p)).sort();
 const catalogue = JSON.parse(readFileSync(join(dist, 'equipment', 'index.json'), 'utf8')).equipment;
 let files = all;
 let note = '';
@@ -68,6 +71,7 @@ for (const { id } of catalogue) {
   const [before, after] = data.document.pagePattern.split('{sheet}');
   pagesAbsentes[id] = missing.map((f) => f.slice(prefix.length + before.length, f.length - after.length)).sort();
 }
+for (const { id, extras: names = [] } of catalogue) if (names.includes('utilisation')) pagesAbsentes[`${id}/utilisation`] = '*';
 const publication = JSON.stringify({ pagesAbsentes }).replace(/</g, '\\u003c');
 const extras = {};
 for (const { id, extras: names = [] } of catalogue) {

@@ -414,8 +414,9 @@ export default {
     // ------------------------------------------------------------ outil de la barre
     const tool = ctx.ui.addTool({
       id: 'btn-procedures',
+      rank: 60,
       label: 'Procédures',
-      icon: 'cle',
+      icon: 'etapes',
       title: 'Procédures d\'assemblage pas à pas',
       pressed: false,
       onClick: () => {

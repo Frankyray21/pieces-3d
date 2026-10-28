@@ -1,0 +1,52 @@
+/* Consignes des dessins (src/ui/features/consignes.js) */
+
+#consignes-tool[hidden], .csg-card-home[hidden] { display: none !important; }
+.csg-couple { --csg: #c62828; }
+.csg-freinage { --csg: #1565c0; }
+.csg-graissage { --csg: #8d5a12; }
+.csg-reglage { --csg: #7b1fa2; }
+.csg-trousse { --csg: #00838f; }
+.csg-note-kind, .csg-note { --csg-n: var(--muted); }
+.csg-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--csg, var(--muted)); flex: none; }
+.ftool-n { margin-left: 4px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; display: inline-grid; place-items: center; font: 600 11px/1 var(--f-mono); background: var(--accent); color: var(--accent-ink); }
+
+/* ---------------------------------------------------------------- page */
+.csg { display: grid; gap: 18px; min-width: 0; }
+.csg-head { display: grid; gap: 8px; }
+.csg-intro { margin: 0; font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent-text, var(--accent)); }
+.csg-note { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.45; max-width: 80ch; }
+.csg-miss { margin: 0; display: flex; gap: 8px; align-items: flex-start; max-width: 80ch; padding: 9px 12px; border-left: 3px solid var(--warn); background: var(--warn-soft); border-radius: 0 8px 8px 0; font-size: 13px; line-height: 1.45; }
+.csg-miss svg { flex: none; color: var(--warn); margin-top: 1px; }
+.csg-filter { display: flex; flex-wrap: wrap; gap: 6px; }
+.csg-filter .chip { display: inline-flex; align-items: center; gap: 6px; }
+.csg-filter .chip b { font-weight: 600; color: var(--muted); }
+.csg-filter .chip.on { background: var(--ink); border-color: var(--ink); color: var(--surface); }
+.csg-filter .chip.on b { color: inherit; opacity: 0.75; }
+.csg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 14px; align-items: start; }
+
+/* ---------------------------------------------------------------- carte d'une consigne */
+.csg-card { display: flex; flex-direction: column; min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius, 12px); overflow: hidden; box-shadow: inset 4px 0 0 var(--csg, var(--line-strong)); }
+.csg-crop { position: relative; display: block; width: 100%; aspect-ratio: 4; max-height: 240px; overflow: hidden; padding: 0; border: 0; border-bottom: 1px solid var(--line); background: #fff; cursor: zoom-in; }
+.csg-crop img { position: absolute; max-width: none; width: calc(100% / var(--w)); left: calc(-100% * var(--x) / var(--w)); top: calc(-100% * var(--y) / var(--h)); }
+.csg-body { display: grid; gap: 6px; padding: 10px 12px 12px 14px; }
+.csg-kind { font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--csg, var(--muted)); }
+.csg-fr { margin: 0; font-size: 14px; line-height: 1.45; }
+.csg-steps { padding-left: 20px; display: grid; gap: 3px; }
+.csg-steps li::marker { font-weight: 600; color: var(--accent); }
+.csg-en { margin: 0; font: 11.5px/1.45 var(--f-mono); color: var(--muted); overflow-wrap: anywhere; }
+.csg-refs { margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 4px; font-size: 12px; color: var(--muted); }
+.csg-src, .csg-link { justify-self: start; border: 0; background: none; padding: 0; font-size: 12px; color: var(--muted); text-align: left; text-decoration: underline; text-decoration-color: var(--line-strong); text-underline-offset: 2px; }
+.csg-src:hover, .csg-link:hover { color: var(--accent); }
+
+/* ---------------------------------------------------------------- panneau latéral (vue 3D) */
+.csg-panel { display: grid; gap: 12px; }
+.csg-panel .csg-crop { max-height: 200px; }
+
+/* ---------------------------------------------------------------- carte de la page d'équipement */
+.csg-card-home { padding: 16px 18px; display: grid; gap: 10px; box-shadow: inset 5px 0 0 var(--accent); }
+.csg-home-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+.csg-home-head h3 { margin: 0; display: flex; align-items: center; gap: 8px; font: 700 20px/1.1 var(--f-display); text-transform: uppercase; letter-spacing: 0.01em; }
+.csg-home-head h3 svg { color: var(--accent); }
+.csg-home-head .btn { height: 36px; border-radius: 9px; }
+.csg-home-kinds { margin: 0; display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12.5px; color: var(--muted); }
+.csg-home-kinds span { display: inline-flex; align-items: center; gap: 6px; }

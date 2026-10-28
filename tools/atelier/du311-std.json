@@ -1,0 +1,1329 @@
+{
+ "notes": {
+  "P028-704-648": {
+   "en": "INSTALL TOP DRIVE ON LOWEST HOLE SET",
+   "fr": "Monter la tête de rotation sur la rangée de trous la plus basse.",
+   "kind": "reglage",
+   "torques": [],
+   "values": []
+  },
+  "P050-120-230": {
+   "en": "NOTE: USE LOCTITE FLANGE SEALANT 518 GASKET ELIMINATOR - TYP BOTH MOTORS",
+   "fr": "Note : utiliser le produit d'étanchéité pour brides LOCTITE 518 Gasket Eliminator — typique pour les deux moteurs.",
+   "kind": "freinage",
+   "torques": [],
+   "values": []
+  },
+  "P050-608-517": {
+   "en": "REPLACEMENT KIT: CX034047 - KIT, SPLINE PISTON #28",
+   "fr": "Trousse de remplacement : CX034047 — trousse, piston cannelé #28.",
+   "kind": "trousse",
+   "torques": [],
+   "values": []
+  },
+  "P054-522-766": {
+   "en": "NOTE: - THE LOWER ITEM (20) MOUNTS ON THE SAVER SUB",
+   "fr": "Note : le repère (20) inférieur se monte sur le raccord d'usure (saver sub).",
+   "kind": "note",
+   "torques": [],
+   "values": []
+  },
+  "P064-509-265": {
+   "en": "NOTES: 1. MAXIMUM OPERATING PRESSURE 5000 PSI. 2. TORQUE ITEM (1) (LOCK NUTS) TO 529 FT-LBS, TYP 2 3. USE 14 DROPS BLUE LOCTITE 243 ON THE FIRST 3 TO 5 THREADS WHEN INSTALLING ITEMS (11) 4. ITEMS (13.1) TO (13.8) ARE PART OF SEAL KIT.",
+   "fr": "Notes : 1. Pression de service maximale 5000 PSI. 2. Serrer le repère (1) (écrous de blocage) à 529 FT-LBS, typique 2 endroits. 3. Appliquer 14 gouttes de LOCTITE 243 bleu sur les 3 à 5 premiers filets lors du montage des repères (11). 4. Les repères (13.1) à (13.8) font partie de la trousse de joints.",
+   "kind": "couple",
+   "torques": [
+    {
+     "item": "Écrous de blocage, repère (1)",
+     "min": 529,
+     "unit": "lbf·ft"
+    }
+   ],
+   "values": [
+    {
+     "min": 5000,
+     "unit": "psi",
+     "what": "Pression de service maximale"
+    }
+   ]
+  },
+  "P072-770-456": {
+   "en": "NOTE ORIENTATION OF CLIP",
+   "fr": "Respecter l'orientation de l'agrafe.",
+   "kind": "reglage",
+   "torques": [],
+   "values": []
+  },
+  "P078-123-127": {
+   "drop": true
+  },
+  "P080-123-128": {
+   "drop": true
+  },
+  "P080-588-299": {
+   "en": "SCREW TORQUE SPEC: TORQUE M5 SCREW TO 20in*lbs (2Nm)",
+   "fr": "Couple de serrage des vis : serrer la vis M5 à 20 in*lbs (2 Nm).",
+   "kind": "couple",
+   "torques": [
+    {
+     "item": "Vis M5",
+     "min": 20,
+     "unit": "lbf·in"
+    }
+   ],
+   "values": []
+  },
+  "P080-589-291": {
+   "drop": true
+  },
+  "P082-127-129": {
+   "drop": true
+  },
+  "P082-195-399": {
+   "drop": true
+  },
+  "P084-124-129": {
+   "drop": true
+  },
+  "P084-701-200": {
+   "drop": true
+  },
+  "P084-704-206": {
+   "en": "SCREW TORQUE SPEC: TORQUE M5 SCREW TO 20in*lbs (2Nm)",
+   "fr": "Couple de serrage des vis : serrer la vis M5 à 20 in*lbs (2 Nm).",
+   "kind": "couple",
+   "torques": [
+    {
+     "item": "Vis M5",
+     "min": 20,
+     "unit": "lbf·in"
+    }
+   ],
+   "values": []
+  },
+  "P086-127-130": {
+   "drop": true
+  },
+  "P086-154-397": {
+   "drop": true
+  },
+  "P088-180-432": {
+   "en": "NOTE: - JAW INSTALLATION ORIENTATION",
+   "fr": "Note : respecter l'orientation de montage des mâchoires.",
+   "kind": "reglage",
+   "torques": [],
+   "values": []
+  },
+  "P088-345-134": {
+   "drop": true
+  },
+  "P090-145-326": {
+   "en": "NOTE ALIGNMENT OF SLOTS AND LOCATION OF ORIENTATION HOLES",
+   "fr": "Respecter l'alignement des rainures et la position des trous d'orientation.",
+   "kind": "reglage",
+   "torques": [],
+   "values": []
+  },
+  "P090-249-394": {
+   "drop": true
+  },
+  "P090-255-210": {
+   "drop": true
+  },
+  "P090-439-136": {
+   "drop": true
+  },
+  "P092-368-837": {
+   "en": "REMOVE PLASTIC PLUGS FROM CX036768 COUNTERBALANCE VALVE AND REPLACE WITH ADAPTERS AS PER BOM",
+   "fr": "Retirer les bouchons en plastique de la valve d'équilibrage CX036768 et les remplacer par les adaptateurs selon la nomenclature.",
+   "kind": "note",
+   "torques": [],
+   "values": []
+  },
+  "P102-170-585": {
+   "en": "ADJUST CABLE TENSION TO ALIGN TAB WITH THE CENTER OF THE TWO MARKINGS ON E-STOP SWITCH",
+   "fr": "Régler la tension du câble pour aligner la languette avec le centre des deux repères de l'interrupteur d'arrêt d'urgence.",
+   "kind": "reglage",
+   "torques": [],
+   "values": []
+  },
+  "P102-426-702": {
+   "en": "NOTE: 14\" MINIMUM LENGTH FOR INSTALLATION (4FT FEED CONFIGURATION)",
+   "fr": "Note : longueur minimale de 14\" pour l'installation (configuration glissière 4 pi).",
+   "kind": "note",
+   "torques": [],
+   "values": [
+    {
+     "min": 14,
+     "unit": "in",
+     "what": "Longueur minimale pour l'installation (configuration glissière 4 pi)"
+    }
+   ]
+  },
+  "P108-309-821": {
+   "drop": true
+  },
+  "P108-546-320": {
+   "en": "BOLT TORQUE: - USE BLUE LOCTITE - TORQUE ITEM (27) TO 40in*lbs (4.5Nm) OF TORQUE",
+   "fr": "Serrage des boulons : utiliser du LOCTITE bleu ; serrer le repère (27) à 40 in*lbs (4,5 Nm).",
+   "kind": "couple",
+   "torques": [
+    {
+     "item": "Boulon, repère (27)",
+     "min": 40,
+     "unit": "lbf·in"
+    }
+   ],
+   "values": []
+  },
+  "P118-560-140": {
+   "en": "ALIGN THE ARROW HEAD ON ITEM (11) TO THE ARROW HEAD ON ITEM (8) TO ENSURE PIPE ARM ITEM (12) IS IN THE CORRECT ORIENTATION",
+   "fr": "Aligner la flèche du repère (11) sur la flèche du repère (8) pour garantir la bonne orientation du bras de manutention des tiges, repère (12).",
+   "kind": "reglage",
+   "torques": [],
+   "values": []
+  },
+  "P118-622-180": {
+   "drop": true
+  },
+  "P134-198-177": {
+   "en": "NOTES: 1. ROLL STAMP CYLINDER BARREL WITH THE FOLLOWING INFORMATION: - CUBEX P/N: CM78807 - MANUFACTURER NAME - DATE OF MANUFACTURE (MONTH & YEAR) 2. WORKING PRESSURE: 2550PSI",
+   "fr": "Notes : 1. Marquer à la molette le corps du vérin avec les informations suivantes : réf. CUBEX CM78807 ; nom du fabricant ; date de fabrication (mois et année). 2. Pression de service : 2550 PSI.",
+   "kind": "note",
+   "torques": [],
+   "values": [
+    {
+     "min": 2550,
+     "unit": "psi",
+     "what": "Pression de service du vérin"
+    }
+   ]
+  },
+  "P144-131-686": {
+   "drop": true
+  },
+  "P144-133-700": {
+   "drop": true
+  },
+  "P144-151-716": {
+   "en": "INSTALLATION NOTE: 1. CLEAN MANIFOLD BLOCK ITEM (4) 2. CARTRIDGE VALVE INSTALLATION: • DIP ITEM (1) IN CLEAN HYDRAULIC OIL & TORQUE TO 30-35 FT-LBS / 41-47 Nm • DIP ITEM (2) IN CLEAN HYDRAULIC OIL & TORQUE TO 20-25 FT-LBS / 27-33 Nm • DIP ITEM (3) IN CLEAN HYDRAULIC OIL & TORQUE TO 30-35 FT-LBS / 41-47 Nm 3. ORB PLUG INSTALLATION (LUBRICATE THREADS WITH CLEAN HYDRAULIC OIL): • #4 ORB PLUG - TORQUE TO 17 FT-LBS / 23 Nm • #6 ORB PLUG - TORQUE TO 23 FT-LBS / 31 Nm • #8 ORB PLUG - TORQUE TO 39 FT-LBS / 53 Nm",
+   "fr": "Note de montage : 1. Nettoyer le bloc collecteur, repère (4). 2. Montage des valves à cartouche : tremper le repère (1) dans de l'huile hydraulique propre et serrer à 30-35 FT-LBS / 41-47 Nm ; tremper le repère (2) dans de l'huile hydraulique propre et serrer à 20-25 FT-LBS / 27-33 Nm ; tremper le repère (3) dans de l'huile hydraulique propre et serrer à 30-35 FT-LBS / 41-47 Nm. 3. Montage des bouchons ORB (lubrifier les filets avec de l'huile hydraulique propre) : bouchon ORB #4 à 17 FT-LBS / 23 Nm ; bouchon ORB #6 à 23 FT-LBS / 31 Nm ; bouchon ORB #8 à 39 FT-LBS / 53 Nm.",
+   "kind": "couple",
+   "torques": [
+    {
+     "item": "Valve à cartouche, repère (1)",
+     "max": 35,
+     "min": 30,
+     "unit": "lbf·ft"
+    },
+    {
+     "item": "Valve à cartouche, repère (2)",
+     "max": 25,
+     "min": 20,
+     "unit": "lbf·ft"
+    },
+    {
+     "item": "Valve à cartouche, repère (3)",
+     "max": 35,
+     "min": 30,
+     "unit": "lbf·ft"
+    },
+    {
+     "item": "Bouchon ORB #4",
+     "min": 17,
+     "unit": "lbf·ft"
+    },
+    {
+     "item": "Bouchon ORB #6",
+     "min": 23,
+     "unit": "lbf·ft"
+    },
+    {
+     "item": "Bouchon ORB #8",
+     "min": 39,
+     "unit": "lbf·ft"
+    }
+   ],
+   "values": []
+  },
+  "P144-172-769": {
+   "drop": true
+  },
+  "P144-226-716": {
+   "drop": true
+  },
+  "P168-089-370": {
+   "en": "NOTES: 1. ITEM (1) \"PILLOW BLOCK\" MAY HAVE BEEN INSTALLED USING COARSE THREAD (UNC) HARDWARE IN PLACE OF FINE THREAD (UNF) HARDWARE ON PAST BUILDS",
+   "fr": "Notes : 1. Sur les machines plus anciennes, le palier à semelle repère (1) peut avoir été monté avec de la visserie à pas gros (UNC) au lieu de visserie à pas fin (UNF).",
+   "kind": "note",
+   "torques": [],
+   "values": []
+  },
+  "P168-160-394": {
+   "drop": true
+  },
+  "P174-152-765": {
+   "en": "NOTES: 1. TORQUE = 25,000 FT*LBS AT 2,800 PSI 2. ANGULAR VELOCITY = 1 RPM PER 2.9 GPM 3. FILL WITH MOBIL UNIREX EP2 GREASE. SHELL GADUS S3 V220C 2 GREASE CAN BE USED AS AN ALTERNATE TO MOBIL UNIREX EP2.",
+   "fr": "Notes : 1. Couple = 25 000 FT*LBS à 2 800 PSI. 2. Vitesse angulaire = 1 tr/min par 2,9 GPM. 3. Remplir de graisse MOBIL UNIREX EP2. La graisse SHELL GADUS S3 V220C 2 peut être utilisée en remplacement de la MOBIL UNIREX EP2.",
+   "kind": "graissage",
+   "torques": [],
+   "values": [
+    {
+     "min": 2800,
+     "unit": "psi",
+     "what": "Pression correspondant au couple de 25 000 FT*LBS"
+    },
+    {
+     "min": 1,
+     "unit": "rpm",
+     "what": "Vitesse angulaire (par 2,9 GPM de débit)"
+    }
+   ]
+  },
+  "P176-524-660": {
+   "en": "NOTES: 1. USE LIQUID SEAL FOR SEALING CLOSED CAP ITEM (16). DO NOT USE LIQUID SEAL FOR SEALING OPEN CAP ITEM (17) DUE TO THE USE OF NYLON SHIMS ITEM (21). 2. USE FASTENERS ITEMS (38) & (42) TO ATTACH RETAINER COLLARS ITEMS (32) & (33).",
+   "fr": "Notes : 1. Utiliser un joint liquide pour l'étanchéité du chapeau fermé, repère (16). Ne pas utiliser de joint liquide pour le chapeau ouvert, repère (17), en raison des cales en nylon, repère (21). 2. Fixer les colliers de retenue, repères (32) et (33), avec les fixations repères (38) et (42).",
+   "kind": "freinage",
+   "torques": [],
+   "values": []
+  },
+  "P194-317-826": {
+   "en": "USE CAP SCREW TO LOCK ROTATION OF LOCK VALVE ASSEMBLY ONCE 18° ORIENTATION IS ACHIEVED",
+   "fr": "Une fois l'orientation de 18° obtenue, bloquer la rotation de l'ensemble valve de verrouillage avec la vis à tête.",
+   "kind": "reglage",
+   "torques": [],
+   "values": []
+  },
+  "P204-220-696": {
+   "en": "MAKE SURE TO INSTALL CORRECT RPCC VALVE",
+   "fr": "S'assurer de monter la bonne valve RPCC.",
+   "kind": "note",
+   "torques": [],
+   "values": []
+  },
+  "P224-668-480": {
+   "drop": true
+  },
+  "P240-127-694": {
+   "en": "NOTE: 1) INSTALL GAS SPRING WITH CYLINDER SHAFT DOWN. TYPICAL ALL PLACES. 2) INSTALL CHAINS ON SIDE CANOPY DOORS. ENSURE CHAINS INSTALLED TO LIMIT GAS SPRINGS FROM FULLY EXTENDING.",
+   "fr": "Note : 1) Monter les vérins à gaz tige vers le bas, à tous les emplacements. 2) Installer les chaînes sur les portes latérales de l'auvent ; s'assurer que les chaînes empêchent les vérins à gaz de s'allonger complètement.",
+   "kind": "reglage",
+   "torques": [],
+   "values": []
+  },
+  "P244-402-371": {
+   "drop": true
+  },
+  "P244-503-540": {
+   "drop": true
+  },
+  "P244-602-861": {
+   "drop": true
+  },
+  "P252-138-352": {
+   "en": "NOTE: SIDE PLATES REMOVED FROM VIEW FOR CLARITY",
+   "fr": "Note : plaques latérales non représentées pour plus de clarté.",
+   "kind": "note",
+   "torques": [],
+   "values": []
+  },
+  "P252-528-360": {
+   "drop": true
+  },
+  "P254-124-127": {
+   "en": "TORQUE: 320 LB*FT",
+   "fr": "Couple de serrage : 320 LB*FT.",
+   "kind": "couple",
+   "torques": [
+    {
+     "item": "Non précisé dans la note (voir le dessin)",
+     "min": 320,
+     "unit": "lbf·ft"
+    }
+   ],
+   "values": []
+  },
+  "P254-447-156": {
+   "en": "TORQUE: 200 LB*FT",
+   "fr": "Couple de serrage : 200 LB*FT.",
+   "kind": "couple",
+   "torques": [
+    {
+     "item": "Non précisé dans la note (voir le dessin)",
+     "min": 200,
+     "unit": "lbf·ft"
+    }
+   ],
+   "values": []
+  },
+  "P262-608-126": {
+   "en": "NOTE: 1. SEALS NOT SHOWN, BOLT KIT IS INCLUDED IN SEAL KIT",
+   "fr": "Note : 1. Joints non représentés ; la trousse de boulons est incluse dans la trousse de joints.",
+   "kind": "trousse",
+   "torques": [],
+   "values": []
+  },
+  "P272-260-718": {
+   "en": "NOTE: V-BAND CLAMPS CP001081 COME WITH THE WELDED EXHAUST COMPONENTS.",
+   "fr": "Note : les colliers en V CP001081 sont fournis avec les composants d'échappement soudés.",
+   "kind": "note",
+   "torques": [],
+   "values": []
+  },
+  "P274-271-845": {
+   "drop": true
+  },
+  "P274-635-471": {
+   "drop": true
+  },
+  "P284-159-437": {
+   "en": "NOTE: SEAL BOTH SIDES OF GASKET WITH GASKET SEALANT",
+   "fr": "Note : enduire les deux faces du joint de produit d'étanchéité pour joints.",
+   "kind": "freinage",
+   "torques": [],
+   "values": []
+  },
+  "P284-284-849": {
+   "drop": true
+  },
+  "P284-355-685": {
+   "drop": true
+  },
+  "P284-515-604": {
+   "drop": true
+  },
+  "P284-626-844": {
+   "drop": true
+  },
+  "P284-627-794": {
+   "drop": true
+  },
+  "P288-607-537": {
+   "en": "TACK WELD SHIMS INTO PLACE AFTER FITTED TO CAB, TYP",
+   "fr": "Pointer les cales en place après ajustement sur la cabine, typique.",
+   "kind": "reglage",
+   "torques": [],
+   "values": []
+  },
+  "P302-120-350": {
+   "en": "NOTE: *1. TORQUE BOLTS FOR ITEM 10 BEARING STRAP RETAINER BOLTS TO 30 - 35 Lb-Ft",
+   "fr": "Note : *1. Serrer les boulons de retenue de la bride de palier, repère (10), à 30 - 35 Lb-Ft.",
+   "kind": "couple",
+   "torques": [
+    {
+     "item": "Boulons de retenue de la bride de palier, repère (10)",
+     "max": 35,
+     "min": 30,
+     "unit": "lbf·ft"
+    }
+   ],
+   "values": []
+  },
+  "P302-424-542": {
+   "en": "APPLY LOCTITE 243 (BLUE) TO THREADS OF BOLTS TYP.",
+   "fr": "Appliquer du LOCTITE 243 (bleu) sur les filets des boulons, typique.",
+   "kind": "freinage",
+   "torques": [],
+   "values": []
+  },
+  "P302-432-740": {
+   "drop": true
+  },
+  "P304-192-481": {
+   "drop": true
+  },
+  "P304-224-598": {
+   "drop": true
+  },
+  "P304-224-607": {
+   "drop": true
+  },
+  "P304-224-780": {
+   "drop": true
+  },
+  "P304-226-652": {
+   "drop": true
+  },
+  "P304-292-566": {
+   "en": "PRE-LOAD INSTRUCTIONS - ARTICULATION PIN'S (TYP TOP AND BOTTOM PIN LOCATIONS) 1. INSTALL QTY=5 SHIMS (0.031\"), ITEM (24) 2. INSTALL NUT & HEAVY WASHER ITEMS (17) & (36) AND TIGHTEN SNUG BUT NOT TORQUED. ENSURE PIN FULLY INSERTED WITH HEAD PRESSED AGAINST LOWER SURFACE OF MOUNT. 3. USE FEELER GAUGES TO MEASURE THIS GAP. ADD OR REMOVE SHIMS UNTIL THIS GAP IS BETWEEN 0.005\" AND 0.035\" 4. APPLY LOCTITE 243 (BLUE) TO PIN THREADS THEN RE-INSTALL NUT & HEAVY WASHER ITEMS (17) & (36). TORQUE TO 975 FT*LBS (MAX), 650 FT*LBS (MIN)",
+   "fr": "Instructions de précharge — axes d'articulation (typique, axes supérieur et inférieur) : 1. Poser 5 cales (0,031\"), repère (24). 2. Poser l'écrou et la rondelle épaisse, repères (17) et (36), et serrer au contact sans appliquer le couple. Vérifier que l'axe est entièrement engagé, la tête appuyée contre la face inférieure du support. 3. Mesurer ce jeu avec des jauges d'épaisseur ; ajouter ou retirer des cales jusqu'à obtenir un jeu entre 0,005\" et 0,035\". 4. Appliquer du LOCTITE 243 (bleu) sur les filets de l'axe, puis reposer l'écrou et la rondelle épaisse, repères (17) et (36). Serrer à 975 FT*LBS (max), 650 FT*LBS (min).",
+   "kind": "reglage",
+   "torques": [
+    {
+     "item": "Écrou d'axe d'articulation, repères (17) et (36)",
+     "max": 975,
+     "min": 650,
+     "unit": "lbf·ft"
+    }
+   ],
+   "values": [
+    {
+     "min": 0.031,
+     "unit": "in",
+     "what": "Épaisseur d'une cale, repère (24) (quantité 5)"
+    },
+    {
+     "max": 0.035,
+     "min": 0.005,
+     "unit": "in",
+     "what": "Jeu à obtenir par calage (jauges d'épaisseur)"
+    }
+   ]
+  },
+  "P308-128-467": {
+   "en": "TORQUE 1\" JAM NUT TO 250FT LBS",
+   "fr": "Serrer le contre-écrou 1\" à 250 FT LBS.",
+   "kind": "couple",
+   "torques": [
+    {
+     "item": "Contre-écrou 1\"",
+     "min": 250,
+     "unit": "lbf·ft"
+    }
+   ],
+   "values": []
+  },
+  "P308-640-492": {
+   "en": "TORQUE 5/8 BOLT TO 150FT LBS",
+   "fr": "Serrer le boulon 5/8 à 150 FT LBS.",
+   "kind": "couple",
+   "torques": [
+    {
+     "item": "Boulon 5/8",
+     "min": 150,
+     "unit": "lbf·ft"
+    }
+   ],
+   "values": []
+  },
+  "P318-592-338": {
+   "en": "NOTE: 1. COMPONENTS ARE NOT AVAILABLE ON AN INDIVIDUAL BASIS, MUST ORDER COMPLETE SERVICE KIT",
+   "fr": "Note : 1. Composants non vendus séparément ; commander la trousse d'entretien complète.",
+   "kind": "trousse",
+   "torques": [],
+   "values": []
+  },
+  "P320-347-694": {
+   "en": "NOTE: 1. COMPONENTS ARE NOT AVAILABLE ON AN INDIVIDUAL BASIS, MUST ORDER COMPLETE SERVICE KIT",
+   "fr": "Note : 1. Composants non vendus séparément ; commander la trousse d'entretien complète.",
+   "kind": "trousse",
+   "torques": [],
+   "values": []
+  },
+  "P322-341-790": {
+   "en": "NOTE: 1. COMPONENTS ARE NOT AVAILABLE ON AN INDIVIDUAL BASIS, MUST ORDER COMPLETE SERVICE KIT",
+   "fr": "Note : 1. Composants non vendus séparément ; commander la trousse d'entretien complète.",
+   "kind": "trousse",
+   "torques": [],
+   "values": []
+  },
+  "P358-100-587": {
+   "en": "(4) REPLACES RUBBER GASKET THAT COMES WITH GREASE PUMP",
+   "fr": "Le repère (4) remplace le joint en caoutchouc fourni avec la pompe à graisse.",
+   "kind": "note",
+   "torques": [],
+   "values": []
+  },
+  "P380-195-136": {
+   "en": "NOTE: PUMPS ARE SHOWN FOR REFERENCE ONLY",
+   "fr": "Note : pompes représentées à titre indicatif seulement.",
+   "kind": "note",
+   "torques": [],
+   "values": []
+  },
+  "P400-148-350": {
+   "en": "NOTE: 1. SEALS ARE NOT SHOWN",
+   "fr": "Note : 1. Joints non représentés.",
+   "kind": "note",
+   "torques": [],
+   "values": []
+  },
+  "P422-370-577": {
+   "en": "ALIGN W/ PRE-EXISTING 3/8-16 UNC TAPPED HOLES",
+   "fr": "Aligner avec les trous taraudés 3/8-16 UNC existants.",
+   "kind": "reglage",
+   "torques": [],
+   "values": []
+  },
+  "P422-559-336": {
+   "en": "NOTES: - Use item CX008017 as required. - Install gas springs with cylinder shaft down.",
+   "fr": "Notes : utiliser l'article CX008017 au besoin ; monter les vérins à gaz tige vers le bas.",
+   "kind": "reglage",
+   "torques": [],
+   "values": []
+  },
+  "P424-164-457": {
+   "en": "NOTES: 1) SURFACES REQUIRING INSTALLATION OF THE ACOUSTICAL FOAM PANELS ARE TO BE CLEANED WITH ISOPROPYL ALCOHOL PRIOR TO ADHERING THE ACOUSTICAL FOAM. FLASH OFF TIME 15 MINUTES. 2) CLEAN ALL PERIMETER SURFACES AND EDGES WITH ISOPROPYL ALCOHOL PRIOR TO ADHERING THE ACOUSTICAL TAPE. FLASH OFF TIME 15 MINUTES. 3) ADHERE THE ACOUSTICAL FOAM PANELS AS SHOWN, SILVER MYLAR SIDE FACING OUT. …",
+   "fr": "Notes : 1) Nettoyer à l'alcool isopropylique les surfaces recevant les panneaux de mousse acoustique avant le collage ; temps d'évaporation 15 minutes. 2) Nettoyer à l'alcool isopropylique toutes les surfaces et arêtes périphériques avant de coller le ruban acoustique ; temps d'évaporation 15 minutes. 3) Coller les panneaux de mousse acoustique comme illustré, face Mylar argentée vers l'extérieur. …",
+   "kind": "note",
+   "torques": [],
+   "values": []
+  },
+  "P424-164-464": {
+   "drop": true
+  },
+  "P426-217-666": {
+   "en": "NOTES: 1) SURFACES REQUIRING INSTALLATION OF THE ACOUSTICAL FOAM PANELS ARE TO BE CLEANED WITH ISOPROPYL ALCOHOL PRIOR TO ADHERING THE ACOUSTICAL FOAM. FLASH OFF TIME 15 MINUTES. 2) CLEAN ALL PERIMETER SURFACES AND EDGES WITH ISOPROPYL ALCOHOL PRIOR TO ADHERING THE ACOUSTICAL TAPE. FLASH OFF TIME 15 MINUTES. 3) ADHERE THE ACOUSTICAL FOAM PANELS AS SHOWN, SILVER MYLAR SIDE FACING OUT. …",
+   "fr": "Notes : 1) Nettoyer à l'alcool isopropylique les surfaces recevant les panneaux de mousse acoustique avant le collage ; temps d'évaporation 15 minutes. 2) Nettoyer à l'alcool isopropylique toutes les surfaces et arêtes périphériques avant de coller le ruban acoustique ; temps d'évaporation 15 minutes. 3) Coller les panneaux de mousse acoustique comme illustré, face Mylar argentée vers l'extérieur. …",
+   "kind": "note",
+   "torques": [],
+   "values": []
+  },
+  "P428-152-406": {
+   "en": "NOTES: 1) SURFACES REQUIRING INSTALLATION OF THE ACOUSTICAL FOAM PANELS ARE TO BE CLEANED WITH ISOPROPYL ALCOHOL PRIOR TO ADHERING THE ACOUSTICAL FOAM. FLASH OFF TIME 15 MINUTES. 2) CLEAN ALL PERIMETER SURFACES AND EDGES WITH ISOPROPYL ALCOHOL PRIOR TO ADHERING THE ACOUSTICAL TAPE. FLASH OFF TIME 15 MINUTES. 3) ADHERE THE ACOUSTICAL FOAM PANELS AS SHOWN, SILVER MYLAR SIDE FACING OUT. 4) USING 2\" WIDE SILVER MYLAR TAPE, TAPE ALL EDGES OF THE ACOUSTICAL FOAM, CLOSING OFF THE EXPOSED ACOUSTICAL FOAM TO THE PANEL. 5) CHECK TO ENSURE THAT ALL FOAM PANELS EXPOSED FOAM IS COVERED WITH THE MYLAR TAPE LEAVING NO EXPOSED FOAM.",
+   "fr": "Notes : 1) Nettoyer à l'alcool isopropylique les surfaces recevant les panneaux de mousse acoustique avant le collage ; temps d'évaporation 15 minutes. 2) Nettoyer à l'alcool isopropylique toutes les surfaces et arêtes périphériques avant de coller le ruban acoustique ; temps d'évaporation 15 minutes. 3) Coller les panneaux de mousse acoustique comme illustré, face Mylar argentée vers l'extérieur. 4) Avec du ruban Mylar argenté de 2\" de large, recouvrir toutes les arêtes de la mousse acoustique pour fermer la mousse apparente contre le panneau. 5) Vérifier que toute la mousse apparente des panneaux est recouverte de ruban Mylar, sans mousse exposée.",
+   "kind": "note",
+   "torques": [],
+   "values": [
+    {
+     "min": 2,
+     "unit": "in",
+     "what": "Largeur du ruban Mylar argenté"
+    }
+   ]
+  },
+  "P428-152-413": {
+   "drop": true
+  },
+  "P430-110-741": {
+   "en": "NOTE: Air hose assemblies are not shown.",
+   "fr": "Note : flexibles d'air non représentés.",
+   "kind": "note",
+   "torques": [],
+   "values": []
+  },
+  "P438-465-271": {
+   "en": "USE FLANGE CP48001-0718M AS DRILL GUIDE: INSTALL FLANGE WITHOUT GASKET DRILL Ø11/16 THRU CRANK CASE REMOVE FLANGE AND THOROUGHLY CLEAN",
+   "fr": "Utiliser la bride CP48001-0718M comme guide de perçage : poser la bride sans joint, percer Ø 11/16 à travers le carter, puis retirer la bride et nettoyer soigneusement.",
+   "kind": "note",
+   "torques": [],
+   "values": []
+  },
+  "P476-537-292": {
+   "en": "INSTALL THE PROBE OF TEMP. GAUGE (CP19020-5)",
+   "fr": "Installer la sonde de l'indicateur de température (CP19020-5).",
+   "kind": "note",
+   "torques": [],
+   "values": []
+  }
+ },
+ "settings": {
+  "P064-478-172": {
+   "en": "1500psi",
+   "fr": "1500 psi — réglage de valve indiqué sur le schéma hydraulique (près de l'orifice R1)",
+   "values": [
+    {
+     "min": 1500,
+     "unit": "psi",
+     "what": "Réglage de pression — valve près de l'orifice R1"
+    }
+   ]
+  },
+  "P064-595-172": {
+   "en": "3000psi",
+   "fr": "3000 psi — réglage de valve indiqué sur le schéma hydraulique (près de l'orifice E1)",
+   "values": [
+    {
+     "min": 3000,
+     "unit": "psi",
+     "what": "Réglage de pression — valve près de l'orifice E1"
+    }
+   ]
+  },
+  "P064-661-216": {
+   "en": "3000psi",
+   "fr": "3000 psi — réglage de valve indiqué sur le schéma hydraulique (près de l'orifice E2)",
+   "values": [
+    {
+     "min": 3000,
+     "unit": "psi",
+     "what": "Réglage de pression — valve près de l'orifice E2"
+    }
+   ]
+  },
+  "P064-760-216": {
+   "en": "1500psi — R2",
+   "fr": "1500 psi — réglage de valve indiqué sur le schéma hydraulique (orifice R2)",
+   "values": [
+    {
+     "min": 1500,
+     "unit": "psi",
+     "what": "Réglage de pression — valve côté orifice R2"
+    }
+   ]
+  },
+  "P148-385-772": {
+   "drop": true
+  },
+  "P148-396-776": {
+   "en": "ARM UNIT 6.6 GPM 2200 PSI",
+   "fr": "Section bras (ARM UNIT) : 6,6 GPM, 2200 PSI",
+   "values": [
+    {
+     "min": 6.6,
+     "unit": "gpm",
+     "what": "Débit — section bras (ARM UNIT)"
+    },
+    {
+     "min": 2200,
+     "unit": "psi",
+     "what": "Réglage de pression — section bras (ARM UNIT)"
+    }
+   ]
+  },
+  "P158-535-811": {
+   "en": "WORKING PRESSURE: 4000 PSI",
+   "fr": "Pression de service : 4000 PSI",
+   "values": [
+    {
+     "min": 4000,
+     "unit": "psi",
+     "what": "Pression de service"
+    }
+   ]
+  },
+  "P204-228-221": {
+   "en": "RPCC-4 T-162A 2800 PSI",
+   "fr": "RPCC-4 T-162A : 2800 PSI (limiteur de pression d'avance)",
+   "values": [
+    {
+     "min": 2800,
+     "unit": "psi",
+     "what": "Réglage de pression — RPCC-4, limiteur de pression d'avance (FEED REL)"
+    }
+   ]
+  },
+  "P204-257-298": {
+   "en": "RBAN T-8A NC 3000-200PSI",
+   "fr": "RBAN T-8A NC : 3000-200 PSI (limiteur de pression de poussée, PULL DOWN REL)"
+  },
+  "P204-641-233": {
+   "en": "RPCC-2 T-162A 1600 PSI",
+   "fr": "RPCC-2 T-162A : 1600 PSI (basse pression de rotation)",
+   "values": [
+    {
+     "min": 1600,
+     "unit": "psi",
+     "what": "Réglage de pression — RPCC-2, basse pression de rotation (ROT LOW PRESS)"
+    }
+   ]
+  },
+  "P204-648-172": {
+   "en": "RPCC-1 T-162A 2500 PSI",
+   "fr": "RPCC-1 T-162A : 2500 PSI (haute pression de rotation)",
+   "values": [
+    {
+     "min": 2500,
+     "unit": "psi",
+     "what": "Réglage de pression — RPCC-1, haute pression de rotation (ROT HIGH PRESS)"
+    }
+   ]
+  },
+  "P204-702-296": {
+   "en": "RPCC-3 T-162A 3200 PSI",
+   "fr": "RPCC-3 T-162A : 3200 PSI (limiteur de pression de rotation)",
+   "values": [
+    {
+     "min": 3200,
+     "unit": "psi",
+     "what": "Réglage de pression — RPCC-3, limiteur de pression de rotation (ROT REL)"
+    }
+   ]
+  },
+  "P396-625-362": {
+   "en": "FEED 26.4 GPM 2800 PSI",
+   "fr": "Avance : 26,4 GPM, 2800 PSI",
+   "values": [
+    {
+     "min": 26.4,
+     "unit": "gpm",
+     "what": "Débit — avance (FEED)"
+    },
+    {
+     "min": 2800,
+     "unit": "psi",
+     "what": "Pression — avance (FEED)"
+    }
+   ]
+  },
+  "P400-193-272": {
+   "en": "LEFT FRONT OUTRIGGER 6.6 GPM",
+   "fr": "Stabilisateur avant gauche : 6,6 GPM",
+   "values": [
+    {
+     "min": 6.6,
+     "unit": "gpm",
+     "what": "Débit — stabilisateur avant gauche"
+    }
+   ]
+  },
+  "P400-253-272": {
+   "en": "RIGHT FRONT OUTRIGGER 6.6 GPM",
+   "fr": "Stabilisateur avant droit : 6,6 GPM",
+   "values": [
+    {
+     "min": 6.6,
+     "unit": "gpm",
+     "what": "Débit — stabilisateur avant droit"
+    }
+   ]
+  },
+  "P400-320-272": {
+   "en": "FEED EXTENSION 6.6 GPM",
+   "fr": "Extension de glissière : 6,6 GPM",
+   "values": [
+    {
+     "min": 6.6,
+     "unit": "gpm",
+     "what": "Débit — extension de glissière (FEED EXTENSION)"
+    }
+   ]
+  },
+  "P400-382-278": {
+   "en": "SWING 1.3 GPM",
+   "fr": "Pivotement (SWING) : 1,3 GPM",
+   "values": [
+    {
+     "min": 1.3,
+     "unit": "gpm",
+     "what": "Débit — pivotement (SWING)"
+    }
+   ]
+  },
+  "P400-442-278": {
+   "en": "SLIDE 6.6 GPM",
+   "fr": "Coulissement (SLIDE) : 6,6 GPM",
+   "values": [
+    {
+     "min": 6.6,
+     "unit": "gpm",
+     "what": "Débit — coulissement (SLIDE)"
+    }
+   ]
+  },
+  "P400-564-272": {
+   "en": "L. UPPER STINGER 6.6 GPM",
+   "fr": "Béquille (stinger) supérieure gauche : 6,6 GPM",
+   "values": [
+    {
+     "min": 6.6,
+     "unit": "gpm",
+     "what": "Débit — béquille (stinger) supérieure gauche"
+    }
+   ]
+  },
+  "P400-625-272": {
+   "en": "L. LOWER STINGER 6.6 GPM",
+   "fr": "Béquille (stinger) inférieure gauche : 6,6 GPM",
+   "values": [
+    {
+     "min": 6.6,
+     "unit": "gpm",
+     "what": "Débit — béquille (stinger) inférieure gauche"
+    }
+   ]
+  },
+  "P400-684-272": {
+   "en": "R. UPPER STINGER 6.6 GPM",
+   "fr": "Béquille (stinger) supérieure droite : 6,6 GPM",
+   "values": [
+    {
+     "min": 6.6,
+     "unit": "gpm",
+     "what": "Débit — béquille (stinger) supérieure droite"
+    }
+   ]
+  },
+  "P400-745-272": {
+   "en": "R. LOWER STINGER 6.6 GPM",
+   "fr": "Béquille (stinger) inférieure droite : 6,6 GPM",
+   "values": [
+    {
+     "min": 6.6,
+     "unit": "gpm",
+     "what": "Débit — béquille (stinger) inférieure droite"
+    }
+   ]
+  },
+  "P406-351-350": {
+   "en": "WATER PUMP 10.6 GPM",
+   "fr": "Pompe à eau : 10,6 GPM",
+   "values": [
+    {
+     "min": 10.6,
+     "unit": "gpm",
+     "what": "Débit — pompe à eau"
+    }
+   ]
+  },
+  "P492-138-566": {
+   "en": "80 PSI",
+   "fr": "80 PSI (valve repère (24))",
+   "values": [
+    {
+     "min": 80,
+     "unit": "psi",
+     "what": "Réglage de pression — valve repère (24)"
+    }
+   ]
+  },
+  "P492-187-696": {
+   "en": "400 PSI",
+   "fr": "400 PSI (valve repère (37))",
+   "values": [
+    {
+     "min": 400,
+     "unit": "psi",
+     "what": "Réglage de pression — valve repère (37)"
+    }
+   ]
+  },
+  "P492-282-587": {
+   "en": "DISCHARGE AIR TEMPERATURE TRANSDUCER SHUTDOWN: 375°F",
+   "fr": "Transmetteur de température d'air de refoulement — arrêt : 375 °F",
+   "values": [
+    {
+     "min": 375,
+     "unit": "°F",
+     "what": "Température d'arrêt — air de refoulement (transmetteur de température)"
+    }
+   ]
+  },
+  "P492-407-833": {
+   "en": "PRESSURE CONTROL VALVE SET TO 360 PSI",
+   "fr": "Valve de régulation de pression réglée à 360 PSI",
+   "values": [
+    {
+     "min": 360,
+     "unit": "psi",
+     "what": "Réglage de la valve de régulation de pression"
+    }
+   ]
+  },
+  "P492-445-262": {
+   "en": "450 PSI SYSTEM RELIEF",
+   "fr": "Décharge du système : 450 PSI",
+   "values": [
+    {
+     "min": 450,
+     "unit": "psi",
+     "what": "Réglage de la soupape de décharge du système"
+    }
+   ]
+  },
+  "P492-613-296": {
+   "en": "LOW MINE WATER PRESSURE SHUT-OFF 25 PSI / 18\" MIN. VENT HOSE",
+   "fr": "Arrêt sur basse pression d'eau de la mine : 25 PSI / flexible d'évent 18 po min.",
+   "values": [
+    {
+     "min": 25,
+     "unit": "psi",
+     "what": "Seuil d'arrêt — basse pression d'eau de la mine"
+    },
+    {
+     "min": 18,
+     "unit": "in",
+     "what": "Longueur minimale du flexible d'évent"
+    }
+   ]
+  },
+  "P492-710-296": {
+   "en": "700 PSI",
+   "fr": "700 PSI (valve du circuit de la pompe à eau)",
+   "values": [
+    {
+     "min": 700,
+     "unit": "psi",
+     "what": "Réglage de pression — valve du circuit de la pompe à eau"
+    }
+   ]
+  },
+  "P492-782-696": {
+   "en": "LOW MINE AIR SHUT-OFF 60 PSI",
+   "fr": "Arrêt sur basse pression d'air de la mine : 60 PSI",
+   "values": [
+    {
+     "min": 60,
+     "unit": "psi",
+     "what": "Seuil d'arrêt — basse pression d'air de la mine"
+    }
+   ]
+  },
+  "P494-138-566": {
+   "en": "80 PSI",
+   "fr": "80 PSI (valve repère (24))",
+   "values": [
+    {
+     "min": 80,
+     "unit": "psi",
+     "what": "Réglage de pression — valve repère (24)"
+    }
+   ]
+  },
+  "P494-187-696": {
+   "en": "400 PSI",
+   "fr": "400 PSI (valve repère (37))",
+   "values": [
+    {
+     "min": 400,
+     "unit": "psi",
+     "what": "Réglage de pression — valve repère (37)"
+    }
+   ]
+  },
+  "P494-282-587": {
+   "en": "DISCHARGE AIR TEMPERATURE TRANSDUCER SHUTDOWN: 375°F",
+   "fr": "Transmetteur de température d'air de refoulement — arrêt : 375 °F",
+   "values": [
+    {
+     "min": 375,
+     "unit": "°F",
+     "what": "Température d'arrêt — air de refoulement (transmetteur de température)"
+    }
+   ]
+  },
+  "P494-407-833": {
+   "en": "PRESSURE CONTROL VALVE SET TO 360 PSI",
+   "fr": "Valve de régulation de pression réglée à 360 PSI",
+   "values": [
+    {
+     "min": 360,
+     "unit": "psi",
+     "what": "Réglage de la valve de régulation de pression"
+    }
+   ]
+  },
+  "P494-445-262": {
+   "en": "450 PSI SYSTEM RELIEF",
+   "fr": "Décharge du système : 450 PSI",
+   "values": [
+    {
+     "min": 450,
+     "unit": "psi",
+     "what": "Réglage de la soupape de décharge du système"
+    }
+   ]
+  },
+  "P494-613-297": {
+   "en": "LOW MINE WATER PRESSURE SHUT-OFF 25 PSI / 18\" MIN. VENT HOSE",
+   "fr": "Arrêt sur basse pression d'eau de la mine : 25 PSI / flexible d'évent 18 po min.",
+   "values": [
+    {
+     "min": 25,
+     "unit": "psi",
+     "what": "Seuil d'arrêt — basse pression d'eau de la mine"
+    },
+    {
+     "min": 18,
+     "unit": "in",
+     "what": "Longueur minimale du flexible d'évent"
+    }
+   ]
+  },
+  "P494-710-296": {
+   "en": "700 PSI",
+   "fr": "700 PSI (valve du circuit de la pompe à eau)",
+   "values": [
+    {
+     "min": 700,
+     "unit": "psi",
+     "what": "Réglage de pression — valve du circuit de la pompe à eau"
+    }
+   ]
+  },
+  "P494-782-696": {
+   "en": "LOW MINE AIR SHUT-OFF 60 PSI",
+   "fr": "Arrêt sur basse pression d'air de la mine : 60 PSI",
+   "values": [
+    {
+     "min": 60,
+     "unit": "psi",
+     "what": "Seuil d'arrêt — basse pression d'air de la mine"
+    }
+   ]
+  },
+  "P496-138-566": {
+   "en": "80 PSI",
+   "fr": "80 PSI (valve repère (24))",
+   "values": [
+    {
+     "min": 80,
+     "unit": "psi",
+     "what": "Réglage de pression — valve repère (24)"
+    }
+   ]
+  },
+  "P496-187-696": {
+   "en": "400 PSI",
+   "fr": "400 PSI (valve repère (37))",
+   "values": [
+    {
+     "min": 400,
+     "unit": "psi",
+     "what": "Réglage de pression — valve repère (37)"
+    }
+   ]
+  },
+  "P496-282-587": {
+   "en": "DISCHARGE AIR TEMPERATURE TRANSDUCER SHUTDOWN: 375°F",
+   "fr": "Transmetteur de température d'air de refoulement — arrêt : 375 °F",
+   "values": [
+    {
+     "min": 375,
+     "unit": "°F",
+     "what": "Température d'arrêt — air de refoulement (transmetteur de température)"
+    }
+   ]
+  },
+  "P496-407-833": {
+   "en": "PRESSURE CONTROL VALVE SET TO 360 PSI",
+   "fr": "Valve de régulation de pression réglée à 360 PSI",
+   "values": [
+    {
+     "min": 360,
+     "unit": "psi",
+     "what": "Réglage de la valve de régulation de pression"
+    }
+   ]
+  },
+  "P496-445-262": {
+   "en": "450 PSI SYSTEM RELIEF",
+   "fr": "Décharge du système : 450 PSI",
+   "values": [
+    {
+     "min": 450,
+     "unit": "psi",
+     "what": "Réglage de la soupape de décharge du système"
+    }
+   ]
+  },
+  "P496-613-296": {
+   "en": "LOW MINE WATER PRESSURE SHUT-OFF 25 PSI / 18\" MIN. VENT HOSE",
+   "fr": "Arrêt sur basse pression d'eau de la mine : 25 PSI / flexible d'évent 18 po min.",
+   "values": [
+    {
+     "min": 25,
+     "unit": "psi",
+     "what": "Seuil d'arrêt — basse pression d'eau de la mine"
+    },
+    {
+     "min": 18,
+     "unit": "in",
+     "what": "Longueur minimale du flexible d'évent"
+    }
+   ]
+  },
+  "P496-710-296": {
+   "en": "700 PSI",
+   "fr": "700 PSI (valve du circuit de la pompe à eau)",
+   "values": [
+    {
+     "min": 700,
+     "unit": "psi",
+     "what": "Réglage de pression — valve du circuit de la pompe à eau"
+    }
+   ]
+  },
+  "P496-782-696": {
+   "en": "LOW MINE AIR SHUT-OFF 60 PSI",
+   "fr": "Arrêt sur basse pression d'air de la mine : 60 PSI",
+   "values": [
+    {
+     "min": 60,
+     "unit": "psi",
+     "what": "Seuil d'arrêt — basse pression d'air de la mine"
+    }
+   ]
+  }
+ },
+ "titles": {
+  "P585": {
+   "en": "MAIN POWER PANEL TO REAR CONTROL PANEL",
+   "fr": "Panneau d'alimentation principal vers panneau de commande arrière"
+  },
+  "P586": {
+   "en": "REAR CONTROL PANEL VMM 3 COMMUNICATION",
+   "fr": "Panneau de commande arrière — VMM 3 communication"
+  },
+  "P587": {
+   "en": "REAR CONTROL PANEL VMM 3 INPUTS",
+   "fr": "Panneau de commande arrière — entrées VMM 3"
+  },
+  "P588": {
+   "en": "REAR CONTROL PANEL VMM 3 OUTPUTS",
+   "fr": "Panneau de commande arrière — sorties VMM 3"
+  },
+  "P589": {
+   "en": "REAR CONTROL PANEL TO DRIVER CONTROL PANEL",
+   "fr": "Panneau de commande arrière vers panneau de commande du conducteur"
+  },
+  "P590": {
+   "en": "BATTERY / STARTER / ALTERNATOR / POWER RELAY",
+   "fr": "Batterie / démarreur / alternateur / relais d'alimentation"
+  },
+  "P591": {
+   "en": "ENGINE ECM/ADM",
+   "fr": "Moteur — ECM/ADM"
+  },
+  "P592": {
+   "en": "HYDROSTATIC DRIVE/BRAKE SYSTEM",
+   "fr": "Transmission hydrostatique / système de freinage"
+  },
+  "P593": {
+   "en": "DRIVER CONTROL PANEL VMM 4 COMMUNICATION",
+   "fr": "Panneau de commande du conducteur — VMM 4 communication"
+  },
+  "P594": {
+   "en": "DRIVER CONTROL PANEL INPUT VMM 4",
+   "fr": "Panneau de commande du conducteur — entrées VMM 4"
+  },
+  "P595": {
+   "en": "DRIVER CONTROL PANEL OUTPUT VMM 4",
+   "fr": "Panneau de commande du conducteur — sorties VMM 4"
+  },
+  "P596": {
+   "en": "DRIVER CONTROL PANEL VMM 5 COMMUNICATION",
+   "fr": "Panneau de commande du conducteur — VMM 5 communication"
+  },
+  "P597": {
+   "en": "DRIVER CONTROL PANEL INPUT VMM 5",
+   "fr": "Panneau de commande du conducteur — entrées VMM 5"
+  },
+  "P598": {
+   "en": "DRIVER CONTROL PANEL OUTPUT VMM 5",
+   "fr": "Panneau de commande du conducteur — sorties VMM 5"
+  },
+  "P599": {
+   "en": "DRIVER CONTROL PANEL VMM 6",
+   "fr": "Panneau de commande du conducteur — VMM 6"
+  },
+  "P600": {
+   "en": "DRIVER CONTROL PANEL INPUT VMM 6",
+   "fr": "Panneau de commande du conducteur — entrées VMM 6"
+  },
+  "P601": {
+   "en": "DRIVER CONTROL PANEL OUTPUT VMM 6",
+   "fr": "Panneau de commande du conducteur — sorties VMM 6"
+  },
+  "P602": {
+   "en": "DRIVER CONTROL PANEL TO FRONT CONTROL PANEL",
+   "fr": "Panneau de commande du conducteur vers panneau de commande avant"
+  },
+  "P603": {
+   "en": "FRONT CONTROL PANEL VMM7",
+   "fr": "Panneau de commande avant — VMM7"
+  },
+  "P604": {
+   "en": "FRONT CONTROL PANEL INPUT VMM 7",
+   "fr": "Panneau de commande avant — entrées VMM 7"
+  },
+  "P605": {
+   "en": "FRONT CONTROL PANEL OUTPUT VMM 7",
+   "fr": "Panneau de commande avant — sorties VMM 7"
+  },
+  "P606": {
+   "en": "FRONT CONTROL PANEL VMM8",
+   "fr": "Panneau de commande avant — VMM8"
+  },
+  "P607": {
+   "en": "FRONT CONTROL PANEL INPUT VMM 8",
+   "fr": "Panneau de commande avant — entrées VMM 8"
+  },
+  "P608": {
+   "en": "FRONT CONTROL PANEL OUTPUT VMM 8",
+   "fr": "Panneau de commande avant — sorties VMM 8"
+  },
+  "P609": {
+   "en": "FRONT CONTROL PANEL VMM9",
+   "fr": "Panneau de commande avant — VMM9"
+  },
+  "P610": {
+   "en": "FRONT CONTROL PANEL INPUT VMM 9",
+   "fr": "Panneau de commande avant — entrées VMM 9"
+  },
+  "P611": {
+   "en": "FRONT CONTROL PANEL OUTPUT VMM 9",
+   "fr": "Panneau de commande avant — sorties VMM 9"
+  },
+  "P612": {
+   "en": "FRONT CONTROL PANEL VMM10",
+   "fr": "Panneau de commande avant — VMM10"
+  },
+  "P613": {
+   "en": "FRONT CONTROL PANEL INPUT VMM 10",
+   "fr": "Panneau de commande avant — entrées VMM 10"
+  },
+  "P614": {
+   "en": "FRONT CONTROL PANEL OUTPUT VMM 10",
+   "fr": "Panneau de commande avant — sorties VMM 10"
+  },
+  "P615": {
+   "en": "FRONT CONTROL PANEL VMM12",
+   "fr": "Panneau de commande avant — VMM12"
+  },
+  "P616": {
+   "en": "FRONT CONTROL PANEL INPUT VMM 12",
+   "fr": "Panneau de commande avant — entrées VMM 12"
+  },
+  "P617": {
+   "en": "FRONT CONTROL PANEL OUTPUT VMM 12",
+   "fr": "Panneau de commande avant — sorties VMM 12"
+  },
+  "P618": {
+   "en": "FRONT CONTROL PANEL MOTORIZED RELIEFS",
+   "fr": "Panneau de commande avant — limiteurs de pression motorisés"
+  },
+  "P619": {
+   "en": "FRONT CONTROL PANEL COMPUTER REMOTE STATION 1",
+   "fr": "Panneau de commande avant — poste informatique déporté 1"
+  },
+  "P620": {
+   "en": "FRONT CONTROL PANEL COMPUTER REMOTE STATION 2",
+   "fr": "Panneau de commande avant — poste informatique déporté 2"
+  },
+  "P621": {
+   "en": "FRONT CONTROL PANEL MAST VALVE JUNCTION BOX",
+   "fr": "Panneau de commande avant — boîte de jonction des valves du mât"
+  },
+  "P622": {
+   "en": "MAST VALVE JUNCTION BOX CAN IO MODULE",
+   "fr": "Boîte de jonction des valves du mât — module E/S CAN (CAN IO)"
+  },
+  "P623": {
+   "en": "FRONT CONTROL PANEL CAROUSEL VALVE JUNCTION BOX",
+   "fr": "Panneau de commande avant — boîte de jonction des valves du carrousel"
+  },
+  "P624": {
+   "en": "CAROUSEL VALVE JUNCTION BOX VMM 13 INPUTS",
+   "fr": "Boîte de jonction des valves du carrousel — entrées VMM 13"
+  },
+  "P625": {
+   "en": "CAROUSEL VALVE JUNCTION BOX VMM 13 OUTPUTS",
+   "fr": "Boîte de jonction des valves du carrousel — sorties VMM 13"
+  },
+  "P632": {
+   "en": "MAIN POWER PANEL INPUT VMM 1",
+   "fr": "Panneau d'alimentation principal — entrées VMM 1"
+  },
+  "P633": {
+   "en": "MAIN POWER PANEL OUTPUT VMM 1",
+   "fr": "Panneau d'alimentation principal — sorties VMM 1"
+  },
+  "P634": {
+   "en": "MAIN POWER PANEL VMM 2",
+   "fr": "Panneau d'alimentation principal — VMM 2"
+  },
+  "P635": {
+   "en": "MAIN POWER PANEL INPUT VMM 2",
+   "fr": "Panneau d'alimentation principal — entrées VMM 2"
+  },
+  "P636": {
+   "en": "MAIN POWER PANEL OUTPUT VMM 2",
+   "fr": "Panneau d'alimentation principal — sorties VMM 2"
+  },
+  "P637": {
+   "en": "MAIN POWER PANEL AIR MODULE CONTROL PANEL",
+   "fr": "Panneau d'alimentation principal — panneau de commande du module d'air"
+  }
+ }
+}

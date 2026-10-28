@@ -70,7 +70,7 @@ export default {
 
     // --- bouton de la barre d'outils (vue 3D)
     const tool = ctx.ui.addTool({
-      id: 'donnees-tool', label: 'Données', icon: 'liste', title: 'Données techniques de l’équipement (cotes, poids, moteur, visserie)',
+      id: 'donnees-tool', rank: 20, label: 'Données', icon: 'liste', title: 'Données techniques de l’équipement (cotes, poids, moteur, visserie)',
       onClick: () => ctx.go(ID),
     });
 

@@ -6,6 +6,7 @@
       "manufacturer": "Machines Roger International",
       "category": "Foreuse sur chenilles",
       "thumbnail": "equipment/cubex-mri-5200/pages/F01.jpg",
+      "extras": ["bulles", "donnees", "entretien", "schemas", "systemes"],
       "status": "3D procédurale — 14 assemblages, 7 schémas"
     },
     {
@@ -14,6 +15,7 @@
       "manufacturer": "Sandvik",
       "category": "Foreuse sur chenilles",
       "thumbnail": "equipment/du311/thumbnail.webp",
+      "extras": ["bulles", "donnees", "entretien", "consignes", "schemas", "systemes"],
       "status": "3D détaillée : 157 assemblages sur 172 (machine complète, châssis, porteur et chenilles, avance V30, mât, tête de rotation, moteur Deutz, surpresseur Le Roi, glissière, options), le reste en cours — 15 schémas"
     },
     {
@@ -22,6 +24,7 @@
       "manufacturer": "Sandvik",
       "category": "Foreuse sur roues",
       "thumbnail": "equipment/du311-std/thumbnail.webp",
+      "extras": ["bulles", "donnees", "entretien", "consignes", "schemas", "systemes", "utilisation", "prise-en-main"],
       "status": "3D détaillée : 189 assemblages sur 189, jusqu'à la plus petite pièce (porteur Pegasus, cabine, moteur, pont avant, distributeurs, pont arrière et surpresseur, glissière, MCP, avance 6 pi à carrousel, extinction d'incendie, autocollants ISO) — 29 schémas et listes électriques"
     },
     {
@@ -30,6 +33,7 @@
       "manufacturer": "Epiroc",
       "category": "Outils de carottage au câble",
       "thumbnail": "equipment/epiroc-ith/thumbnail.webp",
+      "extras": ["bulles", "donnees", "entretien", "consignes", "systemes"],
       "status": "Catalogue « Core Drilling Tools — In-The-Hole » : têtes, overshots, carottiers, émerillons et presse-étoupes ; 3D refaite d'après les dessins pour les outils souterrains (BU, NU, HU, PU)"
     },
     {
@@ -46,7 +50,7 @@
       "manufacturer": "Usinage Marcotte",
       "category": "Foreuse souterraine",
       "thumbnail": "equipment/stm-1500/thumbnail.webp",
-      "extras": ["bulles", "donnees", "entretien", "procedures"],
+      "extras": ["bulles", "donnees", "entretien", "procedures", "systemes"],
       "status": "Manuel de pièces s/n STM-1500-128 (96 pages) : 42 assemblages et 7 documents ; 3D réaliste de la foreuse (traîneau, avance à 0°, tête Boyles, serre-tiges, vérins, treuil), du groupe hydraulique 125 HP et de la console ; rendus Blender"
     }
   ]

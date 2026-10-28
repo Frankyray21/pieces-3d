@@ -47,6 +47,25 @@ pièces (numéro, quantité, page du manuel).
   son émerillon d'air (P052) et sa boîte d'engrenages (P054) sont repris du
   TVK (même numéro, même liste ; voir `src/models/reuse.js`). Le PDF
   d'origine (101 Mo) est dans la release GitHub `manuel-du311-std`.
+  **Manuel de l'utilisateur** (manuel d'opération DU311 - Tier3, fr-FR 7,
+  2026-08-04, 264 pages ; PDF dans la release `operation-du311` du dépôt
+  `manuel-du311`) : lecteur de pages avec sommaire et recherche plein texte
+  (`#du311-std.utilisation`, `src/ui/features/utilisation.js`, données
+  produites par `tools/extract_utilisation.py`). **Prise en main de la
+  console ERIS** (`#du311-std.prise-en-main`, pages 121 à 147 du manuel) :
+  parcours en 6 étapes pour un nouveau travailleur — console (repères
+  cliquables et défi), manettes, voyants CANBUS / DRILL / CONTROL (exercice),
+  console ERIS en 3D manipulable (manettes à incliner, boutons des têtes de
+  manette fonctionnels — correspondance bouton/fonction relevée sur les
+  vignettes de manette des copies d'écran, `BOUTON` dans
+  `prise-en-main/eris.js`, bouton actif allumé —, touche Mode, arrêt
+  d'urgence, interrupteur, écran ERIS vivant dans le boîtier, dont on touche
+  les noms ; `prise-en-main/console3d.js`) et écran 2D au choix, avec 7
+  missions guidées (démarrer, changer de
+  mode, se déplacer, mettre le mât en place, forer avec verrouillage, lire et
+  réinitialiser une alarme, arrêt d'urgence), les 43 alarmes et un quiz ;
+  simulateur dans `src/ui/features/prise-en-main/`, textes dans
+  `public/equipment/du311-std/prise-en-main.json`.
 
 - **Epiroc — outils de carottage ITH** (`epiroc-ith`, catalogue « Core
   Drilling Tools — In-The-Hole », 108 pages en planches doubles) : 78
@@ -161,11 +180,33 @@ sont préfixées : `#du311.P032`, `#du311-std.P050`, `#epiroc-ith.P019`.
   différentes, les numéros presque identiques (erreurs de saisie probables),
   les lignes et numéros absents.
 - Chaque page du manuel original reste consultable (bouton « Page du manuel »).
+- **Dock « Atelier » de la vue 3D** : toutes les fonctions au même endroit,
+  dans une colonne de grands boutons au bord gauche de la scène (rangée en bas
+  sur téléphone) : Systèmes, Données, Entretien, Consignes, Circuits,
+  Procédures, Schémas, Page du manuel. Un bouton n'apparaît que si la vue
+  s'y prête. **Systèmes** colore la machine par système fonctionnel (moteur,
+  hydraulique, électricité, air, avance, carrousel…) ; un clic sur un
+  système le montre seul et liste ses ensembles.
+- **Données d'atelier du DU311, du DU311-TVK, du Cubex et du catalogue Epiroc**,
+  tirées seulement de leur manuel (OCR des planches, puis relecture sur la
+  planche) : données techniques avec leur page (capacités, moteurs, pompes,
+  pressions, vérins, couples et réglages imprimés sur les dessins, pièces
+  d'entretien), points d'entretien en 3D (graisseurs, éléments filtrants,
+  reniflards, repères de remplissage), « Voir sur le dessin » pour les pièces,
+  consignes des dessins traduites avec leur extrait de planche (page
+  « Consignes » et outil de la vue 3D), bulles cliquables sur les planches,
+  schémas en couleur par circuit (bulles et liste des schémas hydrauliques et
+  pneumatiques, étiquettes des schémas électriques, titre relu de chaque
+  planche, renvois d'échelons cliquables). Les manuels de pièces ne
+  contiennent ni procédures pas à pas, ni intervalles d'entretien, ni codes de
+  diagnostic : le site le dit.
 
 Site en ligne : https://frankyray21.github.io/pieces-3d/ (republié
 automatiquement à chaque push sur la branche `main`, voir
 `.github/workflows/pages.yml`). DU311-TVK : https://frankyray21.github.io/pieces-3d/#du311.P010 ;
-DU311 : https://frankyray21.github.io/pieces-3d/#du311-std.P010
+DU311 : https://frankyray21.github.io/pieces-3d/#du311-std.P010 ; prise en main :
+https://frankyray21.github.io/pieces-3d/#du311-std.prise-en-main ; manuel de
+l'utilisateur : https://frankyray21.github.io/pieces-3d/#du311-std.utilisation
 
 ## Démarrer
 
@@ -218,6 +259,11 @@ tools/extract_sandvik.py                    extraction complète d'un manuel San
 tools/extract_epiroc.py                     extraction du catalogue Epiroc (tableaux, pages)
 tools/extract_stm1500*.py                   listes du manuel STM-1500 (brouillon, nettoyage, liens)
 tools/blender_render.py                     rendu Cycles d'un .glb (scripts/export-glb.mjs)
+tools/ocr_pages.py, tools/ocr_bulles.py     OCR des planches (texte, bulles de repère)
+tools/atelier_review.py                     planches de relecture des textes lus
+tools/build_atelier.py                      bulles, donnees, entretien, consignes, schemas et systemes (.json)
+tools/atelier/ocr/<id>.jsonl.gz             résultats de l'OCR
+tools/atelier/<id>.json                     relecture : texte exact, traduction, couples, valeurs
 ```
 
 ## Simulation mécanique (développement, hors site)
@@ -305,6 +351,18 @@ effet sur le rendu du site.
    automatiquement). Un assemblage sans modèle s'affiche avec ses dessins du
    manuel. Une variante d'une machine déjà modélisée reprend les modèles des
    assemblages identiques avec `reuse()` (`src/models/reuse.js`).
+
+5. Données d'atelier tirées des planches (facultatif) :
+   `python3 tools/ocr_pages.py public/equipment/<id>/pages sortie.jsonl P001 P002 …`
+   (OCR, environ 6 s par planche ; `pip install rapidocr-onnxruntime`),
+   résultat compressé dans `tools/atelier/ocr/<id>.jsonl.gz` ; puis
+   `python3 tools/atelier_review.py <id> relecture/ tools/atelier/ocr/<id>.jsonl.gz`
+   découpe chaque consigne, réglage et titre de schéma lu, pour la relecture
+   à l'œil qui donne `tools/atelier/<id>.json` (format en tête du script) ;
+   enfin `python3 tools/build_atelier.py <id> tools/atelier/ocr/<id>.jsonl.gz`
+   écrit `bulles`, `donnees`, `entretien`, `consignes`, `schemas` et `systemes` (.json)
+   dans `public/equipment/<id>/` et affiche les noms à déclarer dans le champ
+   `extras` de l'index. Seuls les textes relus sont publiés.
 
 Un catalogue d'outils (Epiroc) suit le même schéma : `tools/extract_epiroc.py
 catalogue.pdf > data.json` lit les tableaux (cases fusionnées recopiées,

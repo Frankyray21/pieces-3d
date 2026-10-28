@@ -7,7 +7,8 @@
 // pages ; ctx.equipmentData('entretien')). Les objets 3D concernés portent
 // userData.entretien = { type, id } (src/models/<id>/*.js) ; un point sans objet
 // 3D est placé par coordonnées (« marqueurs » : repère local d'un assemblage,
-// accroché à une de ses pièces). Équipement sans fichier entretien.json :
+// accroché à une de ses pièces), ou, marqueur sans « pos », sur la pièce même
+// de son repère (points tirés des listes par tools/build_atelier.py). Équipement sans fichier entretien.json :
 // l'outil n'apparaît pas.
 //
 // La machine est estompée par des matériaux transparents (pas par le fantôme de
@@ -62,6 +63,7 @@ export default {
 
     const btn = ctx.ui.addTool({
       id: 'entretien-btn',
+      rank: 30,
       label: 'Entretien',
       icon: 'cle',
       title: 'Entretien et graissage : points à vérifier (manuel)',
@@ -86,12 +88,14 @@ export default {
       });
       const list = [];
       for (const p of def.points || []) {
-        const objs = tagged.get(p.id) || [];
+        const objs = [...(tagged.get(p.id) || [])];
         const marks = [];
         for (const m of p.marqueurs || []) {
           for (const sub of subs.get(m.assemblage) || []) {
-            const part = (sub.userData.parts || []).find((q) => q.userData.partRef === String(m.repere)) || sub;
-            marks.push({ sub, part, pos: m.pos });
+            const part = (sub.userData.parts || []).find((q) => q.userData.partRef === String(m.repere));
+            // Marqueur sans coordonnées : la pièce de son repère (centre de sa boîte, comme un objet étiqueté).
+            if (!m.pos) { if (part) objs.push(part); continue; }
+            marks.push({ sub, part: part || sub, pos: m.pos });
           }
         }
         if (objs.length || marks.length) list.push({ n: list.length + 1, def: p, objs, marks });
