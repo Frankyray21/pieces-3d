@@ -27,7 +27,7 @@ export const MAT = {
   laser: { at: [X0 + 0.1, 0, 1.0], text: 'Niveau au laser Bosch' },
   biche: { at: [X0 + 1.0, 0, 0.0], text: 'Pied de biche' },
   niveau: { at: [X0 + 1.0, 0, 1.2], text: 'Niveau de 48 po' },
-  sciotte: { at: [X0 + 1.0, 0, 2.1], text: 'Sciotte (scie à archet)' },
+  sciotte: { at: [X0 + 1.0, 0, 2.1], text: 'Sciotte (scie à main)' },
   masse: { at: [X0 + 1.8, 0, 0.0], text: 'Masse' },
   marteau: { at: [X0 + 1.8, 0, 0.85], text: 'Marteau' },
   pinces: { at: [X0 + 1.8, 0, 1.5], text: 'Pinces à billots' },
