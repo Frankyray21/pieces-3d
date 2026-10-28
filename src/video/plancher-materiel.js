@@ -4,7 +4,7 @@
 // de 6 po, outils (pied de biche, masse, marteau, sciotte, pinces à billots,
 // niveau au laser Bosch, niveau de 48 po,
 // pingouin (gratte minière de 32 po, sert de pelle), scie va-et-vient et
-// lames à bois) et ÉPI de base. Silhouettes simples : ce
+// lames à bois). L'ÉPI n'est pas montré (déjà acquis). Silhouettes simples : ce
 // sont des repères pour la formation, pas des modèles de pièces.
 import { IN, FT, B66, P3, P8, S24, L, ground, WEDGE } from '../models/plancher-dd/plan.js';
 import { lumber, between, lagScrews, wedge } from '../models/plancher-dd/lumber.js';
@@ -29,8 +29,8 @@ const bigBase = (k) => {
 // Bouts seuls (échantillons), près de la barricade : 6 × 6, 3 × 8, 2 × 4.
 const SAMPLE = { b66: { z: -2.2, w: B66, h: B66 }, b38: { z: -1.82, w: P8, h: P3 }, s24: { z: -1.5, w: S24.w, h: S24.t } };
 const SX0 = X0 + 0.35, SLEN = 0.6;
-// Barres d'écaillage le long de la paroi Z positive, selon X (au-delà du bout des piles de 16 pi).
-const BARS_Z = 2.52;
+// Barres d'écaillage le long de la paroi Z négative, selon X (au-delà du bout des piles de 16 pi).
+const BARS_Z = -2.55;
 /** Bout (côté barricade) de l'échantillon de bois k. */
 export function woodEnd(k) {
   const p = SAMPLE[k];
@@ -54,8 +54,7 @@ export const MAT = {
   pinces: { at: [X0 + 1.8, 0, 1.5], text: 'Pinces à billots' },
   scie: { at: [X0 + 1.8, 0, 2.25], text: 'Scie va-et-vient et lames à bois' },
   pingouin: { at: [X0 + 2.25, 0, 0.55], text: 'Pingouin (gratte minière 32 po)' },
-  barres: { at: [X0 + 1.5, 0, BARS_Z], text: 'Barres d’écaillage 6, 8 et 10 pi' },
-  epi: { at: [X0 + 0.1, 0, 1.85], text: 'ÉPI : équipement de base' },
+  barres: { at: [X0 + 0.7, 0, BARS_Z], text: 'Barres d’écaillage 6, 8 et 10 pi' },
 };
 for (const m of Object.values(MAT)) m.at[1] = g0(m.at[0], m.at[2]) + 0.12;
 MAT.b66.at[1] = bigBase('b66') + (BIG.b66.ny + 1) * B66;
@@ -96,7 +95,7 @@ export function materielGroup(S) {
   for (const [k, p] of Object.entries(SAMPLE)) g.add(lumber(S, [SLEN, p.h, p.w], [SX0 + SLEN / 2, g0(SX0 + SLEN / 2, p.z) + p.h / 2, p.z], k === 's24' ? 'woodPlaned' : 'wood'));
   // Barres d'écaillage de 6, 8 et 10 pi (alu, pointe d'acier), couchées le long de la paroi.
   [6, 8, 10].forEach((ft, k) => {
-    const len = ft * FT, z = BARS_Z + (k - 1) * 0.07, x0 = X0 + 0.05;
+    const len = ft * FT, z = BARS_Z + (k - 1) * 0.06, x0 = X0 + 0.05;
     const bar = S.group(S.cyl(0.017, len - 0.12, 'castAlu', { axis: 'x', pos: [(len - 0.12) / 2, 0.02, 0] }), S.cyl(0.017, 0.12, 'darkSteel', { axis: 'x', r2: 0.006, pos: [len - 0.06, 0.02, 0] }));
     g.add(onGround(S, bar, x0, z, Math.max(0, g0(x0 + len, z) - g0(x0, z))));
   });
@@ -201,16 +200,6 @@ export function materielGroup(S) {
     p.children[4].position.set(0, 0.035, -len / 2 + 0.04);
     g.add(onGround(S, p, MAT.pingouin.at[0], MAT.pingouin.at[2]));
   }
-  // ÉPI de base : casque avec lampe, lunettes et gants.
-  const casque = S.group(
-    S.lathe([[0, -0.008], [0.16, -0.008], [0.16, 0.0], [0.135, 0.02], [0.13, 0.07], [0.11, 0.13], [0.07, 0.165], [0, 0.17]], 'yellow', { pos: [0, 0.01, 0] }),
-    S.cyl(0.03, 0.04, 'black', { axis: 'x', pos: [0.13, 0.1, 0] }),
-    S.cyl(0.026, 0.005, 'lamp', { axis: 'x', pos: [0.152, 0.1, 0] }),
-  );
-  g.add(onGround(S, casque, X0 + 0.05, 1.75));
-  const lunettes = S.group(S.box(0.025, 0.04, 0.15, 'glass', { pos: [0, 0.02, 0] }), S.box(0.12, 0.008, 0.005, 'black', { pos: [-0.06, 0.02, 0.075] }), S.box(0.12, 0.008, 0.005, 'black', { pos: [-0.06, 0.02, -0.075] }));
-  g.add(onGround(S, lunettes, X0 + 0.1, 2.15));
-  for (const z of [1.5, 1.38]) g.add(onGround(S, S.box(0.2, 0.025, 0.1, 'orange', { r: 0.01, pos: [0, 0.0125, 0] }), X0 + 0.3, z));
   g.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
   return g;
 }
@@ -236,9 +225,8 @@ export const TOUR = [
   { keys: ['sciotte', 'pinces'], c: G(X0 + 1.4, 1.8), d: 1.15 },
   { keys: ['laser', 'niveau'], c: G(X0 + 0.6, 1.1, 0.2), d: 1.75 },
   { keys: ['pingouin'], c: G(X0 + 2.0, 0.55), pos: [X0 + 1.25, ground(X0 + 2.0, 0.55) + 0.95, 1.3] },
-  { keys: ['barres'], c: G(X0 + 1.55, BARS_Z), pos: [X0 + 0.9, ground(X0 + 1.55, BARS_Z) + 1.45, 0.95] },
+  { keys: ['barres'], c: G(X0 + 1.1, BARS_Z), pos: [X0 - 0.3, ground(X0 + 1.1, BARS_Z) + 0.95, -1.75] },
   { keys: ['scie'], c: G(X0 + 1.8, 2.25), d: 0.7 },
-  { keys: ['epi'], c: G(X0 + 0.2, 1.75, 0.08), d: 1.0 },
 ];
 export const TOUR_STEP = { go: 0.8, hold: 1.7 }; // approche, arrêt (s)
 

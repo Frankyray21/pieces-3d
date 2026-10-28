@@ -7,6 +7,7 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { GTAOPass } from 'three/examples/jsm/postprocessing/GTAOPass.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
@@ -86,6 +87,15 @@ let composer = null;
 if (FXAA) {
   composer = new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene, camera));
+  // Occlusion ambiante (GTAO) : ombres de contact entre les pièces de bois, sous les
+  // blocages et contre le sol (?ao=0 pour la couper).
+  if (QS.get('ao') !== '0') {
+    const ao = new GTAOPass(scene, camera, VW * SCALE, VH * SCALE);
+    ao.updateGtaoMaterial({ radius: 0.35, distanceExponent: 1.4, thickness: 1.2, scale: 1.0, samples: 12 });
+    ao.updatePdMaterial({ lumaPhi: 10, depthPhi: 2, normalPhi: 3, radius: 4, rings: 2, samples: 12 });
+    ao.blendIntensity = 1.0;
+    composer.addPass(ao);
+  }
   composer.addPass(new OutputPass());
   const fx = new ShaderPass(FXAAShader);
   fx.material.uniforms.resolution.value.set(1 / (VW * SCALE), 1 / (VH * SCALE));

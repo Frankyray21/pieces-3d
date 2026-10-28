@@ -66,7 +66,7 @@ export const SEGMENTS = [
   },
   {
     id: 'materiel', min: 10,
-    band: { n: '', title: 'Matériel nécessaire et ÉPI', text: 'Barricade travaux en cours avec flasher orange · Armoire (trousse de premier soin et lave-yeux 2x) · Extincteur · Bois 2\'\'X4\'\' planés (ou bruts) · Bois brut de 6\'\'X6\'\' et de 3\'\'X8\'\' · Coins de bois · Tire-fonds 6\'\' · Lame à bois pour scie', detail: 'Outils : pied de biche, masse, marteau, sciotte, pinces à billots, niveau au laser Bosch, niveau de 48\'\', barres d’écaillage de 6\', 8\' et 10\', pingouin, scie va-et-vient · ÉPI : équipement de base obligatoire' },
+    band: { n: '', title: 'Matériel nécessaire', text: 'Barricade travaux en cours avec flasher orange · Armoire (trousse de premier soin et lave-yeux 2x) · Extincteur · Bois 2\'\'X4\'\' planés (ou bruts) · Bois brut de 6\'\'X6\'\' et de 3\'\'X8\'\' · Coins de bois · Tire-fonds 6\'\' · Lame à bois pour scie', detail: 'Outils : pied de biche, masse, marteau, sciotte, pinces à billots, niveau au laser Bosch, niveau de 48\'\', barres d’écaillage de 6\', 8\' et 10\', pingouin, scie va-et-vient' },
     why: 'TOUJOURS TRANSPORTER LES GROSSES PIÈCES DE BOIS À DEUX.',
     lines: [
       [1, 'Avant de commencer : la barricade travaux en cours avec son flasher orange, l\'armoire avec la trousse de premiers soins pis les deux lave-yeux, l\'extincteur.'],
@@ -74,10 +74,10 @@ export const SEGMENTS = [
       [1, 'Une règle qui change pas : les grosses pièces de bois, on les transporte toujours à deux.'],
       // Outils : une phrase par arrêt de la caméra (voir TOUR, plancher-materiel.js), dans l'ordre de la procédure.
       [2, 'Pis les outils ?'],
-      [1, 'Pied de biche, masse pis marteau. … La sciotte pis les pinces à billots. … Le niveau au laser Bosch pis le niveau de quarante-huit pouces. … Les barres d\'écaillage de six, huit pis dix pieds. … Le pingouin, la gratte de la mine. … La scie va-et-vient, avec ses lames à bois. … Pis l\'ÉPI de base, toujours.'],
+      [1, 'Pied de biche, masse pis marteau. … La sciotte pis les pinces à billots. … Le niveau au laser Bosch pis le niveau de quarante-huit pouces. … Les barres d\'écaillage de six, huit pis dix pieds. … Le pingouin, la gratte de la mine. … Pis la scie va-et-vient, avec ses lames à bois.'],
     ],
     reveal: [{ cue: 'barricade', v: 19.0, vspan: 1.2 }, { cue: 'cabinet', v: 22.4, vspan: 0 }, { cue: 'ext', v: 25.6, vspan: 0 }],
-    // Bois, quincaillerie, outils et ÉPI étalés derrière la barricade ; les outils (que la voix
+    // Bois, quincaillerie et outils étalés derrière la barricade ; les outils (que la voix
     // ne nomme pas) défilent à la fin de la partie, avec leurs étiquettes.
     show: [{ obj: 'materiel', vfrom: 26.6 }],
     cams: [{ v: 18.2, ...C.entr }, { v: 21.4, ...C.entr }, { v: 22.6, ...C.cab }, { v: 26.2, ...C.cab }, { v: 27.6, ...C.mat }, { v: 38.6, ...C.mat }, ...tourCams(TOUR_V0)],
@@ -331,7 +331,7 @@ export const STEP_CARD = { dur: 2.0, rect: { x: 250, y: 185, w: 780, h: 170 } };
 export function stepCard(seg) {
   const b = seg.band;
   if (seg.card || seg.id === 'e5b') return null;
-  if (seg.id === 'materiel') return { big: 'Avant de commencer', small: 'Matériel et ÉPI' };
+  if (seg.id === 'materiel') return { big: 'Avant de commencer', small: 'Matériel nécessaire' };
   if (seg.id === 'inspection') return { big: 'Inspection', small: 'Inspection des lieux par le superviseur' };
   if (seg.id === 'demont') return { big: 'Démantèlement', small: '' };
   if (b.n === '18') return { big: 'Plancher secondaire', small: 'À côté de la foreuse' };

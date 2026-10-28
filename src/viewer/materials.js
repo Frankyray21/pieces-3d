@@ -31,8 +31,9 @@ const FIN = {
   oxide: { fine: 0.03, wave: 0.004, rough: 0.12, tint: 0.04, fs: 30, cs: 1.6, env: 1.9 },
   // Bois de construction : surface sciée (bois brut) ou rabotée, taches et
   // teinte inégales ; roche de galerie : relief marqué, mate.
-  wood: { fine: 0.08, wave: 0.02, rough: 0.25, tint: 0.3, fs: 24, cs: 2.4, env: 0.45 },
-  woodPlaned: { fine: 0.03, wave: 0.008, rough: 0.18, tint: 0.2, fs: 24, cs: 2.4, env: 0.5 },
+  // grain : veines du bois le long de la pièce (attribut aGrain = axe de la pièce), bois de bout plus foncé.
+  wood: { fine: 0.08, wave: 0.02, rough: 0.25, tint: 0.3, fs: 24, cs: 2.4, env: 0.45, grain: 0.42 },
+  woodPlaned: { fine: 0.03, wave: 0.008, rough: 0.18, tint: 0.2, fs: 24, cs: 2.4, env: 0.5, grain: 0.3 },
   rock: { fine: 0.3, wave: 0.12, rough: 0.2, tint: 0.22, fs: 9, cs: 0.7, env: 0.35 },
 };
 
@@ -223,17 +224,40 @@ diffuseColor.rgb *= 1.0 + uSurfAmp.w * ( sBlot * 1.2 + sGrain * 0.4 );
 roughnessFactor = clamp( roughnessFactor * ( 1.0 + uSurfAmp.z * ( sBlot * 1.6 + sGrain * 0.8 ) ), 0.02, 1.0 );`;
 
 /** Injecte le relief de surface dans un shader standard / physique. */
+const GRAIN_VERT = /* glsl */`
+attribute vec3 aGrain;
+varying vec3 vGrain;`;
+// Veines : bandes étirées le long de l'axe de la pièce, ondulées ; bois de bout plus foncé.
+const GRAIN_FRAG = /* glsl */`
+if ( dot( vGrain, vGrain ) > 0.5 ) {
+  vec3 gA = normalize( vGrain );
+  float gL = dot( sP, gA );
+  vec3 gC = sP - gA * gL;
+  float gX = gC.x + gC.y + gC.z;
+  float gWob = texture2D( uSurfTex, vec2( gL * 0.18, gX * 1.7 ) ).b;
+  float gLines = texture2D( uSurfTex, vec2( gL * 0.09, gX * 13.0 + gWob * 0.2 ) ).a;
+  float gRings = 0.5 + 0.5 * sin( gX * 310.0 + gWob * 3.5 );
+  float gFig = mix( gLines, gRings, 0.5 );
+  float gEnd = smoothstep( 0.8, 0.95, abs( dot( sN, gA ) ) );
+  // Bois de bout : cernes concentriques autour d'un cœur décentré, plus foncé.
+  float gEndRings = 0.5 + 0.5 * sin( length( gC + vec3( 0.035, 0.02, 0.03 ) ) * 380.0 + gWob * 4.0 );
+  diffuseColor.rgb *= mix( 1.0 + uSurfGrain * ( gFig - 0.5 ) * 1.6, 0.7 + 0.16 * gEndRings, gEnd );
+  roughnessFactor = clamp( roughnessFactor * ( 1.0 + 0.25 * ( gFig - 0.5 ) ), 0.02, 1.0 );
+}`;
+
 function injectSurface(shader, fin) {
   shader.uniforms.uSurfTex = { value: surfaceTexture() };
+  shader.uniforms.uSurfGrain = { value: fin.grain || 0 };
   shader.uniforms.uSurfAmp = { value: new THREE.Vector4(fin.fine, fin.wave, fin.rough, fin.tint) };
   shader.uniforms.uSurfFreq = { value: new THREE.Vector3(fin.fs, fin.cs, fin.stretch || 1) };
   shader.uniforms.uSurfEnv = { value: fin.env ?? 1 };
+  const G = !!fin.grain;
   shader.vertexShader = shader.vertexShader
-    .replace('#include <common>', SURF_VERT_PARS)
-    .replace('#include <begin_vertex>', SURF_VERT);
+    .replace('#include <common>', SURF_VERT_PARS + (G ? GRAIN_VERT : ''))
+    .replace('#include <begin_vertex>', SURF_VERT + (G ? '\nvGrain = aGrain;' : ''));
   shader.fragmentShader = shader.fragmentShader
-    .replace('#include <common>', SURF_FRAG_PARS)
-    .replace('#include <roughnessmap_fragment>', SURF_FRAG)
+    .replace('#include <common>', SURF_FRAG_PARS + (G ? '\nvarying vec3 vGrain;\nuniform float uSurfGrain;' : ''))
+    .replace('#include <roughnessmap_fragment>', SURF_FRAG + (G ? GRAIN_FRAG : ''))
     .replace('#include <normal_fragment_maps>', `#include <normal_fragment_maps>
 normal = normalize( normal + faceDirection * sDelta );`)
     .replace('#include <clearcoat_normal_fragment_begin>', `#include <clearcoat_normal_fragment_begin>
@@ -280,7 +304,7 @@ function setupProgram(m, cap, dir = 1) {
     if (fin) injectSurface(shader, fin);
     if (cap) shader.fragmentShader = shader.fragmentShader.replace('#include <dithering_fragment>', capShader(dir));
   };
-  const key = `${fin ? 'surf' : ''}${cap ? `-section-cap-${dir}` : ''}`;
+  const key = `${fin ? `surf${fin.grain ? '-grain' : ''}` : ''}${cap ? `-section-cap-${dir}` : ''}`;
   m.customProgramCacheKey = () => key;
 }
 

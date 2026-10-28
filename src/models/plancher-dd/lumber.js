@@ -11,16 +11,30 @@ function tone(pos) {
   return TONES[Math.floor((h - Math.floor(h)) * TONES.length)];
 }
 
+/** Axe des veines (le plus long côté de la pièce), en attribut de la géométrie (ombrage du bois). */
+export function grain(mesh, axis) {
+  const g = mesh.geometry;
+  if (!g || g.getAttribute('aGrain')) return mesh;
+  const v = [0, 0, 0];
+  v[axis] = 1;
+  const n = g.getAttribute('position').count;
+  const a = new Float32Array(n * 3);
+  for (let i = 0; i < n; i++) a.set(v, i * 3);
+  g.setAttribute('aGrain', new THREE.BufferAttribute(a, 3));
+  return mesh;
+}
+
 /** Pièce de bois rectangulaire centrée en pos (tailles en X, Y, Z) ; « wood » prend une teinte variée. */
 export function lumber(S, size, pos, material = 'wood') {
-  return S.box(size[0], size[1], size[2], material === 'wood' ? tone(pos) : material, { pos });
+  const m = S.box(size[0], size[1], size[2], material === 'wood' ? tone(pos) : material, { pos });
+  return grain(m, size.indexOf(Math.max(...size)));
 }
 
 /** Pièce de section w × h (Y) tendue entre deux points a et b (lisses, jambes de force). */
 export function between(S, a, b, w, h, material = 'woodPlaned') {
   const A = new THREE.Vector3(...a), B = new THREE.Vector3(...b);
   const len = A.distanceTo(B);
-  const m = S.box(len, h, w, material);
+  const m = grain(S.box(len, h, w, material), 0);
   const g = S.group(m);
   g.position.copy(A).add(B).multiplyScalar(0.5);
   // Axe X de la pièce sur AB, son « haut » le plus près possible de Y.
