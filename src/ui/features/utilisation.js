@@ -164,7 +164,14 @@ export default {
 
       $('.ut-prev').addEventListener('click', () => show(page - 1));
       $('.ut-next').addEventListener('click', () => show(page + 1));
-      num.addEventListener('change', () => show(Number(num.value) || page));
+      num.addEventListener('change', () => show(num.value === '' ? page : Number(num.value)));
+      // Boutons précédent / suivant à jour dès la saisie : Tab depuis le champ va au bouton voisin, pas en bas de page.
+      num.addEventListener('input', () => {
+        const v = Math.round(Number(num.value));
+        if (!num.value || Number.isNaN(v)) return;
+        $('.ut-prev').disabled = v <= 1;
+        $('.ut-next').disabled = v >= n;
+      });
       el.addEventListener('click', (e) => {
         const b = e.target.closest('[data-p]');
         if (!b) return;

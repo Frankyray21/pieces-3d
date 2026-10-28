@@ -388,8 +388,10 @@ export function creerConsole3D(conteneur, sim, { agir = () => {}, info = () => {
       const dx = (ev.clientX - drag.x0) / 70;
       const dy = (ev.clientY - drag.y0) / 70;
       if (Math.abs(dx) + Math.abs(dy) > 0.15) drag.moved = true;
-      const x = quantifier(dx);
-      const y = quantifier(-dy);
+      // Position visée : celle de la manette au début du geste, plus le déplacement. Reprendre une manette déjà
+      // inclinée ne la fait pas repasser par le centre (ce qui vaudrait un relâchement, ex. après Drill Lock).
+      const x = quantifier(drag.pos0.x + dx);
+      const y = quantifier(drag.pos0.y - dy);
       const cur = sim.s[drag.side];
       if (drag.moved && (x !== cur.x || y !== cur.y)) { sim.stick(drag.side, x, y); agir(); }
       return;

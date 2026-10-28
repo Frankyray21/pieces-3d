@@ -23,7 +23,8 @@ const melange = (a) => {
 };
 
 /** Petit écran ou pointeur tactile : l'écran ERIS de la console 3D y serait trop petit pour être lu (vue 2D par défaut). */
-// Seuil 1200 px : en dessous, les lignes de l'écran ERIS de la vue 3D font moins de 7 px de haut.
+// Seuil 1200 px : en dessous, les lignes de l'écran ERIS de la vue 3D font moins de 5,5 px de haut (6 à 7 px au-delà,
+// d'où l'aide qui propose de zoomer ou de passer à « Écran 2D »).
 const ecranEtroit = () => typeof matchMedia === 'function' && matchMedia('(max-width: 1199px), (pointer: coarse)').matches;
 
 export default {
