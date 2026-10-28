@@ -66,7 +66,7 @@ export const SEGMENTS = [
   },
   {
     id: 'materiel', min: 10,
-    band: { n: '', title: 'Matériel nécessaire et ÉPI', text: 'Barricade travaux en cours avec flasher orange · Armoire (trousse de premier soin et lave-yeux 2x) · Extincteur · Bois 2\'\'X4\'\' planés (ou bruts) · Bois brut de 6\'\'X6\'\' et de 3\'\'X8\'\' · Coins de bois · Tire-fonds 6\'\' · Lame à bois pour scie', detail: 'Outils : pied de biche, masse, marteau, sciotte, pinces à billots, niveau au laser Bosch, niveau de 48\'\', pingouin, scie va-et-vient · ÉPI : équipement de base obligatoire' },
+    band: { n: '', title: 'Matériel nécessaire et ÉPI', text: 'Barricade travaux en cours avec flasher orange · Armoire (trousse de premier soin et lave-yeux 2x) · Extincteur · Bois 2\'\'X4\'\' planés (ou bruts) · Bois brut de 6\'\'X6\'\' et de 3\'\'X8\'\' · Coins de bois · Tire-fonds 6\'\' · Lame à bois pour scie', detail: 'Outils : pied de biche, masse, marteau, sciotte, pinces à billots, niveau au laser Bosch, niveau de 48\'\', barres d’écaillage de 6\', 8\' et 10\', pingouin, scie va-et-vient · ÉPI : équipement de base obligatoire' },
     why: 'TOUJOURS TRANSPORTER LES GROSSES PIÈCES DE BOIS À DEUX.',
     lines: [
       [1, 'Avant de commencer : la barricade travaux en cours avec son flasher orange, l\'armoire avec la trousse de premiers soins pis les deux lave-yeux, l\'extincteur.'],
@@ -74,7 +74,7 @@ export const SEGMENTS = [
       [1, 'Une règle qui change pas : les grosses pièces de bois, on les transporte toujours à deux.'],
       // Outils : une phrase par arrêt de la caméra (voir TOUR, plancher-materiel.js), dans l'ordre de la procédure.
       [2, 'Pis les outils ?'],
-      [1, 'Pied de biche, masse pis marteau. … La sciotte pis les pinces à billots. … Le niveau au laser Bosch pis le niveau de quarante-huit pouces. … Le pingouin, la gratte de la mine. … La scie va-et-vient, avec ses lames à bois. … Pis l\'ÉPI de base, toujours.'],
+      [1, 'Pied de biche, masse pis marteau. … La sciotte pis les pinces à billots. … Le niveau au laser Bosch pis le niveau de quarante-huit pouces. … Les barres d\'écaillage de six, huit pis dix pieds. … Le pingouin, la gratte de la mine. … La scie va-et-vient, avec ses lames à bois. … Pis l\'ÉPI de base, toujours.'],
     ],
     reveal: [{ cue: 'barricade', v: 19.0, vspan: 1.2 }, { cue: 'cabinet', v: 22.4, vspan: 0 }, { cue: 'ext', v: 25.6, vspan: 0 }],
     // Bois, quincaillerie, outils et ÉPI étalés derrière la barricade ; les outils (que la voix
@@ -225,11 +225,11 @@ export const SEGMENTS = [
     id: 'e12', min: 10,
     band: { n: '12', title: 'Couvrir la section 2', text: 'Une fois la structure de base de la deuxième section de plancher complétée, poursuivre en couvrant avec des 3\'\'X8\'\' en répétant les étapes 6 et 7 précédentes.', detail: 'Les 2 planches laissées libres (étape 8) sont vissées pour jointer les sections' },
     lines: [
-      [1, 'Étape douze : on pose d\'abord les deux planches de jonction, sans les visser, pour passer sur la deuxième section sans enjamber. Pis on couvre en répétant les étapes six pis sept. Les planches de jonction sont vissées à la fin.'],
+      [1, 'Étape douze : on couvre la deuxième section en partant du bout, du côté où arrive le bois, en répétant les étapes six pis sept. Les deux planches de jonction sont posées pis vissées à la fin.'],
     ],
-    // Planches de jonction posées d'abord (non vissées) : on passe de la section 1 sans enjamber ;
-    // puis la section 2 de la jonction vers le bout ; les planches de jonction vissées à la fin.
-    reveal: [{ cue: 'joinPlanks', at: 0.04, span: 0.06 }, { cue: 'deck2', at: 0.13, span: 0.58 }, { cue: 'screws2', at: 0.74, span: 0.08 }, { cue: 'joinScrews', at: 0.88, span: 0 }],
+    // Section 2 couverte du bout côté galerie (d'où arrive le bois) vers la jonction ; les
+    // planches de jonction posées et vissées à la fin.
+    reveal: [{ cue: 'deck2', at: 0.05, span: 0.6 }, { cue: 'screws2', at: 0.68, span: 0.08 }, { cue: 'joinPlanks', at: 0.78, span: 0.08 }, { cue: 'joinScrews', at: 0.9, span: 0 }],
     cams: [{ t: 0.3, ...C.deck2 }, { t: 1, pos: [L + 2.4, 2.6, 4.2], tgt: [SEC, 0, 0] }],
   },
   {
@@ -282,15 +282,19 @@ export const SEGMENTS = [
     lines: [
       [1, 'À côté de la tour de la foreuse, le plancher secondaire : au moins trente-deux par soixante-douze pouces, douze pouces de haut au maximum, rien en porte-à-faux.'],
       [1, 'Les deux planches les plus proches sont vissées, la dernière arrive à trois pouces de la tour. À chaque changement d\'angle, on les ajuste. Pis pas de bois plané sur les planchers.'],
+      [1, 'S\'il faut deux marches, la première a seize pouces de profondeur pis neuf pouces de haut. Un côté sans marche, c\'est un garde-corps bien fixé. Pis quand on déplace la foreuse, on ajuste les garde-corps pour fermer les ouvertures.'],
     ],
     reveal: [{ cue: 'secondary', at: 0.15, span: 0.45 }],
     cams: [{ t: 0.2, ...C.ov }, { t: 0.5, ...C.second }, { t: 1, pos: [2.9, 1.5, 1.9], tgt: [0.8, 0.4, 0.2] }],
   },
   {
     id: 'demont', min: 12,
-    band: { n: '', title: 'Démantèlement', text: 'Démanteler d’abord le plancher secondaire, ensuite le plancher principal en commençant toujours par les planches du fond ; toujours enlever les clous et tire-fonds à mesure que les planches sont enlevées.', detail: 'Après la fin du démantèlement : installer une clôture orange et une carte de ruban rouge : trou non arpenté et non cimenté · date de l’installation · nom du superviseur' },
+    band: { n: '', title: 'Démantèlement', text: 'Démanteler d’abord le plancher secondaire, ensuite le plancher principal en commençant toujours par les planches du fond ; toujours enlever les clous et tire-fonds à mesure que les planches sont enlevées ; démanteler ensuite la structure de base en 6\'\'X6\'\'. Boue de forage sous le plancher : se positionner dans la partie la plus solide et stable, commencer au fond de la baie de forage et faire glisser les pièces de bois.', detail: 'Après la fin du démantèlement : installer une clôture orange et une carte de ruban rouge : trou non arpenté et non cimenté · date de l’installation · nom du superviseur' },
     lines: [
       [1, 'Au démantèlement, c\'est l\'inverse : le plancher secondaire d\'abord, le principal en commençant par les planches du fond, les tire-fonds enlevés à mesure.'],
+      [1, 'Une fois toutes les planches pis tous les tire-fonds enlevés, on défait la structure en six par six.'],
+      [2, 'Pis s\'il y a de la boue de forage en dessous ?'],
+      [1, 'On se place sur la partie la plus solide, on reste vigilant, les pieds solides. On commence au fond de la baie, pis on fait glisser les pièces de bois les unes sur les autres pour les sortir.'],
       [1, 'À la fin : clôture orange pis carte de ruban rouge. Trou non arpenté et non cimenté, la date, le nom du superviseur.'],
     ],
     cams: [{ t: 0.4, ...C.end }, { t: 1, pos: [-2.6, 3.4, 5.6], tgt: [L / 2, 0.2, 0] }],
@@ -344,7 +348,7 @@ const VOICE_END = 332.59;
 // Silences ajoutés dans la voix : [instant dans l'enregistrement, durée] (ex. cage, étape 11).
 const GAPS = { e11: [[203.45, 2.4]] };
 // Temps laissé après la voix (s) ; par défaut 0,4.
-const TAIL = { e14: 8.4, e11: 11.9, titre: 0.2, fin: 1.2, e15: 0.2, e7: 1.6, materiel: +(tourEnd(TOUR_V0) + 0.1 - 38.93).toFixed(2) };
+const TAIL = { sec: 8.4, demont: 15.0, e14: 8.4, e11: 11.9, titre: 0.2, fin: 1.2, e15: 0.2, e7: 1.6, materiel: +(tourEnd(TOUR_V0) + 0.1 - 38.93).toFixed(2) };
 const LEAD = 0.3; // la voix démarre 0,3 s après le début de la partie
 const r24 = (x) => Math.round(x * 24) / 24;
 

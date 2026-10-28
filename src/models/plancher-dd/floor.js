@@ -120,7 +120,7 @@ export function P13(api, opts = {}) {
   soil(api, opts, SEC - 0.4, L + 0.4, -W / 2 - 0.3, W / 2 + 0.3);
   const put = labeler(api);
   for (let i = 0; i < PER_SEC; i++) {
-    const p = lumber(S, [P8, P3, W], [plankX(d2(i)), B66 + P3 / 2, 0]); // de la jonction vers le bout côté galerie
+    const p = lumber(S, [P8, P3, W], [plankX(d2(i)), B66 + P3 / 2, 0]); // du bout côté galerie (arrivée du bois) vers la jonction
     p.userData.order = i;
     put('1', p, [0, 0.45, 0], 12);
   }

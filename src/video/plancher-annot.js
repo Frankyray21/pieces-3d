@@ -141,7 +141,6 @@ export const ANNOTATIONS = {
     { v: 219.6, type: 'note', at: [DIP.x - 0.95, CRIB.g + 0.75, DIP.z + 0.4], text: 'Interdit : morceaux de bois empilés l’un sur l’autre', dir: 'up' },
   ],
   e12: [
-    { v: 211.8, type: 'note', at: [plankX(22) + P8 / 2, DECK, -0.6], text: 'Planches de jonction posées d’abord, sans les visser', dir: 'up', until: 213.2 },
     { v: 213.4, type: 'note', at: [SEC * 1.5, DECK, 0.6], text: 'Étapes 6 et 7 répétées', dir: 'up' },
     { v: 217.4, type: 'note', at: [SEC - P8, DECK, joistZ[1]], text: 'Planches de jonction vissées', dir: 'up' },
   ],
@@ -168,12 +167,17 @@ export const ANNOTATIONS = {
     { v: 270.4, type: 'dim', a: [6.8, DECK - 0.3, -GAL + 0.06], b: [6.8, DECK - 0.3 + 24 * IN, -GAL + 0.06], off: [0, 0, 0.25], text: '24 po', sub: 'grillage' },
   ],
   sec: [
+    { v: 297.0, type: 'panel', title: 'Plancher secondaire : aussi', rows: ['Avec 2 marches : la 1re marche a 16 po de profondeur (2 madriers de 3 × 8) et 9 po de hauteur', 'Côté sans marche : un garde-corps fixé solidement', 'Foreuse déplacée : les garde-corps sont ajustés pour fermer les ouvertures'] },
     { v: 279.6, type: 'dim', a: [sp.x1, DECK + B66 + P3, sp.z0], b: [sp.x1, DECK + B66 + P3, sp.z1], off: [0.3, 0, 0], text: '32 po', sub: 'largeur min.' },
     { v: 281.0, type: 'dim', a: [sp.x0, DECK + B66 + P3, sp.z1], b: [sp.x1, DECK + B66 + P3, sp.z1], off: [0, 0, 0.3], text: '72 po', sub: 'longueur min.' },
     { v: 283.0, type: 'dim', a: [sp.x1 + 0.02, DECK, sp.z1], b: [sp.x1 + 0.02, DECK + B66 + P3, sp.z1], off: [0.25, 0, 0.2], text: '9 po', sub: '12 po max.' },
     { v: 284.8, type: 'note', at: [(sp.x0 + sp.x1) / 2, DECK + B66 + P3, sp.z1], text: 'Aucun morceau en porte-à-faux', dir: 'down' },
     { v: 287.2, type: 'note', at: [sp.x0 + B66 / 2, DECK + B66 + P3, sp.z0 + P8 / 2], text: '2 planches vissées près de la foreuse', dir: 'up' },
     { v: 289.6, type: 'note', at: [sp.x1 - B66 / 2, DECK + B66 + P3, sp.z1 - P8 / 2], text: 'Tire-fonds aux 4 coins', dir: 'right' },
+  ],
+  demont: [
+    { v: 300.5, type: 'panel', title: 'Démantèlement : dans l’ordre', rows: ['Plancher secondaire d’abord', 'Plancher principal : les planches du fond en premier', 'Clous et tire-fonds enlevés à mesure', 'Structure de 6 × 6 : seulement quand toutes les planches et tous les tire-fonds sont enlevés'], until: 315.4 },
+    { v: 315.6, type: 'panel', title: 'Boue de forage sous le plancher', rows: ['Se placer dans la partie la plus solide et stable', 'Rester vigilant, les pieds solides au sol', 'Commencer au fond de la baie de forage', 'Faire glisser les pièces de bois les unes sur les autres pour les sortir'] },
   ],
 };
 
@@ -414,8 +418,13 @@ export class Annotator {
   /** Encadré fixe à l'écran (en haut à droite) : titre, lignes « article : quantité », note. */
   panel(a, alpha) {
     const ctx = this.ctx;
-    const x = this.W - 560, y = 64, w = 520, rowH = 30;
-    const h = 58 + a.rows.length * rowH + 44;
+    const x = this.W - 560, y = 64, w = 520;
+    ctx.font = `600 18px ${BODY}`;
+    const rows = a.rows.map((r) => wrap(ctx, r, w - 64));
+    const nl = rows.reduce((n, r) => n + r.length, 0);
+    ctx.font = `500 14px ${BODY}`;
+    const notes = a.note ? wrap(ctx, a.note, w - 44) : [];
+    const h = 58 + nl * 24 + rows.length * 8 + (notes.length ? notes.length * 18 + 14 : 6);
     ctx.save();
     ctx.globalAlpha = alpha;
     ctx.fillStyle = BG;
@@ -426,18 +435,18 @@ export class Annotator {
     ctx.fillStyle = YEL;
     ctx.font = `700 26px ${DISPLAY}`;
     ctx.fillText(a.title, x + 22, y + 14);
-    a.rows.forEach(([k, v], i) => {
-      const ry = y + 58 + i * rowH;
-      ctx.fillStyle = INK;
-      ctx.font = `600 18px ${BODY}`;
-      ctx.fillText(k, x + 22, ry);
+    let ry = y + 58;
+    ctx.font = `600 18px ${BODY}`;
+    for (const r of rows) {
       ctx.fillStyle = YEL;
-      ctx.font = `700 18px ${BODY}`;
-      ctx.fillText(v, x + 250, ry);
-    });
+      ctx.fillText('•', x + 22, ry);
+      ctx.fillStyle = INK;
+      r.forEach((l, i) => ctx.fillText(l, x + 42, ry + i * 24));
+      ry += r.length * 24 + 8;
+    }
     ctx.fillStyle = 'rgba(232,236,240,0.75)';
     ctx.font = `500 14px ${BODY}`;
-    wrap(ctx, a.note, w - 44).forEach((l, i) => ctx.fillText(l, x + 22, y + h - 40 + i * 18));
+    notes.forEach((l, i) => ctx.fillText(l, x + 22, ry + 4 + i * 18));
     ctx.restore();
   }
 

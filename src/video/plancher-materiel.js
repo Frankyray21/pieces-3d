@@ -29,6 +29,8 @@ const bigBase = (k) => {
 // Bouts seuls (échantillons), près de la barricade : 6 × 6, 3 × 8, 2 × 4.
 const SAMPLE = { b66: { z: -2.2, w: B66, h: B66 }, b38: { z: -1.82, w: P8, h: P3 }, s24: { z: -1.5, w: S24.w, h: S24.t } };
 const SX0 = X0 + 0.35, SLEN = 0.6;
+// Barres d'écaillage le long de la paroi Z positive, selon X (au-delà du bout des piles de 16 pi).
+const BARS_Z = 2.52;
 /** Bout (côté barricade) de l'échantillon de bois k. */
 export function woodEnd(k) {
   const p = SAMPLE[k];
@@ -52,6 +54,7 @@ export const MAT = {
   pinces: { at: [X0 + 1.8, 0, 1.5], text: 'Pinces à billots' },
   scie: { at: [X0 + 1.8, 0, 2.25], text: 'Scie va-et-vient et lames à bois' },
   pingouin: { at: [X0 + 2.25, 0, 0.55], text: 'Pingouin (gratte minière 32 po)' },
+  barres: { at: [X0 + 1.5, 0, BARS_Z], text: 'Barres d’écaillage 6, 8 et 10 pi' },
   epi: { at: [X0 + 0.1, 0, 1.85], text: 'ÉPI : équipement de base' },
 };
 for (const m of Object.values(MAT)) m.at[1] = g0(m.at[0], m.at[2]) + 0.12;
@@ -91,6 +94,12 @@ export function materielGroup(S) {
   blocs(X0 + 2.0, 24 * IN, P8, P3, 3, 10, -1.95);
   // Échantillons : un bout de chaque bois, seul, pour la grosseur.
   for (const [k, p] of Object.entries(SAMPLE)) g.add(lumber(S, [SLEN, p.h, p.w], [SX0 + SLEN / 2, g0(SX0 + SLEN / 2, p.z) + p.h / 2, p.z], k === 's24' ? 'woodPlaned' : 'wood'));
+  // Barres d'écaillage de 6, 8 et 10 pi (alu, pointe d'acier), couchées le long de la paroi.
+  [6, 8, 10].forEach((ft, k) => {
+    const len = ft * FT, z = BARS_Z + (k - 1) * 0.07, x0 = X0 + 0.05;
+    const bar = S.group(S.cyl(0.017, len - 0.12, 'castAlu', { axis: 'x', pos: [(len - 0.12) / 2, 0.02, 0] }), S.cyl(0.017, 0.12, 'darkSteel', { axis: 'x', r2: 0.006, pos: [len - 0.06, 0.02, 0] }));
+    g.add(onGround(S, bar, x0, z, Math.max(0, g0(x0 + len, z) - g0(x0, z))));
+  });
   // Coins de bois en tas (environ 80).
   for (let k = 0; k < 80; k++) {
     const layer = Math.floor(k / 20), i = k % 20;
@@ -227,6 +236,7 @@ export const TOUR = [
   { keys: ['sciotte', 'pinces'], c: G(X0 + 1.4, 1.8), d: 1.15 },
   { keys: ['laser', 'niveau'], c: G(X0 + 0.6, 1.1, 0.2), d: 1.75 },
   { keys: ['pingouin'], c: G(X0 + 2.0, 0.55), pos: [X0 + 1.25, ground(X0 + 2.0, 0.55) + 0.95, 1.3] },
+  { keys: ['barres'], c: G(X0 + 1.55, BARS_Z), pos: [X0 + 0.9, ground(X0 + 1.55, BARS_Z) + 1.45, 0.95] },
   { keys: ['scie'], c: G(X0 + 1.8, 2.25), d: 0.7 },
   { keys: ['epi'], c: G(X0 + 0.2, 1.75, 0.08), d: 1.0 },
 ];
