@@ -143,3 +143,40 @@ export function materielGroup(S) {
   g.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
   return g;
 }
+
+// ------------------------------------------------------------------ tour des outils
+// Gros plan sur chaque outil après la narration du matériel : la caméra s'approche,
+// fait un tour complet (360°) en se rapprochant puis en reculant, et passe au suivant.
+// c : centre visé (au-dessus du sol), r : rayon du tour, h : hauteur de la caméra
+// au-dessus du centre.
+const TOOL_AT = (k, dy = 0.05) => [MAT[k].at[0], MAT[k].at[1] - 0.12 + dy, MAT[k].at[2]];
+export const TOUR = [
+  { k: 'laser', c: TOOL_AT('laser', 0.45), r: 1.0, h: 0.4 },
+  { k: 'epi', c: [X0 + 0.15, MAT.epi.at[1] - 0.07, 1.8], r: 0.95, h: 0.65 },
+  { k: 'sciotte', c: TOOL_AT('sciotte'), r: 0.75, h: 0.5 },
+  { k: 'niveau', c: TOOL_AT('niveau'), r: 1.0, h: 0.6 },
+  { k: 'biche', c: TOOL_AT('biche'), r: 0.7, h: 0.5 },
+  { k: 'masse', c: TOOL_AT('masse'), r: 0.75, h: 0.5 },
+  { k: 'marteau', c: TOOL_AT('marteau'), r: 0.6, h: 0.45 },
+  { k: 'pinces', c: TOOL_AT('pinces'), r: 0.7, h: 0.5 },
+  { k: 'scie', c: TOOL_AT('scie'), r: 0.6, h: 0.45 },
+  { k: 'pingouin', c: [MAT.pingouin.at[0] - 0.12, MAT.pingouin.at[1] - 0.07, MAT.pingouin.at[2]], r: 1.0, h: 0.6 },
+  { k: 'barres', c: [BARS_X, g0(BARS_X, 0.75) + 0.05, 0.75], r: 2.2, h: 1.2 },
+];
+export const TOUR_STEP = { go: 0.6, spin: 2.0 }; // approche, tour (s)
+
+/** Images clés (en temps v de l'enregistrement) du tour des outils, à partir de v0. */
+export function tourCams(v0) {
+  const cams = [];
+  let v = v0;
+  for (const s of TOUR) {
+    const start = [s.c[0] + s.r, s.c[1] + s.h, s.c[2]];
+    const orbit = { c: s.c, r: s.r, h: s.h, a0: 0, zoom: 0.2 };
+    cams.push({ v: v + TOUR_STEP.go, pos: start, tgt: s.c, orbit });
+    cams.push({ v: v + TOUR_STEP.go + TOUR_STEP.spin, pos: start, tgt: s.c });
+    s.v = v; // début de l'approche (pour l'étiquette)
+    v += TOUR_STEP.go + TOUR_STEP.spin;
+  }
+  return cams;
+}
+export function tourEnd(v0) { return v0 + TOUR.length * (TOUR_STEP.go + TOUR_STEP.spin); }

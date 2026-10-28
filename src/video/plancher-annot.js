@@ -11,7 +11,7 @@ import * as THREE from 'three';
 import { IN, FT, B66, P3, P8, W, L, SEC, DECK, joistZ, GAL, STAIR, SUPPORTS_X, SLEEPERS_X, GUIDE_X, JOINT_X, DIP, DRILL, FACE_X, ground, deckHeight, plankX, TIGHT, stack } from '../models/plancher-dd/plan.js';
 import { stairPlan, secondaryPlan } from '../models/plancher-dd/floor.js';
 import { vt } from './plancher-script.js';
-import { MAT } from './plancher-materiel.js';
+import { MAT, TOUR, TOUR_STEP } from './plancher-materiel.js';
 
 const YEL = '#f2c230';
 const INK = '#f4f6f7';
@@ -52,17 +52,8 @@ export const ANNOTATIONS = {
     { v: 30.9, type: 'note', at: MAT.s24.at, text: MAT.s24.text, dir: 'up', until: 33.6 },
     { v: 31.5, type: 'note', at: MAT.coins.at, text: MAT.coins.text, dir: 'down', until: 36.4 },
     { v: 32.6, type: 'note', at: MAT.tirefonds.at, text: MAT.tirefonds.text, dir: 'down', until: 36.4 },
-    { v: 39.6, type: 'note', at: MAT.laser.at, text: MAT.laser.text, dir: 'up', until: 42.6 },
-    { v: 40.2, type: 'note', at: MAT.biche.at, text: MAT.biche.text, dir: 'down', until: 43.2 },
-    { v: 40.8, type: 'note', at: MAT.niveau.at, text: MAT.niveau.text, dir: 'down', until: 43.8 },
-    { v: 42.8, type: 'note', at: MAT.masse.at, text: MAT.masse.text, dir: 'right', until: 45.6 },
-    { v: 43.4, type: 'note', at: MAT.marteau.at, text: MAT.marteau.text, dir: 'right', until: 46.2 },
-    { v: 44.8, type: 'note', at: MAT.pingouin.at, text: MAT.pingouin.text, dir: 'down', until: 47.6 },
-    { v: 46.4, type: 'note', at: MAT.sciotte.at, text: MAT.sciotte.text, dir: 'up', until: 49.0 },
-    { v: 46.9, type: 'note', at: MAT.pinces.at, text: MAT.pinces.text, dir: 'up', until: 49.5 },
-    { v: 47.4, type: 'note', at: MAT.scie.at, text: MAT.scie.text, dir: 'down', until: 50.0 },
-    { v: 49.1, type: 'note', at: MAT.barres.at, text: MAT.barres.text, dir: 'up' },
-    { v: 49.6, type: 'note', at: MAT.epi.at, text: MAT.epi.text, dir: 'down' },
+    // Tour des outils : l'étiquette suit le gros plan de chaque outil.
+    ...TOUR.map((o) => ({ v: o.v + 0.3, type: 'note', at: [o.c[0], o.c[1] + 0.05, o.c[2]], text: MAT[o.k].text, dir: 'up', until: o.v + TOUR_STEP.go + TOUR_STEP.spin - 0.1 })),
   ],
   inspection: [
     { v: 41.0, type: 'note', at: [2.6, 0.02, 0.6], text: 'Sol sans débris et plat', dir: 'down' },
