@@ -223,6 +223,18 @@ const extras = {
   ),
   // Matériel et outils de la procédure, étalés derrière la barricade (présentation du début).
   materiel: materielGroup(S),
+  // Exemple interdit (étape 11) : morceaux de bois simplement empilés l'un sur l'autre, barré en rouge.
+  badStack: (() => {
+    const g = S.group();
+    const bx = DIP.x - 0.95, bz = DIP.z + 0.4;
+    let y = ground(bx, bz);
+    const pcs = [[B66, B66, 0.46, 0], [P3, P8, 0.6, 0.03], [B66, B66, 0.46, -0.04], [P3, P8, 0.6, 0.05], [B66, B66, 0.46, -0.02]];
+    for (const [h, w, len, dz] of pcs) { g.add(S.box(len, h, w, 'woodDark', { pos: [bx, y + h / 2, bz + dz] })); y += h; }
+    const cy = (ground(bx, bz) + y) / 2, cz = bz + 0.16;
+    const span = y - ground(bx, bz) + 0.15;
+    for (const a of [0.6, -0.6]) g.add(S.box(0.045, span, 0.02, 'fluoRed', { pos: [bx, cy, cz], rot: [0, 0, a] }));
+    return g;
+  })(),
 };
 extras.highMark.position.set(high.x, high.y + 0.004, high.z);
 extras.highMark.children[2].rotation.x = Math.PI; // pointe vers le sol

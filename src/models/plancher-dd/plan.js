@@ -228,10 +228,11 @@ const HIGH = (() => {
 export const plankX = (i) => (i + 0.5) * P8;
 // Sens de pose (étape 6) : on couvre en marchant sur ce qui est déjà couvert, sans enjamber
 // les 6 × 6. Section 1 : de la jonction (2 planches libres laissées) vers le front de taille ;
-// section 2 : du bout côté galerie (accès) vers la jonction. d1(k) / d2(k) : indice de la k-ième planche posée.
-export const S1_FIRST = 21, S2_FIRST = 47;
+// section 2 : les 2 planches de jonction posées d'abord (non vissées) pour passer de la section 1
+// sans enjamber, puis de la jonction vers le bout côté galerie. d1(k) / d2(k) : indice de la k-ième planche posée.
+export const S1_FIRST = 21, S2_FIRST = 24;
 export const d1 = (k) => S1_FIRST - k;
-export const d2 = (k) => S2_FIRST - k;
+export const d2 = (k) => S2_FIRST + k;
 export const TIGHT = 10; // planche vissée devant les coins de serrage (étape 7)
 
 /** Annotations du montage par étapes : texte posé dans la 3D aux étapes données. */

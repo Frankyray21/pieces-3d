@@ -20,6 +20,7 @@ import { tourCams, tourEnd } from './plancher-materiel.js';
 // Après la narration du matériel : le bois de près, les quantités, puis les outils.
 const TOUR_V0 = 39.0;
 const L = 9.7536, SEC = 4.8768, W = 4.8768, DECK = 0.2286;
+const DIP_X = 8.8773, DIP_Z = 1.5748; // creux de la cage (plan.js : DIP)
 
 const C = {
   ov: { pos: [L / 2 + 6.2, 5.0, 8.4], tgt: [L / 2, -0.15, -0.4] },
@@ -211,19 +212,24 @@ export const SEGMENTS = [
     lines: [
       [1, 'Étape onze : les madriers à trente-deux pouces centre, à la même hauteur que la première section. Les soutiens, toujours vis-à-vis le croisement des six par six.'],
       [1, 'Dans un creux comme celui-là, on monte une cage : des bouts de vingt-quatre à trente-six pouces, empilés croisés.'],
+      [1, 'Pis attention : on empile jamais des morceaux de bois un par-dessus l\'autre. C\'est un blocage avec ses coins, ou une cage croisée.'],
     ],
     // Cage (cas spécial) : gros plan, plancher en transparence, montée couche par couche.
     reveal: [{ cue: 'joists2', v: 194.4, vspan: 3.6 }, { cue: 'jointBlocks', v: 199.0, vspan: 2.0 }, { cue: 'cribFocus', v: 204.0, vspan: 9.6 }, { cue: 'cribOther', v: 214.4, vspan: 1.6 }],
     ghost: { vfrom: 203.2, vto: 230 },
-    cams: [{ v: 194.0, ...C.s2 }, { v: 202.6, pos: [SEC * 1.5 + 3.4, 1.5, 4.4], tgt: [SEC * 1.5 + 0.6, -0.3, 0.9] }, { v: 205.2, ...C.cageA }, { v: 212.5, ...C.cageB }, { v: 217.6, ...C.cageC }],
+    // Exemple interdit : bois simplement empilé, montré à côté de la cage.
+    show: [{ obj: 'badStack', vfrom: 218.0 }],
+    cams: [{ v: 194.0, ...C.s2 }, { v: 202.6, pos: [SEC * 1.5 + 3.4, 1.5, 4.4], tgt: [SEC * 1.5 + 0.6, -0.3, 0.9] }, { v: 205.2, ...C.cageA }, { v: 212.5, ...C.cageB }, { v: 217.6, ...C.cageC }, { v: 219.2, pos: [DIP_X - 1.55, 0.4, DIP_Z + 2.15], tgt: [DIP_X - 0.95, -0.12, DIP_Z + 0.4] }, { v: 222.8, pos: [DIP_X - 1.65, 0.45, DIP_Z + 2.2], tgt: [DIP_X - 0.95, -0.12, DIP_Z + 0.4] }],
   },
   {
     id: 'e12', min: 10,
     band: { n: '12', title: 'Couvrir la section 2', text: 'Une fois la structure de base de la deuxième section de plancher complétée, poursuivre en couvrant avec des 3\'\'X8\'\' en répétant les étapes 6 et 7 précédentes.', detail: 'Les 2 planches laissées libres (étape 8) sont vissées pour jointer les sections' },
     lines: [
-      [1, 'Étape douze : on couvre la deuxième section en répétant les étapes six pis sept. Les deux planches de jonction sont vissées à la fin.'],
+      [1, 'Étape douze : on pose d\'abord les deux planches de jonction, sans les visser, pour passer sur la deuxième section sans enjamber. Pis on couvre en répétant les étapes six pis sept. Les planches de jonction sont vissées à la fin.'],
     ],
-    reveal: [{ cue: 'deck2', at: 0.05, span: 0.6 }, { cue: 'screws2', at: 0.68, span: 0.08 }, { cue: 'joinPlanks', at: 0.78, span: 0.08 }, { cue: 'joinScrews', at: 0.9, span: 0 }],
+    // Planches de jonction posées d'abord (non vissées) : on passe de la section 1 sans enjamber ;
+    // puis la section 2 de la jonction vers le bout ; les planches de jonction vissées à la fin.
+    reveal: [{ cue: 'joinPlanks', at: 0.04, span: 0.06 }, { cue: 'deck2', at: 0.13, span: 0.58 }, { cue: 'screws2', at: 0.74, span: 0.08 }, { cue: 'joinScrews', at: 0.88, span: 0 }],
     cams: [{ t: 0.3, ...C.deck2 }, { t: 1, pos: [L + 2.4, 2.6, 4.2], tgt: [SEC, 0, 0] }],
   },
   {
@@ -338,7 +344,7 @@ const VOICE_END = 332.59;
 // Silences ajoutés dans la voix : [instant dans l'enregistrement, durée] (ex. cage, étape 11).
 const GAPS = { e11: [[203.45, 2.4]] };
 // Temps laissé après la voix (s) ; par défaut 0,4.
-const TAIL = { e14: 8.4, e11: 7.5, titre: 0.2, fin: 1.2, e15: 0.2, e7: 1.6, materiel: +(tourEnd(TOUR_V0) + 0.1 - 38.93).toFixed(2) };
+const TAIL = { e14: 8.4, e11: 11.9, titre: 0.2, fin: 1.2, e15: 0.2, e7: 1.6, materiel: +(tourEnd(TOUR_V0) + 0.1 - 38.93).toFixed(2) };
 const LEAD = 0.3; // la voix démarre 0,3 s après le début de la partie
 const r24 = (x) => Math.round(x * 24) / 24;
 
