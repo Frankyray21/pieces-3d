@@ -6,7 +6,7 @@
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { mat } from '../../viewer/materials.js';
-import { IN, FT, B66, P3, P8, W, L, DECK, GAL, GAL_X0, GAL_X1, FACE_X, WALL_H, ground, DRILL, plankX, TIGHT } from './plan.js';
+import { IN, FT, B66, P3, P8, W, L, DECK, GAL, GAL_X0, GAL_X1, FACE_X, WALL_H, ground, DRILL, plankX, TIGHT, d1 } from './plan.js';
 import { lumber, between, labeler } from './lumber.js';
 
 // Petit générateur pseudo-aléatoire reproductible.
@@ -506,7 +506,7 @@ export function guides(S, high) {
   for (const z of [-1.65, -0.55, 0.55, 1.65]) {
     const w = S.extrude([[0, 0], [0.025, 0], [0.012, -0.2]], 0.09, 'woodWedge');
     const r = S.group(w);
-    r.position.set(plankX(TIGHT) + P8 / 2 + 0.0125 - 0.0125, B66 + P3 + 0.03, z);
+    r.position.set(plankX(d1(TIGHT)) - P8 / 2, B66 + P3 + 0.03, z);
     wedges.add(r);
   }
   only(wedges, [7]);

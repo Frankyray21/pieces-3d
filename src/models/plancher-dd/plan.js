@@ -226,6 +226,12 @@ const HIGH = (() => {
 // fond vers l'entrée : section 1, 0 à 23 (22 et 23 : les 2 planches libres à
 // la jonction) ; section 2, 24 à 47.
 export const plankX = (i) => (i + 0.5) * P8;
+// Sens de pose (étape 6) : on couvre en marchant sur ce qui est déjà couvert, sans enjamber
+// les 6 × 6. Section 1 : de la jonction (2 planches libres laissées) vers le front de taille ;
+// section 2 : du bout côté galerie (accès) vers la jonction. d1(k) / d2(k) : indice de la k-ième planche posée.
+export const S1_FIRST = 21, S2_FIRST = 47;
+export const d1 = (k) => S1_FIRST - k;
+export const d2 = (k) => S2_FIRST - k;
 export const TIGHT = 10; // planche vissée devant les coins de serrage (étape 7)
 
 /** Annotations du montage par étapes : texte posé dans la 3D aux étapes données. */
@@ -237,9 +243,9 @@ export const NOTES = [
   { steps: [4], pos: [1.2, B66 + 0.05, joistZ[JOISTS - 1]], text: 'Madrier à 16 pi du premier' },
   { steps: [5], pos: [SUPPORTS_X[2], -0.02, joistZ[1] + 0.25], text: 'Blocage + coin, en sens contraire' },
   { steps: [5], pos: [JOINT_X, -0.02, joistZ[3]], text: 'Blocage de jonction' },
-  { steps: [6], pos: [plankX(3), DECK + 0.05, 1.2], text: 'Avancer sur la surface couverte' },
-  { steps: [6], pos: [plankX(0), DECK + 0.05, joistZ[0]], text: '1re planche : tire-fonds aux 2 bouts' },
-  { steps: [7], pos: [plankX(TIGHT) + P8 / 2, DECK + 0.3, 0.5], text: 'Coins enfoncés : planches en tension' },
+  { steps: [6], pos: [plankX(d1(3)), DECK + 0.05, 1.2], text: 'Avancer sur la surface couverte' },
+  { steps: [6], pos: [plankX(d1(0)), DECK + 0.05, joistZ[0]], text: '1re planche : tire-fonds aux 2 bouts' },
+  { steps: [7], pos: [plankX(d1(TIGHT)) - P8 / 2, DECK + 0.3, 0.5], text: 'Coins enfoncés : planches en tension' },
   { steps: [8], pos: [plankX(22) + P8 / 2, B66 + 0.1, 0], text: '2 planches laissées libres, à la jonction' },
   { steps: [9], pos: [SEC * 1.5, 0.05, 0], text: 'Le sol descend : hauteur à soutenir' },
   { steps: [10], pos: [SLEEPERS_X[1], -B66 + 0.05, joistZ[1]], text: 'Soutiens 6 × 6 de 16 pi en sens contraire' },

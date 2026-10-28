@@ -20,7 +20,7 @@ import './plancher-video.css';
 import { buildProcedural } from '../viewer/assembly.js';
 import * as S from '../viewer/shapes.js';
 import models from '../models/plancher-dd/index.js';
-import { IN, FT, P3, P8, B66, W, L, SEC, DECK, ground, plankX, TIGHT, joistZ, GUIDE_X, DIP } from '../models/plancher-dd/plan.js';
+import { IN, FT, P3, P8, B66, W, L, SEC, DECK, ground, plankX, TIGHT, d1, joistZ, GUIDE_X, DIP } from '../models/plancher-dd/plan.js';
 import { lagScrews } from '../models/plancher-dd/lumber.js';
 import { timeline, RETENIR, stepCard, STEP_CARD, vt } from './plancher-script.js';
 import { Annotator } from './plancher-annot.js';
@@ -242,7 +242,9 @@ const WG = 0.05; // espace pour les coins
 const TSEG = SEGS.find((x) => x.tighten);
 const TT = Object.fromEntries(Object.entries(TSEG.tighten).map(([k, v]) => [k, Array.isArray(v) ? v.map((x) => vt(TSEG, x)) : vt(TSEG, v)]));
 const span01 = (t, a, b) => Math.min(1, Math.max(0, (t - a) / (b - a)));
-const anchorX0 = plankX(ANCHOR);
+// La pose avance vers le front de taille (−X) : les écarts et le recul du dernier 3 × 8 aussi.
+const D = -1;
+const anchorX0 = plankX(d1(ANCHOR));
 const anchorScrews = lagScrews(S, [joistZ[0], joistZ.at(-1)].map((z) => [0, DECK, z]));
 const wedgeZs = [-1.65, -0.55, 0.55, 1.65];
 const tightWedges = S.group();
@@ -268,18 +270,18 @@ function tighten(t) {
   for (const lf of deckLeaves) {
     const i = lf.obj.userData.order;
     if (i === 0) continue;
-    lf.obj.position.x = lf.base.x + (i === ANCHOR ? anchorOff : loose(i));
+    lf.obj.position.x = lf.base.x + D * (i === ANCHOR ? anchorOff : loose(i));
   }
   // Tire-fonds temporaires du dernier 3 × 8 : posés, puis retirés (ils remontent).
   const up = span01(t, TT.unscrew, TT.unscrew + 0.6);
   anchorScrews.visible = t >= TT.anchorScrews && up < 1;
-  anchorScrews.position.set(anchorX0 + anchorOff, 0.25 * (1 - span01(t, TT.anchorScrews, TT.anchorScrews + 0.4)) + 0.12 * up, 0);
+  anchorScrews.position.set(anchorX0 + D * anchorOff, 0.25 * (1 - span01(t, TT.anchorScrews, TT.anchorScrews + 0.4)) + 0.12 * up, 0);
   // Coins : insérés au-dessus de l'écart, enfoncés, puis enlevés.
   const out = span01(t, TT.wedgesOut, TT.wedgesOut + 0.5);
   tightWedges.visible = t >= TT.wedgesIn && out < 1;
-  const xFront = plankX(TIGHT) + loose(TIGHT) + P8 / 2; // face de la planche devant les coins
-  const xBack = anchorX0 + anchorOff - P8 / 2; // face du dernier 3 × 8
-  const gap = Math.max(0.004, xBack - xFront);
+  const xFront = plankX(d1(TIGHT)) + D * (loose(TIGHT) + P8 / 2); // face de la planche devant les coins
+  const xBack = anchorX0 + D * (anchorOff - P8 / 2); // face du dernier 3 × 8
+  const gap = Math.max(0.004, D * (xBack - xFront));
   const ins = span01(t, TT.wedgesIn, TT.wedgesIn + 0.5);
   for (const g of tightWedges.children) {
     g.position.x = (xFront + xBack) / 2;

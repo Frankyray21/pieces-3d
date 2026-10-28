@@ -5,7 +5,7 @@
 // fixe à l'écran).
 import * as THREE from 'three';
 import {
-  IN, FT, B66, P3, P8, W, L, SEC, DECK, joistZ, GAL, STAIR, SUPPORTS_X, ground, deckHeight, plankX, TIGHT,
+  IN, FT, B66, P3, P8, W, L, SEC, DECK, joistZ, GAL, STAIR, SUPPORTS_X, ground, deckHeight, plankX, TIGHT, d1,
 } from './plan.js';
 import { stairPlan, secondaryPlan } from './floor.js';
 
@@ -166,7 +166,7 @@ export function dimensions() {
   at([6], dim([0, 0, zP], [0, DECK, zP], 'Plancher 9 po', [-0.85, 0, 0.1]));
   at([6], dim([0, DECK, zN], [P8, DECK, zN], '8 po', [0, 0, -0.35], { h: 0.04 }));
   // Étape 7 : environ 50 % de la section couverte avant de resserrer.
-  at([7], dim([0, DECK, zN], [plankX(TIGHT) + P8 / 2, DECK, zN], '≈ 50 % de la section', [0, 0, -0.4]));
+  at([7], dim([plankX(d1(TIGHT)) - P8 / 2, DECK, zN], [plankX(d1(0)) + P8 / 2, DECK, zN], '≈ 50 % de la section', [0, 0, -0.4]));
   // Étape 8 : deux planches libres (16 po).
   at([8], dim([SEC - 2 * P8, B66, zP], [SEC, B66, zP], '2 planches = 16 po', [0, 0, 0.4]));
   // Étapes 9 et 10 : hauteur à soutenir au bout de la section 2, madrier guide à 16 pi.

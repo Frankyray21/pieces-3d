@@ -8,7 +8,7 @@
 // toujours entières dans le cadre. Une annotation dont le point est hors champ
 // s'efface au lieu d'être coupée.
 import * as THREE from 'three';
-import { IN, FT, B66, P3, P8, W, L, SEC, DECK, joistZ, GAL, STAIR, SUPPORTS_X, SLEEPERS_X, GUIDE_X, JOINT_X, DIP, DRILL, FACE_X, ground, deckHeight, plankX, TIGHT, stack } from '../models/plancher-dd/plan.js';
+import { IN, FT, B66, P3, P8, W, L, SEC, DECK, joistZ, GAL, STAIR, SUPPORTS_X, SLEEPERS_X, GUIDE_X, JOINT_X, DIP, DRILL, FACE_X, ground, deckHeight, plankX, TIGHT, d1, stack } from '../models/plancher-dd/plan.js';
 import { stairPlan, secondaryPlan } from '../models/plancher-dd/floor.js';
 import { vt } from './plancher-script.js';
 import { MAT, TOUR } from './plancher-materiel.js';
@@ -36,7 +36,7 @@ const zg = -1.5;
 const t1 = DECK - rise;
 // Cage de l'étape 11 (sous le soutien, au croisement du creux), calculée comme dans le modèle.
 const CRIB = (() => { const st = stack(DIP.x, DIP.z, -B66, 'x'); const lay = (k) => st.pieces.filter((p) => p.kind === 'crib')[k]; return { x: DIP.x, z: DIP.z, g: st.ground, top: -B66, y1: lay(0).pos[1], y2: lay(2).pos[1], h2: lay(2).size[1] }; })();
-const ANCHOR_X = plankX(TIGHT + 1) + TIGHT * 0.015 + 0.05; // dernier 3 × 8 posé plus loin (étape 7)
+const ANCHOR_X = plankX(d1(TIGHT + 1)) - TIGHT * 0.015 - 0.05; // dernier 3 × 8 posé plus loin (étape 7)
 const zJ = joistZ[joistZ.length - 1]; // madrier de la rive Z positive
 
 // dim : cote entre a et b décalée de off (m) ; note : texte relié au point at ;
@@ -104,15 +104,15 @@ export const ANNOTATIONS = {
   ],
   e6: [
     { v: 124.6, type: 'dim', a: [0, 0, zN], b: [0, DECK, zN], off: [-0.35, 0, -0.1], text: '9 po', sub: '6 × 6 + 3 × 8' },
-    { v: 128.8, type: 'note', at: [plankX(0), DECK, joistZ[0]], text: '1re planche : tire-fonds aux 2 bouts', dir: 'left' },
-    { v: 133.6, type: 'note', at: [plankX(4), DECK, 0.6], text: 'Avancer sur la surface déjà couverte', dir: 'up' },
+    { v: 128.8, type: 'note', at: [plankX(d1(0)), DECK, joistZ[0]], text: '1re planche : tire-fonds aux 2 bouts', dir: 'left' },
+    { v: 133.6, type: 'note', at: [plankX(d1(4)), DECK, 0.6], text: 'Avancer sur la surface déjà couverte', dir: 'up' },
   ],
   e7: [
-    { v: 143.6, type: 'dim', a: [0, DECK, zP], b: [plankX(TIGHT) + P8 / 2, DECK, zP], off: [0, 0, 0.3], text: '≈ 50 %', sub: 'de la section', until: 146.6 },
+    { v: 143.6, type: 'dim', a: [plankX(d1(TIGHT)) - P8 / 2, DECK, zP], b: [plankX(d1(0)) + P8 / 2, DECK, zP], off: [0, 0, 0.3], text: '≈ 50 %', sub: 'de la section', until: 146.6 },
     { v: 145.8, type: 'note', at: [ANCHOR_X, DECK, zJ], text: 'Dernier 3 × 8 vissé (temporaire)', dir: 'right', until: 152.8 },
-    { v: 147.6, type: 'note', at: [plankX(TIGHT) + P8 / 2 + 0.05, DECK + 0.06, 1.65], text: 'Coins enfoncés entre les planches', dir: 'up', until: 151.6 },
-    { v: 149.0, type: 'arrow', a: [plankX(10), DECK + 0.1, zP + 0.12], b: [plankX(1), DECK + 0.1, zP + 0.12], text: 'Tension : les écarts se ferment', until: 153.0 },
-    { v: 151.2, type: 'note', at: [plankX(TIGHT), DECK, zJ], text: 'Planche devant les coins vissée', dir: 'right' },
+    { v: 147.6, type: 'note', at: [plankX(d1(TIGHT)) - P8 / 2 - 0.05, DECK + 0.06, 1.65], text: 'Coins enfoncés entre les planches', dir: 'up', until: 151.6 },
+    { v: 149.0, type: 'arrow', a: [plankX(d1(10)), DECK + 0.1, zP + 0.12], b: [plankX(d1(1)), DECK + 0.1, zP + 0.12], text: 'Tension : les écarts se ferment', until: 153.0 },
+    { v: 151.2, type: 'note', at: [plankX(d1(TIGHT)), DECK, zJ], text: 'Planche devant les coins vissée', dir: 'right' },
     { v: 153.4, type: 'note', at: [ANCHOR_X, DECK + 0.05, joistZ[0]], text: 'Tire-fonds du dernier 3 × 8 retirés', dir: 'up' },
   ],
   e8: [

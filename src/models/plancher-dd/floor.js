@@ -5,7 +5,7 @@
 // d'ensemble. Chaque objet porte userData.step (étape de la procédure).
 import {
   IN, FT, B66, P3, P8, S24, R24, W, L, SEC, DECK, joistZ, GAL, JOINT_X, SUPPORTS_X, SLEEPERS_X,
-  stack, ground, over12, deckHeight, STAIR, DRILL, WEDGE, plankX, TIGHT,
+  stack, ground, over12, deckHeight, STAIR, DRILL, WEDGE, plankX, TIGHT, d1, d2,
 } from './plan.js';
 import { lumber, between, wedge, lagScrews, placeStack, labeler } from './lumber.js';
 import { wireMesh, groundPatch } from './site.js';
@@ -59,14 +59,14 @@ export function P07(api, opts = {}) {
   for (let i = 0; i < PER_SEC; i++) {
     const join = i >= PER_SEC - 2; // deux planches laissées libres à la jonction, vissées à la fin (étape 8)
     const p = lumber(S, [P8, P3, W], [plankX(i), B66 + P3 / 2, 0]);
-    p.userData.order = i;
+    p.userData.order = join ? i : d1(0) - i; // ordre de pose : de la jonction vers le front
     put(join ? '2' : '1', p, [0, join ? 0.75 : 0.45, 0], join ? 12 : 6, { seq: join ? 1 : 0 });
   }
   // Tire-fonds de la procédure seulement : première planche à chaque extrémité
   // (étape 6), planche vissée devant les coins pour retenir la tension (étape 7),
   // planches de jonction, de chaque bout (étape 8).
-  put('3', lagScrews(S, ends(0)), [0, 1.05, 0], 6, { seq: 0 });
-  put('4', lagScrews(S, ends(TIGHT)), [0, 1.05, 0], 7);
+  put('3', lagScrews(S, ends(d1(0))), [0, 1.05, 0], 6, { seq: 0 });
+  put('4', lagScrews(S, ends(d1(TIGHT))), [0, 1.05, 0], 7);
   put('5', lagScrews(S, [...ends(PER_SEC - 2), ...ends(PER_SEC - 1)]), [0, 1.2, 0], 12, { seq: 2 });
   return { view: { dir: [0.75, 1.0, 1.1] } };
 }
@@ -120,13 +120,13 @@ export function P13(api, opts = {}) {
   soil(api, opts, SEC - 0.4, L + 0.4, -W / 2 - 0.3, W / 2 + 0.3);
   const put = labeler(api);
   for (let i = 0; i < PER_SEC; i++) {
-    const p = lumber(S, [P8, P3, W], [plankX(PER_SEC + i), B66 + P3 / 2, 0]);
+    const p = lumber(S, [P8, P3, W], [plankX(d2(i)), B66 + P3 / 2, 0]); // du bout côté galerie vers la jonction
     p.userData.order = i;
     put('1', p, [0, 0.45, 0], 12);
   }
   // Étapes 6 et 7 répétées : première planche de la section, planche devant les coins.
-  put('2', lagScrews(S, ends(PER_SEC)), [0, 1.05, 0], 12);
-  put('3', lagScrews(S, ends(PER_SEC + TIGHT)), [0, 1.05, 0], 12);
+  put('2', lagScrews(S, ends(d2(0))), [0, 1.05, 0], 12);
+  put('3', lagScrews(S, ends(d2(TIGHT))), [0, 1.05, 0], 12);
   return { view: { dir: [-0.75, 1.0, 1.1] } };
 }
 
