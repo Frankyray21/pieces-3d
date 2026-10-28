@@ -511,7 +511,8 @@ export function createSim() {
       }
     }
     // Forage verrouillé : l'avance est automatique (temps accéléré : environ 5 pi/s pour l'exercice).
-    if (s.mode === 'drill' && s.lock && ok) {
+    // L'avance automatique ne part qu'une fois la manette droite relâchée (p. 145).
+    if (s.mode === 'drill' && s.lock && ok && !s.R.x && !s.R.y) {
       const d = 5 * dt * (0.5 + s.rotationVitesse / 100);
       s.profondeur += d; s.profondeurTotale += d;
       s.tiges = Math.floor(s.profondeur / (s.longueurTige / 12));

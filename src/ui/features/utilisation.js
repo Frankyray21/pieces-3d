@@ -118,11 +118,16 @@ export default {
       const section = (p) => man.sommaire[sectionIndex(p)] || null;
       /** Numéro et titre d'une entrée (sans espace en tête quand l'entrée n'a pas de numéro). */
       const nomSection = (e) => (e ? [e[1], e[2]].filter(Boolean).join(' ') : '');
-      /** Barre collante : la figure doit commencer juste sous elle (dy > 0 : la figure est cachée dessous). */
+      /**
+       * Barre collante : la figure doit commencer juste sous elle. La cible est la place de la barre une fois collée
+       * (haut de .wp-body + retrait), pas sa place actuelle : sur téléphone, la barre n'est pas encore collée quand on
+       * touche le sommaire. toujours : amener la figure sous la barre même si elle est plus bas (sommaire, recherche).
+       */
       const sousLaBarre = (toujours = false) => {
         const wb = el.closest('.wp-body');
         if (!wb) return;
-        const dy = $('.ut-bar').getBoundingClientRect().bottom + 8 - fig.getBoundingClientRect().top;
+        const cible = wb.getBoundingClientRect().top + parseFloat(getComputedStyle(wb).paddingTop || 0) + $('.ut-bar').offsetHeight + 8;
+        const dy = cible - fig.getBoundingClientRect().top;
         if (dy > 0 || toujours) wb.scrollTop -= dy;
       };
 

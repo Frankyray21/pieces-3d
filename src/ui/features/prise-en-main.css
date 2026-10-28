@@ -462,3 +462,5 @@
 @media (max-height: 560px) {
   .pem-console:fullscreen > .pem-now, .pem-console.c3-plein > .pem-now { order: 0; }
 }
+/* La console ne reçoit le focus que pour capter le clavier : pas de contour autour de tout le bloc. */
+.pem-console:focus { outline: none; }

@@ -23,7 +23,8 @@ const melange = (a) => {
 };
 
 /** Petit écran ou pointeur tactile : l'écran ERIS de la console 3D y serait trop petit pour être lu (vue 2D par défaut). */
-const ecranEtroit = () => typeof matchMedia === 'function' && matchMedia('(max-width: 700px), (pointer: coarse)').matches;
+// Seuil 1200 px : en dessous, les lignes de l'écran ERIS de la vue 3D font moins de 7 px de haut.
+const ecranEtroit = () => typeof matchMedia === 'function' && matchMedia('(max-width: 1199px), (pointer: coarse)').matches;
 
 export default {
   id: ID,
@@ -373,7 +374,7 @@ export default {
                 <label class="pem-fr"><input type="checkbox" ${u.fr ? 'checked' : ''}> Traduire l’écran en français (sur la machine, l’écran est en anglais)</label>
               </div>
               <div class="pem-3d"${u.vue === '3d' ? '' : ' hidden'}></div>
-              <p class="pem-small pem-3d-aide"${u.vue === '3d' ? '' : ' hidden'}>3D : glisser une manette pour l’incliner (elle reste en place ; la toucher sans glisser la recentre) · appuyer sur les boutons des têtes de manette (survoler un bouton affiche sa fonction ; l’actif s’allume en orange) · touche Mode sur le côté gauche de la manette gauche · arrêt d’urgence, interrupteur à droite · toucher un nom à l’écran = appuyer sur son bouton · glisser ailleurs pour tourner la vue.</p>
+              <p class="pem-small pem-3d-aide"${u.vue === '3d' ? '' : ' hidden'}>3D : glisser une manette pour l’incliner (elle reste en place ; la toucher sans glisser la recentre) · appuyer sur les boutons des têtes de manette (survoler un bouton affiche sa fonction ; l’actif s’allume en orange) · touche Mode sur le côté gauche de la manette gauche · arrêt d’urgence, interrupteur à droite · toucher un nom à l’écran = appuyer sur son bouton · glisser ailleurs pour tourner la vue · pour lire l’écran : zoomer (molette, deux doigts) ou choisir « Écran 2D ».</p>
               <div class="pem-screen"${u.vue === '2d' ? '' : ' hidden'}><div class="pem-screen-in"></div></div>
               <div class="pem-msg" aria-live="polite"></div>
               <div class="pem-deck"></div>
@@ -436,10 +437,13 @@ export default {
           // Consigne en cours, au-dessus de l'écran (visible même quand la liste des missions est plus bas).
           const mc = missionCourante();
           const kc = mc ? (u.etapesM?.[mc.id] ?? 0) : 0;
+          const focusNow = now.contains(document.activeElement);
           now.innerHTML = !mc ? '<span>Choisissez une mission dans la liste, ou manipulez librement la console.</span>'
             : kc >= mc.etapes.length ? `<b>✓ Mission réussie : ${esc(mc.titre)}</b>${d.missions[d.missions.indexOf(mc) + 1] ? `<button type="button" class="btn primary" data-start="${esc(d.missions[d.missions.indexOf(mc) + 1].id)}">Mission suivante ${icon('droite', { size: 14 })}</button>` : ''}`
               : `<span class="pem-now-k">Mission ${d.missions.indexOf(mc) + 1} · étape ${kc + 1}/${mc.etapes.length}</span><span>${esc(mc.etapes[kc].t)}</span>`;
           now.classList.toggle('ok', !!mc && kc >= mc.etapes.length);
+          // « Mission suivante » remplacé alors qu'il avait le focus : le focus reste dans la console.
+          if (focusNow && !now.contains(document.activeElement)) body.querySelector('.pem-console')?.focus({ preventScroll: true });
           body.querySelectorAll('.pem-m').forEach((det) => {
             const m = d.missions.find((x) => x.id === det.dataset.m);
             const k = u.mission === m.id ? (u.etapesM?.[m.id] ?? 0) : (p.missions[m.id] ? m.etapes.length : -1);
@@ -496,7 +500,8 @@ export default {
               <div class="pem-keys-r">${btns(sim.fonctions(), 'R')}</div>
             </div>`;
           sigDeck = signatureDeck();
-          if (focus) deck.querySelector(focus)?.focus({ preventScroll: true });
+          // Bouton disparu au redessin (autre couche, autre mode) : le focus reste dans la console (clavier actif).
+          if (focus) (deck.querySelector(focus) || body.querySelector('.pem-console'))?.focus({ preventScroll: true });
         };
         /** Ce que montre le pupitre : il n'est redessiné que si cela change. */
         const signatureDeck = () => {
@@ -587,7 +592,8 @@ export default {
         // les flèches gardent leur rôle (défilement de la page).
         const consoleEl = body.querySelector('.pem-console');
         consoleEl.tabIndex = -1;
-        consoleEl.addEventListener('pointerdown', () => { if (!consoleEl.contains(document.activeElement)) consoleEl.focus({ preventScroll: true }); });
+        // En capture : la console 3D arrête la propagation des appuis sur ses commandes.
+        consoleEl.addEventListener('pointerdown', () => { if (!consoleEl.contains(document.activeElement)) consoleEl.focus({ preventScroll: true }); }, true);
         const enfoncees = new Set(); // touches tenues (relâchées à l'arrêt ou quand la fenêtre perd le focus)
         const touche = (ev, bas) => {
           if (ev.ctrlKey || ev.metaKey || ev.altKey) return;

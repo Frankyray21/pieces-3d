@@ -329,11 +329,12 @@ export function creerConsole3D(conteneur, sim, { agir = () => {}, info = () => {
   const pivots = { L: mg.pivot, R: md.pivot };
 
   // Vue : rotation limitée devant la console. L'écran HTML (CSS3D) est toujours dessiné par-dessus la 3D : au-delà de
-  // ±0,4 rad (ou en vue plus rasante), il recouvrirait la manette la plus proche et capterait ses clics.
+  // ±0,3 rad, en vue reculée et basse, il recouvrirait les boutons de la manette la plus proche et capterait leurs
+  // clics (mesuré : aucun recouvrement à ±0,3 pour toutes les distances et inclinaisons permises).
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.target.set(0, 0.17, -0.02);
   controls.enableDamping = true;
-  controls.minAzimuthAngle = -0.4; controls.maxAzimuthAngle = 0.4;
+  controls.minAzimuthAngle = -0.3; controls.maxAzimuthAngle = 0.3;
   controls.minPolarAngle = 0.35; controls.maxPolarAngle = 1.35;
   controls.minDistance = 0.55; controls.maxDistance = 2.2;
   controls.enablePan = false;
