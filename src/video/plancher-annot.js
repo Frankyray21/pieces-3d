@@ -11,7 +11,7 @@ import * as THREE from 'three';
 import { IN, FT, B66, P3, P8, W, L, SEC, DECK, joistZ, GAL, STAIR, SUPPORTS_X, SLEEPERS_X, GUIDE_X, JOINT_X, DIP, DRILL, FACE_X, ground, deckHeight, plankX, TIGHT, stack } from '../models/plancher-dd/plan.js';
 import { stairPlan, secondaryPlan } from '../models/plancher-dd/floor.js';
 import { vt } from './plancher-script.js';
-import { MAT, TOUR, TOUR_STEP } from './plancher-materiel.js';
+import { MAT, TOUR, QTY } from './plancher-materiel.js';
 
 const YEL = '#f2c230';
 const INK = '#f4f6f7';
@@ -52,8 +52,19 @@ export const ANNOTATIONS = {
     { v: 30.9, type: 'note', at: MAT.s24.at, text: MAT.s24.text, dir: 'up', until: 33.6 },
     { v: 31.5, type: 'note', at: MAT.coins.at, text: MAT.coins.text, dir: 'down', until: 36.4 },
     { v: 32.6, type: 'note', at: MAT.tirefonds.at, text: MAT.tirefonds.text, dir: 'down', until: 36.4 },
-    // Outils de près, par groupes : les étiquettes du groupe pendant l'arrêt.
-    ...TOUR.flatMap((o) => o.keys.map((k, i) => ({ v: o.v + 0.5 + 0.25 * i, type: 'note', at: MAT[k].at, text: MAT[k].text, dir: i % 2 ? 'down' : 'up', until: o.v + TOUR_STEP.go + TOUR_STEP.hold }))),
+    // Bois de près (grosseur), quantités du plancher 16 × 32, puis outils par groupes.
+    ...TOUR.flatMap((o) => {
+      if (o.qty) return [{ v: o.v + 0.5, type: 'panel', ...QTY, until: o.end }];
+      if (o.wood) {
+        const { e } = o, w = e.w / 2;
+        return [
+          { v: o.v + 0.5, type: 'note', at: [e.x - 0.25, e.yb + e.h, e.z], text: MAT[o.wood].text, dir: 'up', until: o.end },
+          { v: o.v + 0.8, type: 'dim', a: [e.x, e.yb + e.h, e.z - w], b: [e.x, e.yb + e.h, e.z + w], off: [0.03, 0.06, 0], text: o.dims[0], until: o.end },
+          { v: o.v + 1.1, type: 'dim', a: [e.x, e.yb, e.z + w], b: [e.x, e.yb + e.h, e.z + w], off: [0.03, 0, 0.07], text: o.dims[1], until: o.end },
+        ];
+      }
+      return o.keys.map((k, i) => ({ v: o.v + 0.5 + 0.25 * i, type: 'note', at: MAT[k].at, text: MAT[k].text, dir: i % 2 ? 'down' : 'up', until: o.end }));
+    }),
   ],
   inspection: [
     { v: 41.0, type: 'note', at: [2.6, 0.02, 0.6], text: 'Sol sans débris et plat', dir: 'down' },
@@ -236,7 +247,9 @@ export class Annotator {
     const placed = avoid.map((r) => ({ ...r }));
     // Géométrie projetée et visibilité.
     const draws = [];
+    for (const a of active.filter((x) => x.type === 'panel')) this.panel(a, Math.min(clamp01((t - a.t0) / 0.35), clamp01((a.t1 + 0.4 - t) / 0.4)));
     for (const a of active) {
+      if (a.type === 'panel') continue;
       const st = this.state.get(a) || { vis: 0, pos: null, cand: -1 };
       this.state.set(a, st);
       const life = Math.min(clamp01((t - a.t0) / 0.35), clamp01((a.t1 + 0.4 - t) / 0.4));
@@ -390,6 +403,36 @@ export class Annotator {
       ctx.globalAlpha = d.alpha * clamp01((k - 0.5) / 0.5);
       this.pill(x, y, box, a);
     }
+    ctx.restore();
+  }
+
+  /** Encadré fixe à l'écran (en haut à droite) : titre, lignes « article : quantité », note. */
+  panel(a, alpha) {
+    const ctx = this.ctx;
+    const x = this.W - 560, y = 64, w = 520, rowH = 30;
+    const h = 58 + a.rows.length * rowH + 44;
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = BG;
+    rrect(ctx, x, y, w, h, 8); ctx.fill();
+    ctx.fillStyle = YEL;
+    rrect(ctx, x, y, 6, h, [8, 0, 0, 8]); ctx.fill();
+    ctx.textBaseline = 'top';
+    ctx.fillStyle = YEL;
+    ctx.font = `700 26px ${DISPLAY}`;
+    ctx.fillText(a.title, x + 22, y + 14);
+    a.rows.forEach(([k, v], i) => {
+      const ry = y + 58 + i * rowH;
+      ctx.fillStyle = INK;
+      ctx.font = `600 18px ${BODY}`;
+      ctx.fillText(k, x + 22, ry);
+      ctx.fillStyle = YEL;
+      ctx.font = `700 18px ${BODY}`;
+      ctx.fillText(v, x + 250, ry);
+    });
+    ctx.fillStyle = 'rgba(232,236,240,0.75)';
+    ctx.font = `500 14px ${BODY}`;
+    wrap(ctx, a.note, w - 44).forEach((l, i) => ctx.fillText(l, x + 22, y + h - 40 + i * 18));
     ctx.restore();
   }
 
