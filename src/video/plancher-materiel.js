@@ -119,15 +119,21 @@ export function materielGroup(S) {
     S.box(0.03, 0.012, 0.012, 'steel', { pos: [-0.18, 0.074, 0] }),
     // Grilles d'aération du moteur.
     ...[0, 1, 2, 3].map((i) => S.box(0.006, 0.05, 0.08, 'blackCast', { pos: [0.2 + i * 0.014, 0.078, 0] })),
-    // Poignée arrière en D (caoutchouc) et gâchette.
-    S.tube([[0.25, 0.105], [0.33, 0.12], [0.39, 0.1], [0.4, 0.05], [0.37, 0.016], [0.3, 0.016], [0.26, 0.032]].map(([x, y]) => [x, y, 0]), 0.015, 'rubber', { ends: 'none' }),
-    S.box(0.03, 0.022, 0.016, 'orange', { r: 0.004, pos: [0.315, 0.09, 0] }),
+    // Poignée arrière fermée en D : barre du haut dans le prolongement du moteur,
+    // poignée inclinée gainée de caoutchouc, barre du bas qui rejoint le moteur ;
+    // gâchette sous la barre du haut, bouton de blocage sur le côté.
+    S.box(0.13, 0.036, 0.05, 'grey', { r: 0.012, pos: [0.315, 0.104, 0] }),
+    S.box(0.038, 0.115, 0.048, 'grey', { r: 0.014, pos: [0.371, 0.062, 0], rot: [0, 0, 0.34] }),
+    S.box(0.042, 0.085, 0.052, 'rubber', { r: 0.016, pos: [0.374, 0.055, 0], rot: [0, 0, 0.34] }),
+    S.box(0.16, 0.028, 0.046, 'grey', { r: 0.01, pos: [0.31, 0.018, 0] }),
+    S.box(0.016, 0.03, 0.022, 'orange', { r: 0.004, pos: [0.3, 0.075, 0] }),
+    S.cyl(0.006, 0.054, 'blackCast', { axis: 'z', pos: [0.335, 0.104, 0] }),
   );
   const blade = S.extrude(lame(0.2, 0.025), 0.0015, 'steel');
   blade.position.set(-0.39, 0.06, 0);
   scie.add(blade);
   // Fil d'alimentation, au sol.
-  scie.add(S.tube([[0.37, 0.02, 0], [0.43, 0.008, 0.02], [0.5, 0.008, 0.09], [0.52, 0.008, 0.2]], 0.006, 'hose', { ends: 'none' }));
+  scie.add(S.tube([[0.39, 0.01, 0], [0.43, 0.008, 0.02], [0.5, 0.008, 0.09], [0.52, 0.008, 0.2]], 0.006, 'hose', { ends: 'none' }));
   // Deux lames à bois de rechange, à plat à côté de la scie.
   [0.12, 0.17].forEach((z, k) => {
     const sp = S.extrude(lame(0.2, 0.02), 0.0015, 'steel');
