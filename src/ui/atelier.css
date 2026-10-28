@@ -342,3 +342,35 @@ body.page-open .workspace .resizer { display: none; }
   #stage .proc-bar-actions .tbtn { flex: none; width: 38px; padding: 0; }
   #stage .proc-bar-actions .tbtn span { display: none; }
 }
+
+/* ---------------------------------------------------------------- dock « Atelier » (fonctions de la vue 3D)
+   Toutes les fonctions au même endroit : colonne de grands boutons (pictogramme + nom) au bord gauche de la scène,
+   sous la barre de la vue ; rangée qui défile en bas sur une scène étroite (téléphone, tablette en portrait). */
+.tgroup #btn-page.in-dock { display: none; }
+.dock {
+  position: absolute; left: 12px; top: var(--tools-bottom, 12px); z-index: 6; display: flex; flex-direction: column; gap: 4px;
+  max-height: calc(100% - var(--tools-bottom, 12px) - 56px); padding: 6px 5px; overflow: auto; overscroll-behavior: contain; scrollbar-width: thin;
+  background: color-mix(in srgb, var(--surface) 94%, transparent); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+.dock[hidden] { display: none !important; }
+.dock-t { padding: 0 4px 2px; font: 600 10px/1 var(--f-body); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); text-align: center; }
+.dock-list { display: flex; flex-direction: column; gap: 3px; }
+.dock .tbtn.ftool {
+  position: relative; width: 78px; height: auto; min-height: 56px; padding: 7px 4px 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  border-radius: 9px; font-size: 11.5px; line-height: 1.15; font-weight: 500; text-align: center; white-space: normal; color: var(--ink);
+}
+.dock .tbtn.ftool[hidden] { display: none; }
+.dock .tbtn.ftool svg { width: 22px; height: 22px; color: var(--accent-text, var(--accent)); flex: none; }
+.dock .tbtn.ftool:hover { background: var(--hover); }
+.dock .tbtn.ftool[aria-pressed="true"] { background: var(--ink); color: var(--surface); }
+.dock .tbtn.ftool[aria-pressed="true"] svg { color: inherit; }
+.dock .ftool-n { position: absolute; top: 4px; right: 6px; margin: 0; }
+@container stage (max-width: 719px) {
+  .dock { left: 8px; right: 8px; top: auto; bottom: 8px; max-height: none; flex-direction: row; align-items: center; padding: 4px; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }
+  .dock::-webkit-scrollbar { display: none; }
+  .dock-t { display: none; }
+  .dock-list { flex-direction: row; }
+  .dock .tbtn.ftool { width: auto; min-width: 70px; min-height: 52px; padding: 5px 6px; flex: none; }
+  #stage.has-dock .sidepanel { bottom: calc(var(--dock-h, 0px) + 14px); height: min(46%, calc(100% - var(--tools-bottom, 8px) - var(--dock-h, 0px) - 22px)); }
+  #stage.has-dock .hint { display: none; }
+}

@@ -75,7 +75,7 @@ export default {
     let root = null;
     let selected = new Set(); // maillages de la pièce sélectionnée (jamais estompés)
 
-    const btn = ctx.ui.addTool({ label: 'Circuits', icon: 'goutte', title: 'Circuits hydrauliques en couleur', pressed: false, onClick: () => (active ? stop() : start()) });
+    const btn = ctx.ui.addTool({ id: 'circuits-tool', rank: 50, label: 'Circuits', icon: 'goutte', title: 'Circuits hydrauliques en couleur', pressed: false, onClick: () => (active ? stop() : start()) });
     btn.style.display = 'none';
 
     /** Couleurs du mode : boyaux à la couleur de leur circuit, le reste estompé (API du visualiseur). */

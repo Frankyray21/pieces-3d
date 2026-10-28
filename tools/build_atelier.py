@@ -97,6 +97,10 @@ WEAK = [
 OVERRIDES = {
     'du311-std': {'P216': 'air', 'P312': 'air', 'P314': 'air', 'P276': 'hydraulique', 'P418': 'air', 'P144': 'carrousel'},
     'du311': {},
+    # STM-1500 : tête de forage et serre-tiges (avance), treuil, groupe hydraulique, eau et boue, protections.
+    'stm-1500': {**{k: 'avance' for k in ('P032', 'P048', 'P049', 'P052')}, **{k: 'treuil' for k in ('P039', 'P040', 'P041', 'P042')},
+                 **{k: 'hydraulique' for k in ('P068', 'P069', 'P071')}, **{k: 'air' for k in ('P029', 'P034', 'P036')},
+                 **{k: 'securite' for k in ('P023', 'P024', 'P025')}},
 }
 CAT_RULES = [
     ('gamme', r'^Gamme'),
@@ -1081,12 +1085,47 @@ def schemas_json(data, schem, docsys):
     }
 
 
+# Systèmes fonctionnels affichés en 3D (src/ui/features/systemes3d.js) : nom, pictogramme (src/ui/icons.js), couleur.
+SYS3D = {
+    'general': ('Vue générale', 'cube', '#5b6b7c'), 'porteur': ('Porteur et châssis', 'roue', '#8d6e3f'),
+    'moteur': ('Moteur diesel et refroidissement', 'engrenage', '#c0392b'), 'cabine': ('Cabine et poste de conduite', 'siege', '#7e57c2'),
+    'hydraulique': ('Hydraulique', 'goutte', '#1e6fd9'), 'air': ('Air comprimé et eau', 'vent', '#138d90'),
+    'electricite': ('Électricité et commandes', 'eclair', '#c99a06'), 'glissiere': ('Glissière et positionnement', 'glissiere', '#5f8a1f'),
+    'avance': ('Avance et forage', 'foret', '#ad1457'), 'carrousel': ('Carrousel et manutention des tiges', 'carrousel', '#9c5a2e'),
+    'treuil': ('Treuil de câble', 'cable', '#3949ab'), 'graissage': ('Graissage', 'burette', '#5d4037'), 'securite': ('Sécurité et extinction', 'flamme', '#e8453c'),
+    'finition': ('Finition et autocollants', 'etiquette', '#00838f'), 'options': ('Options et outillage', 'cle', '#455a64'),
+    'gamme': ('Gamme et repères', 'cube', '#5b6b7c'), 'carottier': ('Carottiers', 'structure', '#1e6fd9'), 'tete': ('Têtes de carottier', 'engrenage', '#c0392b'),
+    'overshot': ('Overshots et outils de repêchage', 'cle', '#7e57c2'), 'emerillon': ("Émerillons d'eau", 'goutte', '#138d90'),
+    'presse': ('Presse-étoupes', 'carrousel', '#8d6e3f'), 'tubage': ('Tubage et coupe', 'structure', '#5f8a1f'),
+    'raccord': ('Raccords et adaptateurs', 'cle', '#c99a06'), 'trousse': ('Trousses et consommables', 'etiquette', '#ad1457'),
+    'outil': ('Outils de manutention', 'cle', '#455a64'),
+}
+
+
+def systemes_json(data, sysmap, docsys):
+    """Système fonctionnel de chaque assemblage (moteur, hydraulique, électricité…), pour la vue 3D."""
+    used = set(sysmap.values())
+    order = list(SYS3D)
+    return {
+        'note': ("Systèmes fonctionnels de la machine, d'après le titre de chaque assemblage du manuel (ou celui de son "
+                 "parent) ; tools/build_atelier.py (classify)."),
+        'systemes': [{'id': k, 'nom': SYS3D[k][0], 'icone': SYS3D[k][1], 'couleur': SYS3D[k][2]} for k in order if k in used],
+        'assemblages': dict(sorted(sysmap.items())),
+        'documents': dict(sorted(docsys.items())),
+    }
+
+
 def main():
-    """Écrit bulles, donnees, entretien, consignes et schemas (.json) dans public/equipment/<id>/
+    """Écrit bulles, donnees, entretien, consignes, schemas et systemes (.json) dans public/equipment/<id>/
     et la liste des fichiers produits (champ « extras » de public/equipment/index.json)."""
     eid = sys.argv[1]
     data = json.load(open(f'public/equipment/{eid}/data.json'))
     sysmap, docsys, parent = classify(data)
+    if '--systemes' in sys.argv:  # seulement les systèmes (équipement dont les autres fichiers sont faits à la main)
+        with open(f'public/equipment/{eid}/systemes.json', 'w') as f:
+            json.dump(systemes_json(data, sysmap, docsys), f, ensure_ascii=False, separators=(',', ':'))
+        print(json.dumps(['systemes']))
+        return
     tech = techdata(data, sysmap, docsys)
     maint = maintenance(data, sysmap, docsys, tech)
     pages = ocr_load(sys.argv[2:]) if len(sys.argv) > 2 else {}
@@ -1100,6 +1139,7 @@ def main():
         'entretien': entretien_json(eid, data, maint),
         'consignes': consignes_json(data, notes),
         'schemas': schemas_json(data, schem, docsys),
+        'systemes': systemes_json(data, sysmap, docsys),
     }
     made = []
     for name, d in files.items():

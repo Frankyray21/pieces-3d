@@ -200,6 +200,36 @@ export default {
     ctx.on('view', (v) => {
       if (v.type === 'document' || (v.type === 'assembly' && !v.is3d)) requestAnimationFrame(decorate);
     });
+
+    // ---------------------------------------------------------------- outil « Schémas » du dock (vue 3D)
+    // Schémas et listes du manuel, rangés par famille, avec les circuits de chacun : un clic ouvre le schéma.
+    const SCH = 'schemas';
+    const schPanel = () => {
+      const e = eq();
+      const fams = schemas()?.documents || {};
+      const docs = [...e.documents.values()];
+      const groups = [...Object.keys(FAMILLE).map((f) => [FAMILLE[f], docs.filter((d) => fams[d.id] === f), f]), ['Autres schémas et listes', docs.filter((d) => !fams[d.id]), null]]
+        .filter(([, list]) => list.length);
+      const el = document.createElement('div');
+      el.className = 'pl-sch';
+      el.innerHTML = `<p class="pl-sch-intro">Schémas et listes du ${esc(e.docWord)}. Sur le schéma, les circuits sont en couleur et chaque bulle ouvre sa pièce.</p>
+        ${groups.map(([title, list, fam]) => `<h4>${fam ? icon(fam === 'electricite' ? 'eclair' : fam === 'air' ? 'vent' : 'goutte', { size: 15 }) : ''}${esc(title)}</h4>
+          <ul>${list.map((d) => {
+            const n = fam ? counts(d.id, fam) : {};
+            const dots = fam ? (schemas().circuits?.[fam] || []).filter((c) => n[c.id]).map((c) => `<i style="--cc:${color(fam, c.id)}" title="${esc(c.name)}"></i>`).join('') : '';
+            const planches = Object.values(schemas()?.planches || {}).filter((v) => v.doc === d.id && v.rungs).length;
+            return `<li><button type="button" data-go="${esc(d.id)}"><span class="mono">${esc(label(d.sheets[0]))}</span><span class="t">${esc(d.titleFr)}</span>
+              <small>${d.parts.length ? `${d.parts.length} composants` : planches ? `${planches} planches` : `${d.sheets.length} page${d.sheets.length > 1 ? 's' : ''}`}</small>${dots ? `<span class="pl-dots">${dots}</span>` : ''}</button></li>`;
+          }).join('')}</ul>`).join('')}`;
+      return el;
+    };
+    const schBtn = ctx.ui.addTool({
+      id: 'schemas-tool', rank: 70, label: 'Schémas', icon: 'schema', title: 'Schémas et listes du manuel, circuits en couleur', pressed: false,
+      onClick: () => ctx.ui.sidePanel.toggle({ owner: SCH, title: 'Schémas du manuel', icon: 'schema', content: schPanel() }),
+    });
+    schBtn.hidden = true;
+    ctx.on('equipment', ({ equipment }) => { schBtn.hidden = !equipment?.documents?.size; });
+    ctx.on('sidepanel', ({ open, owner }) => { if (owner === SCH) schBtn.setAttribute('aria-pressed', String(open)); });
     ctx.on('select', (d) => mark(d?.row ? refOf(d.ref) : null));
   },
 };

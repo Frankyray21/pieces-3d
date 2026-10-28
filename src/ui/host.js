@@ -354,52 +354,64 @@ export function createHost(app) {
   };
 
   // ---------------------------------------------------------------- outils de la scène
-  // Barre d'outils en deux rangées au besoin : l'éclatement, puis le groupe d'outils (outils du site, puis ceux des
-  // fonctions après un séparateur). Scène étroite (téléphone, ou moins de 600 px de scène) : le groupe tient sur une
-  // rangée qui défile (glisser, molette, boutons ‹ ›), outils des fonctions en tête pour qu'ils se voient d'emblée.
+  // Barre d'outils de la vue (éclatement, coupe, repères…) en haut de la scène ; scène étroite (téléphone, ou
+  // moins de 600 px de scène) : le groupe tient sur une rangée qui défile (glisser, molette, boutons ‹ ›).
+  // Les fonctions de l'atelier (ctx.ui.addTool : systèmes, données, entretien, consignes, circuits, procédures,
+  // schémas, page du manuel) sont réunies à un seul endroit, le « dock » : colonne de grands boutons au bord
+  // gauche de la scène, rangée en bas sur une scène étroite. Chaque bouton a son rang (« rank ») : l'ordre ne
+  // dépend pas de l'ordre de chargement des fonctions.
   const mainGroup = tools.querySelector('.tgroup');
-  const feat = document.createElement('span'); // outils des fonctions (display: contents : éléments du groupe)
-  feat.className = 'tfeat';
-  let sep = null;
-  const TOOLS_SCROLL_W = 600; // même seuil que la requête de conteneur de atelier.css
-  const toolsScroll = () => { const w = $('#stage').clientWidth; return app.narrow() || (w > 0 && w < TOOLS_SCROLL_W); };
-  /** Outils des fonctions : après ceux du site (séparateur devant), ou en tête de la rangée défilante (séparateur après). */
-  const placeFeat = () => {
-    if (!sep) return;
-    if (toolsScroll()) {
-      if (feat.lastChild !== sep) feat.append(sep);
-      if (mainGroup.firstChild !== feat) mainGroup.prepend(feat);
-    } else {
-      if (feat.firstChild !== sep) feat.prepend(sep);
-      if (mainGroup.lastChild !== feat) mainGroup.append(feat);
-    }
+  const dock = document.createElement('nav');
+  dock.className = 'dock';
+  dock.id = 'dock';
+  dock.setAttribute('aria-label', 'Atelier : fonctions de la vue 3D');
+  dock.innerHTML = '<span class="dock-t">Atelier</span><div class="dock-list"></div>';
+  $('#stage').append(dock);
+  const dockList = dock.querySelector('.dock-list');
+  /** Dock visible avec la barre de la vue 3D, s'il a au moins un bouton affiché. */
+  const placeDock = () => {
+    dock.hidden = tools.hidden || ![...dockList.children].some((b) => !b.hidden);
+    const r = dock.getBoundingClientRect();
+    $('#stage').style.setProperty('--dock-h', `${dock.hidden ? 0 : Math.round(r.height)}px`);
+    $('#stage').classList.toggle('has-dock', !dock.hidden);
   };
+  new MutationObserver(placeDock).observe(tools, { attributes: true, attributeFilter: ['hidden'] });
+  new MutationObserver(placeDock).observe(dockList, { subtree: true, childList: true, attributes: true, attributeFilter: ['hidden'] });
+  new ResizeObserver(placeDock).observe(dock);
   const addTool = (btn) => {
     let el = btn;
+    let rank = 100;
     if (!(btn instanceof Element)) {
       const { id, label = '', title = '', icon: ic, pressed, onClick } = btn || {};
+      rank = btn?.rank ?? 100;
       el = document.createElement('button');
       el.type = 'button';
       if (id) el.id = id;
       el.title = title || label;
-      el.innerHTML = `${ic ? icon(ic, { size: 16 }) : ''}${label ? `<span>${esc(label)}</span>` : ''}`;
+      el.innerHTML = `${ic ? icon(ic, { size: 22 }) : ''}${label ? `<span>${esc(label)}</span>` : ''}`;
       if (!label) el.setAttribute('aria-label', title);
       if (pressed != null) el.setAttribute('aria-pressed', String(!!pressed));
       if (onClick) el.addEventListener('click', onClick);
-    }
+    } else rank = Number(btn.dataset.rank) || 100;
     el.classList.add('tbtn', 'ftool');
-    if (!sep) {
-      sep = document.createElement('span');
-      sep.className = 'tsep';
-      sep.setAttribute('aria-hidden', 'true');
-      feat.append(sep);
-    }
-    if (feat.lastChild === sep && feat.firstChild !== sep) feat.insertBefore(el, sep);
-    else feat.append(el);
-    placeFeat();
+    el.dataset.rank = String(rank);
+    const next = [...dockList.children].find((b) => Number(b.dataset.rank) > rank);
+    dockList.insertBefore(el, next || null);
+    placeDock();
     return el;
   };
-  new ResizeObserver(placeFeat).observe($('#stage'));
+  setInsets('dock', dock);
+  // Page du manuel : le bouton de la barre (géré par le site) passe dans le dock, sous le même nom.
+  const pageBtn = $('#btn-page');
+  if (pageBtn) {
+    const proxy = addTool({ id: 'dock-page', label: pageBtn.textContent.trim() || 'Page du manuel', icon: 'page', title: pageBtn.title, rank: 90, onClick: () => pageBtn.click() });
+    pageBtn.classList.add('in-dock');
+    new MutationObserver(() => {
+      proxy.querySelector('span').textContent = pageBtn.textContent.trim();
+      proxy.title = pageBtn.title;
+      proxy.hidden = pageBtn.hidden;
+    }).observe(pageBtn, { childList: true, characterData: true, subtree: true, attributes: true, attributeFilter: ['hidden', 'title'] });
+  }
   // Rangée défilante : fondu et bouton ‹ › sur le bord où il reste des outils ; molette verticale convertie en
   // défilement horizontal ; l'outil qui prend le focus est montré.
   const moreL = tools.querySelector('.tmore.l');

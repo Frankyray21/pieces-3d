@@ -63,6 +63,7 @@ export default {
 
     const btn = ctx.ui.addTool({
       id: 'entretien-btn',
+      rank: 30,
       label: 'Entretien',
       icon: 'cle',
       title: 'Entretien et graissage : points à vérifier (manuel)',
