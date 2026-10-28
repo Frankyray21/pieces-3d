@@ -155,6 +155,7 @@ export const TOUR = [
   { keys: ['laser', 'niveau'], c: G(X0 + 0.6, 1.1, 0.2), d: 1.75 },
   { keys: ['barres', 'pingouin'], c: G(X0 + 2.5, 0.75), d: 2.1 },
   { keys: ['scie'], c: G(X0 + 1.8, 2.25), d: 0.7 },
+  { keys: ['epi'], c: G(X0 + 0.2, 1.75, 0.08), d: 1.0 },
 ];
 export const TOUR_STEP = { go: 0.8, hold: 1.7 }; // approche, arrêt (s)
 

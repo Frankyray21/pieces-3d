@@ -69,8 +69,11 @@ export const SEGMENTS = [
     why: 'TOUJOURS TRANSPORTER LES GROSSES PIÈCES DE BOIS À DEUX.',
     lines: [
       [1, 'Avant de commencer : la barricade travaux en cours avec son flasher orange, l\'armoire avec la trousse de premiers soins pis les deux lave-yeux, l\'extincteur.'],
-      [2, 'Pis le bois : du six par six brut, du trois par huit brut, des coins pis des tire-fonds de six pouces.'],
+      [2, 'Pis le bois : du six par six brut, du trois par huit brut, du deux par quatre plané, des coins pis des tire-fonds de six pouces.'],
       [1, 'Une règle qui change pas : les grosses pièces de bois, on les transporte toujours à deux.'],
+      // Outils : une phrase par arrêt de la caméra (voir TOUR, plancher-materiel.js), dans l'ordre de la procédure.
+      [2, 'Pis les outils ?'],
+      [1, 'Pied de biche, masse pis marteau. … La sciotte pis les pinces à billots. … Le niveau au laser Bosch pis le niveau de quarante-huit pouces. … Le pingouin pis les barres d\'écaillage de six, huit pis dix pieds. … La scie va-et-vient, avec ses lames à bois. … Pis l\'ÉPI de base, toujours.'],
     ],
     reveal: [{ cue: 'barricade', v: 19.0, vspan: 1.2 }, { cue: 'cabinet', v: 22.4, vspan: 0 }, { cue: 'ext', v: 25.6, vspan: 0 }],
     // Bois, quincaillerie, outils et ÉPI étalés derrière la barricade ; les outils (que la voix
@@ -335,7 +338,7 @@ const VOICE_END = 332.59;
 // Silences ajoutés dans la voix : [instant dans l'enregistrement, durée] (ex. cage, étape 11).
 const GAPS = { e11: [[203.45, 2.4]] };
 // Temps laissé après la voix (s) ; par défaut 0,4.
-const TAIL = { e11: 7.5, titre: 0.2, fin: 1.2, e15: 0.2, e7: 1.6, materiel: 12.6 };
+const TAIL = { e11: 7.5, titre: 0.2, fin: 1.2, e15: 0.2, e7: 1.6, materiel: 15.1 };
 const LEAD = 0.3; // la voix démarre 0,3 s après le début de la partie
 const r24 = (x) => Math.round(x * 24) / 24;
 
