@@ -28,7 +28,7 @@ const walk = (dir) => readdirSync(dir).flatMap((f) => {
 // renvoie alors à la version complète du site).
 // Données complémentaires (bulles, donnees, entretien, procedures, utilisation, prise-en-main, déclarées par index.json) : inscrites dans la
 // page (<script id="extras">, lu par src/data/extras.js) ; elles ne sont pas publiées (limite de fichiers).
-const EXTRAS = /\/(?:bulles|donnees|entretien|procedures|utilisation|prise-en-main)\.json$/;
+const EXTRAS = /\/(?:bulles|donnees|entretien|procedures|consignes|schemas|utilisation|prise-en-main)\.json$/;
 // Pages du manuel de l'utilisateur (utilisation/U001.webp…) : jamais publiées (limite de fichiers) ; le lecteur
 // affiche un message avec un lien vers la version complète. Le texte (recherche) et le sommaire restent.
 const MANUEL_UTILISATION = /^equipment\/([^/]+)\/utilisation\//;

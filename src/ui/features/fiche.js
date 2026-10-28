@@ -6,7 +6,8 @@
 // autres listes qui portent le même numéro et vignette de la page du manuel. « Voir sur le dessin » ouvre
 // la page du manuel avec la bulle de la pièce entourée d'un cercle animé
 // (positions : public/equipment/<id>/bulles.json, produit par
-// tools/extract_bulles.py ; sans position connue, la page s'ouvre simplement).
+// tools/extract_bulles.py, ou tools/build_atelier.py pour les manuels lus par OCR ; sans position
+// connue, la page s'ouvre simplement).
 //
 // La fiche se pose par-dessus le panneau d'un mode (circuits, entretien,
 // procédure, sous-ensemble isolé : sidePanel.open({ over: true })) : le mode

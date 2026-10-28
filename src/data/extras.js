@@ -1,7 +1,8 @@
 // Données complémentaires des équipements : public/equipment/<id>/<nom>.json
 // (bulles : positions des bulles des dessins ; donnees : données techniques ;
-// entretien : points d'entretien ; procedures : procédures pas à pas ; utilisation : manuel de l'utilisateur ;
-// prise-en-main : prise en main de la console).
+// entretien : points d'entretien ; procedures : procédures pas à pas ; consignes : consignes des dessins ;
+// schemas : schémas en couleur par circuit ; utilisation : manuel de l'utilisateur ; prise-en-main : prise en
+// main de la console).
 //
 // Site publié : lues à la demande, une fois, au chargement d'un équipement dont
 // l'index (public/equipment/index.json, champ « extras ») déclare les fichiers —
