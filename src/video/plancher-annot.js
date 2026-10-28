@@ -141,7 +141,7 @@ export const ANNOTATIONS = {
     { v: 219.6, type: 'note', at: [DIP.x - 0.95, CRIB.g + 0.75, DIP.z + 0.4], text: 'Interdit : morceaux de bois empilés l’un sur l’autre', dir: 'up' },
   ],
   e12: [
-    { v: 213.4, type: 'note', at: [SEC * 1.5, DECK, 0.6], text: 'Étapes 6 et 7 répétées', dir: 'up' },
+    { v: 213.4, type: 'note', at: [SEC * 1.5, DECK, 0.6], text: 'Étapes 6 et 7 répétées : 1re planche vissée, resserrage aux coins', dir: 'up' },
     { v: 217.4, type: 'note', at: [SEC - P8, DECK, joistZ[1]], text: 'Planches de jonction vissées', dir: 'up' },
   ],
   e13: [

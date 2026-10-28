@@ -225,7 +225,10 @@ export const SEGMENTS = [
     id: 'e12', min: 10,
     band: { n: '12', title: 'Couvrir la section 2', text: 'Une fois la structure de base de la deuxième section de plancher complétée, poursuivre en couvrant avec des 3\'\'X8\'\' en répétant les étapes 6 et 7 précédentes.', detail: 'Les 2 planches laissées libres (étape 8) sont vissées pour jointer les sections' },
     lines: [
-      [1, 'Étape douze : on couvre la deuxième section en partant du bout, du côté où arrive le bois, en répétant les étapes six pis sept. Les deux planches de jonction sont posées pis vissées à la fin.'],
+      [1, 'Étape douze : la deuxième section, on la couvre comme la première.'],
+      [2, 'Fait qu\'on part d\'où ?'],
+      // Indications de ton ElevenLabs entre crochets, au fil de la réplique (non dites).
+      [1, 'Du bout, du côté où arrive le bois. La première planche vissée à chaque bout, pis on avance sur ce qui est déjà couvert. … [firm] Rendu à la moitié, on resserre : coins enfoncés entre les planches, planche devant les coins vissée. … [calm] Les deux planches de jonction, on les pose pis on les visse à la fin.'],
     ],
     // Section 2 couverte du bout côté galerie (d'où arrive le bois) vers la jonction ; les
     // planches de jonction posées et vissées à la fin.
