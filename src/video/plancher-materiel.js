@@ -2,7 +2,7 @@
 // derrière la barricade pour la présentation du début de la vidéo : bois
 // (6 × 6 brut, 3 × 8 brut, 2 × 4 planés ou bruts), coins de bois, tire-fonds
 // de 6 po, outils (pied de biche, masse, marteau, sciotte, pinces à billots,
-// niveau au laser Bosch, niveau de 48 po, barres d'écaillage de 6, 8 et 10 pi,
+// niveau au laser Bosch, niveau de 48 po,
 // pingouin (gratte minière de 32 po, sert de pelle), scie va-et-vient et
 // lames à bois) et ÉPI de base. Silhouettes simples : ce
 // sont des repères pour la formation, pas des modèles de pièces.
@@ -14,8 +14,6 @@ const g0 = (x, z) => ground(x, z);
 const LEN = 10 * FT; // longueurs de présentation (le chantier utilise aussi du 16 pi)
 // Piles de bois le long de la galerie, contre la paroi Z négative.
 const PILES = { b66: -2.2, b38: -1.6, s24: -1.05 };
-// Barres d'écaillage en travers de la galerie, au fond de l'aire.
-const BARS_X = X0 + 2.75;
 
 // Points d'attache des étiquettes (repère de la galerie), par article.
 export const MAT = {
@@ -32,7 +30,6 @@ export const MAT = {
   marteau: { at: [X0 + 1.8, 0, 0.85], text: 'Marteau' },
   pinces: { at: [X0 + 1.8, 0, 1.5], text: 'Pinces à billots' },
   scie: { at: [X0 + 1.8, 0, 2.25], text: 'Scie va-et-vient et lames à bois' },
-  barres: { at: [BARS_X, 0, 0.3], text: 'Barres d’écaillage 6, 8 et 10 pi' },
   pingouin: { at: [X0 + 2.25, 0, 0.55], text: 'Pingouin (gratte minière 32 po)' },
   epi: { at: [X0 + 0.1, 0, 1.85], text: 'ÉPI : équipement de base' },
 };
@@ -143,14 +140,6 @@ export function materielGroup(S) {
   });
   scie.rotation.y = -Math.PI / 2;
   g.add(onGround(S, scie, MAT.scie.at[0], MAT.scie.at[2]));
-  // Barres d'écaillage de 6, 8 et 10 pi (alu, pointe d'acier), en travers (selon Z).
-  [6, 8, 10].forEach((ft, k) => {
-    const len = ft * FT;
-    const x = BARS_X + (k - 1) * 0.13;
-    const z0 = -0.75;
-    const bar = S.group(S.cyl(0.017, len - 0.12, 'castAlu', { axis: 'z', pos: [0, 0.02, (len - 0.12) / 2] }), S.cyl(0.017, 0.12, 'darkSteel', { axis: 'z', r2: 0.006, pos: [0, 0.02, len - 0.06] }));
-    g.add(onGround(S, bar, x, z0));
-  });
   // Pingouin : gratte minière de 32 po (manche de bois, lame d'acier jaune
   // recourbée, embout jaune), couchée selon Z, lame vers le fond de l'aire.
   {
@@ -189,7 +178,7 @@ export const TOUR = [
   { keys: ['biche', 'masse', 'marteau'], c: G(X0 + 1.4, 0.4), d: 1.65 },
   { keys: ['sciotte', 'pinces'], c: G(X0 + 1.4, 1.8), d: 1.15 },
   { keys: ['laser', 'niveau'], c: G(X0 + 0.6, 1.1, 0.2), d: 1.75 },
-  { keys: ['barres', 'pingouin'], c: G(X0 + 2.5, 0.75), d: 2.1 },
+  { keys: ['pingouin'], c: G(X0 + 2.15, 0.55), d: 1.3 },
   { keys: ['scie'], c: G(X0 + 1.8, 2.25), d: 0.7 },
   { keys: ['epi'], c: G(X0 + 0.2, 1.75, 0.08), d: 1.0 },
 ];
