@@ -99,13 +99,43 @@ export function materielGroup(S) {
   const arm = (k) => S.tube([[k * 0.15, 0.02, -0.25], [k * 0.05, 0.02, -0.08], [0, 0.02, 0], [-k * 0.13, 0.02, 0.17], [-k * 0.14, 0.02, 0.3], [-k * 0.04, 0.02, 0.37]], 0.011, 'darkSteel');
   const pinces = S.group(arm(1), arm(-1), S.cyl(0.018, 0.4, 'black', { axis: 'x', pos: [0, 0.02, -0.26] }), S.cyl(0.02, 0.03, 'darkSteel', { pos: [0, 0.02, 0] }));
   g.add(onGround(S, pinces, MAT.pinces.at[0], MAT.pinces.at[2]));
-  // Scie va-et-vient et lames à bois de rechange.
+  // Scie va-et-vient (scie alternative à fil) et lames à bois de rechange : modèle
+  // générique, sans marque. Construite selon X (lame vers -X), puis tournée selon Z.
+  const lame = (len, h) => {
+    const pts = [[0, h], [len, h], [len, 0.004]];
+    const n = Math.floor(len / 0.008);
+    for (let i = n; i > 0; i--) pts.push([i * 0.008 - 0.004, 0], [(i - 1) * 0.008 + 0.002, 0.004]);
+    pts.push([0, 0.004]);
+    return pts;
+  };
   const scie = S.group(
-    S.box(0.09, 0.1, 0.42, 'blue', { r: 0.02, pos: [0, 0.05, 0] }),
-    S.box(0.002, 0.03, 0.2, 'steel', { pos: [0, 0.05, -0.3] }),
-    S.box(0.07, 0.003, 0.22, 'steel', { pos: [0.14, 0.0015, -0.05] }),
-    S.box(0.07, 0.003, 0.22, 'steel', { pos: [0.14, 0.0045, 0.05] }),
+    // Moteur (gris) et poignée avant (caoutchouc noir), posés sur la poignée et le pied.
+    S.box(0.24, 0.088, 0.078, 'grey', { r: 0.025, pos: [0.14, 0.074, 0] }),
+    S.box(0.12, 0.012, 0.08, 'orange', { r: 0.004, pos: [0.09, 0.105, 0] }),
+    S.box(0.15, 0.074, 0.07, 'rubber', { r: 0.028, pos: [-0.06, 0.07, 0] }),
+    S.box(0.035, 0.05, 0.055, 'blackCast', { r: 0.01, pos: [-0.15, 0.068, 0] }),
+    // Pied d'appui (acier) et porte-lame.
+    S.box(0.006, 0.075, 0.05, 'darkSteel', { r: 0.003, pos: [-0.172, 0.06, 0] }),
+    S.box(0.03, 0.012, 0.012, 'steel', { pos: [-0.18, 0.074, 0] }),
+    // Grilles d'aération du moteur.
+    ...[0, 1, 2, 3].map((i) => S.box(0.006, 0.05, 0.08, 'blackCast', { pos: [0.2 + i * 0.014, 0.078, 0] })),
+    // Poignée arrière en D (caoutchouc) et gâchette.
+    S.tube([[0.25, 0.105], [0.33, 0.12], [0.39, 0.1], [0.4, 0.05], [0.37, 0.016], [0.3, 0.016], [0.26, 0.032]].map(([x, y]) => [x, y, 0]), 0.015, 'rubber', { ends: 'none' }),
+    S.box(0.03, 0.022, 0.016, 'orange', { r: 0.004, pos: [0.315, 0.09, 0] }),
   );
+  const blade = S.extrude(lame(0.2, 0.025), 0.0015, 'steel');
+  blade.position.set(-0.39, 0.06, 0);
+  scie.add(blade);
+  // Fil d'alimentation, au sol.
+  scie.add(S.tube([[0.37, 0.02, 0], [0.43, 0.008, 0.02], [0.5, 0.008, 0.09], [0.52, 0.008, 0.2]], 0.006, 'hose', { ends: 'none' }));
+  // Deux lames à bois de rechange, à plat à côté de la scie.
+  [0.12, 0.17].forEach((z, k) => {
+    const sp = S.extrude(lame(0.2, 0.02), 0.0015, 'steel');
+    sp.rotation.x = -Math.PI / 2;
+    sp.position.set(-0.12 + k * 0.03, 0.002 + k * 0.0016, z);
+    scie.add(sp);
+  });
+  scie.rotation.y = -Math.PI / 2;
   g.add(onGround(S, scie, MAT.scie.at[0], MAT.scie.at[2]));
   // Barres d'écaillage de 6, 8 et 10 pi (alu, pointe d'acier), en travers (selon Z).
   [6, 8, 10].forEach((ft, k) => {
