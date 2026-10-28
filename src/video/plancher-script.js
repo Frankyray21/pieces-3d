@@ -240,7 +240,7 @@ export const SEGMENTS = [
     lines: [
       [1, 'Étape quatorze : ici, le plancher dépasse douze pouces. Il faut des marches : seize pouces de profondeur, entre trente-six pis soixante pouces de large, douze pouces de haut au maximum. On vise neuf.'],
     ],
-    reveal: [{ cue: 'stairs', at: 0.1, span: 0.6 }],
+    reveal: [{ cue: 'stairs', at: 0.05, span: 0.62 }],
     cams: [{ t: 0.3, ...C.stairs }, { t: 1, pos: [L + 2.6, 1.0, 2.1], tgt: [L + 0.3, 0.0, 0.96] }],
   },
   {
@@ -338,7 +338,7 @@ const VOICE_END = 332.59;
 // Silences ajoutés dans la voix : [instant dans l'enregistrement, durée] (ex. cage, étape 11).
 const GAPS = { e11: [[203.45, 2.4]] };
 // Temps laissé après la voix (s) ; par défaut 0,4.
-const TAIL = { e11: 7.5, titre: 0.2, fin: 1.2, e15: 0.2, e7: 1.6, materiel: +(tourEnd(TOUR_V0) + 0.1 - 38.93).toFixed(2) };
+const TAIL = { e14: 8.4, e11: 7.5, titre: 0.2, fin: 1.2, e15: 0.2, e7: 1.6, materiel: +(tourEnd(TOUR_V0) + 0.1 - 38.93).toFixed(2) };
 const LEAD = 0.3; // la voix démarre 0,3 s après le début de la partie
 const r24 = (x) => Math.round(x * 24) / 24;
 

@@ -173,19 +173,26 @@ export function P14(api, opts = {}) {
   const { n, rise } = stairPlan();
   const T = STAIR.tread;
   const z0 = STAIR.z0, z1 = STAIR.z0 + STAIR.w;
+  // Marches superposées (p. 15) : chaque giron (deux 3 × 8, 16 po) repose sur trois
+  // colonnes de 3 × 8 empilés à plat dans le sens de la marche (côtés et centre),
+  // montées du sol jusqu'au giron ; un coin de bois sous la colonne la met de niveau.
   for (let i = 1; i < n; i++) {
     const top = DECK - i * rise;
     const x0 = L + (i - 1) * T;
-    // Giron : deux 3 × 8 (16 po), de 48 po de large.
-    for (const k of [0, 1]) put('1', lumber(S, [P8, P3, STAIR.w], [x0 + (k + 0.5) * P8, top - P3 / 2, (z0 + z1) / 2]), [0.25 * i, 0.35, 0], 14, { seq: i * 10 + 5 });
-    // Supports empilés en 3 × 8 (dans le sens de la marche), mis de niveau aux coins.
-    for (const z of [z0 + 0.12, (z0 + z1) / 2, z1 - 0.12]) {
-      placeStack(api, stack(x0 + T / 2, z, top - P3, 'x', { len38: T }), { refs: { b38: '2', b66: '2', crib: '2', wedge: '3' }, labeled, step: 14, seq: i * 10, explode: { wedge: [0.25 * i, 0.18, 0] } });
+    for (const k of [0, 1]) put('1', lumber(S, [P8, P3, STAIR.w], [x0 + (k + 0.5) * P8, top - P3 / 2, (z0 + z1) / 2]), [0.25 * i, 0.35, 0], 14, { seq: i * 20 + 15 + k });
+    for (const z of [z0 + P8 / 2, (z0 + z1) / 2, z1 - P8 / 2]) {
+      const g = Math.max(ground(x0, z), ground(x0 + T, z));
+      const under = top - P3; // dessous du giron
+      const nL = Math.floor((under - g) / P3);
+      const yb = under - nL * P3; // les 3 × 8 partent du giron vers le bas
+      for (let j = 0; j < nL; j++) put('2', lumber(S, [T, P3, P8], [x0 + T / 2, yb + (j + 0.5) * P3, z]), [0.25 * i, 0.12 * j, 0], 14, { seq: i * 20 + 1 + j });
+      const gap = yb - g;
+      if (gap > 0.004) put('3', wedge(S, { pos: [x0 + T / 2, g, z], along: 'x', pair: gap > WEDGE.t, thick: gap }), [0.25 * i, -0.1, 0], 14, { seq: i * 20 });
     }
   }
   // Mains courantes (plus d'une marche) : 2 × 4 raboté de chaque côté.
   const xb = L + (n - 1) * T - T / 2;
-  for (const z of [z0 - S24.t, z1 + S24.t]) {
+  for (const z of [z0 - S24.t / 2, z1 + S24.t / 2]) {
     const hb = DECK - (n - 1) * rise;
     const gb = ground(xb, z);
     put('4', lumber(S, [S24.w, hb + 0.9 - gb, S24.t], [xb, (gb + hb + 0.9) / 2, z], 'woodPlaned'), [0.5, 0, Math.sign(z - (z0 + z1) / 2) * 0.3], 16, { seq: 0 });
@@ -217,7 +224,7 @@ export function guardSegments() {
     const x0 = over12(s * W / 2);
     if (x0 != null && sideGap > 12 * IN + 0.005) segs.push({ axis: 'x', side: s, a: Math.max(0, Math.floor(x0 / FT) * FT), b: L });
   }
-  if (deckHeight(L, 0) > 12 * IN) segs.push({ axis: 'z', side: 1, a: -W / 2, b: STAIR.z0 }, { axis: 'z', side: 1, a: STAIR.z0 + STAIR.w, b: W / 2 });
+  if (deckHeight(L, 0) > 12 * IN) segs.push({ axis: 'z', side: 1, a: -W / 2, b: STAIR.z0 - S24.t - S24.w / 2 }, { axis: 'z', side: 1, a: STAIR.z0 + STAIR.w + S24.t + S24.w / 2, b: W / 2 });
   return segs;
 }
 

@@ -148,9 +148,9 @@ export const ANNOTATIONS = {
   ],
   e14: [
     { v: 233.8, type: 'dim', a: [L, ground(L, zg - 0.75), zg - 0.75], b: [L, DECK, zg - 0.75], off: [0.45, 0, 0], text: po(deckHeight(L, zg - 0.75)), sub: 'plus de 12 po : marches' },
-    { v: 238.0, type: 'dim', a: [L, t1, STAIR.z0 + STAIR.w], b: [L + STAIR.tread, t1, STAIR.z0 + STAIR.w], off: [0, 0, 0.3], text: '16 po', sub: 'profondeur min.' },
-    { v: 240.2, type: 'dim', a: [L + STAIR.tread * (STN - 1), DECK - (STN - 1) * rise, STAIR.z0], b: [L + STAIR.tread * (STN - 1), DECK - (STN - 1) * rise, STAIR.z0 + STAIR.w], off: [0.3, 0, 0], text: '48 po', sub: 'largeur 36 à 60 po' },
-    { v: 242.8, type: 'dim', a: [L + 0.02, t1, STAIR.z0], b: [L + 0.02, DECK, STAIR.z0], off: [0, 0, -0.3], text: po(rise), sub: 'hauteur 12 po max.' },
+    { v: 241.0, type: 'dim', a: [L, t1, STAIR.z0 + STAIR.w], b: [L + STAIR.tread, t1, STAIR.z0 + STAIR.w], off: [0, 0, 0.3], text: '16 po', sub: 'profondeur min.' },
+    { v: 244.0, type: 'dim', a: [L + STAIR.tread * (STN - 1), DECK - (STN - 1) * rise, STAIR.z0], b: [L + STAIR.tread * (STN - 1), DECK - (STN - 1) * rise, STAIR.z0 + STAIR.w], off: [0.3, 0, 0], text: '48 po', sub: 'largeur 36 à 60 po' },
+    { v: 247.0, type: 'dim', a: [L + 0.02, t1, STAIR.z0], b: [L + 0.02, DECK, STAIR.z0], off: [0, 0, -0.3], text: po(rise), sub: 'on vise 9 po · 12 po max.' },
   ],
   e15: [
     { v: 248.4, type: 'dim', a: [L, ground(L, zg - 0.75), zg - 0.75], b: [L, DECK, zg - 0.75], off: [0.45, 0, 0], text: po(deckHeight(L, zg - 0.75)), sub: 'plus de 12 po + vide' },
