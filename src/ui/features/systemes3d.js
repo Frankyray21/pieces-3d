@@ -5,9 +5,9 @@
 //
 // Le panneau latéral donne la légende : un système par ligne, avec sa couleur,
 // son pictogramme et le nombre d'ensembles présents dans la vue. Un clic sur un
-// système le montre seul (le reste est estompé, la vue le cadre) et liste ses
-// ensembles : un clic ouvre l'ensemble (le mode reste actif, la vue garde ses
-// couleurs). Un clic sur une pièce la sélectionne : sa fiche se pose par-dessus
+// système le montre seul (le reste est estompé) et zoome sur le cœur du système ;
+// il liste aussi ses ensembles : un clic zoome sur l'ensemble (mis en évidence),
+// « Ouvrir » affiche sa liste (le mode reste actif, la vue garde ses couleurs). Un clic sur une pièce la sélectionne : sa fiche se pose par-dessus
 // la légende, qui revient quand elle se ferme. Chaque maillage prend la couleur
 // de l'ensemble le plus proche qui le contient (un distributeur hydraulique
 // monté sur l'avance est bleu hydraulique).
@@ -36,6 +36,7 @@ export default {
     const { icon } = ctx.icons;
     let active = false;
     let focus = null; // système montré seul
+    let zoomed = null; // ensemble du système sur lequel la vue est cadrée
     let root = null;
     let parts = new Map(); // maillage → id du système
     let present = new Map(); // id du système → Set des ensembles présents dans la vue
@@ -105,9 +106,12 @@ export default {
           </button></li>`).join('')}
         </ul>
         ${cur ? `${asms.length ? `<h4 class="s3-h">Ensembles — ${esc(cur.nom)} (${asms.length})</h4>
-          <ul class="s3-asms">${asms.map((a) => `<li><button type="button" class="s3-asm" data-go="${esc(a)}" style="--c:${esc(cur.couleur)}">${esc(titleOf(a))}</button></li>`).join('')}</ul>` : ''}` : ''}
+          <p class="s3-tip">Touchez un ensemble pour zoomer dessus ; « Ouvrir » affiche sa liste de pièces.</p>
+          <ul class="s3-asms">${asms.map((a) => `<li class="${zoomed === a ? 'on' : ''}" style="--c:${esc(cur.couleur)}"><button type="button" class="s3-asm" data-s3-zoom="${esc(a)}" aria-pressed="${zoomed === a}">${esc(titleOf(a))}</button><button type="button" class="s3-open" data-go="${esc(a)}" title="Ouvrir ${esc(titleOf(a))}">Ouvrir ›</button></li>`).join('')}</ul>` : ''}` : ''}
         <p class="s3-note">${esc(d.note.split(' ; ')[0])}.</p>`;
       el.addEventListener('click', (e) => {
+        const z = e.target.closest('[data-s3-zoom]');
+        if (z) { zoomTo(z.dataset.s3Zoom); return; }
         const b = e.target.closest('[data-s3]');
         if (b) show(b.dataset.s3 || null);
       });
@@ -115,13 +119,59 @@ export default {
     };
     const render = () => { if (active) ctx.ui.sidePanel.setContent(panel(), OWNER); };
 
-    /** Montre un système seul (null : tous), cadré dans la vue. */
+    /**
+     * Boîte du cœur d'un ensemble de maillages : celle des maillages dont le centre tombe entre les 8e et 92e
+     * centiles (pondérés par la taille) de chaque axe. Un système qui court sur toute la machine (flexibles
+     * hydrauliques, conduites d'air) est ainsi cadré là où ses pièces se concentrent, au lieu de la machine entière.
+     */
+    const coreBox = (objs) => {
+      const items = [];
+      for (const o of objs) {
+        const b = new THREE.Box3().setFromObject(o);
+        if (b.isEmpty()) continue;
+        const sz = b.getSize(new THREE.Vector3());
+        items.push({ b, c: b.getCenter(new THREE.Vector3()), w: Math.cbrt(Math.max(sz.x * sz.y * sz.z, 1e-9)) });
+      }
+      if (!items.length) return null;
+      const total = items.reduce((t, i) => t + i.w, 0);
+      const pct = (ax, q) => {
+        const sorted = items.slice().sort((a, b) => a.c[ax] - b.c[ax]);
+        let acc = 0;
+        for (const i of sorted) { acc += i.w; if (acc >= q * total) return i.c[ax]; }
+        return sorted[sorted.length - 1].c[ax];
+      };
+      const lo = new THREE.Vector3(pct('x', 0.08), pct('y', 0.08), pct('z', 0.08));
+      const hi = new THREE.Vector3(pct('x', 0.92), pct('y', 0.92), pct('z', 0.92));
+      const box = new THREE.Box3();
+      for (const i of items) if (i.c.x >= lo.x && i.c.x <= hi.x && i.c.y >= lo.y && i.c.y <= hi.y && i.c.z >= lo.z && i.c.z <= hi.z) box.union(i.b);
+      return box.isEmpty() ? null : box;
+    };
+
+    /** Montre un système seul (null : tous) et zoome sur lui. */
     const show = (id) => {
       focus = focus === id ? null : id;
+      zoomed = null;
+      ctx.viewer.clear();
       apply();
       render();
-      const objs = focus ? [...parts].filter(([, s]) => s === focus).map(([o]) => o) : null;
-      ctx.viewer.frame(objs && objs.length ? objs : undefined);
+      const objs = focus ? [...parts].filter(([, s]) => s === focus).map(([o]) => o) : [];
+      const box = objs.length ? coreBox(objs) : null;
+      ctx.viewer.frame(box || undefined);
+    };
+
+    /** Zoom sur un ensemble du système montré (tous ses exemplaires dans la vue), mis en évidence. */
+    const zoomTo = (asm) => {
+      if (!root) return;
+      if (zoomed === asm) { zoomed = null; ctx.viewer.clear(); render(); show(focus); return; }
+      const groups = [];
+      root.traverse((o) => { if (o.userData?.isAssembly && o.userData.assemblyId === asm) groups.push(o); });
+      if (!groups.length) return;
+      zoomed = asm;
+      const box = new THREE.Box3();
+      groups.forEach((g) => box.expandByObject(g));
+      ctx.viewer.markObjects(groups, { ghost: false });
+      ctx.viewer.frame(box);
+      render();
     };
 
     // ---------------------------------------------------------------- outil du dock
@@ -135,6 +185,7 @@ export default {
       ctx.viewer.select(null);
       active = true;
       focus = null;
+      zoomed = null;
       btn.setAttribute('aria-pressed', 'true');
       ctx.ui.sidePanel.open({ owner: OWNER, title: 'Systèmes de la machine', icon: 'calques', content: panel() });
       apply();
@@ -143,6 +194,8 @@ export default {
       if (!active) return;
       active = false;
       focus = null;
+      if (zoomed) ctx.viewer.clear();
+      zoomed = null;
       btn.setAttribute('aria-pressed', 'false');
       ctx.viewer.restoreBaseMaterials();
       ctx.ui.sidePanel.release(OWNER);

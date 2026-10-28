@@ -13,6 +13,7 @@
 // Tout vient du manuel : bulles et étiquettes lues par OCR (tools/ocr_pages.py),
 // circuits déduits des descriptions de la liste (tools/build_atelier.py).
 import './planches.css';
+import * as THREE from 'three';
 
 const ID = 'planches';
 // Couleurs des circuits : conventions des schémas (pression rouge, retour bleu…), distinctes en deutéranopie.
@@ -202,34 +203,218 @@ export default {
     });
 
     // ---------------------------------------------------------------- outil « Schémas » du dock (vue 3D)
-    // Schémas et listes du manuel, rangés par famille, avec les circuits de chacun : un clic ouvre le schéma.
+    // Schémas et listes du manuel, rangés par famille. Un clic reste dans la vue 3D : les composants du schéma
+    // sont montrés à leur place sur la machine (couleur de leur circuit, le reste estompé, vue cadrée), avec leur
+    // liste ; un composant de la liste sélectionne sa pièce (fiche par-dessus). Les composants se retrouvent par
+    // leur numéro dans les listes des assemblages (schémas hydrauliques et pneumatiques), ou par la ligne qui
+    // renvoie au schéma, ou par le boîtier lui-même (même numéro de coffret) ; un boîtier électrique que le
+    // manuel ne dessine qu'en planches le dit, et ses planches ne s'ouvrent que par le bouton prévu.
     const SCH = 'schemas';
+    const HW = /\b(BOLTS?|SCREWS?|NUTS?|WASHERS?|WSHR|HHCS|SHCS|PINS?|RIVETS?|CLAMPS?|TIES?|STRAPS?|LABELS?|DECALS?|DECL|GROMMETS?|SPACERS?|STANDOFFS?)\b/;
+    const BOX = /CUT-?OUT|ENCLOSURE|\bBOX\b|CABINET|CAMERA|CONSOLE|MONITOR/;
+    let shown = null; // { doc, targets } : schéma montré en 3D
+    let schIso = ''; // circuit isolé parmi ses composants
+    let pendingDoc = null; // schéma à montrer après l'ouverture de la machine entière
+    const normPn = (p) => String(p || '').toUpperCase().replace(/^\*/, '').replace(/\s/g, '');
+
+    /** Pièces de la vue 3D par (assemblage, repère) : tous les exemplaires. */
+    const modelParts = () => {
+      const out = new Map();
+      const root = ctx.viewer.model?.root;
+      if (!root) return out;
+      root.traverse((g) => {
+        const a = g.userData?.isAssembly && g.userData.assemblyId;
+        if (!a) return;
+        for (const q of g.userData.parts || []) {
+          const k = `${a}:${q.userData.partRef}`;
+          if (!out.has(k)) out.set(k, []);
+          out.get(k).push(q);
+        }
+      });
+      return out;
+    };
+    /** Composants d'un schéma présents dans la vue 3D : [{ row, key, objs, circ }]. */
+    const targetsOf = (doc) => {
+      const e = eq();
+      const d = e.documents.get(doc);
+      const fam = famOf(doc);
+      const parts = modelParts();
+      const byPn = new Map();
+      for (const a of e.assemblies.values()) for (const r of a.parts) for (const pn of r.pns || []) {
+        const k = normPn(pn);
+        if (!byPn.has(k)) byPn.set(k, []);
+        byPn.get(k).push(r);
+      }
+      const out = [];
+      const seen = new Set();
+      const add = (docRow, r) => {
+        const key = `${r.source.id}:${String(r.ref)}`;
+        const objs = parts.get(key) || parts.get(`${r.source.id}:${refOf(r.ref)}`);
+        if (!objs?.length || seen.has(key)) return;
+        seen.add(key);
+        out.push({ row: docRow || r, key, objs, circ: docRow && fam !== 'electricite' ? circuitOf(doc, docRow.ref) : null });
+      };
+      // ligne d'un assemblage qui renvoie au schéma (télécommande ERIS…)
+      for (const a of e.assemblies.values()) for (const r of a.parts) if (r.link === doc) add(null, r);
+      for (const r of d.parts) {
+        const u = String(r.desc || '').toUpperCase();
+        if (HW.test(u)) continue;
+        // schéma hydraulique ou pneumatique : chaque composant ; boîtier électrique : seulement le coffret lui-même
+        if (fam === 'electricite' && !BOX.test(u)) continue;
+        for (const pn of r.pns || []) for (const m of byPn.get(normPn(pn)) || []) add(r, m);
+      }
+      return out;
+    };
+
+    const paintSch = () => {
+      if (!shown || !ctx.viewer.model) return;
+      const fam = famOf(shown.doc);
+      const lit = new Map();
+      for (const t of shown.targets) {
+        if (schIso && t.circ !== schIso) continue;
+        const hex = t.circ ? color(fam, t.circ) : '#ff7c24';
+        for (const o of t.objs) o.traverse((m) => { if (m.isMesh && !m.userData.isEdges) lit.set(m, hex); });
+      }
+      const map = new Map();
+      ctx.viewer.model.root.traverse((m) => {
+        if (!m.isMesh || m.userData.isEdges) return;
+        map.set(m, lit.has(m) ? litMat(lit.get(m)) : ctx.viewer.dimMaterial(ctx.viewer.originalMaterial(m), 0.08));
+      });
+      ctx.viewer.setBaseMaterials(map);
+    };
+    const mats = new Map();
+    const litMat = (hex) => {
+      if (!mats.has(hex)) {
+        const m = new THREE.MeshStandardMaterial({ color: hex, roughness: 0.45, metalness: 0, emissive: hex, emissiveIntensity: 0.3 });
+        m.polygonOffset = true;
+        m.polygonOffsetFactor = 1;
+        mats.set(hex, m);
+      }
+      return mats.get(hex);
+    };
+    const frameSch = () => {
+      const objs = shown.targets.filter((t) => !schIso || t.circ === schIso).flatMap((t) => t.objs);
+      if (!objs.length) return;
+      const box = new THREE.Box3();
+      objs.forEach((o) => box.expandByObject(o));
+      ctx.viewer.frame(box);
+    };
+    /** Chemin de repères d'une ligne depuis l'assemblage affiché (pour la sélectionner en 3D). */
+    const pathTo = (asmId, ref) => {
+      const e = eq();
+      const start = ctx.view?.id;
+      const queue = [[start, []]];
+      const seen = new Set();
+      while (queue.length) {
+        const [id, path] = queue.shift();
+        if (id === asmId) return [...path, ref];
+        if (seen.has(id)) continue;
+        seen.add(id);
+        for (const r of e.assemblies.get(id)?.parts || []) if (r.link && e.assemblies.has(r.link)) queue.push([r.link, [...path, r.ref]]);
+      }
+      return null;
+    };
+
+    /** Liste des schémas, ou le schéma montré en 3D. */
     const schPanel = () => {
       const e = eq();
+      const el = document.createElement('div');
+      el.className = 'pl-sch';
+      if (shown) {
+        const d = e.documents.get(shown.doc);
+        const fam = famOf(shown.doc);
+        const n = {};
+        shown.targets.forEach((t) => { if (t.circ) n[t.circ] = (n[t.circ] || 0) + 1; });
+        const chips = fam && fam !== 'electricite' ? (schemas().circuits?.[fam] || []).filter((c) => n[c.id]).map((c) => `<button type="button" class="pl-chip" data-sch-circ="${c.id}" aria-pressed="${schIso === c.id}" style="--cc:${color(fam, c.id)}"><i></i>${esc(c.name)} <b>${n[c.id]}</b></button>`).join('') : '';
+        const rows = shown.targets.filter((t) => !schIso || t.circ === schIso);
+        const missing = d.parts.filter((r) => !HW.test(String(r.desc).toUpperCase()) && !shown.targets.some((t) => t.row === r)).length;
+        el.innerHTML = `
+          <button type="button" class="pl-back" data-sch-back>${icon('gauche', { size: 15 })}Tous les schémas</button>
+          <h3 class="pl-sch-t"><span class="mono">${esc(label(d.sheets[0]))}</span> ${esc(d.titleFr)}</h3>
+          ${shown.targets.length ? `<p class="pl-sch-intro">${fam === 'electricite' ? 'Le boîtier est mis en évidence sur la machine' : `${shown.targets.length} composant${shown.targets.length > 1 ? 's' : ''} du schéma à leur place sur la machine, en couleur par circuit`} ; le reste est estompé. Touchez un composant pour sa fiche.</p>
+            ${chips ? `<div class="pl-legend">${chips}</div>` : ''}
+            <ul class="pl-comp">${rows.map((t) => `<li><button type="button" data-sch-sel="${esc(t.key)}"${t.circ ? ` style="--cc:${color(fam, t.circ)}"` : ''}><i></i><span class="t">${esc(t.row.desc)}</span><span class="mono">${esc(t.row.pn || '')}</span><small>${esc(t.key.split(':')[0])}${t.objs.length > 1 ? ` · ×${t.objs.length}` : ''}</small></button></li>`).join('')}</ul>
+            ${missing && fam !== 'electricite' ? `<p class="pl-sch-intro">${missing} composant${missing > 1 ? 's' : ''} du schéma ne ${missing > 1 ? 'sont' : 'est'} pas dans cette vue 3D.</p>` : ''}`
+          : `<p class="pl-sch-intro">${ctx.view?.id !== e.root ? 'Aucun composant de ce schéma dans l’assemblage affiché.' : 'Ce boîtier ou ce schéma n’a pas de pièce dessinée en 3D : le manuel le décrit seulement par ses planches.'}</p>`}
+          <div class="pl-sch-acts">
+            ${ctx.view?.id !== e.root ? `<button type="button" class="btn primary" data-sch-root>Voir sur la machine entière</button>` : ''}
+            <button type="button" class="btn" data-go="${esc(d.id)}">${icon('page', { size: 15 })}Planches du ${esc(e.docWord)}</button>
+          </div>`;
+        return el;
+      }
       const fams = schemas()?.documents || {};
       const docs = [...e.documents.values()];
       const groups = [...Object.keys(FAMILLE).map((f) => [FAMILLE[f], docs.filter((d) => fams[d.id] === f), f]), ['Autres schémas et listes', docs.filter((d) => !fams[d.id]), null]]
         .filter(([, list]) => list.length);
-      const el = document.createElement('div');
-      el.className = 'pl-sch';
-      el.innerHTML = `<p class="pl-sch-intro">Schémas et listes du ${esc(e.docWord)}. Sur le schéma, les circuits sont en couleur et chaque bulle ouvre sa pièce.</p>
+      el.innerHTML = `<p class="pl-sch-intro">Touchez un schéma pour voir ses composants sur la machine, en 3D.</p>
         ${groups.map(([title, list, fam]) => `<h4>${fam ? icon(fam === 'electricite' ? 'eclair' : fam === 'air' ? 'vent' : 'goutte', { size: 15 }) : ''}${esc(title)}</h4>
           <ul>${list.map((d) => {
             const n = fam ? counts(d.id, fam) : {};
             const dots = fam ? (schemas().circuits?.[fam] || []).filter((c) => n[c.id]).map((c) => `<i style="--cc:${color(fam, c.id)}" title="${esc(c.name)}"></i>`).join('') : '';
             const planches = Object.values(schemas()?.planches || {}).filter((v) => v.doc === d.id && v.rungs).length;
-            return `<li><button type="button" data-go="${esc(d.id)}"><span class="mono">${esc(label(d.sheets[0]))}</span><span class="t">${esc(d.titleFr)}</span>
+            return `<li><button type="button" data-sch-doc="${esc(d.id)}"><span class="mono">${esc(label(d.sheets[0]))}</span><span class="t">${esc(d.titleFr)}</span>
               <small>${d.parts.length ? `${d.parts.length} composants` : planches ? `${planches} planches` : `${d.sheets.length} page${d.sheets.length > 1 ? 's' : ''}`}</small>${dots ? `<span class="pl-dots">${dots}</span>` : ''}</button></li>`;
           }).join('')}</ul>`).join('')}`;
       return el;
     };
+    const renderSch = ({ top = false } = {}) => {
+      if (!ctx.ui.sidePanel.has(SCH)) return;
+      ctx.ui.sidePanel.setContent(schPanel(), SCH);
+      if (top && ctx.ui.sidePanel.owner === SCH) ctx.ui.sidePanel.body.scrollTop = 0;
+    };
+    const showDoc = (doc, { frame = true } = {}) => {
+      if (frame) { ctx.viewer.select(null); schIso = ''; }
+      shown = { doc, targets: targetsOf(doc) };
+      renderSch({ top: frame });
+      if (!shown.targets.length) { ctx.viewer.restoreBaseMaterials(); return; }
+      paintSch();
+      if (frame) frameSch();
+    };
+    const leaveDoc = () => {
+      if (!shown) return;
+      shown = null;
+      schIso = '';
+      ctx.viewer.restoreBaseMaterials();
+    };
     const schBtn = ctx.ui.addTool({
-      id: 'schemas-tool', rank: 70, label: 'Schémas', icon: 'schema', title: 'Schémas et listes du manuel, circuits en couleur', pressed: false,
-      onClick: () => ctx.ui.sidePanel.toggle({ owner: SCH, title: 'Schémas du manuel', icon: 'schema', content: schPanel() }),
+      id: 'schemas-tool', rank: 70, label: 'Schémas', icon: 'schema', title: 'Schémas du manuel : leurs composants en couleur sur la machine', pressed: false,
+      onClick: () => {
+        if (ctx.ui.sidePanel.has(SCH)) { ctx.ui.sidePanel.release(SCH); return; }
+        ctx.ui.sidePanel.open({ owner: SCH, title: 'Schémas du manuel', icon: 'schema', content: schPanel() });
+        if (shown) { paintSch(); frameSch(); }
+      },
     });
     schBtn.hidden = true;
-    ctx.on('equipment', ({ equipment }) => { schBtn.hidden = !equipment?.documents?.size; });
-    ctx.on('sidepanel', ({ open, owner }) => { if (owner === SCH) schBtn.setAttribute('aria-pressed', String(open)); });
+    ctx.ui.sidePanel.element?.addEventListener('click', (e) => {
+      if (ctx.ui.sidePanel.owner !== SCH) return;
+      const t = e.target;
+      const doc = t.closest('[data-sch-doc]');
+      if (doc) { showDoc(doc.dataset.schDoc); return; }
+      if (t.closest('[data-sch-back]')) { leaveDoc(); renderSch({ top: true }); ctx.viewer.frame(); return; }
+      const c = t.closest('[data-sch-circ]');
+      if (c) { schIso = schIso === c.dataset.schCirc ? '' : c.dataset.schCirc; paintSch(); renderSch(); frameSch(); return; }
+      const sel = t.closest('[data-sch-sel]');
+      if (sel) {
+        const [asm, ref] = sel.dataset.schSel.split(':');
+        const path = pathTo(asm, ref);
+        if (path) ctx.viewer.select(path.join('>'));
+        return;
+      }
+      if (t.closest('[data-sch-root]')) { pendingDoc = shown.doc; ctx.go(eq().root); }
+    });
+    ctx.on('equipment', ({ equipment }) => { schBtn.hidden = !equipment?.documents?.size; leaveDoc(); pendingDoc = null; });
+    ctx.on('sidepanel', ({ open, owner }) => {
+      if (owner === SCH) schBtn.setAttribute('aria-pressed', String(open));
+      if (!open && owner === SCH) leaveDoc();
+    });
+    // Autre assemblage 3D : le schéma montré est recherché dans le nouveau modèle.
+    ctx.on('assembly', ({ is3d }) => {
+      if (pendingDoc && is3d) { const d = pendingDoc; pendingDoc = null; if (!ctx.ui.sidePanel.has(SCH)) ctx.ui.sidePanel.open({ owner: SCH, title: 'Schémas du manuel', icon: 'schema', content: schPanel() }); requestAnimationFrame(() => showDoc(d)); return; }
+      if (shown && is3d) requestAnimationFrame(() => showDoc(shown.doc));
+      else if (shown) leaveDoc();
+    });
+    // Vue d'ensemble : sous-ensembles détaillés arrivés, les composants sont recherchés à nouveau (sans recadrer).
+    ctx.on('model-update', ({ model, done }) => { if (shown && done && model === ctx.viewer.model) showDoc(shown.doc, { frame: false }); });
     ctx.on('select', (d) => mark(d?.row ? refOf(d.ref) : null));
   },
 };

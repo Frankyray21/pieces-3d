@@ -64,3 +64,16 @@
 .pl-sch small { font-size: 11px; color: var(--muted); white-space: nowrap; }
 .pl-dots { grid-column: 2 / -1; display: flex; gap: 4px; margin-top: 4px; }
 .pl-dots i { width: 10px; height: 10px; border-radius: 3px; background: var(--cc); }
+.pl-back { justify-self: start; display: inline-flex; align-items: center; gap: 4px; height: 30px; padding: 0 10px 0 6px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface-2); font-size: 12.5px; }
+.pl-back:hover { border-color: var(--accent); }
+.pl-sch-t { margin: 2px 0 0; font-size: 15px; line-height: 1.3; }
+.pl-sch-t .mono { color: var(--muted); font-size: 12.5px; margin-right: 4px; }
+.pl-comp { list-style: none; margin: 0; padding: 0; display: grid; }
+.pl-comp button { width: 100%; display: grid; grid-template-columns: 12px 1fr auto; column-gap: 8px; align-items: baseline; text-align: left; border: 0; border-bottom: 1px solid var(--line); background: none; padding: 7px 2px; font-size: 12.5px; }
+.pl-comp button:hover { background: var(--hover); }
+.pl-comp i { width: 10px; height: 10px; border-radius: 3px; background: var(--cc, var(--accent)); align-self: center; }
+.pl-comp .mono { font-size: 11.5px; color: var(--muted); }
+.pl-comp small { grid-column: 2 / -1; font-size: 11px; color: var(--muted); }
+.pl-sch-acts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.pl-sch-acts .btn { display: inline-flex; align-items: center; gap: 6px; }
+.pl-sch .pl-legend { flex-wrap: wrap; }
