@@ -22,6 +22,9 @@ const melange = (a) => {
   return b;
 };
 
+/** Petit écran ou pointeur tactile : l'écran ERIS de la console 3D y serait trop petit pour être lu (vue 2D par défaut). */
+const ecranEtroit = () => typeof matchMedia === 'function' && matchMedia('(max-width: 700px), (pointer: coarse)').matches;
+
 export default {
   id: ID,
   order: 65,
@@ -32,7 +35,7 @@ export default {
     /** État de l'interface par équipement (conservé quand on revient d'une page du manuel). */
     const UI = new Map();
     const ui = (eqId) => {
-      if (!UI.has(eqId)) UI.set(eqId, { etape: null, mission: null, fr: false, vue: '3d', defi: null, voy: null, quiz: null, essais: new Set(), sim: createSim(), info: null });
+      if (!UI.has(eqId)) UI.set(eqId, { etape: null, mission: null, fr: false, vue: ecranEtroit() ? '2d' : '3d', defi: null, voy: null, quiz: null, essais: new Set(), sim: createSim(), info: null });
       return UI.get(eqId);
     };
 
@@ -321,7 +324,8 @@ export default {
             return;
           }
           const v = q.ordre[q.i];
-          if (!v.choix) v.choix = melange(v.g.etats.length > 3 ? [v, ...melange(v.g.etats.filter((x) => x !== v)).slice(0, 3)] : v.g.etats);
+          // Choix : l'état à trouver et jusqu'à trois autres du même voyant (comparés par leur image).
+          if (!v.choix) v.choix = melange([v, ...melange(v.g.etats.filter((x) => x.img !== v.img)).slice(0, 3)]);
           zone.innerHTML = `<span class="pem-small">Voyant ${q.i + 1} / ${q.ordre.length}</span>
             <img class="pem-ex-img" src="${esc(img(v.img))}" alt="Voyant ${esc(v.g.groupe)} à identifier">
             <div class="pem-choices">${v.choix.map((c, k) => `<button type="button" class="pem-choice" data-k="${k}">${esc(c.texte)}</button>`).join('')}</div>
@@ -334,11 +338,13 @@ export default {
           const q = u.voy;
           const v = q.ordre[q.i];
           const c = v.choix[Number(b.dataset.k)];
-          const ok = c === v;
+          const ok = c.img === v.img;
           if (ok) q.score += 1;
           q.retour = { ok, t: ok ? 'Exact.' : `Non : ${v.texte}` };
           q.i += 1;
           dessiner();
+          // Focus clavier sur la première réponse suivante (ou « Recommencer »), pas perdu sur la page.
+          zone.querySelector('.pem-choice, [data-voy]')?.focus({ preventScroll: true });
         });
         dessiner();
       }
@@ -371,7 +377,7 @@ export default {
               <div class="pem-screen"${u.vue === '2d' ? '' : ' hidden'}><div class="pem-screen-in"></div></div>
               <div class="pem-msg" aria-live="polite"></div>
               <div class="pem-deck"></div>
-              <p class="pem-small pem-keys">Clavier : manette gauche W A S D, manette droite ← ↑ → ↓, touche Mode : M (maintenir). À la souris ou au doigt, une flèche touchée reste maintenue : la toucher de nouveau (ou ●) pour relâcher.</p>
+              <p class="pem-small pem-keys">Clavier (après un clic dans la console) : manette gauche W A S D, manette droite ← ↑ → ↓, touche Mode : M (maintenir). À la souris ou au doigt, une flèche touchée reste maintenue : la toucher de nouveau (ou ●) pour relâcher.</p>
             </div>
           </div>`;
         const scr2d = body.querySelector('.pem-screen-in');
@@ -453,8 +459,19 @@ export default {
           msgEl.className = `pem-msg ${m.ton}`;
           msgEl.innerHTML = `<span>${esc(m.texte)}</span>${m.page ? pageBtn(m.page) : ''}`;
         };
+        // Clé de l'élément qui a le focus dans le pupitre : il est retrouvé après le rendu (focus clavier gardé).
+        const cleFocus = (e) => {
+          if (!e || !deck.contains(e)) return null;
+          const pad = e.closest('.pem-pad');
+          if (pad && e.dataset.dir) return `.pem-pad[data-side="${pad.dataset.side}"] [data-dir="${e.dataset.dir}"]`;
+          if (e.dataset.id) return `.pem-key[data-side="${e.dataset.side}"][data-id="${CSS.escape(e.dataset.id)}"]`;
+          for (const a of ['data-power', 'data-estop', 'data-ext', 'data-modekey']) if (e.hasAttribute(a)) return `[${a}]`;
+          return null;
+        };
+        let sigDeck = '';
         const dessinerDeck = () => {
           const s = sim.s;
+          const focus = cleFocus(document.activeElement);
           const { L, R } = sim.axes();
           const btns = (ids, side) => ids.map((id) => {
             const on = side === 'L' ? (id === sim.couche() || sim.actif(id)) : sim.actif(id);
@@ -478,6 +495,13 @@ export default {
               ${pad('R', lbl(R), { pos: s.R })}
               <div class="pem-keys-r">${btns(sim.fonctions(), 'R')}</div>
             </div>`;
+          sigDeck = signatureDeck();
+          if (focus) deck.querySelector(focus)?.focus({ preventScroll: true });
+        };
+        /** Ce que montre le pupitre : il n'est redessiné que si cela change. */
+        const signatureDeck = () => {
+          const s = sim.s;
+          return JSON.stringify([s.power, s.estop, s.modeKey, s.L, s.R, sim.couche(), sim.couches(), sim.fonctions(), [...sim.couches(), ...sim.fonctions()].map((id) => sim.actif(id)), sim.axes()]);
         };
         const lbl = (a) => Object.fromEntries(Object.entries(a).map(([k, id]) => [k, id ? court(id) : null]));
         const tout = () => { dessinerEcran(); dessinerDeck(); dessinerMsg(); verifier(); sig = signature(); };
@@ -540,6 +564,13 @@ export default {
           if (dir) {
             const side = dir.closest('.pem-pad').dataset.side;
             const pos = { ...sim.s[side] };
+            if (side === 'L' && sim.s.modeKey && (dir.dataset.dir === 'left' || dir.dataset.dir === 'right')) {
+              // Touche Mode maintenue : un toucher = un changement de mode (aller-retour de la manette).
+              sim.stick('L', dir.dataset.dir === 'left' ? -1 : 1, 0);
+              sim.stick('L', 0, 0);
+              tout();
+              return;
+            }
             if (dir.dataset.dir === 'centre') { pos.x = 0; pos.y = 0; }
             else {
               const [axe, v] = { up: ['y', 1], down: ['y', -1], left: ['x', -1], right: ['x', 1] }[dir.dataset.dir];
@@ -552,14 +583,23 @@ export default {
 
         // Clavier : W A S D, flèches, M.
         const CLES = { w: ['L', 'y', 1], s: ['L', 'y', -1], a: ['L', 'x', -1], d: ['L', 'x', 1], ArrowUp: ['R', 'y', 1], ArrowDown: ['R', 'y', -1], ArrowLeft: ['R', 'x', -1], ArrowRight: ['R', 'x', 1] };
+        // Le clavier ne commande la console que si le focus est dans la console (clic ou tabulation) : ailleurs,
+        // les flèches gardent leur rôle (défilement de la page).
+        const consoleEl = body.querySelector('.pem-console');
+        consoleEl.tabIndex = -1;
+        consoleEl.addEventListener('pointerdown', () => { if (!consoleEl.contains(document.activeElement)) consoleEl.focus({ preventScroll: true }); });
+        const enfoncees = new Set(); // touches tenues (relâchées à l'arrêt ou quand la fenêtre perd le focus)
         const touche = (ev, bas) => {
-          if (ev.target.closest('input, textarea, select') || ev.ctrlKey || ev.metaKey || ev.altKey) return;
+          if (ev.ctrlKey || ev.metaKey || ev.altKey) return;
           const k = ev.key.length === 1 ? ev.key.toLowerCase() : ev.key;
-          if (k === 'm') { if (ev.repeat) return; sim.modeKey(bas); tout(); ev.preventDefault(); return; }
+          if (bas && (!consoleEl.contains(document.activeElement) || ev.target.closest('input, textarea, select'))) return;
+          if (!bas && !enfoncees.has(k)) return;
+          if (k === 'm') { ev.preventDefault(); if (ev.repeat) return; sim.modeKey(bas); if (bas) enfoncees.add(k); else enfoncees.delete(k); tout(); return; }
           const c = CLES[k];
           if (!c) return;
           ev.preventDefault();
           if (ev.repeat) return;
+          if (bas) enfoncees.add(k); else enfoncees.delete(k);
           const [side, axe, v] = c;
           const pos = { ...sim.s[side] };
           if (bas) pos[axe] = v;
@@ -568,10 +608,15 @@ export default {
           sim.stick(side, pos.x, pos.y);
           tout();
         };
+        const relacher = () => {
+          for (const k of [...enfoncees]) touche({ key: k, ctrlKey: false, metaKey: false, altKey: false, repeat: false, preventDefault() {}, target: consoleEl }, false);
+          enfoncees.clear();
+        };
         const kd = (ev) => touche(ev, true);
         const ku = (ev) => touche(ev, false);
         document.addEventListener('keydown', kd);
         document.addEventListener('keyup', ku);
+        window.addEventListener('blur', relacher);
 
         // Boucle : axes maintenus, forage, avertisseur.
         let raf = 0;
@@ -581,11 +626,11 @@ export default {
           t0 = t;
           sim.tick(dt);
           const sg = signature();
-          if (sg !== sig) { sig = sg; dessinerEcran(); dessinerMsg(); verifier(); if (sim.s.recul > 0 || !sim.s.lock) dessinerDeck(); }
+          if (sg !== sig) { sig = sg; dessinerEcran(); dessinerMsg(); verifier(); if (signatureDeck() !== sigDeck) dessinerDeck(); }
           raf = requestAnimationFrame(boucle);
         };
         raf = requestAnimationFrame(boucle);
-        arret = () => { cancelAnimationFrame(raf); document.removeEventListener('keydown', kd); document.removeEventListener('keyup', ku); c3?.arreter(); c3 = null; };
+        arret = () => { relacher(); cancelAnimationFrame(raf); document.removeEventListener('keydown', kd); document.removeEventListener('keyup', ku); window.removeEventListener('blur', relacher); c3?.arreter(); c3 = null; };
         ouvrir3d();
 
         dessinerMissions();
@@ -664,6 +709,7 @@ export default {
             if (a.dataset.quiz === 'again') nouveau();
             else { q.i += 1; q.rep = null; }
             dessiner();
+            zone.querySelector('.pem-choice, [data-quiz]')?.focus({ preventScroll: true });
             return;
           }
           const b = ev.target.closest('.pem-choice');
@@ -671,6 +717,7 @@ export default {
           q.rep = Number(b.dataset.k);
           if (q.ordre[q.i].choix[q.rep].ok) q.score += 1;
           dessiner();
+          zone.querySelector('[data-quiz="next"]')?.focus({ preventScroll: true });
         });
         dessiner();
       }

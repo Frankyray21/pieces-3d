@@ -150,12 +150,13 @@ export function createSim() {
     if (s.mode === 'system') {
       if (c === 'start') return ['control', 'compressor', 'hydraulic-pump', 'horn', 'drill-light'];
       if (c === 'diagnostic') return ['can-bus'];
-      if (c === 'configuration') return ['log-off'];
+      if (c === 'configuration') return []; // écran du mot de passe : aucune fonction à droite (p. 128)
       if (c === 'error') return ['silence', 'bottom-alarm', 'top-alarm', 'alarm-history', 'current-alarm', 'reset'];
       return ['reset-total-depth', 'reset-hole-depth'];
     }
     if (s.mode === 'tram') return ['laser'];
-    if (s.mode === 'setup') return ['deck-slide', 'mast-slide', 'laser'];
+    // Deck Slide et Mast Slide seulement dans la couche Feed (p. 139) ; Stinger et Outrigger : Laser seul (p. 140).
+    if (s.mode === 'setup') return couche() === 'feed' ? ['deck-slide', 'mast-slide', 'laser'] : ['laser'];
     if (s.accrafeed) return ['drill-lock', 'drill-air', 'collar-air', 'manual-drilling', 'water'];
     if (s.manual) return ['drill-lock', 'drill-air', 'reverse-drilling', 'collar-air', 'manual-drilling', 'water'];
     return ['makeup-breakout', 'drill-air', 'spline-piston', 'collar-air', 'manual-drilling', 'water'];
@@ -196,13 +197,15 @@ export function createSim() {
       else R = ax('feed-forward', 'feed-reverse', 'rotation-forward', 'rotation-reverse');
     }
     // Déplacement : sans Tram Enable maintenu, les pointeurs disparaissent (p. 138).
-    if (s.mode === 'tram' && !s.tramEnable) R = ax(null, null, null, null);
-    return { L, R };
+    // Déplacement sans Tram Enable maintenu : les libellés restent, les pointeurs disparaissent (p. 138).
+    return { L, R, pointeursR: !(s.mode === 'tram' && !s.tramEnable) };
   }
 
   /** Fonction d'un axe dévié : id de libellé ou null. */
   const fonctionAxe = (side, x, y) => {
-    const a = axes()[side];
+    const tout = axes();
+    if (side === 'R' && !tout.pointeursR) return []; // déplacement désactivé sans Tram Enable
+    const a = tout[side];
     return [x < 0 ? a.left : x > 0 ? a.right : null, y > 0 ? a.up : y < 0 ? a.down : null].filter(Boolean);
   };
 
@@ -223,8 +226,11 @@ export function createSim() {
     if (!effet) return;
     // Effets donnés par la liste des alarmes (p. 131 à 136).
     if ([2, 8, 9, 10, 11, 12, 30, 35, 37, 38, 39, 40].includes(n)) arretTotal();
-    if (n === 3) s.eau = false;
-    if ([13, 14, 15, 16].includes(n) || n === 1) s.pompe = false;
+    if (n === 3) { s.eau = false; s.lock = false; }
+    if ([13, 14, 15, 16].includes(n) || n === 1) { s.pompe = false; s.lock = false; }
+    // « Arrête la pompe hydraulique et le moteur du compresseur » (1), « Éteint le compresseur » (4, 5, 17 à 29,
+    // 41 à 43) ; sans compresseur, pas d'air de forage (p. 171).
+    if ([1, 4, 5, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 41, 42, 43].includes(n)) { s.compresseur = false; s.air = false; s.lock = false; }
   }
   function arretTotal() {
     s.pompe = false; s.compresseur = false; s.lock = false; s.air = false; s.eau = false; s.tramEnable = false;
@@ -241,6 +247,8 @@ export function createSim() {
     } else {
       s.mode = 'system'; s.couche.system = 'start';
       msg('Console allumée : mode SYSTEM, couche Start (démarrage).', 'ok', 122);
+      // Bouton d'arrêt d'urgence resté enfoncé pendant que la console était éteinte : l'alarme apparaît à l'allumage.
+      if (s.estop) { alarme(10); msg('Console allumée, arrêt d’urgence ERIS actionné : relâcher le bouton, puis réinitialiser l’alarme (couche Error).', 'danger', 132); }
     }
     visite(s.power ? 'power-on' : 'power-off');
   }
@@ -249,8 +257,9 @@ export function createSim() {
     if (on === s.estop) return;
     s.estop = on;
     if (on) {
+      // Chaque enfoncement arrête tout, même si l'alarme 10 est encore active d'un arrêt précédent.
+      arretTotal();
       if (s.power) alarme(10);
-      else arretTotal();
       visite('estop');
       msg('Arrêt d’urgence actionné : toutes les fonctions en cours sont arrêtées. Il reste actionné jusqu’à sa réinitialisation manuelle.', 'danger', 44);
     } else {
@@ -261,7 +270,8 @@ export function createSim() {
   function modeKey(on) {
     if (!s.power) return;
     s.modeKey = on;
-    if (on) { s.L = { x: 0, y: 0 }; msg('Touche Mode maintenue : déplacer la manette gauche vers la gauche ou la droite pour changer de mode.', 'info', 124); }
+    s.L = { x: 0, y: 0 }; // la manette gauche repart du centre, avec ou sans la touche Mode
+    if (on) { msg('Touche Mode maintenue : déplacer la manette gauche vers la gauche ou la droite pour changer de mode.', 'info', 124); }
   }
 
   function changerMode(dir) {
@@ -275,6 +285,7 @@ export function createSim() {
     }
     s.mode = cible;
     s.tramEnable = false;
+    s.lock = false; // le forage verrouillé ne continue pas hors du mode DRILL
     s.R = { x: 0, y: 0 };
     visite(cible);
     msg(`Mode ${T[cible][0]} (${T[cible][1]}).`, 'ok', T[cible][2]);
@@ -284,11 +295,15 @@ export function createSim() {
   function stick(side, x, y) {
     if (!s.power) { msg('La console est éteinte : interrupteur marche/arrêt.', 'warn', 121); return; }
     if (side === 'L' && s.modeKey) {
-      if (x) changerMode(x);
+      // Un seul changement de mode par déviation : au départ du centre vers la gauche ou la droite.
+      const avant = s.L.x;
+      s.L = { x, y };
+      if (x && x !== avant) changerMode(x);
       return;
     }
     s[side] = { x, y };
     if (!x && !y) {
+      if (side === 'R' && s.lock) visite('lock-relache');
       if (side === 'R' && s.lock) msg('Manette droite relâchée : la vitesse d’avance devient automatique, la rotation revient à la vitesse du dernier verrouillage.', 'ok', 145);
       return;
     }
@@ -366,7 +381,11 @@ export function createSim() {
       if (id === 'tram-enable') {
         s.tramEnable = !s.tramEnable;
         if (!s.tramEnable) { s.R = { x: 0, y: 0 }; msg('Tram Enable relâché : les pointeurs disparaissent, le déplacement est désactivé.', 'info', 138); }
-        else msg('Tram Enable maintenu : l’axe de la manette est activé pour le déplacement. Pousser : l’unité s’éloigne ; tirer : elle vient vers vous.', 'ok', 138);
+        else {
+          msg('Tram Enable maintenu : l’axe de la manette est activé pour le déplacement. Pousser : l’unité s’éloigne ; tirer : elle vient vers vous.', 'ok', 138);
+          // Manette droite déjà déviée : sa fonction s'exécute dès que l'axe est activé.
+          if (s.R.x || s.R.y) for (const f of fonctionAxe('R', s.R.x, s.R.y)) agir(f);
+        }
         return;
       }
       if (id === 'accrafeed') {
@@ -391,14 +410,17 @@ export function createSim() {
     switch (id) {
       case 'control':
         s.control = !s.control;
-        if (!s.control && s.mode !== 'system') s.mode = 'system';
+        if (!s.control) { s.lock = false; s.tramEnable = false; if (s.mode !== 'system') s.mode = 'system'; }
         return msg(s.control ? 'Commande active (CONTROL orange) : les modes Déplacement, Mise en place et Forage peuvent être sélectionnés.' : 'Commande inactive (CONTROL gris).', 'ok', 123);
       case 'hydraulic-pump':
+        if (!s.pompe && s.alarmes.some((a) => a.n === 10)) return msg('Alarme « Arrêt d’urgence ERIS 1 activé » : la réinitialiser d’abord (mode SYSTEM, couche Error, Reset). Elle permet seulement de redémarrer.', 'warn', 45);
         s.pompe = !s.pompe;
+        if (!s.pompe) s.lock = false;
         return msg(s.pompe ? 'Pompe hydraulique en marche : circuit hydraulique activé.' : 'Pompe hydraulique arrêtée.', 'ok', 125);
       case 'compressor':
+        if (!s.compresseur && s.alarmes.some((a) => a.n === 10)) return msg('Alarme « Arrêt d’urgence ERIS 1 activé » : la réinitialiser d’abord (mode SYSTEM, couche Error, Reset). Elle permet seulement de redémarrer.', 'warn', 45);
         s.compresseur = !s.compresseur;
-        if (!s.compresseur) s.air = false;
+        if (!s.compresseur) { s.air = false; s.lock = false; }
         return msg(s.compresseur ? 'Compresseur en marche (à vide jusqu’à la sélection de l’air de forage).' : 'Compresseur arrêté.', 'ok', 171);
       case 'horn': s.klaxon = 1.2; return msg('Horn : l’avertisseur sonore retentit.', 'ok', 125);
       case 'drill-light': s.eclairage = !s.eclairage; return msg(s.eclairage ? 'Feux de la foreuse allumés.' : 'Feux de la foreuse éteints.', 'ok', 125);
@@ -408,7 +430,7 @@ export function createSim() {
       case 'silence':
         if (!s.alarmes.length) return msg('Aucune alarme active.', 'info', 130);
         s.silence = true; visite('silence');
-        return msg('Silence : l’alarme sonore est coupée. L’alarme reste active jusqu’à sa réinitialisation.', 'ok', 130);
+        return msg('Silence : silence de l’alarme. L’alarme reste active jusqu’à sa réinitialisation.', 'ok', 130);
       case 'reset': {
         if (!s.alarmes.length) return msg('Aucune alarme active à réinitialiser.', 'info', 130);
         if (s.estop) return msg('Relâcher d’abord le bouton d’arrêt d’urgence (le tourner ou le tirer).', 'warn', 46);
@@ -439,10 +461,12 @@ export function createSim() {
       case 'drill-air':
         if (!s.air && !s.compresseur) return msg('Compresseur arrêté : le démarrer en mode SYSTEM, couche Start, avant l’air de forage.', 'warn', 171);
         s.air = !s.air;
+        if (!s.air) s.lock = false; // l'air et l'eau sont la condition du verrouillage (p. 145, étape 1)
         return msg(s.air ? 'Air de forage activé.' : 'Air de forage coupé.', 'ok', 145);
       case 'water':
         if (!s.eau && s.alarmes.some((a) => a.n === 3)) return msg('Alarme « Bas niveau d’eau de la mine » active : la pompe à eau est arrêtée.', 'warn', 132);
         s.eau = !s.eau;
+        if (!s.eau) s.lock = false;
         return msg(s.eau ? `Eau activée : le débit revient au dernier réglage (${s.debitEau} %).` : 'Eau coupée.', 'ok', 146);
       case 'drill-lock': {
         if (s.lock) { s.lock = false; return msg('Verrouillage de la foreuse désactivé.', 'info', 145); }

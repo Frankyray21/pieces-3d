@@ -12,11 +12,14 @@ const COURT = {
 export const court = (id) => COURT[id] || String(T[id]?.[1] || id).split(/ [:(—]/)[0];
 const lib = (id, fr) => esc(fr ? court(id) : T[id]?.[0] || id);
 
-/** Manette dessinée (contour, comme à l'écran) avec ses quatre fonctions ; flèches seulement sur les axes actifs. */
-function manette(axes, pos, fr, cls) {
+/**
+ * Manette dessinée (contour, comme à l'écran) avec ses quatre fonctions ; flèches (pointeurs) seulement si
+ * pointeurs est vrai (déplacement sans Tram Enable : libellés sans pointeurs, p. 138).
+ */
+function manette(axes, pos, fr, cls, pointeurs = true) {
   const { up, down, left, right } = axes;
   const on = (k) => pos && ((k === 'up' && pos.y > 0) || (k === 'down' && pos.y < 0) || (k === 'left' && pos.x < 0) || (k === 'right' && pos.x > 0));
-  const fl = (k, id) => (id ? `<span class="er-ar er-a-${k}${on(k) ? ' on' : ''}" aria-hidden="true"></span><span class="er-lb er-l-${k}${on(k) ? ' on' : ''}">${lib(id, fr)}</span>` : '');
+  const fl = (k, id) => (id ? `${pointeurs ? `<span class="er-ar er-a-${k}${on(k) ? ' on' : ''}" aria-hidden="true"></span>` : ''}<span class="er-lb er-l-${k}${pointeurs && on(k) ? ' on' : ''}">${lib(id, fr)}</span>` : '');
   return `<div class="er-stick ${cls}">
     <svg viewBox="0 0 60 100" class="er-stick-svg" aria-hidden="true"><path d="M22 8c6-6 18-4 20 4l-2 10c4 2 6 6 4 10l-6 30h6v4H16v-4h6l-6-38c-1-6 1-12 6-16Z" /><rect x="12" y="70" width="36" height="5" rx="1"/><rect x="10" y="78" width="40" height="5" rx="1"/><rect x="12" y="86" width="36" height="5" rx="1"/><rect x="8" y="94" width="44" height="5" rx="1"/></svg>
     ${fl('up', up)}${fl('down', down)}${fl('left', left)}${fl('right', right)}
@@ -63,7 +66,7 @@ export function ecran(sim, { fr = false, alarmes = new Map(), img = (p) => p } =
   const s = sim.s;
   if (!s.power) return '<div class="er er-off"><span>Console éteinte</span></div>';
   const c = sim.couche();
-  const { L, R } = sim.axes();
+  const { L, R, pointeursR } = sim.axes();
   const d = new Date();
   const heure = `${String(d.getHours()).padStart(2, '0')} : ${String(d.getMinutes()).padStart(2, '0')}`;
   const liste = (ids, side) => ids.map((id) => {
@@ -141,7 +144,7 @@ export function ecran(sim, { fr = false, alarmes = new Map(), img = (p) => p } =
       <span class="er-modes">${MODES.map((m) => `<span class="${m === s.mode ? 'on' : ''}">${fr ? esc(T[m][1]) : T[m][0]}</span>`).join('')}</span></div>
     <div class="er-status">${voyant(1, 'CANBUS : communication correcte')}${s.mode === 'drill' ? '' : voyant(8, 'DRILL : forage sélectionné')}${voyant(ctrl, s.control ? 'CONTROL : commande active' : 'CONTROL : commande inactive')}</div>
     <div class="er-centre">${centre}</div>
-    ${manettes ? `<div class="er-sticks">${manette(L, s.L, fr, 'g')}${manette(R, s.R, fr, 'd')}</div>` : ''}
+    ${manettes ? `<div class="er-sticks">${manette(L, s.L, fr, 'g')}${manette(R, s.R, fr, 'd', pointeursR)}</div>` : ''}
     <ul class="er-list er-left">${liste(sim.couches(), 'L')}</ul>
     <ul class="er-list er-right">${liste(sim.fonctions(), 'R')}</ul>
     ${vignette('L', sim.couches(), (id) => id === c || sim.actif(id), s.modeKey)}

@@ -415,8 +415,7 @@
     {
      "t": "Relâcher la manette droite : la vitesse d'avance devient automatique.",
      "si": {
-      "lock": true,
-      "Rcentre": true
+      "visite": "lock-relache"
      },
      "page": 145
     },
@@ -452,7 +451,7 @@
      "page": 130
     },
     {
-     "t": "Couper l'alarme sonore (Silence). Le silence et la réinitialisation ne se font que depuis cet écran.",
+     "t": "Faire le silence de l'alarme (Silence). Le silence et la réinitialisation ne se font que depuis cet écran.",
      "si": {
       "silence": true
      },

@@ -84,12 +84,12 @@ function manette(side, materiaux, cibles) {
   pivot.add(tete);
   const bloc = new THREE.Mesh(new RoundedBoxGeometry(0.06, 0.03, 0.075, 3, 0.012), materiaux.poignee);
   tete.add(bloc);
-  // Boutons : deux jaunes, deux rouges, un blanc (figures p. 121 et 122).
+  // Boutons : colonne jaune à gauche, colonne rouge à droite, bouton blanc en dessous (figures p. 121 et 122).
   // Positions des vignettes de manette de l'écran (eris.js, BOUTON) : HG, HD, MG, MD, B ; le bouton blanc du bas est du
-  // côté intérieur sur chaque manette.
+  // côté extérieur sur chaque manette (sous la colonne gauche à gauche, sous la colonne droite à droite).
   const boutons = [
-    ['HG', -0.014, -0.022, materiaux.jaune], ['HD', 0.014, -0.022, materiaux.jaune],
-    ['MG', -0.014, 0.0, materiaux.rouge], ['MD', 0.014, 0.0, materiaux.rouge],
+    ['HG', -0.014, -0.022, materiaux.jaune], ['HD', 0.014, -0.022, materiaux.rouge],
+    ['MG', -0.014, 0.0, materiaux.jaune], ['MD', 0.014, 0.0, materiaux.rouge],
     ['B', side === 'L' ? -0.01 : 0.01, 0.022, materiaux.blanc],
   ];
   const parPos = {};
@@ -328,12 +328,13 @@ export function creerConsole3D(conteneur, sim, { agir = () => {}, info = () => {
   racine.add(md.groupe);
   const pivots = { L: mg.pivot, R: md.pivot };
 
-  // Vue : rotation limitée devant la console (l'écran HTML ne se cache pas derrière les formes).
+  // Vue : rotation limitée devant la console. L'écran HTML (CSS3D) est toujours dessiné par-dessus la 3D : au-delà de
+  // ±0,4 rad (ou en vue plus rasante), il recouvrirait la manette la plus proche et capterait ses clics.
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.target.set(0, 0.17, -0.02);
   controls.enableDamping = true;
-  controls.minAzimuthAngle = -1.0; controls.maxAzimuthAngle = 1.0;
-  controls.minPolarAngle = 0.35; controls.maxPolarAngle = 1.45;
+  controls.minAzimuthAngle = -0.4; controls.maxAzimuthAngle = 0.4;
+  controls.minPolarAngle = 0.35; controls.maxPolarAngle = 1.35;
   controls.minDistance = 0.55; controls.maxDistance = 2.2;
   controls.enablePan = false;
   controls.update();
@@ -345,9 +346,14 @@ export function creerConsole3D(conteneur, sim, { agir = () => {}, info = () => {
     const r = renderer.domElement.getBoundingClientRect();
     ndc.set(((ev.clientX - r.left) / r.width) * 2 - 1, -((ev.clientY - r.top) / r.height) * 2 + 1);
     ray.setFromCamera(ndc, camera);
-    // Pièce visible touchée d'abord (bouton, touche Mode) ; sinon la zone de saisie la plus proche.
-    const hits = ray.intersectObjects(cibles, false);
-    const hit = hits.find((h) => h.object.material !== PRISE) || hits[0];
+    // Toute la console est testée : une commande cachée derrière une pièce (pare-chocs, coque, bac) n'est pas touchée.
+    // Parmi les commandes devant la première pièce opaque (à 1 cm près), une pièce visible (bouton, touche Mode) passe
+    // avant une zone de saisie invisible.
+    const hits = ray.intersectObject(racine, true);
+    const opaque = hits.find((h) => h.object.material !== PRISE);
+    const limite = opaque ? opaque.distance + 0.01 : Infinity;
+    const devant = hits.filter((h) => h.object.userData.cible && h.distance <= limite);
+    const hit = devant.find((h) => h.object.material !== PRISE) || devant[0];
     return hit ? hit.object.userData.cible : null;
   };
   let drag = null; // { side, x0, y0, moved }
@@ -361,7 +367,7 @@ export function creerConsole3D(conteneur, sim, { agir = () => {}, info = () => {
     if (surCible) { surCible(c); return; }
     controls.enabled = false;
     if (c.type === 'manette') {
-      drag = { side: c.side, x0: ev.clientX, y0: ev.clientY, moved: false, pos0: { ...sim.s[c.side] } };
+      drag = { side: c.side, pointerId: ev.pointerId, x0: ev.clientX, y0: ev.clientY, moved: false, pos0: { ...sim.s[c.side] } };
       renderer.domElement.setPointerCapture?.(ev.pointerId);
       return;
     }
@@ -376,6 +382,7 @@ export function creerConsole3D(conteneur, sim, { agir = () => {}, info = () => {
     agir();
   };
   const onMove = (ev) => {
+    if (drag && ev.pointerId !== drag.pointerId) return; // un autre doigt ne déplace pas la manette tenue
     if (drag) {
       const dx = (ev.clientX - drag.x0) / 70;
       const dy = (ev.clientY - drag.y0) / 70;
@@ -404,7 +411,8 @@ export function creerConsole3D(conteneur, sim, { agir = () => {}, info = () => {
       info(nom);
     } else bulle.hidden = true;
   };
-  const onUp = () => {
+  const onUp = (ev) => {
+    if (drag && ev.pointerId !== drag.pointerId) return; // seul le doigt qui tient la manette termine le geste
     if (drag) {
       // Toucher sans glisser : recentrer la manette ; sinon elle reste où on l'a laissée (comme les flèches).
       if (!drag.moved) { sim.stick(drag.side, 0, 0); agir(); }
@@ -416,6 +424,7 @@ export function creerConsole3D(conteneur, sim, { agir = () => {}, info = () => {
   renderer.domElement.addEventListener('pointermove', onMove);
   renderer.domElement.addEventListener('pointerleave', () => { bulle.hidden = true; });
   window.addEventListener('pointerup', onUp);
+  window.addEventListener('pointercancel', onUp);
 
   // ------------------------------------------------------------------ taille et boucle
   const taille = () => {
@@ -488,7 +497,11 @@ export function creerConsole3D(conteneur, sim, { agir = () => {}, info = () => {
       document.removeEventListener('webkitfullscreenchange', surChangement);
       document.removeEventListener('keydown', echap, true);
       window.removeEventListener('pointerup', onUp);
+      window.removeEventListener('pointercancel', onUp);
       controls.dispose();
+      // OrbitControls retire son écouteur keydown du « document » du canevas : canevas déjà détaché de la page, il
+      // resterait sur le vrai document (et garderait le contexte WebGL en vie).
+      document.removeEventListener('keydown', controls._interceptControlDown, { capture: true });
       scene.traverse((o) => {
         o.geometry?.dispose();
         if (o.material === PRISE) return;
@@ -496,6 +509,7 @@ export function creerConsole3D(conteneur, sim, { agir = () => {}, info = () => {
         for (const m of ms) { m.map?.dispose(); m.dispose(); }
       });
       renderer.dispose();
+      renderer.forceContextLoss(); // libère le contexte WebGL tout de suite (limite du navigateur)
       conteneur.replaceChildren();
       delete conteneur.c3;
     },
