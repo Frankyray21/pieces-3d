@@ -27,7 +27,7 @@ export const MAT = {
   laser: { at: [X0 + 0.1, 0, 1.0], text: 'Niveau au laser Bosch' },
   biche: { at: [X0 + 1.0, 0, 0.0], text: 'Pied de biche' },
   niveau: { at: [X0 + 1.0, 0, 1.2], text: 'Niveau de 48 po' },
-  sciotte: { at: [X0 + 1.0, 0, 2.1], text: 'Sciotte' },
+  sciotte: { at: [X0 + 1.0, 0, 2.1], text: 'Sciotte (scie à archet)' },
   masse: { at: [X0 + 1.8, 0, 0.0], text: 'Masse' },
   marteau: { at: [X0 + 1.8, 0, 0.85], text: 'Marteau' },
   pinces: { at: [X0 + 1.8, 0, 1.5], text: 'Pinces à billots' },
@@ -144,39 +144,31 @@ export function materielGroup(S) {
   return g;
 }
 
-// ------------------------------------------------------------------ tour des outils
-// Gros plan sur chaque outil après la narration du matériel : la caméra s'approche,
-// fait un tour complet (360°) en se rapprochant puis en reculant, et passe au suivant.
-// c : centre visé (au-dessus du sol), r : rayon du tour, h : hauteur de la caméra
-// au-dessus du centre.
-const TOOL_AT = (k, dy = 0.05) => [MAT[k].at[0], MAT[k].at[1] - 0.12 + dy, MAT[k].at[2]];
+// ------------------------------------------------------------------ outils de près
+// Après la narration du matériel, la caméra s'approche des outils, par groupes,
+// dans l'ordre de la liste de la procédure (p. 1) : un court arrêt sur chaque groupe.
+// c : point visé, d : recul de la caméra ; keys : étiquettes affichées.
+const G = (x, z, dy = 0.05) => [x, g0(x, z) + dy, z];
 export const TOUR = [
-  { k: 'laser', c: TOOL_AT('laser', 0.45), r: 1.0, h: 0.4 },
-  { k: 'epi', c: [X0 + 0.15, MAT.epi.at[1] - 0.07, 1.8], r: 0.95, h: 0.65 },
-  { k: 'sciotte', c: TOOL_AT('sciotte'), r: 0.75, h: 0.5 },
-  { k: 'niveau', c: TOOL_AT('niveau'), r: 1.0, h: 0.6 },
-  { k: 'biche', c: TOOL_AT('biche'), r: 0.7, h: 0.5 },
-  { k: 'masse', c: TOOL_AT('masse'), r: 0.75, h: 0.5 },
-  { k: 'marteau', c: TOOL_AT('marteau'), r: 0.6, h: 0.45 },
-  { k: 'pinces', c: TOOL_AT('pinces'), r: 0.7, h: 0.5 },
-  { k: 'scie', c: TOOL_AT('scie'), r: 0.6, h: 0.45 },
-  { k: 'pingouin', c: [MAT.pingouin.at[0] - 0.12, MAT.pingouin.at[1] - 0.07, MAT.pingouin.at[2]], r: 1.0, h: 0.6 },
-  { k: 'barres', c: [BARS_X, g0(BARS_X, 0.75) + 0.05, 0.75], r: 2.2, h: 1.2 },
+  { keys: ['biche', 'masse', 'marteau'], c: G(X0 + 1.4, 0.4), d: 1.65 },
+  { keys: ['sciotte', 'pinces'], c: G(X0 + 1.4, 1.8), d: 1.15 },
+  { keys: ['laser', 'niveau'], c: G(X0 + 0.6, 1.1, 0.2), d: 1.75 },
+  { keys: ['barres', 'pingouin'], c: G(X0 + 2.5, 0.75), d: 2.1 },
+  { keys: ['scie'], c: G(X0 + 1.8, 2.25), d: 0.7 },
 ];
-export const TOUR_STEP = { go: 0.6, spin: 2.0 }; // approche, tour (s)
+export const TOUR_STEP = { go: 0.8, hold: 1.7 }; // approche, arrêt (s)
 
-/** Images clés (en temps v de l'enregistrement) du tour des outils, à partir de v0. */
+/** Images clés (en temps v de l'enregistrement) des arrêts sur les outils, à partir de v0. */
 export function tourCams(v0) {
   const cams = [];
   let v = v0;
   for (const s of TOUR) {
-    const start = [s.c[0] + s.r, s.c[1] + s.h, s.c[2]];
-    const orbit = { c: s.c, r: s.r, h: s.h, a0: 0, zoom: 0.2 };
-    cams.push({ v: v + TOUR_STEP.go, pos: start, tgt: s.c, orbit });
-    cams.push({ v: v + TOUR_STEP.go + TOUR_STEP.spin, pos: start, tgt: s.c });
-    s.v = v; // début de l'approche (pour l'étiquette)
-    v += TOUR_STEP.go + TOUR_STEP.spin;
+    const pos = [s.c[0] + 0.78 * s.d, s.c[1] + 0.72 * s.d, s.c[2] + 0.3 * s.d];
+    cams.push({ v: v + TOUR_STEP.go, pos, tgt: s.c });
+    cams.push({ v: v + TOUR_STEP.go + TOUR_STEP.hold, pos, tgt: s.c });
+    s.v = v; // début de l'approche (pour les étiquettes)
+    v += TOUR_STEP.go + TOUR_STEP.hold;
   }
   return cams;
 }
-export function tourEnd(v0) { return v0 + TOUR.length * (TOUR_STEP.go + TOUR_STEP.spin); }
+export function tourEnd(v0) { return v0 + TOUR.length * (TOUR_STEP.go + TOUR_STEP.hold); }

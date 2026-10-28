@@ -328,7 +328,7 @@ const V = (a) => new THREE.Vector3(...a);
 const path = [];
 let last = null;
 for (const s of SEGS) {
-  const keys = s.cams.map((k) => ({ time: s.start + s.dur * k.t, pos: V(k.pos), tgt: V(k.tgt), orbit: k.orbit }));
+  const keys = s.cams.map((k) => ({ time: s.start + s.dur * k.t, pos: V(k.pos), tgt: V(k.tgt) }));
   if (last && keys[0].time > s.start) path.push({ time: s.start, pos: last.pos, tgt: last.tgt });
   path.push(...keys);
   last = keys.at(-1);
@@ -338,13 +338,6 @@ function cameraAt(t) {
   if (i === -1) i = path.length;
   const a = path[Math.max(0, i - 1)], b = path[Math.min(path.length - 1, i)];
   const u = b.time > a.time ? ease(Math.min(1, Math.max(0, (t - a.time) / (b.time - a.time)))) : 1;
-  if (a.orbit && b.time > a.time) {
-    // Tour complet autour de l'outil, en se rapprochant à mi-tour (zoom avant puis arrière).
-    const o = a.orbit, ang = o.a0 + 2 * Math.PI * u, k = 1 - o.zoom * Math.sin(Math.PI * u);
-    camera.position.set(o.c[0] + o.r * k * Math.cos(ang), o.c[1] + o.h * k, o.c[2] + o.r * k * Math.sin(ang));
-    camera.lookAt(V(o.c));
-    return;
-  }
   camera.position.copy(a.pos).lerp(b.pos, u);
   camera.lookAt(a.tgt.clone().lerp(b.tgt, u));
 }

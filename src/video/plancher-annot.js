@@ -52,8 +52,8 @@ export const ANNOTATIONS = {
     { v: 30.9, type: 'note', at: MAT.s24.at, text: MAT.s24.text, dir: 'up', until: 33.6 },
     { v: 31.5, type: 'note', at: MAT.coins.at, text: MAT.coins.text, dir: 'down', until: 36.4 },
     { v: 32.6, type: 'note', at: MAT.tirefonds.at, text: MAT.tirefonds.text, dir: 'down', until: 36.4 },
-    // Tour des outils : l'étiquette suit le gros plan de chaque outil.
-    ...TOUR.map((o) => ({ v: o.v + 0.3, type: 'note', at: [o.c[0], o.c[1] + 0.05, o.c[2]], text: MAT[o.k].text, dir: 'up', until: o.v + TOUR_STEP.go + TOUR_STEP.spin - 0.1 })),
+    // Outils de près, par groupes : les étiquettes du groupe pendant l'arrêt.
+    ...TOUR.flatMap((o) => o.keys.map((k, i) => ({ v: o.v + 0.5 + 0.25 * i, type: 'note', at: MAT[k].at, text: MAT[k].text, dir: i % 2 ? 'down' : 'up', until: o.v + TOUR_STEP.go + TOUR_STEP.hold }))),
   ],
   inspection: [
     { v: 41.0, type: 'note', at: [2.6, 0.02, 0.6], text: 'Sol sans débris et plat', dir: 'down' },

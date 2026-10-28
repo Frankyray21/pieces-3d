@@ -15,9 +15,9 @@
 // La durée d'un segment vient de sa narration (débit d'environ 2,5 mots/s,
 // celui de la vidéo du mandrin), avec un minimum pour l'action.
 
-import { tourCams, tourEnd } from './plancher-materiel.js';
+import { tourCams } from './plancher-materiel.js';
 
-// Tour des outils (gros plans à 360°) après la narration du matériel.
+// Arrêts sur les outils, de près, après la narration du matériel.
 const TOUR_V0 = 39.0;
 const L = 9.7536, SEC = 4.8768, W = 4.8768, DECK = 0.2286;
 
@@ -76,7 +76,7 @@ export const SEGMENTS = [
     // Bois, quincaillerie, outils et ÉPI étalés derrière la barricade ; les outils (que la voix
     // ne nomme pas) défilent à la fin de la partie, avec leurs étiquettes.
     show: [{ obj: 'materiel', vfrom: 26.6 }],
-    cams: [{ v: 18.2, ...C.entr }, { v: 21.4, ...C.entr }, { v: 22.6, ...C.cab }, { v: 26.2, ...C.cab }, { v: 27.6, ...C.mat }, { v: 38.6, ...C.mat }, ...tourCams(TOUR_V0), { v: tourEnd(TOUR_V0) + 1.2, ...C.mat }],
+    cams: [{ v: 18.2, ...C.entr }, { v: 21.4, ...C.entr }, { v: 22.6, ...C.cab }, { v: 26.2, ...C.cab }, { v: 27.6, ...C.mat }, { v: 38.6, ...C.mat }, ...tourCams(TOUR_V0)],
   },
   {
     id: 'inspection', min: 9,
@@ -335,7 +335,7 @@ const VOICE_END = 332.59;
 // Silences ajoutés dans la voix : [instant dans l'enregistrement, durée] (ex. cage, étape 11).
 const GAPS = { e11: [[203.45, 2.4]] };
 // Temps laissé après la voix (s) ; par défaut 0,4.
-const TAIL = { e11: 7.5, titre: 0.2, fin: 1.2, e15: 0.2, e7: 1.6, materiel: +(tourEnd(TOUR_V0) + 1.4 - 38.93).toFixed(2) };
+const TAIL = { e11: 7.5, titre: 0.2, fin: 1.2, e15: 0.2, e7: 1.6, materiel: 12.6 };
 const LEAD = 0.3; // la voix démarre 0,3 s après le début de la partie
 const r24 = (x) => Math.round(x * 24) / 24;
 
