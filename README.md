@@ -180,6 +180,13 @@ sont préfixées : `#du311.P032`, `#du311-std.P050`, `#epiroc-ith.P019`.
   différentes, les numéros presque identiques (erreurs de saisie probables),
   les lignes et numéros absents.
 - Chaque page du manuel original reste consultable (bouton « Page du manuel »).
+- **Dock « Atelier » de la vue 3D** : toutes les fonctions au même endroit,
+  dans une colonne de grands boutons au bord gauche de la scène (rangée en bas
+  sur téléphone) : Systèmes, Données, Entretien, Consignes, Circuits,
+  Procédures, Schémas, Page du manuel. Un bouton n'apparaît que si la vue
+  s'y prête. **Systèmes** colore la machine par système fonctionnel (moteur,
+  hydraulique, électricité, air, avance, carrousel…) ; un clic sur un
+  système le montre seul et liste ses ensembles.
 - **Données d'atelier du DU311, du DU311-TVK, du Cubex et du catalogue Epiroc**,
   tirées seulement de leur manuel (OCR des planches, puis relecture sur la
   planche) : données techniques avec leur page (capacités, moteurs, pompes,
@@ -254,7 +261,7 @@ tools/extract_stm1500*.py                   listes du manuel STM-1500 (brouillon
 tools/blender_render.py                     rendu Cycles d'un .glb (scripts/export-glb.mjs)
 tools/ocr_pages.py, tools/ocr_bulles.py     OCR des planches (texte, bulles de repère)
 tools/atelier_review.py                     planches de relecture des textes lus
-tools/build_atelier.py                      bulles, donnees, entretien, consignes et schemas (.json)
+tools/build_atelier.py                      bulles, donnees, entretien, consignes, schemas et systemes (.json)
 tools/atelier/ocr/<id>.jsonl.gz             résultats de l'OCR
 tools/atelier/<id>.json                     relecture : texte exact, traduction, couples, valeurs
 ```
@@ -353,7 +360,7 @@ effet sur le rendu du site.
    découpe chaque consigne, réglage et titre de schéma lu, pour la relecture
    à l'œil qui donne `tools/atelier/<id>.json` (format en tête du script) ;
    enfin `python3 tools/build_atelier.py <id> tools/atelier/ocr/<id>.jsonl.gz`
-   écrit `bulles`, `donnees`, `entretien`, `consignes` et `schemas` (.json)
+   écrit `bulles`, `donnees`, `entretien`, `consignes`, `schemas` et `systemes` (.json)
    dans `public/equipment/<id>/` et affiche les noms à déclarer dans le champ
    `extras` de l'index. Seuls les textes relus sont publiés.
 

@@ -149,8 +149,8 @@ export default {
       return el;
     };
     const tool = ctx.ui.addTool({
-      id: 'consignes-tool', label: 'Consignes', icon: 'page', title: 'Consignes imprimées sur les dessins de cet assemblage', pressed: false,
-      onClick: () => ctx.ui.sidePanel.toggle({ owner: ID, title: 'Consignes des dessins', icon: 'page', content: panel() }),
+      id: 'consignes-tool', rank: 40, label: 'Consignes', icon: 'consigne', title: 'Consignes imprimées sur les dessins de cet assemblage', pressed: false,
+      onClick: () => ctx.ui.sidePanel.toggle({ owner: ID, title: 'Consignes des dessins', icon: 'consigne', content: panel() }),
     });
     tool.hidden = true;
     ctx.on('sidepanel', ({ open, owner }) => { if (owner === ID) tool.setAttribute('aria-pressed', String(open)); });

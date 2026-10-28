@@ -78,7 +78,7 @@ horizontal). Classes prêtes à l'emploi : `btn`, `btn primary`, `tbtn`, `chip`,
 | `ctx.systems()` | systèmes de l'équipement : `[{ id, title, index, color, icon }]` (sous-assemblages directs de la racine) |
 | `ctx.systemOf(assemblyId)` | système d'un assemblage (le sien ou celui de son ancêtre) ; `null` pour la racine et les documents. `color` vaut `'var(--sys-n)'`, `icon` un nom de `icons.js` |
 | `ctx.has3d(assemblyId)` | vrai si l'assemblage a un modèle 3D |
-| `ctx.equipmentData(nom, equipmentId?)` | données complémentaires `public/equipment/<id>/<nom>.json` (`'bulles'`, `'donnees'`, `'entretien'`, `'procedures'`, `'consignes'`, `'schemas'`, `'utilisation'`, `'prise-en-main'`) de l'équipement chargé, ou `null`. Chargées une fois, avant l'événement `'equipment'`, pour un équipement dont `public/equipment/index.json` déclare les fichiers (champ `extras`, `src/data/extras.js`) : aucune requête, donc aucune erreur 404, pour un équipement qui n'en a pas ; inscrites dans la page de la publication en Artifact (`scripts/build-artifact.mjs`). Un nouveau fichier s'ajoute au champ `extras` de l'index (et au motif `EXTRAS` de `scripts/build-artifact.mjs`) |
+| `ctx.equipmentData(nom, equipmentId?)` | données complémentaires `public/equipment/<id>/<nom>.json` (`'bulles'`, `'donnees'`, `'entretien'`, `'procedures'`, `'consignes'`, `'schemas'`, `'systemes'`, `'utilisation'`, `'prise-en-main'`) de l'équipement chargé, ou `null`. Chargées une fois, avant l'événement `'equipment'`, pour un équipement dont `public/equipment/index.json` déclare les fichiers (champ `extras`, `src/data/extras.js`) : aucune requête, donc aucune erreur 404, pour un équipement qui n'en a pas ; inscrites dans la page de la publication en Artifact (`scripts/build-artifact.mjs`). Un nouveau fichier s'ajoute au champ `extras` de l'index (et au motif `EXTRAS` de `scripts/build-artifact.mjs`) |
 
 **Équipement** (`ctx.equipment`, normalisé par `src/data/equipment.js` à partir
 de `public/equipment/<id>/data.json`) :
@@ -165,7 +165,7 @@ préfixés par `_`, ni `markObjs`, `insets`, `step` ou `userData.baseMaterial`).
 | `ctx.ui.setInsets(id, marges \| fonction \| élément \| null)` | parties de la scène couvertes par l'interface d'une fonction (`{ top, right, bottom, left }` en px, fonction qui les retourne, ou élément posé sur la scène, dégagé par son côté le plus économique) : le cadrage (`frame`, sélection, « Recadrer ») place le modèle dans le reste. Le panneau latéral est pris en compte d'office ; `null` retire les marges |
 | `ctx.ui.onEscape(fn, ordre) → off()` | couche fermée par Échap : `fn()` retourne vrai si elle a fermé quelque chose (voir « Touche Échap ») |
 | `ctx.ui.stage` | la scène (`#stage`) : élément où poser barres et calques |
-| `ctx.ui.addTool(bouton \| { id, label, title, icon, pressed, onClick }) → bouton` | bouton dans la barre d'outils de la vue 3D (groupe principal, après « Plein écran » et un séparateur) ; reçoit les classes `tbtn ftool` ; `pressed` → `aria-pressed`. La barre n'est affichée que pour une vue 3D ; sur téléphone ou dans une scène de moins de 600 px, le groupe d'outils tient sur une rangée qui défile (glisser, molette, boutons ‹ ›), les outils des fonctions en tête |
+| `ctx.ui.addTool(bouton \| { id, label, title, icon, pressed, onClick, rank }) → bouton` | bouton dans le dock « Atelier » de la vue 3D, qui réunit toutes les fonctions (colonne de grands boutons au bord gauche de la scène ; rangée qui défile en bas d'une scène de moins de 720 px) ; reçoit les classes `tbtn ftool` ; `pressed` → `aria-pressed` ; `rank` : place dans le dock (Systèmes 10, Données 20, Entretien 30, Consignes 40, Circuits 50, Procédures 60, Schémas 70, page du manuel 90 ; défaut 100). Le dock n'est affiché que pour une vue 3D, et seulement s'il a un bouton visible : un outil sans objet pour la vue se masque (`hidden`) |
 | `ctx.ui.searchSlot` | élément de l'en-tête, à droite du champ de recherche (fond sombre : boutons `btn` déjà adaptés) |
 | `ctx.ui.equipmentHome` | élément affiché en bas de la page de l'équipement (`#<équipement>.apercu`), après systèmes, schémas et fiche technique ; le même élément sert pour tous les équipements : le remplir à l'événement `'equipment'` |
 | `ctx.ui.equipmentHomeTop` | même chose, en tête de la page de l'équipement (sous les chiffres clés) : formations, manuel de l'utilisateur |
@@ -196,7 +196,8 @@ techniques sur cette section (mise en évidence un instant).
 Le panneau latéral a **un propriétaire à la fois** (`owner`) ; c'est aussi
 l'arbitrage des **modes**, exclusifs : circuits (`'circuits'`), entretien
 (`'entretien'`), procédure (`'procedures'`, `'procedures-list'`),
-sous-ensemble isolé (`'systemes'`).
+sous-ensemble isolé (`'systemes'`), systèmes en couleur (`'systemes3d'`) ; les panneaux des consignes
+(`'consignes'`) et des schémas (`'schemas'`) prennent aussi le panneau.
 
 - Un mode qui ouvre le panneau le prend : l'ancien propriétaire reçoit
   `'sidepanel' { open: false, owner }` et se désactive proprement (couleurs,

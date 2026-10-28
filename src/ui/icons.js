@@ -33,6 +33,22 @@ const P = {
   panneau: '<rect x="3.2" y="4.2" width="17.6" height="15.6" rx="2"/><path d="M14.6 4.2v15.6"/>',
   // Structure (châssis, traîneau, plancher) : poutre en treillis.
   structure: '<path d="M3 7h18M3 17h18M5 7l4 10 4-10 4 10 4-10"/>',
+  // Calques : systèmes de la machine.
+  calques: '<path d="M12 3 2.8 7.8 12 12.6l9.2-4.8Z"/><path d="m2.8 12 9.2 4.8 9.2-4.8"/><path d="m2.8 16.2 9.2 4.8 9.2-4.8"/>',
+  // Schéma (circuit) ; étapes numérotées (procédures) ; consigne (planchette).
+  schema: '<path d="M4 6h6v4h4V6h6M4 18h4v-4h8v4h4"/><circle cx="4" cy="6" r="1.5"/><circle cx="20" cy="18" r="1.5"/>',
+  etapes: '<path d="M10 6.5h10M10 12h10M10 17.5h10"/><path d="M4 5.5 5 5v3M4 8h2M4 11.2a1 1 0 0 1 2 .3c0 .8-2 1.4-2 2.5h2M4 16h2l-1 1.2a1 1 0 1 1-1 1.3"/>',
+  consigne: '<path d="M8.5 3.5h7v3h-7z"/><path d="M8.5 5H5.5v16h13V5h-3"/><path d="M8.5 11h7M8.5 15h5"/>',
+  // Systèmes : air, cabine, avance (foret), carrousel, graissage (burette), sécurité (flamme), autocollants, porteur (roue), glissière.
+  vent: '<path d="M3 9h11a3 3 0 1 0-3-3M3 15h15a3 3 0 1 1-3 3M3 12h7"/>',
+  siege: '<path d="M5 20V9l3-5h8l2 5v11z"/><path d="M8 4l-1 6h10l-1-6M5 14h14"/>',
+  foret: '<path d="M9 2h6v4H9zM12 6v12M10 18h4l-2 4z"/><path d="M7 10h10M7 14h10"/>',
+  carrousel: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="6.5" r="1.5"/><circle cx="17.5" cy="12" r="1.5"/><circle cx="12" cy="17.5" r="1.5"/><circle cx="6.5" cy="12" r="1.5"/>',
+  burette: '<path d="M4 12h10l4-4 3 1-4 5v5H4z"/><path d="M8 12V9h4v3"/>',
+  flamme: '<path d="M12 21.5c3.9 0 6.8-2.9 6.8-6.8 0-4.8-4.8-6.8-3.9-11.7-2.9 1.9-5.8 4.8-5.8 8.7-1-1-1.9-1.9-1.9-3.9-1.9 1.9-1.9 4.8-1.9 6.8 0 3.9 2.9 6.9 6.7 6.9Z"/>',
+  etiquette: '<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.5"/>',
+  roue: '<circle cx="12" cy="12" r="8.2"/><circle cx="12" cy="12" r="3"/><path d="M12 3.8V9M12 15v5.2M3.8 12H9M15 12h5.2"/>',
+  glissiere: '<path d="M3 6h18M3 18h18"/><rect x="8" y="9" width="8" height="6" rx="1"/><path d="M12 6v3M12 15v3"/>',
 };
 const ALIAS = { gear: 'engrenage', drop: 'goutte', bolt: 'eclair', 'éclair': 'eclair', wrench: 'cle', 'clé': 'cle', search: 'recherche', close: 'fermer', home: 'accueil', list: 'liste', warning: 'alerte' };
 

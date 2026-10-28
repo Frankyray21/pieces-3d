@@ -1,0 +1,22 @@
+/* Mode « Systèmes » de la vue 3D (src/ui/features/systemes3d.js) */
+
+#systemes3d-tool[hidden] { display: none !important; }
+.s3 { display: grid; gap: 10px; }
+.s3-intro { margin: 0; font-size: 13px; color: var(--muted); line-height: 1.45; }
+.s3-intro b { color: var(--ink); }
+.s3-list, .s3-asms { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; }
+.s3-sys {
+  width: 100%; display: grid; grid-template-columns: 30px 1fr auto; align-items: center; gap: 10px; text-align: left;
+  padding: 6px 10px 6px 6px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface);
+  box-shadow: inset 4px 0 0 var(--c);
+}
+.s3-sys:hover { border-color: var(--c); background: color-mix(in srgb, var(--c) 8%, var(--surface)); }
+.s3-sys.on { border-color: var(--c); background: color-mix(in srgb, var(--c) 16%, var(--surface)); font-weight: 600; }
+.s3-ico { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; background: var(--c); color: #fff; }
+.s3-t { font-size: 13.5px; line-height: 1.25; }
+.s3-n { font: 600 11.5px/1 var(--f-mono); color: var(--muted); }
+.s3-all { display: inline-flex; height: 28px; margin-left: 6px; padding: 0 10px; font-size: 12.5px; vertical-align: middle; }
+.s3-h { margin: 4px 0 0; font-size: 11.5px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.s3-asm { width: 100%; text-align: left; border: 0; border-bottom: 1px solid var(--line); background: none; padding: 7px 4px 7px 10px; font-size: 13px; box-shadow: inset 3px 0 0 var(--c); }
+.s3-asm:hover { background: var(--hover); }
+.s3-note { margin: 0; font-size: 11.5px; color: var(--muted); }
