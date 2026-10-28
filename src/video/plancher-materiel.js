@@ -11,25 +11,37 @@ import { lumber, between, lagScrews, wedge } from '../models/plancher-dd/lumber.
 
 const X0 = L + 4.75; // première rangée, juste derrière la barricade (L + 4,3)
 const g0 = (x, z) => ground(x, z);
-const LEN = 10 * FT; // longueurs de présentation (le chantier utilise aussi du 16 pi)
-// Piles de bois le long de la galerie, contre la paroi Z négative.
-const PILES = { b66: -2.2, b38: -1.6, s24: -1.05 };
-// Piles : largeur (selon Z), épaisseur, nombre de pièces de front et de rangs.
-const PILE = { b66: [B66, B66, 3, 2], b38: [P8, P3, 2, 3], s24: [S24.w, S24.t, 4, 2] };
-const PX0 = X0 + 0.3, PXC = PX0 + LEN / 2;
-/** Bout (côté fond de l'aire) de la pièce du dessus, au bord libre de la pile. */
+// Bois en quantité estimée pour le plancher principal de 16 × 32 pi (liste des pièces du
+// modèle) : au fond de l'aire, en travers de la galerie, les 6 × 6 et les 3 × 8 de 16 pi ;
+// devant, les blocages courts, les 2 × 4, les coins ; et un bout de chaque bois, seul,
+// pour en voir la grosseur.
+const L16 = 16 * FT;
+const BIG = {
+  b66: { x0: L + 7.18, w: B66, h: B66, nx: 4, ny: 5, extra: 1 }, // 14 madriers, 1 jonction, 6 soutiens
+  b38: { x0: L + 7.96, w: P8, h: P3, nx: 3, ny: 16, extra: 0 }, // 48 planches
+};
+const bigBase = (k) => {
+  const p = BIG[k];
+  let m = -Infinity;
+  for (let i = 0; i <= 4; i++) for (const z of [-2.3, 0, 2.3]) m = Math.max(m, ground(p.x0 + (i / 4) * p.nx * p.w, z));
+  return m + 0.05;
+};
+// Bouts seuls (échantillons), près de la barricade : 6 × 6, 3 × 8, 2 × 4.
+const SAMPLE = { b66: { z: -2.2, w: B66, h: B66 }, b38: { z: -1.82, w: P8, h: P3 }, s24: { z: -1.5, w: S24.w, h: S24.t } };
+const SX0 = X0 + 0.35, SLEN = 0.6;
+/** Bout (côté barricade) de l'échantillon de bois k. */
 export function woodEnd(k) {
-  const [w, h, nz, ny] = PILE[k];
-  const base = ground(PXC, PILES[k]) + 0.05;
-  return { x: PX0 + LEN, yb: base + (ny - 1) * h, h, w, z: PILES[k] + ((nz - 1) / 2) * (w + 0.004) };
+  const p = SAMPLE[k];
+  return { x: SX0, yb: ground(SX0, p.z), h: p.h, w: p.w, z: p.z };
 }
 
 // Points d'attache des étiquettes (repère de la galerie), par article.
 export const MAT = {
-  b66: { at: [X0 + 1.0, 0, PILES.b66], text: '6 × 6 brut' },
-  b38: { at: [X0 + 1.6, 0, PILES.b38], text: '3 × 8 brut' },
-  s24: { at: [X0 + 2.2, 0, PILES.s24], text: '2 × 4 planés (ou bruts)' },
-  coins: { at: [X0 + 0.1, 0, -0.3], text: 'Coins de bois' },
+  b66: { at: [L + 7.5, 0, -1.2], text: '6 × 6 brut' },
+  b38: { at: [L + 8.27, 0, -0.6], text: '3 × 8 brut' },
+  s24: { at: [X0 + 1.2, 0, -0.95], text: '2 × 4 planés (ou bruts)' },
+  blocs: { at: [X0 + 1.6, 0, -1.95], text: 'Blocages 6 × 6 et 3 × 8' },
+  coins: { at: [X0 + 0.15, 0, -0.45], text: 'Coins de bois' },
   tirefonds: { at: [X0 + 0.1, 0, 0.35], text: 'Tire-fonds de 6 po' },
   laser: { at: [X0 + 0.1, 0, 1.0], text: 'Niveau au laser Bosch' },
   biche: { at: [X0 + 1.0, 0, 0.0], text: 'Pied de biche' },
@@ -43,6 +55,8 @@ export const MAT = {
   epi: { at: [X0 + 0.1, 0, 1.85], text: 'ÉPI : équipement de base' },
 };
 for (const m of Object.values(MAT)) m.at[1] = g0(m.at[0], m.at[2]) + 0.12;
+MAT.b66.at[1] = bigBase('b66') + (BIG.b66.ny + 1) * B66;
+MAT.b38.at[1] = bigBase('b38') + BIG.b38.ny * P3;
 
 /** Pièce posée au sol (dessous à y), boîte de taille [sx, sy, sz]. */
 function onGround(S, obj, x, z, dy = 0) {
@@ -52,22 +66,36 @@ function onGround(S, obj, x, z, dy = 0) {
 
 export function materielGroup(S) {
   const g = S.group();
-  // Piles de bois sur deux lambourdes : 6 × 6, 3 × 8, 2 × 4 (selon X).
-  const xc = PXC;
-  const pile = (zc, w, h, nz, ny, material) => {
-    const base = g0(xc, zc) + 0.05;
-    for (const x of [xc - LEN / 3, xc + LEN / 3]) g.add(lumber(S, [0.08, 0.05, nz * w + 0.06], [x, base - 0.025, zc], 'woodGrey'));
-    for (let j = 0; j < ny; j++) for (let i = 0; i < nz; i++) {
-      g.add(lumber(S, [LEN, h, w], [xc, base + h / 2 + j * h, zc + (i - (nz - 1) / 2) * (w + 0.004)], material));
+  // Piles de 16 pi en travers de la galerie, sur trois lambourdes.
+  for (const k of ['b66', 'b38']) {
+    const p = BIG[k], base = bigBase(k), depth = p.nx * (p.w + 0.004);
+    for (const z of [-1.9, 0, 1.9]) g.add(lumber(S, [depth + 0.06, 0.05, 0.08], [p.x0 + depth / 2, base - 0.025, z], 'woodGrey'));
+    for (let j = 0; j < p.ny; j++) for (let i = 0; i < p.nx; i++) {
+      g.add(lumber(S, [p.w, p.h, L16], [p.x0 + p.w / 2 + i * (p.w + 0.004), base + p.h / 2 + j * p.h, 0], 'wood'));
     }
+    for (let i = 0; i < p.extra; i++) g.add(lumber(S, [p.w, p.h, L16], [p.x0 + depth / 2, base + p.h / 2 + p.ny * p.h, 0], 'wood'));
+  }
+  // 2 × 4 (garde-corps, mains courantes) : 15 pièces de 7 pi, selon X, sur deux lambourdes.
+  {
+    const len = 7 * FT, xc = X0 + 0.25 + len / 2, zc = -0.95, nz = 5, ny = 3;
+    const base = Math.max(g0(xc - len / 2, zc), g0(xc + len / 2, zc)) + 0.05;
+    for (const x of [xc - len / 3, xc + len / 3]) g.add(lumber(S, [0.08, 0.05, nz * S24.w + 0.06], [x, base - 0.025, zc], 'woodGrey'));
+    for (let j = 0; j < ny; j++) for (let i = 0; i < nz; i++) g.add(lumber(S, [len, S24.t, S24.w], [xc, base + S24.t / 2 + j * S24.t, zc + (i - (nz - 1) / 2) * (S24.w + 0.004)], 'woodPlaned'));
+  }
+  // Blocages courts empilés : 25 bouts de 6 × 6 de 18 po, 30 bouts de 3 × 8 de 24 po.
+  const blocs = (xc, len, w, h, nz, ny, zc) => {
+    const base = g0(xc, zc) + 0.01;
+    for (let j = 0; j < ny; j++) for (let i = 0; i < nz; i++) g.add(lumber(S, [len, h, w], [xc, base + h / 2 + j * h, zc + (i - (nz - 1) / 2) * (w + 0.006)], 'wood'));
   };
-  pile(PILES.b66, ...PILE.b66, 'wood');
-  pile(PILES.b38, ...PILE.b38, 'wood');
-  pile(PILES.s24, ...PILE.s24, 'woodPlaned');
-  // Coins de bois en tas.
-  for (let k = 0; k < 5; k++) {
-    const x = X0 + (k % 3) * 0.1, z = -0.4 + Math.floor(k / 3) * 0.16;
-    g.add(wedge(S, { pos: [x, g0(x, z) + (k > 2 ? WEDGE.t * 0.5 : 0), z], along: k % 2 ? 'z' : 'x', pair: false, thick: WEDGE.t }));
+  blocs(X0 + 1.35, 18 * IN, B66, B66, 5, 5, -1.95);
+  blocs(X0 + 2.0, 24 * IN, P8, P3, 3, 10, -1.95);
+  // Échantillons : un bout de chaque bois, seul, pour la grosseur.
+  for (const [k, p] of Object.entries(SAMPLE)) g.add(lumber(S, [SLEN, p.h, p.w], [SX0 + SLEN / 2, g0(SX0 + SLEN / 2, p.z) + p.h / 2, p.z], k === 's24' ? 'woodPlaned' : 'wood'));
+  // Coins de bois en tas (environ 80).
+  for (let k = 0; k < 80; k++) {
+    const layer = Math.floor(k / 20), i = k % 20;
+    const x = X0 - 0.05 + (i % 5) * 0.09 + (layer % 2) * 0.03, z = -0.62 + Math.floor(i / 5) * 0.1 + (layer % 2) * 0.02;
+    g.add(wedge(S, { pos: [x, g0(x, z) + layer * WEDGE.t * 0.55, z], along: (i + layer) % 2 ? 'z' : 'x', pair: false, thick: WEDGE.t }));
   }
   // Seau de tire-fonds.
   const tf = MAT.tirefonds.at;
@@ -188,17 +216,17 @@ const G = (x, z, dy = 0.05) => [x, g0(x, z) + dy, z];
 const WOOD = (k, dims) => {
   const e = woodEnd(k);
   const c = [e.x, e.yb + e.h / 2, e.z];
-  return { wood: k, dims, e, c, pos: [e.x + 0.42, e.yb + e.h / 2 + 0.32, e.z + 0.55] };
+  return { wood: k, dims, e, c, pos: [e.x - 0.42, e.yb + e.h / 2 + 0.3, e.z + 0.5] };
 };
 export const TOUR = [
   WOOD('b66', ['6 po', '6 po']),
   WOOD('b38', ['8 po', '3 po']),
   WOOD('s24', ['3 ½ po', '1 ½ po']),
-  { qty: true, c: [L + 6.2, 0.0, -2.9], pos: [L + 8.4, 2.4, -0.2], hold: 4.2 },
-  { keys: ['biche', 'masse', 'marteau'], c: G(X0 + 1.4, 0.4), d: 1.65 },
+  { qty: ['b66', 'b38', 'blocs'], c: [L + 7.4, 0.1, -0.6], pos: [L + 4.85, 2.0, 1.6], hold: 4.2 },
+  { keys: ['biche', 'masse', 'marteau'], c: G(X0 + 1.4, 0.4), pos: [X0 + 0.45, ground(X0 + 1.4, 0.4) + 1.35, 1.25] },
   { keys: ['sciotte', 'pinces'], c: G(X0 + 1.4, 1.8), d: 1.15 },
   { keys: ['laser', 'niveau'], c: G(X0 + 0.6, 1.1, 0.2), d: 1.75 },
-  { keys: ['pingouin'], c: G(X0 + 2.15, 0.55), d: 1.3 },
+  { keys: ['pingouin'], c: G(X0 + 2.0, 0.55), pos: [X0 + 1.25, ground(X0 + 2.0, 0.55) + 0.95, 1.3] },
   { keys: ['scie'], c: G(X0 + 1.8, 2.25), d: 0.7 },
   { keys: ['epi'], c: G(X0 + 0.2, 1.75, 0.08), d: 1.0 },
 ];
@@ -221,18 +249,3 @@ export function tourCams(v0) {
 }
 export function tourEnd(v0) { return v0 + TOUR.reduce((n, s) => n + TOUR_STEP.go + (s.hold || TOUR_STEP.hold), 0); }
 
-/** Quantités pour le plancher principal de 16 × 32 pi, d'après le modèle 3D (liste des pièces). */
-export const QTY = {
-  title: 'Plancher 16 × 32 pi : quantités',
-  rows: [
-    ['6 × 6 × 16 pi', '14 madriers + 1 de jonction'],
-    ['6 × 6 × 16 pi', '6 soutiens (selon le sol)'],
-    ['3 × 8 × 16 pi', '48 planches'],
-    ['Blocages 3 × 8 de 24 po', '≈ 30'],
-    ['Blocages 6 × 6 de 18 po', '≈ 25'],
-    ['Coins de bois', '≈ 80'],
-    ['Tire-fonds 6 po', '30'],
-    ['2 × 4 planés', '15 (garde-corps, mains courantes)'],
-  ],
-  note: 'Blocages, coins et soutiens varient selon le sol. Marches, cage et plancher secondaire en plus.',
-};

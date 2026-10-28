@@ -11,7 +11,7 @@ import * as THREE from 'three';
 import { IN, FT, B66, P3, P8, W, L, SEC, DECK, joistZ, GAL, STAIR, SUPPORTS_X, SLEEPERS_X, GUIDE_X, JOINT_X, DIP, DRILL, FACE_X, ground, deckHeight, plankX, TIGHT, stack } from '../models/plancher-dd/plan.js';
 import { stairPlan, secondaryPlan } from '../models/plancher-dd/floor.js';
 import { vt } from './plancher-script.js';
-import { MAT, TOUR, QTY } from './plancher-materiel.js';
+import { MAT, TOUR } from './plancher-materiel.js';
 
 const YEL = '#f2c230';
 const INK = '#f4f6f7';
@@ -54,13 +54,16 @@ export const ANNOTATIONS = {
     { v: 32.6, type: 'note', at: MAT.tirefonds.at, text: MAT.tirefonds.text, dir: 'down', until: 36.4 },
     // Bois de près (grosseur), quantités du plancher 16 × 32, puis outils par groupes.
     ...TOUR.flatMap((o) => {
-      if (o.qty) return [{ v: o.v + 0.5, type: 'panel', ...QTY, until: o.end }];
+      if (o.qty) {
+        const txt = { b66: '6 × 6 × 16 pi : madriers, jonction, soutiens', b38: '3 × 8 × 16 pi : planches' };
+        return o.qty.map((k, i) => ({ v: o.v + 0.4 + 0.3 * i, type: 'note', at: MAT[k].at, text: txt[k] || MAT[k].text, dir: i % 2 ? 'down' : 'up', until: o.end }));
+      }
       if (o.wood) {
         const { e } = o, w = e.w / 2;
         return [
-          { v: o.v + 0.5, type: 'note', at: [e.x - 0.25, e.yb + e.h, e.z], text: MAT[o.wood].text, dir: 'up', until: o.end },
-          { v: o.v + 0.8, type: 'dim', a: [e.x, e.yb + e.h, e.z - w], b: [e.x, e.yb + e.h, e.z + w], off: [0.03, 0.06, 0], text: o.dims[0], until: o.end },
-          { v: o.v + 1.1, type: 'dim', a: [e.x, e.yb, e.z + w], b: [e.x, e.yb + e.h, e.z + w], off: [0.03, 0, 0.07], text: o.dims[1], until: o.end },
+          { v: o.v + 0.5, type: 'note', at: [e.x + 0.3, e.yb + e.h, e.z], text: MAT[o.wood].text, dir: 'up', until: o.end },
+          { v: o.v + 0.8, type: 'dim', a: [e.x, e.yb + e.h, e.z - w], b: [e.x, e.yb + e.h, e.z + w], off: [-0.03, 0.06, 0], text: o.dims[0], until: o.end },
+          { v: o.v + 1.1, type: 'dim', a: [e.x, e.yb, e.z + w], b: [e.x, e.yb + e.h, e.z + w], off: [-0.03, 0, 0.07], text: o.dims[1], until: o.end },
         ];
       }
       return o.keys.map((k, i) => ({ v: o.v + 0.5 + 0.25 * i, type: 'note', at: MAT[k].at, text: MAT[k].text, dir: i % 2 ? 'down' : 'up', until: o.end }));
