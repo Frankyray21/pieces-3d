@@ -136,7 +136,7 @@ export const ANNOTATIONS = {
     { v: 216.0, type: 'dim', a: [CRIB.x - 0.381, CRIB.y2 + CRIB.h2 / 2, CRIB.z + 0.385], b: [CRIB.x + 0.381, CRIB.y2 + CRIB.h2 / 2, CRIB.z + 0.385], off: [0, 0.3, 0.15], text: '30 po', sub: 'pièces de 24 à 36 po' },
     { v: 218.0, type: 'note', at: [CRIB.x, CRIB.top - 0.05, CRIB.z], text: 'Coin de bois : ajuste le niveau', dir: 'up', until: 218.42 },
     { v: 218.2, type: 'dim', a: [CRIB.x + 0.42, CRIB.g, CRIB.z + 0.4], b: [CRIB.x + 0.42, CRIB.top, CRIB.z + 0.4], off: [0.15, 0, 0.12], text: po(CRIB.top - CRIB.g), sub: 'trop haut pour un blocage : cage' , until: 218.42 },
-    { v: 220.4, type: 'note', at: [DIP.x - 0.95, CRIB.g + 0.75, DIP.z + 0.4], text: 'Interdit : morceaux de bois empilés l’un sur l’autre', dir: 'up' },
+    { v: 220.4, type: 'note', at: [DIP.x - 0.95, CRIB.g + 0.75, DIP.z + 0.4], text: 'Interdit : morceaux de bois empilés l’un sur l’autre', dir: 'up', until: 225.9 },
   ],
   e12: [
     { v: 235.0, type: 'note', at: [SEC * 1.5, DECK, 0.6], text: 'Étapes 6 et 7 répétées : 1re planche vissée, resserrage aux coins', dir: 'up' },

@@ -24,7 +24,7 @@ import { TOUR, MAT } from './plancher-materiel.js';
 const TOUR_AT = {
   b66: [25.6, 27.6, 29.2], b38: [29.2, 29.6, 30.7], s24: [30.7, 31.15, 32.3], qty: [34.7, 35.7, 39.9],
   biche: [39.9, 40.9, 43.5], sciotte: [43.5, 44.2, 45.8], laser: [45.8, 46.5, 49.2], pingouin: [49.2, 49.9, 50.5],
-  scie: [50.5, 51.2, 53.0], barres: [53.0, 53.9, 55.7],
+  scie: [50.5, 51.2, 53.0], barres: [53.0, 54.6, 56.3],
 };
 // Coins et tire-fonds vus de près (entre le bois et les quantités), au moment où ils sont nommés.
 const QUINC = (() => {
@@ -244,7 +244,9 @@ export const SEGMENTS = [
     ghost: { vfrom: 211.4, vto: 240 },
     // Exemple interdit : bois simplement empilé, montré à côté de la cage.
     show: [{ obj: 'badStack', vfrom: 218.42 }],
-    cams: [{ v: 202.75, ...C.s2 }, { v: 211.06, pos: [SEC * 1.5 + 3.4, 1.5, 4.4], tgt: [SEC * 1.5 + 0.6, -0.3, 0.9] }, { v: 213.0, ...C.cageA }, { v: 216.8, ...C.cageB }, { v: 218.42, ...C.cageC }, { v: 220.2, pos: [DIP_X - 1.55, 0.4, DIP_Z + 2.15], tgt: [DIP_X - 0.95, -0.12, DIP_Z + 0.4] }, { v: 225.6, pos: [DIP_X - 1.65, 0.45, DIP_Z + 2.2], tgt: [DIP_X - 0.95, -0.12, DIP_Z + 0.4] }],
+    cams: [{ v: 202.75, ...C.s2 }, { v: 211.06, pos: [SEC * 1.5 + 3.4, 1.5, 4.4], tgt: [SEC * 1.5 + 0.6, -0.3, 0.9] }, { v: 213.0, ...C.cageA }, { v: 216.8, ...C.cageB }, { v: 218.42, ...C.cageC }, { v: 220.2, pos: [DIP_X - 1.55, 0.4, DIP_Z + 2.15], tgt: [DIP_X - 0.95, -0.12, DIP_Z + 0.4] }, { v: 224.6, pos: [DIP_X - 1.65, 0.45, DIP_Z + 2.2], tgt: [DIP_X - 0.95, -0.12, DIP_Z + 0.4] },
+      // Remontée au-dessus du plancher avant que la transparence cesse (vue de l'étape 12).
+      { t: 1, ...C.deck2 }],
   },
   {
     id: 'e12', min: 10,
@@ -386,7 +388,7 @@ const GAPS = {
 // Temps laissé après la voix (s) ; par défaut 0,4. Les parties gardées de la v11 (même
 // durée, mêmes images) ont la fin qui complète leur durée d'origine.
 const TAIL = {
-  titre: 0.4367, materiel: 3.02, inspection: 0.6383, e1: 0.4283, e2: 0.735, e3: 0.4133, e4: 0.62, e5: 0.7367, e5b: 0.5517,
+  titre: 0.4367, materiel: 3.62, inspection: 0.6383, e1: 0.4283, e2: 0.735, e3: 0.4133, e4: 0.62, e5: 0.7367, e5b: 0.5517,
   e6: 0.4717, e7: 2.2267, e8: 1.24, e9: 1.6617, e10: 0.675, e11: 0.6, e13: 1.255, e14: 9.0967, e15: -0.2667, e16: 0.8483,
   e17: 0.8933, sec: 0.6, fin: 1.315,
 };
