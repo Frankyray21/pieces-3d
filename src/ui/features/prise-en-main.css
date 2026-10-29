@@ -200,14 +200,31 @@
 .pem-now.ok { background: color-mix(in srgb, #1f9d55 16%, var(--surface)); border-color: #1f9d55; }
 .pem-now .btn { height: 34px; border-radius: 9px; margin-left: auto; }
 .pem-msg {
-  display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; min-height: 44px; padding: 8px 12px; border-radius: 10px; font-size: 14px;
-  background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--line-strong);
+  --ton: var(--accent-text, var(--accent));
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; min-height: 52px; padding: 10px 14px; border-radius: 12px;
+  font-size: 16px; line-height: 1.4; color: var(--ink);
+  background: color-mix(in srgb, var(--ton) 12%, var(--surface)); border: 1px solid color-mix(in srgb, var(--ton) 45%, var(--line));
+  border-left: 6px solid var(--ton);
 }
 .pem-msg:empty { display: none; }
-.pem-msg.ok { border-left-color: #1f9d55; }
-.pem-msg.warn { border-left-color: var(--warn); background: var(--warn-soft); }
-.pem-msg.danger { border-left-color: #d63a3a; background: var(--error-soft, #fde8e8); }
+.pem-msg.ok { --ton: #1f9d55; }
+.pem-msg.warn { --ton: var(--warn); }
+.pem-msg.danger { --ton: #d63a3a; }
 .pem-msg > span { flex: 1 1 260px; }
+.pem-msg b { font-weight: 700; }
+/* Pastille du type de message (information, réussite, attention, danger). */
+.pem-msg-i {
+  flex: none; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%;
+  background: var(--ton); color: #fff; font-style: normal; font-weight: 800; font-size: 15px;
+}
+/* Nouveau message : bref halo de la couleur du message pour attirer l'œil. */
+.pem-msg.nouveau { animation: pem-msg-flash 1.4s ease-out; }
+@keyframes pem-msg-flash {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--ton) 70%, transparent); background: color-mix(in srgb, var(--ton) 34%, var(--surface)); }
+  100% { box-shadow: 0 0 0 10px transparent; }
+}
+@media (prefers-reduced-motion: reduce) { .pem-msg.nouveau { animation: none; } }
+.pem-console:fullscreen .pem-msg, .pem-console.c3-plein .pem-msg { font-size: 17px; }
 .pem-deck {
   display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 14px; align-items: start; padding: 14px;
   border-radius: 14px; background: color-mix(in srgb, #e2531a 12%, var(--surface)); border: 1px solid color-mix(in srgb, #e2531a 35%, var(--line));

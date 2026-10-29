@@ -467,8 +467,15 @@ export default {
           const m = sim.s.message;
           if (!m || m.t === dernierMsg) return;
           dernierMsg = m.t;
+          // Première phrase en gras (ce qui vient de se passer), suite en texte normal (quoi faire ensuite).
+          const i = m.texte.search(/[.!:] /);
+          const tete = i > 0 ? m.texte.slice(0, i + 1) : m.texte;
+          const suite = i > 0 ? m.texte.slice(i + 2) : '';
+          const icone = { ok: '✓', warn: '!', danger: '⛔' }[m.ton] || 'i';
           msgEl.className = `pem-msg ${m.ton}`;
-          msgEl.innerHTML = `<span>${esc(m.texte)}</span>${m.page ? pageBtn(m.page) : ''}`;
+          msgEl.innerHTML = `<i class="pem-msg-i" aria-hidden="true">${icone}</i><span><b>${esc(tete)}</b>${suite ? ` ${esc(suite)}` : ''}</span>${m.page ? pageBtn(m.page) : ''}`;
+          void msgEl.offsetWidth; // relance l'animation de mise en évidence
+          msgEl.classList.add('nouveau');
         };
         // Clé de l'élément qui a le focus dans le pupitre : il est retrouvé après le rendu (focus clavier gardé).
         const cleFocus = (e) => {
