@@ -13,6 +13,7 @@
 //   options : --jobs 2 · --stills 12.5,40 (images composées isolées) · --encode-only
 //             aperçu rapide : --fps 12 --scale 0.5 · --fxaa (anticrénelage FXAA, plus rapide)
 //             --ao half (occlusion en demi-résolution) · --no-plan (rendu de chaque image)
+//             --reuse scratch/v11 (images d'un rendu précédent reprises à empreinte égale)
 //
 // Rendu planifié (par défaut) : l'empreinte de chaque image (scène visible +
 // caméra, window.__state) est calculée d'abord ; une seule image est rendue par
@@ -144,15 +145,30 @@ if (!flag('encode-only')) {
       if (!groups.has(key)) groups.set(key, []);
       groups.get(key).push(f);
     });
-    // 2) Images déjà dans le cache : liées directement.
+    // Empreintes de ce rendu (states.json), pour qu'un rendu suivant reprenne ses images.
+    const statesFile = join(out, 'states.json');
+    const states = existsSync(statesFile) ? JSON.parse(readFileSync(statesFile, 'utf8')) : [];
+    todo.forEach((f, i) => { states[f] = { scene: st[i].scene, cam: st[i].cam }; });
+    writeFileSync(statesFile, JSON.stringify(states));
+    // --reuse : images d'un rendu précédent (son states.json et son dossier 3d/) à empreinte égale.
+    const reuse = new Map();
+    for (const dir of opt('reuse') ? opt('reuse').split(',') : []) {
+      JSON.parse(readFileSync(join(dir, 'states.json'), 'utf8')).forEach((x, f) => {
+        const file = join(dir, '3d', `f_${String(f).padStart(5, '0')}.jpg`);
+        const k = x && `${x.scene}-${x.cam}`;
+        if (k && !reuse.has(k) && existsSync(file)) reuse.set(k, file);
+      });
+    }
+    // 2) Images déjà dans le cache ou dans un rendu précédent : liées directement.
     const toRender = [];
     let fromCache = 0;
     for (const [key, fs] of groups) {
       const c = join(cacheDir, `${key}.jpg`);
-      if (existsSync(c)) { for (const f of fs) link(c, frameFile(f)); fromCache += fs.length; } else toRender.push([key, fs]);
+      const src = existsSync(c) ? c : reuse.get(key);
+      if (src) { for (const f of fs) link(src, frameFile(f)); fromCache += fs.length; } else toRender.push([key, fs]);
     }
     const n = toRender.reduce((a, [, fs]) => a + fs.length, 0);
-    console.log(`${info.duration.toFixed(1)} s, ${total} images ; ${todo.length} à faire : ${kept} gardées, ${fromCache} du cache, ${n - toRender.length} identiques, ${toRender.length} à rendre (${jobs} onglets, graine ${SALT})`);
+    console.log(`${info.duration.toFixed(1)} s, ${total} images ; ${todo.length} à faire : ${kept} gardées, ${fromCache} reprises (cache ou rendu précédent), ${n - toRender.length} identiques, ${toRender.length} à rendre (${jobs} onglets, graine ${SALT})`);
     writeFileSync(levelsFile, JSON.stringify(levels));
     // 3) Une image rendue par empreinte, liée aux autres images de même empreinte.
     await Promise.all(pages.map(async (page, k) => {

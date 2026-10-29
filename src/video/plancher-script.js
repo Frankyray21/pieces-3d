@@ -15,10 +15,34 @@
 // La durée d'un segment vient de sa narration (débit d'environ 2,5 mots/s,
 // celui de la vidéo du mandrin), avec un minimum pour l'action.
 
-import { tourCams, tourEnd } from './plancher-materiel.js';
+import { TOUR, MAT } from './plancher-materiel.js';
 
-// Après la narration du matériel : le bois de près, les quantités, puis les outils.
-const TOUR_V0 = 39.0;
+// Arrêts de la caméra sur le bois et les outils (TOUR, plancher-materiel.js), calés sur
+// la voix : [début de l'approche, arrivée, départ] en temps de voix. Chaque bois et
+// chaque groupe d'outils au moment où il est nommé ; les barres d'écaillage (non
+// nommées) à la fin, avec leur étiquette.
+const TOUR_AT = {
+  b66: [25.6, 27.6, 29.2], b38: [29.2, 29.6, 30.7], s24: [30.7, 31.15, 32.3], qty: [34.7, 35.7, 39.9],
+  biche: [39.9, 40.9, 43.5], sciotte: [43.5, 44.2, 45.8], laser: [45.8, 46.5, 49.2], pingouin: [49.2, 49.9, 50.5],
+  scie: [50.5, 51.2, 53.0], barres: [53.0, 53.9, 55.7],
+};
+// Coins et tire-fonds vus de près (entre le bois et les quantités), au moment où ils sont nommés.
+const QUINC = (() => {
+  const a = MAT.coins.at, b = MAT.tirefonds.at, d = 1.35;
+  const c = [(a[0] + b[0]) / 2, 0.05, (a[2] + b[2]) / 2];
+  return { pos: [c[0] + 0.78 * d, c[1] + 0.72 * d, c[2] + 0.3 * d], tgt: c };
+})();
+function tourStops() {
+  const cams = [];
+  for (const o of TOUR) {
+    const [v0, v1, v2] = TOUR_AT[o.wood || (o.qty ? 'qty' : o.keys[0])];
+    const pos = o.pos || [o.c[0] + 0.78 * o.d, o.c[1] + 0.72 * o.d, o.c[2] + 0.3 * o.d];
+    o.v = v0; // début de l'approche (étiquettes)
+    o.end = v2;
+    cams.push({ v: v1, pos, tgt: o.c }, { v: v2, pos, tgt: o.c });
+  }
+  return cams;
+}
 const L = 9.7536, SEC = 4.8768, W = 4.8768, DECK = 0.2286;
 const DIP_X = 8.8773, DIP_Z = 1.5748; // creux de la cage (plan.js : DIP)
 
@@ -74,13 +98,14 @@ export const SEGMENTS = [
       [1, 'Une règle qui change pas : les grosses pièces de bois, on les transporte toujours à deux.'],
       // Outils : une phrase par arrêt de la caméra (voir TOUR, plancher-materiel.js), dans l'ordre de la procédure.
       [2, 'Pis les outils ?'],
-      [1, 'Pied de biche, masse pis marteau. … La sciotte pis les pinces à billots. … Le niveau au laser Bosch pis le niveau de quarante-huit pouces. … Les barres d\'écaillage de six, huit pis dix pieds. … Le pingouin, la gratte de la mine. … Pis la scie va-et-vient, avec ses lames à bois.'],
+      // Tel qu'enregistré : les barres d'écaillage ne sont pas nommées (montrées à la fin avec leur étiquette).
+      [1, 'Pied de biche, masse pis marteau. … La scie à main pis les pinces. … Le niveau au laser Bosch pis le niveau de quarante-huit pouces. … Le pingouin. … Pis la scie va-et-vient, avec ses lames à bois.'],
     ],
-    reveal: [{ cue: 'barricade', v: 19.0, vspan: 1.2 }, { cue: 'cabinet', v: 22.4, vspan: 0 }, { cue: 'ext', v: 25.6, vspan: 0 }],
-    // Bois, quincaillerie et outils étalés derrière la barricade ; les outils (que la voix
-    // ne nomme pas) défilent à la fin de la partie, avec leurs étiquettes.
-    show: [{ obj: 'materiel', vfrom: 26.6 }],
-    cams: [{ v: 18.2, ...C.entr }, { v: 21.4, ...C.entr }, { v: 22.6, ...C.cab }, { v: 26.2, ...C.cab }, { v: 27.6, ...C.mat }, { v: 38.6, ...C.mat }, ...tourCams(TOUR_V0)],
+    reveal: [{ cue: 'barricade', v: 18.05, vspan: 1.2 }, { cue: 'cabinet', v: 21.55, vspan: 0 }, { cue: 'ext', v: 25.0, vspan: 0 }],
+    // Bois, quincaillerie et outils étalés derrière la barricade : chaque bois de près au
+    // moment où il est nommé, les coins et tire-fonds, les quantités, puis les outils.
+    show: [{ obj: 'materiel', vfrom: 26.0 }],
+    cams: [{ v: 17.15, ...C.entr }, { v: 20.45, ...C.entr }, { v: 21.75, ...C.cab }, { v: 25.6, ...C.cab }, { v: 32.9, ...QUINC }, { v: 34.7, ...QUINC }, ...tourStops()].sort((a, b) => a.v - b.v),
   },
   {
     id: 'inspection', min: 9,
@@ -173,9 +198,9 @@ export const SEGMENTS = [
     // Serrage : dernier 3 × 8 vissé (temporaire), coins enfoncés entre lui et les
     // planches posées, écarts qui se ferment, planche devant les coins vissée,
     // tire-fonds du dernier 3 × 8 retirés, coins enlevés.
-    tighten: { anchor: 145.0, anchorScrews: 146.4, wedgesIn: 147.4, drive: [148.2, 150.6], frontScrews: 151.0, unscrew: 153.2, wedgesOut: 154.2, back: [154.6, 155.4] },
-    reveal: [{ cue: 'anchor', v: 145.0, vspan: 0 }, { cue: 'screwsT', v: 151.0, vspan: 0 }, { cue: 'deck1b', v: 155.8, vspan: 2.4 }],
-    cams: [{ v: 143.0, ...C.tight }, { v: 150.8, ...C.tight2 }, { v: 155.6, ...C.tight2 }, { v: 158.6, ...C.deck1 }],
+    tighten: { anchor: 157.25, anchorScrews: 158.65, wedgesIn: 159.65, drive: [160.45, 162.85], frontScrews: 163.25, unscrew: 165.45, wedgesOut: 166.45, back: [166.85, 167.65] },
+    reveal: [{ cue: 'anchor', v: 157.25, vspan: 0 }, { cue: 'screwsT', v: 163.25, vspan: 0 }, { cue: 'deck1b', v: 168.05, vspan: 2.4 }],
+    cams: [{ v: 155.25, ...C.tight }, { v: 163.05, ...C.tight2 }, { v: 167.85, ...C.tight2 }, { v: 170.85, ...C.deck1 }],
   },
   {
     id: 'e8', min: 8,
@@ -202,7 +227,7 @@ export const SEGMENTS = [
       [2, 'Ça fait une base stable pour poser les madriers dessus.'],
     ],
     show: [{ obj: 'laser2', from: 0, to: 0.4 }],
-    reveal: [{ cue: 'support2', v: 179.6, vspan: 2.0 }, { cue: 'guide', v: 181.2, vspan: 0 }, { cue: 'sleepers', v: 186.0, vspan: 2.6 }],
+    reveal: [{ cue: 'support2', v: 189.11, vspan: 2 }, { cue: 'guide', v: 190.71, vspan: 0 }, { cue: 'sleepers', v: 195.51, vspan: 2.6 }],
     cams: [{ t: 0.3, ...C.s2 }, { t: 1, pos: [SEC * 1.5 + 3.6, 1.6, 5.2], tgt: [SEC * 1.5, -0.25, 0.3] }],
   },
   {
@@ -215,11 +240,11 @@ export const SEGMENTS = [
       [1, 'Pis attention : on empile jamais des morceaux de bois un par-dessus l\'autre. C\'est un blocage avec ses coins, ou une cage croisée.'],
     ],
     // Cage (cas spécial) : gros plan, plancher en transparence, montée couche par couche.
-    reveal: [{ cue: 'joists2', v: 194.4, vspan: 3.6 }, { cue: 'jointBlocks', v: 199.0, vspan: 2.0 }, { cue: 'cribFocus', v: 204.0, vspan: 9.6 }, { cue: 'cribOther', v: 214.4, vspan: 1.6 }],
-    ghost: { vfrom: 203.2, vto: 230 },
+    reveal: [{ cue: 'joists2', v: 203.1, vspan: 3.6 }, { cue: 'jointBlocks', v: 207.5, vspan: 2.0 }, { cue: 'cribFocus', v: 211.85, vspan: 6.3 }, { cue: 'cribOther', v: 217.6, vspan: 0.7 }],
+    ghost: { vfrom: 211.4, vto: 240 },
     // Exemple interdit : bois simplement empilé, montré à côté de la cage.
-    show: [{ obj: 'badStack', vfrom: 218.0 }],
-    cams: [{ v: 194.0, ...C.s2 }, { v: 202.6, pos: [SEC * 1.5 + 3.4, 1.5, 4.4], tgt: [SEC * 1.5 + 0.6, -0.3, 0.9] }, { v: 205.2, ...C.cageA }, { v: 212.5, ...C.cageB }, { v: 217.6, ...C.cageC }, { v: 219.2, pos: [DIP_X - 1.55, 0.4, DIP_Z + 2.15], tgt: [DIP_X - 0.95, -0.12, DIP_Z + 0.4] }, { v: 222.8, pos: [DIP_X - 1.65, 0.45, DIP_Z + 2.2], tgt: [DIP_X - 0.95, -0.12, DIP_Z + 0.4] }],
+    show: [{ obj: 'badStack', vfrom: 218.42 }],
+    cams: [{ v: 202.75, ...C.s2 }, { v: 211.06, pos: [SEC * 1.5 + 3.4, 1.5, 4.4], tgt: [SEC * 1.5 + 0.6, -0.3, 0.9] }, { v: 213.0, ...C.cageA }, { v: 216.8, ...C.cageB }, { v: 218.42, ...C.cageC }, { v: 220.2, pos: [DIP_X - 1.55, 0.4, DIP_Z + 2.15], tgt: [DIP_X - 0.95, -0.12, DIP_Z + 0.4] }, { v: 225.6, pos: [DIP_X - 1.65, 0.45, DIP_Z + 2.2], tgt: [DIP_X - 0.95, -0.12, DIP_Z + 0.4] }],
   },
   {
     id: 'e12', min: 10,
@@ -232,8 +257,8 @@ export const SEGMENTS = [
     ],
     // Section 2 couverte du bout côté galerie (d'où arrive le bois) vers la jonction ; les
     // planches de jonction posées et vissées à la fin.
-    reveal: [{ cue: 'deck2', at: 0.05, span: 0.6 }, { cue: 'screws2', at: 0.68, span: 0.08 }, { cue: 'joinPlanks', at: 0.78, span: 0.08 }, { cue: 'joinScrews', at: 0.9, span: 0 }],
-    cams: [{ t: 0.3, ...C.deck2 }, { t: 1, pos: [L + 2.4, 2.6, 4.2], tgt: [SEC, 0, 0] }],
+    reveal: [{ cue: 'deck2', v: 232.4, vspan: 6.6 }, { cue: 'screws2', v: 243.0, vspan: 1.2 }, { cue: 'joinPlanks', v: 245.8, vspan: 1.5 }, { cue: 'joinScrews', v: 247.8, vspan: 0 }],
+    cams: [{ v: 227.4, ...C.deck2 }, { v: 241.5, ...C.deck2 }, { t: 1, pos: [L + 2.4, 2.6, 4.2], tgt: [SEC, 0, 0] }],
   },
   {
     id: 'e13', min: 9,
@@ -289,8 +314,8 @@ export const SEGMENTS = [
       [2, 'Pis le côté où il y a pas de marche ?'],
       [1, 'Là, un garde-corps est obligatoire, fixé solidement. Pis quand on déplace la foreuse, on ajuste les garde-corps pour fermer les ouvertures.'],
     ],
-    reveal: [{ cue: 'secondary', at: 0.15, span: 0.45 }],
-    cams: [{ t: 0.2, ...C.ov }, { t: 0.5, ...C.second }, { t: 1, pos: [2.9, 1.5, 1.9], tgt: [0.8, 0.4, 0.2] }],
+    reveal: [{ cue: 'secondary', v: 304.8, vspan: 13.26 }],
+    cams: [{ v: 306.32, ...C.ov }, { v: 315.08, ...C.second }, { t: 1, pos: [2.9, 1.5, 1.9], tgt: [0.8, 0.4, 0.2] }],
   },
   {
     id: 'demont', min: 12,
@@ -341,19 +366,30 @@ export function stepCard(seg) {
 
 // ------------------------------------------------------------------ voix
 
-/** Narration enregistrée (ElevenLabs, voix « Germain »), lue d'un trait. */
-export const VOICE_FILE = 'video/plancher/voix-germain.mp3';
-// Début de chaque partie dans l'enregistrement (s), repéré par transcription.
+/** Narration enregistrée (ElevenLabs, voix « Adam », 29 octobre 2026), lue d'un trait. */
+export const VOICE_FILE = 'video/plancher/voix-adam.mp3';
+// Début de chaque partie dans l'enregistrement (s), repéré par transcription
+// (0,35 s avant la première syllabe, ou l'écart de la v11 pour les parties gardées).
 const VOICE_AT = {
-  titre: 0, materiel: 17.92, inspection: 38.93, e1: 47.68, e2: 59.43, e3: 70.84, e4: 87.22, e5: 97.54,
-  e5b: 113.77, e6: 122.36, e7: 141.46, e8: 158.22, e9: 168.02, e10: 178.88, e11: 192.82, e12: 211.2,
-  e13: 220.36, e14: 231.79, e15: 246.25, e16: 260.6, e17: 265.34, sec: 274.97, demont: 296.75, fin: 315.48,
+  titre: 0, materiel: 16.89, inspection: 52.88, e1: 61.4, e2: 73.13, e3: 84.22, e4: 100.59, e5: 110.67,
+  e5b: 126.25, e6: 134.69, e7: 153.71, e8: 169.85, e9: 178.81, e10: 188.39, e11: 201.52, e12: 225.97,
+  e13: 249.05, e14: 259.62, e15: 273.39, e16: 288.19, e17: 292.5, sec: 301.64, demont: 336.7, fin: 372.86,
 };
-const VOICE_END = 332.59;
-// Silences ajoutés dans la voix : [instant dans l'enregistrement, durée] (ex. cage, étape 11).
-const GAPS = { e11: [[203.45, 2.4]] };
-// Temps laissé après la voix (s) ; par défaut 0,4.
-const TAIL = { sec: 8.4, demont: 15.0, e14: 8.4, e11: 11.9, titre: 0.2, fin: 1.2, e15: 0.2, e7: 1.6, materiel: +(tourEnd(TOUR_V0) + 0.1 - 38.93).toFixed(2) };
+const VOICE_END = 389.29;
+// Silences ajoutés dans la voix : [instant dans l'enregistrement, durée]. Matériel : le
+// temps de voir chaque bois de près ; étape 11 : caméra vers la cage, cage terminée ;
+// ailleurs : chaque réplique au même instant des images que dans la v11.
+const GAPS = {
+  titre: [[9.44, 0.79]], materiel: [[29.25, 0.5], [30.75, 0.5], [32.35, 0.4]], e5: [[118.49, 0.3]], e10: [[198.89, 0.52]],
+  e11: [[211.65, 2.4], [218.42, 2.0]], fin: [[380.53, 0.58]],
+};
+// Temps laissé après la voix (s) ; par défaut 0,4. Les parties gardées de la v11 (même
+// durée, mêmes images) ont la fin qui complète leur durée d'origine.
+const TAIL = {
+  titre: 0.4367, materiel: 3.02, inspection: 0.6383, e1: 0.4283, e2: 0.735, e3: 0.4133, e4: 0.62, e5: 0.7367, e5b: 0.5517,
+  e6: 0.4717, e7: 2.2267, e8: 1.24, e9: 1.6617, e10: 0.675, e11: 0.6, e13: 1.255, e14: 9.0967, e15: -0.2667, e16: 0.8483,
+  e17: 0.8933, sec: 0.6, fin: 1.315,
+};
 const LEAD = 0.3; // la voix démarre 0,3 s après le début de la partie
 const r24 = (x) => Math.round(x * 24) / 24;
 
