@@ -209,7 +209,7 @@ export const STEPS = [
   { n: 12, cam: { pos: [L + 3.0, 3.4, 4.8], tgt: [SEC * 1.45, 0, 0] }, page: 'P13', title: 'Couvrir la section 2', text: 'Répéter les étapes 6 et 7.' },
   { n: 13, cam: { pos: [4.6, 0.8, 3.9], tgt: [6.4, 0.16, 2.44] }, page: 'P13', title: 'Couper au ras', text: "Aucun 6 × 6 ni 3 × 8 ne dépasse : bouts coupés carrés au ras du plancher." },
   { n: 14, cam: { pos: [L + 3.4, 1.45, 2.15], tgt: [L + 0.3, 0.02, 0.96] }, page: 'P14', title: 'Marches', text: 'Plancher plus haut que 12 po : marches de 16 po de profondeur, 36 à 60 po de large, 12 po de haut au plus.' },
-  { n: 15, cam: { pos: [L + 4.6, 2.7, 5.2], tgt: [L - 2.2, 0.6, 0.4] }, page: 'P16', title: 'Garde-corps et lisse inférieure', text: 'RSST art. 12 : lisse supérieure entre 1 et 1,2 m, lisse intermédiaire à mi-hauteur, plinthe d’au moins 90 mm.' },
+  { n: 15, cam: { pos: [L + 4.6, 2.7, 5.2], tgt: [L - 2.2, 0.6, 0.4] }, page: 'P16', title: 'Garde-corps et lisse inférieure', text: 'RSST art. 12 : lisse supérieure entre 1 et 1,2 m, lisse intermédiaire à mi-hauteur, plinthe : 2 × 4 brut sur chant (4 po).' },
   { n: 16, cam: { pos: [L + 3.0, 1.7, 2.2], tgt: [L + 0.3, 0.3, 0.96] }, page: 'P16', title: 'Mains courantes', text: "Plus d'une marche : mains courantes." },
   { n: 17, cam: { pos: [6.3, 1.9, -1.2], tgt: [6.6, 0.0, -2.75] }, page: 'P16', title: 'Grillage au bas du mur', text: 'Écart plancher-mur de 12 po ou moins : grillage de 24 po fixé au bas du mur.' },
   { n: 18, cam: { pos: [3.3, 1.9, 2.5], tgt: [0.9, 0.35, 0.3] }, page: 'P17', label: 'À la foreuse', title: 'Plancher secondaire', text: '32 × 72 po au moins, 12 po de haut au plus, dernière planche à 3 po de la tour, deux dernières planches vissées.' },
@@ -256,6 +256,6 @@ export const NOTES = [
   { steps: [10, 11], pos: [DIP.x, -0.3, DIP.z], text: 'Cage : pièces de 24 à 36 po' },
   { steps: [12], pos: [plankX(22) + P8 / 2, DECK + 0.05, 0], text: 'Planches de jonction vissées' },
   { steps: [13], pos: [L - 0.6, DECK + 0.05, W / 2], text: 'Bouts coupés carrés, au ras' },
-  { steps: [15], pos: [L + 0.05, DECK + 0.12, -0.1], text: 'Plinthe de 90 mm min.' },
+  { steps: [15], pos: [L + 0.05, DECK + 0.12, -0.1], text: 'Plinthe : 2 × 4 brut sur chant (4 po)' },
   { steps: [16], pos: [L + 0.5, DECK + 0.95, STAIR.z0 - 0.05], text: 'Main courante de chaque côté' },
 ];

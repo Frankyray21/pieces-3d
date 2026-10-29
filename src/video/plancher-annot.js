@@ -127,9 +127,9 @@ export const ANNOTATIONS = {
   ],
   e11: [
     { v: 203.7, type: 'dim', a: [SEC * 1.5, B66 + 0.02, joistZ[2]], b: [SEC * 1.5, B66 + 0.02, joistZ[3]], off: [0, 0.1, 0], text: '32 po', sub: 'centre à centre' },
-    { v: 206.1, type: 'note', at: [JOINT_X + 0.15, B66, joistZ[2]], text: 'Dans le prolongement de la section 1', dir: 'up', until: 210.5 },
-    { v: 207.95, type: 'note', at: [SLEEPERS_X[2], -B66, joistZ[2]], text: 'Soutiens vis-à-vis les croisements', dir: 'up' },
-    { v: 209.5, type: 'note', at: [JOINT_X, B66, W / 2 - B66 * 1.5], text: 'Blocage 6 × 6 à l’intérieur, sous les planches : vissé aux 2 sections', dir: 'down', until: 212.0 },
+    { v: 206.1, type: 'note', at: [JOINT_X + 0.15, B66, joistZ[2]], text: 'Dans le prolongement de la section 1', dir: 'up', until: 207.2 },
+    { v: 208.9, type: 'note', at: [SLEEPERS_X[2], -B66, joistZ[2]], text: 'Soutiens vis-à-vis les croisements', dir: 'up' },
+    { v: 207.45, type: 'note', at: [JOINT_X, B66, -(W / 2 - B66 * 1.5)], text: 'Blocage 6 × 6 à l’intérieur, sous les planches : vissé aux 2 sections', dir: 'up', until: 208.0 },
     // Cage, montée couche par couche.
     { v: 212.4, type: 'note', at: [CRIB.x - 0.305, CRIB.y1, CRIB.z - 0.3], text: 'Couche 1 : deux 6 × 6 parallèles', dir: 'down', until: 215.0 },
     { v: 214.5, type: 'note', at: [CRIB.x, CRIB.y2, CRIB.z + 0.38], text: 'Couche 2 : croisée', dir: 'right', until: 217.6 },
@@ -155,7 +155,7 @@ export const ANNOTATIONS = {
     { v: 275.54, type: 'dim', a: [L, ground(L, zg - 0.75), zg - 0.75], b: [L, DECK, zg - 0.75], off: [0.45, 0, 0], text: po(deckHeight(L, zg - 0.75)), sub: 'plus de 12 po + vide' },
     { v: 280.54, type: 'dim', a: [L, DECK, zg], b: [L, DECK + 1.07, zg], off: [0.35, 0, 0], text: '1 à 1,2 m', sub: 'lisse supérieure' },
     { v: 283.54, type: 'note', at: [L + 0.05, DECK + 0.535, -0.6], text: 'Lisse intermédiaire à mi-hauteur', dir: 'right' },
-    { v: 285.54, type: 'note', at: [L + 0.03, DECK + 0.06, -2.0], text: 'Plinthe : 90 mm min.', dir: 'right' },
+    { v: 285.54, type: 'note', at: [L + 0.03, DECK + 0.06, -2.0], text: 'Plinthe : 2 × 4 brut sur chant (4 po)', dir: 'right' },
   ],
   e16: [
     { v: 289.59, type: 'note', at: [L + 0.5, DECK + 0.9, STAIR.z0 - 0.05], text: 'Main courante de chaque côté', dir: 'up' },

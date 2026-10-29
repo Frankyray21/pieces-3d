@@ -616,7 +616,7 @@
    "sheets": [
     "P16"
    ],
-   "note": "RSST art. 12 : lisse supérieure entre 1 et 1,2 m (1,07 m ici), lisse intermédiaire à mi-hauteur, plinthe d'au moins 90 mm. Un 2 × 4 raboté sur chant ne fait que 89 mm : la 3D met un 2 × 4 brut (102 mm). Garde-corps là où le plancher dépasse 12 po de haut et donne sur un vide : au bout du plancher, de part et d'autre de l'escalier. Le long des parois rocheuses, il n'y a pas de vide : l'écart plancher-mur de 12 po est fermé par un grillage de 24 po au bas du mur.",
+   "note": "RSST art. 12 : lisse supérieure entre 1 et 1,2 m (1,07 m ici), lisse intermédiaire à mi-hauteur, plinthe : un 2 × 4 brut sur chant (4 po ; un 2 × 4 raboté ne fait que 3 ½ po, un peu moins que le minimum du RSST). Garde-corps là où le plancher dépasse 12 po de haut et donne sur un vide : au bout du plancher, de part et d'autre de l'escalier. Le long des parois rocheuses, il n'y a pas de vide : l'écart plancher-mur de 12 po est fermé par un grillage de 24 po au bas du mur.",
    "parts": [
     [
      "1",
@@ -649,7 +649,7 @@
      "4",
      "",
      2,
-     "Lisse inférieure (plinthe) 2 × 4 sur chant, 90 mm au moins",
+     "Lisse inférieure (plinthe) 2 × 4 brut sur chant (4 po)",
      {
       "pnText": "2 × 4 brut"
      }

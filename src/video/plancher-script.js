@@ -69,6 +69,7 @@ const C = {
   cageB: { pos: [7.3, 0.45, 2.95], tgt: [8.88, -0.54, 1.6] },
   cageC: { pos: [7.85, 0.75, 3.35], tgt: [8.92, -0.5, 1.62] },
   deck2: { pos: [L + 3.0, 3.4, 4.8], tgt: [SEC * 1.45, 0, 0] },
+  jblock: { pos: [SEC + 0.6, 0.6, -1.4], tgt: [SEC, 0.07, -2.2] }, // blocage de jonction, côté Z négatif (posé en premier)
   edge: { pos: [4.6, 0.8, 3.9], tgt: [6.4, 0.16, 2.44] },
   stairs: { pos: [L + 3.4, 1.45, 2.15], tgt: [L + 0.3, 0.02, 0.96] },
   guards: { pos: [L + 4.6, 2.7, 5.2], tgt: [L - 2.2, 0.6, 0.4] },
@@ -242,11 +243,14 @@ export const SEGMENTS = [
       [1, 'Pis attention : on empile jamais des morceaux de bois un par-dessus l\'autre. C\'est un blocage avec ses coins, ou une cage croisée.'],
     ],
     // Cage (cas spécial) : gros plan, plancher en transparence, montée couche par couche.
-    reveal: [{ cue: 'joists2', v: 203.1, vspan: 3.6 }, { cue: 'jointBlocks', v: 207.5, vspan: 2.0 }, { cue: 'cribFocus', v: 211.85, vspan: 6.3 }, { cue: 'cribOther', v: 217.6, vspan: 0.7 }],
+    reveal: [{ cue: 'joists2', v: 203.1, vspan: 3.6 }, { cue: 'jointBlocks', v: 207.35, vspan: 0.27 }, { cue: 'cribFocus', v: 211.85, vspan: 6.3 }, { cue: 'cribOther', v: 217.6, vspan: 0.7 }],
     ghost: { vfrom: 211.4, vto: 240 },
     // Exemple interdit : bois simplement empilé, montré à côté de la cage.
     show: [{ obj: 'badStack', vfrom: 218.42 }],
-    cams: [{ v: 202.75, ...C.s2 }, { v: 211.06, pos: [SEC * 1.5 + 3.4, 1.5, 4.4], tgt: [SEC * 1.5 + 0.6, -0.3, 0.9] }, { v: 213.0, ...C.cageA }, { v: 216.8, ...C.cageB }, { v: 218.42, ...C.cageC }, { v: 220.2, pos: [DIP_X - 1.55, 0.4, DIP_Z + 2.15], tgt: [DIP_X - 0.95, -0.12, DIP_Z + 0.4] }, { v: 224.6, pos: [DIP_X - 1.65, 0.45, DIP_Z + 2.2], tgt: [DIP_X - 0.95, -0.12, DIP_Z + 0.4] },
+    cams: [{ v: 202.75, ...C.s2 }, { v: 206.4, ...C.s2 },
+      // Gros plan sur le blocage de jonction (6 × 6 vissé aux 2 sections) pendant le silence ajouté.
+      { v: 207.3, ...C.jblock }, { v: 207.75, ...C.jblock },
+      { v: 209.3, pos: [SEC * 1.5 + 3.4, 1.5, 4.4], tgt: [SEC * 1.5 + 0.6, -0.3, 0.9] }, { v: 211.06, pos: [SEC * 1.5 + 3.4, 1.5, 4.4], tgt: [SEC * 1.5 + 0.6, -0.3, 0.9] }, { v: 213.0, ...C.cageA }, { v: 216.8, ...C.cageB }, { v: 218.42, ...C.cageC }, { v: 220.2, pos: [DIP_X - 1.55, 0.4, DIP_Z + 2.15], tgt: [DIP_X - 0.95, -0.12, DIP_Z + 0.4] }, { v: 224.6, pos: [DIP_X - 1.65, 0.45, DIP_Z + 2.2], tgt: [DIP_X - 0.95, -0.12, DIP_Z + 0.4] },
       // Remontée au-dessus du plancher avant que la transparence cesse (vue de l'étape 12).
       { t: 1, ...C.deck2 }],
   },
@@ -283,7 +287,7 @@ export const SEGMENTS = [
   },
   {
     id: 'e15', min: 15,
-    band: { n: '15', title: 'Garde-corps (RSST, art. 12)', text: 'Si le plancher est plus haut que 12 pouces, des garde-corps devront être installés et respecter l’article 12 du RSST. Une lisse inférieure doit être ajoutée pour les endroits sur le plancher où les travailleurs ont accès.', detail: 'Ici : au bout du plancher, côté galerie (vide) ; le long des parois, le grillage ferme l’écart · lisse supérieure 1 m à 1,2 m · lisse intermédiaire · plinthe d’au moins 90 mm' },
+    band: { n: '15', title: 'Garde-corps (RSST, art. 12)', text: 'Si le plancher est plus haut que 12 pouces, des garde-corps devront être installés et respecter l’article 12 du RSST. Une lisse inférieure doit être ajoutée pour les endroits sur le plancher où les travailleurs ont accès.', detail: 'Ici : au bout du plancher, côté galerie (vide) ; le long des parois, le grillage ferme l’écart · lisse supérieure 1 m à 1,2 m · lisse intermédiaire · plinthe : 2 × 4 brut sur chant (4 po)' },
     lines: [
       [1, 'Étape quinze : plus de douze pouces de haut pis un vide, des garde-corps selon l\'article douze du RSST. La lisse du haut entre un mètre pis un mètre vingt, une lisse à mi-hauteur, pis une plinthe d\'au moins quatre-vingt-dix millimètres.'],
     ],
@@ -385,7 +389,7 @@ const VOICE_END = 389.29;
 // ailleurs : chaque réplique au même instant des images que dans la v11.
 const GAPS = {
   titre: [[9.44, 0.79]], materiel: [[29.25, 0.5], [30.75, 0.5], [32.35, 0.4]], e5: [[118.49, 0.3]], e10: [[198.89, 0.52]],
-  e11: [[211.65, 2.4], [218.42, 2.0]], fin: [[380.53, 0.58]],
+  e11: [[207.6, 3.0], [211.65, 2.4], [218.42, 2.0]], fin: [[380.53, 0.58]],
 };
 // Temps laissé après la voix (s) ; par défaut 0,4. Les parties gardées de la v11 (même
 // durée, mêmes images) ont la fin qui complète leur durée d'origine.

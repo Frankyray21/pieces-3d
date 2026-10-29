@@ -178,6 +178,9 @@ for (const [name, list] of cues) {
     if (name.startsWith('joists')) return a.c.z - b.c.z;
     if (name.startsWith('deck')) return (a.obj.userData.order ?? 0) - (b.obj.userData.order ?? 0) || a.c.x - b.c.x;
     if (name.startsWith('crib')) return a.c.y - b.c.y || a.c.x - b.c.x || a.c.z - b.c.z;
+    // Marches : dans l'ordre de pose du modèle (seq) : module du bas (coins, longerons rang
+    // par rang, dessus), puis le module du dessus.
+    if (name === 'stairs') return (a.obj.userData.seq ?? 0) - (b.obj.userData.seq ?? 0) || a.c.z - b.c.z || a.c.x - b.c.x;
     return a.c.x - b.c.x || a.c.z - b.c.z || a.c.y - b.c.y;
   });
 }
