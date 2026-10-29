@@ -160,9 +160,11 @@ export function P12(api) {
 export function stairPlan() {
   const zc = STAIR.z0 + STAIR.w / 2;
   const h = deckHeight(L + STAIR.tread, zc);
-  // Hauteur de marche de 12 po au plus (environ 9 po comme l'exemple de la p. 15).
-  const n = Math.max(2, Math.ceil(h / (9.5 * IN)));
-  return { zc, h, n, rise: h / n };
+  // Marches ajustées à 9 po du plancher (p. 15) : un module = deux rangs de 3 × 8 et le
+  // dessus, 9 po pile ; la dernière hauteur, depuis le sol, prend le reste (12 po au plus).
+  const rise = 9 * IN;
+  const treads = Math.max(1, Math.floor((h - P3) / rise));
+  return { zc, h, n: treads + 1, rise };
 }
 
 /** Marches et mains courantes au bout du plancher, étapes 14 et 16. */
@@ -188,7 +190,8 @@ export function P14(api, opts = {}) {
     for (const z of [z0 + P8 / 2, (z0 + z1) / 2, z1 - P8 / 2]) {
       const g = base ?? Math.max(ground(xa, z), ground(xb, z));
       const under = top - P3; // dessous du dessus du module
-      const nL = Math.max(0, Math.floor((under - g) / P3));
+      // Module du bas : nombre de rangs arrondi, posé de niveau dans le gravier (pas de vide).
+      const nL = base == null ? Math.max(1, Math.round((under - g) / P3)) : Math.round((under - g) / P3);
       const yb = under - nL * P3;
       for (let j = 0; j < nL; j++) put('2', lumber(S, [depth, P3, P8], [(xa + xb) / 2, yb + (j + 0.5) * P3, z]), [0.25 * i, 0.12 * j, 0], 14, { seq: seq0 + 1 + j });
       const gap = yb - g;
