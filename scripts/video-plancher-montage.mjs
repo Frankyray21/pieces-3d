@@ -13,7 +13,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { spawnSync } from 'node:child_process';
-import { timeline, vt, VOICE_FILE } from '../src/video/plancher-script.js';
+import { timeline, vt, voicePieces, VOICE_FILE } from '../src/video/plancher-script.js';
 import { W, H, H3, FONTS, calques } from './plancher-calques.mjs';
 
 const require = createRequire(import.meta.url);
@@ -118,11 +118,7 @@ let fc = `[0:v]format=gbrp[b];[1:v]format=gbrap[an];[b][an]overlay=0:0:format=gb
 const maps = ['-map', '[v]'];
 if (VOICE) {
   // Voix : chaque morceau de l'enregistrement placé à son instant (silences ajoutés compris).
-  const pieces = [];
-  for (const s of SEGS) {
-    const cuts = [s.voice.a, ...s.voice.gaps.map((g) => g[0]).filter((x) => x > s.voice.a && x < s.voice.b), s.voice.b];
-    for (let i = 0; i + 1 < cuts.length; i++) pieces.push({ a: cuts[i], b: cuts[i + 1], at: vt(s, cuts[i]) });
-  }
+  const pieces = SEGS.flatMap((s) => voicePieces(s));
   ins.push('-i', VOICE_FILE);
   fc += ';' + pieces.map((p, i) => `[3:a]atrim=start=${p.a}:end=${p.b},asetpts=PTS-STARTPTS,adelay=${Math.round(p.at * 1000)}:all=1[p${i}]`).join(';')
     + `;${pieces.map((_, i) => `[p${i}]`).join('')}amix=inputs=${pieces.length}:normalize=0:dropout_transition=0,atrim=duration=${DUR.toFixed(3)},loudnorm=I=-16:TP=-1.5:LRA=11[a]`;

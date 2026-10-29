@@ -22,9 +22,9 @@ import { TOUR, MAT } from './plancher-materiel.js';
 // chaque groupe d'outils au moment où il est nommé ; les barres d'écaillage (non
 // nommées) à la fin, avec leur étiquette.
 const TOUR_AT = {
-  b66: [25.6, 27.6, 29.2], b38: [29.2, 29.6, 30.7], s24: [30.7, 31.15, 32.3], qty: [34.7, 35.7, 39.9],
-  biche: [39.9, 40.9, 43.5], sciotte: [43.5, 44.2, 45.8], laser: [45.8, 46.5, 49.2], pingouin: [49.2, 49.9, 50.5],
-  scie: [50.5, 51.2, 53.0], barres: [53.0, 54.6, 56.3],
+  b66: [25.47, 27.34, 28.94], b38: [28.94, 29.39, 30.49], s24: [30.49, 31.02, 32.17], qty: [34.97, 35.97, 40.17],
+  biche: [40.17, 41.17, 43.77], sciotte: [43.77, 44.47, 46.07], laser: [46.07, 46.77, 49.47], pingouin: [49.47, 50.17, 50.77],
+  scie: [50.77, 51.47, 53.27], barres: [53.27, 54.87, 56.57],
 };
 // Coins et tire-fonds vus de près (entre le bois et les quantités), au moment où ils sont nommés.
 const QUINC = (() => {
@@ -103,11 +103,11 @@ export const SEGMENTS = [
       // Tel qu'enregistré : les barres d'écaillage ne sont pas nommées (montrées à la fin avec leur étiquette).
       [1, 'Pied de biche, masse pis marteau. … La scie à main pis les pinces. … Le niveau au laser Bosch pis le niveau de quarante-huit pouces. … Le pingouin. … Pis la scie va-et-vient, avec ses lames à bois.'],
     ],
-    reveal: [{ cue: 'barricade', v: 18.05, vspan: 1.2 }, { cue: 'cabinet', v: 21.55, vspan: 0 }, { cue: 'ext', v: 25.0, vspan: 0 }],
+    reveal: [{ cue: 'barricade', v: 18.23, vspan: 1.08 }, { cue: 'cabinet', v: 21.61, vspan: 0 }, { cue: 'ext', v: 25.06, vspan: 0 }],
     // Bois, quincaillerie et outils étalés derrière la barricade : chaque bois de près au
     // moment où il est nommé, les coins et tire-fonds, les quantités, puis les outils.
-    show: [{ obj: 'materiel', vfrom: 26.0 }],
-    cams: [{ v: 17.15, ...C.entr }, { v: 20.45, ...C.entr }, { v: 21.75, ...C.cab }, { v: 25.6, ...C.cab }, { v: 32.9, ...QUINC }, { v: 34.7, ...QUINC }, ...tourStops()].sort((a, b) => a.v - b.v),
+    show: [{ obj: 'materiel', vfrom: 25.87 }],
+    cams: [{ v: 17.33, ...C.entr }, { v: 20.51, ...C.entr }, { v: 21.81, ...C.cab }, { v: 25.47, ...C.cab }, { v: 33.17, ...QUINC }, { v: 34.97, ...QUINC }, ...tourStops()].sort((a, b) => a.v - b.v),
   },
   {
     id: 'inspection', min: 9,
@@ -200,9 +200,9 @@ export const SEGMENTS = [
     // Serrage : dernier 3 × 8 vissé (temporaire), coins enfoncés entre lui et les
     // planches posées, écarts qui se ferment, planche devant les coins vissée,
     // tire-fonds du dernier 3 × 8 retirés, coins enlevés.
-    tighten: { anchor: 157.25, anchorScrews: 158.65, wedgesIn: 159.65, drive: [160.45, 162.85], frontScrews: 163.25, unscrew: 165.45, wedgesOut: 166.45, back: [166.85, 167.65] },
-    reveal: [{ cue: 'anchor', v: 157.25, vspan: 0 }, { cue: 'screwsT', v: 163.25, vspan: 0 }, { cue: 'deck1b', v: 168.05, vspan: 2.4 }],
-    cams: [{ v: 155.25, ...C.tight }, { v: 163.05, ...C.tight2 }, { v: 167.85, ...C.tight2 }, { v: 170.85, ...C.deck1 }],
+    tighten: { anchor: 156.48, anchorScrews: 157.88, wedgesIn: 158.88, drive: [159.68, 162.08], frontScrews: 162.48, unscrew: 164.68, wedgesOut: 165.68, back: [166.08, 166.88] },
+    reveal: [{ cue: 'anchor', v: 156.48, vspan: 0 }, { cue: 'screwsT', v: 162.48, vspan: 0 }, { cue: 'deck1b', v: 167.28, vspan: 2.4 }],
+    cams: [{ v: 154.48, ...C.tight }, { v: 162.28, ...C.tight2 }, { v: 167.08, ...C.tight2 }, { v: 170.08, ...C.deck1 }],
   },
   {
     id: 'e8', min: 8,
@@ -229,28 +229,33 @@ export const SEGMENTS = [
       [2, 'Ça fait une base stable pour poser les madriers dessus.'],
     ],
     show: [{ obj: 'laser2', from: 0, to: 0.4 }],
-    reveal: [{ cue: 'support2', v: 189.11, vspan: 2 }, { cue: 'guide', v: 190.71, vspan: 0 }, { cue: 'sleepers', v: 195.51, vspan: 2.6 }],
+    reveal: [{ cue: 'support2', v: 188.7, vspan: 2 }, { cue: 'guide', v: 190.3, vspan: 0 }, { cue: 'sleepers', v: 195.1, vspan: 2.6 }],
     cams: [{ t: 0.3, ...C.s2 }, { t: 1, pos: [SEC * 1.5 + 3.6, 1.6, 5.2], tgt: [SEC * 1.5, -0.25, 0.3] }],
   },
   {
     id: 'e11', min: 14,
     band: { n: '11', title: 'Madriers de la section 2', text: 'Après avoir positionné vos 6\'\'X6\'\' de niveau à 32\'\' centre, utiliser des coins de bois pour égaliser la structure de base. Toujours enligner vos soutiens vis-à-vis le croisement de vos 6X6 pour s’assurer d’un soutien solide.', detail: 'Cas spéciaux : construction de cage en 3\'\'X8\'\' et/ou 6\'\'X6\'\' de 24 à 36\'\' de long, empilés' },
     why: 'Toujours enligner vos soutiens vis-à-vis le croisement de vos 6X6 pour s’assurer d’un soutien solide.',
-    whyTo: 211.6, // jusqu'à la fin de la phrase sur les soutiens, avant la cage
+    whyFrom: 221.9, whyTo: 242.2, // pendant la phrase sur les soutiens et le passage à la cage
     lines: [
-      [1, 'Étape onze : les madriers à trente-deux pouces centre, à la même hauteur que la première section. Les soutiens, toujours vis-à-vis le croisement des six par six.'],
+      [1, 'Étape onze : les madriers à trente-deux pouces centre, à la même hauteur que la première section.'],
+      [2, 'Pis comment on joint les deux sections ?'],
+      [1, 'Avec un bout de bois à l’intérieur, sous les planches, vissé dans les madriers des deux sections. Les madriers de la deuxième reposent sur le même blocage que la première : les deux sections sont parfaitement égales.'],
+      [1, 'Les soutiens, toujours vis-à-vis le croisement des six par six.'],
       [1, 'Dans un creux comme celui-là, on monte une cage : des bouts de vingt-quatre à trente-six pouces, empilés croisés.'],
       [1, 'Pis attention : on empile jamais des morceaux de bois un par-dessus l\'autre. C\'est un blocage avec ses coins, ou une cage croisée.'],
     ],
     // Cage (cas spécial) : gros plan, plancher en transparence, montée couche par couche.
-    reveal: [{ cue: 'joists2', v: 203.1, vspan: 3.6 }, { cue: 'jointBlocks', v: 207.35, vspan: 0.27 }, { cue: 'cribFocus', v: 211.85, vspan: 6.3 }, { cue: 'cribOther', v: 217.6, vspan: 0.7 }],
-    ghost: { vfrom: 211.4, vto: 240 },
+    reveal: [{ cue: 'joists2', v: 203.1, vspan: 3.6 }, { cue: 'jointBlocks', v: 208.0, vspan: 6.0 }, { cue: 'cribFocus', v: 242.25, vspan: 6.3 }, { cue: 'cribOther', v: 248.0, vspan: 0.7 }],
+    ghost: { vfrom: 225.6, vto: 270 },
     // Exemple interdit : bois simplement empilé, montré à côté de la cage.
-    show: [{ obj: 'badStack', vfrom: 218.42 }],
-    cams: [{ v: 202.75, ...C.s2 }, { v: 206.4, ...C.s2 },
-      // Gros plan sur le blocage de jonction (6 × 6 vissé aux 2 sections) pendant le silence ajouté.
-      { v: 207.3, ...C.jblock }, { v: 207.75, ...C.jblock },
-      { v: 209.3, pos: [SEC * 1.5 + 3.4, 1.5, 4.4], tgt: [SEC * 1.5 + 0.6, -0.3, 0.9] }, { v: 211.06, pos: [SEC * 1.5 + 3.4, 1.5, 4.4], tgt: [SEC * 1.5 + 0.6, -0.3, 0.9] }, { v: 213.0, ...C.cageA }, { v: 216.8, ...C.cageB }, { v: 218.42, ...C.cageC }, { v: 220.2, pos: [DIP_X - 1.55, 0.4, DIP_Z + 2.15], tgt: [DIP_X - 0.95, -0.12, DIP_Z + 0.4] }, { v: 224.6, pos: [DIP_X - 1.65, 0.45, DIP_Z + 2.2], tgt: [DIP_X - 0.95, -0.12, DIP_Z + 0.4] },
+    show: [{ obj: 'badStack', vfrom: 248.8 }],
+    cams: [{ v: 202.75, ...C.s2 }, { v: 206.9, ...C.s2 },
+      // Gros plan sur le blocage de jonction pendant le dialogue (« Pis comment on joint… »).
+      { v: 207.9, ...C.jblock }, { v: 221.6, ...C.jblock },
+      { v: 223.0, pos: [SEC * 1.5 + 3.4, 1.5, 4.4], tgt: [SEC * 1.5 + 0.6, -0.3, 0.9] }, { v: 225.6, pos: [SEC * 1.5 + 3.4, 1.5, 4.4], tgt: [SEC * 1.5 + 0.6, -0.3, 0.9] },
+      { v: 243.4, ...C.cageA }, { v: 247.2, ...C.cageB }, { v: 248.8, ...C.cageC },
+      { v: 250.5, pos: [DIP_X - 1.55, 0.4, DIP_Z + 2.15], tgt: [DIP_X - 0.95, -0.12, DIP_Z + 0.4] }, { v: 255.0, pos: [DIP_X - 1.65, 0.45, DIP_Z + 2.2], tgt: [DIP_X - 0.95, -0.12, DIP_Z + 0.4] },
       // Remontée au-dessus du plancher avant que la transparence cesse (vue de l'étape 12).
       { t: 1, ...C.deck2 }],
   },
@@ -265,8 +270,8 @@ export const SEGMENTS = [
     ],
     // Section 2 couverte du bout côté galerie (d'où arrive le bois) vers la jonction ; les
     // planches de jonction posées et vissées à la fin.
-    reveal: [{ cue: 'deck2', v: 232.4, vspan: 6.6 }, { cue: 'screws2', v: 243.0, vspan: 1.2 }, { cue: 'joinPlanks', v: 245.8, vspan: 1.5 }, { cue: 'joinScrews', v: 247.8, vspan: 0 }],
-    cams: [{ v: 227.4, ...C.deck2 }, { v: 241.5, ...C.deck2 }, { t: 1, pos: [L + 2.4, 2.6, 4.2], tgt: [SEC, 0, 0] }],
+    reveal: [{ cue: 'deck2', v: 262.86, vspan: 6.6 }, { cue: 'screws2', v: 273.46, vspan: 1.2 }, { cue: 'joinPlanks', v: 276.26, vspan: 1.5 }, { cue: 'joinScrews', v: 278.26, vspan: 0 }],
+    cams: [{ v: 257.86, ...C.deck2 }, { v: 271.96, ...C.deck2 }, { t: 1, pos: [L + 2.4, 2.6, 4.2], tgt: [SEC, 0, 0] }],
   },
   {
     id: 'e13', min: 9,
@@ -281,15 +286,19 @@ export const SEGMENTS = [
     band: { n: '14', title: 'Marches', text: 'Si le plancher est plus haut que 12 pouces, une construction de marches devra être faite. Elles devront avoir une profondeur de 16\'\' minimum (2 madriers de 3\'\'X8\'\'), une largeur de 36\'\' minimum, un maximum de 60\'\' de largeur et une hauteur maximum de 12 pouces.', detail: 'Exemple : marches superposées en 3\'\'X8\'\', ajustées à 9\'\' du plancher, mises de niveau' },
     lines: [
       [1, 'Étape quatorze : ici, le plancher dépasse douze pouces. Il faut des marches : seize pouces de profondeur, entre trente-six pis soixante pouces de large, douze pouces de haut au maximum. On vise neuf.'],
+      [2, 'Pis les marches, on les monte comment ?'],
+      [1, 'De bas en haut. En bas, du trois par huit à plat sur le sol, de niveau. Au-dessus, un bout de six par six par appui : jamais de bois empilé. Pis le dessus en trois par huit, deux planches pour la marche.'],
     ],
-    reveal: [{ cue: 'stairs', at: 0.05, span: 0.62 }],
-    cams: [{ t: 0.3, ...C.stairs }, { t: 1, pos: [L + 2.6, 1.0, 2.1], tgt: [L + 0.3, 0.0, 0.96] }],
+    // Montage des marches au fil du dialogue : longerons du bas, dessus du module du bas,
+    // bouts de 6 × 6 (« Au-dessus, un bout de six par six »), dessus du module du haut.
+    reveal: [{ cue: 'stairs', to: 3, v: 299.5, vspan: 3.0 }, { cue: 'stairs', from: 3, to: 7, v: 304.0, vspan: 3.5 }, { cue: 'stairs', from: 7, to: 10, v: 311.9, vspan: 2.4 }, { cue: 'stairs', from: 10, v: 316.6, vspan: 1.6 }],
+    cams: [{ v: 293.8, ...C.stairs }, { t: 1, pos: [L + 2.6, 1.0, 2.1], tgt: [L + 0.3, 0.0, 0.96] }],
   },
   {
     id: 'e15', min: 15,
-    band: { n: '15', title: 'Garde-corps (RSST, art. 12)', text: 'Si le plancher est plus haut que 12 pouces, des garde-corps devront être installés et respecter l’article 12 du RSST. Une lisse inférieure doit être ajoutée pour les endroits sur le plancher où les travailleurs ont accès.', detail: 'Ici : au bout du plancher, côté galerie (vide) ; le long des parois, le grillage ferme l’écart · lisse supérieure 1 m à 1,2 m · lisse intermédiaire · plinthe : 2 × 4 brut sur chant (4 po)' },
+    band: { n: '15', title: 'Garde-corps (RSST, art. 12)', text: 'Si le plancher est plus haut que 12 pouces, des garde-corps devront être installés et respecter l’article 12 du RSST. Une lisse inférieure doit être ajoutée pour les endroits sur le plancher où les travailleurs ont accès.', detail: 'Ici : au bout du plancher, côté galerie (vide) ; le long des parois, le grillage ferme l’écart · lisse supérieure 1 m à 1,2 m · lisse intermédiaire · lisse inférieure (coup de pied) : 2 × 4 brut sur chant' },
     lines: [
-      [1, 'Étape quinze : plus de douze pouces de haut pis un vide, des garde-corps selon l\'article douze du RSST. La lisse du haut entre un mètre pis un mètre vingt, une lisse à mi-hauteur, pis une plinthe d\'au moins quatre-vingt-dix millimètres.'],
+      [1, 'Étape quinze : plus de douze pouces de haut pis un vide, des garde-corps selon l\'article douze du RSST. La lisse du haut entre un mètre pis un mètre vingt, une lisse à mi-hauteur, pis un coup de pied en deux par quatre au ras du plancher.'],
     ],
     reveal: [{ cue: 'guards', at: 0.08, span: 0.6 }],
     cams: [{ t: 0.3, ...C.guards }, { t: 1, pos: [L + 3.4, 1.9, 4.4], tgt: [L - 1.4, 0.7, 1.0] }],
@@ -307,9 +316,9 @@ export const SEGMENTS = [
     id: 'e17', min: 9,
     band: { n: '17', title: 'Grillage au bas du mur', text: 'Si un écart entre votre plancher et le mur est de 12\'\' et moins, ajouter un grillage de 24\'\' de haut fixé au bas du mur.', detail: 'Celui-ci vous évitera de mettre le pied dans l’écart et annulera le risque de blessure' },
     lines: [
-      [1, 'Étape dix-sept : entre le plancher pis le mur, douze pouces ou moins ? Un grillage de vingt-quatre pouces au bas du mur. Le pied passe pas dans le trou.'],
+      [1, 'Étape dix-sept : entre le bord du plancher pis le mur, il reste souvent une ouverture. Si le pied peut passer dedans, on fixe un grillage de vingt-quatre pouces de haut au bas du mur : il bloque l’ouverture, le pied peut plus passer.'],
     ],
-    reveal: [{ cue: 'grille', at: 0.12, span: 0.3 }],
+    reveal: [{ cue: 'grille', v: 344.5, vspan: 3.0 }],
     cams: [{ t: 0.35, ...C.grille }, { t: 1, pos: [7.4, 1.8, -1.1], tgt: [6.4, 0.0, -2.75] }],
   },
   {
@@ -322,8 +331,8 @@ export const SEGMENTS = [
       [2, 'Pis le côté où il y a pas de marche ?'],
       [1, 'Là, un garde-corps est obligatoire, fixé solidement. Pis quand on déplace la foreuse, on ajuste les garde-corps pour fermer les ouvertures.'],
     ],
-    reveal: [{ cue: 'secondary', v: 304.8, vspan: 13.26 }],
-    cams: [{ v: 306.32, ...C.ov }, { v: 315.08, ...C.second }, { t: 1, pos: [2.9, 1.5, 1.9], tgt: [0.8, 0.4, 0.2] }],
+    reveal: [{ cue: 'secondary', v: 353.95, vspan: 12.35 }],
+    cams: [{ v: 355.28, ...C.ov }, { v: 363.46, ...C.second }, { t: 1, pos: [2.9, 1.5, 1.9], tgt: [0.8, 0.4, 0.2] }],
   },
   {
     id: 'demont', min: 12,
@@ -374,29 +383,45 @@ export function stepCard(seg) {
 
 // ------------------------------------------------------------------ voix
 
-/** Narration enregistrée (ElevenLabs, voix « Adam », 29 octobre 2026), lue d'un trait. */
-export const VOICE_FILE = 'video/plancher/voix-adam.mp3';
-// Début de chaque partie dans l'enregistrement (s), repéré par transcription
-// (0,35 s avant la première syllabe, ou l'écart de la v11 pour les parties gardées).
+/** Narration enregistrée (ElevenLabs, voix « Germain », 29 octobre 2026, prompt v20), lue d'un trait. */
+export const VOICE_FILE = 'video/plancher/voix-germain-2.mp3';
+// Début de chaque partie dans l'enregistrement (s), repéré par transcription. Les parties
+// gardées de la v13 commencent au même écart de leur première syllabe.
 const VOICE_AT = {
-  titre: 0, materiel: 16.89, inspection: 52.88, e1: 61.4, e2: 73.13, e3: 84.22, e4: 100.59, e5: 110.67,
-  e5b: 126.25, e6: 134.69, e7: 153.71, e8: 169.85, e9: 178.81, e10: 188.39, e11: 201.52, e12: 225.97,
-  e13: 249.05, e14: 259.62, e15: 273.39, e16: 288.19, e17: 292.5, sec: 301.64, demont: 336.7, fin: 372.86,
+  titre: 0, materiel: 17.07, inspection: 52.35, e1: 61.06, e2: 72.61, e3: 83.82, e4: 99.76, e5: 109.76,
+  e5b: 125.24, e6: 133.7, e7: 152.94, e8: 169.3, e9: 178.29, e10: 187.98, e11: 201.49, e12: 256.43,
+  e13: 280.22, e14: 290.7, e15: 319.57, e16: 333.86, e17: 337.74, sec: 350.79, demont: 384.25, fin: 420.55,
 };
-const VOICE_END = 389.29;
-// Silences ajoutés dans la voix : [instant dans l'enregistrement, durée]. Matériel : le
-// temps de voir chaque bois de près ; étape 11 : caméra vers la cage, cage terminée ;
-// ailleurs : chaque réplique au même instant des images que dans la v11.
+const VOICE_END = 437.18;
+// Silences ajoutés dans la voix : [instant dans l'enregistrement, durée]. Parties gardées :
+// chaque réplique (ou élément nommé) au même instant des images que dans la v13 ; étape 11 :
+// caméra vers la cage, cage terminée.
 const GAPS = {
-  titre: [[9.44, 0.79]], materiel: [[29.25, 0.5], [30.75, 0.5], [32.35, 0.4]], e5: [[118.49, 0.3]], e10: [[198.89, 0.52]],
-  e11: [[207.6, 3.0], [211.65, 2.4], [218.42, 2.0]], fin: [[380.53, 0.58]],
+  titre: [[9.4, 0.81]],
+  materiel: [[18.52, 0.12], [25.23, 0.19], [26.42, 0.13], [29.05, 0.45], [30.61, 0.42]],
+  e1: [[62.34, 0.1], [67.1, 0.12]],
+  e2: [[73.87, 0.07]],
+  e3: [[92.23, 0.06], [95.34, 0.2]],
+  e4: [[101.09, 0.06]],
+  e5: [[117.49, 0.35], [118.91, 0.05], [122.68, 0.08]],
+  e5b: [[130.97, 0.1]],
+  e8: [[175.93, 0.08]],
+  e10: [[198.74, 0.15]],
+  e13: [[281.68, 0.11]],
+  e15: [[320.82, 0.14], [323.07, 0.16]],
+  e16: [[335.04, 0.13]],
+  sec: [[354.19, 0.19], [360.13, 0.4], [362.44, 0.18], [364.91, 0.14], [369.61, 0.18], [374.35, 0.28], [379.92, 0.14], [381.66, 0.06]],
+  demont: [[386.58, 0.06], [391.24, 0.06], [393.28, 0.15]],
+  fin: [[423.98, 0.1], [428.39, 0.25], [433.86, 0.06]],
+  e11: [[242.1, 2.4], [248.8, 2.0]],
 };
-// Temps laissé après la voix (s) ; par défaut 0,4. Les parties gardées de la v11 (même
-// durée, mêmes images) ont la fin qui complète leur durée d'origine.
+// Passages de l'enregistrement retirés : [début, fin]. Étape 11 : la cage, « Pis attention »
+// (coupé) et le début de l'étape 12 ont été lus deux fois ; on garde la deuxième prise.
+const CUTS = { e11: [[225.95, 242.05]] };
+// Temps laissé après la voix (s) ; par défaut 0,4. Parties gardées de la v13 : la fin
+// complète leur durée d'origine (mêmes images).
 const TAIL = {
-  titre: 0.4367, materiel: 3.62, inspection: 0.6383, e1: 0.4283, e2: 0.735, e3: 0.4133, e4: 0.62, e5: 0.7367, e5b: 0.5517,
-  e6: 0.4717, e7: 2.2267, e8: 1.24, e9: 1.6617, e10: 0.675, e11: 0.6, e13: 1.255, e14: 9.0967, e15: -0.2667, e16: 0.8483,
-  e17: 0.8933, sec: 0.6, fin: 1.315,
+  titre: 0.2367, materiel: 4.4017, inspection: 0.4483, e1: 0.3883, e2: 0.545, e3: 0.5833, e4: 0.64, e5: 0.6567, e5b: 0.4317, e6: 0.2517, e7: 2.0067, e8: 1.13, e9: 1.5517, e10: 0.665, e12: -0.2983, e13: 1.235, e15: -0.0567, e16: 1.1483, sec: 0.6283, demont: 0.005, fin: 1.285, e11: 0.6, e14: 1.0, e17: 0.9,
 };
 const LEAD = 0.3; // la voix démarre 0,3 s après le début de la partie
 const r24 = (x) => Math.round(x * 24) / 24;
@@ -405,7 +430,21 @@ const r24 = (x) => Math.round(x * 24) / 24;
 export function vt(seg, v) {
   let t = seg.start + LEAD + (v - seg.voice.a);
   for (const [at, d] of seg.voice.gaps) if (v >= at) t += d;
+  for (const [c0, c1] of seg.voice.cuts) t -= Math.max(0, Math.min(v, c1) - c0);
   return t;
+}
+
+/** Morceaux de l'enregistrement à placer dans la vidéo : [a, b] et instant at (s). */
+export function voicePieces(seg) {
+  const { a, b, gaps, cuts } = seg.voice;
+  const marks = [...new Set([a, b, ...gaps.map((g) => g[0]), ...cuts.flat()].filter((x) => x >= a && x <= b))].sort((x, y) => x - y);
+  const out = [];
+  for (let i = 0; i + 1 < marks.length; i++) {
+    const [p, q] = [marks[i], marks[i + 1]];
+    if (q - p < 1e-3 || cuts.some(([c0, c1]) => p >= c0 && q <= c1)) continue;
+    out.push({ a: p, b: q, at: vt(seg, p) });
+  }
+  return out;
 }
 
 /**
@@ -419,8 +458,9 @@ export function timeline() {
   return SEGMENTS.map((s, i) => {
     const a = VOICE_AT[s.id], b = i + 1 < ids.length ? VOICE_AT[ids[i + 1]] : VOICE_END;
     const gaps = GAPS[s.id] || [];
-    const dur = r24(LEAD + (b - a) + gaps.reduce((n, g) => n + g[1], 0) + (TAIL[s.id] ?? 0.4));
-    const seg = { ...s, start: t, dur, voice: { a, b, gaps } };
+    const cuts = CUTS[s.id] || [];
+    const dur = r24(LEAD + (b - a) - cuts.reduce((n, c) => n + c[1] - c[0], 0) + gaps.reduce((n, g) => n + g[1], 0) + (TAIL[s.id] ?? 0.4));
+    const seg = { ...s, start: t, dur, voice: { a, b, gaps, cuts } };
     const f = (v) => (vt(seg, v) - seg.start) / dur;
     const fs = (v, d) => (vt(seg, v + d) - vt(seg, v)) / dur;
     seg.reveal = (s.reveal || []).map((r) => (r.v != null ? { ...r, at: f(r.v), span: r.vspan ? fs(r.v, r.vspan) : 0 } : r));

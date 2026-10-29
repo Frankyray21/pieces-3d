@@ -13,7 +13,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 import { spawnSync } from 'node:child_process';
-import { timeline, vt, VOICE_FILE } from '../src/video/plancher-script.js';
+import { timeline, vt, voicePieces, VOICE_FILE } from '../src/video/plancher-script.js';
 
 const args = process.argv.slice(2);
 const opt = (n, d) => { const i = args.indexOf(`--${n}`); return i >= 0 ? args[i + 1] : d; };
@@ -59,11 +59,7 @@ if (!fs.existsSync(muet)) {
 }
 
 // 3) Voix : chaque morceau de l'enregistrement placé à son instant (silences ajoutés compris).
-const pieces = [];
-for (const s of SEGS) {
-  const cuts = [s.voice.a, ...s.voice.gaps.map((g) => g[0]).filter((x) => x > s.voice.a && x < s.voice.b), s.voice.b];
-  for (let i = 0; i + 1 < cuts.length; i++) pieces.push({ a: cuts[i], b: cuts[i + 1], at: vt(s, cuts[i]) + (i > 0 ? 0 : 0) });
-}
+const pieces = SEGS.flatMap((s) => voicePieces(s));
 const fc = pieces.map((p, i) => `[0:a]atrim=start=${p.a}:end=${p.b},asetpts=PTS-STARTPTS,adelay=${Math.round(p.at * 1000)}:all=1[p${i}]`).join(';')
   + `;${pieces.map((_, i) => `[p${i}]`).join('')}amix=inputs=${pieces.length}:normalize=0:dropout_transition=0,atrim=duration=${DUR.toFixed(3)},loudnorm=I=-16:TP=-1.5:LRA=11[a]`;
 run('ffmpeg', ['-v', 'error', '-y', '-i', muet, '-i', VOICE_FILE, '-filter_complex', fc.replace(/\[0:a\]/g, '[1:a]'), '-map', '0:v', '-map', '[a]',
