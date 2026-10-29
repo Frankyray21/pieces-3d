@@ -465,58 +465,138 @@
 /* La console ne reçoit le focus que pour capter le clavier : pas de contour autour de tout le bloc. */
 .pem-console:focus { outline: none; }
 
-/* ---------------------------------------------------------------- vue 3D et pupitre superposés
-   En vue 3D, le pupitre se pose sur la vue : panneau de la manette gauche en bas à gauche, de la manette droite en
-   bas à droite (l'interrupteur, l'arrêt d'urgence et l'extincteur sont déjà sur la console 3D). Tout est visible
-   d'un coup d'œil, sans défiler ; même disposition en plein écran. Sur téléphone (étroit), le pupitre reste dessous. */
+/* ---------------------------------------------------------------- commandes intégrées à la vue 3D (commandes3d.js)
+   Vue 3D assez grande (data-cmd sur la vue) : flèches et étiquettes des manettes posées sur la 3D, le pupitre de la
+   page est retiré (l'interrupteur, l'arrêt d'urgence et l'extincteur sont sur la console 3D). Sinon (vue étroite),
+   le pupitre reste sous la vue. */
 .pem-3d-aide { margin: -4px 0 0; }
 .pem-3d-aide summary { cursor: pointer; width: max-content; max-width: 100%; }
 .pem-console { container: pem-console / inline-size; }
-/* Pupitre dessous (console étroite) : vue 3D basse (la console cadrée au plus près est large). */
 .pem-console.vue3d > .pem-3d { aspect-ratio: 2 / 1; min-height: 240px; max-height: 50dvh; }
 @media (max-width: 700px) and (orientation: portrait) { .pem-console.vue3d > .pem-3d { aspect-ratio: 4 / 3; max-height: 46dvh; } }
-/* Superposition selon la largeur de la console elle-même (pas de la fenêtre) : sous 820 px, le pupitre est dessous. */
-@container pem-console (min-width: 820px) {
-  .pem-console.vue3d > .pem-3d { grid-row: 3; grid-column: 1; aspect-ratio: 16 / 9; min-height: 420px; max-height: calc(100dvh - 190px); }
-  .pem-console.vue3d > .pem-keys { display: none; }
-  /* Le pupitre occupe la même case que la vue 3D (rang 3 de la grille), collé en bas ; seuls ses deux panneaux
-     captent les clics. Les autres éléments se placent d'eux-mêmes autour. */
-  .pem-console.vue3d > .pem-deck {
-    grid-row: 3; grid-column: 1; align-self: end; z-index: 3; pointer-events: none; margin: 0 10px 10px;
-    display: flex; justify-content: space-between; align-items: flex-end; gap: 10px; padding: 0; background: none; border: 0;
-  }
-  .pem-console.vue3d .pem-deck > .pem-mid { display: none; }
-  .pem-console.vue3d .pem-deck > .pem-js {
-    pointer-events: auto; width: min(300px, 31%); gap: 5px; padding: 8px 8px 9px; border-radius: 12px;
-    background: color-mix(in srgb, var(--surface) 82%, transparent); border: 1px solid var(--line);
-    box-shadow: var(--shadow); backdrop-filter: blur(6px);
-  }
-  .pem-console.vue3d .pem-js h4 { font-size: 13px; }
-  .pem-console.vue3d .pem-js h4 .pem-small { font-size: 11px; }
-  .pem-console.vue3d .pem-mode { padding: 3px 10px; font-size: 11.5px; }
-  .pem-console.vue3d .pem-pad { max-width: 168px; gap: 3px; }
-  .pem-console.vue3d .pem-dir { min-height: 32px; padding: 2px; border-radius: 7px; }
-  .pem-console.vue3d .pem-dir small { font-size: 9.5px; }
-  .pem-console.vue3d .pem-key { padding: 3px 6px; border-radius: 7px; }
-  .pem-console.vue3d .pem-key b { font-size: 11px; }
-  .pem-console.vue3d .pem-key span { font-size: 9.5px; }
-  .pem-console.vue3d .pem-keys-l, .pem-console.vue3d .pem-keys-r { gap: 4px; }
-  /* Panneau compact : croix sans libellés d'axe (ils sont sur l'écran ERIS) à gauche, boutons à droite. */
-  .pem-console.vue3d .pem-deck > .pem-js { display: grid; grid-template-columns: 92px minmax(0, 1fr); column-gap: 8px; align-items: start; justify-items: stretch; }
-  .pem-console.vue3d .pem-js > h4 { grid-column: 1 / -1; text-align: left; }
-  .pem-console.vue3d .pem-js > h4 .pem-small { display: inline; margin-left: 6px; }
-  .pem-console.vue3d .pem-js > .pem-mode { grid-column: 1; width: 100%; padding: 3px 4px; font-size: 10.5px; white-space: normal; line-height: 1.15; }
-  .pem-console.vue3d .pem-js > .pem-pad { grid-column: 1; max-width: 92px; }
-  .pem-console.vue3d .pem-js > .pem-keys-l, .pem-console.vue3d .pem-js > .pem-keys-r { grid-column: 2; grid-row: 2 / span 2; justify-content: flex-start; }
-  .pem-console.vue3d .pem-dir { min-height: 27px; }
-  .pem-console.vue3d .pem-dir small { display: none; }
-  .pem-console.vue3d .pem-dir i { font-size: 11px; }
+@container pem-console (min-width: 760px) {
+  .pem-console.vue3d > .pem-3d { aspect-ratio: 16 / 9; min-height: 430px; max-height: calc(100dvh - 170px); }
 }
-/* Faible hauteur (téléphone en paysage) : panneaux réduits aux noms de l'écran. */
-@media (max-height: 560px) {
-  .pem-console.vue3d .pem-key span { display: none; }
-  .pem-console.vue3d .pem-js > h4 .pem-small { display: none; }
+.pem-console.vue3d > .pem-3d[data-cmd] ~ .pem-deck, .pem-console.vue3d > .pem-3d[data-cmd] ~ .pem-keys { display: none; }
+
+.c3-cmd { --k: 1; position: absolute; inset: 0; z-index: 2; pointer-events: none; font-family: var(--f-body); }
+.c3-cmd[hidden] { display: none; }
+.c3-cmd-traits { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.9)); } /* liseré sombre : traits lisibles aussi sur fond clair */
+.c3-cmd-traits path { stroke: rgba(255, 255, 255, 0.6); stroke-width: 1.2; fill: none; }
+.c3-cmd-traits circle { fill: none; stroke: rgba(255, 255, 255, 0.7); stroke-width: 1.6; }
+.c3-cmd-traits .on { stroke: #ff8a1f; stroke-width: 2.2; }
+.c3-croix, .c3-chips { position: absolute; left: 0; top: 0; will-change: transform; }
+/* Croix : centrée sur le soufflet de la manette (la transformation place son centre). */
+.c3-croix { width: 0; height: 0; --r: 62px; }
+.c3-fl, .c3-fl-c {
+  position: absolute; pointer-events: auto; display: grid; place-items: center; cursor: pointer; padding: 0;
+  width: calc(34px * var(--k)); height: calc(34px * var(--k)); margin: calc(-17px * var(--k)) 0 0 calc(-17px * var(--k));
+  border-radius: 50%; border: 1.5px solid rgba(255, 255, 255, 0.55); background: rgba(16, 20, 26, 0.38); color: rgba(255, 255, 255, 0.92);
+  font-size: calc(13px * var(--k)); backdrop-filter: blur(2px); transition: background 0.12s, transform 0.12s;
 }
+.c3-fl i { font-style: normal; line-height: 1; }
+.c3-fl:hover, .c3-fl-c:hover { background: rgba(16, 20, 26, 0.62); border-color: #fff; }
+.c3-fl.on { background: rgba(255, 128, 20, 0.88); border-color: #ffb066; color: #1b1004; }
+.c3-fl.vide { opacity: 0.28; pointer-events: none; }
+.c3-fl:focus-visible, .c3-fl-c:focus-visible, .c3-chip:focus-visible { outline: 2px solid #ffb066; outline-offset: 2px; }
+.c3-fl-up { left: 0; top: calc(-1 * var(--r)); }
+.c3-fl-down { left: 0; top: var(--r); }
+.c3-fl-left { left: calc(-1 * var(--r)); top: 0; }
+.c3-fl-right { left: var(--r); top: 0; }
+.c3-fl-c { left: 0; top: 0; width: calc(22px * var(--k)); height: calc(22px * var(--k)); margin: calc(-11px * var(--k)) 0 0 calc(-11px * var(--k)); font-size: calc(9px * var(--k)); opacity: 0.55; }
+.c3-fl-c:hover, .c3-fl-c:focus-visible { opacity: 1; }
+/* Libellés des axes : au-dessus de la flèche du haut, au-dessous de celle du bas ; ceux de gauche et de droite sous
+   leur flèche, chacun tourné vers l'extérieur de la croix (ils ne se croisent pas et laissent la flèche du bas libre). */
+.c3-lb {
+  position: absolute; display: grid; gap: 1px; padding: calc(4px * var(--k)) calc(8px * var(--k)); border-radius: 8px; pointer-events: none;
+  width: max-content; max-width: calc(150px * var(--k));
+  background: rgba(14, 17, 22, 0.66); border: 1px solid rgba(255, 255, 255, 0.22); color: #fff; backdrop-filter: blur(3px);
+  font-size: calc(12px * var(--k)); line-height: 1.15;
+}
+.c3-lb b { font-weight: 700; white-space: nowrap; }
+.c3-lb small { font-size: calc(10px * var(--k)); color: rgba(225, 230, 236, 0.85); }
+.c3-lb.on { background: rgba(255, 128, 20, 0.92); border-color: #ffb066; color: #1b1004; }
+.c3-lb.on small { color: #3b2408; }
+.c3-lb.vide { opacity: 0.5; }
+/* Flèche du haut : libellé à côté, vers l'extérieur (au-dessus, il couvrirait les boutons de la tête). */
+.c3-cmd-L .c3-lb-up { left: calc(-23px * var(--k)); top: calc(-1 * var(--r)); translate: -100% -50%; text-align: right; }
+.c3-cmd-R .c3-lb-up { left: calc(23px * var(--k)); top: calc(-1 * var(--r)); translate: 0 -50%; }
+.c3-cmd-L .c3-croix[data-haut='in'] .c3-lb-up { left: calc(23px * var(--k)); translate: 0 -50%; text-align: left; }
+.c3-cmd-R .c3-croix[data-haut='in'] .c3-lb-up { left: calc(-23px * var(--k)); translate: -100% -50%; text-align: right; }
+.c3-lb-down { left: 0; top: calc(var(--r) + 21px * var(--k)); translate: -50% 0; text-align: center; max-width: calc(190px * var(--k)); }
+.c3-lb-left { left: calc(-1 * var(--r) + 17px * var(--k)); top: calc(21px * var(--k)); translate: -100% 0; text-align: right; }
+.c3-lb-right { left: calc(var(--r) - 17px * var(--k)); top: calc(21px * var(--k)); }
+/* Étiquettes des boutons : colonne contre le bord de la vue, reliée par un trait au bouton de la tête. */
+.c3-chips { display: grid; gap: calc(6px * var(--k)); width: max-content; max-width: calc(168px * var(--k)); }
+.c3-cmd-L .c3-chips { justify-items: end; }
+.c3-cmd-R .c3-chips { justify-items: start; }
+.c3-chip {
+  pointer-events: auto; display: grid; gap: 1px; text-align: left; cursor: pointer; font: inherit; color: #fff;
+  padding: calc(5px * var(--k)) calc(10px * var(--k)); border-radius: 9px; border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(14, 17, 22, 0.62); backdrop-filter: blur(3px); transition: background 0.12s;
+}
+.c3-cmd-L .c3-chip { text-align: right; }
+.c3-chip b { font-size: calc(12.5px * var(--k)); font-weight: 700; line-height: 1.15; }
+.c3-chip small { font-size: calc(10px * var(--k)); color: rgba(225, 230, 236, 0.85); line-height: 1.15; }
+.c3-chip:hover { background: rgba(14, 17, 22, 0.85); border-color: rgba(255, 255, 255, 0.6); }
+.c3-chip.on { background: rgba(255, 128, 20, 0.92); border-color: #ffb066; color: #1b1004; }
+.c3-chip.on small { color: #3b2408; }
+@media (prefers-reduced-motion: reduce) { .c3-fl, .c3-chip { transition: none; } }
+
+/* Écran ERIS de la console 3D : texte agrandi pour la lecture (pas fidèle à l'échelle de la machine). */
+.c3-ecran .er-list { font-size: 2.05cqw; gap: 0.55cqw; }
+.c3-ecran .er-left { padding-left: 1.8cqw; }
+.c3-ecran .er-right { padding-right: 1.8cqw; }
+.c3-ecran .er-lb { font-size: 1.75cqw; }
+.c3-ecran .er-modes { font-size: 1.9cqw; }
+.c3-ecran .er-clock { font-size: 3cqw; }
+.c3-ecran .er-box { font-size: 2.1cqw; }
+.c3-ecran .er-col { font-size: 1.6cqw; }
+.c3-ecran .er-ticker { font-size: 1.7cqw; }
+.c3-ecran .er-dial { font-size: 1.8cqw; }
+
+/* Commandes posées sur la vue : l'écran ne garde que l'état de la machine (les fonctions des manettes et des
+   boutons sont autour de la console) et l'affiche en grand. */
+.pem-3d[data-cmd] .c3-ecran :is(.er-sticks, .er-list, .er-vig, .er-date) { display: none; }
+.pem-3d[data-cmd] .c3-ecran .er-top { left: 3%; top: 3%; }
+.pem-3d[data-cmd] .c3-ecran .er-clock { font-size: 3.6cqw; }
+.pem-3d[data-cmd] .c3-ecran .er-modes { font-size: 3cqw; gap: 3.2cqw; }
+.pem-3d[data-cmd] .c3-ecran .er-modes .on { padding: 0 1cqw; border-radius: 0.8cqw; background: #e08a1e; color: #111; }
+.pem-3d[data-cmd] .c3-ecran .er-status { top: 17%; width: 13%; gap: 1.2cqw; }
+.pem-3d[data-cmd] .c3-ecran .er-centre { left: 3%; right: 16%; top: 16%; bottom: 9%; }
+.pem-3d[data-cmd] .c3-ecran .er-ticker { left: 3%; right: 3%; bottom: 1.5%; font-size: 2.7cqw; }
+.pem-3d[data-cmd] .c3-ecran .er-horn { top: 16%; font-size: 3cqw; }
+/* SYSTEM */
+.pem-3d[data-cmd] .c3-ecran .er-start { gap: 3.5cqw; }
+.pem-3d[data-cmd] .c3-ecran .er-box { font-size: 4cqw; padding: 2cqw 4cqw; min-width: 36cqw; border-radius: 1.4cqw; }
+.pem-3d[data-cmd] .c3-ecran .er-hole { grid-template-columns: 30% 1fr; }
+.pem-3d[data-cmd] .c3-ecran .er-col { font-size: 2.7cqw; gap: 0.3cqw; }
+.pem-3d[data-cmd] .c3-ecran .er-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 3cqw 2cqw; padding-top: 2%; font-size: 2.7cqw; }
+.pem-3d[data-cmd] .c3-ecran .er-diag { height: 92%; margin: 0 0 0 2%; }
+.pem-3d[data-cmd] .c3-ecran .er-diag > div { font-size: 1.9cqw; gap: 1cqw; }
+.pem-3d[data-cmd] .c3-ecran .er-vmm { width: 7cqw; height: 6cqw; font-size: 1.6cqw; }
+.pem-3d[data-cmd] .c3-ecran .er-pwd p { font-size: 2.8cqw; line-height: 1.5; }
+.pem-3d[data-cmd] .c3-ecran .er-pwd span { width: 5cqw; height: 5.6cqw; font-size: 3cqw; }
+.pem-3d[data-cmd] .c3-ecran .er-alarms { inset: 0; }
+.pem-3d[data-cmd] .c3-ecran .er-alarms > b { font-size: 2.6cqw; }
+.pem-3d[data-cmd] .c3-ecran .er-alarms ol { font-size: 2.7cqw; gap: 1cqw; }
+/* TRAM */
+.pem-3d[data-cmd] .c3-ecran .er-tram { inset: 0 20%; }
+.pem-3d[data-cmd] .c3-ecran .er-carrier { width: 9cqw; height: 36cqw; font-size: 2.8cqw; }
+.pem-3d[data-cmd] .c3-ecran .er-pill { font-size: 2.4cqw; }
+/* SETUP */
+.pem-3d[data-cmd] .c3-ecran .er-dials { gap: 12cqw; padding-top: 2%; }
+.pem-3d[data-cmd] .c3-ecran .er-dial { font-size: 2.8cqw; }
+.pem-3d[data-cmd] .c3-ecran .er-dial svg { width: 19cqw; height: 19cqw; }
+/* DRILL */
+.pem-3d[data-cmd] .c3-ecran .er-drill .er-col { top: 0; width: 27%; font-size: 2.4cqw; text-align: left; }
+.pem-3d[data-cmd] .c3-ecran .er-gauges { left: 29%; top: 0; grid-template-columns: repeat(3, 1fr); gap: 0.6cqw 2cqw; }
+.pem-3d[data-cmd] .c3-ecran .er-g-u { font-size: 2cqw; }
+.pem-3d[data-cmd] .c3-ecran .er-g-l { font-size: 2cqw; }
+.pem-3d[data-cmd] .c3-ecran .er-stages { left: auto; right: 2%; top: auto; bottom: 0; translate: none; display: flex; gap: 1cqw; }
+.pem-3d[data-cmd] .c3-ecran .er-stages span { font-size: 1.8cqw; }
+.pem-3d[data-cmd] .c3-ecran .er-water { left: 29%; top: auto; bottom: 0; font-size: 2.8cqw; }
+.pem-3d[data-cmd] .c3-ecran .er-note { top: 38%; font-size: 2.8cqw; }
 
 /* Plein écran, vue 3D : la vue remplit l'écran, le pupitre reste posé dessus ; consigne au-dessus, messages dessous. */
 .pem-console.vue3d:fullscreen, .pem-console.vue3d.c3-plein {

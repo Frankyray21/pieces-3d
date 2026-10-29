@@ -4,7 +4,8 @@
 // avant, boîtier d'écran incliné à coins noirs, bandeau jaune, bouton d'arrêt d'urgence, actionneur du système
 // extincteur, interrupteur marche/arrêt sur le côté droit, deux manettes (soufflet, plaque, poignée courbe, tête à
 // boutons jaunes, rouges et blanc ; touche Mode sur le côté extérieur de la manette gauche, repère 1 p. 122).
-// Dimensions estimées sur les figures (le manuel ne les donne pas).
+// Dimensions estimées sur les figures (le manuel ne les donne pas), sauf l'écran, volontairement agrandi (avec son
+// boîtier, les manettes écartées d'autant) pour que son texte se lise : la lisibilité passe avant les proportions.
 //
 // L'écran est l'écran ERIS du simulateur (HTML, ecran.js) posé dans le boîtier (CSS3DRenderer) : ses listes se
 // touchent comme les boutons correspondants. Interactions : glisser une manette l'incline (fonction de l'axe à
@@ -17,12 +18,14 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer.js';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
 import { T, POSITION } from './eris.js';
+import { creerCommandes, margeCote } from './commandes3d.js';
 
 const ORANGE = 0xe2531a;
 const NOIR = 0x1d1f22;
 const ACIER = 0x8a9097;
 const INCLINAISON = THREE.MathUtils.degToRad(-24); // boîtier d'écran penché vers l'arrière
-const ECRAN = { w: 0.46, h: 0.2875, px: 960 }; // écran 16:10 ; largeur de l'élément HTML en px
+const ECRAN = { w: 0.84, h: 0.525, px: 960 }; // écran 16:10 agrandi ; largeur de l'élément HTML en px
+const XM = 0.56; // écart des manettes (et de leurs blocs) par rapport à l'axe de la console
 const TILT = 0.32; // inclinaison maximale d'une manette (rad)
 
 /** Zone de saisie invisible, plus large que la pièce (manettes fines, utilisation au doigt). */
@@ -139,10 +142,11 @@ function bandeau() {
  * Crée la console dans `conteneur`. sim : createSim() ; opts.agir(evt) : appelé après une action (pour redessiner
  * le reste de la page) ; opts.info(texte) : nom de la commande survolée ; opts.surCible(cible) : remplace l'action
  * des commandes touchées (découverte de la console) ; opts.plein : élément mis en plein écran (par défaut, la vue) ;
- * opts.reserve() : hauteur en px, en bas de la vue, couverte par des panneaux posés dessus (la console se cadre au-dessus). Retourne { ecran (élément HTML de
- * l'écran), maj(), arreter() }.
+ * opts.reserve() : hauteur en px, en bas de la vue, couverte par des panneaux posés dessus (la console se cadre au-dessus) ;
+ * opts.commandes : flèches et étiquettes des manettes posées sur la vue (commandes3d.js), place gardée sur les côtés.
+ * Retourne { ecran (élément HTML de l'écran), positionBouton(), recentrer(), recadrer(), arreter() }.
  */
-export function creerConsole3D(conteneur, sim, { agir = () => {}, info = () => {}, surCible = null, plein = conteneur, reserve = () => 0 } = {}) {
+export function creerConsole3D(conteneur, sim, { agir = () => {}, info = () => {}, surCible = null, plein = conteneur, reserve = () => 0, commandes = false } = {}) {
   const materiaux = {
     orange: mat(ORANGE, { roughness: 0.45 }), noir: mat(NOIR, { roughness: 0.8 }), caoutchouc: mat(0x151515, { roughness: 0.9 }),
     poignee: mat(0x202226, { roughness: 0.6 }), acier: mat(ACIER, { metalness: 0.6, roughness: 0.4 }),
@@ -209,32 +213,32 @@ export function creerConsole3D(conteneur, sim, { agir = () => {}, info = () => {
   const box = (w, h, d, m, r = 0.012) => new THREE.Mesh(new RoundedBoxGeometry(w, h, d, 3, Math.min(r, w / 2, h / 2, d / 2)), m);
 
   // Bac et blocs porte-manette.
-  const bac = box(0.86, 0.07, 0.36, materiaux.orange, 0.025);
+  const bac = box(2 * XM + 0.2, 0.07, 0.36, materiaux.orange, 0.025);
   bac.position.set(0, 0.035, 0.02);
   racine.add(bac);
   for (const sx of [-1, 1]) {
     const bloc = box(0.2, 0.1, 0.3, materiaux.orange, 0.03);
-    bloc.position.set(sx * 0.33, 0.1, 0.05);
+    bloc.position.set(sx * XM, 0.1, 0.05);
     racine.add(bloc);
     const pc = box(0.21, 0.17, 0.08, materiaux.noir, 0.025);
-    pc.position.set(sx * 0.33, 0.085, 0.22);
+    pc.position.set(sx * XM, 0.085, 0.22);
     racine.add(pc);
     for (const y of [0.05, 0.12]) {
       const v = new THREE.Mesh(new THREE.CylinderGeometry(0.007, 0.007, 0.004, 12), materiaux.acier);
       v.rotation.x = Math.PI / 2;
-      v.position.set(sx * 0.33 + sx * 0.06, y, 0.262);
+      v.position.set(sx * XM + sx * 0.06, y, 0.262);
       racine.add(v);
     }
   }
   // Poignée avant (tube orange entre les blocs).
-  const barre = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.016, 0.46, 16), materiaux.orange);
+  const barre = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.016, 2 * XM - 0.2, 16), materiaux.orange);
   barre.rotation.z = Math.PI / 2;
   barre.position.set(0, 0.06, 0.25);
   racine.add(barre);
   for (const sx of [-1, 1]) {
     const pied = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.016, 0.05, 12), materiaux.orange);
     pied.rotation.x = Math.PI / 2;
-    pied.position.set(sx * 0.2, 0.06, 0.22);
+    pied.position.set(sx * (XM - 0.13), 0.06, 0.22);
     racine.add(pied);
   }
 
@@ -243,19 +247,20 @@ export function creerConsole3D(conteneur, sim, { agir = () => {}, info = () => {
   boitier.position.set(0, 0.07, -0.1);
   boitier.rotation.x = INCLINAISON;
   racine.add(boitier);
-  const coque = box(0.62, 0.44, 0.13, materiaux.orange, 0.035);
-  coque.position.set(0, 0.22, 0);
+  const YE = 0.1125 + ECRAN.h / 2; // hauteur du centre de l’écran dans le boîtier (au-dessus du bandeau jaune)
+  const coque = box(ECRAN.w + 0.16, ECRAN.h + 0.19, 0.13, materiaux.orange, 0.035);
+  coque.position.set(0, (ECRAN.h + 0.19) / 2, 0);
   boitier.add(coque);
-  const cadre = box(0.5, 0.32, 0.01, materiaux.noir, 0.008);
-  cadre.position.set(0, 0.25, 0.066);
+  const cadre = box(ECRAN.w + 0.04, ECRAN.h + 0.035, 0.01, materiaux.noir, 0.008);
+  cadre.position.set(0, YE, 0.066);
   boitier.add(cadre);
   for (const sx of [-1, 1]) {
     const coin = box(0.12, 0.08, 0.15, materiaux.noir, 0.03);
-    coin.position.set(sx * 0.27, 0.42, 0);
+    coin.position.set(sx * (ECRAN.w / 2 + 0.04), ECRAN.h + 0.17, 0);
     boitier.add(coin);
   }
-  const jaune = new THREE.Mesh(new THREE.PlaneGeometry(0.26, 0.048), bandeau());
-  jaune.position.set(0, 0.058, 0.0661);
+  const jaune = new THREE.Mesh(new THREE.PlaneGeometry(0.3, 0.05), bandeau());
+  jaune.position.set(0, 0.055, 0.0661);
   boitier.add(jaune);
   // Écran : élément HTML de l'écran ERIS, à l'échelle de la vitre.
   const ecranEl = document.createElement('div');
@@ -263,11 +268,11 @@ export function creerConsole3D(conteneur, sim, { agir = () => {}, info = () => {
   ecranEl.style.width = `${ECRAN.px}px`;
   const ecranObj = new CSS3DObject(ecranEl);
   ecranObj.scale.setScalar(ECRAN.w / ECRAN.px);
-  ecranObj.position.set(0, 0.25, 0.0725);
+  ecranObj.position.set(0, YE, 0.0725);
   boitier.add(ecranObj);
   // Fond noir derrière l'écran (visible pendant le chargement et sous le HTML).
   const vitre = new THREE.Mesh(new THREE.PlaneGeometry(ECRAN.w, ECRAN.h), materiaux.vitre);
-  vitre.position.set(0, 0.25, 0.0715);
+  vitre.position.set(0, YE, 0.0715);
   boitier.add(vitre);
 
   // Arrêt d'urgence (bouton rouge sur socle jaune) et actionneur de l'extincteur, au centre du bac.
@@ -305,7 +310,7 @@ export function creerConsole3D(conteneur, sim, { agir = () => {}, info = () => {
 
   // Interrupteur marche/arrêt : côté droit du bloc droit (repère 1, p. 121).
   const inter = new THREE.Group();
-  inter.position.set(0.432, 0.1, 0.12);
+  inter.position.set(XM + 0.102, 0.1, 0.12);
   racine.add(inter);
   const interCorps = new THREE.Mesh(new THREE.CylinderGeometry(0.014, 0.014, 0.012, 20), materiaux.acier);
   interCorps.rotation.z = Math.PI / 2;
@@ -322,10 +327,10 @@ export function creerConsole3D(conteneur, sim, { agir = () => {}, info = () => {
 
   // Manettes.
   const mg = manette('L', materiaux, cibles);
-  mg.groupe.position.set(-0.33, 0.15, 0.03);
+  mg.groupe.position.set(-XM, 0.15, 0.03);
   racine.add(mg.groupe);
   const md = manette('R', materiaux, cibles);
-  md.groupe.position.set(0.33, 0.15, 0.03);
+  md.groupe.position.set(XM, 0.15, 0.03);
   racine.add(md.groupe);
   const pivots = { L: mg.pivot, R: md.pivot };
 
@@ -450,30 +455,52 @@ export function creerConsole3D(conteneur, sim, { agir = () => {}, info = () => {
   const boite = new THREE.Box3().setFromObject(racine);
   const centre = boite.getCenter(new THREE.Vector3());
   const DIRECTION = new THREE.Vector3(0, 0.61, 1.32).normalize();
+  // Coins de la boîte de chaque pièce visible (bien plus près de la silhouette que les coins de la boîte d'ensemble,
+  // qui débordent loin de la console une fois projetés : écran haut à l'arrière, bac profond à l'avant).
   const coins = [];
-  for (const x of [boite.min.x, boite.max.x]) for (const y of [boite.min.y, boite.max.y]) for (const z of [boite.min.z, boite.max.z]) coins.push(new THREE.Vector3(x, y, z));
+  racine.updateMatrixWorld(true);
+  racine.traverse((o) => {
+    if (!o.isMesh || o.material === PRISE) return;
+    if (!o.geometry.boundingBox) o.geometry.computeBoundingBox();
+    const b = o.geometry.boundingBox;
+    for (const x of [b.min.x, b.max.x]) for (const y of [b.min.y, b.max.y]) for (const z of [b.min.z, b.max.z]) coins.push(new THREE.Vector3(x, y, z).applyMatrix4(o.matrixWorld));
+  });
   const MARGE = 0.94; // part de la vue occupée par la console (le reste : marge autour)
   let vueModifiee = false;
   function cadrer() {
     // Bande du bas couverte par les panneaux (part r de la hauteur) : la console tient dans le reste, décalée vers le
     // haut par un décalage de vue (setViewOffset, suivi aussi par l'écran HTML en CSS3D).
     const r = partReservee();
+    const c = cote();
     camera.clearViewOffset();
-    controls.target.copy(centre);
+    const cible = centre.clone();
+    const droite = new THREE.Vector3();
+    const haut = new THREE.Vector3();
+    const p = new THREE.Vector3();
     let d = 1.2;
-    for (let k = 0; k < 6; k++) {
-      camera.position.copy(centre).addScaledVector(DIRECTION, d);
-      camera.lookAt(centre);
+    // La silhouette n'est pas symétrique autour du centre de la boîte : à chaque passe, la cible se recentre sur
+    // l'étendue projetée et la distance s'ajuste pour que cette étendue remplisse la place disponible.
+    for (let k = 0; k < 8; k++) {
+      camera.position.copy(cible).addScaledVector(DIRECTION, d);
+      camera.lookAt(cible);
       camera.updateMatrixWorld();
-      let m = 0;
-      const p = new THREE.Vector3();
-      for (const c of coins) { p.copy(c).project(camera); m = Math.max(m, Math.abs(p.x), Math.abs(p.y) / (1 - r)); }
-      d *= m / MARGE;
+      let x0 = Infinity; let x1 = -Infinity; let y0 = Infinity; let y1 = -Infinity;
+      for (const q of coins) { p.copy(q).project(camera); x0 = Math.min(x0, p.x); x1 = Math.max(x1, p.x); y0 = Math.min(y0, p.y); y1 = Math.max(y1, p.y); }
+      const demiH = d * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
+      droite.setFromMatrixColumn(camera.matrixWorld, 0);
+      haut.setFromMatrixColumn(camera.matrixWorld, 1);
+      cible.addScaledVector(droite, ((x0 + x1) / 2) * demiH * camera.aspect).addScaledVector(haut, ((y0 + y1) / 2) * demiH);
+      d *= Math.max((x1 - x0) / 2 / (1 - 2 * c), (y1 - y0) / 2 / (1 - r)) / MARGE;
+      d = Math.min(controls.maxDistance, Math.max(controls.minDistance, d));
     }
-    d = Math.min(controls.maxDistance, Math.max(controls.minDistance, d));
-    camera.position.copy(centre).addScaledVector(DIRECTION, d);
+    controls.target.copy(cible);
+    camera.position.copy(cible).addScaledVector(DIRECTION, d);
     decaler();
     controls.update();
+  }
+  /** Part de la largeur gardée de chaque côté pour les étiquettes des commandes posées sur la vue. */
+  function cote() {
+    return cmd ? margeCote(conteneur.clientWidth, conteneur.clientHeight) : 0;
   }
   /** Part de la hauteur de la vue couverte par les panneaux du bas (0 à 0,5). */
   function partReservee() {
@@ -489,6 +516,13 @@ export function creerConsole3D(conteneur, sim, { agir = () => {}, info = () => {
     else camera.clearViewOffset();
   }
   controls.addEventListener('start', () => { vueModifiee = true; });
+  // Commandes posées sur la vue : positions à l'écran des boutons, du soufflet et de la tête de chaque manette.
+  const ecranPx = (vec) => { const q = vec.project(camera); return { x: (q.x + 1) / 2 * conteneur.clientWidth, y: (1 - q.y) / 2 * conteneur.clientHeight }; };
+  const cmd = commandes ? creerCommandes(conteneur, sim, {
+    bouton: (side, pos) => { const b = (side === 'L' ? mg : md).boutons[pos]; return b ? ecranPx(b.getWorldPosition(new THREE.Vector3())) : null; },
+    base: (side) => ecranPx((side === 'L' ? mg : md).groupe.localToWorld(new THREE.Vector3(0, 0.05, 0))),
+    tete: (side) => { const bs = (side === 'L' ? mg : md).boutons; const p = new THREE.Vector3(); for (const k of ['HG', 'HD', 'MG', 'MD']) p.add(bs[k].getWorldPosition(new THREE.Vector3())); return ecranPx(p.multiplyScalar(0.25)); },
+  }, { agir: () => agir() }) : null;
   const ro = new ResizeObserver(taille);
   ro.observe(conteneur);
   taille();
@@ -524,6 +558,7 @@ export function creerConsole3D(conteneur, sim, { agir = () => {}, info = () => {
     ecranEl.style.visibility = camera.position.clone().sub(v).normalize().dot(normale) > 0.12 ? '' : 'hidden';
     renderer.render(scene, camera);
     css.render(scene, camera);
+    cmd?.maj();
     raf = requestAnimationFrame(boucle);
   };
   raf = requestAnimationFrame(boucle);
@@ -543,6 +578,7 @@ export function creerConsole3D(conteneur, sim, { agir = () => {}, info = () => {
     arreter() {
       cancelAnimationFrame(raf);
       ro.disconnect();
+      cmd?.detruire();
       if (natif()) (document.exitFullscreen || document.webkitExitFullscreen)?.call(document);
       plein.classList.remove('c3-plein');
       document.documentElement.classList.remove('c3-plein-ouvert');

@@ -394,7 +394,7 @@ export default {
               const dk = deck.getBoundingClientRect();
               return dk.top < v.bottom && dk.bottom <= v.bottom + 1 && dk.height ? v.bottom - dk.top + 8 : 0;
             };
-            c3 = creerConsole3D(zone3d, sim, { agir: () => tout(), plein: body.querySelector('.pem-console'), reserve });
+            c3 = creerConsole3D(zone3d, sim, { agir: () => tout(), plein: body.querySelector('.pem-console'), reserve, commandes: true });
             const r = document.createElement('button');
             r.type = 'button'; r.className = 'btn pem-3d-reset'; r.dataset.recentrer = ''; r.textContent = 'Recentrer';
             zone3d.appendChild(r);
