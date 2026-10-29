@@ -294,7 +294,7 @@ export const SEGMENTS = [
   },
   {
     id: 'demont', min: 12,
-    band: { n: '', title: 'Démantèlement', text: 'Démanteler d’abord le plancher secondaire, ensuite le plancher principal en commençant toujours par les planches du fond ; toujours enlever les clous et tire-fonds à mesure que les planches sont enlevées ; démanteler ensuite la structure de base en 6\'\'X6\'\'. Boue de forage sous le plancher : se positionner dans la partie la plus solide et stable, commencer au fond de la baie de forage et faire glisser les pièces de bois.', detail: 'Après la fin du démantèlement : installer une clôture orange et une carte de ruban rouge : trou non arpenté et non cimenté · date de l’installation · nom du superviseur' },
+    band: { n: '', title: 'Démantèlement', text: 'Démanteler d’abord le plancher secondaire, ensuite le plancher principal en commençant toujours par les planches du fond ; toujours enlever les clous et tire-fonds à mesure que les planches sont enlevées ; démanteler ensuite la structure de base en 6\'\'X6\'\'.', detail: 'Après la fin du démantèlement : installer une clôture orange et une carte de ruban rouge : trou non arpenté et non cimenté · date de l’installation · nom du superviseur' },
     lines: [
       [1, 'Au démantèlement, c\'est l\'inverse : le plancher secondaire d\'abord, le principal en commençant par les planches du fond, les tire-fonds enlevés à mesure.'],
       [1, 'Une fois toutes les planches pis tous les tire-fonds enlevés, on défait la structure en six par six.'],
