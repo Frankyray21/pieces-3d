@@ -92,6 +92,7 @@ export const SEGMENTS = [
     id: 'materiel', min: 10,
     band: { n: '', title: 'Matériel nécessaire', text: 'Barricade travaux en cours avec flasher orange · Armoire (trousse de premier soin et lave-yeux 2x) · Extincteur · Bois 2\'\'X4\'\' planés (ou bruts) · Bois brut de 6\'\'X6\'\' et de 3\'\'X8\'\' · Coins de bois · Tire-fonds 6\'\' · Lame à bois pour scie', detail: 'Outils : pied de biche, masse, marteau, sciotte, pinces à billots, niveau au laser Bosch, niveau de 48\'\', barres d’écaillage de 6\', 8\' et 10\', pingouin, scie va-et-vient' },
     why: 'TOUJOURS TRANSPORTER LES GROSSES PIÈCES DE BOIS À DEUX.',
+    whyFrom: 26.9, whyTo: 39.9, // pendant le bois et la règle du transport à deux, pas pendant les outils
     lines: [
       [1, 'Avant de commencer : la barricade travaux en cours avec son flasher orange, l\'armoire avec la trousse de premiers soins pis les deux lave-yeux, l\'extincteur.'],
       [2, 'Pis le bois : du six par six brut, du trois par huit brut, du deux par quatre plané, des coins pis des tire-fonds de six pouces.'],
@@ -234,6 +235,7 @@ export const SEGMENTS = [
     id: 'e11', min: 14,
     band: { n: '11', title: 'Madriers de la section 2', text: 'Après avoir positionné vos 6\'\'X6\'\' de niveau à 32\'\' centre, utiliser des coins de bois pour égaliser la structure de base. Toujours enligner vos soutiens vis-à-vis le croisement de vos 6X6 pour s’assurer d’un soutien solide.', detail: 'Cas spéciaux : construction de cage en 3\'\'X8\'\' et/ou 6\'\'X6\'\' de 24 à 36\'\' de long, empilés' },
     why: 'Toujours enligner vos soutiens vis-à-vis le croisement de vos 6X6 pour s’assurer d’un soutien solide.',
+    whyTo: 211.6, // jusqu'à la fin de la phrase sur les soutiens, avant la cage
     lines: [
       [1, 'Étape onze : les madriers à trente-deux pouces centre, à la même hauteur que la première section. Les soutiens, toujours vis-à-vis le croisement des six par six.'],
       [1, 'Dans un creux comme celui-là, on monte une cage : des bouts de vingt-quatre à trente-six pouces, empilés croisés.'],
@@ -421,6 +423,9 @@ export function timeline() {
     seg.show = (s.show || []).map((r) => (r.vfrom != null ? { ...r, from: f(r.vfrom), to: r.vto != null ? f(r.vto) : 1 } : r));
     seg.cams = s.cams.map((k) => (k.v != null ? { ...k, t: Math.min(1, f(k.v)) } : k));
     if (s.ghost) seg.ghost = { from: f(s.ghost.vfrom), to: Math.min(1, s.ghost.vto != null ? f(s.ghost.vto) : 1) };
+    // Encadré « Pourquoi » : de 0,8 s après le début à la fin de la partie, ou entre
+    // whyFrom et whyTo (temps de voix) ; instants dans la partie (s).
+    if (s.why) seg.whyAt = [s.whyFrom != null ? vt(seg, s.whyFrom) - seg.start : 0.8, s.whyTo != null ? vt(seg, s.whyTo) - seg.start : dur];
     t += dur;
     return seg;
   });

@@ -68,7 +68,7 @@ export function calques({ segs, fits = [], fontCss = '', video = null }) {
       sub(`k${id}`, s.start, d, 4, `<div class="stepcard" style="${anim('kcard', 0, d)}"><div class="sc-n">${esc(sc.big)}</div>${sc.small ? `<div class="sc-t">${esc(sc.small)}</div>` : ''}</div>`);
     }
     if (s.why) {
-      const at = s.start + 0.8, d = s.dur - 0.8;
+      const at = s.start + s.whyAt[0], d = s.whyAt[1] - s.whyAt[0];
       L.push(`<div id="w${id}" class="clip why" data-start="${S(at)}" data-duration="${S(d)}" data-track-index="2" style="${inOut(0, d)}"><b>Pourquoi</b><span>${esc(s.why)}</span></div>`);
     }
     if (s.card === 'title') {

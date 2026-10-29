@@ -425,7 +425,7 @@ function levels(t, s) {
   const clamp = (x) => Math.min(1, Math.max(0, x));
   return {
     text: clamp(u / 0.35),
-    why: s.why ? clamp((u - 0.8) / 0.5) * clamp((s.dur - u) / 0.4) : 0,
+    why: s.why ? clamp((u - s.whyAt[0]) / 0.5) * clamp((s.whyAt[1] - u) / 0.4) : 0,
     card: s.card === 'title' ? (u < s.dur * 0.55 ? 1 : clamp(1 - (u - s.dur * 0.55) / 0.6)) : s.card === 'end' ? clamp((u - 1.2) / 0.6) : 0,
     band: s.card === 'title' ? clamp((u - s.dur * 0.55) / 0.6) : 1,
   };
