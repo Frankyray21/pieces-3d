@@ -200,14 +200,31 @@
 .pem-now.ok { background: color-mix(in srgb, #1f9d55 16%, var(--surface)); border-color: #1f9d55; }
 .pem-now .btn { height: 34px; border-radius: 9px; margin-left: auto; }
 .pem-msg {
-  display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; min-height: 44px; padding: 8px 12px; border-radius: 10px; font-size: 14px;
-  background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--line-strong);
+  --ton: var(--accent-text, var(--accent));
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; min-height: 52px; padding: 10px 14px; border-radius: 12px;
+  font-size: 16px; line-height: 1.4; color: var(--ink);
+  background: color-mix(in srgb, var(--ton) 12%, var(--surface)); border: 1px solid color-mix(in srgb, var(--ton) 45%, var(--line));
+  border-left: 6px solid var(--ton);
 }
 .pem-msg:empty { display: none; }
-.pem-msg.ok { border-left-color: #1f9d55; }
-.pem-msg.warn { border-left-color: var(--warn); background: var(--warn-soft); }
-.pem-msg.danger { border-left-color: #d63a3a; background: var(--error-soft, #fde8e8); }
+.pem-msg.ok { --ton: #1f9d55; }
+.pem-msg.warn { --ton: var(--warn); }
+.pem-msg.danger { --ton: #d63a3a; }
 .pem-msg > span { flex: 1 1 260px; }
+.pem-msg b { font-weight: 700; }
+/* Pastille du type de message (information, réussite, attention, danger). */
+.pem-msg-i {
+  flex: none; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%;
+  background: var(--ton); color: #fff; font-style: normal; font-weight: 800; font-size: 15px;
+}
+/* Nouveau message : bref halo de la couleur du message pour attirer l'œil. */
+.pem-msg.nouveau { animation: pem-msg-flash 1.4s ease-out; }
+@keyframes pem-msg-flash {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--ton) 70%, transparent); background: color-mix(in srgb, var(--ton) 34%, var(--surface)); }
+  100% { box-shadow: 0 0 0 10px transparent; }
+}
+@media (prefers-reduced-motion: reduce) { .pem-msg.nouveau { animation: none; } }
+.pem-console:fullscreen .pem-msg, .pem-console.c3-plein .pem-msg { font-size: 17px; }
 .pem-deck {
   display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 14px; align-items: start; padding: 14px;
   border-radius: 14px; background: color-mix(in srgb, #e2531a 12%, var(--surface)); border: 1px solid color-mix(in srgb, #e2531a 35%, var(--line));
@@ -430,13 +447,13 @@
   position: absolute; z-index: 2; pointer-events: none; padding: 4px 8px; border-radius: 6px; font-size: 12px; white-space: nowrap;
   background: var(--ink); color: var(--surface); box-shadow: var(--shadow);
 }
-.pem-3d-reset { position: absolute; right: 10px; top: 10px; z-index: 2; height: 32px; border-radius: 8px; }
+.pem-3d-reset { position: absolute; right: 10px; top: 10px; z-index: 3; height: 32px; border-radius: 8px; }
 .pem-3d-aide { margin: -4px 0 0; }
 .pem-c3 { display: grid; gap: 6px; min-width: 0; }
 .pem-c3 .pem-3d { aspect-ratio: 4 / 3; min-height: 300px; }
 
 /* Bouton plein écran (console3d.js) */
-.c3-plein-btn { position: absolute; left: 10px; top: 10px; z-index: 2; height: 32px; border-radius: 8px; }
+.c3-plein-btn { position: absolute; left: 10px; top: 10px; z-index: 3; height: 32px; border-radius: 8px; }
 /* Plein écran : la vue 3D prend toute la place libre, le reste (consigne, messages, pupitre) défile en dessous. */
 .pem-console:fullscreen, .pem-two:fullscreen, .pem-console.c3-plein, .pem-two.c3-plein {
   background: var(--bg); overflow: auto; padding: max(10px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) 10px max(10px, env(safe-area-inset-left));
@@ -479,7 +496,8 @@
 }
 .pem-console.vue3d > .pem-3d[data-cmd] ~ .pem-deck, .pem-console.vue3d > .pem-3d[data-cmd] ~ .pem-keys { display: none; }
 
-.c3-cmd { --k: 1; position: absolute; inset: 0; z-index: 2; pointer-events: none; font-family: var(--f-body); }
+.c3-cmd { --k: 1; position: absolute; inset: 0; z-index: 2; pointer-events: none; font-family: var(--f-body); user-select: none; -webkit-user-select: none; }
+.c3-cmd.c3-glisse, .c3-cmd.c3-glisse * { cursor: grabbing !important; }
 .c3-cmd[hidden] { display: none; }
 .c3-cmd-traits { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.9)); } /* liseré sombre : traits lisibles aussi sur fond clair */
 .c3-cmd-traits path { stroke: rgba(255, 255, 255, 0.6); stroke-width: 1.2; fill: none; }
@@ -490,14 +508,15 @@
 .c3-croix { width: 0; height: 0; --r: 62px; }
 .c3-fl, .c3-fl-c {
   position: absolute; pointer-events: auto; display: grid; place-items: center; cursor: pointer; padding: 0;
-  width: calc(34px * var(--k)); height: calc(34px * var(--k)); margin: calc(-17px * var(--k)) 0 0 calc(-17px * var(--k));
+  width: calc(38px * var(--k)); height: calc(38px * var(--k)); margin: calc(-19px * var(--k)) 0 0 calc(-19px * var(--k));
   border-radius: 50%; border: 1.5px solid rgba(255, 255, 255, 0.55); background: rgba(16, 20, 26, 0.38); color: rgba(255, 255, 255, 0.92);
-  font-size: calc(13px * var(--k)); backdrop-filter: blur(2px); transition: background 0.12s, transform 0.12s;
+  font-size: calc(15px * var(--k)); backdrop-filter: blur(2px); transition: background 0.12s, transform 0.12s;
 }
 .c3-fl i { font-style: normal; line-height: 1; }
 .c3-fl:hover, .c3-fl-c:hover { background: rgba(16, 20, 26, 0.62); border-color: #fff; }
 .c3-fl.on { background: rgba(255, 128, 20, 0.88); border-color: #ffb066; color: #1b1004; }
-.c3-fl.vide { opacity: 0.28; pointer-events: none; }
+.c3-fl.vide { opacity: 0.6; border-style: dashed; }
+.c3-fl.vide.on { opacity: 1; }
 .c3-fl:focus-visible, .c3-fl-c:focus-visible, .c3-chip:focus-visible { outline: 2px solid #ffb066; outline-offset: 2px; }
 .c3-fl-up { left: 0; top: calc(-1 * var(--r)); }
 .c3-fl-down { left: 0; top: var(--r); }
@@ -509,38 +528,54 @@
    leur flèche, chacun tourné vers l'extérieur de la croix (ils ne se croisent pas et laissent la flèche du bas libre). */
 .c3-lb {
   position: absolute; display: grid; gap: 1px; padding: calc(4px * var(--k)) calc(8px * var(--k)); border-radius: 8px; pointer-events: none;
-  width: max-content; max-width: calc(150px * var(--k));
+  width: max-content; max-width: calc(175px * var(--k));
   background: rgba(14, 17, 22, 0.66); border: 1px solid rgba(255, 255, 255, 0.22); color: #fff; backdrop-filter: blur(3px);
-  font-size: calc(12px * var(--k)); line-height: 1.15;
+  font-size: calc(14.5px * var(--k)); line-height: 1.15;
 }
 .c3-lb b { font-weight: 700; white-space: nowrap; }
-.c3-lb small { font-size: calc(10px * var(--k)); color: rgba(225, 230, 236, 0.85); }
+.c3-lb small { font-size: calc(12px * var(--k)); color: rgba(225, 230, 236, 0.85); }
 .c3-lb.on { background: rgba(255, 128, 20, 0.92); border-color: #ffb066; color: #1b1004; }
 .c3-lb.on small { color: #3b2408; }
 .c3-lb.vide { opacity: 0.5; }
 /* Flèche du haut : libellé à côté, vers l'extérieur (au-dessus, il couvrirait les boutons de la tête). */
-.c3-cmd-L .c3-lb-up { left: calc(-23px * var(--k)); top: calc(-1 * var(--r)); translate: -100% -50%; text-align: right; }
-.c3-cmd-R .c3-lb-up { left: calc(23px * var(--k)); top: calc(-1 * var(--r)); translate: 0 -50%; }
-.c3-cmd-L .c3-croix[data-haut='in'] .c3-lb-up { left: calc(23px * var(--k)); translate: 0 -50%; text-align: left; }
-.c3-cmd-R .c3-croix[data-haut='in'] .c3-lb-up { left: calc(-23px * var(--k)); translate: -100% -50%; text-align: right; }
-.c3-lb-down { left: 0; top: calc(var(--r) + 21px * var(--k)); translate: -50% 0; text-align: center; max-width: calc(190px * var(--k)); }
-.c3-lb-left { left: calc(-1 * var(--r) + 17px * var(--k)); top: calc(21px * var(--k)); translate: -100% 0; text-align: right; }
-.c3-lb-right { left: calc(var(--r) - 17px * var(--k)); top: calc(21px * var(--k)); }
+.c3-cmd-L .c3-lb-up { left: calc(-25px * var(--k)); top: calc(-1 * var(--r)); translate: -100% -50%; text-align: right; }
+.c3-cmd-R .c3-lb-up { left: calc(25px * var(--k)); top: calc(-1 * var(--r)); translate: 0 -50%; }
+.c3-cmd-L .c3-croix[data-haut='in'] .c3-lb-up { left: calc(25px * var(--k)); translate: 0 -50%; text-align: left; }
+.c3-cmd-R .c3-croix[data-haut='in'] .c3-lb-up { left: calc(-25px * var(--k)); translate: -100% -50%; text-align: right; }
+.c3-lb-down { left: 0; top: calc(var(--r) + 23px * var(--k)); translate: -50% 0; text-align: center; max-width: calc(190px * var(--k)); }
+.c3-lb-left { left: calc(-1 * var(--r) + 19px * var(--k)); top: calc(23px * var(--k)); translate: -100% 0; text-align: right; }
+.c3-lb-right { left: calc(var(--r) - 19px * var(--k)); top: calc(23px * var(--k)); }
 /* Étiquettes des boutons : colonne contre le bord de la vue, reliée par un trait au bouton de la tête. */
-.c3-chips { display: grid; gap: calc(6px * var(--k)); width: max-content; max-width: calc(168px * var(--k)); }
+.c3-chips { display: grid; gap: calc(4px * var(--k)); width: max-content; max-width: calc(190px * var(--k)); }
 .c3-cmd-L .c3-chips { justify-items: end; }
 .c3-cmd-R .c3-chips { justify-items: start; }
 .c3-chip {
-  pointer-events: auto; display: grid; gap: 1px; text-align: left; cursor: pointer; font: inherit; color: #fff;
-  padding: calc(5px * var(--k)) calc(10px * var(--k)); border-radius: 9px; border: 1px solid rgba(255, 255, 255, 0.28);
+  pointer-events: auto; display: grid; gap: 1px; text-align: left; cursor: grab; touch-action: none; font: inherit; color: #fff;
+  padding: calc(4px * var(--k)) calc(11px * var(--k)); border-radius: 9px; border: 1px solid rgba(255, 255, 255, 0.28);
   background: rgba(14, 17, 22, 0.62); backdrop-filter: blur(3px); transition: background 0.12s;
 }
 .c3-cmd-L .c3-chip { text-align: right; }
-.c3-chip b { font-size: calc(12.5px * var(--k)); font-weight: 700; line-height: 1.15; }
-.c3-chip small { font-size: calc(10px * var(--k)); color: rgba(225, 230, 236, 0.85); line-height: 1.15; }
+.c3-chip b { font-size: calc(15px * var(--k)); font-weight: 700; line-height: 1.1; }
+.c3-chip small { font-size: calc(12px * var(--k)); color: rgba(225, 230, 236, 0.85); line-height: 1.1; }
 .c3-chip:hover { background: rgba(14, 17, 22, 0.85); border-color: rgba(255, 255, 255, 0.6); }
 .c3-chip.on { background: rgba(255, 128, 20, 0.92); border-color: #ffb066; color: #1b1004; }
 .c3-chip.on small { color: #3b2408; }
+.c3-power {
+  position: absolute; left: 0; top: 0; pointer-events: auto; display: flex; align-items: center; gap: calc(7px * var(--k)); cursor: pointer;
+  padding: calc(5px * var(--k)) calc(12px * var(--k)) calc(5px * var(--k)) calc(6px * var(--k)); border-radius: 999px; font: inherit;
+  font-size: calc(13px * var(--k)); font-weight: 700; color: #fff; background: rgba(150, 24, 24, 0.9); border: 2px solid #ff8a8a;
+  box-shadow: 0 0 0 0 rgba(255, 90, 90, 0.6); animation: c3-power-appel 1.6s ease-out infinite; will-change: transform;
+}
+.c3-power i { display: grid; place-items: center; width: calc(26px * var(--k)); height: calc(26px * var(--k)); border-radius: 50%; background: #fff; color: #a31515; font-style: normal; font-size: calc(16px * var(--k)); }
+.c3-power.on { background: rgba(20, 110, 60, 0.92); border-color: #6ee39d; animation: none; }
+.c3-power.on i { color: #146e3c; }
+.c3-power:focus-visible { outline: 2px solid #ffb066; outline-offset: 2px; }
+/* Console éteinte : le bouton marche/arrêt appelle l'œil (premier geste à faire). */
+@keyframes c3-power-appel { 70% { box-shadow: 0 0 0 calc(12px * var(--k)) rgba(255, 90, 90, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 90, 90, 0); } }
+@media (prefers-reduced-motion: reduce) { .c3-power { animation: none; } }
+.c3-chips.compacte { gap: calc(3px * var(--k)); }
+.c3-chips.compacte .c3-chip { padding-block: calc(3px * var(--k)); }
+.c3-chips.compacte .c3-chip small { display: none; }
 @media (prefers-reduced-motion: reduce) { .c3-fl, .c3-chip { transition: none; } }
 
 /* Écran ERIS de la console 3D : texte agrandi pour la lecture (pas fidèle à l'échelle de la machine). */
@@ -570,7 +605,7 @@
 .pem-3d[data-cmd] .c3-ecran .er-start { gap: 3.5cqw; }
 .pem-3d[data-cmd] .c3-ecran .er-box { font-size: 4cqw; padding: 2cqw 4cqw; min-width: 36cqw; border-radius: 1.4cqw; }
 .pem-3d[data-cmd] .c3-ecran .er-hole { grid-template-columns: 30% 1fr; }
-.pem-3d[data-cmd] .c3-ecran .er-col { font-size: 2.7cqw; gap: 0.3cqw; }
+.pem-3d[data-cmd] .c3-ecran .er-col { font-size: 3cqw; gap: 0.3cqw; }
 .pem-3d[data-cmd] .c3-ecran .er-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 3cqw 2cqw; padding-top: 2%; font-size: 2.7cqw; }
 .pem-3d[data-cmd] .c3-ecran .er-diag { height: 92%; margin: 0 0 0 2%; }
 .pem-3d[data-cmd] .c3-ecran .er-diag > div { font-size: 1.9cqw; gap: 1cqw; }
@@ -589,21 +624,60 @@
 .pem-3d[data-cmd] .c3-ecran .er-dial { font-size: 2.8cqw; }
 .pem-3d[data-cmd] .c3-ecran .er-dial svg { width: 19cqw; height: 19cqw; }
 /* DRILL */
-.pem-3d[data-cmd] .c3-ecran .er-drill .er-col { top: 0; width: 27%; font-size: 2.4cqw; text-align: left; }
+.pem-3d[data-cmd] .c3-ecran .er-drill .er-col { top: 0; width: 27%; font-size: 2.45cqw; text-align: left; }
 .pem-3d[data-cmd] .c3-ecran .er-gauges { left: 29%; top: 0; grid-template-columns: repeat(3, 1fr); gap: 0.6cqw 2cqw; }
-.pem-3d[data-cmd] .c3-ecran .er-g-u { font-size: 2cqw; }
-.pem-3d[data-cmd] .c3-ecran .er-g-l { font-size: 2cqw; }
+.pem-3d[data-cmd] .c3-ecran .er-g-u { font-size: 2.3cqw; }
+.pem-3d[data-cmd] .c3-ecran .er-g-l { font-size: 2.4cqw; }
 .pem-3d[data-cmd] .c3-ecran .er-stages { left: auto; right: 2%; top: auto; bottom: 0; translate: none; display: flex; gap: 1cqw; }
 .pem-3d[data-cmd] .c3-ecran .er-stages span { font-size: 1.8cqw; }
 .pem-3d[data-cmd] .c3-ecran .er-water { left: 29%; top: auto; bottom: 0; font-size: 2.8cqw; }
 .pem-3d[data-cmd] .c3-ecran .er-note { top: 38%; font-size: 2.8cqw; }
 
-/* Plein écran, vue 3D : la vue remplit l'écran, le pupitre reste posé dessus ; consigne au-dessus, messages dessous. */
+/* Plein écran, vue 3D : la vue remplit l'écran, commandes posées dessus ; consigne au-dessus, messages dessous. Fenêtre
+   trop basse pour les commandes : pupitre sous la vue, qui garde une hauteur minimale, et défilement. */
 .pem-console.vue3d:fullscreen, .pem-console.vue3d.c3-plein {
-  display: grid; height: 100dvh; overflow: hidden; gap: 8px; grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  display: grid; height: 100dvh; overflow: auto; gap: 8px; grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto auto minmax(min(56dvh, 320px), 1fr) auto auto; grid-template-columns: minmax(0, 1fr) auto;
 }
 .pem-console.vue3d:fullscreen > *, .pem-console.vue3d.c3-plein > * { order: 0; min-width: 0; }
+/* Rangées fixes : la vue garde la rangée extensible même quand la ligne d'options ou les messages sont masqués. */
+.pem-console.vue3d:fullscreen > .pem-now, .pem-console.vue3d.c3-plein > .pem-now { grid-row: 1; }
+.pem-console.vue3d:fullscreen > *, .pem-console.vue3d.c3-plein > * { grid-column: 1 / -1; }
+.pem-console.vue3d:fullscreen > .pem-now, .pem-console.vue3d.c3-plein > .pem-now { grid-column: 1; }
+/* Plein écran avec la liste des missions (déplacée dans la console) : colonne à gauche sur toute la hauteur ;
+   « Masquer les missions » rend la place à la vue et ramène le sélecteur (avec « Voir les étapes »). Fenêtre étroite :
+   pas de colonne, le sélecteur suffit. */
+.pem-missions-repli, .pem-choix-etapes { display: none; }
+.pem-console:is(:fullscreen, .c3-plein) > .pem-missions { display: none; }
+@media (min-width: 1000px) {
+  .pem-console.vue3d:is(:fullscreen, .c3-plein):has(> .pem-missions):not(.missions-cachees) {
+    grid-template-columns: minmax(250px, 310px) minmax(0, 1fr) auto;
+  }
+  .pem-console.vue3d:is(:fullscreen, .c3-plein):has(> .pem-missions):not(.missions-cachees) > * { grid-column: 2 / -1; }
+  .pem-console.vue3d:is(:fullscreen, .c3-plein):has(> .pem-missions):not(.missions-cachees) > .pem-now { grid-column: 2; }
+  .pem-console.vue3d:is(:fullscreen, .c3-plein):has(> .pem-missions):not(.missions-cachees) > .pem-choix { display: none; }
+  .pem-console.vue3d:is(:fullscreen, .c3-plein):has(> .pem-missions):not(.missions-cachees) > .pem-missions {
+    display: grid; grid-column: 1; grid-row: 1 / -1; min-height: 0; overflow: auto; padding-right: 4px; align-content: start; overscroll-behavior: contain;
+  }
+  .pem-console:is(:fullscreen, .c3-plein) > .pem-missions .pem-missions-repli { display: inline-flex; justify-self: start; height: 32px; border-radius: 8px; }
+  .pem-console.missions-cachees > .pem-choix .pem-choix-etapes {
+    display: inline; margin-left: 8px; padding: 0; border: 0; background: none; color: inherit; font: inherit; text-decoration: underline; cursor: pointer;
+  }
+}
+/* Sélecteur de mission : seulement en plein écran (la liste des missions est alors hors de vue), à droite de la consigne. */
+.pem-choix { display: none; }
+.pem-console:fullscreen > .pem-choix, .pem-console.c3-plein > .pem-choix {
+  display: flex; flex-direction: column; justify-content: center; gap: 2px; grid-row: 1; grid-column: 2; min-width: 0;
+  font-size: 11.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent-text, var(--accent));
+}
+.pem-choix select {
+  height: 40px; max-width: min(42vw, 360px); padding: 0 10px; border-radius: 10px; border: 1px solid var(--line-strong);
+  background: var(--surface); color: var(--ink); font: inherit; font-size: 15px; font-weight: 600; letter-spacing: 0; text-transform: none;
+}
+.pem-console.vue3d:fullscreen > .pem-opts, .pem-console.vue3d.c3-plein > .pem-opts { grid-row: 2; }
+.pem-console.vue3d:fullscreen > .pem-3d, .pem-console.vue3d.c3-plein > .pem-3d { grid-row: 3; }
+.pem-console.vue3d:fullscreen > .pem-msg, .pem-console.vue3d.c3-plein > .pem-msg { grid-row: 4; }
+.pem-console.vue3d:fullscreen > .pem-deck, .pem-console.vue3d.c3-plein > .pem-deck { grid-row: 5; }
 .pem-console.vue3d:fullscreen > .pem-3d, .pem-console.vue3d.c3-plein > .pem-3d { height: auto; min-height: 0; max-height: none; aspect-ratio: auto; }
 .pem-console.vue3d:fullscreen > .pem-3d-aide, .pem-console.vue3d.c3-plein > .pem-3d-aide,
 .pem-console.vue3d:fullscreen > .pem-keys, .pem-console.vue3d.c3-plein > .pem-keys { display: none; }
@@ -612,8 +686,5 @@
 }
 /* Téléphone en plein écran : vue 3D en haut, pupitre dessous (trop étroit pour superposer), défilement permis. */
 @media (max-width: 760px) {
-  .pem-console.vue3d:fullscreen, .pem-console.vue3d.c3-plein {
-    overflow: auto; grid-template-rows: auto auto 56dvh auto auto;
-  }
-  .pem-console.vue3d:fullscreen > .pem-deck, .pem-console.vue3d.c3-plein > .pem-deck { grid-row: auto; }
+  .pem-console.vue3d:fullscreen, .pem-console.vue3d.c3-plein { grid-template-rows: auto auto 56dvh auto auto; }
 }

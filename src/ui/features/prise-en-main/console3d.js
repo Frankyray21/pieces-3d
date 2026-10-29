@@ -321,6 +321,7 @@ export function creerConsole3D(conteneur, sim, { agir = () => {}, info = () => {
   const voyant = new THREE.Mesh(new THREE.SphereGeometry(0.005, 12, 8), mat(0x1f9d55, { emissive: 0x000000 }));
   voyant.position.set(0.008, 0.024, 0);
   inter.add(voyant);
+  inter.scale.setScalar(1.6); // agrandi pour être repérable (non fidèle à l'échelle)
   const ci = { type: 'power', nom: 'Interrupteur marche/arrêt' };
   for (const m of [interCorps, interLevier]) { m.userData.cible = ci; cibles.push(m); }
   prise(new THREE.SphereGeometry(0.04, 12, 8), ci, inter, cibles, [0.01, 0, 0]);
@@ -521,6 +522,7 @@ export function creerConsole3D(conteneur, sim, { agir = () => {}, info = () => {
   const cmd = commandes ? creerCommandes(conteneur, sim, {
     bouton: (side, pos) => { const b = (side === 'L' ? mg : md).boutons[pos]; return b ? ecranPx(b.getWorldPosition(new THREE.Vector3())) : null; },
     base: (side) => ecranPx((side === 'L' ? mg : md).groupe.localToWorld(new THREE.Vector3(0, 0.05, 0))),
+    inter: () => ecranPx(inter.localToWorld(new THREE.Vector3(0.01, 0, 0))),
     tete: (side) => { const bs = (side === 'L' ? mg : md).boutons; const p = new THREE.Vector3(); for (const k of ['HG', 'HD', 'MG', 'MD']) p.add(bs[k].getWorldPosition(new THREE.Vector3())); return ecranPx(p.multiplyScalar(0.25)); },
   }, { agir: () => agir() }) : null;
   const ro = new ResizeObserver(taille);
@@ -572,7 +574,7 @@ export function creerConsole3D(conteneur, sim, { agir = () => {}, info = () => {
       const w = b.getWorldPosition(new THREE.Vector3()).project(camera);
       return { x: (w.x + 1) / 2 * conteneur.clientWidth, y: (1 - w.y) / 2 * conteneur.clientHeight };
     },
-    recentrer() { vueModifiee = false; cadrer(); },
+    recentrer() { vueModifiee = false; cadrer(); cmd?.replacer(); },
     /** Recadre (panneaux posés sur la vue changés de taille), sauf si l'on a tourné ou zoomé la vue soi-même. */
     recadrer() { if (!vueModifiee) cadrer(); else decaler(); },
     arreter() {

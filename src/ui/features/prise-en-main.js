@@ -358,7 +358,7 @@ export default {
         const ouverte = u.mission || d.missions.find((m) => !p0.missions[m.id])?.id || d.missions[0].id;
         body.innerHTML = `${titre('Simulateur de la console ERIS', 'Faites les missions dans l’ordre : chaque étape se coche toute seule quand elle est faite. Vous pouvez aussi manipuler librement. L’écran reprend celui de la machine (libellés en anglais) ; les commandes sous l’écran sont traduites.', e.page)}
           <div class="pem-sim">
-            <aside class="pem-missions" aria-label="Missions">${d.missions.map((m, k) => `
+            <aside class="pem-missions" aria-label="Missions"><button type="button" class="btn pem-missions-repli" data-repli-missions>Masquer les missions</button>${d.missions.map((m, k) => `
               <details class="pem-m${p0.missions[m.id] ? ' ok' : ''}" data-m="${esc(m.id)}" ${ouverte === m.id ? 'open' : ''}>
                 <summary><span class="pem-m-n">${p0.missions[m.id] ? '✓' : k + 1}</span><span class="pem-m-t">${esc(m.titre)}</span></summary>
                 <div class="pem-m-body"><p>${esc(m.but)} ${pageBtn(m.page)}</p>
@@ -370,6 +370,9 @@ export default {
             </aside>
             <div class="pem-console${u.vue === '3d' ? ' vue3d' : ''}">
               <div class="pem-now" aria-live="polite"></div>
+              <div class="pem-choix"><span>Mission <button type="button" class="pem-choix-etapes" data-repli-missions>Voir les étapes</button></span><select data-choix-mission aria-label="Mission">
+                <option value="">Manipulation libre</option>${d.missions.map((m, k) => `<option value="${esc(m.id)}">${k + 1}. ${esc(m.titre)}</option>`).join('')}
+              </select></div>
               <div class="pem-opts">
                 <div class="pem-tabs" role="group" aria-label="Affichage"><button type="button" class="chip" data-vue="3d" aria-pressed="${u.vue === '3d'}">Console 3D</button><button type="button" class="chip" data-vue="2d" aria-pressed="${u.vue === '2d'}">Écran 2D</button></div>
                 <label class="pem-fr"><input type="checkbox" ${u.fr ? 'checked' : ''}> Traduire l’écran en français (sur la machine, l’écran est en anglais)</label>
@@ -405,6 +408,20 @@ export default {
             body.querySelector('.pem-screen').hidden = false;
           }
         };
+        // Plein écran : la liste des missions (avec leurs étapes) passe dans la console, en colonne à gauche ; elle
+        // revient à sa place en sortant. « Masquer les missions » laisse toute la place à la vue (le sélecteur reste).
+        const consEl = body.querySelector('.pem-console');
+        const asideEl = body.querySelector('.pem-missions');
+        const simEl = body.querySelector('.pem-sim');
+        const placerMissions = () => {
+          const plein = document.fullscreenElement === consEl || document.webkitFullscreenElement === consEl || consEl.classList.contains('c3-plein');
+          if (plein && asideEl.parentElement !== consEl) consEl.appendChild(asideEl);
+          else if (!plein && asideEl.parentElement === consEl) simEl.insertBefore(asideEl, consEl);
+        };
+        document.addEventListener('fullscreenchange', placerMissions);
+        document.addEventListener('webkitfullscreenchange', placerMissions);
+        const obsPlein = new MutationObserver(placerMissions);
+        obsPlein.observe(consEl, { attributes: true, attributeFilter: ['class'] });
         const scr = { set innerHTML(h) { (c3 && u.vue === '3d' ? c3.ecran : scr2d).innerHTML = h; } };
         const now = body.querySelector('.pem-now');
         const deck = body.querySelector('.pem-deck');
@@ -447,8 +464,17 @@ export default {
           const focusNow = now.contains(document.activeElement);
           now.innerHTML = !mc ? '<span>Choisissez une mission dans la liste, ou manipulez librement la console.</span>'
             : kc >= mc.etapes.length ? `<b>✓ Mission réussie : ${esc(mc.titre)}</b>${d.missions[d.missions.indexOf(mc) + 1] ? `<button type="button" class="btn primary" data-start="${esc(d.missions[d.missions.indexOf(mc) + 1].id)}">Mission suivante ${icon('droite', { size: 14 })}</button>` : ''}`
-              : `<span class="pem-now-k">Mission ${d.missions.indexOf(mc) + 1} · étape ${kc + 1}/${mc.etapes.length}</span><span>${esc(mc.etapes[kc].t)}</span>`;
+              : `<span class="pem-now-k">Mission ${d.missions.indexOf(mc) + 1} · étape ${kc + 1}/${mc.etapes.length}</span><span>${esc(mc.etapes[kc].t)}</span>${mc.declencheur ? `<button type="button" class="btn" data-alarme="${mc.declencheur}">Déclencher l’alarme</button>` : ''}`;
           now.classList.toggle('ok', !!mc && kc >= mc.etapes.length);
+          // Sélecteur de mission (plein écran) : mission en cours, missions réussies cochées.
+          const choix = body.querySelector('[data-choix-mission]');
+          if (choix) {
+            for (const o of choix.options) {
+              const m = d.missions.find((x) => x.id === o.value);
+              if (m) o.textContent = `${p.missions[m.id] ? '✓' : `${d.missions.indexOf(m) + 1}.`} ${m.titre}`;
+            }
+            choix.value = u.mission || '';
+          }
           // « Mission suivante » remplacé alors qu'il avait le focus : le focus reste dans la console.
           if (focusNow && !now.contains(document.activeElement)) body.querySelector('.pem-console')?.focus({ preventScroll: true });
           body.querySelectorAll('.pem-m').forEach((det) => {
@@ -467,8 +493,15 @@ export default {
           const m = sim.s.message;
           if (!m || m.t === dernierMsg) return;
           dernierMsg = m.t;
+          // Première phrase en gras (ce qui vient de se passer), suite en texte normal (quoi faire ensuite).
+          const i = m.texte.search(/[.!:] /);
+          const tete = i > 0 ? m.texte.slice(0, i + 1) : m.texte;
+          const suite = i > 0 ? m.texte.slice(i + 2) : '';
+          const icone = { ok: '✓', warn: '!', danger: '⛔' }[m.ton] || 'i';
           msgEl.className = `pem-msg ${m.ton}`;
-          msgEl.innerHTML = `<span>${esc(m.texte)}</span>${m.page ? pageBtn(m.page) : ''}`;
+          msgEl.innerHTML = `<i class="pem-msg-i" aria-hidden="true">${icone}</i><span><b>${esc(tete)}</b>${suite ? ` ${esc(suite)}` : ''}</span>${m.page ? pageBtn(m.page) : ''}`;
+          void msgEl.offsetWidth; // relance l'animation de mise en évidence
+          msgEl.classList.add('nouveau');
         };
         // Clé de l'élément qui a le focus dans le pupitre : il est retrouvé après le rendu (focus clavier gardé).
         const cleFocus = (e) => {
@@ -523,22 +556,27 @@ export default {
           return [s.mode, sim.couche(), s.swing | 0, s.dump | 0, s.position | 0, s.cap | 0, s.profondeur.toFixed(1), Math.round(s.debitEau), s.klaxon > 0, s.recul > 0, s.lock, s.alarmes.length, new Date().getMinutes()].join('|');
         };
 
+        /** Lance (ou relance) une mission ; id vide : manipulation libre. */
+        const demarrer = (id) => {
+          const m = d.missions.find((x) => x.id === id);
+          u.mission = m ? m.id : null;
+          if (m) {
+            u.etapesM = { ...(u.etapesM || {}), [m.id]: 0 };
+            sim.preparer(m.id === 'demarrer' ? 'eteint' : 'pret');
+          }
+          body.querySelectorAll('.pem-m').forEach((x) => { x.open = !!m && x.dataset.m === m.id; x.querySelector('[data-start]').textContent = m && x.dataset.m === m.id ? 'Recommencer' : 'Commencer'; });
+          dessinerMissions();
+          tout();
+        };
         body.addEventListener('change', (ev) => {
           if (ev.target.closest('.pem-fr')) { u.fr = ev.target.checked; dessinerEcran(); }
+          if (ev.target.matches('[data-choix-mission]')) demarrer(ev.target.value);
         });
         body.addEventListener('click', (ev) => {
           const t = ev.target;
           const start = t.closest('[data-start]');
-          if (start) {
-            const m = d.missions.find((x) => x.id === start.dataset.start);
-            u.mission = m.id;
-            u.etapesM = { ...(u.etapesM || {}), [m.id]: 0 };
-            sim.preparer(m.id === 'demarrer' ? 'eteint' : 'pret');
-            body.querySelectorAll('.pem-m').forEach((x) => { x.open = x.dataset.m === m.id; x.querySelector('[data-start]').textContent = x.dataset.m === m.id ? 'Recommencer' : 'Commencer'; });
-            dessinerMissions();
-            tout();
-            return;
-          }
+          if (start) { demarrer(start.dataset.start); return; }
+          if (t.closest('[data-repli-missions]')) { consEl.classList.toggle('missions-cachees'); c3?.recadrer(); return; }
           const al = t.closest('[data-alarme]');
           if (al) {
             if (!sim.s.power) sim.preparer('pret');
@@ -645,7 +683,9 @@ export default {
           raf = requestAnimationFrame(boucle);
         };
         raf = requestAnimationFrame(boucle);
-        arret = () => { relacher(); cancelAnimationFrame(raf); document.removeEventListener('keydown', kd); document.removeEventListener('keyup', ku); window.removeEventListener('blur', relacher); c3?.arreter(); c3 = null; };
+        arret = () => {
+          document.removeEventListener('fullscreenchange', placerMissions); document.removeEventListener('webkitfullscreenchange', placerMissions); obsPlein.disconnect();
+          relacher(); cancelAnimationFrame(raf); document.removeEventListener('keydown', kd); document.removeEventListener('keyup', ku); window.removeEventListener('blur', relacher); c3?.arreter(); c3 = null; };
         ouvrir3d();
 
         dessinerMissions();
