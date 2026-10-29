@@ -358,7 +358,7 @@ export default {
         const ouverte = u.mission || d.missions.find((m) => !p0.missions[m.id])?.id || d.missions[0].id;
         body.innerHTML = `${titre('Simulateur de la console ERIS', 'Faites les missions dans l’ordre : chaque étape se coche toute seule quand elle est faite. Vous pouvez aussi manipuler librement. L’écran reprend celui de la machine (libellés en anglais) ; les commandes sous l’écran sont traduites.', e.page)}
           <div class="pem-sim">
-            <aside class="pem-missions" aria-label="Missions">${d.missions.map((m, k) => `
+            <aside class="pem-missions" aria-label="Missions"><button type="button" class="btn pem-missions-repli" data-repli-missions>Masquer les missions</button>${d.missions.map((m, k) => `
               <details class="pem-m${p0.missions[m.id] ? ' ok' : ''}" data-m="${esc(m.id)}" ${ouverte === m.id ? 'open' : ''}>
                 <summary><span class="pem-m-n">${p0.missions[m.id] ? '✓' : k + 1}</span><span class="pem-m-t">${esc(m.titre)}</span></summary>
                 <div class="pem-m-body"><p>${esc(m.but)} ${pageBtn(m.page)}</p>
@@ -370,9 +370,9 @@ export default {
             </aside>
             <div class="pem-console${u.vue === '3d' ? ' vue3d' : ''}">
               <div class="pem-now" aria-live="polite"></div>
-              <label class="pem-choix"><span>Mission</span><select data-choix-mission>
+              <div class="pem-choix"><span>Mission <button type="button" class="pem-choix-etapes" data-repli-missions>Voir les étapes</button></span><select data-choix-mission aria-label="Mission">
                 <option value="">Manipulation libre</option>${d.missions.map((m, k) => `<option value="${esc(m.id)}">${k + 1}. ${esc(m.titre)}</option>`).join('')}
-              </select></label>
+              </select></div>
               <div class="pem-opts">
                 <div class="pem-tabs" role="group" aria-label="Affichage"><button type="button" class="chip" data-vue="3d" aria-pressed="${u.vue === '3d'}">Console 3D</button><button type="button" class="chip" data-vue="2d" aria-pressed="${u.vue === '2d'}">Écran 2D</button></div>
                 <label class="pem-fr"><input type="checkbox" ${u.fr ? 'checked' : ''}> Traduire l’écran en français (sur la machine, l’écran est en anglais)</label>
@@ -408,6 +408,20 @@ export default {
             body.querySelector('.pem-screen').hidden = false;
           }
         };
+        // Plein écran : la liste des missions (avec leurs étapes) passe dans la console, en colonne à gauche ; elle
+        // revient à sa place en sortant. « Masquer les missions » laisse toute la place à la vue (le sélecteur reste).
+        const consEl = body.querySelector('.pem-console');
+        const asideEl = body.querySelector('.pem-missions');
+        const simEl = body.querySelector('.pem-sim');
+        const placerMissions = () => {
+          const plein = document.fullscreenElement === consEl || document.webkitFullscreenElement === consEl || consEl.classList.contains('c3-plein');
+          if (plein && asideEl.parentElement !== consEl) consEl.appendChild(asideEl);
+          else if (!plein && asideEl.parentElement === consEl) simEl.insertBefore(asideEl, consEl);
+        };
+        document.addEventListener('fullscreenchange', placerMissions);
+        document.addEventListener('webkitfullscreenchange', placerMissions);
+        const obsPlein = new MutationObserver(placerMissions);
+        obsPlein.observe(consEl, { attributes: true, attributeFilter: ['class'] });
         const scr = { set innerHTML(h) { (c3 && u.vue === '3d' ? c3.ecran : scr2d).innerHTML = h; } };
         const now = body.querySelector('.pem-now');
         const deck = body.querySelector('.pem-deck');
@@ -562,6 +576,7 @@ export default {
           const t = ev.target;
           const start = t.closest('[data-start]');
           if (start) { demarrer(start.dataset.start); return; }
+          if (t.closest('[data-repli-missions]')) { consEl.classList.toggle('missions-cachees'); c3?.recadrer(); return; }
           const al = t.closest('[data-alarme]');
           if (al) {
             if (!sim.s.power) sim.preparer('pret');
@@ -668,7 +683,9 @@ export default {
           raf = requestAnimationFrame(boucle);
         };
         raf = requestAnimationFrame(boucle);
-        arret = () => { relacher(); cancelAnimationFrame(raf); document.removeEventListener('keydown', kd); document.removeEventListener('keyup', ku); window.removeEventListener('blur', relacher); c3?.arreter(); c3 = null; };
+        arret = () => {
+          document.removeEventListener('fullscreenchange', placerMissions); document.removeEventListener('webkitfullscreenchange', placerMissions); obsPlein.disconnect();
+          relacher(); cancelAnimationFrame(raf); document.removeEventListener('keydown', kd); document.removeEventListener('keyup', ku); window.removeEventListener('blur', relacher); c3?.arreter(); c3 = null; };
         ouvrir3d();
 
         dessinerMissions();

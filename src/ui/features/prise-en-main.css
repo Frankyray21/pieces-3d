@@ -644,6 +644,26 @@
 .pem-console.vue3d:fullscreen > .pem-now, .pem-console.vue3d.c3-plein > .pem-now { grid-row: 1; }
 .pem-console.vue3d:fullscreen > *, .pem-console.vue3d.c3-plein > * { grid-column: 1 / -1; }
 .pem-console.vue3d:fullscreen > .pem-now, .pem-console.vue3d.c3-plein > .pem-now { grid-column: 1; }
+/* Plein écran avec la liste des missions (déplacée dans la console) : colonne à gauche sur toute la hauteur ;
+   « Masquer les missions » rend la place à la vue et ramène le sélecteur (avec « Voir les étapes »). Fenêtre étroite :
+   pas de colonne, le sélecteur suffit. */
+.pem-missions-repli, .pem-choix-etapes { display: none; }
+.pem-console:is(:fullscreen, .c3-plein) > .pem-missions { display: none; }
+@media (min-width: 1000px) {
+  .pem-console.vue3d:is(:fullscreen, .c3-plein):has(> .pem-missions):not(.missions-cachees) {
+    grid-template-columns: minmax(250px, 310px) minmax(0, 1fr) auto;
+  }
+  .pem-console.vue3d:is(:fullscreen, .c3-plein):has(> .pem-missions):not(.missions-cachees) > * { grid-column: 2 / -1; }
+  .pem-console.vue3d:is(:fullscreen, .c3-plein):has(> .pem-missions):not(.missions-cachees) > .pem-now { grid-column: 2; }
+  .pem-console.vue3d:is(:fullscreen, .c3-plein):has(> .pem-missions):not(.missions-cachees) > .pem-choix { display: none; }
+  .pem-console.vue3d:is(:fullscreen, .c3-plein):has(> .pem-missions):not(.missions-cachees) > .pem-missions {
+    display: grid; grid-column: 1; grid-row: 1 / -1; min-height: 0; overflow: auto; padding-right: 4px; align-content: start; overscroll-behavior: contain;
+  }
+  .pem-console:is(:fullscreen, .c3-plein) > .pem-missions .pem-missions-repli { display: inline-flex; justify-self: start; height: 32px; border-radius: 8px; }
+  .pem-console.missions-cachees > .pem-choix .pem-choix-etapes {
+    display: inline; margin-left: 8px; padding: 0; border: 0; background: none; color: inherit; font: inherit; text-decoration: underline; cursor: pointer;
+  }
+}
 /* Sélecteur de mission : seulement en plein écran (la liste des missions est alors hors de vue), à droite de la consigne. */
 .pem-choix { display: none; }
 .pem-console:fullscreen > .pem-choix, .pem-console.c3-plein > .pem-choix {

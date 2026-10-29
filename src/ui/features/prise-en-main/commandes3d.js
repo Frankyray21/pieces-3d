@@ -227,7 +227,9 @@ export function creerCommandes(conteneur, sim, geo, { agir = () => {} } = {}) {
     const parRangee = new Map();
     for (const e of P.children) {
       if (e === conteneur || e.matches('.pem-deck, .pem-keys') || !e.offsetParent) continue;
-      const r = getComputedStyle(e).gridRowStart;
+      const cs = getComputedStyle(e);
+      if (cs.gridRowEnd === '-1' || cs.gridRowEnd.startsWith('span')) continue; // colonne sur toute la hauteur (missions)
+      const r = cs.gridRowStart;
       const cle = r && r !== 'auto' ? r : e;
       parRangee.set(cle, Math.max(parRangee.get(cle) || 0, e.offsetHeight));
     }
