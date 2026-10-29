@@ -464,3 +464,76 @@
 }
 /* La console ne reçoit le focus que pour capter le clavier : pas de contour autour de tout le bloc. */
 .pem-console:focus { outline: none; }
+
+/* ---------------------------------------------------------------- vue 3D et pupitre superposés
+   En vue 3D, le pupitre se pose sur la vue : panneau de la manette gauche en bas à gauche, de la manette droite en
+   bas à droite (l'interrupteur, l'arrêt d'urgence et l'extincteur sont déjà sur la console 3D). Tout est visible
+   d'un coup d'œil, sans défiler ; même disposition en plein écran. Sur téléphone (étroit), le pupitre reste dessous. */
+.pem-3d-aide { margin: -4px 0 0; }
+.pem-3d-aide summary { cursor: pointer; width: max-content; max-width: 100%; }
+.pem-console { container: pem-console / inline-size; }
+/* Pupitre dessous (console étroite) : vue 3D basse (la console cadrée au plus près est large). */
+.pem-console.vue3d > .pem-3d { aspect-ratio: 2 / 1; min-height: 240px; max-height: 50dvh; }
+@media (max-width: 700px) and (orientation: portrait) { .pem-console.vue3d > .pem-3d { aspect-ratio: 4 / 3; max-height: 46dvh; } }
+/* Superposition selon la largeur de la console elle-même (pas de la fenêtre) : sous 820 px, le pupitre est dessous. */
+@container pem-console (min-width: 820px) {
+  .pem-console.vue3d > .pem-3d { grid-row: 3; grid-column: 1; aspect-ratio: 16 / 9; min-height: 420px; max-height: calc(100dvh - 190px); }
+  .pem-console.vue3d > .pem-keys { display: none; }
+  /* Le pupitre occupe la même case que la vue 3D (rang 3 de la grille), collé en bas ; seuls ses deux panneaux
+     captent les clics. Les autres éléments se placent d'eux-mêmes autour. */
+  .pem-console.vue3d > .pem-deck {
+    grid-row: 3; grid-column: 1; align-self: end; z-index: 3; pointer-events: none; margin: 0 10px 10px;
+    display: flex; justify-content: space-between; align-items: flex-end; gap: 10px; padding: 0; background: none; border: 0;
+  }
+  .pem-console.vue3d .pem-deck > .pem-mid { display: none; }
+  .pem-console.vue3d .pem-deck > .pem-js {
+    pointer-events: auto; width: min(300px, 31%); gap: 5px; padding: 8px 8px 9px; border-radius: 12px;
+    background: color-mix(in srgb, var(--surface) 82%, transparent); border: 1px solid var(--line);
+    box-shadow: var(--shadow); backdrop-filter: blur(6px);
+  }
+  .pem-console.vue3d .pem-js h4 { font-size: 13px; }
+  .pem-console.vue3d .pem-js h4 .pem-small { font-size: 11px; }
+  .pem-console.vue3d .pem-mode { padding: 3px 10px; font-size: 11.5px; }
+  .pem-console.vue3d .pem-pad { max-width: 168px; gap: 3px; }
+  .pem-console.vue3d .pem-dir { min-height: 32px; padding: 2px; border-radius: 7px; }
+  .pem-console.vue3d .pem-dir small { font-size: 9.5px; }
+  .pem-console.vue3d .pem-key { padding: 3px 6px; border-radius: 7px; }
+  .pem-console.vue3d .pem-key b { font-size: 11px; }
+  .pem-console.vue3d .pem-key span { font-size: 9.5px; }
+  .pem-console.vue3d .pem-keys-l, .pem-console.vue3d .pem-keys-r { gap: 4px; }
+  /* Panneau compact : croix sans libellés d'axe (ils sont sur l'écran ERIS) à gauche, boutons à droite. */
+  .pem-console.vue3d .pem-deck > .pem-js { display: grid; grid-template-columns: 92px minmax(0, 1fr); column-gap: 8px; align-items: start; justify-items: stretch; }
+  .pem-console.vue3d .pem-js > h4 { grid-column: 1 / -1; text-align: left; }
+  .pem-console.vue3d .pem-js > h4 .pem-small { display: inline; margin-left: 6px; }
+  .pem-console.vue3d .pem-js > .pem-mode { grid-column: 1; width: 100%; padding: 3px 4px; font-size: 10.5px; white-space: normal; line-height: 1.15; }
+  .pem-console.vue3d .pem-js > .pem-pad { grid-column: 1; max-width: 92px; }
+  .pem-console.vue3d .pem-js > .pem-keys-l, .pem-console.vue3d .pem-js > .pem-keys-r { grid-column: 2; grid-row: 2 / span 2; justify-content: flex-start; }
+  .pem-console.vue3d .pem-dir { min-height: 27px; }
+  .pem-console.vue3d .pem-dir small { display: none; }
+  .pem-console.vue3d .pem-dir i { font-size: 11px; }
+}
+/* Faible hauteur (téléphone en paysage) : panneaux réduits aux noms de l'écran. */
+@media (max-height: 560px) {
+  .pem-console.vue3d .pem-key span { display: none; }
+  .pem-console.vue3d .pem-js > h4 .pem-small { display: none; }
+}
+
+/* Plein écran, vue 3D : la vue remplit l'écran, le pupitre reste posé dessus ; consigne au-dessus, messages dessous. */
+.pem-console.vue3d:fullscreen, .pem-console.vue3d.c3-plein {
+  display: grid; height: 100dvh; overflow: hidden; gap: 8px; grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+}
+.pem-console.vue3d:fullscreen > *, .pem-console.vue3d.c3-plein > * { order: 0; min-width: 0; }
+.pem-console.vue3d:fullscreen > .pem-3d, .pem-console.vue3d.c3-plein > .pem-3d { height: auto; min-height: 0; max-height: none; aspect-ratio: auto; }
+.pem-console.vue3d:fullscreen > .pem-3d-aide, .pem-console.vue3d.c3-plein > .pem-3d-aide,
+.pem-console.vue3d:fullscreen > .pem-keys, .pem-console.vue3d.c3-plein > .pem-keys { display: none; }
+@media (max-height: 560px) {
+  .pem-console.vue3d:fullscreen > .pem-opts, .pem-console.vue3d.c3-plein > .pem-opts { display: none; }
+}
+/* Téléphone en plein écran : vue 3D en haut, pupitre dessous (trop étroit pour superposer), défilement permis. */
+@media (max-width: 760px) {
+  .pem-console.vue3d:fullscreen, .pem-console.vue3d.c3-plein {
+    overflow: auto; grid-template-rows: auto auto 56dvh auto auto;
+  }
+  .pem-console.vue3d:fullscreen > .pem-deck, .pem-console.vue3d.c3-plein > .pem-deck { grid-row: auto; }
+}

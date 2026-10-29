@@ -138,10 +138,11 @@ function bandeau() {
 /**
  * Crée la console dans `conteneur`. sim : createSim() ; opts.agir(evt) : appelé après une action (pour redessiner
  * le reste de la page) ; opts.info(texte) : nom de la commande survolée ; opts.surCible(cible) : remplace l'action
- * des commandes touchées (découverte de la console) ; opts.plein : élément mis en plein écran (par défaut, la vue). Retourne { ecran (élément HTML de
+ * des commandes touchées (découverte de la console) ; opts.plein : élément mis en plein écran (par défaut, la vue) ;
+ * opts.reserve() : hauteur en px, en bas de la vue, couverte par des panneaux posés dessus (la console se cadre au-dessus). Retourne { ecran (élément HTML de
  * l'écran), maj(), arreter() }.
  */
-export function creerConsole3D(conteneur, sim, { agir = () => {}, info = () => {}, surCible = null, plein = conteneur } = {}) {
+export function creerConsole3D(conteneur, sim, { agir = () => {}, info = () => {}, surCible = null, plein = conteneur, reserve = () => 0 } = {}) {
   const materiaux = {
     orange: mat(ORANGE, { roughness: 0.45 }), noir: mat(NOIR, { roughness: 0.8 }), caoutchouc: mat(0x151515, { roughness: 0.9 }),
     poignee: mat(0x202226, { roughness: 0.6 }), acier: mat(ACIER, { metalness: 0.6, roughness: 0.4 }),
@@ -440,7 +441,54 @@ export function creerConsole3D(conteneur, sim, { agir = () => {}, info = () => {
     camera.updateProjectionMatrix();
     renderer.setSize(w, h, false);
     css.setSize(w, h);
+    if (!vueModifiee) cadrer();
+    else decaler();
   };
+  // Cadrage au plus près : la caméra garde sa direction de vue (de face, en surplomb) et recule juste assez pour que
+  // toute la console tienne dans le cadre, quelle que soit la forme de la vue. Refait à chaque changement de taille
+  // tant qu'on n'a pas tourné ou zoomé la vue soi-même (« Recentrer » y revient).
+  const boite = new THREE.Box3().setFromObject(racine);
+  const centre = boite.getCenter(new THREE.Vector3());
+  const DIRECTION = new THREE.Vector3(0, 0.61, 1.32).normalize();
+  const coins = [];
+  for (const x of [boite.min.x, boite.max.x]) for (const y of [boite.min.y, boite.max.y]) for (const z of [boite.min.z, boite.max.z]) coins.push(new THREE.Vector3(x, y, z));
+  const MARGE = 0.94; // part de la vue occupée par la console (le reste : marge autour)
+  let vueModifiee = false;
+  function cadrer() {
+    // Bande du bas couverte par les panneaux (part r de la hauteur) : la console tient dans le reste, décalée vers le
+    // haut par un décalage de vue (setViewOffset, suivi aussi par l'écran HTML en CSS3D).
+    const r = partReservee();
+    camera.clearViewOffset();
+    controls.target.copy(centre);
+    let d = 1.2;
+    for (let k = 0; k < 6; k++) {
+      camera.position.copy(centre).addScaledVector(DIRECTION, d);
+      camera.lookAt(centre);
+      camera.updateMatrixWorld();
+      let m = 0;
+      const p = new THREE.Vector3();
+      for (const c of coins) { p.copy(c).project(camera); m = Math.max(m, Math.abs(p.x), Math.abs(p.y) / (1 - r)); }
+      d *= m / MARGE;
+    }
+    d = Math.min(controls.maxDistance, Math.max(controls.minDistance, d));
+    camera.position.copy(centre).addScaledVector(DIRECTION, d);
+    decaler();
+    controls.update();
+  }
+  /** Part de la hauteur de la vue couverte par les panneaux du bas (0 à 0,5). */
+  function partReservee() {
+    const h = conteneur.clientHeight;
+    return h ? Math.min(0.5, Math.max(0, (Number(reserve()) || 0) / h)) : 0;
+  }
+  /** Décalage de vue vers le haut de la moitié de la bande réservée (sans bouger la caméra). */
+  function decaler() {
+    const w = conteneur.clientWidth;
+    const h = conteneur.clientHeight;
+    const r = partReservee();
+    if (r > 0 && w && h) camera.setViewOffset(w, h, 0, (r * h) / 2, w, h);
+    else camera.clearViewOffset();
+  }
+  controls.addEventListener('start', () => { vueModifiee = true; });
   const ro = new ResizeObserver(taille);
   ro.observe(conteneur);
   taille();
@@ -489,7 +537,9 @@ export function creerConsole3D(conteneur, sim, { agir = () => {}, info = () => {
       const w = b.getWorldPosition(new THREE.Vector3()).project(camera);
       return { x: (w.x + 1) / 2 * conteneur.clientWidth, y: (1 - w.y) / 2 * conteneur.clientHeight };
     },
-    recentrer() { camera.position.set(0, 0.78, 1.3); controls.target.set(0, 0.17, -0.02); controls.update(); },
+    recentrer() { vueModifiee = false; cadrer(); },
+    /** Recadre (panneaux posés sur la vue changés de taille), sauf si l'on a tourné ou zoomé la vue soi-même. */
+    recadrer() { if (!vueModifiee) cadrer(); else decaler(); },
     arreter() {
       cancelAnimationFrame(raf);
       ro.disconnect();

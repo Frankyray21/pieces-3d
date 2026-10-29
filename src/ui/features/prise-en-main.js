@@ -368,14 +368,14 @@ export default {
                 </div>
               </details>`).join('')}
             </aside>
-            <div class="pem-console">
+            <div class="pem-console${u.vue === '3d' ? ' vue3d' : ''}">
               <div class="pem-now" aria-live="polite"></div>
               <div class="pem-opts">
                 <div class="pem-tabs" role="group" aria-label="Affichage"><button type="button" class="chip" data-vue="3d" aria-pressed="${u.vue === '3d'}">Console 3D</button><button type="button" class="chip" data-vue="2d" aria-pressed="${u.vue === '2d'}">Écran 2D</button></div>
                 <label class="pem-fr"><input type="checkbox" ${u.fr ? 'checked' : ''}> Traduire l’écran en français (sur la machine, l’écran est en anglais)</label>
               </div>
               <div class="pem-3d"${u.vue === '3d' ? '' : ' hidden'}></div>
-              <p class="pem-small pem-3d-aide"${u.vue === '3d' ? '' : ' hidden'}>3D : glisser une manette pour l’incliner (elle reste en place ; la toucher sans glisser la recentre) · appuyer sur les boutons des têtes de manette (survoler un bouton affiche sa fonction ; l’actif s’allume en orange) · touche Mode sur le côté gauche de la manette gauche · arrêt d’urgence, interrupteur à droite · toucher un nom à l’écran = appuyer sur son bouton · glisser ailleurs pour tourner la vue · pour lire l’écran : zoomer (molette, deux doigts) ou choisir « Écran 2D ».</p>
+              <details class="pem-small pem-3d-aide"${u.vue === '3d' ? '' : ' hidden'}><summary>Manipuler la console 3D</summary>Glisser une manette pour l’incliner (elle reste en place ; la toucher sans glisser la recentre) · appuyer sur les boutons des têtes de manette (survoler un bouton affiche sa fonction ; l’actif s’allume en orange) · touche Mode sur le côté gauche de la manette gauche · arrêt d’urgence, interrupteur à droite · toucher un nom à l’écran = appuyer sur son bouton · glisser ailleurs pour tourner la vue · pour lire l’écran : zoomer (molette, deux doigts) ou choisir « Écran 2D ».</details>
               <div class="pem-screen"${u.vue === '2d' ? '' : ' hidden'}><div class="pem-screen-in"></div></div>
               <div class="pem-msg" aria-live="polite"></div>
               <div class="pem-deck"></div>
@@ -388,7 +388,13 @@ export default {
         const ouvrir3d = () => {
           if (c3 || u.vue !== '3d') return;
           try {
-            c3 = creerConsole3D(zone3d, sim, { agir: () => tout(), plein: body.querySelector('.pem-console') });
+            // Pupitre posé sur la vue 3D (écran assez large) : la console se cadre dans la partie libre au-dessus de lui.
+            const reserve = () => {
+              const v = zone3d.getBoundingClientRect();
+              const dk = deck.getBoundingClientRect();
+              return dk.top < v.bottom && dk.bottom <= v.bottom + 1 && dk.height ? v.bottom - dk.top + 8 : 0;
+            };
+            c3 = creerConsole3D(zone3d, sim, { agir: () => tout(), plein: body.querySelector('.pem-console'), reserve });
             const r = document.createElement('button');
             r.type = 'button'; r.className = 'btn pem-3d-reset'; r.dataset.recentrer = ''; r.textContent = 'Recentrer';
             zone3d.appendChild(r);
@@ -501,6 +507,7 @@ export default {
               <div class="pem-keys-r">${btns(sim.fonctions(), 'R')}</div>
             </div>`;
           sigDeck = signatureDeck();
+          c3?.recadrer(); // hauteur du pupitre posé sur la vue changée : la console se recadre au-dessus
           // Bouton disparu au redessin (autre couche, autre mode) : le focus reste dans la console (clavier actif).
           if (focus) (deck.querySelector(focus) || body.querySelector('.pem-console'))?.focus({ preventScroll: true });
         };
@@ -548,6 +555,7 @@ export default {
             u.vue = v.dataset.vue;
             body.querySelectorAll('[data-vue]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.vue === u.vue)));
             zone3d.hidden = u.vue !== '3d';
+            body.querySelector('.pem-console').classList.toggle('vue3d', u.vue === '3d');
             body.querySelector('.pem-3d-aide').hidden = u.vue !== '3d';
             body.querySelector('.pem-screen').hidden = u.vue !== '2d';
             if (u.vue === '3d') ouvrir3d(); else if (c3) { c3.arreter(); c3 = null; }
