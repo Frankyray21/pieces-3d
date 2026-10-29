@@ -176,26 +176,38 @@ export function P14(api, opts = {}) {
   const { n, rise } = stairPlan();
   const T = STAIR.tread;
   const z0 = STAIR.z0, z1 = STAIR.z0 + STAIR.w;
-  // Marches superposées (p. 15) : des modules en 3 × 8 posés l'un sur l'autre. Le module
-  // du bas couvre toute la profondeur de l'escalier ; chaque module au-dessus repose sur
-  // celui d'en dessous et recule d'une marche (16 po). Un module : trois longerons de 3 × 8
-  // à plat dans le sens de la marche (côtés et centre), un coin de bois pour la mise de
-  // niveau, puis le dessus en 3 × 8 en travers ; la partie avant du dessus est le giron
-  // (deux 3 × 8, 16 po), la partie arrière porte le module suivant.
+  // Marches superposées (p. 15) : des modules posés l'un sur l'autre. Le module du bas
+  // couvre toute la profondeur de l'escalier ; chaque module au-dessus repose sur celui
+  // d'en dessous et recule d'une marche (16 po). Un module : trois appuis dans le sens de
+  // la marche (côtés et centre) : 3 × 8 à plat au sol pour le module du bas, un seul bout
+  // de 6 × 6 pour les autres (pas de bois empilé) ; puis le dessus en 3 × 8 en travers ;
+  // la partie avant du dessus est le giron (deux 3 × 8, 16 po), la partie arrière porte
+  // le module suivant.
   let base = null; // dessus du module d'en dessous (null : le sol)
   for (let i = n - 1; i >= 1; i--) {
     const top = DECK - i * rise; // dessus du giron i
     const xa = L, xb = L + i * T, depth = xb - xa; // le module i couvre les marches 1 à i
     const seq0 = (n - 1 - i) * 30;
-    for (const z of [z0 + P8 / 2, (z0 + z1) / 2, z1 - P8 / 2]) {
-      const g = base ?? Math.max(ground(xa, z), ground(xb, z));
-      const under = top - P3; // dessous du dessus du module
-      // Module du bas : nombre de rangs arrondi, posé de niveau dans le gravier (pas de vide).
-      const nL = base == null ? Math.max(1, Math.round((under - g) / P3)) : Math.round((under - g) / P3);
-      const yb = under - nL * P3;
-      for (let j = 0; j < nL; j++) put('2', lumber(S, [depth, P3, P8], [(xa + xb) / 2, yb + (j + 0.5) * P3, z]), [0.25 * i, 0.12 * j, 0], 14, { seq: seq0 + 1 + j });
-      const gap = yb - g;
-      if (gap > 0.004) put('3', wedge(S, { pos: [(xa + xb) / 2, g, z], along: 'x', pair: gap > WEDGE.t, thick: gap }), [0.25 * i, -0.1, 0], 14, { seq: seq0 });
+    const under = top - P3; // dessous du dessus du module
+    if (base == null) {
+      // Module du bas : un rang de 3 × 8 à plat, posé de niveau dans le gravier (pas de vide).
+      for (const z of [z0 + P8 / 2, (z0 + z1) / 2, z1 - P8 / 2]) {
+        const g = Math.max(ground(xa, z), ground(xb, z));
+        const nL = Math.max(1, Math.round((under - g) / P3));
+        const yb = under - nL * P3;
+        for (let j = 0; j < nL; j++) put('2', lumber(S, [depth, P3, P8], [(xa + xb) / 2, yb + (j + 0.5) * P3, z]), [0.25 * i, 0.12 * j, 0], 14, { seq: seq0 + 1 + j });
+        const gap = yb - g;
+        if (gap > 0.004) put('3', wedge(S, { pos: [(xa + xb) / 2, g, z], along: 'x', pair: gap > WEDGE.t, thick: gap }), [0.25 * i, -0.1, 0], 14, { seq: seq0 });
+      }
+    } else {
+      // Modules du dessus : un seul bout de 6 × 6 par appui (côtés et centre), jamais de
+      // bois empilé ; 6 po de 6 × 6 + 3 po de 3 × 8 = une marche de 9 po.
+      for (const z of [z0 + B66 / 2, (z0 + z1) / 2, z1 - B66 / 2]) {
+        const yb = under - B66;
+        put('6', lumber(S, [depth, B66, B66], [(xa + xb) / 2, yb + B66 / 2, z]), [0.25 * i, 0.12, 0], 14, { seq: seq0 + 1 });
+        const gap = yb - base;
+        if (gap > 0.004) put('3', wedge(S, { pos: [(xa + xb) / 2, base, z], along: 'x', pair: gap > WEDGE.t, thick: gap }), [0.25 * i, -0.1, 0], 14, { seq: seq0 });
+      }
     }
     // Dessus du module : 3 × 8 en travers sur toute la profondeur ; les deux de l'avant forment le giron.
     const np = Math.round(depth / P8);

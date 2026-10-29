@@ -576,9 +576,18 @@
      "2",
      "",
      null,
-     "Longerons 3 × 8 à plat (côtés et centre) de chaque module ; modules superposés, chacun recule d'une marche (p. 15)",
+     "Appuis du module du bas : 3 × 8 à plat (côtés et centre), posés de niveau dans le gravier ; modules superposés, chacun recule d'une marche (p. 15)",
      {
       "pnText": "3 × 8 brut"
+     }
+    ],
+    [
+     "6",
+     "",
+     3,
+     "Appuis du module du dessus : un seul bout de 6 × 6 × 16 po (côtés et centre), jamais de bois empilé ; 6 po de 6 × 6 + 3 po de 3 × 8 = marche de 9 po",
+     {
+      "pnText": "6 × 6 brut × 16 po"
      }
     ],
     [
