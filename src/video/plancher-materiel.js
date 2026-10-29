@@ -185,19 +185,37 @@ export function materielGroup(S) {
   });
   scie.rotation.y = -Math.PI / 2;
   g.add(onGround(S, scie, MAT.scie.at[0], MAT.scie.at[2]));
-  // Pingouin : gratte minière de 32 po (manche de bois, lame d'acier jaune
-  // recourbée, embout jaune), couchée selon Z, lame vers le fond de l'aire.
+  // Pingouin (gratte à déblais de mine, « pelican pick ») : manche de bois légèrement
+  // cintré, tête d'acier jaune avec une longue lame recourbée en bec, pointe vers le
+  // manche, embout au bout du manche. Couché à plat selon Z, tête vers le fond de l'aire.
   {
-    const len = 32 * IN;
+    const len = 32 * IN, y = 0.022, zh = -len / 2;
     const p = S.group(
-      S.cyl(0.019, len, 'woodLight', { axis: 'z', pos: [0, 0.022, 0] }),
-      S.box(0.045, 0.04, 0.12, 'yellow', { r: 0.008, pos: [0, 0.022, len / 2 - 0.05] }),
-      S.box(0.07, 0.07, 0.09, 'yellow', { r: 0.008, pos: [0, 0.035, -len / 2 + 0.03] }),
-      S.tube([[0, 0.03, -len / 2 + 0.02], [-0.12, 0.03, -len / 2 + 0.06], [-0.26, 0.03, -len / 2 + 0.14], [-0.36, 0.03, -len / 2 + 0.26]], 0.012, 'yellow'),
-      S.extrude([[0, 0], [-0.12, 0.035], [-0.26, 0.07], [-0.37, 0.15], [-0.25, 0.04], [-0.1, -0.01]], 0.012, 'yellow'),
+      S.tube([[0, y, zh + 0.02], [-0.012, y, 0], [0, y, len / 2 - 0.02]], 0.019, 'woodLight', { ends: 'none' }),
+      S.box(0.06, 0.046, 0.09, 'yellow', { r: 0.01, pos: [-0.008, y + 0.003, zh + 0.045] }),
+      S.cyl(0.021, 0.07, 'yellow', { axis: 'z', pos: [0, y, len / 2 - 0.035] }),
+      S.cyl(0.007, 0.06, 'darkSteel', { axis: 'y', pos: [-0.008, y + 0.01, zh + 0.045] }),
     );
-    p.children[4].rotation.x = Math.PI / 2;
-    p.children[4].position.set(0, 0.035, -len / 2 + 0.04);
+    // Lame : contour d'une bande effilée le long d'une courbe (u : vers le bout du manche, v : vers l'extérieur).
+    const bez = (t) => {
+      const P = [[0.0, 0.04], [-0.02, 0.36], [0.31, 0.43]], m = 1 - t;
+      return [m * m * P[0][0] + 2 * m * t * P[1][0] + t * t * P[2][0], m * m * P[0][1] + 2 * m * t * P[1][1] + t * t * P[2][1]];
+    };
+    const L = [], R = [];
+    const N = 18;
+    for (let i = 0; i <= N; i++) {
+      const t = i / N, c = bez(t), d = bez(Math.min(1, t + 0.01)), e = bez(Math.max(0, t - 0.01));
+      let tu = d[0] - e[0], tv = d[1] - e[1];
+      const k = Math.hypot(tu, tv) || 1; tu /= k; tv /= k;
+      const w = 0.03 * Math.pow(1 - t, 0.85) + 0.002;
+      // Lame du côté −X (vers l'allée, loin des piles de bois).
+      L.push([-(c[1] - tu * w), c[0] + tv * w]);
+      R.push([-(c[1] + tu * w), c[0] - tv * w]);
+    }
+    const blade = S.extrude([[-0.01, -0.05], ...R.reverse(), ...L.reverse(), [-0.01, 0.05]], 0.012, 'yellow');
+    blade.rotation.x = Math.PI / 2;
+    blade.position.set(-0.02, y + 0.012, zh + 0.045);
+    p.add(blade);
     g.add(onGround(S, p, MAT.pingouin.at[0], MAT.pingouin.at[2]));
   }
   g.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
