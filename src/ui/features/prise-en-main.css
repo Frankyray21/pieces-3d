@@ -447,13 +447,13 @@
   position: absolute; z-index: 2; pointer-events: none; padding: 4px 8px; border-radius: 6px; font-size: 12px; white-space: nowrap;
   background: var(--ink); color: var(--surface); box-shadow: var(--shadow);
 }
-.pem-3d-reset { position: absolute; right: 10px; top: 10px; z-index: 2; height: 32px; border-radius: 8px; }
+.pem-3d-reset { position: absolute; right: 10px; top: 10px; z-index: 3; height: 32px; border-radius: 8px; }
 .pem-3d-aide { margin: -4px 0 0; }
 .pem-c3 { display: grid; gap: 6px; min-width: 0; }
 .pem-c3 .pem-3d { aspect-ratio: 4 / 3; min-height: 300px; }
 
 /* Bouton plein écran (console3d.js) */
-.c3-plein-btn { position: absolute; left: 10px; top: 10px; z-index: 2; height: 32px; border-radius: 8px; }
+.c3-plein-btn { position: absolute; left: 10px; top: 10px; z-index: 3; height: 32px; border-radius: 8px; }
 /* Plein écran : la vue 3D prend toute la place libre, le reste (consigne, messages, pupitre) défile en dessous. */
 .pem-console:fullscreen, .pem-two:fullscreen, .pem-console.c3-plein, .pem-two.c3-plein {
   background: var(--bg); overflow: auto; padding: max(10px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) 10px max(10px, env(safe-area-inset-left));
@@ -515,7 +515,8 @@
 .c3-fl i { font-style: normal; line-height: 1; }
 .c3-fl:hover, .c3-fl-c:hover { background: rgba(16, 20, 26, 0.62); border-color: #fff; }
 .c3-fl.on { background: rgba(255, 128, 20, 0.88); border-color: #ffb066; color: #1b1004; }
-.c3-fl.vide { opacity: 0.28; pointer-events: none; }
+.c3-fl.vide { opacity: 0.6; border-style: dashed; }
+.c3-fl.vide.on { opacity: 1; }
 .c3-fl:focus-visible, .c3-fl-c:focus-visible, .c3-chip:focus-visible { outline: 2px solid #ffb066; outline-offset: 2px; }
 .c3-fl-up { left: 0; top: calc(-1 * var(--r)); }
 .c3-fl-down { left: 0; top: var(--r); }
@@ -559,6 +560,19 @@
 .c3-chip:hover { background: rgba(14, 17, 22, 0.85); border-color: rgba(255, 255, 255, 0.6); }
 .c3-chip.on { background: rgba(255, 128, 20, 0.92); border-color: #ffb066; color: #1b1004; }
 .c3-chip.on small { color: #3b2408; }
+.c3-power {
+  position: absolute; left: 0; top: 0; pointer-events: auto; display: flex; align-items: center; gap: calc(7px * var(--k)); cursor: pointer;
+  padding: calc(5px * var(--k)) calc(12px * var(--k)) calc(5px * var(--k)) calc(6px * var(--k)); border-radius: 999px; font: inherit;
+  font-size: calc(13px * var(--k)); font-weight: 700; color: #fff; background: rgba(150, 24, 24, 0.9); border: 2px solid #ff8a8a;
+  box-shadow: 0 0 0 0 rgba(255, 90, 90, 0.6); animation: c3-power-appel 1.6s ease-out infinite; will-change: transform;
+}
+.c3-power i { display: grid; place-items: center; width: calc(26px * var(--k)); height: calc(26px * var(--k)); border-radius: 50%; background: #fff; color: #a31515; font-style: normal; font-size: calc(16px * var(--k)); }
+.c3-power.on { background: rgba(20, 110, 60, 0.92); border-color: #6ee39d; animation: none; }
+.c3-power.on i { color: #146e3c; }
+.c3-power:focus-visible { outline: 2px solid #ffb066; outline-offset: 2px; }
+/* Console éteinte : le bouton marche/arrêt appelle l'œil (premier geste à faire). */
+@keyframes c3-power-appel { 70% { box-shadow: 0 0 0 calc(12px * var(--k)) rgba(255, 90, 90, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 90, 90, 0); } }
+@media (prefers-reduced-motion: reduce) { .c3-power { animation: none; } }
 .c3-chips.compacte { gap: calc(3px * var(--k)); }
 .c3-chips.compacte .c3-chip { padding-block: calc(3px * var(--k)); }
 .c3-chips.compacte .c3-chip small { display: none; }
@@ -623,11 +637,23 @@
    trop basse pour les commandes : pupitre sous la vue, qui garde une hauteur minimale, et défilement. */
 .pem-console.vue3d:fullscreen, .pem-console.vue3d.c3-plein {
   display: grid; height: 100dvh; overflow: auto; gap: 8px; grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: auto auto minmax(min(56dvh, 320px), 1fr) auto auto;
+  grid-template-rows: auto auto minmax(min(56dvh, 320px), 1fr) auto auto; grid-template-columns: minmax(0, 1fr) auto;
 }
 .pem-console.vue3d:fullscreen > *, .pem-console.vue3d.c3-plein > * { order: 0; min-width: 0; }
 /* Rangées fixes : la vue garde la rangée extensible même quand la ligne d'options ou les messages sont masqués. */
 .pem-console.vue3d:fullscreen > .pem-now, .pem-console.vue3d.c3-plein > .pem-now { grid-row: 1; }
+.pem-console.vue3d:fullscreen > *, .pem-console.vue3d.c3-plein > * { grid-column: 1 / -1; }
+.pem-console.vue3d:fullscreen > .pem-now, .pem-console.vue3d.c3-plein > .pem-now { grid-column: 1; }
+/* Sélecteur de mission : seulement en plein écran (la liste des missions est alors hors de vue), à droite de la consigne. */
+.pem-choix { display: none; }
+.pem-console:fullscreen > .pem-choix, .pem-console.c3-plein > .pem-choix {
+  display: flex; flex-direction: column; justify-content: center; gap: 2px; grid-row: 1; grid-column: 2; min-width: 0;
+  font-size: 11.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent-text, var(--accent));
+}
+.pem-choix select {
+  height: 40px; max-width: min(42vw, 360px); padding: 0 10px; border-radius: 10px; border: 1px solid var(--line-strong);
+  background: var(--surface); color: var(--ink); font: inherit; font-size: 15px; font-weight: 600; letter-spacing: 0; text-transform: none;
+}
 .pem-console.vue3d:fullscreen > .pem-opts, .pem-console.vue3d.c3-plein > .pem-opts { grid-row: 2; }
 .pem-console.vue3d:fullscreen > .pem-3d, .pem-console.vue3d.c3-plein > .pem-3d { grid-row: 3; }
 .pem-console.vue3d:fullscreen > .pem-msg, .pem-console.vue3d.c3-plein > .pem-msg { grid-row: 4; }

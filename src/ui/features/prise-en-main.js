@@ -370,6 +370,9 @@ export default {
             </aside>
             <div class="pem-console${u.vue === '3d' ? ' vue3d' : ''}">
               <div class="pem-now" aria-live="polite"></div>
+              <label class="pem-choix"><span>Mission</span><select data-choix-mission>
+                <option value="">Manipulation libre</option>${d.missions.map((m, k) => `<option value="${esc(m.id)}">${k + 1}. ${esc(m.titre)}</option>`).join('')}
+              </select></label>
               <div class="pem-opts">
                 <div class="pem-tabs" role="group" aria-label="Affichage"><button type="button" class="chip" data-vue="3d" aria-pressed="${u.vue === '3d'}">Console 3D</button><button type="button" class="chip" data-vue="2d" aria-pressed="${u.vue === '2d'}">Écran 2D</button></div>
                 <label class="pem-fr"><input type="checkbox" ${u.fr ? 'checked' : ''}> Traduire l’écran en français (sur la machine, l’écran est en anglais)</label>
@@ -447,8 +450,17 @@ export default {
           const focusNow = now.contains(document.activeElement);
           now.innerHTML = !mc ? '<span>Choisissez une mission dans la liste, ou manipulez librement la console.</span>'
             : kc >= mc.etapes.length ? `<b>✓ Mission réussie : ${esc(mc.titre)}</b>${d.missions[d.missions.indexOf(mc) + 1] ? `<button type="button" class="btn primary" data-start="${esc(d.missions[d.missions.indexOf(mc) + 1].id)}">Mission suivante ${icon('droite', { size: 14 })}</button>` : ''}`
-              : `<span class="pem-now-k">Mission ${d.missions.indexOf(mc) + 1} · étape ${kc + 1}/${mc.etapes.length}</span><span>${esc(mc.etapes[kc].t)}</span>`;
+              : `<span class="pem-now-k">Mission ${d.missions.indexOf(mc) + 1} · étape ${kc + 1}/${mc.etapes.length}</span><span>${esc(mc.etapes[kc].t)}</span>${mc.declencheur ? `<button type="button" class="btn" data-alarme="${mc.declencheur}">Déclencher l’alarme</button>` : ''}`;
           now.classList.toggle('ok', !!mc && kc >= mc.etapes.length);
+          // Sélecteur de mission (plein écran) : mission en cours, missions réussies cochées.
+          const choix = body.querySelector('[data-choix-mission]');
+          if (choix) {
+            for (const o of choix.options) {
+              const m = d.missions.find((x) => x.id === o.value);
+              if (m) o.textContent = `${p.missions[m.id] ? '✓' : `${d.missions.indexOf(m) + 1}.`} ${m.titre}`;
+            }
+            choix.value = u.mission || '';
+          }
           // « Mission suivante » remplacé alors qu'il avait le focus : le focus reste dans la console.
           if (focusNow && !now.contains(document.activeElement)) body.querySelector('.pem-console')?.focus({ preventScroll: true });
           body.querySelectorAll('.pem-m').forEach((det) => {
@@ -530,22 +542,26 @@ export default {
           return [s.mode, sim.couche(), s.swing | 0, s.dump | 0, s.position | 0, s.cap | 0, s.profondeur.toFixed(1), Math.round(s.debitEau), s.klaxon > 0, s.recul > 0, s.lock, s.alarmes.length, new Date().getMinutes()].join('|');
         };
 
+        /** Lance (ou relance) une mission ; id vide : manipulation libre. */
+        const demarrer = (id) => {
+          const m = d.missions.find((x) => x.id === id);
+          u.mission = m ? m.id : null;
+          if (m) {
+            u.etapesM = { ...(u.etapesM || {}), [m.id]: 0 };
+            sim.preparer(m.id === 'demarrer' ? 'eteint' : 'pret');
+          }
+          body.querySelectorAll('.pem-m').forEach((x) => { x.open = !!m && x.dataset.m === m.id; x.querySelector('[data-start]').textContent = m && x.dataset.m === m.id ? 'Recommencer' : 'Commencer'; });
+          dessinerMissions();
+          tout();
+        };
         body.addEventListener('change', (ev) => {
           if (ev.target.closest('.pem-fr')) { u.fr = ev.target.checked; dessinerEcran(); }
+          if (ev.target.matches('[data-choix-mission]')) demarrer(ev.target.value);
         });
         body.addEventListener('click', (ev) => {
           const t = ev.target;
           const start = t.closest('[data-start]');
-          if (start) {
-            const m = d.missions.find((x) => x.id === start.dataset.start);
-            u.mission = m.id;
-            u.etapesM = { ...(u.etapesM || {}), [m.id]: 0 };
-            sim.preparer(m.id === 'demarrer' ? 'eteint' : 'pret');
-            body.querySelectorAll('.pem-m').forEach((x) => { x.open = x.dataset.m === m.id; x.querySelector('[data-start]').textContent = x.dataset.m === m.id ? 'Recommencer' : 'Commencer'; });
-            dessinerMissions();
-            tout();
-            return;
-          }
+          if (start) { demarrer(start.dataset.start); return; }
           const al = t.closest('[data-alarme]');
           if (al) {
             if (!sim.s.power) sim.preparer('pret');
