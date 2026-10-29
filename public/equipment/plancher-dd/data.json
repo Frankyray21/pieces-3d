@@ -442,10 +442,10 @@
     [
      "8",
      "",
-     4,
-     "Blocage de jonction : 3 × 8 (24 po) à plat sur un blocage 3 × 8, à l'intérieur contre le madrier de rive de chaque côté, à cheval sur le joint, dessus au ras du dessous des planches, vissé aux deux sections",
+     2,
+     "Blocage de jonction : un seul bout de 6 × 6 (24 po) sur le 6 × 6 de jonction, à l'intérieur contre le madrier de rive de chaque côté, à cheval sur le joint, dessus au ras des madriers (sous les planches), vissé aux deux sections",
      {
-      "pnText": "3 × 8 brut"
+      "pnText": "6 × 6 brut"
      }
     ],
     [
@@ -566,8 +566,8 @@
     [
      "1",
      "",
-     4,
-     "Giron : planche 3 × 8 × 48 po (2 par marche)",
+     6,
+     "Dessus des modules : 3 × 8 × 48 po en travers ; les 2 de l'avant de chaque module forment le giron (16 po)",
      {
       "pnText": "3 × 8 brut × 48 po"
      }
@@ -576,7 +576,7 @@
      "2",
      "",
      null,
-     "3 × 8 empilés à plat sous chaque giron (marches superposées, p. 15)",
+     "Longerons 3 × 8 à plat (côtés et centre) de chaque module ; modules superposés, chacun recule d'une marche (p. 15)",
      {
       "pnText": "3 × 8 brut"
      }

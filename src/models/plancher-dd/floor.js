@@ -88,18 +88,15 @@ export function P10(api, opts = {}) {
   joistZ.forEach((z) => put('1', lumber(S, [SEC, B66, B66], [SEC * 1.5, B66 / 2, z]), [0, 0.75, 0], 11));
   // Chaque madrier vissé dans le bout de 6 × 6 de jonction, comme celui de la section 1.
   put('7', lagScrews(S, joistZ.map((z) => [JOINT_X + 1.5 * IN, B66, z])), [0, 0.9, 0], 11);
-  // Blocage de jonction (p. 6) : à l'intérieur, contre le madrier de rive de chaque côté,
-  // à cheval sur le joint : un 3 × 8 de 24 po à plat sur un blocage 3 × 8 posé sur le 6 × 6
-  // de jonction ; le dessus arrive au ras du dessous des planches. Vissé dans le madrier
+  // Blocage de jonction (p. 6) : un seul bout de 6 × 6 de 24 po, à l'intérieur contre le
+  // madrier de rive de chaque côté, à cheval sur le joint, posé sur le 6 × 6 de jonction ;
+  // son dessus arrive au ras des madriers, juste sous les planches. Vissé dans le madrier
   // de chaque section (un tire-fond de chaque côté du joint), il tient les deux sections ensemble.
   const half = 12 * IN;
   const sides = [-1, 1];
   const zin = W / 2 - B66; // face intérieure du madrier de rive
-  sides.forEach((s) => {
-    put('8', lumber(S, [2 * half, P3, P8], [JOINT_X, P3 / 2, s * (zin - P8 / 2)]), [0, 0.5, 0], 11, { seq: 3 });
-    put('8', lumber(S, [2 * half, P3, P8], [JOINT_X, P3 * 1.5, s * (zin - P8 / 2)]), [0, 0.7, 0], 11, { seq: 4 });
-  });
-  sides.forEach((s) => put('9', S.boltSet([[JOINT_X - 6 * IN, P3 * 1.5, s * (zin - P8)], [JOINT_X + 6 * IN, P3 * 1.5, s * (zin - P8)]], 0.375 * IN, 6 * IN, 'zinc', { axis: s > 0 ? '-z' : 'z', washer: true }), [0, 0.9, 0], 11, { seq: 5 }));
+  sides.forEach((s) => put('8', lumber(S, [2 * half, B66, B66], [JOINT_X, B66 / 2, s * (zin - B66 / 2)]), [0, 0.6, 0], 11, { seq: 3 }));
+  sides.forEach((s) => put('9', S.boltSet([[JOINT_X - 6 * IN, B66 / 2, s * (zin - B66)], [JOINT_X + 6 * IN, B66 / 2, s * (zin - B66)]], 0.375 * IN, 6 * IN, 'zinc', { axis: s > 0 ? '-z' : 'z', washer: true }), [0, 0.9, 0], 11, { seq: 4 }));
   // Soutiens 6 × 6 de 16 pi (selon Z) ; le dernier, à 16 pi de la section 1, est le madrier guide.
   SLEEPERS_X.forEach((x, k) => {
     const guide = k === SLEEPERS_X.length - 1;
@@ -177,22 +174,30 @@ export function P14(api, opts = {}) {
   const { n, rise } = stairPlan();
   const T = STAIR.tread;
   const z0 = STAIR.z0, z1 = STAIR.z0 + STAIR.w;
-  // Marches superposées (p. 15) : chaque giron (deux 3 × 8, 16 po) repose sur trois
-  // colonnes de 3 × 8 empilés à plat dans le sens de la marche (côtés et centre),
-  // montées du sol jusqu'au giron ; un coin de bois sous la colonne la met de niveau.
-  for (let i = 1; i < n; i++) {
-    const top = DECK - i * rise;
-    const x0 = L + (i - 1) * T;
-    for (const k of [0, 1]) put('1', lumber(S, [P8, P3, STAIR.w], [x0 + (k + 0.5) * P8, top - P3 / 2, (z0 + z1) / 2]), [0.25 * i, 0.35, 0], 14, { seq: i * 20 + 15 + k });
+  // Marches superposées (p. 15) : des modules en 3 × 8 posés l'un sur l'autre. Le module
+  // du bas couvre toute la profondeur de l'escalier ; chaque module au-dessus repose sur
+  // celui d'en dessous et recule d'une marche (16 po). Un module : trois longerons de 3 × 8
+  // à plat dans le sens de la marche (côtés et centre), un coin de bois pour la mise de
+  // niveau, puis le dessus en 3 × 8 en travers ; la partie avant du dessus est le giron
+  // (deux 3 × 8, 16 po), la partie arrière porte le module suivant.
+  let base = null; // dessus du module d'en dessous (null : le sol)
+  for (let i = n - 1; i >= 1; i--) {
+    const top = DECK - i * rise; // dessus du giron i
+    const xa = L, xb = L + i * T, depth = xb - xa; // le module i couvre les marches 1 à i
+    const seq0 = (n - 1 - i) * 30;
     for (const z of [z0 + P8 / 2, (z0 + z1) / 2, z1 - P8 / 2]) {
-      const g = Math.max(ground(x0, z), ground(x0 + T, z));
-      const under = top - P3; // dessous du giron
-      const nL = Math.floor((under - g) / P3);
-      const yb = under - nL * P3; // les 3 × 8 partent du giron vers le bas
-      for (let j = 0; j < nL; j++) put('2', lumber(S, [T, P3, P8], [x0 + T / 2, yb + (j + 0.5) * P3, z]), [0.25 * i, 0.12 * j, 0], 14, { seq: i * 20 + 1 + j });
+      const g = base ?? Math.max(ground(xa, z), ground(xb, z));
+      const under = top - P3; // dessous du dessus du module
+      const nL = Math.max(0, Math.floor((under - g) / P3));
+      const yb = under - nL * P3;
+      for (let j = 0; j < nL; j++) put('2', lumber(S, [depth, P3, P8], [(xa + xb) / 2, yb + (j + 0.5) * P3, z]), [0.25 * i, 0.12 * j, 0], 14, { seq: seq0 + 1 + j });
       const gap = yb - g;
-      if (gap > 0.004) put('3', wedge(S, { pos: [x0 + T / 2, g, z], along: 'x', pair: gap > WEDGE.t, thick: gap }), [0.25 * i, -0.1, 0], 14, { seq: i * 20 });
+      if (gap > 0.004) put('3', wedge(S, { pos: [(xa + xb) / 2, g, z], along: 'x', pair: gap > WEDGE.t, thick: gap }), [0.25 * i, -0.1, 0], 14, { seq: seq0 });
     }
+    // Dessus du module : 3 × 8 en travers sur toute la profondeur ; les deux de l'avant forment le giron.
+    const np = Math.round(depth / P8);
+    for (let k = 0; k < np; k++) put('1', lumber(S, [P8, P3, STAIR.w], [xa + (k + 0.5) * P8, top - P3 / 2, (z0 + z1) / 2]), [0.25 * i, 0.35, 0], 14, { seq: seq0 + 15 + k });
+    base = top;
   }
   // Mains courantes (plus d'une marche) : 2 × 4 raboté de chaque côté.
   const xb = L + (n - 1) * T - T / 2;
