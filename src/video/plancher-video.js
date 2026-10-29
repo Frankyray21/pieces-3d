@@ -89,8 +89,20 @@ if (FXAA) {
   composer.addPass(new RenderPass(scene, camera));
   // Occlusion ambiante (GTAO) : ombres de contact entre les pièces de bois, sous les
   // blocages et contre le sol (?ao=0 pour la couper).
+  // ?ao=half : occlusion calculée en demi-résolution puis agrandie (plus rapide).
   if (QS.get('ao') !== '0') {
-    const ao = new GTAOPass(scene, camera, VW * SCALE, VH * SCALE);
+    const AO_RES = QS.get('ao') === 'half' ? 0.5 : 1;
+    // Bruit du débruitage tiré d'un générateur à graine fixe : la même image d'un
+    // onglet ou d'un rendu à l'autre (GTAOPass le tire sinon de Math.random).
+    const rnd = Math.random;
+    let seed = 20261029;
+    Math.random = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+    const ao = new GTAOPass(scene, camera, VW * SCALE * AO_RES, VH * SCALE * AO_RES);
+    Math.random = rnd;
+    if (AO_RES !== 1) {
+      const setSize = ao.setSize.bind(ao);
+      ao.setSize = (w, h) => setSize(Math.round(w * AO_RES), Math.round(h * AO_RES));
+    }
     ao.updateGtaoMaterial({ radius: 0.35, distanceExponent: 1.4, thickness: 1.2, scale: 1.0, samples: 12 });
     ao.updatePdMaterial({ lumaPhi: 10, depthPhi: 2, normalPhi: 3, radius: 4, rings: 2, samples: 12 });
     ao.blendIntensity = 1.0;
@@ -461,23 +473,83 @@ function drawAnnotations(t) {
   annot.draw(t, avoidAt(t, s, lv));
 }
 
-// Carte d'ombres recalculée seulement quand une pièce bouge, apparaît ou
-// disparaît (la lumière ne bouge pas) : même image, moins de calcul.
-const SHADOW_CACHE = SHADOWS && QS.get('shadowcache') !== '0';
-let shadowSig = '';
-function shadowSignature() {
-  let n = 0, s = 0;
-  for (const lf of leaves) {
-    if (!lf.obj.visible) continue;
-    const p = lf.obj.position;
-    n++;
-    s += n * (p.x * 1.31 + p.y * 7.13 + p.z * 3.77 + lf.obj.scale.x * 0.53);
+// ------------------------------------------------------------------ empreinte de l'état
+
+// Empreinte numérique de ce qui se voit : objets visibles (contenu de la
+// géométrie, matériau, position) d'un côté, caméra de l'autre. Deux images aux
+// mêmes empreintes sont identiques : le rendu peut être réutilisé (images fixes,
+// rendus précédents) et la carte d'ombres n'est recalculée que si la scène change.
+const geoSig = new WeakMap(), matSig = new WeakMap();
+function geoDigest(g) {
+  let d = geoSig.get(g);
+  if (!d) {
+    if (!g.boundingBox) g.computeBoundingBox();
+    const p = g.attributes.position;
+    let sx = 0, sy = 0, sz = 0;
+    if (p) for (let i = 0; i < p.count; i++) { sx += p.getX(i) * (1 + (i % 7)); sy += p.getY(i) * (1 + (i % 5)); sz += p.getZ(i) * (1 + (i % 3)); }
+    const b = g.boundingBox;
+    d = [p ? p.count : 0, g.index ? g.index.count : 0, g.groups.length, b.min.x, b.min.y, b.min.z, b.max.x, b.max.y, b.max.z, sx, sy, sz];
+    geoSig.set(g, d);
   }
-  return `${n}|${s.toFixed(6)}|${extras.materiel.visible ? 1 : 0}`;
+  return d;
+}
+function matDigest(m) {
+  let d = matSig.get(m);
+  if (!d) {
+    const c = (k) => (m[k] ? [m[k].r, m[k].g, m[k].b] : [-1, -1, -1]);
+    d = [...c('color'), ...c('emissive'), m.roughness ?? -1, m.metalness ?? -1, m.side, m.map ? 1 : 0, m.type.length, m.type.charCodeAt(4) || 0];
+    matSig.set(m, d);
+  }
+  return d;
+}
+function hasher() {
+  let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+  const f64 = new Float64Array(1), u32 = new Uint32Array(f64.buffer);
+  return {
+    add(x) {
+      f64[0] = Math.round(x * 1e6) + 0; // + 0 : -0 devient 0
+      for (const w of u32) { h1 = Math.imul(h1 ^ w, 2654435761); h2 = Math.imul(h2 ^ w, 1597334677); }
+    },
+    addAll(a) { for (const x of a) this.add(x); },
+    hex() {
+      h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+      h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+      return (h2 >>> 0).toString(16).padStart(8, '0') + (h1 >>> 0).toString(16).padStart(8, '0');
+    },
+  };
+}
+function sceneHash() {
+  scene.updateMatrixWorld();
+  const h = hasher();
+  scene.traverseVisible((o) => {
+    if (o.isLight) { h.add(o.intensity); h.addAll(o.matrixWorld.elements); return; }
+    if (!(o.isMesh || o.isLine || o.isPoints || o.isSprite)) return;
+    h.addAll(geoDigest(o.geometry));
+    for (const m of Array.isArray(o.material) ? o.material : [o.material]) {
+      h.addAll(matDigest(m));
+      h.add(m.opacity); h.add(m.transparent ? 1 : 0); h.add(m.depthWrite ? 1 : 0); h.add(m.visible ? 1 : 0);
+    }
+    h.add(o.castShadow ? 1 : 0); h.add(o.receiveShadow ? 1 : 0);
+    h.addAll(o.matrixWorld.elements);
+  });
+  return h.hex();
+}
+function camHash() {
+  camera.updateMatrixWorld();
+  const h = hasher();
+  h.addAll(camera.matrixWorld.elements);
+  h.addAll([camera.fov, camera.aspect, camera.near, camera.far, camera.zoom]);
+  return h.hex();
 }
 
-function render(t) {
-  const s = segAt(t);
+// Carte d'ombres recalculée seulement quand la scène change (la lumière ne
+// bouge pas) : même image, moins de calcul. L'empreinte couvre tous les objets
+// visibles, pièces d'appoint comprises : l'image ne dépend que de l'instant.
+const SHADOW_CACHE = SHADOWS && QS.get('shadowcache') !== '0';
+let shadowSig = '';
+
+// État de la scène à l'instant t (pièces, caméra, transparence), sans rendu.
+function update(t) {
   for (const lf of leaves) {
     const e = (t - lf.t0) / 0.55;
     lf.obj.visible = e >= 0;
@@ -509,17 +581,32 @@ function render(t) {
   tighten(t);
   cameraAt(t);
   ghost(t);
-  overlays(t, s);
+}
+function draw() {
   if (SHADOW_CACHE) {
     renderer.shadowMap.autoUpdate = false;
-    const sig = shadowSignature();
+    const sig = sceneHash();
     if (sig !== shadowSig) { renderer.shadowMap.needsUpdate = true; shadowSig = sig; }
   }
   if (composer) composer.render(); else renderer.render(scene, camera);
 }
+function render(t) {
+  update(t);
+  overlays(t, segAt(t));
+  draw();
+}
 
 window.__video = { duration: DURATION, fps: 24, segments: SEGS.map(({ id, start, dur, band, lines }) => ({ id, start, dur, band, lines })) };
 window.__render = (t) => { render(t); return true; };
+// Empreintes de l'instant t (scène sans la caméra, caméra) et opacités des
+// calques, sans rendu : sert à planifier le rendu (images identiques, reprises).
+window.__state = (t) => {
+  update(t);
+  const s = segAt(t);
+  const d = camera.getWorldDirection(new THREE.Vector3());
+  const pose = [...camera.position.toArray(), ...d.toArray()].map((x) => +x.toFixed(6));
+  return { scene: sceneHash(), cam: camHash(), pose, seg: SEGS.indexOf(s), ...levels(t, s) };
+};
 // Image fixe (validation) : l'état de l'instant t, vu d'une caméra donnée.
 window.__still = (t, pos, tgt, fov) => {
   render(t);

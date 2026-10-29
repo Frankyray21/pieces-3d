@@ -5,6 +5,10 @@
 //   2. montage HyperFrames (scripts/video-plancher-hf.mjs : bandeau, cartons) ;
 //   3. voix (VOICE_FILE) placée selon la chronologie, niveau normalisé, mixée.
 //   node scripts/video-plancher-final.mjs --frames scratch/video --out scratch/video24 --render plancher.mp4
+//
+// 3D déjà à 24 i/s (--fps3d 24) : montage direct (scripts/video-plancher-montage.mjs,
+// mêmes calques, une seule passe ffmpeg, quelques minutes) ; --hf garde l'ancien
+// chemin HyperFrames (35 à 40 min).
 import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
@@ -22,6 +26,11 @@ const SEGS = timeline();
 const DUR = SEGS.at(-1).start + SEGS.at(-1).dur;
 const total = Math.round(DUR * 24);
 const run = (cmd, a) => { const r = spawnSync(cmd, a, { stdio: 'inherit' }); if (r.status !== 0) throw new Error(`${cmd} : code ${r.status}`); };
+
+if (FPS3D === 24 && !args.includes('--hf')) {
+  run('node', ['scripts/video-plancher-montage.mjs', '--frames', FRAMES, '--render', RENDER]);
+  process.exit(0);
+}
 
 // 1) 3D interpolée + annotations.
 const dir3 = path.join(OUT, '3d');
