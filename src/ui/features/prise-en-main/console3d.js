@@ -572,7 +572,7 @@ export function creerConsole3D(conteneur, sim, { agir = () => {}, info = () => {
       const w = b.getWorldPosition(new THREE.Vector3()).project(camera);
       return { x: (w.x + 1) / 2 * conteneur.clientWidth, y: (1 - w.y) / 2 * conteneur.clientHeight };
     },
-    recentrer() { vueModifiee = false; cadrer(); },
+    recentrer() { vueModifiee = false; cadrer(); cmd?.replacer(); },
     /** Recadre (panneaux posés sur la vue changés de taille), sauf si l'on a tourné ou zoomé la vue soi-même. */
     recadrer() { if (!vueModifiee) cadrer(); else decaler(); },
     arreter() {

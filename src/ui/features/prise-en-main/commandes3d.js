@@ -2,7 +2,9 @@
 // de chaque axe dans l'écran affiché) et une colonne d'étiquettes pour ses boutons (couches à gauche, fonctions à
 // droite), chacune reliée par un trait au bouton qu'elle commande sur la tête — comme les vignettes de manette des
 // copies d'écran du manuel. La fonction active est en orange. Toucher une flèche incline la manette (elle reste
-// inclinée ; la toucher de nouveau la relâche), toucher une étiquette appuie sur le bouton.
+// inclinée ; la toucher de nouveau la relâche), toucher une étiquette appuie sur le bouton. Une étiquette se déplace en
+// la faisant glisser (son trait suit) ; la place choisie est gardée (part de la vue, donc suivie en plein écran) et
+// « Recentrer » remet toutes les étiquettes à leur place.
 //
 // Le contenu (libellés, états) n'est refait que lorsqu'il change ; les positions suivent la 3D à chaque image
 // (transformations seulement : rotation de la vue, zoom, plein écran restent fluides). Vue trop petite : rien n'est
@@ -17,9 +19,14 @@ const SYMBOLE = { up: '▲', down: '▼', left: '◀', right: '▶' };
 const MIN_L = 760;
 const MIN_H = 380;
 /** Échelle des commandes selon la taille de la vue (lisibles en plein écran, compactes sinon). */
-const echelle = (W, H) => Math.round(Math.min(1.25, Math.max(0.8, Math.min(W / 1300, H / 760))) * 100) / 100;
+const echelle = (W, H) => Math.round(Math.min(1.6, Math.max(0.85, Math.min(W / 1100, H / 650))) * 100) / 100;
 /** Largeur maximale d'une colonne d'étiquettes (px à l'échelle 1). */
-const COL = 168;
+const COL = 190;
+/** Glissement (px) au-delà duquel toucher une étiquette la déplace au lieu d'appuyer sur le bouton. */
+const SEUIL = 6;
+const CLE = 'pem-c3-etiquettes';
+const lire = () => { try { return JSON.parse(localStorage.getItem(CLE)) || {}; } catch { return {}; } };
+const ecrire = (v) => { try { localStorage.setItem(CLE, JSON.stringify(v)); } catch { /* stockage indisponible */ } };
 /**
  * Part de la largeur de la vue à garder libre de chaque côté de la console pour les colonnes d'étiquettes, posées
  * contre les bords (0 si les commandes ne sont pas affichées à cette taille).
@@ -44,6 +51,13 @@ export function creerCommandes(conteneur, sim, geo, { agir = () => {} } = {}) {
   let visible = null;
   let mesures = null; // tailles des colonnes et des étiquettes (refaites après un rendu ou un changement d'échelle)
   let tracesPrec = '';
+  /** Déplacements des étiquettes : « side:id » → { fx, fy } (part de la largeur et de la hauteur de la vue). */
+  let decalages = lire();
+  let glisse = null; // { cle, x0, y0, fx0, fy0, bouge }
+  let ignorerClic = false;
+  // Colonne trop haute pour la vue (petit écran) : étiquettes sur une ligne, sans la traduction (gardée dans l'infobulle).
+  const compacte = { L: false, R: false };
+  const pleine = { L: null, R: null }; // taille de la colonne complète { ch, cw }, pour savoir quand elle tient de nouveau
 
   /** Étiquettes de la manette : [{ id, pos, on, en, fr }] (couches à gauche avec la touche Mode, fonctions à droite). */
   const etiquettes = (side) => {
@@ -84,7 +98,7 @@ export function creerCommandes(conteneur, sim, geo, { agir = () => {} } = {}) {
         title="${esc(T[e.id]?.[1] || e.fr)}"><b>${esc(e.en)}</b><small>${esc(e.fr)}</small></button>`).join('');
       // Focus clavier gardé sur la même commande après le rendu.
       const f = document.activeElement && zone[side].contains(document.activeElement) ? (document.activeElement.dataset.cmdAxe || document.activeElement.dataset.cmdId) : null;
-      zone[side].innerHTML = `<div class="c3-croix" data-side="${side}">${fleches}<button type="button" class="c3-fl-c" data-cmd-axe="${side}:centre" aria-label="Relâcher la manette ${side === 'L' ? 'gauche' : 'droite'}">●</button></div><div class="c3-chips" data-side="${side}">${chips}</div>`;
+      zone[side].innerHTML = `<div class="c3-croix" data-side="${side}">${fleches}<button type="button" class="c3-fl-c" data-cmd-axe="${side}:centre" aria-label="Relâcher la manette ${side === 'L' ? 'gauche' : 'droite'}">●</button></div><div class="c3-chips${compacte[side] ? ' compacte' : ''}" data-side="${side}">${chips}</div>`;
       if (f) zone[side].querySelector(`[data-cmd-axe="${CSS.escape(f)}"], [data-cmd-id="${CSS.escape(f)}"]`)?.focus({ preventScroll: true });
     }
     mesures = null;
@@ -97,7 +111,7 @@ export function creerCommandes(conteneur, sim, geo, { agir = () => {} } = {}) {
       const taille = (sel) => { const e = zone[side].querySelector(sel); return e ? { w: e.offsetWidth, h: e.offsetHeight } : null; };
       m[side] = {
         cw: col.offsetWidth, ch: col.offsetHeight, haut: taille('.c3-lb-up'), ext: taille(side === 'L' ? '.c3-lb-left' : '.c3-lb-right'),
-        chips: [...col.children].map((c) => ({ pos: c.dataset.pos, top: c.offsetTop, left: c.offsetLeft, w: c.offsetWidth, h: c.offsetHeight, on: c.classList.contains('on') })),
+        chips: [...col.children].map((c) => ({ el: c, cle: c.dataset.cmdId, pos: c.dataset.pos, top: c.offsetTop, left: c.offsetLeft, w: c.offsetWidth, h: c.offsetHeight, on: c.classList.contains('on'), tr: '' })),
       };
     }
     return m;
@@ -110,8 +124,35 @@ export function creerCommandes(conteneur, sim, geo, { agir = () => {} } = {}) {
   };
 
   // Clics : flèches (bascule d'un axe, comme la croix du pupitre) et étiquettes (bouton de la manette).
-  racine.addEventListener('pointerdown', (ev) => { if (ev.target.closest('button')) ev.stopPropagation(); });
+  racine.addEventListener('pointerdown', (ev) => {
+    if (!ev.target.closest('button')) return;
+    ev.stopPropagation();
+    const c = ev.target.closest('.c3-chip');
+    if (!c || ev.button > 0 || glisse) return;
+    const d = decalages[c.dataset.cmdId] || { fx: 0, fy: 0 };
+    glisse = { cle: c.dataset.cmdId, id: ev.pointerId, x0: ev.clientX, y0: ev.clientY, fx0: d.fx, fy0: d.fy, bouge: false };
+  });
+  // Glissement suivi sur la fenêtre : l'étiquette peut être refaite (changement de couche) pendant le geste.
+  const surBouge = (ev) => {
+    if (!glisse || ev.pointerId !== glisse.id) return;
+    const dx = ev.clientX - glisse.x0;
+    const dy = ev.clientY - glisse.y0;
+    if (!glisse.bouge && Math.hypot(dx, dy) < SEUIL) return;
+    if (!glisse.bouge) { glisse.bouge = true; racine.classList.add('c3-glisse'); }
+    ev.preventDefault();
+    decalages[glisse.cle] = { fx: glisse.fx0 + dx / Math.max(1, conteneur.clientWidth), fy: glisse.fy0 + dy / Math.max(1, conteneur.clientHeight) };
+  };
+  const surLache = (ev) => {
+    if (!glisse || ev.pointerId !== glisse.id) return;
+    if (glisse.bouge) { ignorerClic = true; ecrire(decalages); setTimeout(() => { ignorerClic = false; }, 0); }
+    racine.classList.remove('c3-glisse');
+    glisse = null;
+  };
+  window.addEventListener('pointermove', surBouge);
+  window.addEventListener('pointerup', surLache);
+  window.addEventListener('pointercancel', surLache);
   racine.addEventListener('click', (ev) => {
+    if (ignorerClic) { ignorerClic = false; ev.preventDefault(); return; } // fin d'un déplacement, pas un appui
     const a = ev.target.closest('[data-cmd-axe]');
     if (a) {
       const [side, k] = a.dataset.cmdAxe.split(':');
@@ -137,11 +178,31 @@ export function creerCommandes(conteneur, sim, geo, { agir = () => {} } = {}) {
     }
   });
 
+  /**
+   * Hauteur qu'aurait la vue avec les commandes posées dessus : en plein écran, la vue prend toute la place laissée
+   * par la consigne et les messages, y compris celle du pupitre de la page (caché quand les commandes sont
+   * affichées) ; sans ce calcul, une vue basse à cause du pupitre le resterait. Estimation prudente (− 8 px), pour ne
+   * pas alterner entre les deux présentations à la limite.
+   */
+  const hauteurPossible = (H) => {
+    let plein = false;
+    try { plein = !!conteneur.closest(':fullscreen, .c3-plein'); } catch { plein = !!conteneur.closest('.c3-plein'); }
+    const P = conteneur.parentElement;
+    if (visible || !plein || !P) return H;
+    const st = getComputedStyle(P);
+    let h = P.clientHeight - (parseFloat(st.paddingTop) || 0) - (parseFloat(st.paddingBottom) || 0);
+    for (const e of P.children) {
+      if (e === conteneur || e.matches('.pem-deck, .pem-keys') || !e.offsetParent) continue;
+      h -= e.offsetHeight + (parseFloat(st.rowGap) || 0);
+    }
+    return Math.max(H, h - 8);
+  };
+
   /** Place les commandes (à chaque image). */
   const placer = () => {
     const W = conteneur.clientWidth;
     const H = conteneur.clientHeight;
-    const ok = W >= MIN_L && H >= MIN_H;
+    const ok = W >= MIN_L && hauteurPossible(H) >= MIN_H;
     if (ok !== visible) {
       visible = ok;
       racine.hidden = !ok;
@@ -152,8 +213,9 @@ export function creerCommandes(conteneur, sim, geo, { agir = () => {} } = {}) {
     if (sg !== signature) { signature = sg; rendre(); }
     const k = echelle(W, H);
     if (!mesures || mesures.k !== k) { racine.style.setProperty('--k', String(k)); mesures = mesurer(k); }
-    const r = 62 * k; // rayon de la croix
+    const r = 66 * k; // rayon de la croix
     let traits = '';
+    let refaire = false; // colonne passée en compacte ou revenue complète : nouvelles mesures à l'image suivante
     for (const side of ['L', 'R']) {
       const b = geo.base(side);
       const croix = zone[side].querySelector('.c3-croix');
@@ -168,29 +230,60 @@ export function creerCommandes(conteneur, sim, geo, { agir = () => {} } = {}) {
       const sens = side === 'L' ? -1 : 1;
       // Rectangles [gauche, droite, haut] de ces libellés, d'après leur placement en CSS.
       const rect = (x0, w, top) => (side === 'L' ? [x0 - w, x0, top] : [x0, x0 + w, top]);
-      const rHaut = haut && rect(b.x + sens * 23 * k, haut.w, b.y - r - haut.h / 2);
-      const rExt = ext && rect(b.x + sens * (r - 17 * k), ext.w, b.y + 21 * k);
-      const placerY = (lbs) => {
+      const rHaut = haut && rect(b.x + sens * 25 * k, haut.w, b.y - r - haut.h / 2);
+      const rExt = ext && rect(b.x + sens * (r - 19 * k), ext.w, b.y + 23 * k);
+      // Flèches de la croix tournées vers le bord (haut et extérieure) : obstacles aussi.
+      const fl = 19 * k + 4;
+      const rFlHaut = [b.x - fl, b.x + fl, b.y - r - fl];
+      const rFlExt = [b.x + sens * r - fl, b.x + sens * r + fl, b.y - fl];
+      const HAUT = 58; // sous les boutons du haut de la vue
+      /** Bas permis pour une colonne de largeur l (contre le bord) : au-dessus des obstacles qu'elle croise. */
+      const limite = (obs, l = cw) => {
+        const x0 = side === 'L' ? 10 : W - l - 10;
         let bas = b.y + 14 * k;
-        for (const [g, d, top] of lbs) if (g < x + cw && d > x) bas = Math.min(bas, top - 6);
-        return Math.min(H - ch - 8, Math.max(58, Math.min(t.y - ch / 2, bas - ch)));
+        for (const [g, d, top] of obs) if (g < x0 + l && d > x0) bas = Math.min(bas, top - 6);
+        return Math.min(H - 8, bas);
       };
-      let y = placerY([rHaut, rExt].filter(Boolean));
+      const placerY = (bas, h) => Math.max(HAUT, Math.min(t.y - h / 2, bas - h));
+      const tous = [rHaut, rExt, rFlHaut, rFlExt].filter(Boolean);
+      const sansHaut = [rExt, rFlHaut, rFlExt].filter(Boolean);
+      let bas = limite(tous);
       // Vue trop basse pour passer au-dessus : le libellé du haut passe du côté de l'écran.
-      const dedans = !!rHaut && rHaut[0] < x + cw && rHaut[1] > x && y + ch > rHaut[2] - 6;
-      if (dedans) y = placerY([rExt].filter(Boolean));
+      const dedans = !!rHaut && HAUT + ch > bas;
+      if (dedans) bas = limite(sansHaut);
       if (dedans !== (croix.dataset.haut === 'in')) { if (dedans) croix.dataset.haut = 'in'; else delete croix.dataset.haut; }
+      // Toujours trop haute : colonne compacte ; revient complète quand elle tient de nouveau (avec une marge).
+      // (La colonne complète est plus large : elle se teste avec sa propre largeur.)
+      if (!compacte[side]) pleine[side] = { ch, cw };
+      const P = pleine[side];
+      const veut = compacte[side] ? !P || HAUT + P.ch > limite(sansHaut, P.cw) - 12 : HAUT + ch > bas;
+      if (veut !== compacte[side]) { compacte[side] = veut; col.classList.toggle('compacte', veut); refaire = true; }
+      const y = placerY(bas, ch);
       col.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px)`;
-      // Traits : de chaque étiquette au bouton qu'elle commande.
+      // Étiquettes déplacées (gardées dans la vue) ; traits : du point de l'étiquette le plus proche du bouton qu'elle
+      // commande jusqu'à ce bouton.
       for (const chip of chips) {
+        const d = decalages[chip.cle];
+        let gx = x + chip.left;
+        let gy = y + chip.top;
+        let tx = 0;
+        let ty = 0;
+        if (d) {
+          tx = Math.min(W - chip.w - 4 - gx, Math.max(4 - gx, d.fx * W));
+          ty = Math.min(H - chip.h - 4 - gy, Math.max(4 - gy, d.fy * H));
+          gx += tx; gy += ty;
+        }
+        const tr = tx || ty ? `translate(${tx.toFixed(1)}px, ${ty.toFixed(1)}px)` : '';
+        if (tr !== chip.tr) { chip.tr = tr; chip.el.style.transform = tr; }
         const q = chip.pos && geo.bouton(side, chip.pos);
         if (!q) continue;
-        const cy = y + chip.top + chip.h / 2;
-        const cx = side === 'L' ? x + chip.left + chip.w : x + chip.left;
+        const cx = Math.min(gx + chip.w, Math.max(gx, q.x));
+        const cy = Math.min(gy + chip.h, Math.max(gy, q.y));
         const { on } = chip;
         traits += `<path d="M${cx.toFixed(1)} ${cy.toFixed(1)} L${q.x.toFixed(1)} ${q.y.toFixed(1)}" class="${on ? 'on' : ''}"/><circle cx="${q.x.toFixed(1)}" cy="${q.y.toFixed(1)}" r="${(4.5 * k).toFixed(1)}" class="${on ? 'on' : ''}"/>`;
       }
     }
+    if (refaire) mesures = null;
     const cle = `${W},${H}|${traits}`;
     if (cle !== tracesPrec) {
       tracesPrec = cle;
@@ -203,6 +296,14 @@ export function creerCommandes(conteneur, sim, geo, { agir = () => {} } = {}) {
     maj: placer,
     /** Vrai si les commandes sont posées sur la vue (sinon le pupitre de la page les remplace). */
     visibles: () => !!visible,
-    detruire() { delete conteneur.dataset.cmd; racine.remove(); },
+    /** Remet toutes les étiquettes à leur place. */
+    replacer() { decalages = {}; ecrire(decalages); },
+    detruire() {
+      window.removeEventListener('pointermove', surBouge);
+      window.removeEventListener('pointerup', surLache);
+      window.removeEventListener('pointercancel', surLache);
+      delete conteneur.dataset.cmd;
+      racine.remove();
+    },
   };
 }

@@ -479,7 +479,8 @@
 }
 .pem-console.vue3d > .pem-3d[data-cmd] ~ .pem-deck, .pem-console.vue3d > .pem-3d[data-cmd] ~ .pem-keys { display: none; }
 
-.c3-cmd { --k: 1; position: absolute; inset: 0; z-index: 2; pointer-events: none; font-family: var(--f-body); }
+.c3-cmd { --k: 1; position: absolute; inset: 0; z-index: 2; pointer-events: none; font-family: var(--f-body); user-select: none; -webkit-user-select: none; }
+.c3-cmd.c3-glisse, .c3-cmd.c3-glisse * { cursor: grabbing !important; }
 .c3-cmd[hidden] { display: none; }
 .c3-cmd-traits { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.9)); } /* liseré sombre : traits lisibles aussi sur fond clair */
 .c3-cmd-traits path { stroke: rgba(255, 255, 255, 0.6); stroke-width: 1.2; fill: none; }
@@ -490,9 +491,9 @@
 .c3-croix { width: 0; height: 0; --r: 62px; }
 .c3-fl, .c3-fl-c {
   position: absolute; pointer-events: auto; display: grid; place-items: center; cursor: pointer; padding: 0;
-  width: calc(34px * var(--k)); height: calc(34px * var(--k)); margin: calc(-17px * var(--k)) 0 0 calc(-17px * var(--k));
+  width: calc(38px * var(--k)); height: calc(38px * var(--k)); margin: calc(-19px * var(--k)) 0 0 calc(-19px * var(--k));
   border-radius: 50%; border: 1.5px solid rgba(255, 255, 255, 0.55); background: rgba(16, 20, 26, 0.38); color: rgba(255, 255, 255, 0.92);
-  font-size: calc(13px * var(--k)); backdrop-filter: blur(2px); transition: background 0.12s, transform 0.12s;
+  font-size: calc(15px * var(--k)); backdrop-filter: blur(2px); transition: background 0.12s, transform 0.12s;
 }
 .c3-fl i { font-style: normal; line-height: 1; }
 .c3-fl:hover, .c3-fl-c:hover { background: rgba(16, 20, 26, 0.62); border-color: #fff; }
@@ -509,38 +510,41 @@
    leur flèche, chacun tourné vers l'extérieur de la croix (ils ne se croisent pas et laissent la flèche du bas libre). */
 .c3-lb {
   position: absolute; display: grid; gap: 1px; padding: calc(4px * var(--k)) calc(8px * var(--k)); border-radius: 8px; pointer-events: none;
-  width: max-content; max-width: calc(150px * var(--k));
+  width: max-content; max-width: calc(175px * var(--k));
   background: rgba(14, 17, 22, 0.66); border: 1px solid rgba(255, 255, 255, 0.22); color: #fff; backdrop-filter: blur(3px);
-  font-size: calc(12px * var(--k)); line-height: 1.15;
+  font-size: calc(14.5px * var(--k)); line-height: 1.15;
 }
 .c3-lb b { font-weight: 700; white-space: nowrap; }
-.c3-lb small { font-size: calc(10px * var(--k)); color: rgba(225, 230, 236, 0.85); }
+.c3-lb small { font-size: calc(12px * var(--k)); color: rgba(225, 230, 236, 0.85); }
 .c3-lb.on { background: rgba(255, 128, 20, 0.92); border-color: #ffb066; color: #1b1004; }
 .c3-lb.on small { color: #3b2408; }
 .c3-lb.vide { opacity: 0.5; }
 /* Flèche du haut : libellé à côté, vers l'extérieur (au-dessus, il couvrirait les boutons de la tête). */
-.c3-cmd-L .c3-lb-up { left: calc(-23px * var(--k)); top: calc(-1 * var(--r)); translate: -100% -50%; text-align: right; }
-.c3-cmd-R .c3-lb-up { left: calc(23px * var(--k)); top: calc(-1 * var(--r)); translate: 0 -50%; }
-.c3-cmd-L .c3-croix[data-haut='in'] .c3-lb-up { left: calc(23px * var(--k)); translate: 0 -50%; text-align: left; }
-.c3-cmd-R .c3-croix[data-haut='in'] .c3-lb-up { left: calc(-23px * var(--k)); translate: -100% -50%; text-align: right; }
-.c3-lb-down { left: 0; top: calc(var(--r) + 21px * var(--k)); translate: -50% 0; text-align: center; max-width: calc(190px * var(--k)); }
-.c3-lb-left { left: calc(-1 * var(--r) + 17px * var(--k)); top: calc(21px * var(--k)); translate: -100% 0; text-align: right; }
-.c3-lb-right { left: calc(var(--r) - 17px * var(--k)); top: calc(21px * var(--k)); }
+.c3-cmd-L .c3-lb-up { left: calc(-25px * var(--k)); top: calc(-1 * var(--r)); translate: -100% -50%; text-align: right; }
+.c3-cmd-R .c3-lb-up { left: calc(25px * var(--k)); top: calc(-1 * var(--r)); translate: 0 -50%; }
+.c3-cmd-L .c3-croix[data-haut='in'] .c3-lb-up { left: calc(25px * var(--k)); translate: 0 -50%; text-align: left; }
+.c3-cmd-R .c3-croix[data-haut='in'] .c3-lb-up { left: calc(-25px * var(--k)); translate: -100% -50%; text-align: right; }
+.c3-lb-down { left: 0; top: calc(var(--r) + 23px * var(--k)); translate: -50% 0; text-align: center; max-width: calc(190px * var(--k)); }
+.c3-lb-left { left: calc(-1 * var(--r) + 19px * var(--k)); top: calc(23px * var(--k)); translate: -100% 0; text-align: right; }
+.c3-lb-right { left: calc(var(--r) - 19px * var(--k)); top: calc(23px * var(--k)); }
 /* Étiquettes des boutons : colonne contre le bord de la vue, reliée par un trait au bouton de la tête. */
-.c3-chips { display: grid; gap: calc(6px * var(--k)); width: max-content; max-width: calc(168px * var(--k)); }
+.c3-chips { display: grid; gap: calc(4px * var(--k)); width: max-content; max-width: calc(190px * var(--k)); }
 .c3-cmd-L .c3-chips { justify-items: end; }
 .c3-cmd-R .c3-chips { justify-items: start; }
 .c3-chip {
-  pointer-events: auto; display: grid; gap: 1px; text-align: left; cursor: pointer; font: inherit; color: #fff;
-  padding: calc(5px * var(--k)) calc(10px * var(--k)); border-radius: 9px; border: 1px solid rgba(255, 255, 255, 0.28);
+  pointer-events: auto; display: grid; gap: 1px; text-align: left; cursor: grab; touch-action: none; font: inherit; color: #fff;
+  padding: calc(4px * var(--k)) calc(11px * var(--k)); border-radius: 9px; border: 1px solid rgba(255, 255, 255, 0.28);
   background: rgba(14, 17, 22, 0.62); backdrop-filter: blur(3px); transition: background 0.12s;
 }
 .c3-cmd-L .c3-chip { text-align: right; }
-.c3-chip b { font-size: calc(12.5px * var(--k)); font-weight: 700; line-height: 1.15; }
-.c3-chip small { font-size: calc(10px * var(--k)); color: rgba(225, 230, 236, 0.85); line-height: 1.15; }
+.c3-chip b { font-size: calc(15px * var(--k)); font-weight: 700; line-height: 1.1; }
+.c3-chip small { font-size: calc(12px * var(--k)); color: rgba(225, 230, 236, 0.85); line-height: 1.1; }
 .c3-chip:hover { background: rgba(14, 17, 22, 0.85); border-color: rgba(255, 255, 255, 0.6); }
 .c3-chip.on { background: rgba(255, 128, 20, 0.92); border-color: #ffb066; color: #1b1004; }
 .c3-chip.on small { color: #3b2408; }
+.c3-chips.compacte { gap: calc(3px * var(--k)); }
+.c3-chips.compacte .c3-chip { padding-block: calc(3px * var(--k)); }
+.c3-chips.compacte .c3-chip small { display: none; }
 @media (prefers-reduced-motion: reduce) { .c3-fl, .c3-chip { transition: none; } }
 
 /* Écran ERIS de la console 3D : texte agrandi pour la lecture (pas fidèle à l'échelle de la machine). */
@@ -570,7 +574,7 @@
 .pem-3d[data-cmd] .c3-ecran .er-start { gap: 3.5cqw; }
 .pem-3d[data-cmd] .c3-ecran .er-box { font-size: 4cqw; padding: 2cqw 4cqw; min-width: 36cqw; border-radius: 1.4cqw; }
 .pem-3d[data-cmd] .c3-ecran .er-hole { grid-template-columns: 30% 1fr; }
-.pem-3d[data-cmd] .c3-ecran .er-col { font-size: 2.7cqw; gap: 0.3cqw; }
+.pem-3d[data-cmd] .c3-ecran .er-col { font-size: 3cqw; gap: 0.3cqw; }
 .pem-3d[data-cmd] .c3-ecran .er-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 3cqw 2cqw; padding-top: 2%; font-size: 2.7cqw; }
 .pem-3d[data-cmd] .c3-ecran .er-diag { height: 92%; margin: 0 0 0 2%; }
 .pem-3d[data-cmd] .c3-ecran .er-diag > div { font-size: 1.9cqw; gap: 1cqw; }
@@ -589,21 +593,28 @@
 .pem-3d[data-cmd] .c3-ecran .er-dial { font-size: 2.8cqw; }
 .pem-3d[data-cmd] .c3-ecran .er-dial svg { width: 19cqw; height: 19cqw; }
 /* DRILL */
-.pem-3d[data-cmd] .c3-ecran .er-drill .er-col { top: 0; width: 27%; font-size: 2.4cqw; text-align: left; }
+.pem-3d[data-cmd] .c3-ecran .er-drill .er-col { top: 0; width: 27%; font-size: 2.45cqw; text-align: left; }
 .pem-3d[data-cmd] .c3-ecran .er-gauges { left: 29%; top: 0; grid-template-columns: repeat(3, 1fr); gap: 0.6cqw 2cqw; }
-.pem-3d[data-cmd] .c3-ecran .er-g-u { font-size: 2cqw; }
-.pem-3d[data-cmd] .c3-ecran .er-g-l { font-size: 2cqw; }
+.pem-3d[data-cmd] .c3-ecran .er-g-u { font-size: 2.3cqw; }
+.pem-3d[data-cmd] .c3-ecran .er-g-l { font-size: 2.4cqw; }
 .pem-3d[data-cmd] .c3-ecran .er-stages { left: auto; right: 2%; top: auto; bottom: 0; translate: none; display: flex; gap: 1cqw; }
 .pem-3d[data-cmd] .c3-ecran .er-stages span { font-size: 1.8cqw; }
 .pem-3d[data-cmd] .c3-ecran .er-water { left: 29%; top: auto; bottom: 0; font-size: 2.8cqw; }
 .pem-3d[data-cmd] .c3-ecran .er-note { top: 38%; font-size: 2.8cqw; }
 
-/* Plein écran, vue 3D : la vue remplit l'écran, le pupitre reste posé dessus ; consigne au-dessus, messages dessous. */
+/* Plein écran, vue 3D : la vue remplit l'écran, commandes posées dessus ; consigne au-dessus, messages dessous. Fenêtre
+   trop basse pour les commandes : pupitre sous la vue, qui garde une hauteur minimale, et défilement. */
 .pem-console.vue3d:fullscreen, .pem-console.vue3d.c3-plein {
-  display: grid; height: 100dvh; overflow: hidden; gap: 8px; grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  display: grid; height: 100dvh; overflow: auto; gap: 8px; grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto auto minmax(min(56dvh, 320px), 1fr) auto auto;
 }
 .pem-console.vue3d:fullscreen > *, .pem-console.vue3d.c3-plein > * { order: 0; min-width: 0; }
+/* Rangées fixes : la vue garde la rangée extensible même quand la ligne d'options ou les messages sont masqués. */
+.pem-console.vue3d:fullscreen > .pem-now, .pem-console.vue3d.c3-plein > .pem-now { grid-row: 1; }
+.pem-console.vue3d:fullscreen > .pem-opts, .pem-console.vue3d.c3-plein > .pem-opts { grid-row: 2; }
+.pem-console.vue3d:fullscreen > .pem-3d, .pem-console.vue3d.c3-plein > .pem-3d { grid-row: 3; }
+.pem-console.vue3d:fullscreen > .pem-msg, .pem-console.vue3d.c3-plein > .pem-msg { grid-row: 4; }
+.pem-console.vue3d:fullscreen > .pem-deck, .pem-console.vue3d.c3-plein > .pem-deck { grid-row: 5; }
 .pem-console.vue3d:fullscreen > .pem-3d, .pem-console.vue3d.c3-plein > .pem-3d { height: auto; min-height: 0; max-height: none; aspect-ratio: auto; }
 .pem-console.vue3d:fullscreen > .pem-3d-aide, .pem-console.vue3d.c3-plein > .pem-3d-aide,
 .pem-console.vue3d:fullscreen > .pem-keys, .pem-console.vue3d.c3-plein > .pem-keys { display: none; }
@@ -612,8 +623,5 @@
 }
 /* Téléphone en plein écran : vue 3D en haut, pupitre dessous (trop étroit pour superposer), défilement permis. */
 @media (max-width: 760px) {
-  .pem-console.vue3d:fullscreen, .pem-console.vue3d.c3-plein {
-    overflow: auto; grid-template-rows: auto auto 56dvh auto auto;
-  }
-  .pem-console.vue3d:fullscreen > .pem-deck, .pem-console.vue3d.c3-plein > .pem-deck { grid-row: auto; }
+  .pem-console.vue3d:fullscreen, .pem-console.vue3d.c3-plein { grid-template-rows: auto auto 56dvh auto auto; }
 }
