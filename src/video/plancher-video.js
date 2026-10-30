@@ -24,7 +24,7 @@ import * as S from '../viewer/shapes.js';
 import models from '../models/plancher-dd/index.js';
 import { IN, FT, P3, P8, B66, W, L, SEC, DECK, ground, plankX, TIGHT, d1, joistZ, GUIDE_X, DIP } from '../models/plancher-dd/plan.js';
 import { lagScrews } from '../models/plancher-dd/lumber.js';
-import { variante8, JOINT8_X } from '../models/plancher-dd/floor.js';
+import { variante8, jonction8, JOINT8_X } from '../models/plancher-dd/floor.js';
 import { timeline, RETENIR, stepCard, STEP_CARD, vt } from './plancher-script.js';
 import { Annotator } from './plancher-annot.js';
 import { materielGroup } from './plancher-materiel.js';
@@ -269,6 +269,7 @@ extras.madriers8 = v8.madriers;
 extras.appuis8 = v8.appuis;
 extras.appuis8b = v8b.appuis;
 extras.doubleurs8 = v8.doubleurs;
+extras.jonction8 = jonction8(S);
 extras.highMark.position.set(high.x, high.y + 0.004, high.z);
 extras.highMark.children[2].rotation.x = Math.PI; // pointe vers le sol
 extras.level.position.set(2.3, B66, -0.4);
@@ -701,16 +702,21 @@ window.__still = (t, pos, tgt, fov) => {
 };
 // Image fixe de la variante 8 pi (validation) : à l'instant t, madriers de 16 pi de la
 // section 1 et rangée d'appuis voisine du joint remplacés par la variante.
-window.__still8 = (t, pos, tgt, fov, joint = 'commun', doubleur = false) => {
+window.__still8 = (t, pos, tgt, fov, opts = {}) => {
+  if (typeof opts === 'string') opts = { joint: opts };
+  const { joint = 'commun', doubleur = false, jonction = false, madriers = true, planches = true } = opts;
   render(t);
   for (const lf of leaves) {
-    if (['joist1', 'joists1', 'joistFar'].includes(lf.cue)) lf.obj.visible = false;
-    if (lf.cue === 'support1' && Math.abs(lf.c.x - JOINT8_X) < 0.2) lf.obj.visible = false;
+    if (madriers && ['joist1', 'joists1', 'joistFar'].includes(lf.cue)) lf.obj.visible = false;
+    if (madriers && lf.cue === 'support1' && Math.abs(lf.c.x - JOINT8_X) < 0.2) lf.obj.visible = false;
+    if (jonction && lf.asm === 'P04' && lf.ref === '7') lf.obj.visible = false; // 6 × 6 de jonction de 16 pi
+    if (!planches && (lf.asm === 'P07' || lf.asm === 'P13')) lf.obj.visible = false; // recouvrement en 3 × 8 caché
   }
-  extras.madriers8.visible = true;
-  extras.appuis8.visible = joint === 'commun';
-  extras.appuis8b.visible = joint === 'double';
-  extras.doubleurs8.visible = doubleur;
+  extras.madriers8.visible = madriers;
+  extras.appuis8.visible = madriers && joint === 'commun';
+  extras.appuis8b.visible = madriers && joint === 'double';
+  extras.doubleurs8.visible = madriers && doubleur;
+  extras.jonction8.visible = jonction;
   camera.position.set(...pos);
   camera.fov = fov || 40;
   camera.updateProjectionMatrix();

@@ -111,6 +111,22 @@ export function variante8(S, { joint = 'commun' } = {}) {
   return { madriers, appuis, doubleurs };
 }
 
+/**
+ * Variante 8 pi, jonction des deux sections (plancher de 16 × 32 pi) : le 6 × 6 de
+ * jonction en travers (16 pi d'un seul bout avec le bois de 16 pi) est doublé : deux
+ * rangées côte à côte, chacune de deux 6 × 6 de 8 pi bout à bout (joint au centre, sur le
+ * blocage du madrier du milieu). Les madriers de la section 1 reposent à plein sur la
+ * première rangée, ceux de la section 2 sur la deuxième ; les blocages de jonction
+ * (24 po, selon X) portent les deux rangées.
+ */
+export function jonction8(S) {
+  const g = S.group();
+  [JOINT_X - B66 / 2, JOINT_X + B66 / 2].forEach((x, k) => {
+    for (const z of [-4 * FT, 4 * FT]) g.add(lumber(S, [B66, B66, 8 * FT], [x, -B66 / 2, z], k ? 'woodLight' : 'wood'));
+  });
+  return g;
+}
+
 // ------------------------------------------------------------------ section 2
 
 /**
