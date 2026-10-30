@@ -21,7 +21,13 @@ const noPick = (o) => { o.traverse((c) => { c.raycast = () => {}; }); return o; 
 
 /** Étiquette (sprite de taille fixe à l'écran) : texte jaune sur fond sombre. */
 function label(text, { h = 0.042, color = '#f2c230', anchor = [0.5, 0.5], pointer = false } = {}) {
-  if (typeof document === 'undefined') return new THREE.Group(); // contrôle des modèles (Node)
+  if (typeof document === 'undefined') {
+    // Contrôle des modèles et export (Node) : pas de dessin, le texte est gardé pour l'export.
+    const g = new THREE.Group();
+    g.userData.dimText = text;
+    g.userData.dimAnchor = anchor;
+    return g;
+  }
   const canvas = document.createElement('canvas');
   const tex = new THREE.CanvasTexture(canvas);
   tex.colorSpace = THREE.SRGBColorSpace;
