@@ -11,23 +11,27 @@
 // de la durée de l'encart) : la scène y est figée, l'encart remplace la caméra, la
 // visibilité de certaines pièces et les annotations, puis tout revient à l'état de la
 // vidéo. Sa voix (10 répliques) est un fichier à part, V8.file.
-import { B66, P3, W, SEC, joistZ, JOINT_X } from '../models/plancher-dd/plan.js';
+import { B66, W, SEC, joistZ, JOINT_X } from '../models/plancher-dd/plan.js';
 import { JOINT8_X, JOINT8_X2 } from '../models/plancher-dd/floor.js';
 
-// Répliques de l'encart : [début, fin] dans V8.file (s). Estimations tant que la voix
-// n'est pas enregistrée (V8.estime) : les plans suivent ces instants.
+// Répliques de l'encart : [début, fin] dans V8.file (s), mesurées dans la voix.
+// V8.file est monté à partir de l'enregistrement ElevenLabs du prompt v22 (Adam,
+// 2026-10-30) : répliques 1 à 5 d'un seul tenant (242,49 à 267,72 s), 6 et 7 de la
+// deuxième prise (283,54 à 288,39 s), 8 de la première prise (272,95 à 278,43 s),
+// 9 et 10 de la deuxième prise (294,53 à 301,41 s), 0,35 s de silence entre les morceaux.
 const LINES = [
-  [0.0, 2.6], // T : Pis si on a juste des six par six de huit pieds ?
-  [3.3, 8.3], // F : C'est correct, c'est courant… pour faire les seize pieds.
-  [9.0, 12.4], // F : Le joint tombe toujours sur un blocage, jamais dans le vide.
-  [13.1, 17.1], // F : Pis dans une section, les deux six par six de huit pieds doivent être parfaitement de niveau.
-  [17.8, 25.8], // F : À la jonction, on double le six par six… appuyé au complet.
-  [26.5, 28.3], // T : Pis dans la deuxième section ?
-  [29.0, 32.2], // F : Le joint tombe sur un soutien, placé juste en dessous.
-  [32.9, 38.7], // F : Le long des madriers de rive…
-  [39.4, 43.6], // F : Le reste ne change pas…
-  [44.3, 46.7], // T : Parfait. On revient à notre plancher.
+  [0.08, 2.71], // T : Pis si on a juste des six par six de huit pieds ?
+  [3.15, 7.44], // F : C'est correct, c'est courant… pour faire les seize pieds.
+  [7.95, 11.06], // F : Le joint tombe toujours sur un blocage, jamais dans le vide.
+  [11.71, 16.55], // F : Pis dans une section, les deux six par six de huit pieds doivent être parfaitement de niveau.
+  [17.18, 25.11], // F : À la jonction, on double le six par six… appuyé au complet.
+  [25.66, 26.97], // T : Pis dans la deuxième section ?
+  [27.43, 30.31], // F : Le joint tombe sur un soutien, placé juste en dessous.
+  [30.86, 36.14], // F : Le long des madriers de rive…
+  [36.69, 40.96], // F : Le reste ne change pas…
+  [41.43, 43.37], // T : Parfait. On revient à notre plancher.
 ];
+const FILE_DUR = 43.52; // durée de V8.file (s)
 const LEAD = 0.4; // première réplique 0,4 s après le début de l'encart
 const TAIL = 0.7; // temps laissé après la dernière réplique (retour au plancher de la vidéo)
 const r24 = (x) => Math.round(x * 24) / 24;
@@ -35,8 +39,9 @@ const r24 = (x) => Math.round(x * 24) / 24;
 export const V8 = {
   v: 221.6, // instant de l'enregistrement principal (après « …parfaitement égales »)
   file: 'video/plancher/voix-8pi.mp3',
-  estime: true,
+  estime: false,
   lines: LINES,
+  fileDur: FILE_DUR,
   lead: LEAD,
   dur: r24(LEAD + LINES.at(-1)[1] - LINES[0][0] + TAIL),
 };
@@ -80,15 +85,13 @@ export const V8_KEYS = [
 // ------------------------------------------------------------------ pièces
 
 // Phases (instants dans l'encart) : planches et pièces de 16 pi retirées au changement
-// de plan ; les 6 × 6 de 8 pi posés pendant la deuxième réplique ; niveau posé pendant
-// la quatrième ; retour à la vidéo à la dernière coupe.
+// de plan ; les 6 × 6 de 8 pi posés pendant la deuxième réplique ; retour à la vidéo à
+// la dernière coupe.
 export const V8_PHASE = {
   cut: L(1) - 0.35, // planches et pièces de 16 pi enlevées (changement de plan)
   out: L(1) + 0.15, // les pièces de 16 pi se lèvent et disparaissent (0,6 s)
   drop: L(1) + 0.8, // pose des 6 × 6 de 8 pi, en ordre
   dropSpan: 3.4,
-  level: L(3) + 1.2, // niveau de 48 po sur le joint (montré, pas nommé dans la voix)
-  levelOut: L(4) + 1.2,
   back: L(9) - 0.2, // retour à la vidéo
 };
 
@@ -100,8 +103,7 @@ export const V8_NOTES = [
   { u0: L(1) + 0.1, u1: L(1) + 2.6, at: [SEC * 0.35, B66, joistZ[3]], text: 'Planches enlevées pour voir la structure', dir: 'up' },
   { u0: L(1) + 3.0, u1: L(2) + 0.4, at: [JOINT8_X, B66, joistZ[5]], text: 'Deux 6 × 6 de 8 pi bout à bout', dir: 'up' },
   { u0: L(2) + MOVE - 0.3, u1: L(3) + 0.4, at: [JOINT8_X, -0.03, ZE], text: 'Joint sur un blocage, jamais dans le vide', dir: 'right' },
-  { u0: L(3) + 1.7, u1: L(4) + 0.3, at: [JOINT8_X + 0.35, B66 + P3 + 0.07, ZE], text: 'Niveau de 48 po sur un 3 × 8 de 8 pi, à cheval sur le joint', dir: 'up' },
-  { u0: L(3) + 2.4, u1: L(4) + 0.3, at: [JOINT8_X - 0.9, B66 * 0.5, ZE + B66 / 2], text: 'Les deux 6 × 6 de 8 pi parfaitement de niveau', dir: 'down' },
+  { u0: L(3) + MOVE - 0.2, u1: L(4) + 0.3, at: [JOINT8_X - 0.9, B66 * 0.5, ZE + B66 / 2], text: 'Les deux 6 × 6 de 8 pi parfaitement de niveau', dir: 'down' },
   { u0: L(4) + MOVE - 0.2, u1: L(5) + 0.3, at: [JOINT_X, -B66 / 2, joistZ[3] + 0.4], text: 'Jonction doublée : un 6 × 6 sous chaque section', dir: 'down' },
   { u0: L(6) - 0.1, u1: L(7) + 0.3, at: [JOINT8_X2, -0.02, ZE], text: 'Section 2 : joint sur un soutien', dir: 'right' },
   { u0: L(7) + MOVE - 0.2, u1: L(8) + 0.3, at: [JOINT_X, B66 * 0.7, ZN], text: 'Bout de 6 × 6 de 24 po le long des madriers de rive', dir: 'up' },

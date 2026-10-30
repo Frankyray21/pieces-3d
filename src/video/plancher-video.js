@@ -384,8 +384,8 @@ function ghost(t) {
 
 // Étape 11 : l'encart (plancher-v8.js) se joue pendant le silence ajouté dans la voix ;
 // la scène de la vidéo y est figée. Planches et pièces de 16 pi retirées, 6 × 6 de 8 pi
-// posés un à un, niveau sur le joint, caméra et annotations propres ; retour à l'état
-// de la vidéo à la dernière coupe.
+// posés un à un, caméra et annotations propres ; retour à l'état de la vidéo à la
+// dernière coupe.
 const V8SEG = SEGS.find((s) => s.insert);
 const V8_T0 = V8SEG.start + V8SEG.insert.at, V8_T1 = V8_T0 + V8SEG.insert.dur;
 const near = (lf, x, d) => Math.abs(lf.c.x - x) < d;
@@ -398,7 +398,7 @@ const v8Old = leaves.filter((lf) => ['joist1', 'joists1', 'joistFar'].includes(l
 // Pièces de la variante, dans l'ordre de pose : section 1, jonction, section 2.
 const v8Groups = ['appuis8', 'madriers8', 'jonction8', 'appuis8s2', 'soutiens8s2', 'madriers8s2'].map((k) => extras[k]);
 const v8New = v8Groups.flatMap((g) => g.children);
-for (const o of [...v8New, extras.niveau8]) o.userData.base = o.position.clone();
+for (const o of v8New) o.userData.base = o.position.clone();
 const camKey = (name) => V8_CAM[name];
 /** Caméra de l'encart à l'instant u (dans l'encart). */
 function v8Camera(u) {
@@ -432,11 +432,6 @@ function v8Apply(t) {
     o.position.copy(o.userData.base);
     o.position.y += 0.5 * (1 - ease(Math.min(1, Math.max(0, e))));
   });
-  // Niveau de 48 po sur le joint.
-  const lv = extras.niveau8, el = (u - P.level) / 0.5;
-  lv.visible = el >= 0 && u < P.levelOut;
-  lv.position.copy(lv.userData.base);
-  lv.position.y += 0.4 * (1 - ease(Math.min(1, Math.max(0, el))));
 }
 
 // ------------------------------------------------------------------ caméra

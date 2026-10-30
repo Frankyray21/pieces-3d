@@ -122,11 +122,12 @@ if (VOICE) {
   // Voix : chaque morceau de l'enregistrement placé à son instant (silences ajoutés compris).
   const pieces = SEGS.flatMap((s) => voicePieces(s)).map((p) => ({ ...p, src: 3 }));
   ins.push('-i', VOICE_FILE);
-  // Encart de la variante 8 pi : sa voix (fichier à part), de la première à la dernière réplique.
+  // Encart de la variante 8 pi : sa voix (fichier à part) au complet, la première
+  // réplique calée sur V8.lead (la fin du fichier tombe avant la fin de l'encart).
   const v8 = SEGS.find((s) => s.insert);
   if (v8 && fs.existsSync(V8.file)) {
     ins.push('-i', V8.file);
-    pieces.push({ src: 4, a: V8.lines[0][0], b: V8.lines.at(-1)[1], at: v8.start + v8.insert.at + V8.lead });
+    pieces.push({ src: 4, a: 0, b: V8.fileDur, at: v8.start + v8.insert.at + V8.lead - V8.lines[0][0] });
   } else if (v8) console.warn(`voix de l'encart absente (${V8.file}) : encart muet`);
   fc += ';' + pieces.map((p, i) => `[${p.src}:a]atrim=start=${p.a}:end=${p.b},asetpts=PTS-STARTPTS,adelay=${Math.round(p.at * 1000)}:all=1[p${i}]`).join(';')
     + `;${pieces.map((_, i) => `[p${i}]`).join('')}amix=inputs=${pieces.length}:normalize=0:dropout_transition=0,atrim=duration=${DUR.toFixed(3)},loudnorm=I=-16:TP=-1.5:LRA=11[a]`;
