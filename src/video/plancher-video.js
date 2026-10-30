@@ -269,6 +269,14 @@ extras.madriers8 = v8.madriers;
 extras.appuis8 = v8.appuis;
 extras.appuis8b = v8b.appuis;
 extras.jonction8 = jonction8(S);
+// Variante 8 pi : niveau de 48 po sur un 3 × 8 de 8 pi posé le long du madrier de rive, à
+// cheval sur le joint : les deux 6 × 6 de 8 pi de la ligne parfaitement de niveau.
+extras.niveau8 = S.group(
+  S.box(8 * FT, P3, 0.2, 'woodLight', { pos: [0, P3 / 2, 0] }),
+  S.box(48 * IN, 0.07, 0.045, 'blue', { pos: [0, P3 + 0.035, 0] }),
+  S.box(0.07, 0.02, 0.047, 'lampAmber', { pos: [0, P3 + 0.06, 0] }),
+);
+extras.niveau8.position.set(JOINT8_X, B66, joistZ.at(-1));
 extras.highMark.position.set(high.x, high.y + 0.004, high.z);
 extras.highMark.children[2].rotation.x = Math.PI; // pointe vers le sol
 extras.level.position.set(2.3, B66, -0.4);
@@ -703,7 +711,7 @@ window.__still = (t, pos, tgt, fov) => {
 // section 1 et rangée d'appuis voisine du joint remplacés par la variante.
 window.__still8 = (t, pos, tgt, fov, opts = {}) => {
   if (typeof opts === 'string') opts = { joint: opts };
-  const { joint = 'commun', jonction = false, madriers = true, planches = true } = opts;
+  const { joint = 'commun', jonction = false, madriers = true, planches = true, niveau = false } = opts;
   render(t);
   for (const lf of leaves) {
     if (madriers && ['joist1', 'joists1', 'joistFar'].includes(lf.cue)) lf.obj.visible = false;
@@ -715,6 +723,7 @@ window.__still8 = (t, pos, tgt, fov, opts = {}) => {
   extras.appuis8.visible = madriers && joint === 'commun';
   extras.appuis8b.visible = madriers && joint === 'double';
   extras.jonction8.visible = jonction;
+  extras.niveau8.visible = niveau;
   camera.position.set(...pos);
   camera.fov = fov || 40;
   camera.updateProjectionMatrix();
