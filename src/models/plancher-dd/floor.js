@@ -121,24 +121,32 @@ export function jonction8(S) {
 
 /**
  * Variante 8 pi aussi dans la section 2 : madriers en deux 6 × 6 de 8 pi, joint à 24 pi
- * (8 pi après la jonction). Le soutien le plus proche est placé sous le joint, sur ses
- * blocages (le joint ne tombe jamais dans le vide).
+ * (8 pi après la jonction) ; le soutien le plus proche est placé sous le joint, sur ses
+ * blocages (le joint ne tombe jamais dans le vide). Les soutiens en travers (6 × 6 de 16 pi
+ * dans la procédure) sont eux aussi faits de deux 8 pi bout à bout, joint au centre, sous le
+ * madrier du milieu, sur son blocage.
  */
 export const JOINT8_X2 = SEC + 8 * FT;
+export const SLEEPER8_X = SLEEPERS_X.map((x) => (Math.abs(x - JOINT8_X2) < 0.2 ? JOINT8_X2 : x));
 export function variante8Sec2(S) {
   const madriers = S.group();
   for (const z of joistZ) {
     madriers.add(lumber(S, [8 * FT, B66, B66], [SEC + 4 * FT, B66 / 2, z]));
     madriers.add(lumber(S, [8 * FT, B66, B66], [SEC + 12 * FT, B66 / 2, z], 'woodLight'));
   }
-  const soutien = S.group();
-  soutien.add(lumber(S, [B66, B66, W], [JOINT8_X2, -B66 / 2, 0]));
+  const soutiens = S.group();
+  for (const x of SLEEPER8_X) {
+    soutiens.add(lumber(S, [B66, B66, 8 * FT], [x, -B66 / 2, -4 * FT]));
+    soutiens.add(lumber(S, [B66, B66, 8 * FT], [x, -B66 / 2, 4 * FT], 'woodLight'));
+  }
+  // Blocages sous le soutien déplacé sous le joint (les autres restent en place).
+  const appuis = S.group();
   for (const z of joistZ) {
     for (const p of stack(JOINT8_X2, z, -B66, 'x', { inFloor: true }).pieces) {
-      soutien.add(p.kind === 'wedge' ? wedge(S, p) : lumber(S, p.size, p.pos, p.kind === 'crib' ? 'woodDark' : 'wood'));
+      appuis.add(p.kind === 'wedge' ? wedge(S, p) : lumber(S, p.size, p.pos, p.kind === 'crib' ? 'woodDark' : 'wood'));
     }
   }
-  return { madriers, soutien };
+  return { madriers, soutiens, appuis };
 }
 
 // ------------------------------------------------------------------ section 2

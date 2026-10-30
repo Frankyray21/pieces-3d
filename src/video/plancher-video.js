@@ -271,7 +271,8 @@ extras.appuis8b = v8b.appuis;
 extras.jonction8 = jonction8(S);
 const v8s2 = variante8Sec2(S);
 extras.madriers8s2 = v8s2.madriers;
-extras.soutien8s2 = v8s2.soutien;
+extras.soutiens8s2 = v8s2.soutiens;
+extras.appuis8s2 = v8s2.appuis;
 // Variante 8 pi : niveau de 48 po sur un 3 × 8 de 8 pi posé le long du madrier de rive, à
 // cheval sur le joint : les deux 6 × 6 de 8 pi de la ligne parfaitement de niveau.
 extras.niveau8 = S.group(
@@ -716,14 +717,15 @@ window.__still8 = (t, pos, tgt, fov, opts = {}) => {
   if (typeof opts === 'string') opts = { joint: opts };
   const { joint = 'commun', jonction = false, madriers = true, planches = true, niveau = false, sec2 = false } = opts;
   // Soutien de la section 2 le plus proche du joint à 24 pi (remplacé par celui sous le joint).
-  const near2 = (lf) => lf.asm === 'P10' && ['2', '3', '4', '5', '6'].includes(lf.ref) && Math.abs(lf.c.x - JOINT8_X2) < 0.45;
+  const near2 = (lf) => lf.asm === 'P10' && ['3', '4', '5', '6'].includes(lf.ref) && Math.abs(lf.c.x - JOINT8_X2) < 0.45;
   render(t);
   for (const lf of leaves) {
     if (madriers && ['joist1', 'joists1', 'joistFar'].includes(lf.cue)) lf.obj.visible = false;
     if (madriers && lf.cue === 'support1' && Math.abs(lf.c.x - JOINT8_X) < 0.2) lf.obj.visible = false;
     if (jonction && lf.asm === 'P04' && lf.ref === '7') lf.obj.visible = false; // 6 × 6 de jonction de 16 pi
     if (!planches && (lf.asm === 'P07' || lf.asm === 'P13')) lf.obj.visible = false; // recouvrement en 3 × 8 caché
-    if (sec2 && ((lf.asm === 'P10' && lf.ref === '1') || near2(lf))) lf.obj.visible = false;
+    // Section 2 en 8 pi : madriers et soutiens de 16 pi remplacés, appuis du soutien déplacé.
+    if (sec2 && ((lf.asm === 'P10' && ['1', '2'].includes(lf.ref)) || near2(lf))) lf.obj.visible = false;
   }
   extras.madriers8.visible = madriers;
   extras.appuis8.visible = madriers && joint === 'commun';
@@ -731,7 +733,8 @@ window.__still8 = (t, pos, tgt, fov, opts = {}) => {
   extras.jonction8.visible = jonction;
   extras.niveau8.visible = niveau;
   extras.madriers8s2.visible = sec2;
-  extras.soutien8s2.visible = sec2;
+  extras.soutiens8s2.visible = sec2;
+  extras.appuis8s2.visible = sec2;
   camera.position.set(...pos);
   camera.fov = fov || 40;
   camera.updateProjectionMatrix();
