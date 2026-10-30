@@ -8,7 +8,8 @@
 //
 //   PW=$(npm root -g)/playwright node scripts/video-plancher-montage.mjs \
 //     --frames scratch/v11 --render plancher.mp4
-//   options : --range a:b (images a à b-1, sans voix : essai) · --muet · --crf 20
+//   options : --range a:b (images a à b-1, sans voix : essai) · --muet · --crf 21
+//     · --preset slow · --tune film · --x264 "bframes=0:…" ou « aucun » (encodeur, voir plus bas)
 import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
@@ -126,6 +127,12 @@ if (VOICE) {
 }
 const t1 = Date.now();
 run('ffmpeg', ['-hide_banner', '-v', 'error', '-y', ...ins, '-filter_complex', fc, ...maps, '-frames:v', String(F1 - F0),
-  '-c:v', 'libx264', '-crf', opt('crf', '20'), '-preset', 'medium', '-tune', 'animation', '-pix_fmt', 'yuv420p',
+  // Rendu photoréaliste (bois veiné) : aucune image B. Avec les images B (réglage
+  // « animation »), la veine du bois était plus floue sur 5 images sur 6 et nette sur la
+  // sixième : le plancher scintillait 4 fois par seconde dès qu'une pièce ou la caméra
+  // bougeait. Images P seulement, images I aussi fines que les P (ipratio=1) : netteté
+  // constante d'une image à l'autre, pour un fichier de taille comparable.
+  '-c:v', 'libx264', '-crf', opt('crf', '21'), '-preset', opt('preset', 'slow'), '-tune', opt('tune', 'film'),
+  ...(opt('x264', '') === 'aucun' ? [] : ['-x264-params', opt('x264', 'bframes=0:aq-mode=3:ipratio=1.0')]), '-pix_fmt', 'yuv420p',
   '-colorspace', 'bt709', '-color_primaries', 'bt709', '-color_trc', 'bt709', '-color_range', 'tv', '-movflags', '+faststart', RENDER]);
 console.log(`→ ${RENDER} (${((Date.now() - t1) / 1000).toFixed(0)} s)`);
