@@ -3,7 +3,7 @@
 # sont rejouées image par image, même cadrage que la vidéo ; les étiquettes, le bandeau et
 # la voix sont ajoutés ensuite au montage (scripts/video-plancher-montage.mjs).
 #   blender --background --factory-startup --python scripts/blender-plancher.py -- \
-#     scene.glb anim.json 0:11025 sortie/ [échantillons=64] [cpu|gpu] [pourcentage=100]
+#     scene.glb anim.json 0:11025 sortie/ [échantillons=64] [cpu|gpu] [pourcentage=100] [persistant=0|1]
 # Images : sortie/f_00000.jpg … (déjà rendues : sautées, le rendu peut reprendre).
 # Liste d'images : « a:b », « 12,40,41 » ou « @liste.json ». Après chaque lot de 400
 # images, un fichier lot_<n>.zip (images du lot) est écrit pour le rapatriement.
@@ -18,6 +18,9 @@ GLB, ANIM, SPEC, OUTDIR = argv[0], argv[1], argv[2], argv[3]
 SAMPLES = int(argv[4]) if len(argv) > 4 else 64
 DEVICE = argv[5] if len(argv) > 5 else 'cpu'
 PERCENT = int(argv[6]) if len(argv) > 6 else 100
+# Données persistantes (plus rapide) : désactivées par défaut, car sur une longue suite
+# d'images le GPU finit par rendre certaines surfaces en noir (parois, affiches).
+PERSIST = len(argv) > 7 and argv[7] == '1'
 os.makedirs(OUTDIR, exist_ok=True)
 LOG = open(os.path.join(OUTDIR, 'rendu.log'), 'a', encoding='utf-8')
 
@@ -386,7 +389,7 @@ sc.view_settings.look = 'AgX - Medium High Contrast'
 sc.view_settings.exposure = 0.35
 sc.render.image_settings.file_format = 'JPEG'
 sc.render.image_settings.quality = 95
-sc.render.use_persistent_data = True
+sc.render.use_persistent_data = PERSIST
 
 # ------------------------------------------------------------------ animation
 OBJ = {o.name.split('.')[0]: o for o in bpy.data.objects if o.name.startswith('n')}
