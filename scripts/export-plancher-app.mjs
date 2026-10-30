@@ -9,7 +9,8 @@
 // Variante « 6 × 6 de 8 pi » (écran après l'étape 11) : v8 = pièce de la variante
 // (ordre de pose), cachée ailleurs ; x8 = pièce de 16 pi remplacée par la variante
 // (même liste que v8Old de la vidéo, src/video/plancher-video.js) ; pl = planche
-// (P07, P13), enlevée sur cet écran pour voir la structure.
+// (P07, P13), enlevée sur cet écran pour voir la structure. ord = rang de pose d'une
+// planche de la section 1 (animation du serrage de l'étape 7, comme la vidéo).
 //
 // Usage : node scripts/export-plancher-app.mjs sortie.glb etiquettes.json
 import { writeFileSync } from 'node:fs';
@@ -78,6 +79,7 @@ root.traverse((o) => {
     x.s = u.step;
     if (u.seq) x.q = u.seq;
     if (u.noDrop) x.nd = 1;
+    if (u.asm === 'P07' && u.ref === '1' && u.order !== undefined) x.ord = u.order; // rang de pose (serrage, étape 7)
     if (u.asm === 'P07' || u.asm === 'P13') x.pl = 1;
     else if (remplacee8(o)) { x.x8 = 1; x8++; }
     leaves++;
