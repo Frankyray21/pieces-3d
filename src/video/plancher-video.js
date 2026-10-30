@@ -393,6 +393,9 @@ const v8Planks = leaves.filter((lf) => lf.asm === 'P07' || lf.asm === 'P13');
 const v8Old = leaves.filter((lf) => ['joist1', 'joists1', 'joistFar'].includes(lf.cue)
   || (lf.asm === 'P10' && ['1', '2'].includes(lf.ref))
   || (lf.asm === 'P04' && lf.ref === '7')
+  // Tire-fonds des bouts de madriers dans la jonction (P04 rep. 8, P10 rep. 7) : partent
+  // avec les madriers, sinon ils restent debout dans le vide pendant la pose.
+  || (lf.asm === 'P04' && lf.ref === '8') || (lf.asm === 'P10' && lf.ref === '7')
   || (lf.cue === 'support1' && near(lf, JOINT8_X, 0.2))
   || (lf.asm === 'P10' && ['3', '4', '5', '6'].includes(lf.ref) && near(lf, JOINT8_X2, 0.45)));
 // Pièces de la variante, dans l'ordre de pose : section 1, jonction, section 2.
