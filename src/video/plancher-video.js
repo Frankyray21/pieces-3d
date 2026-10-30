@@ -24,7 +24,7 @@ import * as S from '../viewer/shapes.js';
 import models from '../models/plancher-dd/index.js';
 import { IN, FT, P3, P8, B66, W, L, SEC, DECK, ground, plankX, TIGHT, d1, joistZ, GUIDE_X, DIP } from '../models/plancher-dd/plan.js';
 import { lagScrews } from '../models/plancher-dd/lumber.js';
-import { variante8, jonction8, JOINT8_X } from '../models/plancher-dd/floor.js';
+import { variante8, jonction8, variante8Sec2, JOINT8_X, JOINT8_X2 } from '../models/plancher-dd/floor.js';
 import { timeline, RETENIR, stepCard, STEP_CARD, vt } from './plancher-script.js';
 import { Annotator } from './plancher-annot.js';
 import { materielGroup } from './plancher-materiel.js';
@@ -269,6 +269,9 @@ extras.madriers8 = v8.madriers;
 extras.appuis8 = v8.appuis;
 extras.appuis8b = v8b.appuis;
 extras.jonction8 = jonction8(S);
+const v8s2 = variante8Sec2(S);
+extras.madriers8s2 = v8s2.madriers;
+extras.soutien8s2 = v8s2.soutien;
 // Variante 8 pi : niveau de 48 po sur un 3 × 8 de 8 pi posé le long du madrier de rive, à
 // cheval sur le joint : les deux 6 × 6 de 8 pi de la ligne parfaitement de niveau.
 extras.niveau8 = S.group(
@@ -711,19 +714,24 @@ window.__still = (t, pos, tgt, fov) => {
 // section 1 et rangée d'appuis voisine du joint remplacés par la variante.
 window.__still8 = (t, pos, tgt, fov, opts = {}) => {
   if (typeof opts === 'string') opts = { joint: opts };
-  const { joint = 'commun', jonction = false, madriers = true, planches = true, niveau = false } = opts;
+  const { joint = 'commun', jonction = false, madriers = true, planches = true, niveau = false, sec2 = false } = opts;
+  // Soutien de la section 2 le plus proche du joint à 24 pi (remplacé par celui sous le joint).
+  const near2 = (lf) => lf.asm === 'P10' && ['2', '3', '4', '5', '6'].includes(lf.ref) && Math.abs(lf.c.x - JOINT8_X2) < 0.45;
   render(t);
   for (const lf of leaves) {
     if (madriers && ['joist1', 'joists1', 'joistFar'].includes(lf.cue)) lf.obj.visible = false;
     if (madriers && lf.cue === 'support1' && Math.abs(lf.c.x - JOINT8_X) < 0.2) lf.obj.visible = false;
     if (jonction && lf.asm === 'P04' && lf.ref === '7') lf.obj.visible = false; // 6 × 6 de jonction de 16 pi
     if (!planches && (lf.asm === 'P07' || lf.asm === 'P13')) lf.obj.visible = false; // recouvrement en 3 × 8 caché
+    if (sec2 && ((lf.asm === 'P10' && lf.ref === '1') || near2(lf))) lf.obj.visible = false;
   }
   extras.madriers8.visible = madriers;
   extras.appuis8.visible = madriers && joint === 'commun';
   extras.appuis8b.visible = madriers && joint === 'double';
   extras.jonction8.visible = jonction;
   extras.niveau8.visible = niveau;
+  extras.madriers8s2.visible = sec2;
+  extras.soutien8s2.visible = sec2;
   camera.position.set(...pos);
   camera.fov = fov || 40;
   camera.updateProjectionMatrix();

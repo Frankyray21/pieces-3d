@@ -119,6 +119,28 @@ export function jonction8(S) {
   return g;
 }
 
+/**
+ * Variante 8 pi aussi dans la section 2 : madriers en deux 6 × 6 de 8 pi, joint à 24 pi
+ * (8 pi après la jonction). Le soutien le plus proche est placé sous le joint, sur ses
+ * blocages (le joint ne tombe jamais dans le vide).
+ */
+export const JOINT8_X2 = SEC + 8 * FT;
+export function variante8Sec2(S) {
+  const madriers = S.group();
+  for (const z of joistZ) {
+    madriers.add(lumber(S, [8 * FT, B66, B66], [SEC + 4 * FT, B66 / 2, z]));
+    madriers.add(lumber(S, [8 * FT, B66, B66], [SEC + 12 * FT, B66 / 2, z], 'woodLight'));
+  }
+  const soutien = S.group();
+  soutien.add(lumber(S, [B66, B66, W], [JOINT8_X2, -B66 / 2, 0]));
+  for (const z of joistZ) {
+    for (const p of stack(JOINT8_X2, z, -B66, 'x', { inFloor: true }).pieces) {
+      soutien.add(p.kind === 'wedge' ? wedge(S, p) : lumber(S, p.size, p.pos, p.kind === 'crib' ? 'woodDark' : 'wood'));
+    }
+  }
+  return { madriers, soutien };
+}
+
 // ------------------------------------------------------------------ section 2
 
 /**
