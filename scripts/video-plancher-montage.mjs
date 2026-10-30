@@ -15,6 +15,7 @@ import path from 'node:path';
 import { createRequire } from 'node:module';
 import { spawnSync } from 'node:child_process';
 import { timeline, vt, voicePieces, VOICE_FILE } from '../src/video/plancher-script.js';
+import { V8 } from '../src/video/plancher-v8.js';
 import { W, H, H3, FONTS, calques } from './plancher-calques.mjs';
 
 const require = createRequire(import.meta.url);
@@ -119,9 +120,16 @@ let fc = `[0:v]format=gbrp[b];[1:v]format=gbrap[an];[b][an]overlay=0:0:format=gb
 const maps = ['-map', '[v]'];
 if (VOICE) {
   // Voix : chaque morceau de l'enregistrement placé à son instant (silences ajoutés compris).
-  const pieces = SEGS.flatMap((s) => voicePieces(s));
+  const pieces = SEGS.flatMap((s) => voicePieces(s)).map((p) => ({ ...p, src: 3 }));
   ins.push('-i', VOICE_FILE);
-  fc += ';' + pieces.map((p, i) => `[3:a]atrim=start=${p.a}:end=${p.b},asetpts=PTS-STARTPTS,adelay=${Math.round(p.at * 1000)}:all=1[p${i}]`).join(';')
+  // Encart de la variante 8 pi : sa voix (fichier à part) au complet, la première
+  // réplique calée sur V8.lead (la fin du fichier tombe avant la fin de l'encart).
+  const v8 = SEGS.find((s) => s.insert);
+  if (v8 && fs.existsSync(V8.file)) {
+    ins.push('-i', V8.file);
+    pieces.push({ src: 4, a: 0, b: V8.fileDur, at: v8.start + v8.insert.at + V8.lead - V8.lines[0][0] });
+  } else if (v8) console.warn(`voix de l'encart absente (${V8.file}) : encart muet`);
+  fc += ';' + pieces.map((p, i) => `[${p.src}:a]atrim=start=${p.a}:end=${p.b},asetpts=PTS-STARTPTS,adelay=${Math.round(p.at * 1000)}:all=1[p${i}]`).join(';')
     + `;${pieces.map((_, i) => `[p${i}]`).join('')}amix=inputs=${pieces.length}:normalize=0:dropout_transition=0,atrim=duration=${DUR.toFixed(3)},loudnorm=I=-16:TP=-1.5:LRA=11[a]`;
   maps.push('-map', '[a]', '-c:a', 'aac', '-b:a', '192k', '-ar', '48000');
 }

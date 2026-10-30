@@ -28,12 +28,14 @@ const total = Math.round(info.duration * FPS);
 const blank = resolve(out, 'vide.png');
 let blankUrl = null;
 const t0 = Date.now();
-for (let f = 0; f < total; f++) {
+// --range a:b : seulement les images a à b-1 (aperçu d'un passage).
+const [A0, A1] = opt('range') ? opt('range').split(':').map(Number) : [0, total];
+for (let f = A0; f < Math.min(A1, total); f++) {
   const url = await page.evaluate((t) => (window.__annotRun === 1 ? window.__annot(t) : null), f / FPS);
   if (url === null) throw new Error(`page rechargée à l'image ${f} : relancer le calque`);
   const file = join(out, `a_${String(f).padStart(5, '0')}.png`);
   if (existsSync(file)) unlinkSync(file);
-  if (blankUrl === null && f === 0) { blankUrl = url; writeFileSync(blank, Buffer.from(url.split(',')[1], 'base64')); }
+  if (blankUrl === null && f === A0) { blankUrl = url; writeFileSync(blank, Buffer.from(url.split(',')[1], 'base64')); }
   if (url === blankUrl) symlinkSync(blank, file);
   else writeFileSync(file, Buffer.from(url.split(',')[1], 'base64'));
   if ((f + 1) % 1200 === 0) console.log(`${f + 1}/${total} · ${((Date.now() - t0) / (f + 1)).toFixed(0)} ms/image`);

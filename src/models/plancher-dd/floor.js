@@ -71,6 +71,84 @@ export function P07(api, opts = {}) {
   return { view: { dir: [0.75, 1.0, 1.1] } };
 }
 
+// ------------------------------------------------------------------ variante : 6 × 6 de 8 pi
+
+/**
+ * Variante courante sur le chantier (pas décrite dans la procédure) : chaque
+ * madrier de 16 pi de la section 1 fait de deux 6 × 6 de 8 pi bout à bout. Le
+ * joint tombe toujours sur un blocage, jamais dans le vide.
+ *   joint 'commun' : un blocage centré sous le joint, les deux bouts dessus ;
+ *   joint 'double' : un blocage sous chaque bout, côte à côte.
+ * Pas de doubleur aux joints des 8 pi : à la jonction des sections, seulement le bout de
+ * 6 × 6 de 24 po le long des madriers de rive, comme dans la vidéo (P10, repère 8).
+ * Retourne les madriers (deux par ligne) et la rangée d'appuis du joint.
+ */
+export const JOINT8_X = 8 * FT;
+export function variante8(S, { joint = 'commun' } = {}) {
+  const madriers = S.group();
+  for (const z of joistZ) {
+    madriers.add(lumber(S, [8 * FT, B66, B66], [4 * FT, B66 / 2, z]));
+    madriers.add(lumber(S, [8 * FT, B66, B66], [12 * FT, B66 / 2, z], 'woodLight'));
+  }
+  const appuis = S.group();
+  const xs = joint === 'double' ? [JOINT8_X - P8 / 2, JOINT8_X + P8 / 2] : [JOINT8_X];
+  for (const x of xs) {
+    for (const z of joistZ) {
+      for (const p of stack(x, z, 0, 'z', { inFloor: true, block: true }).pieces) {
+        appuis.add(p.kind === 'wedge' ? wedge(S, p) : lumber(S, p.size, p.pos, p.kind === 'crib' ? 'woodDark' : 'wood'));
+      }
+    }
+  }
+  return { madriers, appuis };
+}
+
+/**
+ * Variante 8 pi, jonction des deux sections (plancher de 16 × 32 pi) : jonction doublée.
+ * Le 6 × 6 de jonction en travers (16 pi d'un seul bout avec le bois de 16 pi) devient deux
+ * rangées côte à côte, chacune de deux 6 × 6 de 8 pi bout à bout (joint au centre, sous le
+ * madrier du milieu, sur son blocage). Les madriers de la section 1 reposent à plein sur la
+ * première rangée, ceux de la section 2 sur la deuxième ; les blocages de jonction (24 po,
+ * selon X) portent les deux rangées. Le bout de 6 × 6 de 24 po vissé dans les deux sections
+ * reste seulement le long des madriers de rive (P10, repère 8).
+ */
+export function jonction8(S) {
+  const g = S.group();
+  [JOINT_X - B66 / 2, JOINT_X + B66 / 2].forEach((x, k) => {
+    for (const z of [-4 * FT, 4 * FT]) g.add(lumber(S, [B66, B66, 8 * FT], [x, -B66 / 2, z], k ? 'woodLight' : 'wood'));
+  });
+  return g;
+}
+
+/**
+ * Variante 8 pi aussi dans la section 2 : madriers en deux 6 × 6 de 8 pi, joint à 24 pi
+ * (8 pi après la jonction) ; le soutien le plus proche est placé sous le joint, sur ses
+ * blocages (le joint ne tombe jamais dans le vide). Les soutiens en travers (6 × 6 de 16 pi
+ * dans la procédure) sont eux aussi faits de deux 8 pi bout à bout, joint au centre, sous le
+ * madrier du milieu, sur son blocage.
+ */
+export const JOINT8_X2 = SEC + 8 * FT;
+export const SLEEPER8_X = SLEEPERS_X.map((x) => (Math.abs(x - JOINT8_X2) < 0.2 ? JOINT8_X2 : x));
+export function variante8Sec2(S) {
+  const madriers = S.group();
+  for (const z of joistZ) {
+    madriers.add(lumber(S, [8 * FT, B66, B66], [SEC + 4 * FT, B66 / 2, z]));
+    madriers.add(lumber(S, [8 * FT, B66, B66], [SEC + 12 * FT, B66 / 2, z], 'woodLight'));
+  }
+  const soutiens = S.group();
+  for (const x of SLEEPER8_X) {
+    soutiens.add(lumber(S, [B66, B66, 8 * FT], [x, -B66 / 2, -4 * FT]));
+    soutiens.add(lumber(S, [B66, B66, 8 * FT], [x, -B66 / 2, 4 * FT], 'woodLight'));
+  }
+  // Blocages sous le soutien déplacé sous le joint (les autres restent en place).
+  const appuis = S.group();
+  for (const z of joistZ) {
+    for (const p of stack(JOINT8_X2, z, -B66, 'x', { inFloor: true }).pieces) {
+      appuis.add(p.kind === 'wedge' ? wedge(S, p) : lumber(S, p.size, p.pos, p.kind === 'crib' ? 'woodDark' : 'wood'));
+    }
+  }
+  return { madriers, soutiens, appuis };
+}
+
 // ------------------------------------------------------------------ section 2
 
 /**

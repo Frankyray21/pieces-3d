@@ -250,7 +250,9 @@ export class Annotator {
     ctx.clearRect(0, 0, this.W, this.H);
     const jump = Math.abs(t - this.lastT) > 0.2;
     this.lastT = t;
-    const active = this.items.filter((a) => t >= a.t0 && t <= a.t1 + 0.4);
+    // Encart (blackout) : seulement ses propres annotations.
+    const out = (this.blackout || []).some(([x, y]) => t >= x && t < y);
+    const active = this.items.filter((a) => t >= a.t0 && t <= a.t1 + 0.4 && (!out || a.v8) && (out || !a.v8 || t <= a.t1 + 0.4));
     const placed = avoid.map((r) => ({ ...r }));
     // Géométrie projetée et visibilité.
     const draws = [];

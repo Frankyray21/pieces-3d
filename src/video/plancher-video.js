@@ -24,6 +24,8 @@ import * as S from '../viewer/shapes.js';
 import models from '../models/plancher-dd/index.js';
 import { IN, FT, P3, P8, B66, W, L, SEC, DECK, ground, plankX, TIGHT, d1, joistZ, GUIDE_X, DIP } from '../models/plancher-dd/plan.js';
 import { lagScrews } from '../models/plancher-dd/lumber.js';
+import { variante8, jonction8, variante8Sec2, JOINT8_X, JOINT8_X2 } from '../models/plancher-dd/floor.js';
+import { V8, V8_CAM, V8_KEYS, V8_PHASE, V8_NOTES } from './plancher-v8.js';
 import { timeline, RETENIR, stepCard, STEP_CARD, vt } from './plancher-script.js';
 import { Annotator } from './plancher-annot.js';
 import { materielGroup } from './plancher-materiel.js';
@@ -262,6 +264,24 @@ const extras = {
     return g;
   })(),
 };
+// Variante courante : madriers de la section 1 en 6 × 6 de 8 pi (deux par ligne), joint sur un blocage.
+const v8 = variante8(S), v8b = variante8(S, { joint: 'double' });
+extras.madriers8 = v8.madriers;
+extras.appuis8 = v8.appuis;
+extras.appuis8b = v8b.appuis;
+extras.jonction8 = jonction8(S);
+const v8s2 = variante8Sec2(S);
+extras.madriers8s2 = v8s2.madriers;
+extras.soutiens8s2 = v8s2.soutiens;
+extras.appuis8s2 = v8s2.appuis;
+// Variante 8 pi : niveau de 48 po sur un 3 × 8 de 8 pi posé le long du madrier de rive, à
+// cheval sur le joint : les deux 6 × 6 de 8 pi de la ligne parfaitement de niveau.
+extras.niveau8 = S.group(
+  S.box(8 * FT, P3, 0.2, 'woodLight', { pos: [0, P3 / 2, 0] }),
+  S.box(48 * IN, 0.07, 0.045, 'blue', { pos: [0, P3 + 0.035, 0] }),
+  S.box(0.07, 0.02, 0.047, 'lampAmber', { pos: [0, P3 + 0.06, 0] }),
+);
+extras.niveau8.position.set(JOINT8_X, B66, joistZ.at(-1));
 extras.highMark.position.set(high.x, high.y + 0.004, high.z);
 extras.highMark.children[2].rotation.x = Math.PI; // pointe vers le sol
 extras.level.position.set(2.3, B66, -0.4);
@@ -358,6 +378,63 @@ function ghost(t) {
       m.visible = m.opacity > 0.01;
     }
   }
+}
+
+// ------------------------------------------------------------------ encart variante 8 pi
+
+// Étape 11 : l'encart (plancher-v8.js) se joue pendant le silence ajouté dans la voix ;
+// la scène de la vidéo y est figée. Planches et pièces de 16 pi retirées, 6 × 6 de 8 pi
+// posés un à un, caméra et annotations propres ; retour à l'état de la vidéo à la
+// dernière coupe.
+const V8SEG = SEGS.find((s) => s.insert);
+const V8_T0 = V8SEG.start + V8SEG.insert.at, V8_T1 = V8_T0 + V8SEG.insert.dur;
+const near = (lf, x, d) => Math.abs(lf.c.x - x) < d;
+const v8Planks = leaves.filter((lf) => lf.asm === 'P07' || lf.asm === 'P13');
+const v8Old = leaves.filter((lf) => ['joist1', 'joists1', 'joistFar'].includes(lf.cue)
+  || (lf.asm === 'P10' && ['1', '2'].includes(lf.ref))
+  || (lf.asm === 'P04' && lf.ref === '7')
+  // Tire-fonds des bouts de madriers dans la jonction (P04 rep. 8, P10 rep. 7) : partent
+  // avec les madriers, sinon ils restent debout dans le vide pendant la pose.
+  || (lf.asm === 'P04' && lf.ref === '8') || (lf.asm === 'P10' && lf.ref === '7')
+  || (lf.cue === 'support1' && near(lf, JOINT8_X, 0.2))
+  || (lf.asm === 'P10' && ['3', '4', '5', '6'].includes(lf.ref) && near(lf, JOINT8_X2, 0.45)));
+// Pièces de la variante, dans l'ordre de pose : section 1, jonction, section 2.
+const v8Groups = ['appuis8', 'madriers8', 'jonction8', 'appuis8s2', 'soutiens8s2', 'madriers8s2'].map((k) => extras[k]);
+const v8New = v8Groups.flatMap((g) => g.children);
+for (const o of v8New) o.userData.base = o.position.clone();
+const camKey = (name) => V8_CAM[name];
+/** Caméra de l'encart à l'instant u (dans l'encart). */
+function v8Camera(u) {
+  let i = V8_KEYS.findIndex((k) => k[0] > u);
+  if (i === -1) i = V8_KEYS.length;
+  const a = V8_KEYS[Math.max(0, i - 1)], b = V8_KEYS[Math.min(V8_KEYS.length - 1, i)];
+  // Coupe : le plan suivant commence d'un coup à son instant.
+  const k = b[2] || b[0] <= a[0] ? 0 : ease(Math.min(1, Math.max(0, (u - a[0]) / (b[0] - a[0]))));
+  const A = camKey(a[1]), B = camKey(b[1]);
+  camera.position.set(...A.pos.map((p, j) => p + (B.pos[j] - p) * k));
+  camera.lookAt(...A.tgt.map((p, j) => p + (B.tgt[j] - p) * k));
+}
+const inV8 = (t) => t >= V8_T0 && t < V8_T1;
+function v8Apply(t) {
+  if (!inV8(t)) return;
+  const u = t - V8_T0, P = V8_PHASE;
+  v8Camera(u);
+  if (u < P.cut || u >= P.back) return;
+  for (const lf of v8Planks) lf.obj.visible = false;
+  // Pièces de 16 pi : se lèvent et disparaissent.
+  const ko = Math.min(1, Math.max(0, (u - P.out) / 0.6));
+  for (const lf of v8Old) {
+    lf.obj.visible = lf.obj.visible && ko < 1;
+    if (lf.obj.visible) lf.obj.position.y = lf.base.y + 0.5 * ease(ko);
+  }
+  // Pièces de 8 pi : posées une à une.
+  for (const g of v8Groups) g.visible = true;
+  v8New.forEach((o, i) => {
+    const e = (u - (P.drop + (i / v8New.length) * P.dropSpan)) / 0.5;
+    o.visible = e >= 0;
+    o.position.copy(o.userData.base);
+    o.position.y += 0.5 * (1 - ease(Math.min(1, Math.max(0, e))));
+  });
 }
 
 // ------------------------------------------------------------------ caméra
@@ -458,6 +535,11 @@ annotCanvas.height = VH;
 annotCanvas.style.cssText = 'position:absolute;left:0;top:0;pointer-events:none';
 document.getElementById('stage').appendChild(annotCanvas);
 const annot = new Annotator(annotCanvas, camera, SEGS, [VW, VH]);
+// Encart : les annotations de la vidéo qui finissent juste avant s'effacent avant lui ;
+// celles de l'encart, en temps de l'encart, et aucune autre pendant l'encart.
+for (const a of annot.items) if (a.t0 < V8_T0 && a.t1 > V8_T0 && a.until != null && a.until <= V8.v + 1e-6) a.t1 = V8_T0 - 0.45;
+for (const n of V8_NOTES) annot.items.push({ ...n, type: 'note', seg: V8SEG, v8: true, t0: V8_T0 + n.u0, t1: V8_T0 + n.u1 });
+annot.blackout = [[V8_T0, V8_T1]];
 window.__annotObj = annot;
 // Zones interdites aux étiquettes : étiquette PRO-DD-ST-003, encadré « Pourquoi »,
 // carton d'étape (début de partie).
@@ -585,6 +667,7 @@ function update(t) {
   tighten(t);
   cameraAt(t);
   ghost(t);
+  v8Apply(t);
 }
 function draw() {
   if (SHADOW_CACHE) {
@@ -692,6 +775,38 @@ window.__still = (t, pos, tgt, fov) => {
   if (composer) composer.render(); else renderer.render(scene, camera);
   return renderer.domElement.toDataURL('image/jpeg', 0.95);
 };
+// Image fixe de la variante 8 pi (validation) : à l'instant t, madriers de 16 pi de la
+// section 1 et rangée d'appuis voisine du joint remplacés par la variante.
+window.__still8 = (t, pos, tgt, fov, opts = {}) => {
+  if (typeof opts === 'string') opts = { joint: opts };
+  const { joint = 'commun', jonction = false, madriers = true, planches = true, niveau = false, sec2 = false } = opts;
+  // Soutien de la section 2 le plus proche du joint à 24 pi (remplacé par celui sous le joint).
+  const near2 = (lf) => lf.asm === 'P10' && ['3', '4', '5', '6'].includes(lf.ref) && Math.abs(lf.c.x - JOINT8_X2) < 0.45;
+  render(t);
+  for (const lf of leaves) {
+    if (madriers && ['joist1', 'joists1', 'joistFar'].includes(lf.cue)) lf.obj.visible = false;
+    if (madriers && lf.cue === 'support1' && Math.abs(lf.c.x - JOINT8_X) < 0.2) lf.obj.visible = false;
+    if (jonction && lf.asm === 'P04' && lf.ref === '7') lf.obj.visible = false; // 6 × 6 de jonction de 16 pi
+    if (!planches && (lf.asm === 'P07' || lf.asm === 'P13')) lf.obj.visible = false; // recouvrement en 3 × 8 caché
+    // Section 2 en 8 pi : madriers et soutiens de 16 pi remplacés, appuis du soutien déplacé.
+    if (sec2 && ((lf.asm === 'P10' && ['1', '2'].includes(lf.ref)) || near2(lf))) lf.obj.visible = false;
+  }
+  extras.madriers8.visible = madriers;
+  extras.appuis8.visible = madriers && joint === 'commun';
+  extras.appuis8b.visible = madriers && joint === 'double';
+  extras.jonction8.visible = jonction;
+  extras.niveau8.visible = niveau;
+  extras.madriers8s2.visible = sec2;
+  extras.soutiens8s2.visible = sec2;
+  extras.appuis8s2.visible = sec2;
+  camera.position.set(...pos);
+  camera.fov = fov || 40;
+  camera.updateProjectionMatrix();
+  camera.lookAt(...tgt);
+  camera.updateMatrixWorld(true);
+  if (composer) composer.render(); else renderer.render(scene, camera);
+  return renderer.domElement.toDataURL('image/jpeg', 0.95);
+};
 // Capture rapide : la 3D seule (JPEG) et les opacités des calques ; les calques
 // eux-mêmes sont capturés une fois par segment (__layer), puis composés à part.
 window.__frame = (t) => {
@@ -703,6 +818,7 @@ window.__frame = (t) => {
 // caméra suffit. À appeler dans l'ordre des images (lissage des positions).
 window.__annot = (t) => {
   cameraAt(t);
+  if (inV8(t)) v8Camera(t - V8_T0);
   camera.updateMatrixWorld(true);
   drawAnnotations(t);
   return annotCanvas.toDataURL('image/png');

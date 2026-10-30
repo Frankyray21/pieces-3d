@@ -15,6 +15,7 @@
 // La durée d'un segment vient de sa narration (débit d'environ 2,5 mots/s,
 // celui de la vidéo du mandrin), avec un minimum pour l'action.
 
+import { V8 } from './plancher-v8.js';
 import { TOUR, MAT } from './plancher-materiel.js';
 
 // Arrêts de la caméra sur le bois et les outils (TOUR, plancher-materiel.js), calés sur
@@ -413,7 +414,8 @@ const GAPS = {
   sec: [[354.19, 0.19], [360.13, 0.4], [362.44, 0.18], [364.91, 0.14], [369.61, 0.18], [374.35, 0.28], [379.92, 0.14], [381.66, 0.06]],
   demont: [[386.58, 0.06], [391.24, 0.06], [393.28, 0.15]],
   fin: [[423.98, 0.1], [428.39, 0.25], [433.86, 0.06]],
-  e11: [[242.1, 2.4], [248.8, 2.0]],
+  // Encart « Variante : 6 × 6 de 8 pi » (plancher-v8.js) : silence de la durée de l'encart.
+  e11: [[V8.v, V8.dur], [242.1, 2.4], [248.8, 2.0]],
 };
 // Passages de l'enregistrement retirés : [début, fin]. Étape 11 : la cage, « Pis attention »
 // (coupé) et le début de l'étape 12 ont été lus deux fois ; on garde la deuxième prise.
@@ -469,6 +471,8 @@ export function timeline() {
     if (s.ghost) seg.ghost = { from: f(s.ghost.vfrom), to: Math.min(1, s.ghost.vto != null ? f(s.ghost.vto) : 1) };
     // Encadré « Pourquoi » : de 0,8 s après le début à la fin de la partie, ou entre
     // whyFrom et whyTo (temps de voix) ; instants dans la partie (s).
+    // Encart de la variante 8 pi : instant (dans la partie) et durée.
+    if (s.id === 'e11') seg.insert = { at: vt(seg, V8.v) - V8.dur - seg.start, dur: V8.dur };
     if (s.why) seg.whyAt = [s.whyFrom != null ? vt(seg, s.whyFrom) - seg.start : 0.8, s.whyTo != null ? vt(seg, s.whyTo) - seg.start : dur];
     t += dur;
     return seg;

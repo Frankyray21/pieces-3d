@@ -3,6 +3,7 @@
 // et CSS communs au montage HyperFrames (scripts/video-plancher-hf.mjs) et au
 // montage direct (scripts/video-plancher-montage.mjs).
 import { RETENIR, stepCard, STEP_CARD } from '../src/video/plancher-script.js';
+import { V8_BAND } from '../src/video/plancher-v8.js';
 
 export const W = 1280, H = 720, H3 = 540;
 export const FONTS = [
@@ -61,6 +62,14 @@ export function calques({ segs, fits = [], fontCss = '', video = null }) {
       + `<div class="bar">${bar(s)}</div><div class="head" style="${anim('fadein', 0, 0.35)}"><span class="num">${esc(label(b))}</span><span class="title">${b.n === '18' ? '' : esc(b.title)}</span></div>`
       + `<div class="text" style="font-size:${fits[i]?.text ?? fit(b.text, 22, 15, 150)}px;${anim('fadein', 0, 0.35)}">${esc(b.text)}</div>`
       + `<div class="detail" style="font-size:${fits[i]?.detail ?? fit(b.detail, 17, 13, 130)}px;${anim('fadein', 0, 0.35)}">${esc(b.detail)}</div></div>`);
+    // Encart de la variante 8 pi : son propre bandeau, par-dessus celui de l'étape.
+    if (s.insert) {
+      const vb = V8_BAND, at = s.start + s.insert.at, d = s.insert.dur;
+      sub(`v${id}`, at, d, 1, `<div class="band">`
+        + `<div class="bar">${bar(s)}</div><div class="head" style="${anim('fadein', 0, 0.35)}"><span class="num">${esc(vb.label)}</span><span class="title">${esc(vb.title)}</span></div>`
+        + `<div class="text" style="font-size:${fit(vb.text, 22, 15, 150)}px;${anim('fadein', 0, 0.35)}">${esc(vb.text)}</div>`
+        + `<div class="detail" style="font-size:${fit(vb.detail, 17, 13, 130)}px;${anim('fadein', 0, 0.35)}">${esc(vb.detail)}</div></div>`);
+    }
     // Carton d'étape : grand titre au centre de la 3D pendant 2 s.
     const sc = stepCard(s);
     if (sc) {
