@@ -79,10 +79,9 @@ export function P07(api, opts = {}) {
  * joint tombe toujours sur un blocage, jamais dans le vide.
  *   joint 'commun' : un blocage centré sous le joint, les deux bouts dessus ;
  *   joint 'double' : un blocage sous chaque bout, côte à côte.
- * Doubleurs : à chaque joint, un bout de 6 × 6 de 24 po le long du madrier, à cheval
- * sur le joint, vissé dans les deux 6 × 6 (un tire-fond de chaque côté du joint), comme le
- * blocage de jonction des deux sections. Du côté du centre du plancher.
- * Retourne les madriers (deux par ligne), la rangée d'appuis du joint et les doubleurs.
+ * Pas de doubleur aux joints des 8 pi : à la jonction des sections, seulement le bout de
+ * 6 × 6 de 24 po le long des madriers de rive, comme dans la vidéo (P10, repère 8).
+ * Retourne les madriers (deux par ligne) et la rangée d'appuis du joint.
  */
 export const JOINT8_X = 8 * FT;
 export function variante8(S, { joint = 'commun' } = {}) {
@@ -100,50 +99,18 @@ export function variante8(S, { joint = 'commun' } = {}) {
       }
     }
   }
-  const doubleurs = S.group();
-  const half = 12 * IN;
-  for (const z of joistZ) {
-    const d = z > 0.01 ? -1 : 1; // côté du doubleur : vers le centre du plancher
-    doubleurs.add(lumber(S, [2 * half, B66, B66], [JOINT8_X, B66 / 2, z + d * B66], 'woodDark'));
-    const face = z + d * 1.5 * B66; // face libre du doubleur (têtes des tire-fonds)
-    doubleurs.add(S.boltSet([[JOINT8_X - 6 * IN, B66 / 2, face], [JOINT8_X + 6 * IN, B66 / 2, face]], 0.375 * IN, 6 * IN, 'zinc', { axis: d > 0 ? 'z' : '-z', washer: true }));
-  }
-  return { madriers, appuis, doubleurs };
+  return { madriers, appuis };
 }
 
 /**
  * Variante 8 pi, jonction des deux sections (plancher de 16 × 32 pi) : le 6 × 6 de
- * jonction en travers (16 pi d'un seul bout avec le bois de 16 pi) est doublé : deux
- * rangées côte à côte, chacune de deux 6 × 6 de 8 pi bout à bout (joint au centre, sur le
- * blocage du madrier du milieu). Les madriers de la section 1 reposent à plein sur la
- * première rangée, ceux de la section 2 sur la deuxième ; les blocages de jonction
- * (24 po, selon X) portent les deux rangées.
+ * jonction en travers (16 pi d'un seul bout avec le bois de 16 pi) fait de deux 6 × 6 de
+ * 8 pi bout à bout ; le joint tombe au centre, sous le madrier du milieu, sur son blocage.
  */
 export function jonction8(S) {
   const g = S.group();
-  [JOINT_X - B66 / 2, JOINT_X + B66 / 2].forEach((x, k) => {
-    for (const z of [-4 * FT, 4 * FT]) g.add(lumber(S, [B66, B66, 8 * FT], [x, -B66 / 2, z], k ? 'woodLight' : 'wood'));
-  });
-  return g;
-}
-
-/**
- * Variante 8 pi, jonction des deux sections : le bout de 6 × 6 de 24 po à cheval sur le
- * joint, vissé dans le madrier de chaque section (blocage de jonction, posé le long des deux
- * madriers de rive dans la vidéo), mis sur chaque ligne de madrier : les madriers de la
- * section 2 restent au niveau de ceux de la section 1 pendant qu'on monte la section 2.
- * Seulement à la jonction des sections, pas aux joints des 8 pi. Les madriers de rive ont
- * déjà le leur (P10, repère 8) : seulement les lignes du milieu ici.
- */
-export function doubleursJonction(S) {
-  const g = S.group();
-  const half = 12 * IN;
-  for (const z of joistZ.slice(1, -1)) {
-    const d = z > 0.01 ? -1 : 1; // du côté du centre du plancher
-    g.add(lumber(S, [2 * half, B66, B66], [JOINT_X, B66 / 2, z + d * B66]));
-    const face = z + d * 1.5 * B66;
-    g.add(S.boltSet([[JOINT_X - 6 * IN, B66 / 2, face], [JOINT_X + 6 * IN, B66 / 2, face]], 0.375 * IN, 6 * IN, 'zinc', { axis: d > 0 ? 'z' : '-z', washer: true }));
-  }
+  g.add(lumber(S, [B66, B66, 8 * FT], [JOINT_X, -B66 / 2, -4 * FT]));
+  g.add(lumber(S, [B66, B66, 8 * FT], [JOINT_X, -B66 / 2, 4 * FT], 'woodLight'));
   return g;
 }
 
