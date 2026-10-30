@@ -268,6 +268,7 @@ const v8 = variante8(S), v8b = variante8(S, { joint: 'double' });
 extras.madriers8 = v8.madriers;
 extras.appuis8 = v8.appuis;
 extras.appuis8b = v8b.appuis;
+extras.doubleurs8 = v8.doubleurs;
 extras.highMark.position.set(high.x, high.y + 0.004, high.z);
 extras.highMark.children[2].rotation.x = Math.PI; // pointe vers le sol
 extras.level.position.set(2.3, B66, -0.4);
@@ -700,7 +701,7 @@ window.__still = (t, pos, tgt, fov) => {
 };
 // Image fixe de la variante 8 pi (validation) : à l'instant t, madriers de 16 pi de la
 // section 1 et rangée d'appuis voisine du joint remplacés par la variante.
-window.__still8 = (t, pos, tgt, fov, joint = 'commun') => {
+window.__still8 = (t, pos, tgt, fov, joint = 'commun', doubleur = false) => {
   render(t);
   for (const lf of leaves) {
     if (['joist1', 'joists1', 'joistFar'].includes(lf.cue)) lf.obj.visible = false;
@@ -709,6 +710,7 @@ window.__still8 = (t, pos, tgt, fov, joint = 'commun') => {
   extras.madriers8.visible = true;
   extras.appuis8.visible = joint === 'commun';
   extras.appuis8b.visible = joint === 'double';
+  extras.doubleurs8.visible = doubleur;
   camera.position.set(...pos);
   camera.fov = fov || 40;
   camera.updateProjectionMatrix();
