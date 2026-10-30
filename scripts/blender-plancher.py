@@ -246,12 +246,28 @@ def rock_material(src, floor):
     Lk.new(bump.outputs['Normal'], bsdf.inputs['Normal'])
     bsdf.inputs['Roughness'].default_value = 0.9
     bsdf.inputs['Specular IOR Level'].default_value = 0.35
+    if not floor:
+        # Paroi vue de dos (caméra derrière, hors de la galerie) : transparente pour la
+        # caméra, comme dans la vidéo (faces arrière non dessinées).
+        out = N['Material Output']
+        geo = N.new('ShaderNodeNewGeometry')
+        lp = N.new('ShaderNodeLightPath')
+        both = N.new('ShaderNodeMath'); both.operation = 'MULTIPLY'
+        Lk.new(geo.outputs['Backfacing'], both.inputs[0]); Lk.new(lp.outputs['Is Camera Ray'], both.inputs[1])
+        tr = N.new('ShaderNodeBsdfTransparent')
+        mix = N.new('ShaderNodeMixShader')
+        Lk.new(both.outputs[0], mix.inputs['Fac'])
+        Lk.new(bsdf.outputs[0], mix.inputs[1]); Lk.new(tr.outputs[0], mix.inputs[2])
+        Lk.new(mix.outputs[0], out.inputs['Surface'])
     return m
 
 
 photo = {}
 for o in [o for o in bpy.data.objects if o.type == 'MESH']:
     names = mat_names(o)
+    if names == {'rock'}:
+        # Parois et plafond : ne bloquent pas la lumière principale (comme la vidéo).
+        o.visible_shadow = False
     if names & WOOD:
         grain_attributes(o)
     for s in o.material_slots:
@@ -295,7 +311,7 @@ if DEVICE == 'gpu':
             pass
 sc.view_settings.view_transform = 'AgX'
 sc.view_settings.look = 'AgX - Medium High Contrast'
-sc.view_settings.exposure = 0.0
+sc.view_settings.exposure = 0.35
 sc.render.image_settings.file_format = 'PNG'
 sc.render.filepath = OUT
 t0 = time.time()
