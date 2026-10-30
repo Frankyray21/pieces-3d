@@ -127,6 +127,26 @@ export function jonction8(S) {
   return g;
 }
 
+/**
+ * Variante 8 pi, jonction des deux sections : le bout de 6 × 6 de 24 po à cheval sur le
+ * joint, vissé dans le madrier de chaque section (blocage de jonction, posé le long des deux
+ * madriers de rive dans la vidéo), mis sur chaque ligne de madrier : les madriers de la
+ * section 2 restent au niveau de ceux de la section 1 pendant qu'on monte la section 2.
+ * Seulement à la jonction des sections, pas aux joints des 8 pi. Les madriers de rive ont
+ * déjà le leur (P10, repère 8) : seulement les lignes du milieu ici.
+ */
+export function doubleursJonction(S) {
+  const g = S.group();
+  const half = 12 * IN;
+  for (const z of joistZ.slice(1, -1)) {
+    const d = z > 0.01 ? -1 : 1; // du côté du centre du plancher
+    g.add(lumber(S, [2 * half, B66, B66], [JOINT_X, B66 / 2, z + d * B66]));
+    const face = z + d * 1.5 * B66;
+    g.add(S.boltSet([[JOINT_X - 6 * IN, B66 / 2, face], [JOINT_X + 6 * IN, B66 / 2, face]], 0.375 * IN, 6 * IN, 'zinc', { axis: d > 0 ? 'z' : '-z', washer: true }));
+  }
+  return g;
+}
+
 // ------------------------------------------------------------------ section 2
 
 /**
