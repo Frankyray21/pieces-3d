@@ -10,7 +10,8 @@
 //     --frames scratch/v11 --render plancher.mp4
 //   options : --range a:b (images a à b-1, sans voix : essai) · --muet · --crf 21
 //     · --preset slow · --tune film · --x264 "bframes=0:…" ou « aucun » (encodeur, voir plus bas)
-//     · --abr 192k (débit de la voix) ; version compressée (environ 40 Mo) : --crf 26 --abr 96k
+//     · --abr 192k (débit de la voix) · --ac 2 (voix sur deux canaux)
+//     version compressée sans blocs visibles (environ 45 Mo) : --crf 26 --abr 128k --ac 2
 import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
@@ -132,7 +133,7 @@ if (VOICE) {
   } else if (v8) console.warn(`voix de l'encart absente (${V8.file}) : encart muet`);
   fc += ';' + pieces.map((p, i) => `[${p.src}:a]atrim=start=${p.a}:end=${p.b},asetpts=PTS-STARTPTS,adelay=${Math.round(p.at * 1000)}:all=1[p${i}]`).join(';')
     + `;${pieces.map((_, i) => `[p${i}]`).join('')}amix=inputs=${pieces.length}:normalize=0:dropout_transition=0,atrim=duration=${DUR.toFixed(3)},loudnorm=I=-16:TP=-1.5:LRA=11[a]`;
-  maps.push('-map', '[a]', '-c:a', 'aac', '-b:a', opt('abr', '192k'), '-ar', '48000');
+  maps.push('-map', '[a]', '-c:a', 'aac', '-b:a', opt('abr', '192k'), '-ar', '48000', ...(opt('ac') ? ['-ac', opt('ac')] : []));
 }
 const t1 = Date.now();
 run('ffmpeg', ['-hide_banner', '-v', 'error', '-y', ...ins, '-filter_complex', fc, ...maps, '-frames:v', String(F1 - F0),
