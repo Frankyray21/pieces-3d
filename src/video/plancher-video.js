@@ -8,6 +8,7 @@ import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { GTAOPass } from 'three/examples/jsm/postprocessing/GTAOPass.js';
+import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
@@ -609,6 +610,26 @@ window.__state = (t) => {
   const d = camera.getWorldDirection(new THREE.Vector3());
   const pose = [...camera.position.toArray(), ...d.toArray()].map((x) => +x.toFixed(6));
   return { scene: sceneHash(), cam: camHash(), pose, seg: SEGS.indexOf(s), ...levels(t, s) };
+};
+// Scène de l'instant t en glTF binaire (base64), caméra comprise (« __camera ») :
+// rendu photo-réaliste dans Blender (scripts/blender-plancher.py), même cadrage.
+window.__glb = async (t) => {
+  update(t);
+  scene.updateMatrixWorld(true);
+  const cam = camera.clone();
+  cam.name = '__camera';
+  cam.userData = { fov: camera.fov, aspect: VW / VH };
+  scene.add(cam);
+  cam.updateMatrixWorld(true);
+  try {
+    const glb = await new GLTFExporter().parseAsync(scene, { binary: true, onlyVisible: true });
+    const b = new Uint8Array(glb);
+    let s = '';
+    for (let i = 0; i < b.length; i += 0x8000) s += String.fromCharCode(...b.subarray(i, i + 0x8000));
+    return btoa(s);
+  } finally {
+    scene.remove(cam);
+  }
 };
 // Image fixe (validation) : l'état de l'instant t, vu d'une caméra donnée.
 window.__still = (t, pos, tgt, fov) => {
