@@ -24,6 +24,7 @@ import * as S from '../viewer/shapes.js';
 import models from '../models/plancher-dd/index.js';
 import { IN, FT, P3, P8, B66, W, L, SEC, DECK, ground, plankX, TIGHT, d1, joistZ, GUIDE_X, DIP } from '../models/plancher-dd/plan.js';
 import { lagScrews } from '../models/plancher-dd/lumber.js';
+import { variante8, JOINT8_X } from '../models/plancher-dd/floor.js';
 import { timeline, RETENIR, stepCard, STEP_CARD, vt } from './plancher-script.js';
 import { Annotator } from './plancher-annot.js';
 import { materielGroup } from './plancher-materiel.js';
@@ -262,6 +263,11 @@ const extras = {
     return g;
   })(),
 };
+// Variante courante : madriers de la section 1 en 6 × 6 de 8 pi (deux par ligne), joint sur un blocage.
+const v8 = variante8(S), v8b = variante8(S, { joint: 'double' });
+extras.madriers8 = v8.madriers;
+extras.appuis8 = v8.appuis;
+extras.appuis8b = v8b.appuis;
 extras.highMark.position.set(high.x, high.y + 0.004, high.z);
 extras.highMark.children[2].rotation.x = Math.PI; // pointe vers le sol
 extras.level.position.set(2.3, B66, -0.4);
@@ -684,6 +690,25 @@ window.__blenderAnim = (f0, f1, fps = 24) => {
 // Image fixe (validation) : l'état de l'instant t, vu d'une caméra donnée.
 window.__still = (t, pos, tgt, fov) => {
   render(t);
+  camera.position.set(...pos);
+  camera.fov = fov || 40;
+  camera.updateProjectionMatrix();
+  camera.lookAt(...tgt);
+  camera.updateMatrixWorld(true);
+  if (composer) composer.render(); else renderer.render(scene, camera);
+  return renderer.domElement.toDataURL('image/jpeg', 0.95);
+};
+// Image fixe de la variante 8 pi (validation) : à l'instant t, madriers de 16 pi de la
+// section 1 et rangée d'appuis voisine du joint remplacés par la variante.
+window.__still8 = (t, pos, tgt, fov, joint = 'commun') => {
+  render(t);
+  for (const lf of leaves) {
+    if (['joist1', 'joists1', 'joistFar'].includes(lf.cue)) lf.obj.visible = false;
+    if (lf.cue === 'support1' && Math.abs(lf.c.x - JOINT8_X) < 0.2) lf.obj.visible = false;
+  }
+  extras.madriers8.visible = true;
+  extras.appuis8.visible = joint === 'commun';
+  extras.appuis8b.visible = joint === 'double';
   camera.position.set(...pos);
   camera.fov = fov || 40;
   camera.updateProjectionMatrix();

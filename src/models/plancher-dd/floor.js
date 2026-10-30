@@ -71,6 +71,35 @@ export function P07(api, opts = {}) {
   return { view: { dir: [0.75, 1.0, 1.1] } };
 }
 
+// ------------------------------------------------------------------ variante : 6 × 6 de 8 pi
+
+/**
+ * Variante courante sur le chantier (pas décrite dans la procédure) : chaque
+ * madrier de 16 pi de la section 1 fait de deux 6 × 6 de 8 pi bout à bout. Le
+ * joint tombe toujours sur un blocage, jamais dans le vide.
+ *   joint 'commun' : un blocage centré sous le joint, les deux bouts dessus ;
+ *   joint 'double' : un blocage sous chaque bout, côte à côte.
+ * Retourne les madriers (deux par ligne) et la rangée d'appuis du joint.
+ */
+export const JOINT8_X = 8 * FT;
+export function variante8(S, { joint = 'commun' } = {}) {
+  const madriers = S.group();
+  for (const z of joistZ) {
+    madriers.add(lumber(S, [8 * FT, B66, B66], [4 * FT, B66 / 2, z]));
+    madriers.add(lumber(S, [8 * FT, B66, B66], [12 * FT, B66 / 2, z], 'woodLight'));
+  }
+  const appuis = S.group();
+  const xs = joint === 'double' ? [JOINT8_X - P8 / 2, JOINT8_X + P8 / 2] : [JOINT8_X];
+  for (const x of xs) {
+    for (const z of joistZ) {
+      for (const p of stack(x, z, 0, 'z', { inFloor: true, block: true }).pieces) {
+        appuis.add(p.kind === 'wedge' ? wedge(S, p) : lumber(S, p.size, p.pos, p.kind === 'crib' ? 'woodDark' : 'wood'));
+      }
+    }
+  }
+  return { madriers, appuis };
+}
+
 // ------------------------------------------------------------------ section 2
 
 /**

@@ -124,7 +124,9 @@ const MIN = 0.006; // jeu sous lequel le madrier repose directement
  * { kind: 'wedge', pos, along, pair, thick } ; kind : 'b38', 'b66', 'crib', 'wedge'.
  */
 export const WEDGE_MAX = WEDGE.t * 1.75; // paire de coins opposés au plus serré
-export function stack(x, z, top, along = 'z', { len38 = BLOCK38, inFloor = false } = {}) {
+// block : pose un 3 × 8 dès qu'il y a la place (joint de deux madriers, variante 8 pi),
+// même là où des coins seuls suffiraient.
+export function stack(x, z, top, along = 'z', { len38 = BLOCK38, inFloor = false, block = false } = {}) {
   const lz = along === 'z';
   // Sous le plancher, un blocage ne dépasse pas la rive (étape 13) : sous un
   // madrier de rive, il est décalé vers l'intérieur (il porte toujours le madrier).
@@ -145,7 +147,7 @@ export function stack(x, z, top, along = 'z', { len38 = BLOCK38, inFloor = false
     out.push({ kind, size, pos: [x + (lz ? 0 : d), y + sh / 2, z + (lz ? d : 0)] });
   };
   let y = g;
-  if (G <= WEDGE_MAX) {
+  if (G <= WEDGE_MAX && !(block && G >= P3 + MIN)) {
     // Coins seulement.
   } else if (G <= P3 + WEDGE_MAX) {
     piece('b38', len38, P3, P8, y); y += P3;
