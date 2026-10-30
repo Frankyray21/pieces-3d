@@ -1,22 +1,37 @@
-# Rendu photo-réaliste (Blender Cycles) d'une scène de la vidéo du plancher, exportée de
-# la page vidéo en glTF (window.__glb(t) : même cadrage, même état des pièces).
-#   blender --background --python scripts/blender-plancher.py -- scene.glb sortie.png [échantillons] [cpu|gpu]
-# ou avec le module bpy : python scripts/blender-plancher.py scene.glb sortie.png 64
-# Bois procédural (veines le long de chaque pièce, cernes au bout, arêtes adoucies), roche
-# et gravier en relief, éclairage doux ; aucune texture externe.
-import sys, math, time
+# Rendu photo-réaliste (Blender Cycles) de la vidéo du plancher : la scène complète et
+# l'animation exportées de la page vidéo (scripts/blender-export.mjs : scene.glb, anim.json)
+# sont rejouées image par image, même cadrage que la vidéo ; les étiquettes, le bandeau et
+# la voix sont ajoutés ensuite au montage (scripts/video-plancher-montage.mjs).
+#   blender --background --factory-startup --python scripts/blender-plancher.py -- \
+#     scene.glb anim.json 0:11025 sortie/ [échantillons=64] [cpu|gpu] [pourcentage=100]
+# Images : sortie/f_00000.jpg … (déjà rendues : sautées, le rendu peut reprendre).
+# Liste d'images : « a:b », « 12,40,41 » ou « @liste.json ». Après chaque lot de 400
+# images, un fichier lot_<n>.zip (images du lot) est écrit pour le rapatriement.
+# Bois procédural (veine le long de chaque pièce, bois de bout, arêtes adoucies), roche
+# et gravier en relief ; aucune texture externe.
+import sys, os, math, time, json, bisect, zipfile
 import bpy, bmesh
-from mathutils import Vector
+from mathutils import Vector, Quaternion
 
 argv = sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else sys.argv[1:]
-GLB, OUT = argv[0], argv[1]
-SAMPLES = int(argv[2]) if len(argv) > 2 else 64
-DEVICE = argv[3] if len(argv) > 3 else 'cpu'
+GLB, ANIM, SPEC, OUTDIR = argv[0], argv[1], argv[2], argv[3]
+SAMPLES = int(argv[4]) if len(argv) > 4 else 64
+DEVICE = argv[5] if len(argv) > 5 else 'cpu'
+PERCENT = int(argv[6]) if len(argv) > 6 else 100
+os.makedirs(OUTDIR, exist_ok=True)
+LOG = open(os.path.join(OUTDIR, 'rendu.log'), 'a', encoding='utf-8')
+
+
+def log(msg):
+    LOG.write(f'{time.strftime("%H:%M:%S")} {msg}\n')
+    LOG.flush()
+
 
 bpy.ops.wm.read_factory_settings(use_empty=True)
 bpy.ops.import_scene.gltf(filepath=GLB)
 sc = bpy.context.scene
 L = 9.7536  # longueur du plancher (32 pi)
+anim = json.load(open(ANIM, encoding='utf-8'))
 
 
 def b(v):
@@ -25,13 +40,17 @@ def b(v):
 
 
 # ------------------------------------------------------------------ caméra et sortie
-cam = bpy.data.objects.get('__camera')
+camd = bpy.data.cameras.new('camera')
+camd.sensor_fit = 'VERTICAL'
+camd.angle_y = math.radians(anim['fov'])
+camd.clip_start, camd.clip_end = 0.05, 80
+cam = bpy.data.objects.new('camera', camd)
+sc.collection.objects.link(cam)
+cam.rotation_mode = 'QUATERNION'
 sc.camera = cam
-cam.data.sensor_fit = 'VERTICAL'
-cam.data.angle_y = math.radians(40)
-cam.data.clip_start, cam.data.clip_end = 0.05, 80
 sc.render.resolution_x, sc.render.resolution_y = 1280, 540
-sc.render.resolution_percentage = int(argv[4]) if len(argv) > 4 else 100
+sc.render.resolution_percentage = PERCENT
+Q_UP = Quaternion((math.cos(math.pi / 4), math.sin(math.pi / 4), 0, 0))  # Y en haut -> Z en haut
 
 # ------------------------------------------------------------------ lumières
 for o in [o for o in bpy.data.objects if o.type == 'LIGHT']:
@@ -57,13 +76,24 @@ w.use_nodes = True
 bg = w.node_tree.nodes['Background']
 bg.inputs['Color'].default_value = (0.19, 0.2, 0.22, 1)
 bg.inputs['Strength'].default_value = 0.55
+_wn, _wl = w.node_tree.nodes, w.node_tree.links
+_lp = _wn.new('ShaderNodeLightPath')
+_dark = _wn.new('ShaderNodeBackground'); _dark.inputs['Color'].default_value = (0.012, 0.014, 0.016, 1)
+_mix = _wn.new('ShaderNodeMixShader')
+_wl.new(_lp.outputs['Is Camera Ray'], _mix.inputs['Fac'])
+_wl.new(bg.outputs[0], _mix.inputs[1]); _wl.new(_dark.outputs[0], _mix.inputs[2])
+_wl.new(_mix.outputs[0], _wn['World Output'].inputs['Surface'])
 
 # ------------------------------------------------------------------ bois : veine de chaque pièce
 WOOD = {'wood', 'woodLight', 'woodDark', 'woodGrey', 'woodWedge', 'woodPlaned'}
 
 
+def base_name(m):
+    return m.name.split('.')[0].split('~')[0]
+
+
 def mat_names(o):
-    return {s.material.name.split('.')[0] for s in o.material_slots if s.material}
+    return {base_name(s.material) for s in o.material_slots if s.material}
 
 
 def grain_attributes(o):
@@ -105,7 +135,7 @@ def grain_attributes(o):
 def wood_material(src):
     """Bois brut scié : veines étirées le long de la pièce, cernes au bout, teinte par pièce."""
     base = src.node_tree.nodes['Principled BSDF'].inputs['Base Color'].default_value[:] if src.use_nodes else (0.6, 0.45, 0.3, 1)
-    planed = src.name.startswith('woodPlaned')
+    planed = base_name(src) == 'woodPlaned'
     m = bpy.data.materials.new(src.name + '_photo')
     m.use_nodes = True
     nt = m.node_tree
@@ -174,11 +204,15 @@ def wood_material(src):
     fibm.inputs['Factor'].default_value = 0.18
     # Teinte propre à chaque pièce (lots de bois différents) et taches.
     tint = N.new('ShaderNodeMix'); tint.data_type = 'RGBA'; tint.blend_type = 'MULTIPLY'
-    tint.inputs['Factor'].default_value = 0.22
+    tint.inputs['Factor'].default_value = 1.0
     Lk.new(ramp.outputs['Color'], fibm.inputs['A'])
     Lk.new(fib.outputs['Fac'], fibm.inputs['B'])
     Lk.new(fibm.outputs['Result'], tint.inputs['A'])
-    Lk.new(seed.outputs['Color'], tint.inputs['B'])
+    lot = N.new('ShaderNodeValToRGB')  # clarté propre à chaque pièce (lots de bois)
+    lot.color_ramp.elements[0].color = (0.74, 0.7, 0.66, 1)
+    lot.color_ramp.elements[1].color = (1.0, 1.0, 1.0, 1)
+    Lk.new(seed.outputs['Value'], lot.inputs['Fac'])
+    Lk.new(lot.outputs['Color'], tint.inputs['B'])
     stain = N.new('ShaderNodeTexNoise'); stain.inputs['Scale'].default_value = 3.5; stain.inputs['Detail'].default_value = 4
     Lk.new(tc.outputs['Object'], stain.inputs['Vector'])
     st = N.new('ShaderNodeMix'); st.data_type = 'RGBA'; st.blend_type = 'MULTIPLY'
@@ -262,6 +296,40 @@ def rock_material(src, floor):
     return m
 
 
+GHOST = []  # (nœud Valeur, 'ghost' | 'near') : transparence de la cage, réglée à chaque image
+
+
+def with_ghost(m, tag):
+    """Copie du matériau mélangée à du transparent (pièces autour de la cage, gros plan)."""
+    m = m.copy()
+    m.name = m.name + '~' + tag
+    N, Lk = m.node_tree.nodes, m.node_tree.links
+    out = next(n for n in N if n.type == 'OUTPUT_MATERIAL')
+    src = out.inputs['Surface'].links[0].from_socket
+    val = N.new('ShaderNodeValue'); val.outputs[0].default_value = 0.0
+    tr = N.new('ShaderNodeBsdfTransparent')
+    mix = N.new('ShaderNodeMixShader')
+    Lk.new(val.outputs[0], mix.inputs['Fac'])
+    Lk.new(src, mix.inputs[1]); Lk.new(tr.outputs[0], mix.inputs[2])
+    Lk.new(mix.outputs[0], out.inputs['Surface'])
+    GHOST.append((val, tag))
+    return m
+
+
+def laser_material():
+    m = bpy.data.materials.new('laser_photo')
+    m.use_nodes = True
+    N, Lk = m.node_tree.nodes, m.node_tree.links
+    N.clear()
+    out = N.new('ShaderNodeOutputMaterial')
+    em = N.new('ShaderNodeEmission'); em.inputs['Color'].default_value = (1.0, 0.08, 0.04, 1); em.inputs['Strength'].default_value = 3.0
+    tr = N.new('ShaderNodeBsdfTransparent')
+    mix = N.new('ShaderNodeMixShader'); mix.inputs['Fac'].default_value = 0.84
+    Lk.new(em.outputs[0], mix.inputs[1]); Lk.new(tr.outputs[0], mix.inputs[2])
+    Lk.new(mix.outputs[0], out.inputs['Surface'])
+    return m
+
+
 photo = {}
 for o in [o for o in bpy.data.objects if o.type == 'MESH']:
     names = mat_names(o)
@@ -274,14 +342,18 @@ for o in [o for o in bpy.data.objects if o.type == 'MESH']:
         if not s.material:
             continue
         key = s.material.name
-        nm = key.split('.')[0]
         if key not in photo:
+            nm = base_name(s.material)
+            tag = s.material.name.split('.')[0].split('~')[1] if '~' in s.material.name else None
             if nm in WOOD:
-                photo[key] = wood_material(s.material)
+                m = wood_material(s.material)
             elif nm in ('rock', 'rockFloor'):
-                photo[key] = rock_material(s.material, nm == 'rockFloor')
+                m = rock_material(s.material, nm == 'rockFloor')
+            elif nm == 'laser':
+                m = laser_material()
             else:
-                photo[key] = None
+                m = s.material if tag else None
+            photo[key] = with_ghost(m, tag) if (m and tag) else m
         if photo[key]:
             s.material = photo[key]
 
@@ -295,7 +367,7 @@ cy.denoiser = 'OPENIMAGEDENOISE'
 cy.max_bounces = 6
 cy.diffuse_bounces = 3
 cy.glossy_bounces = 2
-cy.transparent_max_bounces = 4
+cy.transparent_max_bounces = 48
 if DEVICE == 'gpu':
     prefs = bpy.context.preferences.addons['cycles'].preferences
     for t in ('OPTIX', 'CUDA', 'HIP', 'ONEAPI', 'METAL'):
@@ -312,8 +384,80 @@ if DEVICE == 'gpu':
 sc.view_settings.view_transform = 'AgX'
 sc.view_settings.look = 'AgX - Medium High Contrast'
 sc.view_settings.exposure = 0.35
-sc.render.image_settings.file_format = 'PNG'
-sc.render.filepath = OUT
-t0 = time.time()
-bpy.ops.render.render(write_still=True)
-print(f'RENDU {OUT} {time.time() - t0:.1f} s ({SAMPLES} échantillons, {cy.device})')
+sc.render.image_settings.file_format = 'JPEG'
+sc.render.image_settings.quality = 95
+sc.render.use_persistent_data = True
+
+# ------------------------------------------------------------------ animation
+OBJ = {o.name.split('.')[0]: o for o in bpy.data.objects if o.name.startswith('n')}
+TRACK = {}  # id -> ([images], [états])
+for c in anim['changes']:
+    f, oid, st = c[0], c[1], c[2:]
+    t = TRACK.setdefault(oid, ([], []))
+    t[0].append(f); t[1].append(st)
+for o in OBJ.values():
+    o.rotation_mode = 'QUATERNION'
+MESHES = [o for o in OBJ.values() if o.type == 'MESH']
+CHAIN = {}
+for o in MESHES:
+    ch, p = [], o
+    while p is not None:
+        ch.append(p.name.split('.')[0]); p = p.parent
+    CHAIN[o.name] = ch
+VIS = {}
+
+
+def apply(f):
+    for oid, (fs, sts) in TRACK.items():
+        o = OBJ.get(oid)
+        if o is None:
+            continue
+        i = bisect.bisect_right(fs, f) - 1
+        if i < 0:
+            continue
+        v, px, py, pz, qx, qy, qz, qw, sx, sy, sz = sts[i]
+        VIS[oid] = v
+        o.location = (px, -pz, py)
+        o.rotation_quaternion = (qw, qx, -qz, qy)
+        o.scale = (sx, sz, sy)
+    for o in MESHES:
+        o.hide_render = not all(VIS.get(i, 1) for i in CHAIN[o.name])
+    px, py, pz, qx, qy, qz, qw = anim['cam'][f]
+    cam.location = (px, -pz, py)
+    cam.rotation_quaternion = Q_UP @ Quaternion((qw, qx, qy, qz))
+    g, n = anim['ghost'][f]
+    for val, tag in GHOST:
+        val.outputs[0].default_value = 1.0 - (g if tag == 'ghost' else n)
+
+
+def frames(spec):
+    if spec.startswith('@'):
+        return json.load(open(spec[1:], encoding='utf-8'))
+    if ':' in spec:
+        a, b = map(int, spec.split(':'))
+        return list(range(a, b))
+    return [int(x) for x in spec.split(',')]
+
+
+todo = frames(SPEC)
+log(f'début : {len(todo)} images, {SAMPLES} échantillons, {cy.device}')
+t0, done, lot = time.time(), 0, []
+for k, f in enumerate(todo):
+    out = os.path.join(OUTDIR, f'f_{f:05d}.jpg')
+    if not os.path.exists(out):
+        apply(f)
+        sc.render.filepath = out
+        bpy.ops.render.render(write_still=True)
+        done += 1
+    lot.append(out)
+    if len(lot) == 400 or k == len(todo) - 1:
+        z = os.path.join(OUTDIR, f'lot_{k // 400:03d}.zip')
+        with zipfile.ZipFile(z + '.tmp', 'w', zipfile.ZIP_STORED) as zf:
+            for p in lot:
+                if os.path.exists(p):
+                    zf.write(p, os.path.basename(p))
+        os.replace(z + '.tmp', z)
+        lot = []
+        el = time.time() - t0
+        log(f'{k + 1}/{len(todo)} images ; {el / max(1, done):.2f} s/image ; lot {z}')
+log('FINI')

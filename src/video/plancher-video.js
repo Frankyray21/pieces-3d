@@ -211,7 +211,7 @@ const high = (() => {
   return best;
 })();
 
-const laserMat = new THREE.MeshBasicMaterial({ color: 0xff2a1a, transparent: true, opacity: 0.16, side: THREE.DoubleSide, depthWrite: false });
+const laserMat = new THREE.MeshBasicMaterial({ color: 0xff2a1a, transparent: true, opacity: 0.16, side: THREE.DoubleSide, depthWrite: false, name: 'laser' });
 function laserPlane(x0, x1) {
   const g = new THREE.Group();
   const p = new THREE.Mesh(new THREE.PlaneGeometry(x1 - x0, W + 0.4), laserMat);
@@ -630,6 +630,56 @@ window.__glb = async (t) => {
   } finally {
     scene.remove(cam);
   }
+};
+// ------------------------------------------------------------------ export vers Blender
+// Toute la scène (pièces encore invisibles comprises) en glTF, chaque objet nommé
+// « n<rang> » le temps de l'export ; puis, image par image, les changements de
+// visibilité et de position de chaque objet, la caméra et la transparence de la
+// cage : le rendu Blender (scripts/blender-plancher.py) rejoue la même animation.
+const blenderIds = new Map();
+function blenderNames() {
+  if (blenderIds.size) return;
+  let i = 0;
+  scene.traverse((o) => { blenderIds.set(o, `n${i++}`); });
+}
+const b64 = (buf) => {
+  const b = new Uint8Array(buf);
+  let s = '';
+  for (let i = 0; i < b.length; i += 0x8000) s += String.fromCharCode(...b.subarray(i, i + 0x8000));
+  return btoa(s);
+};
+window.__blenderScene = async () => {
+  blenderNames();
+  update(0);
+  const names = [];
+  scene.traverse((o) => { names.push([o, o.name]); o.name = blenderIds.get(o); });
+  const mats = [...[...ghostMats.values()].map((m) => [m, '~ghost']), ...[...nearMats.values()].map((m) => [m, '~near'])];
+  for (const [m, tag] of mats) { m.userData.n0 = m.name; m.name = `${m.name}${tag}`; }
+  try {
+    return b64(await new GLTFExporter().parseAsync(scene, { binary: true, onlyVisible: false }));
+  } finally {
+    for (const [o, n] of names) o.name = n;
+    for (const [m] of mats) m.name = m.userData.n0;
+  }
+};
+window.__blenderAnim = (f0, f1, fps = 24) => {
+  blenderNames();
+  const objs = [...blenderIds.entries()].filter(([o]) => o !== scene);
+  const r = (x) => Math.round(x * 1e5) / 1e5;
+  const prev = window.__blenderPrev || (window.__blenderPrev = new Map());
+  const changes = [], cam = [], ghost = [];
+  const g0 = [...ghostMats.values()][0], n0 = [...nearMats.values()][0];
+  for (let f = f0; f < f1; f++) {
+    update(f / fps);
+    for (const [o, id] of objs) {
+      const st = [o.visible ? 1 : 0, ...o.position.toArray(), ...o.quaternion.toArray(), ...o.scale.toArray()].map(r);
+      const key = st.join(',');
+      if (prev.get(o) !== key) { prev.set(o, key); changes.push([f, id, ...st]); }
+    }
+    cam.push([...camera.position.toArray(), ...camera.quaternion.toArray()].map(r));
+    ghost.push([r(g0 ? g0.opacity : 1), r(n0 ? n0.opacity : 1)]);
+  }
+  return { fov: camera.fov, aspect: VW / VH, changes, cam, ghost };
 };
 // Image fixe (validation) : l'état de l'instant t, vu d'une caméra donnée.
 window.__still = (t, pos, tgt, fov) => {
