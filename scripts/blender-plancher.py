@@ -360,6 +360,31 @@ for o in [o for o in bpy.data.objects if o.type == 'MESH']:
         if photo[key]:
             s.material = photo[key]
 
+
+def wire_material():
+    """Fil galvanisé du grillage : sans reflet d'environnement, le zinc métallique pur sort
+    presque noir ; un métal en partie diffus garde le gris clair du grillage de la vidéo."""
+    m = bpy.data.materials.new('grillage_photo')
+    m.use_nodes = True
+    p = m.node_tree.nodes['Principled BSDF']
+    p.inputs['Base Color'].default_value = (0.62, 0.65, 0.68, 1)
+    p.inputs['Metallic'].default_value = 0.35
+    p.inputs['Roughness'].default_value = 0.42
+    return m
+
+
+WIRE, n_wire = None, 0
+for o in [o for o in bpy.data.objects if o.type == 'MESH']:
+    dims = sorted(o.dimensions)
+    # Grillage : maillage de zinc très mince (fils), 24 po de haut, long de plusieurs mètres
+    # (les rangées de tire-fonds, aussi en zinc, ne font que 6 po de long).
+    if mat_names(o) == {'zinc'} and dims[0] < 0.03 and 0.5 < dims[1] < 0.7 and dims[2] > 1.5:
+        WIRE = WIRE or wire_material()
+        n_wire += 1
+        for s in o.material_slots:
+            s.material = WIRE
+log(f'grillage : {n_wire} objets')
+
 # ------------------------------------------------------------------ rendu
 sc.render.engine = 'CYCLES'
 cy = sc.cycles
