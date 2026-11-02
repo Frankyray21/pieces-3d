@@ -20,7 +20,7 @@ import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter.js';
 import { buildProcedural } from '../src/viewer/assembly.js';
 import builders from '../src/models/plancher-dd/index.js';
 import * as shapes from '../src/viewer/shapes.js';
-import { variante8, jonction8, variante8Sec2, JOINT8_X, JOINT8_X2 } from '../src/models/plancher-dd/floor.js';
+import { variante8, jonction8, variante8Sec2, eclisses8, JOINT8_X, JOINT8_X2 } from '../src/models/plancher-dd/floor.js';
 
 globalThis.FileReader = class {
   readAsArrayBuffer(blob) { blob.arrayBuffer().then((b) => { this.result = b; this.onloadend?.(); }); }
@@ -94,7 +94,7 @@ const v1 = variante8(shapes), v2 = variante8Sec2(shapes);
 const v8 = new THREE.Group();
 v8.name = 'variante-8pi';
 let k8 = 0;
-for (const g of [v1.appuis, v1.madriers, jonction8(shapes), v2.appuis, v2.soutiens, v2.madriers]) {
+for (const g of [v1.appuis, v1.madriers, jonction8(shapes), v2.appuis, v2.soutiens, v2.madriers, eclisses8(shapes)]) {
   for (const c of [...g.children]) { c.userData = { v8: ++k8 }; c.traverse((m) => { if (m !== c) m.userData = {}; }); v8.add(c); }
 }
 root.add(v8);

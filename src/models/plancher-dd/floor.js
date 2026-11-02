@@ -149,6 +149,28 @@ export function variante8Sec2(S) {
   return { madriers, soutiens, appuis };
 }
 
+/**
+ * Variante 8 pi : joints des 6 × 6 de 8 pi jointés comme au centre (jonction des
+ * sections) : sur chaque ligne de madriers, un bout de 3 × 6 de 24 po à plat contre le
+ * madrier, à cheval sur le joint, vissé avec un tire-fond de 6 po de chaque côté du joint.
+ * Sans lui, les coins de serrage des planches (étape 7) écartent les deux 6 × 6 au joint.
+ * Madriers de rive : côté intérieur ; les autres : côté Z positif.
+ * Joints à 8 pi (section 1) et à 24 pi (section 2).
+ */
+export function eclisses8(S, xs = [JOINT8_X, JOINT8_X2]) {
+  const g = S.group();
+  const half = 12 * IN;
+  joistZ.forEach((z, k) => {
+    const s = k === joistZ.length - 1 ? -1 : 1; // côté du 3 × 6 (vers l'intérieur pour les rives)
+    const zf = z + s * B66 / 2; // face du madrier
+    for (const x of xs) {
+      g.add(lumber(S, [2 * half, B66, P3], [x, B66 / 2, zf + s * P3 / 2], 'woodLight'));
+      g.add(S.boltSet([[x - 6 * IN, B66 / 2, zf + s * P3], [x + 6 * IN, B66 / 2, zf + s * P3]], 0.375 * IN, 6 * IN, 'zinc', { axis: s > 0 ? '-z' : 'z', washer: true }));
+    }
+  });
+  return g;
+}
+
 // ------------------------------------------------------------------ section 2
 
 /**
