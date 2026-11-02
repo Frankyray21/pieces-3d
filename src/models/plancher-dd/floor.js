@@ -281,8 +281,8 @@ export function P14(api, opts = {}) {
   const z0 = STAIR.z0, z1 = STAIR.z0 + STAIR.w;
   // Marches superposées (p. 15) : des modules posés l'un sur l'autre. Le module du bas
   // couvre toute la profondeur de l'escalier ; chaque module au-dessus repose sur celui
-  // d'en dessous et recule d'une marche (16 po). Un module : trois appuis dans le sens de
-  // la marche (côtés et centre) : 3 × 8 à plat au sol pour le module du bas, un seul bout
+  // d'en dessous et recule d'une marche (16 po). Un module : deux appuis dans le sens de
+  // la marche (les côtés, pas d'appui au milieu, comme dans la procédure p. 15) : 3 × 8 à plat au sol pour le module du bas, un seul bout
   // de 6 × 6 pour les autres (pas de bois empilé) ; puis le dessus en 3 × 8 en travers ;
   // la partie avant du dessus est le giron (deux 3 × 8, 16 po), la partie arrière porte
   // le module suivant.
@@ -294,7 +294,7 @@ export function P14(api, opts = {}) {
     const under = top - P3; // dessous du dessus du module
     if (base == null) {
       // Module du bas : un rang de 3 × 8 à plat, posé de niveau dans le gravier (pas de vide).
-      for (const z of [z0 + P8 / 2, (z0 + z1) / 2, z1 - P8 / 2]) {
+      for (const z of [z0 + P8 / 2, z1 - P8 / 2]) {
         const g = Math.max(ground(xa, z), ground(xb, z));
         const nL = Math.max(1, Math.round((under - g) / P3));
         const yb = under - nL * P3;
@@ -303,9 +303,9 @@ export function P14(api, opts = {}) {
         if (gap > 0.004) put('3', wedge(S, { pos: [(xa + xb) / 2, g, z], along: 'x', pair: gap > WEDGE.t, thick: gap }), [0.25 * i, -0.1, 0], 14, { seq: seq0 });
       }
     } else {
-      // Modules du dessus : un seul bout de 6 × 6 par appui (côtés et centre), jamais de
+      // Modules du dessus : un seul bout de 6 × 6 par appui (les deux côtés), jamais de
       // bois empilé ; 6 po de 6 × 6 + 3 po de 3 × 8 = une marche de 9 po.
-      for (const z of [z0 + B66 / 2, (z0 + z1) / 2, z1 - B66 / 2]) {
+      for (const z of [z0 + B66 / 2, z1 - B66 / 2]) {
         const yb = under - B66;
         put('6', lumber(S, [depth, B66, B66], [(xa + xb) / 2, yb + B66 / 2, z]), [0.25 * i, 0.12, 0], 14, { seq: seq0 + 1 });
         const gap = yb - base;
@@ -317,21 +317,134 @@ export function P14(api, opts = {}) {
     for (let k = 0; k < np; k++) put('1', lumber(S, [P8, P3, STAIR.w], [xa + (k + 0.5) * P8, top - P3 / 2, (z0 + z1) / 2]), [0.25 * i, 0.35, 0], 14, { seq: seq0 + 15 + k });
     base = top;
   }
-  // Mains courantes (plus d'une marche) : 2 × 4 raboté de chaque côté.
-  const xb = L + (n - 1) * T - T / 2;
-  for (const z of [z0 - S24.t / 2, z1 + S24.t / 2]) {
-    const hb = DECK - (n - 1) * rise;
-    const gb = ground(xb, z);
-    put('4', lumber(S, [S24.w, hb + 0.9 - gb, S24.t], [xb, (gb + hb + 0.9) / 2, z], 'woodPlaned'), [0.5, 0, Math.sign(z - (z0 + z1) / 2) * 0.3], 16, { seq: 0 });
-    put('5', between(S, [L + S24.t, DECK + 0.9, z], [xb, hb + 0.9, z], S24.t, S24.w), [0.5, 0.25, Math.sign(z - (z0 + z1) / 2) * 0.3], 16, { seq: 1 });
+  // Mains courantes (plus d'une marche), de chaque côté de l'escalier, montées comme les
+  // garde-corps (p. 16) : un montant 2 × 4 en haut (au bord du plancher) et un en bas (au
+  // nez de la dernière marche), du sol jusqu'à la main courante ; la main courante, un
+  // 2 × 4 droit vissé sur la face extérieure des montants, parallèle à la ligne des nez de
+  // marche, à 36 po au-dessus.
+  const HR = 36 * IN;
+  const nez = (x) => DECK - ((x - L) / T) * rise; // ligne des nez de marche
+  const xh = L + R24.w / 2, xbas = L + (n - 1) * T - R24.w / 2;
+  for (const [z, s] of [[z0 - R24.t / 2, -1], [z1 + R24.t / 2, 1]]) {
+    for (const x of [xh, xbas]) {
+      const g = ground(x, z), top = nez(x) + HR + R24.w / 2;
+      put('4', lumber(S, [R24.w, top - g, R24.t], [x, (g + top) / 2, z], 'wood'), [0.5, 0, s * 0.3], 16, { seq: 0 });
+    }
+    const zr = z + s * R24.t;
+    put('5', between(S, [xh - R24.w / 2, nez(xh - R24.w / 2) + HR, zr], [xbas + R24.w / 2, nez(xbas + R24.w / 2) + HR, zr], R24.t, R24.w, 'wood'), [0.5, 0.25, s * 0.3], 16, { seq: 1 });
   }
   return { view: { dir: [1.3, 0.6, 0.9] } };
+}
+
+/**
+ * Cas de marches à montrer (outil 3D de l'app) : escalier de n marches de 9 po, le
+ * plancher (bout de plancher en 3 × 8 sur deux madriers 6 × 6) à n × 9 po du sol, posé
+ * sur un sol plat à (x, y, z), l'escalier descendant vers X positif. Modules superposés
+ * comme à l'étape 14 : deux appuis par module (les côtés), 3 × 8 à plat pour le module
+ * du bas, bouts de 6 × 6 au-dessus ; empilables et récupérables au démantèlement.
+ */
+export function marchesCas(S, n, [x, y, z]) {
+  const g = S.group();
+  const rise = 9 * IN, T = STAIR.tread, w = STAIR.w;
+  const z0 = z - w / 2, z1 = z + w / 2;
+  const H = n * rise;
+  // userData.plancher : bout de plancher (décor du cas) ; userData.module : rang de pose
+  // des modules de marche, de bas en haut (1 = module du bas).
+  const base = (o) => { o.userData.plancher = true; g.add(o); };
+  const pose = (o, m) => { o.userData.module = m; g.add(o); };
+  // Bout de plancher : planches 3 × 8 en travers sur deux madriers, appuyés sur des 6 × 6 debout.
+  const xa = x - 0.7;
+  for (const zz of [z0 + B66 / 2, z1 - B66 / 2]) {
+    base(lumber(S, [0.7, B66, B66], [(xa + x) / 2, y + H - P3 - B66 / 2, zz]));
+    const hp = H - P3 - B66;
+    for (const xx of [xa + B66 / 2, x - B66 / 2]) base(lumber(S, [B66, hp, B66], [xx, y + hp / 2, zz], 'woodDark'));
+  }
+  for (let k = 0; k < 3; k++) base(lumber(S, [P8, P3, w + 0.3], [x - (k + 0.5) * P8, y + H - P3 / 2, z]));
+  // Modules : le module i (du haut, i = 1, au bas, i = n - 1) couvre les marches 1 à i.
+  for (let i = n - 1; i >= 1; i--) {
+    const top = y + H - i * rise, depth = i * T, xm = x + depth / 2;
+    const under = top - P3;
+    for (const zz of [z0 + P8 / 2, z1 - P8 / 2]) {
+      if (i === n - 1) {
+        // Module du bas : 3 × 8 à plat, empilés jusqu'à 9 po moins le dessus.
+        const nL = Math.max(1, Math.round((under - y) / P3));
+        for (let j = 0; j < nL; j++) pose(lumber(S, [depth, P3, P8], [xm, under - (nL - j - 0.5) * P3, zz]), n - i);
+      } else pose(lumber(S, [depth, B66, B66], [xm, under - B66 / 2, zz]), n - i);
+    }
+    const np = Math.round(depth / P8);
+    for (let k = 0; k < np; k++) pose(lumber(S, [P8, P3, w], [x + (k + 0.5) * P8, top - P3 / 2, z]), n - i + 0.5);
+  }
+  return g;
+}
+
+/**
+ * Cas du plancher secondaire à montrer (outil 3D de l'app), posés sur un sol plat à
+ * (x, y, z), planches selon X (72 po), largeur selon Z (32 po) :
+ *   'marches' : plancher à 18 po, première marche de 16 po de profondeur (deux 3 × 8) et
+ *               9 po de haut, sur le long côté Z positif ;
+ *   'garde'   : plancher à 9 po, côté sans marche (Z négatif) fermé par un garde-corps
+ *               fixé solidement (montants de 48 po, lisses, coup de pied) ;
+ *   'foreuse' : plancher à 9 po contre la foreuse : patin et pied de tour en silhouette
+ *               côté Z négatif, dernière planche à 3 po de la tour, les deux dernières
+ *               planches vissées (tire-fonds).
+ * userData.plancher : décor posé d'emblée ; userData.module : rang de pose.
+ */
+export function secondaireCas(S, kind, [x, y, z]) {
+  const g = S.group();
+  const Lx = 72 * IN, Wz = 32 * IN;
+  const x0 = x - Lx / 2, x1 = x + Lx / 2, z0 = z - Wz / 2, z1 = z + Wz / 2;
+  const base = (o) => { o.userData.plancher = true; g.add(o); };
+  const pose = (o, m) => { o.userData.module = m; g.add(o); };
+  const H = kind === 'marches' ? 18 * IN : 9 * IN;
+  const yt = y + H - P3; // dessous des planches
+  // Appuis : pour 18 po, un 6 × 6 couché sous chaque bout de travers (6 po) + 3 × 8 à plat (3 po).
+  const xs = [x0 + B66 / 2, x, x1 - B66 / 2];
+  if (kind === 'marches') for (const xx of xs) for (const zz of [z0 + B66 / 2, z1 - B66 / 2]) {
+    pose(lumber(S, [P8, P3, 24 * IN], [xx, y + P3 / 2, zz]), 1);
+    pose(lumber(S, [B66, B66, 24 * IN], [xx, y + P3 + B66 / 2, zz]), 1.4);
+  }
+  // Travers 6 × 6 sous les planches : aucun morceau en porte-à-faux.
+  for (const xx of xs) pose(lumber(S, [B66, B66, Wz], [xx, yt - B66 / 2, z]), 2);
+  // Planches 3 × 8 selon X ; les deux plus près de la foreuse (Z négatif) vissées.
+  const vis = [];
+  for (let k = 0; k < 4; k++) {
+    const zz = z0 + (k + 0.5) * P8;
+    pose(lumber(S, [Lx, P3, P8], [x, yt + P3 / 2, zz]), 3 + k * 0.2);
+    if (kind === 'foreuse' && k < 2) for (const xx of [x0 + B66 / 2, x1 - B66 / 2]) vis.push([xx, yt + P3, zz]);
+  }
+  if (vis.length) pose(lagScrews(S, vis), 4.2);
+  if (kind === 'marches') {
+    // Première marche : 9 po de haut, 16 po de profondeur (deux 3 × 8), le long du côté Z positif.
+    const zs = z1 + 8 * IN;
+    for (const xx of [x0 + B66 / 2, x, x1 - B66 / 2]) pose(lumber(S, [B66, B66, 16 * IN], [xx, y + B66 / 2, zs]), 4);
+    for (let k = 0; k < 2; k++) pose(lumber(S, [Lx, P3, P8], [x, y + B66 + P3 / 2, z1 + (k + 0.5) * P8]), 4.5);
+  }
+  if (kind === 'garde') {
+    // Garde-corps sur le côté sans marche (Z négatif) : montants de 48 po contre le bord.
+    const top = y + H + 1.07;
+    for (const xx of [x0 + S24.w / 2, x1 - S24.w / 2]) pose(lumber(S, [S24.w, 48 * IN, S24.t], [xx, top - 24 * IN, z0 - S24.t / 2], 'woodPlaned'), 4);
+    pose(lumber(S, [Lx, S24.w, S24.t], [x, top - S24.w / 2, z0 + S24.t / 2], 'woodPlaned'), 4.5);
+    pose(lumber(S, [Lx, S24.w, S24.t], [x, y + H + 0.535, z0 + S24.t / 2], 'woodPlaned'), 4.6);
+    pose(lumber(S, [Lx, R24.w, R24.t], [x, y + H + R24.w / 2, z0 + R24.t / 2], 'wood'), 4.7);
+  }
+  if (kind === 'foreuse') {
+    // Silhouette de la foreuse : patin en acier, pied de tour, à 3 po de la dernière planche.
+    const zt = z0 - 3 * IN;
+    base(S.box(Lx + 0.6, 0.16, 0.12, 'darkSteel', { pos: [x, y + 0.08, zt - 0.3] }));
+    base(S.box(0.3, 1.4, 0.24, 'red', { pos: [x + 0.2, y + 0.7, zt - 0.12] }));
+    base(S.box(0.5, 0.2, 0.3, 'darkSteel', { pos: [x + 0.2, y + 0.1, zt - 0.15] }));
+  }
+  return g;
 }
 
 // ------------------------------------------------------------------ garde-corps
 
 const RAIL_TOP = 1.07; // lisse supérieure au-dessus du plancher (1 à 1,2 m)
-const POST_MAX = 1.8;
+// Sections de garde-corps de 8 pi au plus : avec quatre 2 × 4 de 8 pi, un coupé en deux
+// pour les deux montants (48 po chacun, la bonne hauteur sans mesurer), un pour la lisse
+// supérieure, un pour la lisse intermédiaire et un pour la lisse inférieure.
+const POST_MAX = 8 * FT;
+const POST_LEN = 48 * IN;
 
 function postsAlong(a, b) {
   const n = Math.max(1, Math.ceil((b - a) / POST_MAX));
@@ -373,14 +486,22 @@ export function P16(api, opts = {}) {
     const mid = (seg.a + seg.b) / 2;
     const ex = (k) => out.map((v, i) => v * 0.35 * k + (i === 1 ? 0.15 * k : 0));
     const sz = (lu, h, t) => (alongX ? [lu, h, t] : [t, h, lu]);
-    for (const u of postsAlong(seg.a, seg.b)) {
-      const top = DECK + RAIL_TOP + 0.03;
-      put('1', lumber(S, sz(S24.w, top, S24.t), P(u, postC, top / 2), 'woodPlaned'), ex(1), 15, { seq: 0 });
+    // Montants de 48 po (un 2 × 4 de 8 pi coupé en deux) vissés contre le bord du
+    // plancher : le haut à la lisse supérieure, le bas sous le dessus du plancher.
+    const us = postsAlong(seg.a, seg.b);
+    for (const u of us) {
+      const top = DECK + RAIL_TOP;
+      put('1', lumber(S, sz(S24.w, POST_LEN, S24.t), P(u, postC, top - POST_LEN / 2), 'woodPlaned'), ex(1), 15, { seq: 0 });
     }
-    put('2', lumber(S, sz(len, S24.w, S24.t), P(mid, railC, DECK + RAIL_TOP - S24.w / 2), 'woodPlaned'), ex(2), 15, { seq: 2 });
-    put('3', lumber(S, sz(len, S24.w, S24.t), P(mid, railC, DECK + RAIL_TOP / 2), 'woodPlaned'), ex(1.6), 15, { seq: 3 });
-    // Plinthe : 2 × 4 brut sur chant (4 po, plus de 90 mm), posé sur le plancher.
-    put('4', lumber(S, sz(len, R24.w, R24.t), P(mid, plinthC, DECK + R24.w / 2), 'wood'), ex(1.2), 15, { seq: 4 });
+    // Une section par paire de montants : lisses de la longueur de la section (8 pi au plus).
+    for (let k = 0; k + 1 < us.length; k++) {
+      const a = us[k] - S24.w / 2, b = us[k + 1] + S24.w / 2, lk = b - a, mk = (a + b) / 2;
+      put('2', lumber(S, sz(lk, S24.w, S24.t), P(mk, railC, DECK + RAIL_TOP - S24.w / 2), 'woodPlaned'), ex(2), 15, { seq: 2 });
+      put('3', lumber(S, sz(lk, S24.w, S24.t), P(mk, railC, DECK + RAIL_TOP / 2), 'woodPlaned'), ex(1.6), 15, { seq: 3 });
+      // Lisse inférieure (coup de pied) : 2 × 4 brut sur chant (4 po, plus de 90 mm), au ras du plancher.
+      put('4', lumber(S, sz(lk, R24.w, R24.t), P(mk, plinthC, DECK + R24.w / 2), 'wood'), ex(1.2), 15, { seq: 4 });
+    }
+    void len; void mid;
   }
   // Grillage de 24 po fixé au bas de chaque mur (écart plancher-mur de 12 po).
   for (const s of [-1, 1]) {

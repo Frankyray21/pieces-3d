@@ -9,7 +9,8 @@
 // Variante « 6 × 6 de 8 pi » (écran après l'étape 11) : v8 = pièce de la variante
 // (ordre de pose), cachée ailleurs ; x8 = pièce de 16 pi remplacée par la variante
 // (même liste que v8Old de la vidéo, src/video/plancher-video.js) ; pl = planche
-// (P07, P13), enlevée sur cet écran pour voir la structure. ord = rang de pose d'une
+// (P07, P13), enlevée sur cet écran pour voir la structure. grp = groupe montré seulement
+// sur l'écran « cas » du même nom (marches à 2, 3, 4 marches…). ord = rang de pose d'une
 // planche de la section 1 (animation du serrage de l'étape 7, comme la vidéo).
 //
 // Usage : node scripts/export-plancher-app.mjs sortie.glb etiquettes.json
@@ -20,7 +21,8 @@ import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter.js';
 import { buildProcedural } from '../src/viewer/assembly.js';
 import builders from '../src/models/plancher-dd/index.js';
 import * as shapes from '../src/viewer/shapes.js';
-import { variante8, jonction8, variante8Sec2, eclisses8, JOINT8_X, JOINT8_X2 } from '../src/models/plancher-dd/floor.js';
+import { variante8, jonction8, variante8Sec2, eclisses8, marchesCas, secondaireCas, JOINT8_X, JOINT8_X2 } from '../src/models/plancher-dd/floor.js';
+import { L, ground } from '../src/models/plancher-dd/plan.js';
 
 globalThis.FileReader = class {
   readAsArrayBuffer(blob) { blob.arrayBuffer().then((b) => { this.result = b; this.onloadend?.(); }); }
@@ -98,15 +100,62 @@ for (const g of [v1.appuis, v1.madriers, jonction8(shapes), v2.appuis, v2.soutie
   for (const c of [...g.children]) { c.userData = { v8: ++k8 }; c.traverse((m) => { if (m !== c) m.userData = {}; }); v8.add(c); }
 }
 root.add(v8);
+// Écrans « cas » de l'app (grp) : affichés seulement sur l'écran qui les nomme.
+// Marches à 2, 3 et 4 marches, côte à côte dans la galerie, au-delà de la barricade.
+const cas = new THREE.Group();
+cas.name = 'cas';
+const casLabels = [];
+[[2, -1.9], [3, 0], [4, 1.9]].forEach(([n, z]) => {
+  const x = L + 6.2;
+  let y = -Infinity;
+  for (let dx = -0.8; dx <= 1.5; dx += 0.1) for (let dz = -0.7; dz <= 0.7; dz += 0.1) y = Math.max(y, ground(x + dx, z + dz));
+  // Chaque pièce du cas est un nœud : bout de plancher (b, décor, posé d'emblée) ou
+  // pièce de marche avec son rang de pose (m : module du bas d'abord, puis son dessus).
+  const g = marchesCas(shapes, n, [x, y, z]);
+  for (const c of [...g.children]) {
+    const u = c.userData;
+    c.userData = u.plancher ? { grp: 'marches', b: 1 } : { grp: 'marches', m: u.module };
+    c.traverse((k) => { if (k !== c) k.userData = {}; });
+    cas.add(c);
+  }
+  casLabels.push({ steps: ['marches'], pos: [x - 0.35, y + n * 9 * 0.0254 + 0.05, z], text: `${n} marches : plancher à ${n * 9} po`, kind: 'note' });
+});
+// Plancher secondaire : 2 marches, côté sans marche avec garde-corps, contre la foreuse.
+const titres = { marches: '2 marches : plancher à 18 po, 1re marche 16 po × 9 po', garde: 'Côté sans marche : garde-corps', foreuse: 'Contre la foreuse : dernière planche à 3 po de la tour' };
+[['marches', -1.75], ['garde', 0.15], ['foreuse', 2.0]].forEach(([kind, z]) => {
+  const x = L + 6.2;
+  let y = -Infinity;
+  for (let dx = -1.0; dx <= 1.0; dx += 0.1) for (let dz = -0.6; dz <= 0.6; dz += 0.1) y = Math.max(y, ground(x + dx, z + dz));
+  const g = secondaireCas(shapes, kind, [x, y, z]);
+  for (const c of [...g.children]) {
+    const u = c.userData;
+    c.userData = u.plancher ? { grp: 'secondaire', b: 1 } : { grp: 'secondaire', m: u.module };
+    c.traverse((k) => { if (k !== c) k.userData = {}; });
+    cas.add(c);
+  }
+  casLabels.push({ steps: ['secondaire'], pos: [x, y + (kind === 'marches' ? 0.46 : 0.23) + 0.05, z], text: titres[kind], kind: 'note' });
+});
+root.add(cas);
 root.updateMatrixWorld(true);
 
 // Allègement : pas de texture, donc pas d'UV ; géométries identiques partagées
 // (l'exportateur écrit alors un seul maillage glTF pour toutes leurs instances).
 const shared = new Map();
+// Géométrie recentrée sur son origine (le décalage passe dans la position du nœud) :
+// deux pièces identiques posées à des endroits différents partagent alors leur maillage.
+const ctrG = new THREE.Vector3();
 root.traverse((o) => {
   if (!o.isMesh && !o.isLine) return;
-  const g = o.geometry;
+  let g = o.geometry;
   g.deleteAttribute('uv');
+  g.computeBoundingBox();
+  g.boundingBox.getCenter(ctrG);
+  if (ctrG.lengthSq() > 1e-10) {
+    g = o.geometry = g.clone().translate(-ctrG.x, -ctrG.y, -ctrG.z);
+    o.position.add(ctrG.clone().multiply(o.scale).applyQuaternion(o.quaternion));
+  }
+  const pa = g.attributes.position.array;
+  for (let i = 0; i < pa.length; i++) pa[i] = Math.round(pa[i] * 1e5) / 1e5;
   const h = createHash('sha1');
   for (const k of Object.keys(g.attributes).sort()) h.update(k).update(Buffer.from(g.attributes[k].array.buffer, g.attributes[k].array.byteOffset, g.attributes[k].array.byteLength));
   if (g.index) h.update(Buffer.from(g.index.array.buffer, g.index.array.byteOffset, g.index.array.byteLength));
@@ -116,5 +165,5 @@ root.traverse((o) => {
 });
 const glb = await new GLTFExporter().parseAsync(scene, { binary: true, onlyVisible: false });
 writeFileSync(out, Buffer.from(glb));
-writeFileSync(outLabels, JSON.stringify([...notes, ...dims], null, 1));
+writeFileSync(outLabels, JSON.stringify([...notes, ...dims, ...casLabels], null, 1));
 console.log(`${out} : ${(glb.byteLength / 1e6).toFixed(2)} Mo, ${leaves} pièces d'étape (${x8} remplacées en 8 pi), ${k8} pièces de 8 pi ; ${notes.length} notes, ${dims.length} cotes`);

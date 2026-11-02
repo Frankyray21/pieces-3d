@@ -184,7 +184,7 @@ export function dimensions() {
   const z0 = STAIR.z0, z1 = STAIR.z0 + STAIR.w;
   const t1 = DECK - rise;
   at([14], dim([L, t1, z1], [L + STAIR.tread, t1, z1], 'Giron 16 po min.', [0, 0, 0.3]));
-  at([14], dim([L + 0.02, t1, z0], [L + 0.02, DECK, z0], `Hauteur ${po(rise)} (12 po max.)`, [0, 0, -0.3]));
+  at([14], dim([L + 0.02, t1, z0], [L + 0.02, DECK, z0], `${po(rise)} sous le dessus du plancher (12 po max.)`, [0, 0, -0.3]));
   at([14], dim([L + STAIR.tread * (n - 1), DECK - (n - 1) * rise, z0], [L + STAIR.tread * (n - 1), DECK - (n - 1) * rise, z1], 'Largeur 48 po (36 à 60 po)', [0.3, 0, 0], { h: 0.04 }));
   // Étape 15 : plus de 12 po de haut au bout, garde-corps (RSST art. 12).
   const zg = -1.5;
