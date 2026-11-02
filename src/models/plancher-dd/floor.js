@@ -80,7 +80,7 @@ export function P07(api, opts = {}) {
  *   joint 'commun' : un blocage centré sous le joint, les deux bouts dessus ;
  *   joint 'double' : un blocage sous chaque bout, côte à côte.
  * Pas de doubleur aux joints des 8 pi : à la jonction des sections, seulement le bout de
- * 6 × 6 de 24 po le long des madriers de rive, comme dans la vidéo (P10, repère 8).
+ * 3 × 6 de 24 po le long des madriers de rive, comme dans la vidéo (P10, repère 8).
  * Retourne les madriers (deux par ligne) et la rangée d'appuis du joint.
  */
 export const JOINT8_X = 8 * FT;
@@ -108,7 +108,7 @@ export function variante8(S, { joint = 'commun' } = {}) {
  * rangées côte à côte, chacune de deux 6 × 6 de 8 pi bout à bout (joint au centre, sous le
  * madrier du milieu, sur son blocage). Les madriers de la section 1 reposent à plein sur la
  * première rangée, ceux de la section 2 sur la deuxième ; les blocages de jonction (24 po,
- * selon X) portent les deux rangées. Le bout de 6 × 6 de 24 po vissé dans les deux sections
+ * selon X) portent les deux rangées. Le bout de 3 × 6 de 24 po vissé dans les deux sections
  * reste seulement le long des madriers de rive (P10, repère 8).
  */
 export function jonction8(S) {
