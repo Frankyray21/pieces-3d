@@ -576,7 +576,7 @@
      "2",
      "",
      null,
-     "Appuis du module du bas : 3 × 8 à plat (côtés et centre), posés de niveau dans le gravier ; modules superposés, chacun recule d'une marche (p. 15)",
+     "Appuis du module du bas : 3 × 8 à plat (les deux côtés, rien au milieu), posés de niveau dans le gravier ; modules superposés, chacun recule d'une marche (p. 15)",
      {
       "pnText": "3 × 8 brut"
      }
@@ -584,8 +584,8 @@
     [
      "6",
      "",
-     3,
-     "Appuis du module du dessus : un seul bout de 6 × 6 × 16 po (côtés et centre), jamais de bois empilé ; 6 po de 6 × 6 + 3 po de 3 × 8 = marche de 9 po",
+     2,
+     "Appuis du module du dessus : un seul bout de 6 × 6 × 16 po (les deux côtés, rien au milieu), jamais de bois empilé ; 6 po de 6 × 6 + 3 po de 3 × 8 = marche de 9 po",
      {
       "pnText": "6 × 6 brut × 16 po"
      }
@@ -593,19 +593,19 @@
     [
      "4",
      "",
-     2,
-     "Poteau de main courante 2 × 4",
+     4,
+     "Montant de main courante 2 × 4, en haut (bord du plancher) et en bas (nez de la dernière marche), de chaque côté",
      {
-      "pnText": "2 × 4 raboté"
+      "pnText": "2 × 4 brut"
      }
     ],
     [
      "5",
      "",
      2,
-     "Main courante 2 × 4",
+     "Main courante 2 × 4 droite, vissée sur les montants, parallèle aux marches, à 36 po au-dessus des nez",
      {
-      "pnText": "2 × 4 raboté"
+      "pnText": "2 × 4 brut"
      }
     ],
     [
@@ -631,7 +631,7 @@
      "1",
      "",
      5,
-     "Poteau 2 × 4",
+     "Montant 2 × 4 de 48 po (un 2 × 4 de 8 pi coupé en deux), vissé au bord du plancher",
      {
       "pnText": "2 × 4 raboté"
      }
@@ -639,8 +639,8 @@
     [
      "2",
      "",
-     2,
-     "Lisse supérieure 2 × 4 (1,07 m du plancher)",
+     3,
+     "Lisse supérieure 2 × 4 (1,07 m du plancher), une par section de 8 pi au plus",
      {
       "pnText": "2 × 4 raboté"
      }
@@ -648,8 +648,8 @@
     [
      "3",
      "",
-     2,
-     "Lisse intermédiaire 2 × 4 (mi-hauteur)",
+     3,
+     "Lisse intermédiaire 2 × 4 (mi-hauteur), une par section",
      {
       "pnText": "2 × 4 raboté"
      }
@@ -657,8 +657,8 @@
     [
      "4",
      "",
-     2,
-     "Lisse inférieure (plinthe) 2 × 4 brut sur chant (4 po)",
+     3,
+     "Lisse inférieure (coup de pied) 2 × 4 brut sur chant (4 po), une par section",
      {
       "pnText": "2 × 4 brut"
      }
