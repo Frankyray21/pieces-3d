@@ -443,16 +443,16 @@
      "8",
      "",
      2,
-     "Blocage de jonction : un seul bout de 6 × 6 (24 po) sur le 6 × 6 de jonction, à l'intérieur contre le madrier de rive de chaque côté, à cheval sur le joint, dessus au ras des madriers (sous les planches), vissé aux deux sections",
+     "Bois de jonction : un bout de 3 × 6 (24 po) sur le 6 × 6 de jonction, à plat contre la face intérieure du madrier de rive de chaque côté, à cheval sur le joint, dessus au ras des madriers (sous les planches), vissé aux deux sections (le tire-fond de 6 po traverse les 3 po et mord dans le madrier ; un 6 × 6 serait trop épais)",
      {
-      "pnText": "6 × 6 brut"
+      "pnText": "3 × 6 brut × 24 po"
      }
     ],
     [
      "9",
      "",
      4,
-     "Tire-fond 6 po : blocage de jonction vissé dans le madrier de chaque section",
+     "Tire-fond 6 po : bois de jonction (3 × 6) vissé dans le madrier de chaque section",
      {
       "pnText": "Tire-fond 6 po",
       "qty3d": 2

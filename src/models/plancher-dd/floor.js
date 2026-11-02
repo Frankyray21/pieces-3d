@@ -166,15 +166,18 @@ export function P10(api, opts = {}) {
   joistZ.forEach((z) => put('1', lumber(S, [SEC, B66, B66], [SEC * 1.5, B66 / 2, z]), [0, 0.75, 0], 11));
   // Chaque madrier vissé dans le bout de 6 × 6 de jonction, comme celui de la section 1.
   put('7', lagScrews(S, joistZ.map((z) => [JOINT_X + 1.5 * IN, B66, z])), [0, 0.9, 0], 11);
-  // Blocage de jonction (p. 6) : un seul bout de 6 × 6 de 24 po, à l'intérieur contre le
-  // madrier de rive de chaque côté, à cheval sur le joint, posé sur le 6 × 6 de jonction ;
-  // son dessus arrive au ras des madriers, juste sous les planches. Vissé dans le madrier
-  // de chaque section (un tire-fond de chaque côté du joint), il tient les deux sections ensemble.
+  // Bois de jonction (p. 6) : un bout de 3 × 6 de 24 po, à plat contre la face intérieure
+  // du madrier de rive de chaque côté, à cheval sur le joint, posé sur le 6 × 6 de jonction ;
+  // son dessus (6 po) arrive au ras des madriers, juste sous les planches. Vissé dans le
+  // madrier de chaque section (un tire-fond de chaque côté du joint), il tient les deux
+  // sections ensemble. Un 3 × 6 et non un 6 × 6 : le tire-fond de 6 po traverse les 3 po
+  // du bois de jonction et mord 3 po dans le madrier ; dans un 6 × 6, il n'atteindrait pas
+  // le madrier.
   const half = 12 * IN;
   const sides = [-1, 1];
   const zin = W / 2 - B66; // face intérieure du madrier de rive
-  sides.forEach((s) => put('8', lumber(S, [2 * half, B66, B66], [JOINT_X, B66 / 2, s * (zin - B66 / 2)]), [0, 0.6, 0], 11, { seq: 3 }));
-  sides.forEach((s) => put('9', S.boltSet([[JOINT_X - 6 * IN, B66 / 2, s * (zin - B66)], [JOINT_X + 6 * IN, B66 / 2, s * (zin - B66)]], 0.375 * IN, 6 * IN, 'zinc', { axis: s > 0 ? '-z' : 'z', washer: true }), [0, 0.9, 0], 11, { seq: 4 }));
+  sides.forEach((s) => put('8', lumber(S, [2 * half, B66, P3], [JOINT_X, B66 / 2, s * (zin - P3 / 2)]), [0, 0.6, 0], 11, { seq: 3 }));
+  sides.forEach((s) => put('9', S.boltSet([[JOINT_X - 6 * IN, B66 / 2, s * (zin - P3)], [JOINT_X + 6 * IN, B66 / 2, s * (zin - P3)]], 0.375 * IN, 6 * IN, 'zinc', { axis: s > 0 ? '-z' : 'z', washer: true }), [0, 0.9, 0], 11, { seq: 4 }));
   // Soutiens 6 × 6 de 16 pi (selon Z) ; le dernier, à 16 pi de la section 1, est le madrier guide.
   SLEEPERS_X.forEach((x, k) => {
     const guide = k === SLEEPERS_X.length - 1;
