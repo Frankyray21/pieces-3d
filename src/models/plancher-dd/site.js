@@ -141,7 +141,7 @@ function target(S, z, y) {
 export function gallery(S) {
   const g = S.group(groundMesh(), wallMesh(-1), wallMesh(1), faceMesh(), rocks());
   g.add(target(S, STM.z, DECK + 1.45));
-  g.add(target(S, STM.z - 1.3, DECK + 1.65));
+  g.add(target(S, STM.z + 1.3, DECK + 1.65));
   return g;
 }
 

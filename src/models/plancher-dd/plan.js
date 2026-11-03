@@ -73,8 +73,8 @@ export const DRILL = { x: 0.3, z: -0.35, tilt: (12 * Math.PI) / 180, len: 3.0, f
 // hydraulique, Z positif du modèle, passé du côté Z négatif).
 // x, z : milieu du traîneau ; yaw : rotation du modèle (+X du modèle, l'avant, vers X négatif) ;
 // sens : signe de X vers l'avant. L'avant du traîneau (pointe à 1,66 m du milieu) est à 1 pi du
-// front de taille (X ≈ −0,12 m).
-export const STM = { x: 1.845, z: 0, yaw: Math.PI, sens: -1 };
+// front de taille (X ≈ −0,12 m). z : la foreuse et le plancher secondaire centrés sur le plancher.
+export const STM = { x: 1.845, z: -0.62, yaw: Math.PI, sens: -1 };
 
 // Escalier : au bout du plancher (X = L), du côté Z positif de l'axe.
 export const STAIR = { z0: 0.35, w: 48 * IN, tread: 16 * IN };
