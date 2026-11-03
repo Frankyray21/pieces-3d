@@ -67,8 +67,9 @@ export const WALL_H = 2.7; // murs coupés à cette hauteur (vue en écorché)
 export const DRILL = { x: 0.3, z: -0.35, tilt: (12 * Math.PI) / 180, len: 3.0, frontY: DECK + 1.2 };
 // Foreuse STM-1500 (dépôt stm-1500, P010) posée sur le plancher pour l'étape 18 : traîneau en
 // travers des madriers (les patins croisent les 6 × 6, étape 3), l'avant vers la paroi Z négative ;
-// x, z : milieu du traîneau ; yaw : +X du modèle (avant) vers −Z.
-export const STM = { x: 1.6, z: -0.3, yaw: Math.PI / 2 };
+// x, z : milieu du traîneau ; yaw : +X du modèle (avant) vers −Z. L'avant du traîneau (pointe à
+// 1,66 m du milieu) est à 1 pi de la paroi (paroi la plus avancée à Z ≈ −2,73 m).
+export const STM = { x: 1.6, z: -0.76, yaw: Math.PI / 2 };
 
 // Escalier : au bout du plancher (X = L), du côté Z positif de l'axe.
 export const STAIR = { z0: 0.35, w: 48 * IN, tread: 16 * IN };
