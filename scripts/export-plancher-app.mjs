@@ -22,7 +22,7 @@ import { buildProcedural } from '../src/viewer/assembly.js';
 import builders from '../src/models/plancher-dd/index.js';
 import * as shapes from '../src/viewer/shapes.js';
 import { variante8, jonction8, variante8Sec2, eclisses8, marchesCas, secondaireCas, stairPlan, JOINT8_X, JOINT8_X2 } from '../src/models/plancher-dd/floor.js';
-import { L, ground, STAIR } from '../src/models/plancher-dd/plan.js';
+import { L, ground, STAIR, setFond } from '../src/models/plancher-dd/plan.js';
 
 globalThis.FileReader = class {
   readAsArrayBuffer(blob) { blob.arrayBuffer().then((b) => { this.result = b; this.onloadend?.(); }); }
@@ -120,6 +120,28 @@ const casLabels = [];
       c.traverse((k) => { if (k !== c) k.userData = {}; });
       cas.add(c);
     }
+    // Appuis du plancher pour ce cas : le modèle est reconstruit sur un sol creusé de façon que
+    // le sol aux marches soit à (n - 1) × 9 po sous le dessous des madriers (plancher à n × 9 po),
+    // avec les mêmes règles de montage (blocages, 6 × 6, coins). Pièces d'étape sous les madriers.
+    setFond(((n - 1) * 9 * 0.0254) / -y);
+    const m2 = buildProcedural(builders, 'P02');
+    m2.root.updateMatrixWorld(true);
+    const bxA = new THREE.Box3();
+    const app = [];
+    m2.root.traverse((o) => {
+      const u = o.userData;
+      if (u.stepOnly !== undefined || u.step === undefined || u.step < 1 || u.step > 14 || hasStepBelow(o)) return;
+      if (bxA.setFromObject(o).max.y > 0.003) return;
+      app.push(o);
+    });
+    for (const o of app) {
+      o.updateMatrixWorld(true);
+      o.matrixWorld.decompose(o.position, o.quaternion, o.scale);
+      o.userData = { grp: 'marches', cas: n, ap: 1 };
+      o.traverse((k) => { if (k !== o) k.userData = {}; });
+      cas.add(o);
+    }
+    setFond(1);
     casLabels.push({ steps: ['marches'], cas: n, pos: [L - 0.25, y + n * 9 * 0.0254 + 0.06, zc], text: `${n} marches : plancher à ${n * 9} po du sol`, kind: 'note' });
   }
 }

@@ -95,7 +95,12 @@ const OFFSET = (() => {
   return m;
 })();
 
-export const ground = (x, z) => rawGround(x, z) - OFFSET;
+// Profondeur du sol sous le point le plus haut, multipliée par FOND (1 : le vrai sol). L'outil
+// 3D de l'app s'en sert pour les cas de marches : même plancher, sol plus ou moins creux, et
+// les appuis montés selon les mêmes règles (blocages, 6 × 6, coins) pour chaque profondeur.
+let FOND = 1;
+export function setFond(f) { FOND = f; }
+export const ground = (x, z) => { const g = rawGround(x, z) - OFFSET; return g < 0 ? g * FOND : g; };
 
 /** Point le plus haut du sol sous une empreinte rectangulaire (centre, demi-tailles). */
 export function groundUnder(x, z, hx, hz) {
