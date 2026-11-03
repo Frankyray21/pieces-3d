@@ -10,7 +10,7 @@
 // (ordre de pose), cachée ailleurs ; x8 = pièce de 16 pi remplacée par la variante
 // (même liste que v8Old de la vidéo, src/video/plancher-video.js) ; pl = planche
 // (P07, P13), enlevée sur cet écran pour voir la structure. grp = groupe montré seulement
-// sur l'écran « cas » du même nom (marches à 2, 3, 4 marches…). ord = rang de pose d'une
+// sur l'écran « cas » du même nom (marches : cas = nombre de marches, posées au bout du vrai plancher). ord = rang de pose d'une
 // planche de la section 1 (animation du serrage de l'étape 7, comme la vidéo).
 //
 // Usage : node scripts/export-plancher-app.mjs sortie.glb etiquettes.json
@@ -21,8 +21,8 @@ import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter.js';
 import { buildProcedural } from '../src/viewer/assembly.js';
 import builders from '../src/models/plancher-dd/index.js';
 import * as shapes from '../src/viewer/shapes.js';
-import { variante8, jonction8, variante8Sec2, eclisses8, marchesCas, secondaireCas, JOINT8_X, JOINT8_X2 } from '../src/models/plancher-dd/floor.js';
-import { L, ground } from '../src/models/plancher-dd/plan.js';
+import { variante8, jonction8, variante8Sec2, eclisses8, marchesCas, secondaireCas, stairPlan, JOINT8_X, JOINT8_X2 } from '../src/models/plancher-dd/floor.js';
+import { L, ground, STAIR } from '../src/models/plancher-dd/plan.js';
 
 globalThis.FileReader = class {
   readAsArrayBuffer(blob) { blob.arrayBuffer().then((b) => { this.result = b; this.onloadend?.(); }); }
@@ -101,25 +101,28 @@ for (const g of [v1.appuis, v1.madriers, jonction8(shapes), v2.appuis, v2.soutie
 }
 root.add(v8);
 // Écrans « cas » de l'app (grp) : affichés seulement sur l'écran qui les nomme.
-// Marches à 2, 3 et 4 marches, côte à côte dans la galerie, au-delà de la barricade.
 const cas = new THREE.Group();
 cas.name = 'cas';
 const casLabels = [];
-[[2, -1.9], [3, 0], [4, 1.9]].forEach(([n, z]) => {
-  const x = L + 6.2;
+// Marches à 2, 3 et 4 marches : posées à la place des vraies marches, au bout du plancher
+// (X = L, centrées sur l'escalier), sur le sol à cet endroit ; l'app monte ou descend le
+// plancher pour que son dessus soit à n × 9 po de ce sol (cas = nombre de marches).
+{
+  const { zc } = stairPlan();
   let y = -Infinity;
-  for (let dx = -0.8; dx <= 1.5; dx += 0.1) for (let dz = -0.7; dz <= 0.7; dz += 0.1) y = Math.max(y, ground(x + dx, z + dz));
-  // Chaque pièce du cas est un nœud : bout de plancher (b, décor, posé d'emblée) ou
-  // pièce de marche avec son rang de pose (m : module du bas d'abord, puis son dessus).
-  const g = marchesCas(shapes, n, [x, y, z]);
-  for (const c of [...g.children]) {
-    const u = c.userData;
-    c.userData = u.plancher ? { grp: 'marches', b: 1 } : { grp: 'marches', m: u.module };
-    c.traverse((k) => { if (k !== c) k.userData = {}; });
-    cas.add(c);
+  for (let dx = 0; dx <= 3 * STAIR.tread + 0.01; dx += 0.1) for (let dz = -STAIR.w / 2; dz <= STAIR.w / 2 + 0.01; dz += 0.1) y = Math.max(y, ground(L + dx, zc + dz));
+  for (const n of [2, 3, 4]) {
+    const g = marchesCas(shapes, n, [L, y, zc]);
+    for (const c of [...g.children]) {
+      const u = c.userData;
+      if (u.plancher) continue;                       // pas de bout de plancher : c'est le vrai plancher qui sert
+      c.userData = { grp: 'marches', cas: n, m: u.module };
+      c.traverse((k) => { if (k !== c) k.userData = {}; });
+      cas.add(c);
+    }
+    casLabels.push({ steps: ['marches'], cas: n, pos: [L - 0.25, y + n * 9 * 0.0254 + 0.06, zc], text: `${n} marches : plancher à ${n * 9} po du sol`, kind: 'note' });
   }
-  casLabels.push({ steps: ['marches'], pos: [x - 0.35, y + n * 9 * 0.0254 + 0.05, z], text: `${n} marches : plancher à ${n * 9} po`, kind: 'note' });
-});
+}
 // Plancher secondaire : 2 marches, côté sans marche avec garde-corps, contre la foreuse.
 const titres = { marches: '2 marches : plancher à 18 po, 1re marche 16 po × 9 po', garde: 'Côté sans marche : garde-corps', foreuse: 'Contre la foreuse : dernière planche à 3 po de la tour' };
 [['marches', -1.75], ['garde', 0.15], ['foreuse', 2.0]].forEach(([kind, z]) => {
