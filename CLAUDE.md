@@ -10,3 +10,5 @@
 - Ne modéliser que ce qui figure dans le manuel de l'équipement (pas
   d'accessoires de chantier inventés).
 - Textes et commentaires en français.
+- Vidéo de formation du plancher (PRO-DD-ST-003) : suivre la compétence
+  `.claude/skills/video-plancher/SKILL.md` (ne refaire que ce qui change).
