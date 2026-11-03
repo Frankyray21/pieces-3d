@@ -78,7 +78,7 @@
     "P02",
     "P01"
    ],
-   "note": "Reconstitution 3D d'après la procédure PRO-DD-ST-003 (révision juillet 2026). La foreuse fore vers le fond de la galerie (front de taille où sont marqués les fonds de trous). Le plancher prend toute la largeur de la galerie : planches 3 × 8 en travers de la galerie, dans le sens contraire du forage, madriers 6 × 6 le long de la galerie (les patins de la foreuse les suivent). Section 1 au fond, section 2 vers l'entrée, dans le prolongement ; les 2 planches libres de l'étape 8 sont à la jonction, au centre du plancher. Sol de galerie fictif : il descend vers l'entrée pour montrer les blocages, les soutiens, la cage, les marches et les garde-corps que la procédure exige. Chaque pièce porte son numéro d'étape pour l'animation du montage. Règle appliquée partout : jamais de bois simplement empilé ; un seul blocage et ses coins, sinon une cage (couches de deux pièces croisées).",
+   "note": "Reconstitution 3D d'après la procédure PRO-DD-ST-003 (révision juillet 2026). La foreuse STM-1500 fore vers la paroi de la galerie où sont marqués les fonds de trous : son traîneau est en travers des madriers, ses patins croisent les 6 × 6 (étape 3). Le plancher prend toute la largeur de la galerie : planches 3 × 8 en travers de la galerie, dans le sens du forage, madriers 6 × 6 le long de la galerie, dans le sens contraire du forage. Section 1 au fond, section 2 vers l'entrée, dans le prolongement ; les 2 planches libres de l'étape 8 sont à la jonction, au centre du plancher. Sol de galerie fictif : il descend vers l'entrée pour montrer les blocages, les soutiens, la cage, les marches et les garde-corps que la procédure exige. Chaque pièce porte son numéro d'étape pour l'animation du montage. Règle appliquée partout : jamais de bois simplement empilé ; un seul blocage et ses coins, sinon une cage (couches de deux pièces croisées).",
    "parts": [
     [
      "1",
@@ -698,7 +698,7 @@
    "sheets": [
     "P17"
    ],
-   "note": "32 × 72 po, 9 po de haut (12 po au plus) ; aucun morceau en porte-à-faux ; les 2 planches les plus près de la foreuse vissées ; la dernière planche à 3 po de la tour. À chaque changement d'azimut ou d'angle, les 2 dernières planches et les garde-corps sont ajustés. Bois plané non toléré sur les planchers.",
+   "note": "À côté de la tour de la STM-1500 : 32 × 72 po, planches dans le sens de la tour, la plus près de la foreuse à 3 po de la foreuse (poteaux des paliers du traîneau, au-dessus du patin), appuis le long des patins ; aucun morceau en porte-à-faux. Plancher à 18 po : 2 marches, la première de 16 po de profondeur (deux 3 × 8) et 9 po de haut ; les bouts sans marche ont un garde-corps fixé solidement. Les 2 planches les plus près de la foreuse vissées. À chaque changement d'azimut ou d'angle, les 2 dernières planches et les garde-corps sont ajustés. Bois plané non toléré sur les planchers.",
    "parts": [
     [
      "1",
@@ -713,7 +713,7 @@
      "2",
      "",
      4,
-     "Planche 3 × 8 × 72 po",
+     "Planche 3 × 8 × 72 po, dans le sens de la tour",
      {
       "pnText": "3 × 8 brut × 72 po"
      }
@@ -721,11 +721,56 @@
     [
      "3",
      "",
-     6,
-     "Tire-fond 6 po (2 planches côté foreuse et quatre coins du plancher)",
+     4,
+     "Tire-fond 6 po (2 planches les plus près de la foreuse)",
      {
       "qty3d": 1,
       "pnText": "Tire-fond 6 po"
+     }
+    ],
+    [
+     "4",
+     "",
+     12,
+     "Appuis sous les deux bouts de chaque travers : 3 × 8 à plat et bout de 6 × 6 de 24 po, en travers",
+     {
+      "pnText": "3 × 8 et 6 × 6 brut × 24 po"
+     }
+    ],
+    [
+     "5",
+     "",
+     5,
+     "Première marche : 3 bouts de 6 × 6 de 16 po et 2 planches 3 × 8 × 72 po (9 po de haut, 16 po de profondeur)",
+     {
+      "pnText": "6 × 6 et 3 × 8 brut"
+     }
+    ],
+    [
+     "6",
+     "",
+     4,
+     "Montant de garde-corps 2 × 4 de 48 po (un 2 × 4 de 8 pi coupé en deux)",
+     {
+      "pnText": "2 × 4 × 48 po"
+     }
+    ],
+    [
+     "7",
+     "",
+     4,
+     "Lisse du haut et lisse intermédiaire 2 × 4 (32 po), aux deux bouts sans marche",
+     {
+      "pnText": "2 × 4"
+     }
+    ],
+    [
+     "8",
+     "",
+     2,
+     "Coup de pied 2 × 4 brut sur chant (32 po)",
+     {
+      "pnText": "2 × 4 brut"
      }
     ]
    ]

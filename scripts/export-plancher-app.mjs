@@ -21,7 +21,7 @@ import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter.js';
 import { buildProcedural } from '../src/viewer/assembly.js';
 import builders from '../src/models/plancher-dd/index.js';
 import * as shapes from '../src/viewer/shapes.js';
-import { variante8, jonction8, variante8Sec2, eclisses8, marchesCas, secondaireCas, stairPlan, appuisProfonds, JOINT8_X, JOINT8_X2 } from '../src/models/plancher-dd/floor.js';
+import { variante8, jonction8, variante8Sec2, eclisses8, marchesCas, stairPlan, appuisProfonds, JOINT8_X, JOINT8_X2 } from '../src/models/plancher-dd/floor.js';
 import { L, ground, STAIR, setFond } from '../src/models/plancher-dd/plan.js';
 
 globalThis.FileReader = class {
@@ -137,21 +137,8 @@ const casLabels = [];
     casLabels.push({ steps: ['marches'], cas: n, pos: [L - 0.25, y + n * 9 * 0.0254 + 0.06, zc], text: `${n} marches : plancher à ${n * 9} po du sol`, kind: 'note' });
   }
 }
-// Plancher secondaire : 2 marches, côté sans marche avec garde-corps, contre la foreuse.
-const titres = { marches: '2 marches : plancher à 18 po, 1re marche 16 po × 9 po', garde: 'Côté sans marche : garde-corps', foreuse: 'Contre la foreuse : dernière planche à 3 po de la tour' };
-[['marches', -1.75], ['garde', 0.15], ['foreuse', 2.0]].forEach(([kind, z]) => {
-  const x = L + 6.2;
-  let y = -Infinity;
-  for (let dx = -1.0; dx <= 1.0; dx += 0.1) for (let dz = -0.6; dz <= 0.6; dz += 0.1) y = Math.max(y, ground(x + dx, z + dz));
-  const g = secondaireCas(shapes, kind, [x, y, z]);
-  for (const c of [...g.children]) {
-    const u = c.userData;
-    c.userData = u.plancher ? { grp: 'secondaire', b: 1 } : { grp: 'secondaire', m: u.module };
-    c.traverse((k) => { if (k !== c) k.userData = {}; });
-    cas.add(c);
-  }
-  casLabels.push({ steps: ['secondaire'], pos: [x, y + (kind === 'marches' ? 0.46 : 0.23) + 0.05, z], text: titres[kind], kind: 'note' });
-});
+// Plancher secondaire : un seul montage réel, à côté de la tour de la STM-1500 (P17, étape 18) ;
+// la foreuse elle-même est exportée à part, allégée (scripts/export-stm-app.mjs).
 root.add(cas);
 root.updateMatrixWorld(true);
 

@@ -5,7 +5,7 @@
 // d'ensemble. Chaque objet porte userData.step (étape de la procédure).
 import {
   IN, FT, B66, P3, P8, S24, R24, W, L, SEC, DECK, joistZ, GAL, JOINT_X, SUPPORTS_X, SLEEPERS_X,
-  stack, ground, groundUnder, over12, deckHeight, STAIR, DRILL, WEDGE, plankX, TIGHT, d1, d2,
+  stack, ground, groundUnder, over12, deckHeight, STAIR, DRILL, STM, WEDGE, plankX, TIGHT, d1, d2,
 } from './plan.js';
 import { lumber, between, wedge, lagScrews, placeStack, labeler } from './lumber.js';
 import { wireMesh, groundPatch } from './site.js';
@@ -380,65 +380,6 @@ export function marchesCas(S, n, [x, y, z]) {
   return g;
 }
 
-/**
- * Cas du plancher secondaire à montrer (outil 3D de l'app), posés sur un sol plat à
- * (x, y, z), planches selon X (72 po), largeur selon Z (32 po) :
- *   'marches' : plancher à 18 po, première marche de 16 po de profondeur (deux 3 × 8) et
- *               9 po de haut, sur le long côté Z positif ;
- *   'garde'   : plancher à 9 po, côté sans marche (Z négatif) fermé par un garde-corps
- *               fixé solidement (montants de 48 po, lisses, coup de pied) ;
- *   'foreuse' : plancher à 9 po contre la foreuse : patin et pied de tour en silhouette
- *               côté Z négatif, dernière planche à 3 po de la tour, les deux dernières
- *               planches vissées (tire-fonds).
- * userData.plancher : décor posé d'emblée ; userData.module : rang de pose.
- */
-export function secondaireCas(S, kind, [x, y, z]) {
-  const g = S.group();
-  const Lx = 72 * IN, Wz = 32 * IN;
-  const x0 = x - Lx / 2, x1 = x + Lx / 2, z0 = z - Wz / 2, z1 = z + Wz / 2;
-  const base = (o) => { o.userData.plancher = true; g.add(o); };
-  const pose = (o, m) => { o.userData.module = m; g.add(o); };
-  const H = kind === 'marches' ? 18 * IN : 9 * IN;
-  const yt = y + H - P3; // dessous des planches
-  // Appuis : pour 18 po, un 6 × 6 couché sous chaque bout de travers (6 po) + 3 × 8 à plat (3 po).
-  const xs = [x0 + B66 / 2, x, x1 - B66 / 2];
-  if (kind === 'marches') for (const xx of xs) for (const zz of [z0 + B66 / 2, z1 - B66 / 2]) {
-    pose(lumber(S, [P8, P3, 24 * IN], [xx, y + P3 / 2, zz]), 1);
-    pose(lumber(S, [B66, B66, 24 * IN], [xx, y + P3 + B66 / 2, zz]), 1.4);
-  }
-  // Travers 6 × 6 sous les planches : aucun morceau en porte-à-faux.
-  for (const xx of xs) pose(lumber(S, [B66, B66, Wz], [xx, yt - B66 / 2, z]), 2);
-  // Planches 3 × 8 selon X ; les deux plus près de la foreuse (Z négatif) vissées.
-  const vis = [];
-  for (let k = 0; k < 4; k++) {
-    const zz = z0 + (k + 0.5) * P8;
-    pose(lumber(S, [Lx, P3, P8], [x, yt + P3 / 2, zz]), 3 + k * 0.2);
-    if (kind === 'foreuse' && k < 2) for (const xx of [x0 + B66 / 2, x1 - B66 / 2]) vis.push([xx, yt + P3, zz]);
-  }
-  if (vis.length) pose(lagScrews(S, vis), 4.2);
-  if (kind === 'marches') {
-    // Première marche : 9 po de haut, 16 po de profondeur (deux 3 × 8), le long du côté Z positif.
-    const zs = z1 + 8 * IN;
-    for (const xx of [x0 + B66 / 2, x, x1 - B66 / 2]) pose(lumber(S, [B66, B66, 16 * IN], [xx, y + B66 / 2, zs]), 4);
-    for (let k = 0; k < 2; k++) pose(lumber(S, [Lx, P3, P8], [x, y + B66 + P3 / 2, z1 + (k + 0.5) * P8]), 4.5);
-  }
-  if (kind === 'garde') {
-    // Garde-corps sur le côté sans marche (Z négatif) : montants de 48 po contre le bord.
-    const top = y + H + 1.07;
-    for (const xx of [x0 + S24.w / 2, x1 - S24.w / 2]) pose(lumber(S, [S24.w, 48 * IN, S24.t], [xx, top - 24 * IN, z0 - S24.t / 2], 'woodPlaned'), 4);
-    pose(lumber(S, [Lx, S24.w, S24.t], [x, top - S24.w / 2, z0 + S24.t / 2], 'woodPlaned'), 4.5);
-    pose(lumber(S, [Lx, S24.w, S24.t], [x, y + H + 0.535, z0 + S24.t / 2], 'woodPlaned'), 4.6);
-    pose(lumber(S, [Lx, R24.w, R24.t], [x, y + H + R24.w / 2, z0 + R24.t / 2], 'wood'), 4.7);
-  }
-  if (kind === 'foreuse') {
-    // Silhouette de la foreuse : patin en acier, pied de tour, à 3 po de la dernière planche.
-    const zt = z0 - 3 * IN;
-    base(S.box(Lx + 0.6, 0.16, 0.12, 'darkSteel', { pos: [x, y + 0.08, zt - 0.3] }));
-    base(S.box(0.3, 1.4, 0.24, 'red', { pos: [x + 0.2, y + 0.7, zt - 0.12] }));
-    base(S.box(0.5, 0.2, 0.3, 'darkSteel', { pos: [x + 0.2, y + 0.1, zt - 0.15] }));
-  }
-  return g;
-}
 
 // ------------------------------------------------------------------ garde-corps
 
@@ -527,29 +468,58 @@ export function P16(api, opts = {}) {
 
 // ------------------------------------------------------------------ plancher secondaire
 
-/** Emprise du plancher secondaire, à côté de la tour de la foreuse (planches selon X). */
+/**
+ * Plancher secondaire à côté de la tour de la STM-1500 (STM, plan.js), comme sur le chantier :
+ * 32 × 72 po, le long côté parallèle à la tour, planches 3 × 8 dans le sens de la tour ; la plus
+ * près de la foreuse à 3 po de la foreuse (poteaux des paliers du traîneau, au-dessus du patin),
+ * appuis le long des patins. Plancher à 18 po : 2 marches, la
+ * première de 16 po de profondeur (deux 3 × 8) et 9 po de haut, sur le côté libre ; les deux
+ * bouts sans marche ont un garde-corps fixé solidement. Les 2 planches les plus près de la
+ * foreuse sont vissées.
+ */
+const FOREUSE_Z = 0.573;   // demi-largeur hors tout de la STM-1500 au-dessus du plancher (poteaux, paliers)
+const PATIN_Z = 0.533;     // demi-largeur hors tout du traîneau (face extérieure des patins)
 export function secondaryPlan() {
-  const z0 = DRILL.z + 0.11 + 3 * IN; // dernière planche à 3 po de la tour
-  return { x0: 0.12, x1: 0.12 + 72 * IN, z0, z1: z0 + 32 * IN };
+  const x0 = STM.x + FOREUSE_Z + 3 * IN;       // dernière planche à 3 po de la foreuse
+  const zc = STM.z - 0.4;                       // à la hauteur de la tête et du serre-tiges
+  return { x0, x1: x0 + 32 * IN, z0: zc - 36 * IN, z1: zc + 36 * IN, H: 18 * IN, patin: STM.x + PATIN_Z };
 }
 
-/** Plancher secondaire (32 × 72 po, 9 po de haut), à côté de la tour. */
+/** Plancher secondaire (étape 18) : voir secondaryPlan. */
 export function P17(api) {
   const S = api.S;
   const put = labeler(api);
-  const { x0, x1, z0, z1 } = secondaryPlan();
-  const zc = (z0 + z1) / 2;
-  // Travers 6 × 6 sous les planches : aucun morceau en porte-à-faux.
-  for (const x of [x0 + B66 / 2, (x0 + x1) / 2, x1 - B66 / 2]) put('1', lumber(S, [B66, B66, z1 - z0], [x, DECK + B66 / 2, zc]), [0, 0.2, 0], 18, { seq: 1 });
-  const screws = [];
-  for (let k = 0; k < 4; k++) {
-    const z = z0 + (k + 0.5) * P8;
-    put('2', lumber(S, [x1 - x0, P3, P8], [(x0 + x1) / 2, DECK + B66 + P3 / 2, z]), [0, 0.45 + 0.05 * k, 0], 18, { seq: 2 });
-    // Les deux planches les plus près de la foreuse sont vissées (procédure), et
-    // la dernière aussi : un tire-fond à chacun des quatre coins du plancher.
-    if (k < 2 || k === 3) for (const x of [x0 + B66 / 2, x1 - B66 / 2]) screws.push([x, DECK + B66 + P3, z]);
+  const { x0, x1, z0, z1, H } = secondaryPlan();
+  const zc = (z0 + z1) / 2, y0 = DECK, yt = y0 + H - P3; // dessous des planches
+  const zs = [z0 + B66 / 2, zc, z1 - B66 / 2];
+  // Appuis sous les deux bouts de chaque travers (le long des patins et au bout), en travers de
+  // lui : 3 × 8 à plat et bout de 6 × 6 de 24 po.
+  for (const z of zs) for (const x of [x0 + B66 / 2, x1 - B66 / 2]) {
+    put('4', lumber(S, [P8, P3, 24 * IN], [x, y0 + P3 / 2, z]), [0, 0.15, 0], 18, { seq: 1 });
+    put('4', lumber(S, [B66, B66, 24 * IN], [x, y0 + P3 + B66 / 2, z]), [0, 0.2, 0], 18, { seq: 2 });
   }
-  put('3', lagScrews(S, screws), [0, 0.75, 0], 18, { seq: 3 });
+  // Travers 6 × 6 de 32 po.
+  for (const z of zs) put('1', lumber(S, [x1 - x0, B66, B66], [(x0 + x1) / 2, yt - B66 / 2, z]), [0, 0.3, 0], 18, { seq: 3 });
+  // Planches 3 × 8 × 72 po dans le sens de la tour ; les 2 plus près de la foreuse vissées.
+  const vis = [];
+  for (let k = 0; k < 4; k++) {
+    const x = x0 + (k + 0.5) * P8;
+    put('2', lumber(S, [P8, P3, z1 - z0], [x, yt + P3 / 2, zc]), [0, 0.45 + 0.05 * k, 0], 18, { seq: 4 + k });
+    if (k < 2) for (const z of [zs[0], zs[2]]) vis.push([x, yt + P3, z]);
+  }
+  put('3', lagScrews(S, vis), [0, 0.75, 0], 18, { seq: 8 });
+  // Première marche, sur le côté libre : bouts de 6 × 6 et deux 3 × 8 (9 po de haut, 16 po de profondeur).
+  const xm = x1 + 8 * IN;
+  for (const z of zs) put('5', lumber(S, [16 * IN, B66, B66], [xm, y0 + B66 / 2, z]), [0.3, 0.1, 0], 18, { seq: 9 });
+  for (let k = 0; k < 2; k++) put('5', lumber(S, [P8, P3, z1 - z0], [x1 + (k + 0.5) * P8, y0 + B66 + P3 / 2, zc]), [0.3, 0.2, 0], 18, { seq: 10 });
+  // Garde-corps aux deux bouts sans marche : montants de 48 po à l'extérieur, lisses et coup de pied.
+  const top = y0 + H + RAIL_TOP;
+  for (const [z, s] of [[z0, -1], [z1, 1]]) {
+    for (const x of [x0 + S24.w / 2, x1 - S24.w / 2]) put('6', lumber(S, [S24.w, POST_LEN, S24.t], [x, top - POST_LEN / 2, z + s * S24.t / 2], 'woodPlaned'), [0, 0.3, s * 0.3], 18, { seq: 11 });
+    put('7', lumber(S, [x1 - x0, S24.w, S24.t], [(x0 + x1) / 2, top - S24.w / 2, z - s * S24.t / 2], 'woodPlaned'), [0, 0.35, s * 0.3], 18, { seq: 12 });
+    put('7', lumber(S, [x1 - x0, S24.w, S24.t], [(x0 + x1) / 2, y0 + H + RAIL_TOP / 2, z - s * S24.t / 2], 'woodPlaned'), [0, 0.35, s * 0.3], 18, { seq: 13 });
+    put('8', lumber(S, [x1 - x0, R24.w, R24.t], [(x0 + x1) / 2, y0 + H + R24.w / 2, z - s * R24.t / 2], 'wood'), [0, 0.35, s * 0.3], 18, { seq: 14 });
+  }
   return { view: { dir: [1.2, 1.0, 0.6] } };
 }
 

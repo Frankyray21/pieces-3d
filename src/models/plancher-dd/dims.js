@@ -194,11 +194,10 @@ export function dimensions() {
   const xg = 6.0;
   at([17], dim([xg, DECK + 0.02, zN], [xg, DECK + 0.02, -GAL], 'Écart 12 po', [0, 0.25, 0]));
   at([17], dim([xg + 0.8, DECK - 0.3, -GAL + 0.06], [xg + 0.8, DECK - 0.3 + 24 * IN, -GAL + 0.06], 'Grillage 24 po', [0, 0, 0.25]));
-  // Plancher secondaire : 32 × 72 po, 12 po de haut au plus.
+  // Plancher secondaire à côté de la tour : 32 × 72 po, 18 po (2 marches de 9 po).
   const sp = secondaryPlan();
-  const top = DECK + B66 + P3;
-  at([18], dim([sp.x0, top, sp.z1], [sp.x1, top, sp.z1], '32 po min.', [0, 0, 0.3]));
-  at([18], dim([sp.x1, top, sp.z0], [sp.x1, top, sp.z1], '72 po min.', [0.3, 0, 0]));
-  at([18], dim([sp.x0, DECK, sp.z0 - 0.02], [sp.x0, top, sp.z0 - 0.02], '9 po (12 po max.)', [0, 0, -0.3], { h: 0.04 }));
+  const top = DECK + sp.H;
+  at([18], dim([sp.x0, top, sp.z1 + 0.06], [sp.x1, top, sp.z1 + 0.06], '32 po min.', [0, 0, 0.3]));
+  at([18], dim([sp.x1 + 0.45, top, sp.z0], [sp.x1 + 0.45, top, sp.z1], '72 po min.', [0.3, 0, 0]));
   return out;
 }
