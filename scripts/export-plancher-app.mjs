@@ -21,7 +21,7 @@ import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter.js';
 import { buildProcedural } from '../src/viewer/assembly.js';
 import builders from '../src/models/plancher-dd/index.js';
 import * as shapes from '../src/viewer/shapes.js';
-import { variante8, jonction8, variante8Sec2, eclisses8, marchesCas, stairPlan, appuisProfonds, SECONDAIRES, secondaryPlan, plancherSecondaire, JOINT8_X, JOINT8_X2 } from '../src/models/plancher-dd/floor.js';
+import { variante8, jonction8, variante8Sec2, eclisses8, marchesCas, stairPlan, appuisProfonds, SECONDAIRES, plancherSecondaire, JOINT8_X, JOINT8_X2 } from '../src/models/plancher-dd/floor.js';
 import { L, ground, STAIR, setFond, STM, DECK } from '../src/models/plancher-dd/plan.js';
 
 globalThis.FileReader = class {
@@ -141,20 +141,13 @@ const casLabels = [];
 // serre-tiges à la taille (SECONDAIRES : cas = 1, 2, 3 ; pas de plancher au cas 1), à côté de la STM-1500 (exportée à part, allégée, par
 // scripts/export-stm-app.mjs ; l'app la recule et lève son avance selon le cas).
 {
-  const titres = {
-    1: 'Horizontal : pas de plancher secondaire',
-    2: '10° : plancher de 9 po, sans marche',
-    3: '15° : plancher de 18 po, 2 marches',
-  };
   for (const c of SECONDAIRES) {
-    const sp = secondaryPlan(c.H, c.zc);
     if (c.H > 0) for (const { obj, module } of plancherSecondaire(shapes, c.H, c.zc)) {
       obj.userData = { grp: 'secondaire', cas: c.n, m: module };
       obj.traverse((k) => { if (k !== obj) k.userData = {}; });
       cas.add(obj);
     }
-    // Une seule étiquette par montage, sur le plancher secondaire (ou à sa place).
-    casLabels.push({ steps: ['secondaire'], cas: c.n, pos: [(sp.x0 + sp.x1) / 2, DECK + c.H + 0.05, (sp.z0 + sp.z1) / 2], text: titres[c.n], kind: 'note' });
+    // Pas d'étiquette dans la 3D : le nom du cas s'affiche dans le panneau de l'app.
   }
 }
 root.add(cas);
