@@ -166,7 +166,8 @@ export function eclisses8(S, xs = [JOINT8_X, JOINT8_X2]) {
     const zf = z + s * B66 / 2; // face du madrier
     for (const x of xs) {
       g.add(lumber(S, [2 * half, B66, P3], [x, B66 / 2, zf + s * P3 / 2], 'woodLight'));
-      g.add(S.boltSet([[x - 6 * IN, B66 / 2, zf + s * P3], [x + 6 * IN, B66 / 2, zf + s * P3]], 0.375 * IN, 6 * IN, 'zinc', { axis: s > 0 ? '-z' : 'z', washer: true }));
+      // Tête contre la face extérieure du 3 × 6, tige vers le madrier (comme au joint du centre).
+      g.add(S.boltSet([[x - 6 * IN, B66 / 2, zf + s * P3], [x + 6 * IN, B66 / 2, zf + s * P3]], 0.375 * IN, 6 * IN, 'zinc', { axis: s > 0 ? 'z' : '-z', washer: true }));
     }
   });
   return g;
