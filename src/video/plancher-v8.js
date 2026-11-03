@@ -4,7 +4,7 @@
 // Variante courante sur le chantier, pas décrite dans la procédure : les madriers
 // des deux sections faits de deux 6 × 6 de 8 pi bout à bout, parfaitement de niveau,
 // le joint sur un blocage (section 1) ou sur un soutien (section 2) ; jonction des
-// sections doublée (un 6 × 6 sous chaque section) ; bout de 6 × 6 de 24 po le long des
+// sections doublée (un 6 × 6 sous chaque section) ; bout de 3 × 6 de 24 po le long des
 // madriers de rive, comme dans la vidéo.
 //
 // L'encart s'insère dans l'enregistrement principal à l'instant V8.v (silence ajouté
@@ -106,7 +106,7 @@ export const V8_NOTES = [
   { u0: L(3) + MOVE - 0.2, u1: L(4) + 0.3, at: [JOINT8_X - 0.9, B66 * 0.5, ZE + B66 / 2], text: 'Les deux 6 × 6 de 8 pi parfaitement de niveau', dir: 'down' },
   { u0: L(4) + MOVE - 0.2, u1: L(5) + 0.3, at: [JOINT_X, -B66 / 2, joistZ[3] + 0.4], text: 'Jonction doublée : un 6 × 6 sous chaque section', dir: 'down' },
   { u0: L(6) - 0.1, u1: L(7) + 0.3, at: [JOINT8_X2, -0.02, ZE], text: 'Section 2 : joint sur un soutien', dir: 'right' },
-  { u0: L(7) + MOVE - 0.2, u1: L(8) + 0.3, at: [JOINT_X, B66 * 0.7, ZN], text: 'Bout de 6 × 6 de 24 po le long des madriers de rive', dir: 'up' },
+  { u0: L(7) + MOVE - 0.2, u1: L(8) + 0.3, at: [JOINT_X, B66 * 0.7, ZN], text: 'Bout de 3 × 6 de 24 po le long des madriers de rive', dir: 'up' },
   { u0: L(7) + MOVE + 0.6, u1: L(8) + 0.3, at: [JOINT_X, -B66 / 2, -1.6], text: '6 × 6 doublé', dir: 'down' },
   { u0: L(8) + MOVE - 0.1, u1: L(9) - 0.5, at: [JOINT8_X, B66, ZE], text: 'Joints à 8 pi', dir: 'up' },
   { u0: L(8) + MOVE + 0.3, u1: L(9) - 0.5, at: [JOINT_X, B66, ZE], text: 'Jonction doublée', dir: 'up' },
