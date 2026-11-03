@@ -317,21 +317,24 @@ export function P14(api, opts = {}) {
     for (let k = 0; k < np; k++) put('1', lumber(S, [P8, P3, STAIR.w], [xa + (k + 0.5) * P8, top - P3 / 2, (z0 + z1) / 2]), [0.25 * i, 0.35, 0], 14, { seq: seq0 + 15 + k });
     base = top;
   }
-  // Mains courantes (plus d'une marche), de chaque côté de l'escalier, montées comme les
-  // garde-corps (p. 16) : un montant 2 × 4 en haut (au bord du plancher) et un en bas (au
-  // nez de la dernière marche), du sol jusqu'à la main courante ; la main courante, un
-  // 2 × 4 droit vissé sur la face extérieure des montants, parallèle à la ligne des nez de
-  // marche, à 36 po au-dessus.
+  // Mains courantes (plus d'une marche), de chaque côté de l'escalier, comme sur le chantier :
+  // un montant 2 × 4 en haut (au bord du plancher) et un en bas (au nez de la dernière marche),
+  // du sol jusqu'à la main courante ; sur la face des montants côté escalier, deux 2 × 4 droits
+  // parallèles à la ligne des nez de marche : la main courante à 36 po au-dessus des nez et une
+  // lisse intermédiaire à mi-hauteur. Les montants sont juste à l'extérieur de l'escalier : les
+  // 2 × 4 arrivent au bord des marches sans les rétrécir.
   const HR = 36 * IN;
   const nez = (x) => DECK - ((x - L) / T) * rise; // ligne des nez de marche
   const xh = L + R24.w / 2, xbas = L + (n - 1) * T - R24.w / 2;
-  for (const [z, s] of [[z0 - R24.t / 2, -1], [z1 + R24.t / 2, 1]]) {
+  for (const [z, s] of [[z0 - 1.5 * R24.t, -1], [z1 + 1.5 * R24.t, 1]]) {
     for (const x of [xh, xbas]) {
       const g = ground(x, z), top = nez(x) + HR + R24.w / 2;
       put('4', lumber(S, [R24.w, top - g, R24.t], [x, (g + top) / 2, z], 'wood'), [0.5, 0, s * 0.3], 16, { seq: 0 });
     }
-    const zr = z + s * R24.t;
-    put('5', between(S, [xh - R24.w / 2, nez(xh - R24.w / 2) + HR, zr], [xbas + R24.w / 2, nez(xbas + R24.w / 2) + HR, zr], R24.t, R24.w, 'wood'), [0.5, 0.25, s * 0.3], 16, { seq: 1 });
+    const zr = z - s * R24.t; // face côté escalier
+    for (const [ref, h, seq] of [['5', HR, 1], ['7', HR / 2, 2]]) {
+      put(ref, between(S, [xh - R24.w / 2, nez(xh - R24.w / 2) + h, zr], [xbas + R24.w / 2, nez(xbas + R24.w / 2) + h, zr], R24.t, R24.w, 'wood'), [0.5, 0.25, s * 0.3], 16, { seq });
+    }
   }
   return { view: { dir: [1.3, 0.6, 0.9] } };
 }

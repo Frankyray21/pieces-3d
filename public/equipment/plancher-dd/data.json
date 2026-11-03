@@ -594,7 +594,7 @@
      "4",
      "",
      4,
-     "Montant de main courante 2 × 4, en haut (bord du plancher) et en bas (nez de la dernière marche), de chaque côté",
+     "Montant de main courante 2 × 4, en haut (bord du plancher) et en bas (nez de la dernière marche), de chaque côté, juste à l'extérieur de l'escalier",
      {
       "pnText": "2 × 4 brut"
      }
@@ -603,7 +603,16 @@
      "5",
      "",
      2,
-     "Main courante 2 × 4 droite, vissée sur les montants, parallèle aux marches, à 36 po au-dessus des nez",
+     "Main courante 2 × 4 droite, vissée sur la face des montants côté escalier, parallèle aux nez de marche, à 36 po au-dessus",
+     {
+      "pnText": "2 × 4 brut"
+     }
+    ],
+    [
+     "7",
+     "",
+     2,
+     "Lisse intermédiaire 2 × 4 droite, sous la main courante, à mi-hauteur (18 po au-dessus des nez), côté escalier",
      {
       "pnText": "2 × 4 brut"
      }
