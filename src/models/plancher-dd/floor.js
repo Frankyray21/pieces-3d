@@ -8,7 +8,7 @@ import {
   stack, ground, groundUnder, over12, deckHeight, STAIR, DRILL, STM, WEDGE, plankX, TIGHT, d1, d2,
 } from './plan.js';
 import { lumber, between, wedge, lagScrews, placeStack, labeler } from './lumber.js';
-import { wireMesh, groundPatch } from './site.js';
+import { groundPatch } from './site.js';
 import { PIVOT, FOOT_X, AXIS_Y } from '../stm-1500/layout.js';
 
 // Sous-assemblage vu seul : le sol de la galerie sous l'emprise (absent dans la vue d'ensemble).
@@ -405,9 +405,10 @@ function postsAlong(a, b, depuis = 'a') {
 
 /**
  * Tronçons de garde-corps : bords du plancher de plus de 12 po de haut qui
- * donnent sur un vide. Le long des parois rocheuses (écart de 12 po ou moins),
- * il n'y a pas de vide : le grillage au bas du mur ferme l'écart (étape 17).
- * Reste le bout du plancher, côté galerie, de part et d'autre de l'escalier.
+ * donnent sur un vide. Le long des parois rocheuses, le plancher est près du roc
+ * (écart de 12 po ou moins) : pas de garde-corps ; s'il y a plus de 12 po, un
+ * garde-corps (étape 17). Reste le bout du plancher, côté galerie, de part et
+ * d'autre de l'escalier.
  */
 export function guardSegments() {
   const segs = [];
@@ -420,7 +421,7 @@ export function guardSegments() {
   return segs;
 }
 
-/** Garde-corps (RSST art. 12), lisse inférieure et grillage au bas du mur, étapes 15 et 17. */
+/** Garde-corps (RSST art. 12) et lisse inférieure, étape 15 (et étape 17 : côtés à plus de 12 po de la paroi). */
 export function P16(api, opts = {}) {
   const S = api.S;
   soil(api, opts, -0.3, L + 1.2, -W / 2 - 0.3, W / 2 + 0.3);
@@ -459,12 +460,6 @@ export function P16(api, opts = {}) {
     }
     void len; void mid;
   }
-  // Grillage de 24 po fixé au bas de chaque mur (écart plancher-mur de 12 po).
-  for (const s of [-1, 1]) {
-    const m = wireMesh(S, L + 0.6, 24 * IN, 2 * IN, 'zinc', 0.005);
-    m.position.set(L / 2, DECK - 0.3, s * (GAL - 0.04));
-    put('6', m, [0, 0, s * 0.5], 17, { noDrop: true });
-  }
   return { view: { dir: [1.2, 0.8, 1.0] } };
 }
 
@@ -472,40 +467,41 @@ export function P16(api, opts = {}) {
 
 /**
  * Plancher secondaire à côté de la tour de la STM-1500 (STM, plan.js). Il sert à travailler dans une
- * position ergonomique : changer les tiges et manipuler le tube carotier au serre-tiges, à peu près
- * à la hauteur de la taille (≈ 1,2 m au-dessus de là où l'on se tient). Sa hauteur suit donc l'angle
- * de forage, qui lève le serre-tiges (SECONDAIRES) :
- *   - forage à l'horizontale : serre-tiges à 1,24 m du plancher, pas de plancher secondaire ;
- *   - forage montant (10°) : serre-tiges à 1,41 m, plancher secondaire de 9 po, sans marche ;
- *   - forage montant (15°) : serre-tiges à 1,73 m, plancher à 18 po, 2 marches (la 1re de 16 po
- *     × 9 po) et garde-corps aux bouts sans marche.
- * Au-delà de 20° (forage ascendant), le serre-tiges passe 2 m : plus de 2 marches (pas montré).
+ * position ergonomique à l'arrière de la tête de forage : ajouter les tiges et sortir le tube carotier.
+ * Sa hauteur suit l'angle de forage (SECONDAIRES) :
+ *   - forage à l'horizontale : pas de plancher secondaire ;
+ *   - forage montant (10°) : plancher secondaire de 9 po, sans marche ;
+ *   - forage montant (15°) : plancher à 18 po, 2 marches (la 1re de 16 po × 9 po) et garde-corps
+ *     aux bouts sans marche.
+ * Au-delà de 20° (forage ascendant) : plus de 2 marches (pas montré).
  * 32 × 72 po, le long côté parallèle à la tour, planches 3 × 8 dans le sens de la tour ; il épouse
  * la foreuse : la planche la plus près est à 1 po de la face extérieure du patin (moins de 3 po :
- * le pied ne passe pas), les poteaux des paliers à environ 3 po. Placé vis-à-vis du serre-tiges,
- * sans dépasser le plancher principal. Les 2 planches les plus près de la foreuse sont vissées.
+ * le pied ne passe pas), les poteaux des paliers à environ 3 po. Placé vis-à-vis de l'arrière de
+ * la tête, sans dépasser le plancher principal. Les 2 planches les plus près de la foreuse sont vissées.
  */
 const PATIN_Z = 0.533;     // demi-largeur hors tout du traîneau (face extérieure des patins)
 // Pour lever l'avance, le support bascule sur l'axe arrière (tubes de pivot dans les paliers des
 // poteaux arrière du traîneau, PIVOT de stm-1500/layout.js, 45° vers le haut au plus) ; au-delà de
 // 10°, la poutre est d'abord avancée sur le support (vérin de relevage, glisse en m) pour que son
 // arrière (poulie) ne touche pas le plancher, et la foreuse recule pour garder l'avance à 1 pi de
-// la paroi. z : milieu du traîneau ; travail : hauteur du serre-tiges au-dessus du plancher principal.
-const serreTiges = (angle, glisse, z) => {
-  const t = (angle * Math.PI) / 180, dx = FOOT_X - 0.3985 + glisse - PIVOT.x[1], dy = AXIS_Y - PIVOT.y;
-  return { zs: z - (PIVOT.x[1] + dx * Math.cos(t) - dy * Math.sin(t)), travail: PIVOT.y + dx * Math.sin(t) + dy * Math.cos(t) };
+// la paroi. z : milieu du traîneau ; travail : hauteur de l'arrière de la tête au-dessus du plancher principal.
+// Les travailleurs se tiennent à l'arrière de la tête de forage (nez de l'émerillon, 1,624 m derrière
+// la face du pied le long de l'avance) : c'est là qu'on ajoute les tiges et qu'on sort le tube carotier.
+const arriereTete = (angle, glisse, z) => {
+  const t = (angle * Math.PI) / 180, dx = FOOT_X - 1.074 - 0.55 + glisse - PIVOT.x[1], dy = AXIS_Y - PIVOT.y;
+  return { zs: z + STM.sens * (PIVOT.x[1] + dx * Math.cos(t) - dy * Math.sin(t)), travail: PIVOT.y + dx * Math.sin(t) + dy * Math.cos(t) };
 };
 const cfg = (n, angle, H, glisse, z) => {
-  const { zs, travail } = serreTiges(angle, glisse, z);
-  const zc = Math.max(zs, -W / 2 + 0.06 + 36 * IN);   // vis-à-vis du serre-tiges, sans dépasser le plancher
+  const { zs, travail } = arriereTete(angle, glisse, z);
+  const zc = Math.min(Math.max(zs, -W / 2 + 0.06 + 36 * IN), W / 2 - 0.06 - 36 * IN);   // vis-à-vis de l'arrière de la tête
   return { n, angle, H, glisse, z, zc, travail };
 };
 export const SECONDAIRES = [
   cfg(1, 0, 0, 0, STM.z),
   cfg(2, 10, 9 * IN, 0, STM.z),
-  cfg(3, 15, 18 * IN, 0.9, -0.134),
+  cfg(3, 15, 18 * IN, 0.9, -0.091),
 ];
-export function secondaryPlan(H = 18 * IN, zc = STM.z - 0.4) {
+export function secondaryPlan(H = 18 * IN, zc = STM.z + STM.sens * 0.4) {
   const x0 = STM.x + PATIN_Z + 1 * IN;         // à 1 po du patin : le plancher épouse la foreuse
   return { x0, x1: x0 + 32 * IN, z0: zc - 36 * IN, z1: zc + 36 * IN, H, patin: STM.x + PATIN_Z };
 }

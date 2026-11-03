@@ -64,7 +64,7 @@
   "P13": "Recouvrement de la section 2, bouts au ras (étapes 12 et 13)",
   "P14": "Marches (étape 14)",
   "P15": "Exemple de marches superposées",
-  "P16": "Garde-corps RSST art. 12, lisse inférieure, mains courantes, grillage (étapes 15 à 17)",
+  "P16": "Garde-corps RSST art. 12, lisse inférieure, mains courantes (étapes 15 à 17)",
   "P17": "Plancher secondaire",
   "P18": "Démantèlement et fermeture du site",
   "P19": "Critères de choix des planchers ; révisions"
@@ -144,7 +144,7 @@
      "7",
      "",
      1,
-     "Garde-corps, lisse inférieure et grillage",
+     "Garde-corps et lisse inférieure",
      {
       "link": "P16",
       "pseudo": true
@@ -629,12 +629,12 @@
    ]
   },
   "P16": {
-   "title": "Garde-corps, lisse inférieure et grillage",
-   "titleFr": "Garde-corps, lisse inférieure et grillage",
+   "title": "Garde-corps et lisse inférieure",
+   "titleFr": "Garde-corps et lisse inférieure",
    "sheets": [
     "P16"
    ],
-   "note": "RSST art. 12 : lisse supérieure entre 1 et 1,2 m (1,07 m ici), lisse intermédiaire à mi-hauteur, plinthe : un 2 × 4 brut sur chant (4 po ; un 2 × 4 raboté ne fait que 3 ½ po, un peu moins que le minimum du RSST). Garde-corps là où le plancher dépasse 12 po de haut et donne sur un vide : au bout du plancher, de part et d'autre de l'escalier. Le long des parois rocheuses, il n'y a pas de vide : l'écart plancher-mur de 12 po est fermé par un grillage de 24 po au bas du mur.",
+   "note": "RSST art. 12 : lisse supérieure entre 1 et 1,2 m (1,07 m ici), lisse intermédiaire à mi-hauteur, plinthe : un 2 × 4 brut sur chant (4 po ; un 2 × 4 raboté ne fait que 3 ½ po, un peu moins que le minimum du RSST). Garde-corps là où le plancher dépasse 12 po de haut et donne sur un vide : au bout du plancher, de part et d'autre de l'escalier. Le long des parois rocheuses, le plancher est près du roc (écart de 12 po ou moins) : pas de garde-corps ; s'il y a plus de 12 po, un garde-corps.",
    "parts": [
     [
      "1",
@@ -670,15 +670,6 @@
      "Lisse inférieure (coup de pied) 2 × 4 brut sur chant (4 po), une par section",
      {
       "pnText": "2 × 4 brut"
-     }
-    ],
-    [
-     "6",
-     "",
-     2,
-     "Grillage de 24 po fixé au bas du mur",
-     {
-      "pnText": "Grillage 24 po"
      }
     ],
     [

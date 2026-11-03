@@ -126,14 +126,14 @@ function faceMesh() {
   return meshOf(geo, 'rock');
 }
 
-/** Cible peinte d'un fond de trou sur la paroi Z négative, où fore la STM-1500 (traîneau en travers des madriers, étape 3). */
+/** Cible peinte d'un fond de trou sur la paroi Z positive, où fore la STM-1500 (traîneau en travers des madriers, étape 3). */
 function target(S, x, y) {
   const g = S.group(
     S.ring(0.17, 0.145, 0.006, 'fluoRed', { axis: 'z' }),
     S.ring(0.095, 0.07, 0.006, 'fluoRed', { axis: 'z' }),
     S.cyl(0.025, 0.006, 'fluoRed', { axis: 'z' }),
   );
-  g.position.set(x, y, wallZ(-1, x, y) + 0.012);
+  g.position.set(x, y, wallZ(1, x, y) - 0.012);
   return g;
 }
 

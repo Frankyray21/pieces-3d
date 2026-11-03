@@ -52,10 +52,11 @@ export const SUPPORTS_X = Array.from({ length: 6 }, (_, k) => 0.16 + k * 0.8);
 export const SLEEPERS_X = Array.from({ length: 6 }, (_, k) => SEC + ((k + 1) * (SEC - B66 / 2)) / 6);
 export const GUIDE_X = SLEEPERS_X[5];
 
-// Galerie : 18 pi de large, l'écart plancher-mur est de 12 po de chaque côté
-// (étape 17 : grillage de 24 po au bas du mur). Front de taille (fond de la
-// galerie) à FACE_X, devant le bout X = 0 du plancher.
-export const GAL = 9 * FT; // demi-largeur
+// Galerie : le plancher est près des parois, comme sous terre : écart plancher-paroi de 1 à
+// 9 po selon le relief du roc (moins de 12 po : pas de garde-corps sur les côtés ; plus de
+// 12 po, un garde-corps comme au bout du plancher). Front de taille (fond de la galerie) à
+// FACE_X, devant le bout X = 0 du plancher.
+export const GAL = W / 2 + 0.08; // demi-largeur (paroi moyenne à GAL + 0,05, voir site.js)
 export const FACE_X = -0.12; // plancher collé au front de taille
 export const GAL_X0 = FACE_X - 0.1;
 export const GAL_X1 = L + 8.6;
@@ -66,10 +67,12 @@ export const WALL_H = 2.7; // murs coupés à cette hauteur (vue en écorché)
 // z : axe de la tour.
 export const DRILL = { x: 0.3, z: -0.35, tilt: (12 * Math.PI) / 180, len: 3.0, frontY: DECK + 1.2 };
 // Foreuse STM-1500 (dépôt stm-1500, P010) posée sur le plancher pour l'étape 18 : traîneau en
-// travers des madriers (les patins croisent les 6 × 6, étape 3), l'avant vers la paroi Z négative ;
-// x, z : milieu du traîneau ; yaw : +X du modèle (avant) vers −Z. L'avant du traîneau (pointe à
-// 1,66 m du milieu) est à 1 pi de la paroi (paroi la plus avancée à Z ≈ −2,73 m).
-export const STM = { x: 1.6, z: -0.76, yaw: Math.PI / 2 };
+// travers des madriers (les patins croisent les 6 × 6, étape 3), l'avant vers la paroi Z positive,
+// tournée pour que le côté de travail (X positif, plancher secondaire) soit le côté sans la
+// transmission de la tête (moteur hydraulique, Z positif du modèle, passé du côté X négatif).
+// x, z : milieu du traîneau ; yaw : +X du modèle (avant) vers +Z ; sens : signe de Z vers l'avant.
+// L'avant du traîneau (pointe à 1,66 m du milieu) est à 1 pi de la paroi (Z ≈ +2,50 m).
+export const STM = { x: 1.6, z: 0.535, yaw: -Math.PI / 2, sens: 1 };
 
 // Escalier : au bout du plancher (X = L), du côté Z positif de l'axe.
 export const STAIR = { z0: 0.35, w: 48 * IN, tread: 16 * IN };
@@ -207,7 +210,7 @@ export function over12(z) {
 
 /** Étapes de la procédure (page où elles sont décrites), pour le montage par étapes et la vidéo. */
 export const STEPS = [
-  { n: 0, cam: { pos: [2.6, 1.7, 0.4], tgt: [2.2, 1.55, -2.7] }, page: 'P02', title: 'Inspection des lieux par le superviseur', text: 'Plancher exempt de débris, plat, fonds de trous trouvés et marqués.' },
+  { n: 0, cam: { pos: [2.6, 1.7, -0.4], tgt: [2.2, 1.55, 2.5] }, page: 'P02', title: 'Inspection des lieux par le superviseur', text: 'Plancher exempt de débris, plat, fonds de trous trouvés et marqués.' },
   { n: 1, cam: { pos: [-2.6, 2.0, 0.9], tgt: [3.2, -0.15, -2.35] }, page: 'P02', title: 'Marquer la position du plancher', text: "Avec le plan de forage, tracer à la peinture la ligne de référence du plancher (16 × 32 pi)." },
   { n: 2, cam: { pos: [-1.9, 1.45, 1.4], tgt: [0.9, -0.05, -1.7] }, page: 'P03', title: 'Trouver le point le plus haut', text: 'Niveau au laser Bosch : le premier madrier repose directement sur le sol au point le plus haut.' },
   { n: 3, cam: { pos: [SEC / 2 + 4.0, 3.1, 5.8], tgt: [SEC / 2, -0.05, -0.2] }, page: 'P03', title: 'Placer la structure de base', text: 'Madriers 6 × 6 le long de la galerie, les planches 3 × 8 en travers, dans le sens contraire du forage.' },
@@ -224,7 +227,7 @@ export const STEPS = [
   { n: 14, cam: { pos: [L + 3.4, 1.45, 2.15], tgt: [L + 0.3, 0.02, 0.96] }, page: 'P14', title: 'Marches', text: 'Plancher plus haut que 12 po : marches de 16 po de profondeur, 36 à 60 po de large, 12 po de haut au plus.' },
   { n: 15, cam: { pos: [L + 4.6, 2.7, 5.2], tgt: [L - 2.2, 0.6, 0.4] }, page: 'P16', title: 'Garde-corps et lisse inférieure', text: 'RSST art. 12 : lisse supérieure entre 1 et 1,2 m, lisse intermédiaire à mi-hauteur, plinthe : 2 × 4 brut sur chant (4 po).' },
   { n: 16, cam: { pos: [L + 3.0, 1.7, 2.2], tgt: [L + 0.3, 0.3, 0.96] }, page: 'P16', title: 'Mains courantes', text: "Plus d'une marche : mains courantes." },
-  { n: 17, cam: { pos: [6.3, 1.9, -1.2], tgt: [6.6, 0.0, -2.75] }, page: 'P16', title: 'Grillage au bas du mur', text: 'Écart plancher-mur de 12 po ou moins : grillage de 24 po fixé au bas du mur.' },
+  { n: 17, cam: { pos: [6.3, 1.9, -1.2], tgt: [6.6, 0.0, -2.5] }, page: 'P16', title: 'Écart avec la paroi', text: 'Plancher près de la paroi : écart de 12 po ou moins, rien à ajouter. Plus de 12 po : garde-corps, comme au bout du plancher.' },
   { n: 18, cam: { pos: [4.2, 2.0, 0.9], tgt: [2.2, 0.5, -0.7] }, page: 'P17', label: 'À la foreuse', title: 'Plancher secondaire', text: '32 × 72 po au moins, à côté de la tour de la STM-1500 : 2 marches (1re de 16 po × 9 po), garde-corps aux bouts sans marche, dernière planche à 3 po de la foreuse, le long des patins, deux planches vissées.' },
 ];
 

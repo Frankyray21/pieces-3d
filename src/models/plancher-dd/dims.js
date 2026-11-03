@@ -190,10 +190,9 @@ export function dimensions() {
   const zg = -1.5;
   at([14, 15], dim([L, ground(L, zg - 0.75), zg - 0.75], [L, DECK, zg - 0.75], `${po(deckHeight(L, zg - 0.75))} : plus de 12 po`, [0.45, 0, 0]));
   at([15], dim([L, DECK, zg], [L, DECK + 1.07, zg], '1 m à 1,2 m', [0.35, 0, 0]));
-  // Étape 17 : écart plancher-mur et grillage.
+  // Étape 17 : écart plancher-paroi, 12 po ou moins (plancher près du roc, pas de garde-corps).
   const xg = 6.0;
-  at([17], dim([xg, DECK + 0.02, zN], [xg, DECK + 0.02, -GAL], 'Écart 12 po', [0, 0.25, 0]));
-  at([17], dim([xg + 0.8, DECK - 0.3, -GAL + 0.06], [xg + 0.8, DECK - 0.3 + 24 * IN, -GAL + 0.06], 'Grillage 24 po', [0, 0, 0.25]));
+  at([17], dim([xg, DECK + 0.02, zN], [xg, DECK + 0.02, -GAL - 0.05], 'Moins de 12 po', [0, 0.25, 0]));
   // Plancher secondaire (étape 18) : dimensions données par les étiquettes de l'app (3 montages animés).
   return out;
 }
