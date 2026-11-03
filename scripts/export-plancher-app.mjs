@@ -23,7 +23,6 @@ import builders from '../src/models/plancher-dd/index.js';
 import * as shapes from '../src/viewer/shapes.js';
 import { variante8, jonction8, variante8Sec2, eclisses8, marchesCas, stairPlan, appuisProfonds, SECONDAIRES, secondaryPlan, plancherSecondaire, JOINT8_X, JOINT8_X2 } from '../src/models/plancher-dd/floor.js';
 import { L, ground, STAIR, setFond, STM, DECK } from '../src/models/plancher-dd/plan.js';
-import { PIVOT } from '../src/models/stm-1500/layout.js';
 
 globalThis.FileReader = class {
   readAsArrayBuffer(blob) { blob.arrayBuffer().then((b) => { this.result = b; this.onloadend?.(); }); }
@@ -142,11 +141,10 @@ const casLabels = [];
 // serre-tiges à la taille (SECONDAIRES : cas = 1, 2, 3 ; pas de plancher au cas 1), à côté de la STM-1500 (exportée à part, allégée, par
 // scripts/export-stm-app.mjs ; l'app la recule et lève son avance selon le cas).
 {
-  const m = (h) => h.toFixed(2).replace('.', ',');
   const titres = {
-    1: "Forage à l'horizontale : pas de plancher secondaire",
-    2: 'Forage montant (10°) : plancher secondaire de 9 po, sans marche',
-    3: 'Forage montant (15°) : plancher à 18 po, 2 marches, garde-corps',
+    1: 'Horizontal : pas de plancher secondaire',
+    2: '10° : plancher de 9 po, sans marche',
+    3: '15° : plancher de 18 po, 2 marches',
   };
   for (const c of SECONDAIRES) {
     const sp = secondaryPlan(c.H, c.zc);
@@ -155,13 +153,8 @@ const casLabels = [];
       obj.traverse((k) => { if (k !== obj) k.userData = {}; });
       cas.add(obj);
     }
-    const yt = DECK + c.H;
-    casLabels.push({ steps: ['secondaire'], cas: c.n, pos: [(sp.x0 + sp.x1) / 2, yt + 0.05, (sp.z0 + sp.z1) / 2], text: titres[c.n], kind: 'note' });
-    casLabels.push({ steps: ['secondaire'], cas: c.n, pos: [STM.x, DECK + c.travail + 0.12, c.zc], text: `Serre-tiges à ${m(c.travail - c.H)} m de là où l'on se tient : tiges et tube carotier à la taille`, kind: 'note' });
-    if (c.angle > 0) {
-      casLabels.push({ steps: ['secondaire'], cas: c.n, pos: [STM.x + 0.45, DECK + PIVOT.y, c.z + 0.004], text: `Axe de bascule arrière : l'avance monte à ${c.angle}°`, kind: 'note' });
-      casLabels.push({ steps: ['secondaire'], cas: c.n, pos: [STM.x - 0.4, DECK + 1.0, c.z - 1.5], text: 'Pattes de forage (jambes) : du traîneau à la poutre', kind: 'note' });
-    }
+    // Une seule étiquette par montage, sur le plancher secondaire (ou à sa place).
+    casLabels.push({ steps: ['secondaire'], cas: c.n, pos: [(sp.x0 + sp.x1) / 2, DECK + c.H + 0.05, (sp.z0 + sp.z1) / 2], text: titres[c.n], kind: 'note' });
   }
 }
 root.add(cas);
