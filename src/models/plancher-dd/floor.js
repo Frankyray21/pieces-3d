@@ -5,7 +5,7 @@
 // d'ensemble. Chaque objet porte userData.step (étape de la procédure).
 import {
   IN, FT, B66, P3, P8, S24, R24, W, L, SEC, DECK, joistZ, GAL, JOINT_X, SUPPORTS_X, SLEEPERS_X,
-  stack, ground, over12, deckHeight, STAIR, DRILL, WEDGE, plankX, TIGHT, d1, d2,
+  stack, ground, groundUnder, over12, deckHeight, STAIR, DRILL, WEDGE, plankX, TIGHT, d1, d2,
 } from './plan.js';
 import { lumber, between, wedge, lagScrews, placeStack, labeler } from './lumber.js';
 import { wireMesh, groundPatch } from './site.js';
@@ -541,3 +541,46 @@ export function P17(api) {
 }
 
 export { P8 };
+
+// ------------------------------------------------------------------ appuis profonds
+
+/**
+ * Appuis d'un plancher plus haut que le sol (cas de marches de l'app : sol plus creux sous le
+ * même plancher, voir setFond). Montage de la section 2 (étapes 10 et 11), sans cage : sous les
+ * madriers, sur chaque ligne d'appui, un 6 × 6 de 16 pi en travers (soutien) là où un blocage et
+ * des coins ne suffisent plus ; si c'est encore trop creux, on ajoute un autre 6 × 6 de 16 pi
+ * dessous, autant qu'il en faut. Sous le dernier 6 × 6, à chaque madrier : un seul blocage et des
+ * coins (stack). Lignes d'appui du plancher : SUPPORTS_X, la jonction, SLEEPERS_X (la jonction et
+ * la section 2 ont toujours leur soutien). Seul un creux local (cage de l'étape 11) garde sa cage.
+ * Retourne un groupe de pièces (bois et coins), chacune avec userData.kind.
+ */
+export function appuisProfonds(S) {
+  const g = S.group();
+  const add = (o, kind) => { o.userData.kind = kind; g.add(o); };
+  // Trop creux : un blocage et des coins ne suffisent plus (stack ferait une cage).
+  const cage = (x, z, top) => stack(x, z, top, top < 0 ? 'x' : 'z', { inFloor: true }).pieces.some((p) => p.kind === 'crib');
+  // Un 6 × 6 de 16 pi en travers à x, dessous à « bas » : il doit passer au-dessus du sol partout.
+  const libre = (x, bas) => {
+    for (let z = -W / 2; z <= W / 2 + 1e-6; z += 0.1) if (groundUnder(x, z, B66 / 2, 0.05) > bas - 0.006) return false;
+    return true;
+  };
+  const lignes = SUPPORTS_X.map((x) => ({ x, soutien: false }))
+    .concat([{ x: JOINT_X, soutien: true }], SLEEPERS_X.map((x) => ({ x, soutien: true })));
+  for (const l of lignes) {
+    const trop = (top) => joistZ.some((z) => cage(l.x, z, top));
+    let top = 0;
+    if (l.soutien || trop(0)) {
+      add(lumber(S, [B66, B66, W], [l.x, -B66 / 2, 0]), 'soutien');
+      top = -B66;
+      while (trop(top) && libre(l.x, top - B66)) {
+        add(lumber(S, [B66, B66, W], [l.x, top - B66 / 2, 0]), 'soutien');
+        top -= B66;
+      }
+    }
+    for (const z of joistZ) {
+      const st = stack(l.x, z, top, top < 0 ? 'x' : 'z', { inFloor: true });
+      for (const p of st.pieces) add(p.kind === 'wedge' ? wedge(S, p) : lumber(S, p.size, p.pos), p.kind);
+    }
+  }
+  return g;
+}
