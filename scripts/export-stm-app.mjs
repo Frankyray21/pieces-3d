@@ -2,6 +2,11 @@
 // (plancher PRO-DD-ST-003, étape 18 : plancher secondaire à côté de la tour). Pour le cellulaire
 // hors ligne : sans la petite visserie (pièces de moins de MIN de long), formes simplifiées
 // (SimplifyModifier), un seul maillage par matériau, posée sur le plancher à sa place (STM, plan.js).
+// Trois groupes, pour lever l'avance dans l'app : « stm-fixe » (traîneau, treuil, vérins de bascule),
+// « stm-support » (support d'avance et vérin de relevage), origine sur l'axe de bascule arrière (tubes
+// de pivot dans les paliers des poteaux arrière, PIVOT.x[1], 598 mm du sol : 45° vers le haut au plus),
+// et « stm-poutre » (poutre, pied, serre-tiges, table, tête, poulie), enfant du support : elle pivote
+// avec lui et coulisse le long de l'avance (vérin de relevage).
 //
 // Usage : node scripts/export-stm-app.mjs sortie.glb [MIN en m] [part gardée]
 import { writeFileSync } from 'node:fs';
@@ -11,6 +16,7 @@ import { SimplifyModifier } from 'three/examples/jsm/modifiers/SimplifyModifier.
 import { mergeGeometries, mergeVertices } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { buildProcedural } from '../src/viewer/assembly.js';
 import { STM, DECK } from '../src/models/plancher-dd/plan.js';
+import { PIVOT } from '../src/models/stm-1500/layout.js';
 
 globalThis.FileReader = class {
   readAsArrayBuffer(blob) { blob.arrayBuffer().then((b) => { this.result = b; this.onloadend?.(); }); }
@@ -29,6 +35,15 @@ pose.add(model.root);
 pose.rotation.y = STM.yaw;
 pose.position.set(STM.x, DECK, STM.z);
 pose.updateMatrixWorld(true);
+// Groupe de chaque pièce de premier niveau de P010 (repère du manuel ou sous-assemblage).
+const FIXE = new Set(['1', '18', 'P042']), SUPPORT = new Set(['5', '12']);
+const groupe = new Map();
+for (const p of model.root.userData.parts || []) {
+  const id = p.userData.isAssembly ? p.userData.assemblyId : p.userData.partRef;
+  const g = FIXE.has(id) ? 'fixe' : SUPPORT.has(id) ? 'support' : 'poutre';
+  p.traverse((o) => groupe.set(o, g));
+}
+const pivot = pose.localToWorld(new THREE.Vector3(PIVOT.x[1], PIVOT.y, 0));
 
 const parMat = new Map();
 const bb = new THREE.Box3(), sz = new THREE.Vector3();
@@ -57,8 +72,10 @@ pose.traverse((o) => {
     g = g.index ? g.toNonIndexed() : g;
     g.computeVertexNormals();
     tri1 += g.attributes.position.count / 3;
-    const cle = (m.color ? m.color.getHexString() : 'x') + (m.metalness ?? '') + (m.roughness ?? '');
-    if (!parMat.has(cle)) parMat.set(cle, { m, geos: [] });
+    const gr = groupe.get(o) || 'fixe';
+    if (gr !== 'fixe') g.translate(-pivot.x, -pivot.y, -pivot.z);   // relatif à l'axe de bascule
+    const cle = gr + (m.color ? m.color.getHexString() : 'x') + (m.metalness ?? '') + (m.roughness ?? '');
+    if (!parMat.has(cle)) parMat.set(cle, { m, gr, geos: [] });
     parMat.get(cle).geos.push(g);
     gardees++;
   }
@@ -67,7 +84,12 @@ const scene = new THREE.Scene();
 const racine = new THREE.Group();
 racine.name = 'stm1500';
 scene.add(racine);
-for (const { m, geos } of parMat.values()) {
+const noeuds = { fixe: new THREE.Group(), support: new THREE.Group(), poutre: new THREE.Group() };
+for (const [k, n] of Object.entries(noeuds)) n.name = 'stm-' + k;
+racine.add(noeuds.fixe, noeuds.support);
+noeuds.support.add(noeuds.poutre);
+noeuds.support.position.copy(pivot);
+for (const { m, gr, geos } of parMat.values()) {
   let g = mergeGeometries(geos, false);
   const pa = g.attributes.position.array;
   for (let i = 0; i < pa.length; i++) pa[i] = Math.round(pa[i] * 2e3) / 2e3; // au demi-millimètre
@@ -76,7 +98,7 @@ for (const { m, geos } of parMat.values()) {
   g = mergeVertices(g, 1e-4); // sommets partagés là où la normale est la même (arêtes vives gardées)
   const mat = new THREE.MeshStandardMaterial({ color: m.color, metalness: m.metalness ?? 0.3, roughness: m.roughness ?? 0.6 });
   mat.name = m.name || 'stm';
-  racine.add(new THREE.Mesh(g, mat));
+  noeuds[gr].add(new THREE.Mesh(g, mat));
 }
 const glb = await new GLTFExporter().parseAsync(scene, { binary: true });
 writeFileSync(out, Buffer.from(glb));

@@ -7,7 +7,7 @@ import * as THREE from 'three';
 import {
   IN, FT, B66, P3, P8, W, L, SEC, DECK, joistZ, GAL, STAIR, SUPPORTS_X, ground, deckHeight, plankX, TIGHT, d1,
 } from './plan.js';
-import { stairPlan, secondaryPlan } from './floor.js';
+import { stairPlan } from './floor.js';
 
 const YELLOW = 0xf2c230;
 const FONT = '"Barlow Condensed", "IBM Plex Sans", "Arial Narrow", Arial, sans-serif';
@@ -194,10 +194,6 @@ export function dimensions() {
   const xg = 6.0;
   at([17], dim([xg, DECK + 0.02, zN], [xg, DECK + 0.02, -GAL], 'Écart 12 po', [0, 0.25, 0]));
   at([17], dim([xg + 0.8, DECK - 0.3, -GAL + 0.06], [xg + 0.8, DECK - 0.3 + 24 * IN, -GAL + 0.06], 'Grillage 24 po', [0, 0, 0.25]));
-  // Plancher secondaire à côté de la tour : 32 × 72 po, 18 po (2 marches de 9 po).
-  const sp = secondaryPlan();
-  const top = DECK + sp.H;
-  at([18], dim([sp.x0, top, sp.z1 + 0.06], [sp.x1, top, sp.z1 + 0.06], '32 po min.', [0, 0, 0.3]));
-  at([18], dim([sp.x1 + 0.45, top, sp.z0], [sp.x1 + 0.45, top, sp.z1], '72 po min.', [0.3, 0, 0]));
+  // Plancher secondaire (étape 18) : dimensions données par les étiquettes de l'app (3 montages animés).
   return out;
 }

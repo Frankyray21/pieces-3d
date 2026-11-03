@@ -21,8 +21,9 @@ import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter.js';
 import { buildProcedural } from '../src/viewer/assembly.js';
 import builders from '../src/models/plancher-dd/index.js';
 import * as shapes from '../src/viewer/shapes.js';
-import { variante8, jonction8, variante8Sec2, eclisses8, marchesCas, stairPlan, appuisProfonds, JOINT8_X, JOINT8_X2 } from '../src/models/plancher-dd/floor.js';
-import { L, ground, STAIR, setFond } from '../src/models/plancher-dd/plan.js';
+import { variante8, jonction8, variante8Sec2, eclisses8, marchesCas, stairPlan, appuisProfonds, SECONDAIRES, secondaryPlan, plancherSecondaire, JOINT8_X, JOINT8_X2 } from '../src/models/plancher-dd/floor.js';
+import { L, ground, STAIR, setFond, STM, DECK } from '../src/models/plancher-dd/plan.js';
+import { PIVOT } from '../src/models/stm-1500/layout.js';
 
 globalThis.FileReader = class {
   readAsArrayBuffer(blob) { blob.arrayBuffer().then((b) => { this.result = b; this.onloadend?.(); }); }
@@ -137,8 +138,28 @@ const casLabels = [];
     casLabels.push({ steps: ['marches'], cas: n, pos: [L - 0.25, y + n * 9 * 0.0254 + 0.06, zc], text: `${n} marches : plancher à ${n * 9} po du sol`, kind: 'note' });
   }
 }
-// Plancher secondaire : un seul montage réel, à côté de la tour de la STM-1500 (P17, étape 18) ;
-// la foreuse elle-même est exportée à part, allégée (scripts/export-stm-app.mjs).
+// Plancher secondaire (écran de l'étape 18) : les trois montages selon l'angle de forage
+// (SECONDAIRES : cas = 1, 2, 3), à côté de la STM-1500 (exportée à part, allégée, par
+// scripts/export-stm-app.mjs ; l'app la recule et lève son avance selon le cas).
+{
+  const titres = {
+    1: "Forage à l'horizontale : plancher à 9 po, sans marche",
+    2: 'Forage montant (15°) : plancher à 18 po, 2 marches, garde-corps',
+    3: 'Forage ascendant de plus de 20° (25°) : plancher à 27 po, 3 marches',
+  };
+  for (const c of SECONDAIRES) {
+    const sp = secondaryPlan(c.H, c.zc);
+    for (const { obj, module } of plancherSecondaire(shapes, c.H, c.zc)) {
+      obj.userData = { grp: 'secondaire', cas: c.n, m: module };
+      obj.traverse((k) => { if (k !== obj) k.userData = {}; });
+      cas.add(obj);
+    }
+    const yt = DECK + c.H;
+    casLabels.push({ steps: ['secondaire'], cas: c.n, pos: [(sp.x0 + sp.x1) / 2, yt + 0.05, (sp.z0 + sp.z1) / 2], text: titres[c.n], kind: 'note' });
+    casLabels.push({ steps: ['secondaire'], cas: c.n, pos: [sp.x0, yt + 0.02, sp.z1], text: 'Moins de 3 po de la foreuse : le pied ne passe pas', kind: 'note' });
+    if (c.angle > 0) casLabels.push({ steps: ['secondaire'], cas: c.n, pos: [STM.x + 0.45, DECK + PIVOT.y, c.z + 0.004], text: `Axe de bascule arrière : l'avance monte à ${c.angle}°`, kind: 'note' });
+  }
+}
 root.add(cas);
 root.updateMatrixWorld(true);
 
