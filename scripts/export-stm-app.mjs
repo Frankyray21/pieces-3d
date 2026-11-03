@@ -54,8 +54,46 @@ const parMat = new Map();
 const bb = new THREE.Box3(), sz = new THREE.Vector3();
 const simp = new SimplifyModifier();
 let gardees = 0, tri0 = 0, tri1 = 0;
+// Boyaux et câble souples (userData.souple de stm-1500/drill.js) : gardés entiers (pas simplifiés), dans le
+// groupe « stm-souple », avec un attribut « poids » par sommet (part du support, part de la poutre ; le reste
+// suit le traîneau) : l'app les déforme quand l'avance glisse et bascule.
+const GV = { fixe: [0, 0], support: [1, 0], poutre: [0, 1] };
+const parSouple = new Map();
+function poidsSouple(o, anc) {
+  // Courbe du tube (TubeGeometry : anneaux de radialSegments + 1 sommets, tubularSegments + 1 anneaux).
+  const tg = (o.userData.isTubeEnds ? o.parent : o).geometry, { path, tubularSegments: n, radialSegments: r } = tg.parameters;
+  const cs = Array.from({ length: n + 1 }, (_, i) => path.getPointAt(i / n));
+  const near = (p) => { let b = 0, d = Infinity; cs.forEach((c, i) => { const e = c.distanceTo(p); if (e < d) { d = e; b = i; } }); return b; };
+  const A = anc.map((a) => ({ i: near(new THREE.Vector3(...a.p)), w: GV[a.g] })).sort((a, b) => a.i - b.i);
+  const at = (i) => {
+    if (i <= A[0].i) return A[0].w;
+    for (let k = 1; k < A.length; k++) if (i <= A[k].i) { const t = (i - A[k - 1].i) / (A[k].i - A[k - 1].i); return A[k - 1].w.map((v, j) => v + (A[k].w[j] - v) * t); }
+    return A[A.length - 1].w;
+  };
+  const pos = o.geometry.attributes.position, w = new Float32Array(pos.count * 2), v = new THREE.Vector3();
+  for (let k = 0; k < pos.count; k++) {
+    let i;
+    if (o.userData.isTubeEnds) { v.fromBufferAttribute(pos, k); i = v.distanceTo(cs[0]) < v.distanceTo(cs[n]) ? 0 : n; } else i = Math.floor(k / (r + 1));
+    const q = at(i); w[2 * k] = q[0]; w[2 * k + 1] = q[1];
+  }
+  return w;
+}
 pose.traverse((o) => {
   if (!o.isMesh || !o.visible) return;
+  const anc = o.userData.souple || (o.userData.isTubeEnds && o.parent.userData.souple);
+  if (anc) {
+    const m = [].concat(o.material)[0];
+    let g = new THREE.BufferGeometry();
+    g.setAttribute('position', o.geometry.attributes.position.clone());
+    g.setAttribute('poids', new THREE.BufferAttribute(poidsSouple(o, anc), 2));
+    g.setIndex(o.geometry.index ? o.geometry.index.clone() : [...Array(g.attributes.position.count).keys()]);
+    g.applyMatrix4(o.matrixWorld);
+    g.computeVertexNormals();
+    const cle = (m.color ? m.color.getHexString() : 'x') + (m.metalness ?? '') + (m.roughness ?? '');
+    if (!parSouple.has(cle)) parSouple.set(cle, { m, geos: [] });
+    parSouple.get(cle).geos.push(g);
+    return;
+  }
   bb.setFromObject(o).getSize(sz);
   if (sz.length() < MIN) return;
   const mats = [].concat(o.material);
@@ -91,9 +129,14 @@ racine.name = 'stm1500';
 racine.rotation.y = STM.yaw;
 racine.position.set(STM.x, DECK, STM.z);
 scene.add(racine);
-const noeuds = { fixe: new THREE.Group(), support: new THREE.Group(), poutre: new THREE.Group() };
+const noeuds = { fixe: new THREE.Group(), support: new THREE.Group(), poutre: new THREE.Group(), souple: new THREE.Group() };
 for (const [k, n] of Object.entries(noeuds)) n.name = 'stm-' + k;
-racine.add(noeuds.fixe, noeuds.support);
+racine.add(noeuds.fixe, noeuds.support, noeuds.souple);
+for (const { m, geos } of parSouple.values()) {
+  const mat = new THREE.MeshStandardMaterial({ color: m.color, metalness: m.metalness ?? 0.3, roughness: m.roughness ?? 0.6 });
+  mat.name = (m.name || 'stm') + '-souple';
+  noeuds.souple.add(new THREE.Mesh(mergeGeometries(geos, false), mat));
+}
 noeuds.support.add(noeuds.poutre);
 noeuds.support.position.copy(pivot);
 for (const [s, c] of [[-1, 'g'], [1, 'd']]) {

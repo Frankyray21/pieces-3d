@@ -467,7 +467,9 @@ export function hose(points, r, { material = 'hose', endMaterial = 'steel' } = {
   const n = Math.max(12, Math.min(120, Math.round(curve.getLength() / (r * 1.6))));
   const geo = new THREE.TubeGeometry(curve, n, r, 14, false);
   geo.userData.edgeAngle = 70;
-  return addEnds(mesh(geo, material), curve, r, 'ferrule', endMaterial);
+  const m = addEnds(mesh(geo, material), curve, r, 'ferrule', endMaterial);
+  m.userData.pts = points.map((q) => [...q]);   // points de passage (ancrages souples, voir stm-1500/drill.js)
+  return m;
 }
 
 /** Câble électrique souple avec presse-étoupe à chaque bout. */

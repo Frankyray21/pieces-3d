@@ -194,6 +194,16 @@ function resample(poly, step) {
 }
 
 /**
+ * Boyau ou câble souple : ancrages [point, groupe] le long de sa courbe (groupe : « fixe » traîneau,
+ * « support » support d'avance, « poutre »), lus par scripts/export-stm-app.mjs pour qu'il suive la
+ * bascule et la glisse de l'avance dans l'app. Sans effet sur la géométrie.
+ */
+function souple(m, ...ancres) {
+  m.userData.souple = ancres.map(([p, g]) => ({ p: [...p], g }));
+  return m;
+}
+
+/**
  * Câble du treuil (repère de la foreuse, plan z = 0 du guide-câble et des réas) : départ tangent sur la
  * couche extérieure du tambour (côté arrière), derrière le rouleau de retenue du guide-câble, autour du
  * rouleau d'enroulement, puis presque à plat sous la poutre jusqu'au dessous du réa bas de la poulie, par
@@ -215,7 +225,9 @@ function wirePath() {
     ...arcPts(ROLLER, RR, t3.q, [ROLLER[0] + RR, ROLLER[1]], -1, 0.006),
   ].map(([x, y]) => [x, y, 0]);
   poly.push(tip);
-  return { pts: resample(poly, 0.01), tip };
+  // Brin libre du guide-câble au réa bas : il suit la poutre quand elle glisse ou bascule (outil 3D de l'app).
+  const n = c.pts.length, libre = [off(c.pts[n - 2]), off(c.pts[n - 1])].map(([x, y]) => [x, y, 0]);
+  return { pts: resample(poly, 0.01), tip, libre };
 }
 
 /**
@@ -841,8 +853,10 @@ export function P010(api) {
   // « option underground » posé entre les longerons devant le bâti (pages 1.00, 1.01 et 8.0).
   P('FBRA-002-400HH', at(api.sub('P042', { capot: WINCH.capot, guide: WINCH.guide, cable: false, cadre: true }), [WINCH.x, WINCH.y, 0]), [-0.2, 0.5, 0]);
   // Câble du treuil (tambour → guide-câble → poulie double → rouleau du guide de tiges) et son embout serti.
+  const cableT = tube(wire.pts, 0.004, 'darkSteel', { seg: wire.pts.length, tension: 0.5 });
+  souple(cableT, [wire.libre[0], 'fixe'], [wire.libre[1], 'poutre']);
   api.add(group(
-    tube(wire.pts, 0.004, 'darkSteel', { seg: wire.pts.length, tension: 0.5 }),
+    cableT,
     at(cyl(0.007, 0.016, 'darkSteel', { axis: 'y', seg: 12 }), [wire.tip[0], wire.tip[1] - 0.008, 0]),
   ));
 
@@ -900,6 +914,12 @@ export function P010(api) {
   circ(dumpHoses[0], 'relevage', 'Relevage (hypothèse du modèle) : sélecteur droit → bloc YEJ du vérin de relevage', `${SD} : raccord arrière intérieur (6400-8-8)`, 'Vérin de relevage UM-064-300Z : dessous du bloc YEJ (6801F-8-8)');
   circ(dumpHoses[1], 'relevage', 'Relevage (hypothèse du modèle) : sélecteur droit → bloc YEJ du vérin de relevage', `${SD} : raccord arrière extérieur (6400-8-8)`, 'Vérin de relevage UM-064-300Z : dessous du bloc YEJ (6801F-8-8)');
   circ(dumpHoses[2], 'relevage', 'Relevage (hypothèse du modèle) : bloc YEJ → orifice de la tige', 'Vérin de relevage UM-064-300Z : bloc YEJ (6801F-8-8)', 'Vérin de relevage UM-064-300Z : orifice de la tige (coude 2501F-08-08)');
+  // Ancrages souples (outil 3D de l'app, où l'avance glisse et bascule) : chaque boyau suit la pièce où il est
+  // raccordé ; entre deux ancrages de groupes différents, il passe progressivement de l'un à l'autre.
+  souple(feedRecul, [feedRecul.userData.pts[7], 'poutre'], [feedRecul.userData.pts[11], 'fixe']);
+  souple(feedAvance, [feedAvance.userData.pts[2], 'poutre'], [feedAvance.userData.pts[5], 'fixe']);
+  for (const h of dumpHoses.slice(0, 2)) souple(h, [h.userData.pts[1], 'support'], [h.userData.pts[4], 'fixe']);
+  souple(dumpHoses[2], [dumpHoses[2].userData.pts[0], 'support']);
   api.add(group(feedRecul, feedAvance, ...motorHoses, ...tiltHoses, ...dumpHoses));
   return { view: { dir: [0.75, 0.5, 1.0] } };
 }
