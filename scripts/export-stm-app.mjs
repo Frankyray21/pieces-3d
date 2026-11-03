@@ -35,9 +35,9 @@ const { default: builders } = await import('../src/models/stm-1500/index.js');
 const model = buildProcedural(builders, 'P010');
 const pose = new THREE.Group();
 pose.add(model.root);
-// Traîneau en travers des madriers (étape 3) : l'avant (+X du modèle) vers la paroi Z négative.
-pose.rotation.y = STM.yaw;
-pose.position.set(STM.x, DECK, STM.z);
+// Géométries dans le repère du modèle (+X : avant de l'avance, Y : haut) ; la pose sur le plancher
+// (STM, plan.js : l'avant vers le front de taille) est portée par le nœud « stm1500 ». L'app lève
+// l'avance par rotation Z du support, fait glisser la poutre en X et recule la foreuse sur son axe.
 pose.updateMatrixWorld(true);
 // Groupe de chaque pièce de premier niveau de P010 (repère du manuel ou sous-assemblage).
 const FIXE = new Set(['1', '18', 'P042']), SUPPORT = new Set(['5', '12']);
@@ -88,6 +88,8 @@ pose.traverse((o) => {
 const scene = new THREE.Scene();
 const racine = new THREE.Group();
 racine.name = 'stm1500';
+racine.rotation.y = STM.yaw;
+racine.position.set(STM.x, DECK, STM.z);
 scene.add(racine);
 const noeuds = { fixe: new THREE.Group(), support: new THREE.Group(), poutre: new THREE.Group() };
 for (const [k, n] of Object.entries(noeuds)) n.name = 'stm-' + k;

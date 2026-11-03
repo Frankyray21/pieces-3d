@@ -66,13 +66,15 @@ export const WALL_H = 2.7; // murs coupés à cette hauteur (vue en écorché)
 // négatif) ; ses patins suivent X, comme les madriers. x : avant de la tour ;
 // z : axe de la tour.
 export const DRILL = { x: 0.3, z: -0.35, tilt: (12 * Math.PI) / 180, len: 3.0, frontY: DECK + 1.2 };
-// Foreuse STM-1500 (dépôt stm-1500, P010) posée sur le plancher pour l'étape 18 : traîneau en
-// travers des madriers (les patins croisent les 6 × 6, étape 3), l'avant vers la paroi Z positive,
-// tournée pour que le côté de travail (X positif, plancher secondaire) soit le côté sans la
-// transmission de la tête (moteur hydraulique, Z positif du modèle, passé du côté X négatif).
-// x, z : milieu du traîneau ; yaw : +X du modèle (avant) vers +Z ; sens : signe de Z vers l'avant.
-// L'avant du traîneau (pointe à 1,66 m du milieu) est à 1 pi de la paroi (Z ≈ +2,50 m).
-export const STM = { x: 1.6, z: 0.535, yaw: -Math.PI / 2, sens: 1 };
+// Foreuse STM-1500 (dépôt stm-1500, P010) posée sur le plancher pour l'étape 18 : elle fore les
+// fonds de trous du front de taille (fond de la galerie, X négatif), traîneau dans le sens de la
+// galerie (les patins croisent les madriers 6 × 6, en travers, étape 3). Tournée pour que le côté de
+// travail (Z positif, plancher secondaire) soit le côté sans la transmission de la tête (moteur
+// hydraulique, Z positif du modèle, passé du côté Z négatif).
+// x, z : milieu du traîneau ; yaw : rotation du modèle (+X du modèle, l'avant, vers X négatif) ;
+// sens : signe de X vers l'avant. L'avant du traîneau (pointe à 1,66 m du milieu) est à 1 pi du
+// front de taille (X ≈ −0,12 m).
+export const STM = { x: 1.845, z: 0, yaw: Math.PI, sens: -1 };
 
 // Escalier : au bout du plancher (X = L), du côté Z positif de l'axe.
 export const STAIR = { z0: 0.35, w: 48 * IN, tread: 16 * IN };
@@ -228,7 +230,7 @@ export const STEPS = [
   { n: 15, cam: { pos: [L + 4.6, 2.7, 5.2], tgt: [L - 2.2, 0.6, 0.4] }, page: 'P16', title: 'Garde-corps et lisse inférieure', text: 'RSST art. 12 : lisse supérieure entre 1 et 1,2 m, lisse intermédiaire à mi-hauteur, plinthe : 2 × 4 brut sur chant (4 po).' },
   { n: 16, cam: { pos: [L + 3.0, 1.7, 2.2], tgt: [L + 0.3, 0.3, 0.96] }, page: 'P16', title: 'Mains courantes', text: "Plus d'une marche : mains courantes." },
   { n: 17, cam: { pos: [6.3, 1.9, -1.2], tgt: [6.6, 0.0, -2.5] }, page: 'P16', title: 'Écart avec la paroi', text: 'Plancher près de la paroi : écart de 12 po ou moins, rien à ajouter. Plus de 12 po : garde-corps, comme au bout du plancher.' },
-  { n: 18, cam: { pos: [4.2, 2.0, 0.9], tgt: [2.2, 0.5, -0.7] }, page: 'P17', label: 'À la foreuse', title: 'Plancher secondaire', text: '32 × 72 po au moins, à côté de la tour de la STM-1500 : 2 marches (1re de 16 po × 9 po), garde-corps aux bouts sans marche, dernière planche à 3 po de la foreuse, le long des patins, deux planches vissées.' },
+  { n: 18, cam: { pos: [4.0, 2.0, 3.2], tgt: [2.2, 0.6, 0.9] }, page: 'P17', label: 'À la foreuse', title: 'Plancher secondaire', text: '32 × 72 po au moins, à côté de la tour de la STM-1500 : 2 marches (1re de 16 po × 9 po), garde-corps aux bouts sans marche, dernière planche à 3 po de la foreuse, le long des patins, deux planches vissées.' },
 ];
 
 // Point le plus haut du sol sous la section 1 (étape 2).

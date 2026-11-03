@@ -142,7 +142,7 @@ const casLabels = [];
 // scripts/export-stm-app.mjs ; l'app la recule et lève son avance selon le cas).
 {
   for (const c of SECONDAIRES) {
-    if (c.H > 0) for (const { obj, module } of plancherSecondaire(shapes, c.H, c.zc)) {
+    if (c.H > 0) for (const { obj, module } of plancherSecondaire(shapes, c.H, c.xc)) {
       obj.userData = { grp: 'secondaire', cas: c.n, m: module };
       obj.traverse((k) => { if (k !== obj) k.userData = {}; });
       cas.add(obj);

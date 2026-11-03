@@ -126,22 +126,22 @@ function faceMesh() {
   return meshOf(geo, 'rock');
 }
 
-/** Cible peinte d'un fond de trou sur la paroi Z positive, où fore la STM-1500 (traîneau en travers des madriers, étape 3). */
-function target(S, x, y) {
+/** Cible peinte d'un fond de trou sur le front de taille (fond de la galerie), où fore la STM-1500. */
+function target(S, z, y) {
   const g = S.group(
-    S.ring(0.17, 0.145, 0.006, 'fluoRed', { axis: 'z' }),
-    S.ring(0.095, 0.07, 0.006, 'fluoRed', { axis: 'z' }),
-    S.cyl(0.025, 0.006, 'fluoRed', { axis: 'z' }),
+    S.ring(0.17, 0.145, 0.006, 'fluoRed', { axis: 'x' }),
+    S.ring(0.095, 0.07, 0.006, 'fluoRed', { axis: 'x' }),
+    S.cyl(0.025, 0.006, 'fluoRed', { axis: 'x' }),
   );
-  g.position.set(x, y, wallZ(1, x, y) - 0.012);
+  g.position.set(faceX(z, y) + 0.012, y, z);
   return g;
 }
 
 /** Galerie (contexte) : sol, murs coupés, front de taille, roches, cibles des fonds de trous. */
 export function gallery(S) {
   const g = S.group(groundMesh(), wallMesh(-1), wallMesh(1), faceMesh(), rocks());
-  g.add(target(S, STM.x, DECK + 1.45));
-  g.add(target(S, STM.x + 1.3, DECK + 1.65));
+  g.add(target(S, STM.z, DECK + 1.45));
+  g.add(target(S, STM.z - 1.3, DECK + 1.65));
   return g;
 }
 

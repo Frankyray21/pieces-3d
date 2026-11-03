@@ -3,6 +3,7 @@
 // plancher secondaire. Toutes les pièces sont posées dans le repère de
 // plan.js, si bien qu'un sous-assemblage s'insère tel quel dans la vue
 // d'ensemble. Chaque objet porte userData.step (étape de la procédure).
+import * as THREE from 'three';
 import {
   IN, FT, B66, P3, P8, S24, R24, W, L, SEC, DECK, joistZ, GAL, JOINT_X, SUPPORTS_X, SLEEPERS_X,
   stack, ground, groundUnder, over12, deckHeight, STAIR, DRILL, STM, WEDGE, plankX, TIGHT, d1, d2,
@@ -487,34 +488,41 @@ const PATIN_Z = 0.533;     // demi-largeur hors tout du traîneau (face extérie
 // la paroi. z : milieu du traîneau ; travail : hauteur de l'arrière de la tête au-dessus du plancher principal.
 // Les travailleurs se tiennent à l'arrière de la tête de forage (nez de l'émerillon, 1,624 m derrière
 // la face du pied le long de l'avance) : c'est là qu'on ajoute les tiges et qu'on sort le tube carotier.
-const arriereTete = (angle, glisse, z) => {
+const arriereTete = (angle, glisse, recul) => {
   const t = (angle * Math.PI) / 180, dx = FOOT_X - 1.074 - 0.55 + glisse - PIVOT.x[1], dy = AXIS_Y - PIVOT.y;
-  return { zs: z + STM.sens * (PIVOT.x[1] + dx * Math.cos(t) - dy * Math.sin(t)), travail: PIVOT.y + dx * Math.sin(t) + dy * Math.cos(t) };
+  return { xs: STM.x + STM.sens * (PIVOT.x[1] + dx * Math.cos(t) - dy * Math.sin(t) - recul), travail: PIVOT.y + dx * Math.sin(t) + dy * Math.cos(t) };
 };
-const cfg = (n, angle, H, glisse, z) => {
-  const { zs, travail } = arriereTete(angle, glisse, z);
-  const zc = Math.min(Math.max(zs, -W / 2 + 0.06 + 36 * IN), W / 2 - 0.06 - 36 * IN);   // vis-à-vis de l'arrière de la tête
-  return { n, angle, H, glisse, z, zc, travail };
+// recul : la foreuse recule sur son axe (m, depuis sa place de l'étape 18, STM) ; xc : milieu du
+// plancher secondaire le long de la foreuse, vis-à-vis de l'arrière de la tête, sur le plancher principal.
+const cfg = (n, angle, H, glisse, recul) => {
+  const { xs, travail } = arriereTete(angle, glisse, recul);
+  const xc = Math.min(Math.max(xs, 0.06 + 36 * IN), L - 0.06 - 36 * IN);
+  return { n, angle, H, glisse, recul, xc, travail };
 };
 export const SECONDAIRES = [
-  cfg(1, 0, 0, 0, STM.z),
-  cfg(2, 10, 9 * IN, 0, STM.z),
-  cfg(3, 15, 18 * IN, 0.9, -0.091),
+  cfg(1, 0, 0, 0, 0),
+  cfg(2, 10, 9 * IN, 0, 0),
+  cfg(3, 15, 18 * IN, 0.9, 0.626),
 ];
-export function secondaryPlan(H = 18 * IN, zc = STM.z + STM.sens * 0.4) {
-  const x0 = STM.x + PATIN_Z + 1 * IN;         // à 1 po du patin : le plancher épouse la foreuse
-  return { x0, x1: x0 + 32 * IN, z0: zc - 36 * IN, z1: zc + 36 * IN, H, patin: STM.x + PATIN_Z };
+/** Emprise du plancher secondaire (repère de la galerie) : du côté Z positif de la foreuse, à 1 po du patin. */
+export function secondaryPlan(H = 18 * IN, xc = SECONDAIRES[2].xc) {
+  const z0 = STM.z + PATIN_Z + 1 * IN;         // à 1 po du patin : le plancher épouse la foreuse
+  return { z0, z1: z0 + 32 * IN, x0: xc - 36 * IN, x1: xc + 36 * IN, H, patin: STM.z + PATIN_Z };
 }
+// Le plancher secondaire est construit dans un repère local (x : en s'éloignant de la foreuse,
+// z : le long de la foreuse, z = −X), puis tourné de −90° autour de Y dans la galerie.
+const VERS_GALERIE = new THREE.Matrix4().makeRotationY(-Math.PI / 2);
 
 /**
  * Pièces d'un plancher secondaire de hauteur H : [{ ref, obj, module }] (module : rang de pose).
  * Appuis : rien à 9 po (travers sur le plancher), 3 × 8 à plat et bout de 6 × 6 à 18 po, 6 × 6
  * debout au-delà ; marches de 16 po de profondeur, une tous les 9 po, sur le côté libre.
  */
-export function plancherSecondaire(S, H, zc) {
+export function plancherSecondaire(S, H, xc) {
   const out = [];
-  const add = (ref, obj, module) => out.push({ ref, obj, module });
-  const { x0, x1, z0, z1 } = secondaryPlan(H, zc);
+  const add = (ref, obj, module) => { obj.applyMatrix4(VERS_GALERIE); out.push({ ref, obj, module }); };
+  const sp = secondaryPlan(H, xc);
+  const x0 = sp.z0, x1 = sp.z1, z0 = -sp.x1, z1 = -sp.x0;   // repère local
   const zm = (z0 + z1) / 2, y0 = DECK, yt = y0 + H - P3; // dessous des planches
   const zs = [z0 + B66 / 2, zm, z1 - B66 / 2];
   const sous = H - P3 - B66;                    // hauteur des appuis sous les travers
@@ -558,7 +566,7 @@ export function P17(api) {
   const put = labeler(api);
   const ex = { 1: [0, 0.3, 0], 2: [0, 0.45, 0], 3: [0, 0.75, 0], 4: [0, 0.15, 0], 5: [0.3, 0.15, 0], 6: [0, 0.3, 0.3], 7: [0, 0.35, 0.3], 8: [0, 0.35, 0.3] };
   const c = SECONDAIRES[2];
-  for (const { ref, obj, module } of plancherSecondaire(api.S, c.H, c.zc)) put(ref, obj, ex[ref], 18, { seq: Math.round(module * 10) });
+  for (const { ref, obj, module } of plancherSecondaire(api.S, c.H, c.xc)) put(ref, obj, ex[ref], 18, { seq: Math.round(module * 10) });
   return { view: { dir: [1.2, 1.0, 0.6] } };
 }
 
