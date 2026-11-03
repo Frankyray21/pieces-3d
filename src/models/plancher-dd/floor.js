@@ -443,15 +443,21 @@ export function secondaireCas(S, kind, [x, y, z]) {
 // ------------------------------------------------------------------ garde-corps
 
 const RAIL_TOP = 1.07; // lisse supérieure au-dessus du plancher (1 à 1,2 m)
-// Sections de garde-corps de 8 pi au plus : avec quatre 2 × 4 de 8 pi, un coupé en deux
-// pour les deux montants (48 po chacun, la bonne hauteur sans mesurer), un pour la lisse
-// supérieure, un pour la lisse intermédiaire et un pour la lisse inférieure.
+// Sections de garde-corps de 8 pi : avec quatre 2 × 4 de 8 pi, un coupé en deux pour les deux
+// montants (48 po chacun, la bonne hauteur sans mesurer), et trois gardés entiers : la lisse
+// supérieure, la lisse intermédiaire et la lisse inférieure.
 const POST_MAX = 8 * FT;
 const POST_LEN = 48 * IN;
 
-function postsAlong(a, b) {
-  const n = Math.max(1, Math.ceil((b - a) / POST_MAX));
-  return Array.from({ length: n + 1 }, (_, i) => a + ((b - a) * i) / n);
+// Montants d'un tronçon : des sections pleines de 8 pi à partir du coin du plancher (« depuis »,
+// le bout a ou b), les lisses de 8 pi allant d'un bord extérieur de montant à l'autre ; seule la
+// dernière section, au bout, est plus courte (lisses coupées à la longueur qui reste).
+function postsAlong(a, b, depuis = 'a') {
+  const pas = POST_MAX - S24.w;
+  const us = [];
+  if (depuis === 'a') { for (let u = a; u < b - 0.15; u += pas) us.push(u); us.push(b); }
+  else { for (let u = b; u > a + 0.15; u -= pas) us.push(u); us.push(a); us.reverse(); }
+  return us;
 }
 
 /**
@@ -465,9 +471,9 @@ export function guardSegments() {
   const sideGap = GAL - W / 2; // écart plancher-paroi
   for (const s of [-1, 1]) {
     const x0 = over12(s * W / 2);
-    if (x0 != null && sideGap > 12 * IN + 0.005) segs.push({ axis: 'x', side: s, a: Math.max(0, Math.floor(x0 / FT) * FT), b: L });
+    if (x0 != null && sideGap > 12 * IN + 0.005) segs.push({ axis: 'x', side: s, a: Math.max(0, Math.floor(x0 / FT) * FT), b: L, depuis: 'b' });
   }
-  if (deckHeight(L, 0) > 12 * IN) segs.push({ axis: 'z', side: 1, a: -W / 2, b: STAIR.z0 - S24.t - S24.w / 2 }, { axis: 'z', side: 1, a: STAIR.z0 + STAIR.w + S24.t + S24.w / 2, b: W / 2 });
+  if (deckHeight(L, 0) > 12 * IN) segs.push({ axis: 'z', side: 1, a: -W / 2, b: STAIR.z0 - S24.t - S24.w / 2, depuis: 'a' }, { axis: 'z', side: 1, a: STAIR.z0 + STAIR.w + S24.t + S24.w / 2, b: W / 2, depuis: 'b' });
   return segs;
 }
 
@@ -491,7 +497,7 @@ export function P16(api, opts = {}) {
     const sz = (lu, h, t) => (alongX ? [lu, h, t] : [t, h, lu]);
     // Montants de 48 po (un 2 × 4 de 8 pi coupé en deux) vissés contre le bord du
     // plancher : le haut à la lisse supérieure, le bas sous le dessus du plancher.
-    const us = postsAlong(seg.a, seg.b);
+    const us = postsAlong(seg.a, seg.b, seg.depuis);
     for (const u of us) {
       const top = DECK + RAIL_TOP;
       put('1', lumber(S, sz(S24.w, POST_LEN, S24.t), P(u, postC, top - POST_LEN / 2), 'woodPlaned'), ex(1), 15, { seq: 0 });
