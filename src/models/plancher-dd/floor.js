@@ -546,41 +546,84 @@ export { P8 };
 
 /**
  * Appuis d'un plancher plus haut que le sol (cas de marches de l'app : sol plus creux sous le
- * même plancher, voir setFond). Montage de la section 2 (étapes 10 et 11), sans cage : sous les
- * madriers, sur chaque ligne d'appui, un 6 × 6 de 16 pi en travers (soutien) là où un blocage et
- * des coins ne suffisent plus ; si c'est encore trop creux, on ajoute un autre 6 × 6 de 16 pi
- * dessous, autant qu'il en faut. Sous le dernier 6 × 6, à chaque madrier : un seul blocage et des
- * coins (stack). Lignes d'appui du plancher : SUPPORTS_X, la jonction, SLEEPERS_X (la jonction et
- * la section 2 ont toujours leur soutien). Seul un creux local (cage de l'étape 11) garde sa cage.
+ * même plancher, voir setFond). Montage de la section 2 (étapes 10 et 11), jamais de bois
+ * empilé dans le même sens ni de cage : sous les madriers, sur chaque ligne d'appui, un 6 × 6
+ * de 16 pi en travers (soutien) là où un blocage et des coins ne suffisent plus ; si c'est encore
+ * trop creux, des 6 × 6 croisés dessous : un rang dans le sens des madriers (vis-à-vis de chaque
+ * madrier), puis un rang en travers, etc. Un 6 × 6 dans le sens des madriers fait 16 pi s'il
+ * passe partout au-dessus du sol, sinon 8 pi, sans dépasser du plancher. Sous le dernier rang,
+ * à chaque croisement : un seul blocage et des coins (stack). Lignes d'appui du plancher :
+ * SUPPORTS_X, la jonction, SLEEPERS_X (la jonction et la section 2 ont toujours leur soutien).
+ * Un creux local qu'un 6 × 6 ne peut pas atteindre garde sa cage (étape 11, cas spéciaux).
  * Retourne un groupe de pièces (bois et coins), chacune avec userData.kind.
  */
 export function appuisProfonds(S) {
   const g = S.group();
   const add = (o, kind) => { o.userData.kind = kind; g.add(o); };
   // Trop creux : un blocage et des coins ne suffisent plus (stack ferait une cage).
-  const cage = (x, z, top) => stack(x, z, top, top < 0 ? 'x' : 'z', { inFloor: true }).pieces.some((p) => p.kind === 'crib');
-  // Un 6 × 6 de 16 pi en travers à x, dessous à « bas » : il doit passer au-dessus du sol partout.
-  const libre = (x, bas) => {
-    for (let z = -W / 2; z <= W / 2 + 1e-6; z += 0.1) if (groundUnder(x, z, B66 / 2, 0.05) > bas - 0.006) return false;
-    return true;
-  };
+  const cage = (c) => stack(c.x, c.z, c.top, c.along, { inFloor: true }).pieces.some((p) => p.kind === 'crib');
+  const sol = (x, z) => groundUnder(x, z, 0.05, B66 / 2);
+  // Un 6 × 6 dans le sens des madriers (z, de xa à xb) ou en travers (x), dessous à « bas » : au-dessus du sol partout.
+  const libreX = (z, xa, xb, bas) => { for (let x = xa; x <= xb + 1e-6; x += 0.1) if (sol(x, z) > bas - 0.006) return false; return true; };
+  const libreZ = (x, bas) => { for (let z = -W / 2; z <= W / 2 + 1e-6; z += 0.1) if (groundUnder(x, z, B66 / 2, 0.05) > bas - 0.006) return false; return true; };
   const lignes = SUPPORTS_X.map((x) => ({ x, soutien: false }))
     .concat([{ x: JOINT_X, soutien: true }], SLEEPERS_X.map((x) => ({ x, soutien: true })));
+  const fin = [];       // croisements qui reçoivent un blocage et des coins
+  let C = [];           // croisements sous le rang du dessous, en attente
   for (const l of lignes) {
-    const trop = (top) => joistZ.some((z) => cage(l.x, z, top));
-    let top = 0;
-    if (l.soutien || trop(0)) {
+    const sous = (top, along) => joistZ.map((z) => ({ x: l.x, z, top, along }));
+    if (!l.soutien) l.soutien = sous(0, 'z').some(cage);
+    if (l.soutien) {
       add(lumber(S, [B66, B66, W], [l.x, -B66 / 2, 0]), 'soutien');
-      top = -B66;
-      while (trop(top) && libre(l.x, top - B66)) {
-        add(lumber(S, [B66, B66, W], [l.x, top - B66 / 2, 0]), 'soutien');
-        top -= B66;
+      C.push(...sous(-B66, 'x'));
+    } else fin.push(...sous(0, 'z'));
+  }
+  let sensX = true;
+  for (let rang = 0; rang < 8 && C.length; rang++) {
+    const deep = C.filter(cage);
+    fin.push(...C.filter((c) => !deep.includes(c)));
+    if (!deep.length) { C = []; break; }
+    const suite = [];
+    if (sensX) {
+      // Sous des croisements trop creux, vis-à-vis d'un même madrier : 6 × 6 dans le sens des madriers.
+      for (const z of [...new Set(deep.map((c) => c.z))]) {
+        let reste = deep.filter((c) => c.z === z).sort((a, b) => a.x - b.x);
+        const top = reste[0].top, bas = top - B66;
+        while (reste.length) {
+          let best = null;
+          for (const len of [SEC, SEC / 2]) {
+            const essais = [L - len];   // collé au bout du plancher, puis tous les 5 cm
+            for (let xa = 0; xa < L - len; xa += 0.05) essais.push(xa);
+            for (const xa of essais) {
+              const pris = reste.filter((c) => c.x - B66 / 2 >= xa - 1e-6 && c.x + B66 / 2 <= xa + len + 1e-6);
+              if (!pris.length || !pris.some((c) => c === reste[0])) continue;
+              if (!libreX(z, xa, xa + len, bas)) continue;
+              if (!best || pris.length > best.pris.length) best = { len, xa, pris };
+            }
+            if (best && best.pris.length === reste.length) break;
+          }
+          if (!best) { fin.push(reste.shift()); continue; }
+          add(lumber(S, [best.len, B66, B66], [best.xa + best.len / 2, top - B66 / 2, z]), 'soutien');
+          for (const c of best.pris) suite.push({ x: c.x, z, top: bas, along: 'z' });
+          reste = reste.filter((c) => !best.pris.includes(c));
+        }
+      }
+    } else {
+      // Sous des croisements trop creux d'une même ligne : 6 × 6 de 16 pi en travers.
+      for (const x of [...new Set(deep.map((c) => c.x))]) {
+        const ici = deep.filter((c) => c.x === x), top = ici[0].top, bas = top - B66;
+        if (!libreZ(x, bas)) { fin.push(...ici); continue; }
+        add(lumber(S, [B66, B66, W], [x, top - B66 / 2, 0]), 'soutien');
+        for (const c of ici) suite.push({ x, z: c.z, top: bas, along: 'x' });
       }
     }
-    for (const z of joistZ) {
-      const st = stack(l.x, z, top, top < 0 ? 'x' : 'z', { inFloor: true });
-      for (const p of st.pieces) add(p.kind === 'wedge' ? wedge(S, p) : lumber(S, p.size, p.pos), p.kind);
-    }
+    C = suite;
+    sensX = !sensX;
+  }
+  fin.push(...C);
+  for (const c of fin) {
+    const st = stack(c.x, c.z, c.top, c.along, { inFloor: true });
+    for (const p of st.pieces) add(p.kind === 'wedge' ? wedge(S, p) : lumber(S, p.size, p.pos), p.kind);
   }
   return g;
 }
