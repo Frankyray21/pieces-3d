@@ -498,7 +498,11 @@ export function P16(api, opts = {}) {
     // Montants de 48 po (un 2 × 4 de 8 pi coupé en deux) vissés contre le bord du
     // plancher : le haut à la lisse supérieure, le bas sous le dessus du plancher.
     const us = postsAlong(seg.a, seg.b, seg.depuis);
-    for (const u of us) {
+    // Un montant au milieu de chaque section de plus de 5 pi (tous les 4 pi dans une section de
+    // 8 pi : pas de grand vide sans montant) ; les lisses de la section passent par-dessus, entières.
+    const milieux = [];
+    for (let k = 0; k + 1 < us.length; k++) if (us[k + 1] - us[k] > 5 * FT) milieux.push((us[k] + us[k + 1]) / 2);
+    for (const u of [...us, ...milieux]) {
       const top = DECK + RAIL_TOP;
       put('1', lumber(S, sz(S24.w, POST_LEN, S24.t), P(u, postC, top - POST_LEN / 2), 'woodPlaned'), ex(1), 15, { seq: 0 });
     }
