@@ -158,6 +158,7 @@ const casLabels = [];
     casLabels.push({ steps: ['secondaire'], cas: c.n, pos: [(sp.x0 + sp.x1) / 2, yt + 0.05, (sp.z0 + sp.z1) / 2], text: titres[c.n], kind: 'note' });
     casLabels.push({ steps: ['secondaire'], cas: c.n, pos: [sp.x0, yt + 0.02, sp.z1], text: 'Moins de 3 po de la foreuse : le pied ne passe pas', kind: 'note' });
     if (c.angle > 0) casLabels.push({ steps: ['secondaire'], cas: c.n, pos: [STM.x + 0.45, DECK + PIVOT.y, c.z + 0.004], text: `Axe de bascule arrière : l'avance monte à ${c.angle}°`, kind: 'note' });
+    if (c.angle > 0) casLabels.push({ steps: ['secondaire'], cas: c.n, pos: [STM.x - 0.4, DECK + 1.0, c.z - 1.5], text: 'Pattes de forage (jambes) : du traîneau à la poutre', kind: 'note' });
   }
 }
 root.add(cas);

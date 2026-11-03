@@ -7,6 +7,10 @@
 // de pivot dans les paliers des poteaux arrière, PIVOT.x[1], 598 mm du sol : 45° vers le haut au plus),
 // et « stm-poutre » (poutre, pied, serre-tiges, table, tête, poulie), enfant du support : elle pivote
 // avec lui et coulisse le long de l'avance (vérin de relevage).
+// Jambes UM-064-400D (P020, page 1.10, deux) : ajustables, posées seulement quand l'avance est levée
+// (pas à 0°, page 1.01). Points d'ancrage exportés comme nœuds vides : « jambe-bas-g/d » dans
+// stm-fixe (oreille de la face avant des poteaux avant, axe à 455 mm du sol) et « jambe-haut-g/d »
+// dans stm-poutre (flasques latéraux de la plateforme avant de la poutre) ; l'app trace les jambes.
 //
 // Usage : node scripts/export-stm-app.mjs sortie.glb [MIN en m] [part gardée]
 import { writeFileSync } from 'node:fs';
@@ -16,7 +20,7 @@ import { SimplifyModifier } from 'three/examples/jsm/modifiers/SimplifyModifier.
 import { mergeGeometries, mergeVertices } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { buildProcedural } from '../src/viewer/assembly.js';
 import { STM, DECK } from '../src/models/plancher-dd/plan.js';
-import { PIVOT } from '../src/models/stm-1500/layout.js';
+import { PIVOT, BEAM } from '../src/models/stm-1500/layout.js';
 
 globalThis.FileReader = class {
   readAsArrayBuffer(blob) { blob.arrayBuffer().then((b) => { this.result = b; this.onloadend?.(); }); }
@@ -44,6 +48,7 @@ for (const p of model.root.userData.parts || []) {
   p.traverse((o) => groupe.set(o, g));
 }
 const pivot = pose.localToWorld(new THREE.Vector3(PIVOT.x[1], PIVOT.y, 0));
+const JAMBE_BAS = [1.035, 0.455, 0.397], JAMBE_HAUT = [BEAM.x1 - 0.25, 0.8, 0.3];
 
 const parMat = new Map();
 const bb = new THREE.Box3(), sz = new THREE.Vector3();
@@ -89,6 +94,16 @@ for (const [k, n] of Object.entries(noeuds)) n.name = 'stm-' + k;
 racine.add(noeuds.fixe, noeuds.support);
 noeuds.support.add(noeuds.poutre);
 noeuds.support.position.copy(pivot);
+for (const [s, c] of [[-1, 'g'], [1, 'd']]) {
+  const bas = new THREE.Object3D();
+  bas.name = 'jambe-bas-' + c;
+  bas.position.copy(pose.localToWorld(new THREE.Vector3(JAMBE_BAS[0], JAMBE_BAS[1], s * JAMBE_BAS[2])));
+  noeuds.fixe.add(bas);
+  const haut = new THREE.Object3D();
+  haut.name = 'jambe-haut-' + c;
+  haut.position.copy(pose.localToWorld(new THREE.Vector3(JAMBE_HAUT[0], JAMBE_HAUT[1], s * JAMBE_HAUT[2]))).sub(pivot);
+  noeuds.poutre.add(haut);
+}
 for (const { m, gr, geos } of parMat.values()) {
   let g = mergeGeometries(geos, false);
   const pa = g.attributes.position.array;
