@@ -138,27 +138,30 @@ const casLabels = [];
     casLabels.push({ steps: ['marches'], cas: n, pos: [L - 0.25, y + n * 9 * 0.0254 + 0.06, zc], text: `${n} marches : plancher à ${n * 9} po du sol`, kind: 'note' });
   }
 }
-// Plancher secondaire (écran de l'étape 18) : les trois montages selon l'angle de forage
-// (SECONDAIRES : cas = 1, 2, 3), à côté de la STM-1500 (exportée à part, allégée, par
+// Plancher secondaire (écran de l'étape 18) : les montages selon l'angle de forage, pour garder le
+// serre-tiges à la taille (SECONDAIRES : cas = 1, 2, 3 ; pas de plancher au cas 1), à côté de la STM-1500 (exportée à part, allégée, par
 // scripts/export-stm-app.mjs ; l'app la recule et lève son avance selon le cas).
 {
+  const m = (h) => h.toFixed(2).replace('.', ',');
   const titres = {
-    1: "Forage à l'horizontale : plancher à 9 po, sans marche",
-    2: 'Forage montant (15°) : plancher à 18 po, 2 marches, garde-corps',
-    3: 'Forage ascendant de plus de 20° (25°) : plancher à 27 po, 3 marches',
+    1: "Forage à l'horizontale : pas de plancher secondaire",
+    2: 'Forage montant (10°) : plancher secondaire de 9 po, sans marche',
+    3: 'Forage montant (15°) : plancher à 18 po, 2 marches, garde-corps',
   };
   for (const c of SECONDAIRES) {
     const sp = secondaryPlan(c.H, c.zc);
-    for (const { obj, module } of plancherSecondaire(shapes, c.H, c.zc)) {
+    if (c.H > 0) for (const { obj, module } of plancherSecondaire(shapes, c.H, c.zc)) {
       obj.userData = { grp: 'secondaire', cas: c.n, m: module };
       obj.traverse((k) => { if (k !== obj) k.userData = {}; });
       cas.add(obj);
     }
     const yt = DECK + c.H;
     casLabels.push({ steps: ['secondaire'], cas: c.n, pos: [(sp.x0 + sp.x1) / 2, yt + 0.05, (sp.z0 + sp.z1) / 2], text: titres[c.n], kind: 'note' });
-    casLabels.push({ steps: ['secondaire'], cas: c.n, pos: [sp.x0, yt + 0.02, sp.z1], text: 'Moins de 3 po de la foreuse : le pied ne passe pas', kind: 'note' });
-    if (c.angle > 0) casLabels.push({ steps: ['secondaire'], cas: c.n, pos: [STM.x + 0.45, DECK + PIVOT.y, c.z + 0.004], text: `Axe de bascule arrière : l'avance monte à ${c.angle}°`, kind: 'note' });
-    if (c.angle > 0) casLabels.push({ steps: ['secondaire'], cas: c.n, pos: [STM.x - 0.4, DECK + 1.0, c.z - 1.5], text: 'Pattes de forage (jambes) : du traîneau à la poutre', kind: 'note' });
+    casLabels.push({ steps: ['secondaire'], cas: c.n, pos: [STM.x, DECK + c.travail + 0.12, c.zc], text: `Serre-tiges à ${m(c.travail - c.H)} m de là où l'on se tient : tiges et tube carotier à la taille`, kind: 'note' });
+    if (c.angle > 0) {
+      casLabels.push({ steps: ['secondaire'], cas: c.n, pos: [STM.x + 0.45, DECK + PIVOT.y, c.z + 0.004], text: `Axe de bascule arrière : l'avance monte à ${c.angle}°`, kind: 'note' });
+      casLabels.push({ steps: ['secondaire'], cas: c.n, pos: [STM.x - 0.4, DECK + 1.0, c.z - 1.5], text: 'Pattes de forage (jambes) : du traîneau à la poutre', kind: 'note' });
+    }
   }
 }
 root.add(cas);

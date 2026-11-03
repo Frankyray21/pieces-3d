@@ -9,6 +9,7 @@ import {
 } from './plan.js';
 import { lumber, between, wedge, lagScrews, placeStack, labeler } from './lumber.js';
 import { wireMesh, groundPatch } from './site.js';
+import { PIVOT, FOOT_X, AXIS_Y } from '../stm-1500/layout.js';
 
 // Sous-assemblage vu seul : le sol de la galerie sous l'emprise (absent dans la vue d'ensemble).
 function soil(api, opts, x0, x1, z0, z1) {
@@ -469,28 +470,39 @@ export function P16(api, opts = {}) {
 // ------------------------------------------------------------------ plancher secondaire
 
 /**
- * Plancher secondaire à côté de la tour de la STM-1500 (STM, plan.js), comme sur le chantier :
- * 32 × 72 po, le long côté parallèle à la tour, planches 3 × 8 dans le sens de la tour. Il épouse
+ * Plancher secondaire à côté de la tour de la STM-1500 (STM, plan.js). Il sert à travailler dans une
+ * position ergonomique : changer les tiges et manipuler le tube carotier au serre-tiges, à peu près
+ * à la hauteur de la taille (≈ 1,2 m au-dessus de là où l'on se tient). Sa hauteur suit donc l'angle
+ * de forage, qui lève le serre-tiges (SECONDAIRES) :
+ *   - forage à l'horizontale : serre-tiges à 1,24 m du plancher, pas de plancher secondaire ;
+ *   - forage montant (10°) : serre-tiges à 1,41 m, plancher secondaire de 9 po, sans marche ;
+ *   - forage montant (15°) : serre-tiges à 1,73 m, plancher à 18 po, 2 marches (la 1re de 16 po
+ *     × 9 po) et garde-corps aux bouts sans marche.
+ * Au-delà de 20° (forage ascendant), le serre-tiges passe 2 m : plus de 2 marches (pas montré).
+ * 32 × 72 po, le long côté parallèle à la tour, planches 3 × 8 dans le sens de la tour ; il épouse
  * la foreuse : la planche la plus près est à 1 po de la face extérieure du patin (moins de 3 po :
- * le pied ne passe pas), les poteaux des paliers à environ 3 po. Trois montages selon l'angle de
- * forage (SECONDAIRES) :
- *   - forage à l'horizontale : plancher à 9 po, sans marche (travers posés sur le plancher) ;
- *   - forage montant de moins de 20° : plancher à 18 po, 2 marches (la 1re de 16 po × 9 po) ;
- *   - forage ascendant de plus de 20° (ex. 25°) : la tête monte, plancher à 27 po, 3 marches.
- * Les bouts sans marche d'un plancher à plus de 9 po ont un garde-corps fixé solidement ; les
- * 2 planches les plus près de la foreuse sont vissées.
+ * le pied ne passe pas), les poteaux des paliers à environ 3 po. Placé vis-à-vis du serre-tiges,
+ * sans dépasser le plancher principal. Les 2 planches les plus près de la foreuse sont vissées.
  */
 const PATIN_Z = 0.533;     // demi-largeur hors tout du traîneau (face extérieure des patins)
-// Pour forer vers le haut, l'avance (support et poutre) bascule sur l'axe arrière (tubes de pivot
-// dans les paliers des poteaux arrière du traîneau, PIVOT de stm-1500/layout.js) ; la poutre est
-// d'abord avancée sur le support (vérin de relevage, glisse en m) pour que son arrière passe
-// au-dessus du treuil, et la foreuse recule pour garder l'avant de l'avance à 1 pi de la paroi.
-// z : milieu du traîneau ; zc : milieu du plancher secondaire, à la hauteur de la tête.
-const cfg = (n, angle, H, glisse, z) => ({ n, angle, H, glisse, z, zc: z - (0.4 + glisse * Math.cos((angle * Math.PI) / 180)) });
+// Pour lever l'avance, le support bascule sur l'axe arrière (tubes de pivot dans les paliers des
+// poteaux arrière du traîneau, PIVOT de stm-1500/layout.js, 45° vers le haut au plus) ; au-delà de
+// 10°, la poutre est d'abord avancée sur le support (vérin de relevage, glisse en m) pour que son
+// arrière (poulie) ne touche pas le plancher, et la foreuse recule pour garder l'avance à 1 pi de
+// la paroi. z : milieu du traîneau ; travail : hauteur du serre-tiges au-dessus du plancher principal.
+const serreTiges = (angle, glisse, z) => {
+  const t = (angle * Math.PI) / 180, dx = FOOT_X - 0.3985 + glisse - PIVOT.x[1], dy = AXIS_Y - PIVOT.y;
+  return { zs: z - (PIVOT.x[1] + dx * Math.cos(t) - dy * Math.sin(t)), travail: PIVOT.y + dx * Math.sin(t) + dy * Math.cos(t) };
+};
+const cfg = (n, angle, H, glisse, z) => {
+  const { zs, travail } = serreTiges(angle, glisse, z);
+  const zc = Math.max(zs, -W / 2 + 0.06 + 36 * IN);   // vis-à-vis du serre-tiges, sans dépasser le plancher
+  return { n, angle, H, glisse, z, zc, travail };
+};
 export const SECONDAIRES = [
-  cfg(1, 0, 9 * IN, 0, STM.z),
-  cfg(2, 15, 18 * IN, 1.6, 0.545),
-  cfg(3, 25, 27 * IN, 1.6, 0.365),
+  cfg(1, 0, 0, 0, STM.z),
+  cfg(2, 10, 9 * IN, 0, STM.z),
+  cfg(3, 15, 18 * IN, 0.9, -0.134),
 ];
 export function secondaryPlan(H = 18 * IN, zc = STM.z - 0.4) {
   const x0 = STM.x + PATIN_Z + 1 * IN;         // à 1 po du patin : le plancher épouse la foreuse
@@ -544,11 +556,12 @@ export function plancherSecondaire(S, H, zc) {
   return out;
 }
 
-/** Plancher secondaire (étape 18) : le montage à 2 marches (forage montant de moins de 20°). */
+/** Plancher secondaire (étape 18) : le montage à 2 marches (forage montant à 15°). */
 export function P17(api) {
   const put = labeler(api);
   const ex = { 1: [0, 0.3, 0], 2: [0, 0.45, 0], 3: [0, 0.75, 0], 4: [0, 0.15, 0], 5: [0.3, 0.15, 0], 6: [0, 0.3, 0.3], 7: [0, 0.35, 0.3], 8: [0, 0.35, 0.3] };
-  for (const { ref, obj, module } of plancherSecondaire(api.S, 18 * IN)) put(ref, obj, ex[ref], 18, { seq: Math.round(module * 10) });
+  const c = SECONDAIRES[2];
+  for (const { ref, obj, module } of plancherSecondaire(api.S, c.H, c.zc)) put(ref, obj, ex[ref], 18, { seq: Math.round(module * 10) });
   return { view: { dir: [1.2, 1.0, 0.6] } };
 }
 
