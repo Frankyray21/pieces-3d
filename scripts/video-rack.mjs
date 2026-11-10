@@ -80,7 +80,7 @@ if (!args.includes('--encode-only')) {
     const count = Math.round(s.dur * FPS);
     for (let f = 0; f < count; f++) {
       await page.clock.runFor(1000 / FPS);
-      await page.screenshot({ path: join(frames, `f${String(n++).padStart(5, '0')}.jpg`), type: 'jpeg', quality: 92 });
+      await page.screenshot({ path: join(frames, `f${String(n++).padStart(5, '0')}.jpg`), type: 'jpeg', quality: 92, timeout: 180000 });
     }
     console.log(`${s.id} : ${count} images (${((Date.now() - t0) / 1000).toFixed(0)} s)`);
   }
