@@ -4,7 +4,9 @@
 // corps qu'ils relient : ils suivent le mât sans se détacher. Une tige de forage (taille B), absente du manuel et du
 // site, est ajoutée entre l'émerillon et le serre-tiges pour montrer le forage ; elle a son os et son matériau.
 //
-// Usage : node scripts/export-anim.mjs [sortie.glb] [--fps 30]
+// Usage : node scripts/export-anim.mjs [sortie.glb] [--fps 30] [--metal-max 0.3]
+// --metal-max : plafonne le caractère métallique des matériaux. Un métal pur ne renvoie que les reflets de son
+// environnement : dans une scène sans ciel ni captures de reflets (galerie de mine), il sort noir.
 // Écrit aussi sortie.json (os, séquences et résumés). FBX : tools/blender_fbx.py.
 import { writeFileSync } from 'node:fs';
 import * as THREE from 'three';
@@ -26,6 +28,8 @@ globalThis.FileReader = class {
 const args = process.argv.slice(2);
 const fi = args.indexOf('--fps');
 const fps = fi >= 0 ? Number(args.splice(fi, 2)[1]) : 30;
+const mi = args.indexOf('--metal-max');
+const metalMax = mi >= 0 ? Number(args.splice(mi, 2)[1]) : 1;
 const out = args[0] || 'stm-1500-foreuse-animee.glb';
 
 const model = buildProcedural(builders, 'P010');
@@ -132,7 +136,8 @@ const ranges = []; // sommets de chaque section : contigus dans les tampons
 for (const s of sections.values()) {
   ranges.push({ base, count: s.count });
   geometry.addGroup(start, s.index.length, materials.length);
-  materials.push(s.material);
+  const mt = s.material.metalness > metalMax ? Object.assign(s.material.clone(), { metalness: metalMax, name: s.material.name }) : s.material;
+  materials.push(mt);
   for (const x of s.position) P.push(x);
   for (const x of s.normal) N.push(x);
   for (const x of s.joints) Jn.push(x);
