@@ -149,17 +149,20 @@ pièces (numéro, quantité, page du manuel).
   tendeur, quinconce, tiges qui se touchent sans se traverser, appui au fond
   et jeu sur les côtés, rallonges, crochets entre 66 et 72 po, angle d'arrêt
   de la chaîne, point bas à 5 pi au moins, marques).
-  **Vidéo de la procédure** (premier contact avec la méthode, 3 min 55,
+  **Vidéo de la procédure** (premier contact avec la méthode, 4 min 01,
   1280 × 720, 24 i/s, muette, sous-titrée) : scénario dans
   `src/video/rack-script.js` — par passage, bandeau, réplique du formateur,
   plans de caméra choisis selon ce qui est expliqué (ensemble, gros plan,
   profil pour un angle, plongée pour le quinconce, coupe pour le trou),
   repères révélés une idée à la fois (`reveal`), photos de la procédure
-  incrustées (`inset`), cartons (`card`), rappels (`cues`). Tournage image par
-  image sous une horloge arrêtée : `scripts/video-rack.mjs` (images par
-  passage, re-tournage partiel avec `--only`, deux tournages en parallèle avec
-  `--no-encode`, serveur d'images fixes `--serve` pour régler les plans,
-  planche-contact `scripts/video-rack-planche.py`). Script de voix minuté et
+  incrustées (`inset`), cartons (`card`), rappels (`cues`). Les plans sont
+  fixes ; la caméra ne bouge que pendant une animation. Tournage image par
+  image sous une horloge arrêtée : `scripts/video-rack.mjs` (le rendu 3D,
+  coûteux sans carte graphique, n'est refait que si la scène a changé, sinon
+  l'image précédente est reprise ; images par passage, re-tournage partiel
+  avec `--only`, deux tournages en parallèle avec `--no-encode`, serveur
+  d'images fixes `--serve` pour régler les plans, planche-contact
+  `scripts/video-rack-planche.py`). Script de voix minuté et
   sous-titres : `node scripts/video-rack-script.mjs` (`video/rack/`,
   `sous-titres.vtt`) ; la voix enregistrée s'ajoute avec `--voix`. Publiée
   dans `public/equipment/rack-tiges-dd/video/` (lecteur `index.html`, relié
