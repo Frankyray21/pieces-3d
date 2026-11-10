@@ -92,6 +92,11 @@ const defs = {
   rockFloor: { color: 0x3d3f42, metalness: 0, roughness: 0.95, fin: 'rock' },
   fluoRed: { color: 0xff3020, emissive: 0x5a0800, emissiveIntensity: 1, roughness: 0.6 },
   fluoOrange: { color: 0xff7a10, emissive: 0x4a1800, emissiveIntensity: 1, roughness: 0.55 },
+  // Tiges de forage usagées : acier terni, brun de rouille plus ou moins marqué.
+  rodWorn: { color: 0x5a4f47, metalness: 0.55, roughness: 0.7, fin: 'cast' },
+  rodRust: { color: 0x6e4630, metalness: 0.35, roughness: 0.82, fin: 'cast' },
+  rodRustDark: { color: 0x4a3226, metalness: 0.4, roughness: 0.85, fin: 'cast' },
+  rodDull: { color: 0x4b4a48, metalness: 0.6, roughness: 0.66, fin: 'cast' },
   blackCast: { color: 0x2a2c30, metalness: 0.1, roughness: 0.55, clearcoat: 0.3, clearcoatRoughness: 0.35, fin: 'paintDark' },};
 
 // ------------------------------------------------------- relief de surface

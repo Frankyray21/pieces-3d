@@ -147,6 +147,13 @@ function P01(api) {
   return { view: { dir: [0.9, 0.45, 1.25] } };
 }
 
+// Tiges usagées : teinte choisie d'après la place de la tige (toujours la même pour une tige).
+const ROD_TONES = ['rodWorn', 'rodRust', 'rodDull', 'rodWorn', 'rodRustDark', 'rodRust', 'rodDull'];
+function rodTone(k, c) {
+  const h = Math.sin(k * 127.1 + c * 311.7) * 43758.5453;
+  return ROD_TONES[Math.floor((h - Math.floor(h)) * ROD_TONES.length)];
+}
+
 /** Support chargé de 184 tiges NQ, appuyé au mur (figures 2 et 3). */
 function P02(api) {
   const S = api.S;
@@ -161,7 +168,7 @@ function P02(api) {
     const s = (y0 - r * cos) / sin; // du point d'appui au pied, le long de la tige
     const mid = NQ.len / 2 - s;
     for (let c = 0; c < NQ.cols; c++) {
-      const rod = S.shell(r, NQ.id / 2, NQ.len, 'steel', { seg: 14 });
+      const rod = S.shell(r, NQ.id / 2, NQ.len, rodTone(k, c), { seg: 14 });
       rod.rotation.x = -tilt;
       S.at(rod, [(c - (NQ.cols - 1) / 2) * NQ.od, y0 + mid * sin, z0 - mid * cos]);
       api.part('2', rod, [0, 0, 1.1 + k * 0.05], { noLabel: k + c > 0 });
