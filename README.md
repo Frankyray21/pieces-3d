@@ -131,6 +131,11 @@ pièces (numéro, quantité, page du manuel).
   animations d'étape (`userData.stepAnim`, jouées par `Viewer.setStep`) :
   perçage du trou à la foreuse à percussion sans fil (étape 2) et serrage de
   la chaîne au tendeur à cliquet (étape 8).
+  Conformité à la procédure : `node scripts/check-rack.mjs` mesure sur le
+  modèle construit chaque exigence chiffrée (angle de 75° à 80°, trou à 5 pi
+  au centre du support, pattes du haut appuyées à la paroi, 8 rangées de 23
+  tiges en quinconce, jeu sur les côtés, crochets entre 66 et 72 po, chaîne
+  de retenue jamais sous 5 pi, marques à 5 pi).
   **Vidéo de la procédure** (3 min 34, 1280 × 720) : le montage par étapes
   joué passage par passage avec un bandeau (étape, titre, texte), capturé
   image par image sous une horloge simulée (`scripts/video-rack.mjs`, scénario

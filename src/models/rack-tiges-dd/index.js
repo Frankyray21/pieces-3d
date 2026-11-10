@@ -14,7 +14,8 @@ import { DECK, SEC } from '../plancher-dd/plan.js';
 
 const IN = 0.0254;
 const T2 = 2 * IN, T15 = 1.5 * IN, T25 = 2.5 * IN; // profilés HSS carrés (estimés)
-const CLEAR = 1.66; // entre les poteaux : 23 tiges NQ par rangée, en quinconce (23,5 diamètres)
+const SIDE = 0.02; // jeu de chaque côté : les tiges ne s'appuient pas sur les côtés (étape 10)
+const CLEAR = 1.69; // entre les poteaux : 23 tiges NQ par rangée, en quinconce (23,5 diamètres), plus le jeu
 const XP = (CLEAR + T2) / 2; // axe des poteaux
 const H_TOP = 2.47, H_LOW = 0.96; // axes des traverses
 const POST = [0.3, 2.84]; // bas et haut du poteau
@@ -195,19 +196,34 @@ const FRONT = T2 / 2 + NQ.od + (NQ.rows - 1) * ROW; // devant du paquet de tiges
 
 // Chantier : la galerie et le plancher de foreuse du modèle « plancher-dd »
 // (section 1), le support contre la paroi de roche, pieds sur le plancher.
-// L'endroit le long de la galerie est celui où la paroi est la plus égale
-// vis-à-vis les deux pattes du haut ; la plus avancée des deux bosses touche.
-const ARM_Y = W(0, H_TOP, -WALL)[1] + DECK;
-const MINE = (() => {
-  let best = null;
-  for (let x0 = 2.2; x0 <= 3.1; x0 += 0.02) {
-    const a = rockZ(-1, x0 - XP, ARM_Y), b = rockZ(-1, x0 + XP, ARM_Y);
-    if (!best || Math.abs(a - b) < best.d) best = { x0, d: Math.abs(a - b), dz: WALL_Z - Math.max(a, b) };
+// Étape 1 : près du mur et loin de la ligne de tir (la foreuse fore vers le
+// front de taille, au centre de la galerie) : contre la paroi, à l'arrière de
+// la section. L'endroit retenu est celui où la paroi est la plus égale
+// vis-à-vis les deux pattes du haut, pour qu'elles s'y appuient toutes les deux.
+// Le décor est tourné de quelques degrés au plus autour de la verticale (YAW)
+// pour que les deux pattes du haut s'appuient sur la paroi, comme le demande
+// l'étape 4 : repère du chantier = Ry(YAW) · (repère du plancher − Q0).
+const ARM_Y = W(0, H_TOP, -WALL)[1];
+export const MINE = (() => {
+  const x0 = 3.3;
+  let yaw = 0, zq = 0, e = [0, 0];
+  for (let it = 0; it < 40; it++) {
+    e = [-1, 1].map((s) => {
+      const qx = s * XP * Math.cos(yaw) - WALL_Z * Math.sin(yaw) + x0;
+      const qz = s * XP * Math.sin(yaw) + WALL_Z * Math.cos(yaw) + zq;
+      return qz - rockZ(-1, qx, ARM_Y + DECK);
+    });
+    zq -= (e[0] + e[1]) / 2;
+    yaw -= (e[1] - e[0]) / (2 * XP);
   }
-  return best;
+  return { x0, yaw, zq, d: Math.max(Math.abs(e[0]), Math.abs(e[1])) };
 })();
-/** Face de la paroi (Z, repère du support) au point (x, y). */
-const rockAt = (x, y) => rockZ(-1, x + MINE.x0, y + DECK) + MINE.dz;
+/** Face de la paroi (Z, repère du chantier) au point (x, y). */
+const rockAt = (x, y) => {
+  const c = Math.cos(MINE.yaw), sn = Math.sin(MINE.yaw);
+  const qx = x * c - WALL_Z * sn + MINE.x0;
+  return -(qx - MINE.x0) * sn + (rockZ(-1, qx, y + DECK) - MINE.zq) * c;
+};
 const ROCK_EYE = rockAt(0, FT5);
 const EYE = [0, FT5, ROCK_EYE + 0.045]; // œil du boulon, au centre du support, à ± 5 pi du plancher
 
@@ -366,10 +382,10 @@ function P02(api) {
   };
   // Décor : paroi de roche de la galerie et plancher de foreuse (section 1 du
   // modèle « plancher-dd »), recadrés autour du chantier.
-  const place = (o) => S.at(o, [-MINE.x0, -DECK, MINE.dz]);
+  const place = (o) => { const g = S.group(S.at(o, [-MINE.x0, -DECK, -MINE.zq])); g.rotation.y = MINE.yaw; return g; };
   const gal = gallery(S);
   gal.remove(gal.children[2]); // paroi d'en face : la vue reste dégagée
-  const rock = S.group(place(S.group(cropX(api.THREE, still(gal), SEC + 0.3))));
+  const rock = S.group(place(cropX(api.THREE, still(gal), SEC + 0.3)));
   rock.add(groundSupport(api, -MINE.x0 + 0.05, SEC + 0.25 - MINE.x0));
   put('M', rock, [0, 0, 0], -1, { noLabel: true });
   const deck = S.group(['P04', 'P07'].map((id) => still(buildProcedural(plancher, id, { inPlace: true, quality: 0.4 }).root)));
@@ -382,7 +398,7 @@ function P02(api) {
   const hd = hammerDrill(S);
   S.at(hd, [0, FT5, ROCK_EYE]);
   hd.userData.stepOnly = [2];
-  hd.userData.stepAnim = { step: 2, delay: 900, dur: 5200, update: (k) => { hd.position.z = ROCK_EYE - 0.44 * k + 0.004 * Math.sin(k * 260); } };
+  hd.userData.stepAnim = { step: 2, delay: 900, dur: 5200, update: (k) => { hd.position.z = ROCK_EYE - 18 * IN * k + 0.004 * Math.sin(k * 260); } };
   api.part('8', hd, [0, 0, 0.6], { noLabel: true });
 
   put('3', eyeBolt(S), [0, 0, 0.35], 3);
@@ -403,23 +419,46 @@ function P02(api) {
     [s * XP * 0.55, (mid[1] + FT5) / 2 - 0.05 - 0.22 * slack, (mid[2] + EYE[2]) / 2],
   ];
   const LEVELS = 5;
-  const variants = Array.from({ length: LEVELS }, (_, i) => {
+  const tension = Array.from({ length: LEVELS }, (_, i) => {
     const slack = 1 - i / (LEVELS - 1);
-    const m = chainAlong(api, [...half(-1, slack), EYE, ...half(1, slack).reverse()]);
-    m.visible = i === LEVELS - 1;
-    return m;
+    return chainAlong(api, [...half(-1, slack), EYE, ...half(1, slack).reverse()]);
   });
+  // Longueur de la chaîne (tendue) : la même chaîne aux étapes 6 et 7.
+  const pts = [...half(-1, 0), EYE, ...half(1, 0).reverse()];
+  const LEN = pts.slice(1).reduce((n, q, i) => n + Math.hypot(q[0] - pts[i][0], q[1] - pts[i][1], q[2] - pts[i][2]), 0);
+  // Étape 6 : chaîne passée dans le boulon à œil jusqu'à son milieu ; les deux
+  // moitiés pendent de chaque côté de l'œil, le surplus posé sur le plancher.
+  const ez = EYE[2] + 0.03, lay = Math.max(0.1, LEN / 2 - FT5);
+  const hang = (s) => [[s * (0.05 + lay), 0.012, ez + 0.1], [s * 0.07, 0.014, ez + 0.03], [s * 0.035, 0.35, ez], [s * 0.03, FT5 - 0.12, ez]];
+  const hanging = chainAlong(api, [...hang(-1), [0, FT5 + 0.012, EYE[2]], ...hang(1).reverse()]);
+  // Étape 7 : chaque bout passé dans son œillet, de l'extérieur vers
+  // l'intérieur ; les bouts pendent à l'intérieur du support, pas encore reliés.
+  const tail = Math.max(0.2, LEN / 2 - Math.hypot(XP + 0.07, mid[1] - FT5, mid[2] - EYE[2]) - 0.1);
+  const lugW = W(XP, ly, lz);
+  const thread = (s) => [
+    [s * (XP - 0.06), lugW[1] - tail, lugW[2] + 0.02], [s * (XP - 0.055), lugW[1] - 0.12, lugW[2] + 0.005], [s * (XP - 0.03), lugW[1] - 0.005, lugW[2]],
+    W(s * (XP + 0.07), ly - 0.03, lz - 0.05), [s * XP * 0.55, (mid[1] + FT5) / 2 - 0.27, (mid[2] + EYE[2]) / 2],
+  ];
+  const threaded = chainAlong(api, [...thread(-1), EYE, ...thread(1).reverse()]);
+  const variants = [hanging, threaded, ...tension];
+  const show = (m) => variants.forEach((v) => { v.visible = v === m; });
+  show(tension[LEVELS - 1]);
   const anchor = S.group(variants);
+  anchor.userData.stepAnim = { step: 7, delay: 500, dur: 600, update: (k) => show(k < 0.5 ? hanging : threaded) };
   put('4', anchor, [0, 0.35, 0.2], 6);
   const b = binder(S);
   S.at(b, mid);
   put('5', b, [0, 0.6, 0.2], 8);
-  // Étape 8, animation du serrage : le levier du cliquet est pompé, la chaîne se tend.
+  // Étape 8, animation du serrage : les bouts sont reliés par le tendeur, le
+  // levier du cliquet est pompé et la chaîne se tend. Avant l'étape 8, l'état
+  // de la chaîne est celui des étapes 6 et 7 (ci-dessus).
   const PUMPS = 6;
-  anchor.userData.stepAnim = { step: 8, delay: 1100, dur: 6000, update: (k) => {
-    const i = Math.round(k * (LEVELS - 1));
-    variants.forEach((m, j) => { m.visible = j === i; });
-    b.userData.lever.rotation.x = 0.5 + (k < 1 ? 0.55 * Math.sin(k * PUMPS * 2 * Math.PI) : 0);
+  let joined = false;
+  b.userData.stepAnim = { step: 8, delay: 1100, dur: 6000, update: (k) => {
+    b.userData.lever.rotation.x = 0.5 + (k > 0 && k < 1 ? 0.55 * Math.sin(k * PUMPS * 2 * Math.PI) : 0);
+    if (k === 0 && !joined) return;
+    joined = k > 0;
+    if (joined) show(tension[Math.round(k * (LEVELS - 1))]);
   } };
 
   // Tiges en quinconce, par rangée à partir de la gauche, appuyées sur les
@@ -430,7 +469,7 @@ function P02(api) {
     for (let c = 0; c < NQ.cols; c++) {
       const rod = S.shell(NQ.od / 2, NQ.id / 2, NQ.len, rodTone(k, c), { seg: 14 });
       rod.rotation.x = -TILT;
-      S.at(rod, W(-CLEAR / 2 + NQ.od / 2 + c * NQ.od + (k % 2 ? NQ.od / 2 : 0), yb + NQ.len / 2, z));
+      S.at(rod, W(-CLEAR / 2 + SIDE + NQ.od / 2 + c * NQ.od + (k % 2 ? NQ.od / 2 : 0), yb + NQ.len / 2, z));
       put('2', rod, [0, 0, 1.2 + k * 0.05], 9, { seq: k, noLabel: k + c > 0 });
     }
   }
@@ -440,6 +479,17 @@ function P02(api) {
   const zf = FRONT + 0.02, yh = HOOK - 0.02;
   const side = (s) => [W(s * XP, yh, T2 / 2 + 0.03), W(s * XP, yh - 0.03, zf * 0.55), W(s * (XP - 0.02), yh - 0.06, zf)];
   put('6', S.group(chainAlong(api, [...side(-1), W(0, yh - 0.16, zf + 0.004), ...side(1).reverse()], 'blue')), [0, 0, 1.9], 11);
+
+  // Étape 14 : tournevis plat glissé entre deux tiges du devant pour les séparer.
+  const driver = S.group(
+    S.cyl(0.0035, 0.15, 'steel', { axis: 'z', pos: [0, 0, 0.075], seg: 8 }),
+    S.box(0.007, 0.0015, 0.02, 'steel', { pos: [0, 0, 0.008] }),
+    S.cyl(0.015, 0.1, 'safety', { axis: 'z', pos: [0, 0, 0.2] }),
+  );
+  driver.rotation.x = -TILT;
+  S.at(driver, W(-CLEAR / 2 + SIDE + NQ.od * (NQ.rows % 2 ? 11 : 11.5), 1.25, FRONT - NQ.od * 0.45));
+  driver.userData.stepOnly = [14];
+  api.part('9', driver, [0, 0, 1.4], { noLabel: true });
 
   // Marques à 5 pi du sol sur les poteaux.
   for (const s of [-1, 1]) {
@@ -485,6 +535,8 @@ const NOTES = [
   { steps: [4], pos: [0, 2.75, WALL_Z + 0.1], text: 'Pattes du haut bien appuyées au mur' },
   { steps: [5], pos: [XP, 1.2, -0.1], text: 'Entre 75° et 80° (ici 78°)' },
   { steps: [7], pos: [XP, W(0, LUG, 0)[1] + 0.25, W(0, LUG, -0.1)[2]], text: "Œillet : de l'extérieur vers l'intérieur" },
+  { steps: [6], pos: [0, FT5 + 0.3, WALL_Z + 0.1], text: 'Chaîne passée jusqu’à son milieu' },
+  { steps: [14], pos: [0, 1.55, 0.75], text: 'Tournevis plat pour séparer les tiges' },
   { steps: [8], pos: [0, W(0, LUG, 0)[1] + 0.4, W(0, LUG, -0.1)[2]], text: 'Pomper le cliquet : chaîne serrée au maximum' },
   { steps: [9], pos: [-XP, 3.1, 0], text: '23 tiges par rangée, 8 rangées : 184 tiges NQ' },
   { steps: [11, 12], pos: [XP, 69 * IN + 0.2, 0.2], text: 'Crochets fermés : 66 à 72 po du sol' },
