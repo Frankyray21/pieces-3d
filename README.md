@@ -259,6 +259,8 @@ tools/extract_sandvik.py                    extraction complète d'un manuel San
 tools/extract_epiroc.py                     extraction du catalogue Epiroc (tableaux, pages)
 tools/extract_stm1500*.py                   listes du manuel STM-1500 (brouillon, nettoyage, liens)
 tools/blender_render.py                     rendu Cycles d'un .glb (scripts/export-glb.mjs)
+scripts/export-anim.mjs                     foreuse STM-1500 animée en .glb (squelette et séquences, voir docs/animation-stm-1500.md)
+tools/blender_fbx.py                        conversion du .glb animé en FBX pour Unreal Engine
 tools/ocr_pages.py, tools/ocr_bulles.py     OCR des planches (texte, bulles de repère)
 tools/atelier_review.py                     planches de relecture des textes lus
 tools/build_atelier.py                      bulles, donnees, entretien, consignes, schemas et systemes (.json)

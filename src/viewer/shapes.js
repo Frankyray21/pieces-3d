@@ -833,7 +833,9 @@ export function hydCylinder(len, bore, { material = 'red', rodR, ext = 0.45, eye
   // Racleur de tige à la sortie du presse-étoupe.
   rubber.push(place(X(ringGeo(rodR * 1.25, rodR * 1.0, r * 0.06, 24)), [barrelLen + r * 0.03, 0, 0]));
   const rodLen = len - pistonX;
-  g.add(at(cyl(rodR, rodLen, 'chrome', { axis: 'x' }), [pistonX + rodLen / 2, 0, 0]));
+  const tige = at(cyl(rodR, rodLen, 'chrome', { axis: 'x' }), [pistonX + rodLen / 2, 0, 0]);
+  tige.userData.rodSide = true; // pièce entraînée par l'œil de tige (animation)
+  g.add(tige);
   g.userData.hasInterior = true;
   // Axes d'articulation (repère local, le long de X) pour une simulation : œil
   // arrière et œil de tige.

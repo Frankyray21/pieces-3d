@@ -229,8 +229,12 @@ export function P048(api) {
     lathe([[0.049, -0.438], [0.148, -0.438], [0.154, -0.432], [0.154, -0.324], [0.136, -0.324], [0.136, -0.281], [0.154, -0.281], [0.154, -0.183], [0.148, -0.177], [0.078, -0.177], [0.078, -0.247], [0.049, -0.247], [0.049, -0.438]], 'red', { axis: 'x', seg: 56, pos: [0, SPY, 0] }),
     merged(ressorts, 'steel'),
     ...Array.from({ length: 8 }, (_, i) => { const a = Math.PI / 8 + (i * Math.PI) / 4; return at(nut(0.019, 0.012, 'blackOxide', { axis: 'x' }), [-0.444, SPY + 0.137 * Math.cos(a), 0.137 * Math.sin(a)]); }),
-    ring(0.12, 0.049, 0.015, 'red', { axis: 'x', seg: 40, pos: [-0.4455, SPY, 0] }),
-    ...Array.from({ length: 6 }, (_, i) => { const a = (i * Math.PI) / 3; const y = SPY + 0.09 * Math.cos(a), z = 0.09 * Math.sin(a); return group(cyl(0.013, 0.011, 'red', { axis: 'x', pos: [-0.4585, y, z] }), at(nut(0.019, 0.012, 'blackOxide', { axis: 'x' }), [-0.47, y, z])); }),
+    // Disque de bout et ses six vis : avec la cuvette et les mors, ils tournent avec la broche (le tambour, vérin
+    // d'ouverture du mandrin, reste fixe sur l'adaptateur 120) — corps « Broche » pour l'animation.
+    Object.assign(group(
+      ring(0.12, 0.049, 0.015, 'red', { axis: 'x', seg: 40, pos: [-0.4455, SPY, 0] }),
+      ...Array.from({ length: 6 }, (_, i) => { const a = (i * Math.PI) / 3; const y = SPY + 0.09 * Math.cos(a), z = 0.09 * Math.sin(a); return group(cyl(0.013, 0.011, 'red', { axis: 'x', pos: [-0.4585, y, z] }), at(nut(0.019, 0.012, 'blackOxide', { axis: 'x' }), [-0.47, y, z])); }),
+    ), { userData: { body: 'Broche' } }),
     pose(THREE, coude, [-0.262, SPY + 0.154 + 0.006, 0], [0, 1, 0], [-1, 0, 0]),
     pose(THREE, graisseur, [-0.215, SPY + 0.154 + 0.0035, 0], [0, 1, 0]), // graisseur ZNPT250 de la liste du mandrin (P052, repère 1)
   ), [-0.95, 0, 0]);

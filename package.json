@@ -12,7 +12,8 @@
     "check:visserie": "node scripts/check-visserie.mjs",
     "check:3d": "node scripts/check-models.mjs --eq epiroc-ith && node scripts/check-models.mjs --eq epiroc-ith --from P064 --qty --max-tris 180000",
     "shots": "node scripts/shots.mjs",
-    "export:glb": "node scripts/export-glb.mjs"
+    "export:glb": "node scripts/export-glb.mjs",
+    "export:anim": "node scripts/export-anim.mjs"
   },
   "dependencies": {
     "three": "^0.169.0"

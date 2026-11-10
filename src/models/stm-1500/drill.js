@@ -215,7 +215,14 @@ function wirePath() {
     ...arcPts(ROLLER, RR, t3.q, [ROLLER[0] + RR, ROLLER[1]], -1, 0.006),
   ].map(([x, y]) => [x, y, 0]);
   poly.push(tip);
-  return { pts: resample(poly, 0.01), tip };
+  // Partie libre (fractions de la longueur) : dernier tronçon droit avant le réa bas, du guide-câble du treuil au mât.
+  const len = (k) => { let d = 0; for (let i = 1; i <= k; i++) d += Math.hypot(poly[i][0] - poly[i - 1][0], poly[i][1] - poly[i - 1][1]); return d; };
+  const k1 = c.pts.length - 1;
+  let k0 = k1 - 1;
+  const dir = (i) => Math.atan2(poly[i + 1][1] - poly[i][1], poly[i + 1][0] - poly[i][0]);
+  while (k0 > 0 && Math.abs(dir(k0 - 1) - dir(k1 - 1)) < 0.02) k0--;
+  const total = len(poly.length - 1);
+  return { pts: resample(poly, 0.01), tip, free: [len(k0) / total, len(k1) / total] };
 }
 
 /**
@@ -253,6 +260,11 @@ const profilYa = (api, outline, holes, t, y, mat = 'red') => api.S.at(profil(api
 
 export function P010(api) {
   const { box, cyl, ring, shell, tube, hose, rod, plate, extrude, hydCylinder, bolt, boltSet, boltCircle, group, at, lathe, torus, nut, merged, washer } = api.S;
+  // Corps mobiles pour l'animation (rig.js) : étiquettes sans effet sur la géométrie.
+  const body = (name, ...objs) => Object.assign(group(...objs), { userData: { body: name } });
+  const rodBody = (c, name) => { c.traverse((o) => { if (o.userData.rodSide) o.userData.body = name; }); return c; };
+  // Boyau ou câble souple entre deux corps : a au départ, b à l'arrivée, partie libre entre les fractions u de sa longueur.
+  const skin = (t, a, b, u = [0.15, 0.85]) => { t.userData.skin = { a, b, u }; return t; };
   const P = lister(api, 'P010');
   const profilX = (...args) => profilXa(api, ...args), profilY = (...args) => profilYa(api, ...args);
   const wire = wirePath();
@@ -663,7 +675,7 @@ export function P010(api) {
       t.push(at(nut(0.022, 0.01, 'steel'), [x, 1.098, zo]));
     }
     // Brides 205DS et blocs 204DS sur la barre du cylindre principal.
-    for (const dx of [0, 0.3]) { // sur le cylindre principal (X HEAD_X − 0,105 à + 0,395)
+    for (const dx of [0.08, 0.34]) { // sur la barre du cylindre principal (X HEAD_X − 0,015 à + 0,845)
       t.push(at(box(0.1, 0.012, 0.08, 'red', { r: 0.002 }), [HEAD_X + dx, TBL.y0 - 0.006, 0]));
       for (const u of [-1, 1]) t.push(at(box(0.012, 0.022, 0.08, 'red', { r: 0.002 }), [HEAD_X + dx + u * 0.044, TBL.y0 - 0.023, 0]));
       t.push(at(box(0.07, 0.022, 0.05, 'grey', { r: 0.003 }), [HEAD_X + dx, TBL.y0 - 0.023, 0]));
@@ -674,34 +686,49 @@ export function P010(api) {
   // 9 — Tête de forage Boyles sur la table, broche dans l'axe de l'avance.
   P('UM-012-100UG', at(api.sub('P048'), [HEAD_X, HB, 0]), [0, 0.7, 0]);
 
-  // 17 — Vérin d'avance double UM-064-100Z (P021), logé dans la poutre : deux tiges creuses 119Z Ø 2 po ancrées dans la
-  // plaque d'extrémité et le flasque avant de la plateforme (bagues 317B, écrous 128Z et contre-écrous 127Z à
-  // l'extérieur, coude 6801-12-12 au bout de chaque tige : l'huile passe par les tiges ; recul à l'arrière, avance à
-  // l'avant), tube central 122Z gris Ø 4 po de part et d'autre du cylindre principal 150Z noir (alésage 5 po) accroché
-  // sous la table, avec sa barre et son bloc supérieur à deux coudes 6801-12-12.
-  // Course de 1 808 mm (page 1.01) : l'ensemble mobile (tube central et cylindre, 1,198 m) part à 9 mm de la bague du
-  // flasque avant (tête à l'avant de la course) et s'arrête à 3 mm de la bague de la plaque d'extrémité ; cylindre
-  // principal de 0,5 m sous l'arrière de la table, tube central de part et d'autre (page 1.11 : vue d'ensemble).
+  // 17 — Vérin d'avance télescopique UM-064-100Z (P021), logé dans la poutre. Deux étages, d'après la liste de la
+  // page 1.11 (joints de piston de 3 1/2 et de 5 po, joints de tige de 2 et de 4 po) :
+  // — deux tiges creuses 119Z Ø 2 po, fixes, vissées sur le piston central 120Z et ancrées dans la plaque d'extrémité
+  //   et le flasque avant de la plateforme (bagues 317B, écrous 128Z et contre-écrous 127Z à l'extérieur, coude
+  //   6801-12-12 au bout de chaque tige : l'huile passe par les tiges ; recul à l'arrière, avance à l'avant) ;
+  // — tube central 122Z gris Ø 4 po (1,50 m), qui coulisse sur le piston des tiges (presse-étoupes 121Z) ;
+  // — cylindre principal 150Z noir (alésage 5 po, 0,86 m), qui coulisse sur le tube central (presse-étoupes 116Z,
+  //   piston de 5 po au milieu du tube) ; il est accroché sous la table par sa barre et son bloc supérieur à deux
+  //   coudes 6801-12-12.
+  // Course de 1 808 mm (page 1.01) = 1,198 m du tube sur les tiges + 0,610 m du cylindre sur le tube. Tête à l'avant
+  // de la course : tube en butée avant (à 39 mm du flasque), cylindre au bout avant du tube. Proportions relevées sur
+  // la vue d'ensemble de la page 1.11 (tube ≈ la moitié de la longueur des tiges, cylindre ≈ 0,57 du tube).
+  // Corps mobiles (userData.body, animation) : tiges avec le mât, tube central, cylindre avec la table.
   // Le vérin supérieur « bazooka » (6) et sa console (8) ne sont pas montés sur cette foreuse.
-  const FEED_STROKE = 1.808, CYL_C = HEAD_X + 0.145, CYL_HL = 0.25;
-  const cy0 = CYL_C - CYL_HL, cy1 = CYL_C + CYL_HL, tb1 = bx1 - 0.039, tb0 = bx0 + 0.035 + FEED_STROKE;
+  const FEED_STROKE = 1.808, TUBE_L = 1.5, CYL_L = 0.86, CYL_STROKE = 0.61;
+  const tb1 = bx1 - 0.039, tb0 = tb1 - TUBE_L, cy1 = tb1 - 0.01, cy0 = cy1 - CYL_L, CYL_C = (cy0 + cy1) / 2, CYL_HL = CYL_L / 2;
   const RX = bx0 - 0.075, FX = bx1 + 0.075; // coudes des tiges arrière et avant
   P('UM-064-100Z', group(
-    at(lathe([[0.0508, -CYL_HL], [0.083, -CYL_HL], [0.083, 0.04 - CYL_HL], [0.078, 0.04 - CYL_HL], [0.078, CYL_HL - 0.04], [0.083, CYL_HL - 0.04], [0.083, CYL_HL], [0.0508, CYL_HL]], 'black', { axis: 'x', seg: 40 }), [CYL_C, FC.y, 0]),
-    at(box(2 * CYL_HL - 0.06, 0.025, 0.03, 'black', { r: 0.003 }), [CYL_C, 0.9325, 0]),
-    at(box(0.06, 0.03, 0.07, 'black', { r: 0.004 }), [HEAD_X + 0.15, 0.96, 0]),
-    ...[-0.02, 0.02].flatMap((z) => [
-      at(cyl(0.009, 0.02, 'brass', { seg: 12 }), [HEAD_X + 0.15, 0.985, z]),
-      at(box(0.016, 0.016, 0.016, 'brass', { r: 0.003 }), [HEAD_X + 0.15, 0.997, z]),
-      at(cyl(0.008, 0.02, 'brass', { axis: 'x', seg: 12 }), [HEAD_X + 0.168, 0.997, z]),
-    ]),
-    ...[[tb0, cy0], [cy1, tb1]].map(([a, b]) => at(cyl(0.0508, b - a, 'grey', { axis: 'x', seg: 32 }), [(a + b) / 2, FC.y, 0])),
-    ...[[bx0 - 0.06, tb0], [tb1, bx1 + 0.06]].map(([a, b]) => at(cyl(FC.r, b - a, 'chrome', { axis: 'x', seg: 24 }), [(a + b) / 2, FC.y, 0])),
-    ...[[bx0 - 0.015, bx0 - 0.04], [bx1 + 0.015, bx1 + 0.04]].flatMap(([a, b]) => [at(nut(0.075, 0.03, 'darkSteel', { axis: 'x' }), [a, FC.y, 0]), at(nut(0.075, 0.02, 'darkSteel', { axis: 'x' }), [b, FC.y, 0])]),
-    at(box(0.03, 0.03, 0.03, 'brass', { r: 0.006 }), [RX, FC.y, 0]),
-    at(cyl(0.013, 0.103, 'brass', { axis: 'z', seg: 14 }), [RX, FC.y, -0.0665]), // à travers le flanc −Z du connecteur
-    at(box(0.03, 0.03, 0.03, 'brass', { r: 0.006 }), [FX, FC.y, 0]),
-    at(cyl(0.013, 0.035, 'brass', { seg: 14 }), [FX, FC.y - 0.0325, 0]),
+    body('Mat',
+      at(cyl(FC.r, bx1 - bx0 + 0.12, 'chrome', { axis: 'x', seg: 24 }), [(bx0 + bx1) / 2, FC.y, 0]),
+      at(cyl(0.043, 0.1, 'darkSteel', { axis: 'x', seg: 28 }), [tb1 - TUBE_L + 0.151, FC.y, 0]), // piston central 120Z (dans le tube)
+      ...[[bx0 - 0.015, bx0 - 0.04], [bx1 + 0.015, bx1 + 0.04]].flatMap(([a, b]) => [at(nut(0.075, 0.03, 'darkSteel', { axis: 'x' }), [a, FC.y, 0]), at(nut(0.075, 0.02, 'darkSteel', { axis: 'x' }), [b, FC.y, 0])]),
+      at(box(0.03, 0.03, 0.03, 'brass', { r: 0.006 }), [RX, FC.y, 0]),
+      at(cyl(0.013, 0.103, 'brass', { axis: 'z', seg: 14 }), [RX, FC.y, -0.0665]), // à travers le flanc −Z du connecteur
+      at(box(0.03, 0.03, 0.03, 'brass', { r: 0.006 }), [FX, FC.y, 0]),
+      at(cyl(0.013, 0.035, 'brass', { seg: 14 }), [FX, FC.y - 0.0325, 0]),
+    ),
+    body('VerinAvance_Tube',
+      at(shell(0.0508, 0.0445, TUBE_L - 0.08, 'grey', { axis: 'x' }), [(tb0 + tb1) / 2, FC.y, 0]),
+      ...[tb0 + 0.02, tb1 - 0.02].map((x) => at(ring(0.056, FC.r * 1.03, 0.04, 'darkSteel', { axis: 'x', seg: 32 }), [x, FC.y, 0])), // presse-étoupes 121Z
+      at(ring(0.0635, 0.05, 0.05, 'darkSteel', { axis: 'x', seg: 32 }), [(tb0 + tb1) / 2, FC.y, 0]), // piston de 5 po (dans le cylindre)
+    ),
+    body('Table',
+      at(lathe([[0.0525, -CYL_HL], [0.083, -CYL_HL], [0.083, 0.05 - CYL_HL], [0.078, 0.05 - CYL_HL], [0.078, -0.02], [0.084, -0.02], [0.084, 0.02], [0.078, 0.02],
+        [0.078, CYL_HL - 0.05], [0.083, CYL_HL - 0.05], [0.083, CYL_HL], [0.0525, CYL_HL]], 'black', { axis: 'x', seg: 40 }), [CYL_C, FC.y, 0]),
+      at(box(CYL_L - 0.06, 0.025, 0.03, 'black', { r: 0.003 }), [CYL_C, 0.9325, 0]),
+      at(box(0.06, 0.03, 0.07, 'black', { r: 0.004 }), [HEAD_X + 0.15, 0.96, 0]),
+      ...[-0.02, 0.02].flatMap((z) => [
+        at(cyl(0.009, 0.02, 'brass', { seg: 12 }), [HEAD_X + 0.15, 0.985, z]),
+        at(box(0.016, 0.016, 0.016, 'brass', { r: 0.003 }), [HEAD_X + 0.15, 0.997, z]),
+        at(cyl(0.008, 0.02, 'brass', { axis: 'x', seg: 12 }), [HEAD_X + 0.168, 0.997, z]),
+      ]),
+    ),
   ), [0, -0.45, 0]);
 
   // 18 — Vérins de bascule FBRA-002-515ZZ (P019, page 1.01), un par côté au-dessus du longeron : vérin HBU-3010 noir,
@@ -716,16 +743,19 @@ export function P010(api) {
     const W = (u, t, dz = 0) => [...TILT.pt(u, t), z + dz];
     const R = (obj, u, t, dz = 0) => at(obj, W(u, t, dz), [0, 0, angT]);
     const yejIn = z - s * 0.025; // face intérieure du bloc (50 mm de large, centré sur le vérin)
+    const FUT = `VerinBascule_${s > 0 ? 'D' : 'G'}_Fut`, TIGE = `VerinBascule_${s > 0 ? 'D' : 'G'}_Tige`; // corps mobiles (animation)
     const vc = group(
-      at(group(hydCylinder(TILT.len, TILT.bore, { material: 'black', rodR: rr, ext: TILT.ext, eyes: 'none' })), [...TILT.a, z], [0, 0, angT]),
+      at(group(rodBody(hydCylinder(TILT.len, TILT.bore, { material: 'black', rodR: rr, ext: TILT.ext, eyes: 'none' }), TIGE)), [...TILT.a, z], [0, 0, angT]),
       R(box(0.05, 0.06, 0.036, 'black', { r: 0.004 }), 0.037, 0),
       at(ring(0.025, 0.0128, 0.036, 'black', { axis: 'z', seg: 24 }), [...TILT.foot, z]),
       at(cyl(0.0127, 0.09, 'steel', { axis: 'z', seg: 14 }), [...TILT.foot, z]),
       at(torus(0.012, 0.0018, 'steel', { axis: 'z' }), [TILT.foot[0], TILT.foot[1] - 0.012, z + s * 0.042]),
       entretien(R(cyl(0.004, 0.012, 'zinc', { seg: 8 }), 0.03, 0.034), 'graisseur', 'B'), // page 1.04, détail B
-      entretien(at(ring(rr * 1.5, rr * 0.68, rr * 1.3, 'darkSteel', { axis: 'z', seg: 24 }), [...TILT.head, z]), 'graisseur', 'A'), // page 1.04, détail A
-      R(nut(rr * 1.7, rr * 0.45, 'darkSteel', { axis: 'x' }), TILT.L - 0.9 * rr - rr * 0.95, 0),
-      at(cyl(0.0127, 0.085, 'steel', { axis: 'z', seg: 14 }), [...TILT.head, z]),
+      body(TIGE,
+        entretien(at(ring(rr * 1.5, rr * 0.68, rr * 1.3, 'darkSteel', { axis: 'z', seg: 24 }), [...TILT.head, z]), 'graisseur', 'A'), // page 1.04, détail A
+        R(nut(rr * 1.7, rr * 0.45, 'darkSteel', { axis: 'x' }), TILT.L - 0.9 * rr - rr * 0.95, 0),
+        at(cyl(0.0127, 0.085, 'steel', { axis: 'z', seg: 14 }), [...TILT.head, z]),
+      ),
     );
     const yej = group(
       R(box(2 * YEJ.hs, 2 * YEJ.ht, 0.05, 'grey', { r: 0.004 }), YEJ.s, YEJ.t),
@@ -755,7 +785,7 @@ export function P010(api) {
       R(cyl(0.007, 0.022, 'brass', { axis: 'x', seg: 12 }), 0.124, 0.074),
       tube([[0.135, 0.074], [0.17, 0.076], [0.22, 0.08], [0.25, 0.098], [0.27, 0.115], [YEJ.s - YEJ.hs - 0.014, YEJ.t]].map(([u, t]) => W(u, t)), 0.006, 'steel', { seg: 40 }),
     );
-    P('FBRA-002-515ZZ', group(vc, yej), [0, 0, s * 0.45]);
+    P('FBRA-002-515ZZ', body(FUT, vc, yej), [0, 0, s * 0.45]);
   }
 
   // 12 — Vérin de relevage UM-064-300Z (HBU 2536, P019) : couché entre les HSS du support, fond (axe UM-064-550D) sur les
@@ -770,16 +800,19 @@ export function P010(api) {
     const ey = DUMP.foot[1], Y = DUMP_YEJ, yx = (Y.x[0] + Y.x[1]) / 2, yz = (Y.z[0] + Y.z[1]) / 2;
     const [pf, pt] = cylPortsZ(a, b, bore, ext, 1); // orifices du fond et de la tige
     const vd = group(
-      at(group(c), [a[0], a[1], 0], [0, 0, Math.PI]),
+      at(group(rodBody(c, 'Mat')), [a[0], a[1], 0], [0, 0, Math.PI]),
       at(ring(r * 0.75, r * 0.34, r * 0.7, 'black', { axis: 'z', seg: 28 }), [...DUMP.foot, 0]),
-      at(ring(rodR * 1.5, rodR * 0.71, rodR * 1.3, 'darkSteel', { axis: 'z', seg: 24 }), [...DUMP.head, 0]),
-      at(nut(rodR * 1.7, rodR * 0.45, 'darkSteel', { axis: 'x' }), [DUMP.head[0] + 0.9 * rodR + 0.95 * rodR, ey, 0]),
       at(cyl(0.0127, 0.085, 'steel', { axis: 'z', seg: 14 }), [...DUMP.foot, 0]),
-      at(cyl(0.0127, 0.062, 'steel', { axis: 'z', seg: 14 }), [...DUMP.head, 0]),
-      ...[[DUMP.foot, 0.04], [DUMP.head, 0.028]].map(([p, dz]) => at(torus(0.012, 0.0018, 'steel', { axis: 'z' }), [p[0], p[1] - 0.012, dz])),
-      // Patte à chape sous la semelle de la poutre.
-      at(box(0.08, 0.01, 0.06, 'red', { r: 0.002 }), [DUMP.head[0], by0 - 0.005, 0]),
-      ...[-1, 1].map((u) => at(box(0.05, by0 - 0.01 - (ey - 0.022), 0.008, 'red', { r: 0.002 }), [DUMP.head[0], (by0 - 0.01 + ey - 0.022) / 2, u * 0.019])),
+      at(torus(0.012, 0.0018, 'steel', { axis: 'z' }), [DUMP.foot[0], DUMP.foot[1] - 0.012, 0.04]),
+      // Côté tige : œil, contre-écrou, axe et épingle, patte à chape sous la semelle de la poutre (avec le mât).
+      body('Mat',
+        at(ring(rodR * 1.5, rodR * 0.71, rodR * 1.3, 'darkSteel', { axis: 'z', seg: 24 }), [...DUMP.head, 0]),
+        at(nut(rodR * 1.7, rodR * 0.45, 'darkSteel', { axis: 'x' }), [DUMP.head[0] + 0.9 * rodR + 0.95 * rodR, ey, 0]),
+        at(cyl(0.0127, 0.062, 'steel', { axis: 'z', seg: 14 }), [...DUMP.head, 0]),
+        at(torus(0.012, 0.0018, 'steel', { axis: 'z' }), [DUMP.head[0], DUMP.head[1] - 0.012, 0.028]),
+        at(box(0.08, 0.01, 0.06, 'red', { r: 0.002 }), [DUMP.head[0], by0 - 0.005, 0]),
+        ...[-1, 1].map((u) => at(box(0.05, by0 - 0.01 - (ey - 0.022), 0.008, 'red', { r: 0.002 }), [DUMP.head[0], (by0 - 0.01 + ey - 0.022) / 2, u * 0.019])),
+      ),
     );
     const yej = group(
       at(box(Y.x[1] - Y.x[0], Y.y[1] - Y.y[0], Y.z[1] - Y.z[0], 'grey', { r: 0.004 }), [yx, ey, yz]),
@@ -795,7 +828,7 @@ export function P010(api) {
       at(box(0.016, 0.016, 0.016, 'brass', { r: 0.003 }), [pt[0], ey, 0.065]),
       at(cyl(0.007, 0.022, 'brass', { axis: 'x', seg: 12 }), [pt[0] + 0.019, ey, 0.065]),
     );
-    P('UM-064-300Z', group(vd, yej), [0, -0.3, 0]);
+    P('UM-064-300Z', body('Support', vd, yej), [0, -0.3, 0]);
   }
 
   // 10 — Rallonge rentrée (P013, pages 1.01 et 1.02) : connecteur UM-064-150C_R1 (semelles grises à lobes boulonnées
@@ -829,8 +862,8 @@ export function P010(api) {
   // 20 — Émerillon d'eau UM-106-10011-UG (page 1.16, « sous terre compacte ») au bout arrière de la broche :
   // rallonge de broche 104A en acier (Ø 45 × 67) contre la broche, corps 105A (Ø 86 × 73), chapeau souterrain 100A-UG (Ø 71) à bout bombé et deux
   // méplats, entrée d'eau axiale taraudée au bout (raccord laiton vers −X).
-  P('UM-106-10011-UG', group(
-    at(lathe([[0.012, 0.158], [0.0225, 0.158], [0.0225, 0.225], [0.012, 0.225]], 'steel', { axis: 'x', seg: 24 }), [SW_X - 0.225, AXIS_Y, 0]),
+  P('UM-106-10011-UG', body('Emerillon',
+    body('Emerillon_Rotor', at(lathe([[0.012, 0.158], [0.0225, 0.158], [0.0225, 0.225], [0.012, 0.225]], 'steel', { axis: 'x', seg: 24 }), [SW_X - 0.225, AXIS_Y, 0])),
     at(lathe([[0.011, 0], [0.022, 0.003], [0.027, 0.008], [0.028, 0.012], [0.028, 0.046], [0.0355, 0.05], [0.0355, 0.085], [0.043, 0.085], [0.043, 0.158], [0.011, 0.158]], 'red', { axis: 'x', seg: 32 }), [SW_X - 0.225, AXIS_Y, 0]),
     at(box(0.034, 0.068, 0.058, 'red', { r: 0.01 }), [SW_X - 0.196, AXIS_Y, 0]), // bout à deux méplats (z ±0,029)
     at(cyl(0.011, 0.03, 'brass', { axis: 'x', seg: 14 }), [SW_X - 0.24, AXIS_Y, 0]),
@@ -842,8 +875,8 @@ export function P010(api) {
   P('FBRA-002-400HH', at(api.sub('P042', { capot: WINCH.capot, guide: WINCH.guide, cable: false, cadre: true }), [WINCH.x, WINCH.y, 0]), [-0.2, 0.5, 0]);
   // Câble du treuil (tambour → guide-câble → poulie double → rouleau du guide de tiges) et son embout serti.
   api.add(group(
-    tube(wire.pts, 0.004, 'darkSteel', { seg: wire.pts.length, tension: 0.5 }),
-    at(cyl(0.007, 0.016, 'darkSteel', { axis: 'y', seg: 12 }), [wire.tip[0], wire.tip[1] - 0.008, 0]),
+    skin(tube(wire.pts, 0.004, 'darkSteel', { seg: wire.pts.length, tension: 0.5 }), 'Traineau', 'Mat', wire.free),
+    body('Mat', at(cyl(0.007, 0.016, 'darkSteel', { axis: 'y', seg: 12 }), [wire.tip[0], wire.tip[1] - 0.008, 0])),
   ));
 
   // Boyaux de la foreuse, des sélecteurs DF10 aux appareils (les raccords sont décrits avec leurs pièces).
@@ -900,9 +933,36 @@ export function P010(api) {
   circ(dumpHoses[0], 'relevage', 'Relevage (hypothèse du modèle) : sélecteur droit → bloc YEJ du vérin de relevage', `${SD} : raccord arrière intérieur (6400-8-8)`, 'Vérin de relevage UM-064-300Z : dessous du bloc YEJ (6801F-8-8)');
   circ(dumpHoses[1], 'relevage', 'Relevage (hypothèse du modèle) : sélecteur droit → bloc YEJ du vérin de relevage', `${SD} : raccord arrière extérieur (6400-8-8)`, 'Vérin de relevage UM-064-300Z : dessous du bloc YEJ (6801F-8-8)');
   circ(dumpHoses[2], 'relevage', 'Relevage (hypothèse du modèle) : bloc YEJ → orifice de la tige', 'Vérin de relevage UM-064-300Z : bloc YEJ (6801F-8-8)', 'Vérin de relevage UM-064-300Z : orifice de la tige (coude 2501F-08-08)');
+  // Corps reliés par les boyaux (animation) : le long de la poutre avec le mât, au sol avec le traîneau.
+  skin(feedRecul, 'Mat', 'Traineau', [0.48, 0.64]);
+  skin(feedAvance, 'Mat', 'Traineau', [0.1, 0.6]);
+  skin(tiltHoses[0], 'Traineau', 'VerinBascule_D_Fut', [0.3, 0.9]);
+  skin(tiltHoses[1], 'Traineau', 'VerinBascule_G_Fut', [0.3, 0.9]);
+  skin(tiltHoses[2], 'VerinBascule_D_Fut', 'VerinBascule_G_Fut', [0.2, 0.8]);
+  skin(dumpHoses[0], 'Support', 'Traineau', [0.15, 0.8]);
+  skin(dumpHoses[1], 'Support', 'Traineau', [0.15, 0.8]);
+  dumpHoses[2].userData.body = 'Support';
   api.add(group(feedRecul, feedAvance, ...motorHoses, ...tiltHoses, ...dumpHoses));
   return { view: { dir: [0.75, 0.5, 1.0] } };
 }
+
+/**
+ * Repères mécaniques de P010 pour l'animation (rig.js) : pivots, axes et courses, dans le repère de la foreuse.
+ * Bascule : le support pivote sur le tube avant (vers le bas) ou sur le tube arrière (vers le haut), poussé par les
+ * deux vérins HBU-3010 ; relevage : la poutre coulisse dans les brides du support (vérin HBU 2536) ; avance : la
+ * table et la tête coulissent sur la poutre (vérin télescopique, 1 808 mm).
+ */
+export const MECA = {
+  pivots: PIVOT,
+  feed: { stroke: 1.808, tube: 1.198 },
+  headX: HEAD_X, swivelX: SW_X, footX: FOOT_X, axisY: AXIS_Y,
+  hinge: [HB + 0.025, 0.284], // axe de charnière de la tête (y, z), le long de X
+  drive: [HB + SPY + 0.045, 0.35], ratio: 12 / 21, // pignon menant (y, z) ; 12 dents → 21 dents sur la broche
+  tilt: { foot: TILT.foot, head: TILT.head, z: TILT.z, lugs: PATTES, lugY: PATTE_Y, rest: TILT.L },
+  dump: { foot: DUMP.foot, head: DUMP.head },
+  winch: { x: WINCH.x, y: WINCH.y, drum: [WINCH.x + W_AXE[0], WINCH.y + W_AXE[1]] },
+  sheaves: SHEAVES, sheaveR: SHEAVE_R, roller: ROLLER,
+};
 
 // P015 — Pivot de poulie UM-064-1000DD (page 1.5), repère : axe de la charnière (X vers l'avant de la foreuse, Y vers
 // le haut). Plaque de base 1002DD verticale (vissée par quatre CS750-1500 sur la plaque arrière du connecteur), deux
