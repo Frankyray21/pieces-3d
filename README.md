@@ -136,7 +136,7 @@ pièces (numéro, quantité, page du manuel).
   au centre du support, pattes du haut appuyées à la paroi, 8 rangées de 23
   tiges en quinconce, jeu sur les côtés, crochets entre 66 et 72 po, chaîne
   de retenue jamais sous 5 pi, marques à 5 pi).
-  **Vidéo de la procédure** (3 min 34, 1280 × 720) : le montage par étapes
+  **Vidéo de la procédure** (3 min 34, 1280 × 720, 15 i/s, muette) : le montage par étapes
   joué passage par passage avec un bandeau (étape, titre, texte), capturé
   image par image sous une horloge simulée (`scripts/video-rack.mjs`, scénario
   et répliques dans `src/video/rack-script.js`) ; script de voix minuté dans
