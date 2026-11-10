@@ -114,14 +114,17 @@ pièces (numéro, quantité, page du manuel).
   panier en métal déployé, passages de fourche et oreilles de levage. Le
   contenu du coffre n'est pas modélisé.
 
-- **Support de tiges de forage — « rack à rods »** (`rack-tiges-dd`, rapport de
-  certification Forcetech P19113 du 2019-11-27 pour Machines Roger
-  International, 6 pages) : le support vide pièce par pièce (P01 : poteaux,
-  pattes réglables, traverses télescopiques, membrures d'appui au mur et leurs
-  rallonges, goupilles, attaches, chaînes) et le support chargé de 184 tiges NQ
-  de 3 m à 82°, appuyé au mur (P02, figures 2 et 3). Le rapport ne donne pas de
-  cotes : dimensions estimées sur les figures (23 tiges NQ entre les poteaux).
-  Support peint en rouge en entier (le rapport le montre gris, pattes rouges).
+- **Support de tiges de forage — « rack à rods »** (`rack-tiges-dd`, procédure
+  d'installation PRO-DD-ST-008 de Machines Roger International, révision août
+  2024, 5 pages, et rapport de certification Forcetech P19113 du 2019-11-27,
+  6 pages) : le support installé selon la procédure (P02 : boulon à œil dans
+  un trou de 18 po à ± 5 pi du plancher, support incliné à 78° — entre 75° et
+  80° exigé —, chaîne d'ancrage et tendeur à cliquet, 184 tiges NQ de 3 m en
+  quinconce, chaîne de retenue dans les crochets fermés, marques à 5 pi), avec
+  le montage en 15 étapes (`userData.step`, bouton « Montage »), et le support
+  vide pièce par pièce (P01). Aucun des deux documents ne donne de cotes :
+  dimensions estimées sur les figures (23 tiges NQ en quinconce entre les
+  poteaux). Support peint en rouge, tiges usagées.
 
 - **Usinage Marcotte STM-1500** (`stm-1500`, foreuse souterraine
   s/n STM-1500-128, manuel de pièces de Machines Roger, 96 pages) : 42

@@ -2,36 +2,44 @@
  "id": "rack-tiges-dd",
  "name": "Support de tiges de forage (rack à rods)",
  "manufacturer": "Machines Roger International",
- "category": "Rapport de certification",
- "serial": "Forcetech P19113",
+ "category": "Procédure PRO-DD-ST-008 et certification",
+ "serial": "PRO-DD-ST-008 · Forcetech P19113",
  "document": {
-  "title": "Certification du support de tiges de forage",
-  "reference": "Projet Forcetech P19113",
-  "preparedBy": "Forcetech Consultants (Emilie Arcand, ing., OIQ 5020704), pour Machines Roger International",
-  "date": "2019-11-27",
-  "sheets": 6,
+  "title": "Procédure d'installation du support de tiges de forage (PRO-DD-ST-008) et rapport de certification Forcetech P19113",
+  "reference": "PRO-DD-ST-008 · Projet Forcetech P19113",
+  "preparedBy": "Machines Roger International (S. Tremblay, surintendant santé et sécurité) ; certification : Forcetech Consultants (Emilie Arcand, ing.)",
+  "date": "2025-01-15",
+  "sheets": 11,
   "pagePattern": "pages/{sheet}.webp"
  },
  "specs": [
   [
-   "Capacité maximale permise",
-   "184 tiges NQ ou 240 tiges BQ"
+   "Angle du support (procédure)",
+   "Entre 75° et 80°"
+  ],
+  [
+   "Ancrage",
+   "Boulon à œil dans un trou de 18 po au mur, à ± 5 pi du plancher, au centre du support ; chaîne et tendeur à cliquet ou « bear trap »"
+  ],
+  [
+   "Empilement",
+   "En quinconce, par rangée à partir de la gauche ; appui sur la barre transversale du fond, pas sur les côtés"
+  ],
+  [
+   "Chaîne de retenue",
+   "Dans les 2 crochets fermés, à 66 po au moins et 72 po au plus du sol ; jamais à moins de 5 pi du sol au centre ; en tout temps"
+  ],
+  [
+   "Capacité maximale",
+   "HQ : 108 tiges (324 m) · NQ : 184 tiges (552 m) · BQ : 240 tiges (720 m)"
   ],
   [
    "Longueur des tiges",
    "3 m au plus"
   ],
   [
-   "Angle d'empilement",
+   "Angle d'empilement (certification 2019)",
    "80° et plus par rapport au sol"
-  ],
-  [
-   "Empilement",
-   "Par rangée, dans le sens de la traverse ; pas d'appui sur les côtés du support"
-  ],
-  [
-   "Conditions de blocage",
-   "Membrures appuyées au mur, support sécurisé par les attaches, pattes appuyées au sol"
   ],
   [
    "Matériaux",
@@ -58,24 +66,34 @@
   "P03": "Conditions de blocage et charge sur le support (figures 3 et 4)",
   "P04": "Conclusion de conformité ; contrainte de Von Mises (figure 5)",
   "P05": "Déplacement (figure 6) et facteur de sécurité",
-  "P06": "Capacité maximale permise et responsabilités du client"
+  "P06": "Capacité maximale permise et responsabilités du client",
+  "P07": "Procédure PRO-DD-ST-008 : objectif, responsabilités, choix de l'endroit (étape 1)",
+  "P08": "Procédure : trou, boulon à œil, angle de 75° à 80°, chaîne et tendeur (étapes 2 à 8)",
+  "P09": "Procédure : tiges en quinconce, chaîne de retenue, marques à 5 pi (étapes 9 à 13)",
+  "P10": "Procédure : prise des tiges et capacité maximale (étapes 14 et 15)",
+  "P11": "Procédure : exemples de configuration ; révisions"
  },
  "root": "P02",
  "assemblies": {
   "P02": {
-   "title": "Support chargé de 184 tiges NQ, appuyé au mur",
-   "titleFr": "Support chargé de 184 tiges NQ, appuyé au mur",
+   "title": "Support installé selon la procédure : ancré, incliné à 78°, 184 tiges NQ",
+   "titleFr": "Support installé selon la procédure : ancré, incliné à 78°, 184 tiges NQ",
    "sheets": [
+    "P08",
+    "P09",
+    "P10",
+    "P07",
+    "P11",
     "P02",
     "P03"
    ],
-   "note": "Reconstitution 3D d'après les figures 2 et 3 du rapport de certification Forcetech P19113 : 8 rangées de 23 tiges NQ de 3 m, pieds au sol, appuyées sur la traverse supérieure à 82° (80° et plus exigé), sans toucher les côtés du support. Conditions de blocage : membrures appuyées au mur, support sécurisé par les attaches, pattes appuyées au sol. Capacité maximale permise : 184 tiges NQ ou 240 tiges BQ (la disposition des tiges BQ n'est pas illustrée dans le rapport). Vue du côté du mur, comme la figure 3 : le mur est montré en panneau translucide pour laisser voir les tiges dans le support. Mur et sol fictifs.",
+   "note": "Installation d'après la procédure PRO-DD-ST-008 (révision août 2024, photo de janvier 2025), étape par étape (bouton « Montage ») : boulon à œil dans un trou de 18 po à ± 5 pi du plancher, support incliné à 78° (entre 75° et 80° exigé) avec les pattes du haut appuyées au mur, chaîne passée dans le boulon à œil et dans les œillets du support de l'extérieur vers l'intérieur, tendeur à cliquet, 184 tiges NQ de 3 m en quinconce (8 rangées de 23, à partir de la gauche) appuyées sur les barres transversales du fond, chaîne de retenue dans les 2 crochets fermés (69 po du sol), marques à 5 pi du sol. Écart entre les documents : la certification Forcetech de 2019 demande un angle d'empilement de 80° et plus, la procédure un angle de 75° à 80° ; la 3D suit la procédure. Mur montré en panneau translucide ; mur et sol fictifs.",
    "parts": [
     [
      "1",
      "",
      1,
-     "Support de tiges de forage",
+     "Support de tiges de forage, incliné entre 75° et 80°",
      {
       "link": "P01",
       "pseudo": true
@@ -85,17 +103,60 @@
      "2",
      "",
      184,
-     "Tige de forage NQ de 3 m (usagée)",
+     "Tige de forage NQ de 3 m (usagée), en quinconce",
      {
       "pnText": "NQ, 3 m",
-      "note": "Capacité maximale permise ; 240 en tiges BQ."
+      "note": "Capacité maximale : NQ 184, HQ 108, BQ 240."
      }
+    ],
+    [
+     "3",
+     "",
+     1,
+     "Boulon à œil (eye bolt) dans un trou de 18 po, à ± 5 pi du plancher",
+     {
+      "note": "Ne pas l'enfoncer jusqu'au fond du trou."
+     }
+    ],
+    [
+     "4",
+     "",
+     1,
+     "Chaîne d'ancrage, passée dans le boulon à œil et dans les 2 œillets du support",
+     {
+      "note": "De l'extérieur vers l'intérieur."
+     }
+    ],
+    [
+     "5",
+     "",
+     1,
+     "Tendeur à cliquet de chaîne (ou tendeur « bear trap »)",
+     {
+      "note": "Serré au maximum."
+     }
+    ],
+    [
+     "6",
+     "",
+     1,
+     "Chaîne de retenue des tiges, dans les 2 crochets fermés",
+     {
+      "note": "Jamais à moins de 5 pi du sol au centre ; en tout temps."
+     }
+    ],
+    [
+     "7",
+     "",
+     2,
+     "Marque à 5 pi du sol",
+     {}
     ],
     [
      "M",
      "",
      null,
-     "Mur (contexte, en panneau translucide : appui des membrures)",
+     "Mur (contexte, en panneau translucide : appui des pattes du haut)",
      {
       "pseudo": true
      }
@@ -104,12 +165,13 @@
      "S",
      "",
      null,
-     "Sol (contexte : appui des pattes et des tiges)",
+     "Sol (contexte)",
      {
       "pseudo": true
      }
     ]
-   ]
+   ],
+   "sheet": "P08"
   },
   "P01": {
    "title": "Support de tiges de forage (vide)",
@@ -121,7 +183,7 @@
     "P05",
     "P06"
    ],
-   "note": "Reconstitution 3D d'après la figure 1 (modèle fourni par le client à Forcetech) et les figures 2 à 6. Le rapport ne donne ni cotes ni liste de pièces : les dimensions sont estimées sur les vues, à partir de la largeur de 23 tiges NQ entre les poteaux, et les noms des pièces sont descriptifs (« membrures », « attaches » et « pattes » sont les mots du rapport). Support peint en rouge en entier (le rapport le montre gris avec les pattes rouges). Le client est responsable de fabriquer, de souder et d'assembler le support selon son modèle.",
+   "note": "Reconstitution 3D d'après la figure 1 (modèle fourni par le client à Forcetech) et les figures 2 à 6. Le rapport ne donne ni cotes ni liste de pièces : les dimensions sont estimées sur les vues, à partir de la largeur de 23 tiges NQ en quinconce entre les poteaux ; la hauteur des crochets suit la procédure PRO-DD-ST-008, et les noms des pièces sont descriptifs (« membrures », « attaches » et « pattes » sont les mots du rapport). Support peint en rouge en entier (le rapport le montre gris avec les pattes rouges). Le client est responsable de fabriquer, de souder et d'assembler le support selon son modèle.",
    "parts": [
     [
      "1",
@@ -221,8 +283,20 @@
      "11",
      "",
      2,
-     "Chaîne et sa patte d'accrochage",
-     {}
+     "Crochet fermé de la chaîne de retenue",
+     {
+      "pnText": "Plaque, acier 300W",
+      "note": "Entre 66 et 72 po du sol une fois le support installé (procédure)."
+     }
+    ],
+    [
+     "12",
+     "",
+     2,
+     "Chaîne au repos sur son crochet",
+     {
+      "note": "Figure 1 du rapport : une chaîne à chaque poteau. Installée, la chaîne de retenue relie les 2 crochets devant les tiges."
+     }
     ]
    ]
   }
