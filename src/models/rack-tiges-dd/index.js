@@ -275,7 +275,7 @@ function P02(api) {
     S.at(m, W(s * XP, (FT5 - LIFT) / COS, 0));
     put('7', m, [0, 0, 0], 12, { noLabel: s > 0 });
   }
-  return { view: { dir: [-1.0, 0.55, -1.15], steps: STEPS, notes: NOTES } };
+  return { view: { dir: [-1.0, 0.55, -1.15], steps: STEPS, stepsAuto: true, notes: NOTES } };
 }
 
 const CAM = {

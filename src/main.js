@@ -545,6 +545,8 @@ async function openAssembly(id, { select: selPath = null } = {}) {
       if (ov && !LIGHT) upgradeDetail(model, builders, ov);
       S.stepsList = model.view.steps || null;
       S.steps = { on: false, n: 0 };
+      // Vue qui s'ouvre directement en montage par étapes (view.stepsAuto) : étape 0, puis « Étape suivante ».
+      if (S.stepsList && model.view.stepsAuto) setTimeout(() => { if (S.stepsList === model.view.steps && !S.steps.on) toggleSteps(true); }, 0);
       S.section.axis = model.view.section?.axis || 'z';
       S.section.pos = model.view.section?.pos ?? 0.5;
       if (S.explode > 0 && !S.view.home) {

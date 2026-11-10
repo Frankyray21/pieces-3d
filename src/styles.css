@@ -392,3 +392,7 @@ table.parts { width: 100%; border-collapse: collapse; font-size: 13px; }
   * { transition: none !important; }
 }
 .docview figure.portrait { width: min(100%, 860px); }
+
+/* Montage par étapes : le dock « Atelier » ne recouvre pas le texte de l'étape (la page de la procédure reste accessible par le lien de l'étape). */
+body:has(.stage.stepping) #dock { display: none; }
+@media (max-width: 700px) { .stage.stepping .st-num { flex: 1 0 auto; } }

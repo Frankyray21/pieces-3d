@@ -58,14 +58,17 @@ if (!args.includes('--encode-only')) {
   });
   await page.clock.runFor(1500);
   const click = (sel) => page.evaluate((s) => document.querySelector(s).click(), sel);
-  let n = 0, inSteps = false, at = -1;
+  // La page s'ouvre en montage par étapes (view.stepsAuto), à l'étape 0.
+  let n = 0, inSteps = await page.evaluate(() => !document.querySelector('#stepsbar').hidden), at = inSteps ? 0 : -1;
   const t0 = Date.now();
   for (const [i, s] of segs.entries()) {
     if (only && !only.includes(i)) continue;
     if (s.step == null) {
       if (inSteps) { await click('#st-close'); inSteps = false; at = -1; }
     } else {
-      if (!inSteps) { await click('#btn-steps'); inSteps = true; at = 0; }
+      if (!inSteps) { await click('#btn-steps'); inSteps = true; at = 0; await page.clock.runFor(1200); }
+      // Étape 0 déjà affichée à l'ouverture : rejouée pour partir du décor seul.
+      else if (s.step === 0 && at === 0) await click('#st-replay');
       // Essais (--only) : étapes précédentes posées sans animation.
       if (at < s.step - 1) { await page.evaluate((k) => { const r = document.querySelector('#st-range'); r.value = k; r.dispatchEvent(new Event('input')); }, s.step - 1); at = s.step - 1; }
       if (at < s.step) { await click('#st-next'); at = s.step; }
