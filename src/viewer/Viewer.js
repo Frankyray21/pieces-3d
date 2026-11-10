@@ -357,6 +357,7 @@ export class Viewer {
     this.model = model;
     this.nodes = [];
     this._stepLeaves = null;
+    this._stepAnims = null;
     this._stepFresh = null;
     this._notes = [];
     this._drops = [];
@@ -510,8 +511,21 @@ export class Viewer {
     // Pose en cours interrompue : pièces remises en place.
     for (const d of this._drops || []) { d.obj.position.copy(d.target); d.obj.visible = true; }
     this._drops = [];
-    this.tweens = this.tweens.filter((t) => t.kind !== 'drop');
+    this.tweens = this.tweens.filter((t) => t.kind !== 'drop' && t.kind !== 'stepanim');
     this.step = n;
+    // Animations d'étape (userData.stepAnim : { step, dur, delay, update(k) }, ex. le
+    // serrage d'une chaîne) : état de départ avant leur étape, état final après,
+    // jouées en arrivant à leur étape.
+    if (!this._stepAnims) {
+      this._stepAnims = [];
+      root.traverse((o) => { if (o.userData.stepAnim) this._stepAnims.push(o.userData.stepAnim); });
+    }
+    for (const a of this._stepAnims) {
+      if (n != null && n === a.step && animate) {
+        a.update(0);
+        this.tweens.push({ kind: 'stepanim', start: performance.now() + (a.delay || 0), dur: a.dur || 3000, step: (k) => { a.update(Math.max(0, k)); this.invalidate(); } });
+      } else a.update(n == null || n >= a.step ? 1 : 0);
+    }
     const fresh = this._stepLeaves.filter((o) => n != null && o.userData.step === n);
     const gap = fresh.length ? Math.max(70, Math.min(550, 6500 / fresh.length)) : 0;
     const now = performance.now();

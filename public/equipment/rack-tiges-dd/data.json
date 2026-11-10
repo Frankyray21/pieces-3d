@@ -87,7 +87,7 @@
     "P02",
     "P03"
    ],
-   "note": "Installation d'après la procédure PRO-DD-ST-008 (révision août 2024, photo de janvier 2025), étape par étape (bouton « Montage ») : boulon à œil dans un trou de 18 po à ± 5 pi du plancher, support incliné à 78° (entre 75° et 80° exigé) avec les pattes du haut appuyées au mur, chaîne passée dans le boulon à œil et dans les œillets du support de l'extérieur vers l'intérieur, tendeur à cliquet, 184 tiges NQ de 3 m en quinconce (8 rangées de 23, à partir de la gauche) appuyées sur les barres transversales du fond, chaîne de retenue dans les 2 crochets fermés (69 po du sol), marques à 5 pi du sol. Écart entre les documents : la certification Forcetech de 2019 demande un angle d'empilement de 80° et plus, la procédure un angle de 75° à 80° ; la 3D suit la procédure. Mur montré en panneau translucide ; mur et sol fictifs.",
+   "note": "Installation d'après la procédure PRO-DD-ST-008 (révision août 2024, photo de janvier 2025), étape par étape (bouton « Montage ») : boulon à œil dans un trou de 18 po à ± 5 pi du plancher, support incliné à 78° (entre 75° et 80° exigé) avec les pattes du haut appuyées au mur, chaîne passée dans le boulon à œil et dans les œillets du support de l'extérieur vers l'intérieur, tendeur à cliquet, 184 tiges NQ de 3 m en quinconce (8 rangées de 23, à partir de la gauche) appuyées sur les barres transversales du fond, chaîne de retenue dans les 2 crochets fermés (69 po du sol), marques à 5 pi du sol. Écart entre les documents : la certification Forcetech de 2019 demande un angle d'empilement de 80° et plus, la procédure un angle de 75° à 80° ; la 3D suit la procédure. Décor : paroi de roche de la galerie avec son grillage et son soutènement (split sets et barres d'armature, disposition fictive) et plancher de foreuse repris du modèle « Plancher pour foreuse aux diamants ». À l'étape 2, la foreuse à percussion perce le trou ; à l'étape 8, le cliquet du tendeur est pompé et la chaîne se tend.",
    "parts": [
     [
      "1",
@@ -153,10 +153,19 @@
      {}
     ],
     [
+     "8",
+     "",
+     1,
+     "Foreuse à percussion électrique sans fil et mèche (étape 2 : trou de 18 po)",
+     {
+      "note": "Montrée à l'étape 2 du montage ; forme d'après un marteau perforateur Hilti, en version sans fil (batterie)."
+     }
+    ],
+    [
      "M",
      "",
      null,
-     "Mur (contexte, en panneau translucide : appui des pattes du haut)",
+     "Paroi de la galerie (contexte) : roche, grillage soudé, soutènement par split sets et barres d'armature",
      {
       "pseudo": true
      }
@@ -165,7 +174,7 @@
      "S",
      "",
      null,
-     "Sol (contexte)",
+     "Plancher de foreuse (contexte : section 1 du plancher PRO-DD-ST-003)",
      {
       "pseudo": true
      }

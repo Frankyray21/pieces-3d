@@ -7,6 +7,10 @@
 // support incliné entre 75° et 80°, boulon à œil et chaîne d'ancrage tendue,
 // tiges en quinconce, chaîne de retenue aux crochets fermés.
 // Repère : X le long des traverses, Y vers le haut, +Z côté tiges, −Z côté mur.
+import { buildProcedural } from '../../viewer/assembly.js';
+import plancher from '../plancher-dd/index.js';
+import { gallery, wallZ as rockZ } from '../plancher-dd/site.js';
+import { DECK, SEC } from '../plancher-dd/plan.js';
 
 const IN = 0.0254;
 const T2 = 2 * IN, T15 = 1.5 * IN, T25 = 2.5 * IN; // profilés HSS carrés (estimés)
@@ -122,7 +126,7 @@ function chainAlong(api, points, material = 'zinc') {
   const { S, THREE } = api;
   const curve = new THREE.CatmullRomCurve3(points.map((p) => new THREE.Vector3(...p)), false, 'centripetal');
   const n = Math.max(2, Math.round(curve.getLength() / 0.032));
-  const geo = new THREE.TorusGeometry(0.0095, 0.003, 5, 10);
+  const geo = new THREE.TorusGeometry(0.0095, 0.003, 4, 8);
   geo.scale(0.7, 1.75, 1);
   const up = new THREE.Vector3(0, 1, 0), twist = new THREE.Quaternion().setFromAxisAngle(up, Math.PI / 2);
   const links = [];
@@ -188,14 +192,147 @@ function rodTone(k, c) {
 
 const ROW = (NQ.od * Math.sqrt(3)) / 2; // pas des rangées en quinconce
 const FRONT = T2 / 2 + NQ.od + (NQ.rows - 1) * ROW; // devant du paquet de tiges (repère du support)
-const EYE = [0, FT5, WALL_Z + 0.045]; // œil du boulon, au centre du support, à ± 5 pi du plancher
+
+// Chantier : la galerie et le plancher de foreuse du modèle « plancher-dd »
+// (section 1), le support contre la paroi de roche, pieds sur le plancher.
+// L'endroit le long de la galerie est celui où la paroi est la plus égale
+// vis-à-vis les deux pattes du haut ; la plus avancée des deux bosses touche.
+const ARM_Y = W(0, H_TOP, -WALL)[1] + DECK;
+const MINE = (() => {
+  let best = null;
+  for (let x0 = 2.2; x0 <= 3.1; x0 += 0.02) {
+    const a = rockZ(-1, x0 - XP, ARM_Y), b = rockZ(-1, x0 + XP, ARM_Y);
+    if (!best || Math.abs(a - b) < best.d) best = { x0, d: Math.abs(a - b), dz: WALL_Z - Math.max(a, b) };
+  }
+  return best;
+})();
+/** Face de la paroi (Z, repère du support) au point (x, y). */
+const rockAt = (x, y) => rockZ(-1, x + MINE.x0, y + DECK) + MINE.dz;
+const ROCK_EYE = rockAt(0, FT5);
+const EYE = [0, FT5, ROCK_EYE + 0.045]; // œil du boulon, au centre du support, à ± 5 pi du plancher
+
+/**
+ * Soutènement de la paroi : grillage soudé (mailles de 4 po) qui épouse la
+ * roche, retenu par des boulons en quinconce — split sets (tube fendu, anneau
+ * et plaque bombée) et barres d'armature (tige filetée, écrou et plaque carrée).
+ */
+function groundSupport(api, x0, x1) {
+  const { S, THREE } = api;
+  const PITCH = 4 * IN, OFF = 0.014, y0 = 0.25, y1 = 2.38;
+  const at = (x, y, off = OFF) => new THREE.Vector3(x, y, rockAt(x, y) + off);
+  const nx = Math.floor((x1 - x0) / PITCH), ny = Math.floor((y1 - y0) / PITCH);
+  const wires = [];
+  const up = new THREE.Vector3(0, 1, 0);
+  const wire = (a, b) => {
+    const m = new THREE.Mesh(new THREE.CylinderGeometry(0.0024, 0.0024, a.distanceTo(b), 4, 1, true));
+    m.position.copy(a).add(b).multiplyScalar(0.5);
+    m.quaternion.setFromUnitVectors(up, b.clone().sub(a).normalize());
+    wires.push(m);
+  };
+  // Fils horizontaux par tronçons de 2 mailles, fils verticaux par-dessus.
+  for (let j = 0; j <= ny; j++) for (let i = 0; i < nx; i += 2) wire(at(x0 + i * PITCH, y0 + j * PITCH), at(x0 + Math.min(nx, i + 2) * PITCH, y0 + j * PITCH));
+  for (let i = 0; i <= nx; i++) for (let j = 0; j < ny; j += 2) wire(at(x0 + i * PITCH, y0 + j * PITCH, OFF + 0.005), at(x0 + i * PITCH, y0 + Math.min(ny, j + 2) * PITCH, OFF + 0.005));
+  const g = S.group(S.merged(wires, 'zinc'));
+  // Boulons : rangées à 0,6, 1,45 et 2,2 m, aux 1,2 m, décalées d'une rangée à l'autre.
+  let n = 0;
+  [[0.6, 0.6], [1.45, 0], [2.2, 0.6]].forEach(([y, shift]) => {
+    for (let x = -4.2 + shift; x < x1 - 0.2; x += 1.2) {
+      if (x < x0 + 0.2) continue;
+      const b = S.group();
+      if (n++ % 2 === 0) {
+        // Split set : plaque bombée, anneau soudé au bout du tube fendu.
+        b.add(S.box(0.15, 0.15, 0.006, 'darkSteel', { pos: [0, 0, 0.003] }), S.cyl(0.045, 0.014, 'darkSteel', { axis: 'z', r2: 0.03, pos: [0, 0, 0.012] }),
+          S.shell(0.0195, 0.017, 0.03, 'darkSteel', { axis: 'z', pos: [0, 0, 0.03], seg: 14 }), S.torus(0.021, 0.0045, 'darkSteel', { axis: 'z', pos: [0, 0, 0.022] }));
+      } else {
+        // Barre d'armature : plaque carrée, écrou et bout de tige filetée.
+        b.add(S.box(0.125, 0.125, 0.008, 'zinc', { pos: [0, 0, 0.004] }), S.nut(0.032, 0.018, 'zinc', { axis: 'z', pos: [0, 0, 0.017] }),
+          S.cyl(0.0105, 0.07, 'steel', { axis: 'z', pos: [0, 0, 0.04], seg: 10 }));
+      }
+      S.at(b, [x, y, rockAt(x, y) + OFF + 0.006]);
+      g.add(b);
+    }
+  });
+  return g;
+}
+
+/** Ne garde d'un objet que les triangles en deçà de X = xmax (décor recadré autour du chantier). */
+function cropX(THREE, obj, xmax) {
+  obj.updateMatrixWorld(true);
+  const v = new THREE.Vector3(), empty = [];
+  obj.traverse((m) => {
+    if (!m.isMesh) return;
+    const g = m.geometry.index ? m.geometry.toNonIndexed() : m.geometry.clone();
+    const pos = g.attributes.position, keep = [];
+    for (let i = 0; i < pos.count; i += 3) {
+      let ok = true;
+      for (let k = 0; k < 3; k++) if (v.fromBufferAttribute(pos, i + k).applyMatrix4(m.matrixWorld).x > xmax) ok = false;
+      if (ok) keep.push(i, i + 1, i + 2);
+    }
+    const out = new THREE.BufferGeometry();
+    for (const [name, a] of Object.entries(g.attributes)) {
+      const arr = new a.array.constructor(keep.length * a.itemSize);
+      keep.forEach((src, d) => { for (let c = 0; c < a.itemSize; c++) arr[d * a.itemSize + c] = a.array[src * a.itemSize + c]; });
+      out.setAttribute(name, new THREE.BufferAttribute(arr, a.itemSize));
+    }
+    m.geometry = out;
+    if (!keep.length) empty.push(m);
+  });
+  empty.forEach((m) => m.removeFromParent());
+  return obj;
+}
+
+/** Retire les numéros d'étape d'un décor repris d'un autre modèle (il reste affiché en tout temps). */
+function still(obj) {
+  const gone = [];
+  obj.traverse((o) => {
+    if (o.userData.stepOnly) gone.push(o);
+    for (const k of ['step', 'seq', 'noDrop']) delete o.userData[k];
+  });
+  gone.forEach((o) => o.removeFromParent());
+  return obj;
+}
+
+/**
+ * Foreuse à percussion électrique sans fil (étape 2), d'après la photo d'un
+ * marteau perforateur à poignée fermée, avec batterie : mèche le long de −Z, pointe à l'origine.
+ */
+function hammerDrill(S, bit = 0.5) {
+  const z0 = bit; // nez du mandrin
+  const g = S.group(
+    S.cyl(0.008, bit, 'darkSteel', { axis: 'z', pos: [0, 0, bit / 2], seg: 10 }),
+    S.cyl(0.026, 0.035, 'black', { axis: 'z', pos: [0, 0, z0 + 0.0175] }),
+    S.cyl(0.034, 0.06, 'black', { axis: 'z', pos: [0, 0, z0 + 0.065] }),
+    // Collier et poignée latérale, butée de profondeur.
+    S.cyl(0.041, 0.03, 'black', { axis: 'z', pos: [0, 0, z0 + 0.115] }),
+    S.cyl(0.021, 0.13, 'black', { axis: 'y', pos: [0, -0.115, z0 + 0.115] }),
+    S.cyl(0.03, 0.012, 'black', { axis: 'y', pos: [0, -0.052, z0 + 0.115] }),
+    S.cyl(0.004, 0.3, 'steel', { axis: 'z', pos: [0.012, 0.052, z0 + 0.03], seg: 8 }),
+    // Carter rouge : canon, boîtier du moteur, socle noir.
+    S.cyl(0.04, 0.2, 'red', { axis: 'z', pos: [0, 0, z0 + 0.225] }),
+    S.box(0.078, 0.2, 0.115, 'red', { r: 0.012, pos: [0, -0.1, z0 + 0.255] }),
+    // Sans fil : batterie glissée sous le boîtier, jusque sous la poignée.
+    S.box(0.082, 0.02, 0.2, 'black', { r: 0.006, pos: [0, -0.208, z0 + 0.3] }),
+    S.box(0.09, 0.07, 0.15, 'black', { r: 0.012, pos: [0, -0.253, z0 + 0.3] }),
+    S.box(0.092, 0.018, 0.06, 'red', { r: 0.004, pos: [0, -0.24, z0 + 0.3] }),
+    // Sélecteur de fonction sur le flanc.
+    S.cyl(0.027, 0.012, 'black', { axis: 'x', pos: [0.04, -0.01, z0 + 0.25] }),
+    S.box(0.014, 0.012, 0.05, 'black', { pos: [0.048, -0.01, z0 + 0.25] }),
+    // Poignée fermée et gâchette.
+    S.box(0.05, 0.035, 0.12, 'red', { r: 0.008, pos: [0, 0.02, z0 + 0.37] }),
+    S.box(0.045, 0.2, 0.04, 'black', { r: 0.012, pos: [0, -0.07, z0 + 0.42] }),
+    S.box(0.045, 0.035, 0.1, 'red', { r: 0.008, pos: [0, -0.175, z0 + 0.365] }),
+    S.box(0.02, 0.05, 0.016, 'black', { pos: [0, -0.02, z0 + 0.395] }),
+  );
+  return g;
+}
+
 
 /** Boulon à œil dans son trou de 18 po (étapes 2 et 3) : pas enfoncé jusqu'au fond. */
 function eyeBolt(S) {
   const depth = 18 * IN;
   return S.group(
-    S.shell(0.017, 0.0165, depth, 'rockFloor', { axis: 'z', pos: [0, FT5, WALL_Z - depth / 2], seg: 16 }),
-    S.cyl(0.011, 0.4, 'zinc', { axis: 'z', pos: [0, FT5, WALL_Z - 0.4 / 2 + 0.018], seg: 14 }),
+    S.shell(0.017, 0.0165, depth, 'rockFloor', { axis: 'z', pos: [0, FT5, ROCK_EYE - depth / 2], seg: 16 }),
+    S.cyl(0.011, 0.4, 'zinc', { axis: 'z', pos: [0, FT5, ROCK_EYE - 0.4 / 2 + 0.018], seg: 14 }),
     S.torus(0.028, 0.008, 'zinc', { axis: 'x', pos: EYE }),
   );
 }
@@ -205,8 +342,12 @@ function binder(S) {
   const g = S.group(
     S.cyl(0.015, 0.24, 'safety', { axis: 'x', seg: 14 }),
     S.box(0.05, 0.05, 0.04, 'darkSteel'),
-    S.at(S.box(0.026, 0.3, 0.018, 'safety'), [0.02, 0.13, 0.03], [0.5, 0, -0.25]),
   );
+  // Levier du cliquet, articulé sur le boîtier (pompé pendant le serrage).
+  const lever = S.group(S.box(0.026, 0.3, 0.018, 'safety', { pos: [0, 0.15, 0] }));
+  S.at(lever, [0.02, 0, 0.03], [0.5, 0, -0.25]);
+  g.add(lever);
+  g.userData.lever = lever;
   for (const s of [-1, 1]) g.add(S.torus(0.016, 0.005, 'darkSteel', { axis: 'z', pos: [s * 0.135, 0, 0] }));
   return g;
 }
@@ -223,11 +364,26 @@ function P02(api) {
     if (o.seq !== undefined) obj.userData.seq = o.seq;
     return api.part(ref, obj, explode, { noLabel: !!o.noLabel });
   };
-  // Décor : mur en panneau translucide (le trou et le boulon restent visibles), sol.
-  const wall = S.box(3.6, 3.4, 0.5, 'glass', { pos: [0, 1.7, WALL_Z - 0.25] });
-  put('M', wall, [0, 0, 0], -1, { noLabel: true });
-  const floor = S.box(3.6, 0.2, 3.4, 'rockFloor', { pos: [0, -0.1, WALL_Z - 0.5 + 1.7] });
-  put('S', floor, [0, 0, 0], -1, { noLabel: true });
+  // Décor : paroi de roche de la galerie et plancher de foreuse (section 1 du
+  // modèle « plancher-dd »), recadrés autour du chantier.
+  const place = (o) => S.at(o, [-MINE.x0, -DECK, MINE.dz]);
+  const gal = gallery(S);
+  gal.remove(gal.children[2]); // paroi d'en face : la vue reste dégagée
+  const rock = S.group(place(S.group(cropX(api.THREE, still(gal), SEC + 0.3))));
+  rock.add(groundSupport(api, -MINE.x0 + 0.05, SEC + 0.25 - MINE.x0));
+  put('M', rock, [0, 0, 0], -1, { noLabel: true });
+  const deck = S.group(['P04', 'P07'].map((id) => still(buildProcedural(plancher, id, { inPlace: true, quality: 0.4 }).root)));
+  put('S', place(deck), [0, 0, 0], -1, { noLabel: true });
+
+  // Étape 2 : trou de 18 po percé à la foreuse à percussion électrique (montrée à cette étape seulement).
+  const hole = S.cyl(0.02, 0.004, 'blackOxide', { axis: 'z', pos: [0, FT5, ROCK_EYE + 0.003], seg: 16 });
+  hole.userData.step = 2;
+  api.add(hole);
+  const hd = hammerDrill(S);
+  S.at(hd, [0, FT5, ROCK_EYE]);
+  hd.userData.stepOnly = [2];
+  hd.userData.stepAnim = { step: 2, delay: 900, dur: 5200, update: (k) => { hd.position.z = ROCK_EYE - 0.44 * k + 0.004 * Math.sin(k * 260); } };
+  api.part('8', hd, [0, 0, 0.6], { noLabel: true });
 
   put('3', eyeBolt(S), [0, 0, 0.35], 3);
 
@@ -239,15 +395,32 @@ function P02(api) {
   // Chaîne d'ancrage : passée dans le boulon à œil jusqu'à son milieu, chaque
   // bout dans un œillet du support, de l'extérieur vers l'intérieur.
   const lz = -T2 / 2 - 0.055, ly = LUG - 0.01;
-  const half = (s) => [
-    W(s * 0.15, ly, lz), W(s * (XP - 0.14), ly, lz), W(s * XP, ly, lz),
+  // slack : 1 chaîne lâche (étapes 6 et 7), 0 tendue (étape 8).
+  const mid = W(0, ly, lz);
+  const half = (s, slack) => [
+    W(s * 0.15, ly, lz), [s * XP * 0.5, mid[1] - 0.16 * slack, mid[2] + 0.02 * slack], W(s * (XP - 0.14), ly, lz), W(s * XP, ly, lz),
     W(s * (XP + 0.07), ly - 0.03, lz - 0.05),
-    [s * XP * 0.55, (W(0, ly, lz)[1] + FT5) / 2 - 0.06, (W(0, ly, lz)[2] + EYE[2]) / 2],
+    [s * XP * 0.55, (mid[1] + FT5) / 2 - 0.05 - 0.22 * slack, (mid[2] + EYE[2]) / 2],
   ];
-  put('4', S.group(chainAlong(api, [...half(-1), EYE, ...half(1).reverse()])), [0, 0.35, 0.2], 6);
+  const LEVELS = 5;
+  const variants = Array.from({ length: LEVELS }, (_, i) => {
+    const slack = 1 - i / (LEVELS - 1);
+    const m = chainAlong(api, [...half(-1, slack), EYE, ...half(1, slack).reverse()]);
+    m.visible = i === LEVELS - 1;
+    return m;
+  });
+  const anchor = S.group(variants);
+  put('4', anchor, [0, 0.35, 0.2], 6);
   const b = binder(S);
-  S.at(b, W(0, ly, lz));
+  S.at(b, mid);
   put('5', b, [0, 0.6, 0.2], 8);
+  // Étape 8, animation du serrage : le levier du cliquet est pompé, la chaîne se tend.
+  const PUMPS = 6;
+  anchor.userData.stepAnim = { step: 8, delay: 1100, dur: 6000, update: (k) => {
+    const i = Math.round(k * (LEVELS - 1));
+    variants.forEach((m, j) => { m.visible = j === i; });
+    b.userData.lever.rotation.x = 0.5 + (k < 1 ? 0.55 * Math.sin(k * PUMPS * 2 * Math.PI) : 0);
+  } };
 
   // Tiges en quinconce, par rangée à partir de la gauche, appuyées sur les
   // traverses (et non sur les côtés), pieds au sol.
@@ -275,12 +448,12 @@ function P02(api) {
     S.at(m, W(s * XP, (FT5 - LIFT) / COS, 0));
     put('7', m, [0, 0, 0], 12, { noLabel: s > 0 });
   }
-  return { view: { dir: [-1.0, 0.55, -1.15], steps: STEPS, stepsAuto: true, notes: NOTES } };
+  return { view: { dir: [0.95, 0.6, 1.2], steps: STEPS, stepsAuto: true, notes: NOTES } };
 }
 
 const CAM = {
   wide: { pos: [3.3, 2.3, 3.6], tgt: [0, 1.4, -0.3] },
-  wall: { pos: [1.5, 1.9, 1.5], tgt: [0, 1.5, WALL_Z] },
+  wall: { pos: [1.3, 1.8, 1.0], tgt: [0, 1.45, WALL_Z] },
   side: { pos: [4.4, 1.5, -0.3], tgt: [0, 1.4, -0.4] },
   anchor: { pos: [1.5, 3.2, 0.9], tgt: [0, 1.8, -0.7] },
   front: { pos: [2.5, 1.9, 3.2], tgt: [0, 1.5, 0.3] },
@@ -307,11 +480,12 @@ export const STEPS = [
 ];
 
 const NOTES = [
-  { steps: [2, 3], pos: [0, FT5 + 0.25, WALL_Z], text: 'Trou de 18 po, à ± 5 pi du plancher' },
+  { steps: [2, 3], pos: [0, FT5 + 0.3, WALL_Z], text: 'Trou de 18 po, à ± 5 pi du plancher' },
+  { steps: [2], pos: [0.1, FT5 - 0.3, WALL_Z + 0.75], text: 'Foreuse à percussion électrique, sans fil' },
   { steps: [4], pos: [0, 2.75, WALL_Z + 0.1], text: 'Pattes du haut bien appuyées au mur' },
   { steps: [5], pos: [XP, 1.2, -0.1], text: 'Entre 75° et 80° (ici 78°)' },
   { steps: [7], pos: [XP, W(0, LUG, 0)[1] + 0.25, W(0, LUG, -0.1)[2]], text: "Œillet : de l'extérieur vers l'intérieur" },
-  { steps: [8], pos: [0, W(0, LUG, 0)[1] + 0.35, W(0, LUG, -0.1)[2]], text: 'Tendeur serré au maximum' },
+  { steps: [8], pos: [0, W(0, LUG, 0)[1] + 0.4, W(0, LUG, -0.1)[2]], text: 'Pomper le cliquet : chaîne serrée au maximum' },
   { steps: [9], pos: [-XP, 3.1, 0], text: '23 tiges par rangée, 8 rangées : 184 tiges NQ' },
   { steps: [11, 12], pos: [XP, 69 * IN + 0.2, 0.2], text: 'Crochets fermés : 66 à 72 po du sol' },
   { steps: [12], pos: [0, FT5 - 0.05, 0.75], text: 'Jamais à moins de 5 pi du sol au centre' },

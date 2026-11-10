@@ -124,7 +124,13 @@ pièces (numéro, quantité, page du manuel).
   le montage en 15 étapes (`userData.step`, bouton « Montage »), et le support
   vide pièce par pièce (P01). Aucun des deux documents ne donne de cotes :
   dimensions estimées sur les figures (23 tiges NQ en quinconce entre les
-  poteaux). Support peint en rouge, tiges usagées.
+  poteaux). Support peint en rouge, tiges usagées. Décor repris du modèle
+  `plancher-dd` (paroi de roche de la galerie et section 1 du plancher,
+  recadrées), avec grillage soudé et soutènement de la paroi (split sets et
+  barres d'armature). La page s'ouvre en montage par étapes (`view.stepsAuto`) ;
+  animations d'étape (`userData.stepAnim`, jouées par `Viewer.setStep`) :
+  perçage du trou à la foreuse à percussion sans fil (étape 2) et serrage de
+  la chaîne au tendeur à cliquet (étape 8).
   **Vidéo de la procédure** (3 min 34, 1280 × 720) : le montage par étapes
   joué passage par passage avec un bandeau (étape, titre, texte), capturé
   image par image sous une horloge simulée (`scripts/video-rack.mjs`, scénario
