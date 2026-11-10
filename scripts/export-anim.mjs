@@ -12,7 +12,8 @@ import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter.js';
 import { buildProcedural } from '../src/viewer/assembly.js';
 import { mat } from '../src/viewer/materials.js';
 import builders from '../src/models/stm-1500/index.js';
-import { resolve, pose, CLIPS, REST, ROD } from '../src/models/stm-1500/rig.js';
+import * as S from '../src/viewer/shapes.js';
+import { resolve, pose, CLIPS, REST, ROD, LEG } from '../src/models/stm-1500/rig.js';
 
 // Node n'a pas de FileReader : l'exportateur s'en sert pour lire ses tampons.
 globalThis.FileReader = class {
@@ -103,6 +104,24 @@ root.traverse((o) => {
   const geo = new THREE.CylinderGeometry(ROD.r, ROD.r, ROD.x1 - ROD.x0, 32, 1, false).rotateZ(-Math.PI / 2).translate((ROD.x0 + ROD.x1) / 2, ROD.y, 0);
   const mid = (ROD.x0 + ROD.x1) / 2, ar = idx('Tige_Arriere'), av = idx('Tige_Avant');
   push(geo, new THREE.Matrix4(), rodMat, (i, w) => (w.x < mid ? [ar, ar, 0] : [av, av, 0]));
+}
+
+// Jambes UM-064-400D (page 1.10 ; non montées sur le modèle du site, où le mât est à 0°) : section du bas à œil,
+// section centrale, section réglable filetée à œil ; couchées au sol le long du traîneau, un os chacune.
+for (const [c, side] of [['D', 1], ['G', -1]]) {
+  const L = LEG.L, o = [LEG.rest[0], LEG.rest[1], side * LEG.rest[2]], b = idx(`Jambe_${c}`);
+  const leg = S.group(
+    S.at(S.ring(0.03, 0.0105, 0.03, 'black', { axis: 'z', seg: 20 }), [0, 0, 0]),
+    S.at(S.cyl(0.0215, 0.62, 'black', { axis: 'x', seg: 20 }), [0.335, 0, 0]),
+    S.at(S.cyl(0.03, L - 0.78, 'black', { axis: 'x', seg: 24 }), [0.5 + (L - 0.78) / 2, 0, 0]),
+    S.at(S.cyl(0.016, 0.3, 'steel', { axis: 'x', seg: 16 }), [L - 0.18, 0, 0]),
+    S.at(S.nut(0.05, 0.03, 'black', { axis: 'x' }), [L - 0.265, 0, 0]),
+    S.at(S.ring(0.03, 0.0105, 0.03, 'black', { axis: 'z', seg: 20 }), [L, 0, 0]),
+    ...[0, L].map((x) => S.at(S.cyl(0.0095, 0.11, 'steel', { axis: 'z', seg: 12 }), [x, 0, 0])), // axes 01503
+  );
+  leg.position.set(...o);
+  leg.updateMatrixWorld(true);
+  leg.traverse((m) => { if (m.isMesh) push(m.geometry, m.matrixWorld, m.material, () => [b, b, 0]); });
 }
 
 const geometry = new THREE.BufferGeometry();

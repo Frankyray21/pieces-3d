@@ -795,7 +795,8 @@ export function P010(api) {
   // coude 2501F-08-08).
   {
     const { a, b, bore, rodR, ext } = DUMP, r = bore / 2, len = DUMP.len;
-    const c = hydCylinder(len, bore, { material: 'black', rodR, ext, eyes: 'none' });
+    // Tige presque toute sortie à 0° : piston près du presse-étoupe (il rentre de 0,6 m pour avancer le mât, page 1.01).
+    const c = hydCylinder(len, bore, { material: 'black', rodR, ext, eyes: 'none', piston: 0.9 });
     c.rotation.x = Math.PI / 2;
     const ey = DUMP.foot[1], Y = DUMP_YEJ, yx = (Y.x[0] + Y.x[1]) / 2, yz = (Y.z[0] + Y.z[1]) / 2;
     const [pf, pt] = cylPortsZ(a, b, bore, ext, 1); // orifices du fond et de la tige
@@ -875,8 +876,8 @@ export function P010(api) {
   P('FBRA-002-400HH', at(api.sub('P042', { capot: WINCH.capot, guide: WINCH.guide, cable: false, cadre: true }), [WINCH.x, WINCH.y, 0]), [-0.2, 0.5, 0]);
   // Câble du treuil (tambour → guide-câble → poulie double → rouleau du guide de tiges) et son embout serti.
   api.add(group(
-    skin(tube(wire.pts, 0.004, 'darkSteel', { seg: wire.pts.length, tension: 0.5 }), 'Traineau', 'Mat', wire.free),
-    body('Mat', at(cyl(0.007, 0.016, 'darkSteel', { axis: 'y', seg: 12 }), [wire.tip[0], wire.tip[1] - 0.008, 0])),
+    skin(tube(wire.pts, 0.004, 'darkSteel', { seg: wire.pts.length, tension: 0.5 }), 'Cable', 'Rallonge', wire.free),
+    body('Rallonge', at(cyl(0.007, 0.016, 'darkSteel', { axis: 'y', seg: 12 }), [wire.tip[0], wire.tip[1] - 0.008, 0])),
   ));
 
   // Boyaux de la foreuse, des sélecteurs DF10 aux appareils (les raccords sont décrits avec leurs pièces).
@@ -936,6 +937,7 @@ export function P010(api) {
   // Corps reliés par les boyaux (animation) : le long de la poutre avec le mât, au sol avec le traîneau.
   skin(feedRecul, 'Mat', 'Traineau', [0.48, 0.64]);
   skin(feedAvance, 'Mat', 'Traineau', [0.1, 0.6]);
+  motorHoses.forEach((h) => skin(h, 'Treuil', 'Traineau', [0.1, 0.9])); // le treuil recule sur le traîneau pour les trous ascendants
   skin(tiltHoses[0], 'Traineau', 'VerinBascule_D_Fut', [0.3, 0.9]);
   skin(tiltHoses[1], 'Traineau', 'VerinBascule_G_Fut', [0.3, 0.9]);
   skin(tiltHoses[2], 'VerinBascule_D_Fut', 'VerinBascule_G_Fut', [0.2, 0.8]);

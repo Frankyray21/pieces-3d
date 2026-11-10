@@ -803,7 +803,7 @@ export function spring(r, wire, len, turns, material = 'black', { axis = 'y', po
  * Vérin hydraulique le long de +X, de l'œil arrière (x=0) à l'œil de tige (x=len).
  * Retourne un Group.
  */
-export function hydCylinder(len, bore, { material = 'red', rodR, ext = 0.45, eyes = 'eye', axis = 'x' } = {}) {
+export function hydCylinder(len, bore, { material = 'red', rodR, ext = 0.45, eyes = 'eye', axis = 'x', piston = 0.42 } = {}) {
   const r = bore / 2;
   rodR = rodR ?? r * 0.55;
   const barrelLen = len * (1 - ext);
@@ -827,7 +827,7 @@ export function hydCylinder(len, bore, { material = 'red', rodR, ext = 0.45, eye
     steel.push(place(cylGeo(r * 0.12, r * 0.16), [px, r * 1.38, 0]));
   }
   const dark = [];
-  const pistonX = barrelLen * 0.42;
+  const pistonX = barrelLen * piston; // piston : place dans le fût (0 au fond, 1 au presse-étoupe)
   dark.push(place(X(cylGeo(r * 0.79, r * 0.5)), [pistonX, 0, 0]));
   const rubber = [place(new THREE.TorusGeometry(r * 0.79, r * 0.05, 8, 32).rotateY(Math.PI / 2), [pistonX, 0, 0])];
   // Racleur de tige à la sortie du presse-étoupe.
