@@ -76,8 +76,8 @@
  "root": "P02",
  "assemblies": {
   "P02": {
-   "title": "Support installé selon la procédure : ancré, incliné à 78°, 184 tiges NQ",
-   "titleFr": "Support installé selon la procédure : ancré, incliné à 78°, 184 tiges NQ",
+   "title": "Support installé selon la procédure : incliné à 78°, ancré, 184 tiges NQ retenues",
+   "titleFr": "Support installé selon la procédure : incliné à 78°, ancré, 184 tiges NQ retenues",
    "sheets": [
     "P08",
     "P09",
@@ -87,7 +87,7 @@
     "P02",
     "P03"
    ],
-   "note": "Installation d'après la procédure PRO-DD-ST-008 (révision août 2024, photo de janvier 2025), étape par étape (bouton « Montage ») : boulon à œil dans un trou de 18 po à ± 5 pi du plancher, support incliné à 78° (entre 75° et 80° exigé) avec les pattes du haut appuyées au mur, chaîne passée dans le boulon à œil et dans les œillets du support de l'extérieur vers l'intérieur, tendeur à cliquet, 184 tiges NQ de 3 m en quinconce (8 rangées de 23, à partir de la gauche) appuyées sur les barres transversales du fond, chaîne de retenue dans les 2 crochets fermés (69 po du sol), marques à 5 pi du sol. Écart entre les documents : la certification Forcetech de 2019 demande un angle d'empilement de 80° et plus, la procédure un angle de 75° à 80° ; la 3D suit la procédure. Décor : paroi de roche de la galerie avec son grillage et son soutènement (split sets et barres d'armature, disposition fictive) et plancher de foreuse repris du modèle « Plancher pour foreuse aux diamants ». À l'étape 2, la foreuse à percussion perce le trou ; à l'étape 8, le cliquet du tendeur est pompé et la chaîne se tend.",
+   "note": "Installation d'après la procédure PRO-DD-ST-008 (révision août 2024, photo de janvier 2025), à suivre étape par étape (la page s'ouvre en montage : « Étape suivante »). Chaque étape montre ce que dit la procédure, avec ses mesures : trou de 18 po au centre du support, à ± 5 pi du plancher ; boulon à œil pas enfoncé jusqu'au fond ; support levé à deux, pattes du haut appuyées au mur ; angle de 78° (entre 75° et 80° exigé), lu au niveau ; chaîne passée dans le boulon à œil jusqu'à son milieu, puis dans les œillets de l'extérieur vers l'intérieur, reliée et serrée au tendeur à cliquet ; 184 tiges NQ de 3 m en quinconce (8 rangées de 23, à partir de la gauche), appuyées sur les barres transversales du fond et non sur les côtés ; chaîne de retenue dans les 2 crochets fermés (69 po du sol), qui arrête les tiges avant 80° ; marques à 5 pi du sol. Couleurs des repères : orange = mesure, vert = permis, rouge = limite ou interdit, bleu = sens du geste. Écart entre les documents : la certification Forcetech de 2019 demande un angle d'empilement de 80° et plus, la procédure un angle de 75° à 80° ; la 3D suit la procédure. Ajouts hors des documents, pour la compréhension : paroi de roche avec grillage et soutènement (split sets et barres d'armature, disposition fictive), plancher de foreuse du modèle « Plancher pour foreuse aux diamants », travailleurs en silhouette (« à deux », perçage).",
    "parts": [
     [
      "1",
@@ -113,18 +113,18 @@
      "3",
      "",
      1,
-     "Boulon à œil (eye bolt) dans un trou de 18 po, à ± 5 pi du plancher",
+     "Boulon à œil (eye bolt) dans un trou de 18 po, à ± 5 pi du plancher, au centre du support",
      {
-      "note": "Ne pas l'enfoncer jusqu'au fond du trou."
+      "note": "Ne pas l'enfoncer jusqu'au fond du trou. Forme d'après la photo de la procédure (œil forgé en goutte)."
      }
     ],
     [
      "4",
      "",
      1,
-     "Chaîne d'ancrage, passée dans le boulon à œil et dans les 2 œillets du support",
+     "Chaîne d'ancrage, passée dans le boulon à œil jusqu'à son milieu, puis dans les 2 œillets du support",
      {
-      "note": "De l'extérieur vers l'intérieur."
+      "note": "Chaque bout dans l'œillet qui lui est destiné, de l'extérieur vers l'intérieur (étapes 6 et 7)."
      }
     ],
     [
@@ -133,16 +133,16 @@
      1,
      "Tendeur à cliquet de chaîne (ou tendeur « bear trap »)",
      {
-      "note": "Serré au maximum."
+      "note": "Relie les deux bouts de la chaîne ; serré au maximum (étape 8)."
      }
     ],
     [
      "6",
      "",
      1,
-     "Chaîne de retenue des tiges, dans les 2 crochets fermés",
+     "Chaîne de retenue des tiges, accrochée dans les 2 crochets fermés",
      {
-      "note": "Jamais à moins de 5 pi du sol au centre ; en tout temps."
+      "note": "Ajustée pour que les tiges ne puissent dépasser 80° ; jamais à moins de 5 pi du sol au centre ; en tout temps, sauf pendant l'ajout et le retrait des tiges en continu."
      }
     ],
     [
@@ -150,7 +150,9 @@
      "",
      2,
      "Marque à 5 pi du sol",
-     {}
+     {
+      "note": "Photo de la procédure : « Marques à 5 pieds du sol »."
+     }
     ],
     [
      "8",
@@ -158,7 +160,7 @@
      1,
      "Foreuse à percussion électrique sans fil et mèche (étape 2 : trou de 18 po)",
      {
-      "note": "Montrée à l'étape 2 du montage ; forme d'après un marteau perforateur Hilti, en version sans fil (batterie)."
+      "note": "Montrée à l'étape 2 du montage, butée de profondeur à 18 po ; forme d'après un marteau perforateur Hilti, en version sans fil (batterie)."
      }
     ],
     [
@@ -201,7 +203,7 @@
     "P05",
     "P06"
    ],
-   "note": "Reconstitution 3D d'après la figure 1 (modèle fourni par le client à Forcetech) et les figures 2 à 6. Le rapport ne donne ni cotes ni liste de pièces : les dimensions sont estimées sur les vues, à partir de la largeur de 23 tiges NQ en quinconce entre les poteaux ; la hauteur des crochets suit la procédure PRO-DD-ST-008, et les noms des pièces sont descriptifs (« membrures », « attaches » et « pattes » sont les mots du rapport). Support peint en rouge en entier (le rapport le montre gris avec les pattes rouges). Le client est responsable de fabriquer, de souder et d'assembler le support selon son modèle.",
+   "note": "Reconstitution 3D d'après la figure 1 (modèle fourni par le client à Forcetech) et les figures 2 à 6 du rapport de certification. Le rapport ne donne ni cotes ni liste de pièces : les dimensions sont estimées sur les vues, à partir de la largeur de 23 tiges NQ en quinconce entre les poteaux ; la hauteur des crochets suit la procédure PRO-DD-ST-008, et les noms des pièces sont descriptifs (« membrures », « attaches » et « pattes » sont les mots du rapport ; la procédure dit « pattes du haut », « œillets » et « crochets fermés »). Les rallonges du haut et du bas sortent côté tiges au-delà des 8 rangées, pour contenir tout le paquet. Support peint en rouge en entier (le rapport le montre gris avec les pattes rouges). Le client est responsable de fabriquer, de souder et d'assembler le support selon son modèle.",
    "parts": [
     [
      "1",
@@ -216,7 +218,7 @@
      "2",
      "",
      2,
-     "Patte réglable avec appui au pied",
+     "Patte du bas, réglable, avec appui au pied",
      {
       "pnText": "HSS, acier 350W",
       "note": "Doit être correctement appuyée au sol."
@@ -263,7 +265,7 @@
      "7",
      "",
      2,
-     "Membrure d'appui au mur",
+     "Membrure d'appui au mur (« patte du haut »)",
      {
       "pnText": "HSS, acier 350W",
       "note": "Doit être correctement appuyée au mur."
@@ -273,7 +275,7 @@
      "8",
      "",
      2,
-     "Rallonge télescopique de membrure, côté tiges",
+     "Rallonge télescopique de membrure (du haut), côté tiges",
      {
       "pnText": "HSS, acier 350W"
      }
@@ -281,17 +283,17 @@
     [
      "9",
      "",
-     6,
-     "Goupille (traverses, rallonges de membrure, pattes)",
+     8,
+     "Goupille (traverses, rallonges du haut et du bas, pattes)",
      {
-      "note": "Nombre d'après les trous visibles sur les figures."
+      "note": "6 d'après les trous visibles sur les figures du rapport, plus 2 pour les rallonges des pattes du bas."
      }
     ],
     [
      "10",
      "",
      2,
-     "Attache : anneau en plaque sur le poteau",
+     "Attache (« œillet ») : anneau en plaque sur le poteau, pour la chaîne d'ancrage",
      {
       "pnText": "Plaque, acier 300W",
       "note": "Le support doit être correctement sécurisé à l'aide des attaches."
@@ -311,9 +313,19 @@
      "12",
      "",
      2,
-     "Chaîne au repos sur son crochet",
+     "Chaîne de retenue au repos sur son crochet",
      {
       "note": "Figure 1 du rapport : une chaîne à chaque poteau. Installée, la chaîne de retenue relie les 2 crochets devant les tiges."
+     }
+    ],
+    [
+     "13",
+     "",
+     2,
+     "Rallonge de patte du bas, glissée dans l'appui du pied, côté tiges",
+     {
+      "pnText": "HSS, acier 350W",
+      "note": "Absente des figures du rapport (appui du pied montré vide) ; ajoutée à la demande, goupillée comme la rallonge du haut."
      }
     ]
    ]

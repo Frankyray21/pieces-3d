@@ -97,6 +97,19 @@ const defs = {
   rodRust: { color: 0x6e4630, metalness: 0.35, roughness: 0.82, fin: 'cast' },
   rodRustDark: { color: 0x4a3226, metalness: 0.4, roughness: 0.85, fin: 'cast' },
   rodDull: { color: 0x4b4a48, metalness: 0.6, roughness: 0.66, fin: 'cast' },
+  // Repères de mesure du montage par étapes : vert = permis, zones translucides.
+  repereVert: { color: 0x2fd06a, emissive: 0x0c5a26, emissiveIntensity: 1, roughness: 0.55 },
+  zoneVerte: { color: 0x35d06a, emissive: 0x0c5a26, emissiveIntensity: 0.7, roughness: 0.7, transparent: true, opacity: 0.4, depthWrite: false, side: THREE.DoubleSide },
+  zoneRouge: { color: 0xff4030, emissive: 0x5a0800, emissiveIntensity: 0.7, roughness: 0.7, transparent: true, opacity: 0.34, depthWrite: false, side: THREE.DoubleSide },
+  // Chaîne de transport (grade 70) : chromate jaune terni.
+  chaineOr: { color: 0xa98a3c, metalness: 1, roughness: 0.46, fin: 'machined' },
+  // Boulon à œil forgé (photo de la procédure) : acier brut, bruni.
+  boulonForge: { color: 0x8e7359, metalness: 0.55, roughness: 0.66, fin: 'cast' },
+  // Travailleur (silhouette sobre) : combinaison, bandes réfléchissantes, gants, peau.
+  tissuOrange: { color: 0xd9641a, metalness: 0, roughness: 0.92, fin: 'rubber' },
+  bandeReflet: { color: 0xdfe36a, emissive: 0x4a4d10, emissiveIntensity: 0.55, metalness: 0, roughness: 0.55 },
+  gantBleu: { color: 0x2a5aa8, metalness: 0, roughness: 0.85, fin: 'rubber' },
+  peau: { color: 0xc9a184, metalness: 0, roughness: 0.78 },
   blackCast: { color: 0x2a2c30, metalness: 0.1, roughness: 0.55, clearcoat: 0.3, clearcoatRoughness: 0.35, fin: 'paintDark' },};
 
 // ------------------------------------------------------- relief de surface
