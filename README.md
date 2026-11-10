@@ -150,6 +150,19 @@ pièces (numéro, quantité, page du manuel).
   `src/models/stm-1500/refs.js`). Rendus photoréalistes Blender dans
   `public/equipment/stm-1500/renders/`.
 
+- **Table à carottes C16080960** (`table-a-core`, table d'atelier en aluminium
+  6061-T6 fabriquée par Foresco pour Machines Roger, projet 07-0006, 64 × 65 ×
+  34 5/8 po) : la 3D ne vient pas d'un manuel mais de la CAO du fabricant.
+  `tools/solidworks_asm.py` lit le fichier d'assemblage SolidWorks (.SLDASM)
+  sans SolidWorks : arbre des composants, poses et facettes d'affichage de
+  chaque pièce (bandes de triangles) ; `tools/blender_table_core.py` monte la
+  scène dans Blender (soudure, arêtes vives, aluminium nu, contreplaqué), écrit
+  `table-a-core.blend`, `table-a-core.glb`, les rendus Cycles
+  (`public/equipment/table-a-core/renders/`) et les maillages du site
+  (`src/models/table-a-core/mesh.js`). Repères 1 à 7 : nomenclature du plan
+  d'assemblage ; 8 : le contreplaqué du modèle. Pages : plan d'assemblage
+  (aperçu du .SLDDRW) et développé de la jupe C16080961 retracé d'après le DWG.
+
 La page d'accueil (adresse sans « # », ou le logo en haut à gauche) liste
 les équipements et permet de passer de l'un à l'autre. Les adresses du premier équipement restent `#F05` ; celles des autres
 sont préfixées : `#du311.P032`, `#du311-std.P050`, `#epiroc-ith.P019`.

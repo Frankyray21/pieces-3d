@@ -52,6 +52,14 @@
       "thumbnail": "equipment/stm-1500/thumbnail.webp",
       "extras": ["bulles", "donnees", "entretien", "procedures", "systemes"],
       "status": "Manuel de pièces s/n STM-1500-128 (96 pages) : 42 assemblages et 7 documents ; 3D réaliste de la foreuse (traîneau, avance à 0°, tête Boyles, serre-tiges, vérins, treuil), du groupe hydraulique 125 HP et de la console ; rendus Blender"
+    },
+    {
+      "id": "table-a-core",
+      "name": "Table à carottes C16080960",
+      "manufacturer": "Foresco (pour Machines Roger)",
+      "category": "Table d'atelier en aluminium",
+      "thumbnail": "equipment/table-a-core/thumbnail.webp",
+      "status": "3D tirée de la CAO SolidWorks du fabricant (8 pièces, facettes exactes), montée et rendue dans Blender ; plan d'assemblage et développé de la jupe"
     }
   ]
 }

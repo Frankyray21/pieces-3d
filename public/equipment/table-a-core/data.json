@@ -1,0 +1,51 @@
+{
+  "id": "table-a-core",
+  "name": "Table à carottes C16080960",
+  "manufacturer": "Foresco (pour Machines Roger)",
+  "category": "Table d'atelier en aluminium",
+  "serial": "C16080960",
+  "document": {
+    "title": "Plan d'assemblage C16080960 « TABLE » (projet 07-0006 Table à core)",
+    "reference": "C16080960",
+    "client": "Machines Roger",
+    "preparedBy": "Foresco, dessiné par V. Chyhrynau",
+    "date": "2016-09-08",
+    "sheets": 2,
+    "pagePattern": "pages/{sheet}.webp"
+  },
+  "specs": [
+    ["Largeur", "64 po (64 3/8 po à la tablette haute)"],
+    ["Hauteur hors tout", "65 po"],
+    ["Profondeur hors tout", "34 5/8 po"],
+    ["Plan de travail", "64 × 24 po, à 35 po du sol"],
+    ["Matériau", "Aluminium 6061-T6 (nomenclature du plan)"],
+    ["Jupe C16080961", "Tôle de 3/16 po, développé de 114 1/2 × 33 5/8 po, découpe « MRI » sur les deux côtés"],
+    ["Passages de fourche", "2 tubes de 8 × 3 3/4 po, longueur 24 11/16 po, à 36 po d'entraxe"]
+  ],
+  "weights": [["Masse du modèle CAO", "211,5 lb (95,9 kg)"]],
+  "sheetTitles": {
+    "P001": "Plan d'assemblage C16080960 : vues, coupes A-A et B-B, nomenclature",
+    "P002": "C16080961 : développé de la jupe, tôle d'aluminium de 3/16 po (découpe laser)"
+  },
+  "root": "P001",
+  "assemblies": {
+    "P001": {
+      "title": "TABLE",
+      "titleFr": "Table à carottes",
+      "pn": "C16080960",
+      "sheets": ["P001", "P002"],
+      "note": "Modèle 3D tiré du fichier d'assemblage SolidWorks C16080960.SLDASM de Foresco (facettes exactes de chaque pièce, positions de l'assemblage), monté et rendu dans Blender. Repères 1 à 7 : articles de la nomenclature du plan, où toutes les pièces portent le titre « PLAQUE » ; les descriptions entre parenthèses décrivent la pièce d'après sa forme. Le contreplaqué (repère 8) est dans le modèle mais pas dans la nomenclature. Montrée en aluminium nu, le matériau de la nomenclature (le modèle CAO est coloré en rouge ; le plan ne précise pas de fini).",
+      "parts": [
+        ["1", "C16080961", 1, "PLAQUE (jupe pliée : façade ouverte, côtés découpés « MRI », quatre pieds)", {"note": "Aluminium 6061-T6, 3/16 po. Développé 114 1/2 × 33 5/8 po (plan C16080961)."}],
+        ["2", "C16080962", 1, "PLAQUE (tablette du bas, 63 1/2 × 23 1/8 po)", {"note": "Aluminium 6061-T6. Cotes de la coupe B-B."}],
+        ["3", "C16080963", 1, "PLAQUE (panneau arrière, 64 × 59 po)", {"note": "Aluminium 6061-T6."}],
+        ["4", "C16080964", 1, "PLAQUE (dessus de table, 64 × 24 po, rebord de 3 po)", {"note": "Aluminium 6061-T6."}],
+        ["5", "C16080965", 1, "PLAQUE (tablette haute, 64 3/8 × 16 po)", {"note": "Aluminium 6061-T6. Dépasse de 7 3/8 po derrière le panneau arrière."}],
+        ["6", "C16080967", 2, "PLAQUE (tube de passage de fourche, 8 × 3 3/4 × 24 11/16 po)", {"note": "Aluminium 6061-T6. Sous-assemblage C16080966 « TUBE » avec l'article 7."}],
+        ["7", "C16080968", 2, "PLAQUE (dessus du tube, 24 11/16 × 7 5/8 × 1/4 po)", {"note": "Aluminium 6061-T6. Sous-assemblage C16080966 « TUBE » avec l'article 6."}],
+        ["8", "Plywood", 1, "Contreplaqué de 1/2 po, 63 5/8 × 26 1/2 po (devant le panneau arrière)", {"note": "Présent dans le modèle CAO, absent de la nomenclature du plan."}]
+      ]
+    }
+  },
+  "documents": []
+}
