@@ -125,6 +125,13 @@ pièces (numéro, quantité, page du manuel).
   vide pièce par pièce (P01). Aucun des deux documents ne donne de cotes :
   dimensions estimées sur les figures (23 tiges NQ en quinconce entre les
   poteaux). Support peint en rouge, tiges usagées.
+  **Vidéo de la procédure** (3 min 34, 1280 × 720) : le montage par étapes
+  joué passage par passage avec un bandeau (étape, titre, texte), capturé
+  image par image sous une horloge simulée (`scripts/video-rack.mjs`, scénario
+  et répliques dans `src/video/rack-script.js`) ; script de voix minuté dans
+  `video/rack/` (`node scripts/video-rack-script.mjs` : texte pour ElevenLabs,
+  tableau de révision, JSON) ; la voix enregistrée s'ajoute avec `--voix`.
+  Vidéo publiée : `public/equipment/rack-tiges-dd/video/installation.mp4`.
 
 - **Usinage Marcotte STM-1500** (`stm-1500`, foreuse souterraine
   s/n STM-1500-128, manuel de pièces de Machines Roger, 96 pages) : 42

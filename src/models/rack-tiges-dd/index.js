@@ -287,7 +287,7 @@ const CAM = {
 };
 
 // Étapes de la procédure PRO-DD-ST-008 (l'indice est le numéro de l'étape).
-const STEPS = [
+export const STEPS = [
   { n: 0, cam: CAM.wide, page: 'P07', title: 'Avant de commencer', text: "La mine fore les trous de service pour les boulons à œil. Le travailleur respecte la quantité et l'angle d'empilage ; le superviseur fait reprendre toute installation non conforme." },
   { n: 1, cam: CAM.wide, page: 'P07', title: "Choisir l'endroit", text: 'Près du mur et loin de la ligne de tir des trous de forage (voir les exemples de positionnement).' },
   { n: 2, cam: CAM.wall, page: 'P08', title: 'Percer le trou au mur', text: 'Situer le centre du support et faire un trou de 18 po de profond avec la foreuse à percussion électrique, à ± 5 pi du plancher.' },
