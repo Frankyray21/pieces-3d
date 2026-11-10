@@ -1,0 +1,231 @@
+{
+ "id": "rack-tiges-dd",
+ "name": "Support de tiges de forage (rack à rods)",
+ "manufacturer": "Machines Roger International",
+ "category": "Rapport de certification",
+ "serial": "Forcetech P19113",
+ "document": {
+  "title": "Certification du support de tiges de forage",
+  "reference": "Projet Forcetech P19113",
+  "preparedBy": "Forcetech Consultants (Emilie Arcand, ing., OIQ 5020704), pour Machines Roger International",
+  "date": "2019-11-27",
+  "sheets": 6,
+  "pagePattern": "pages/{sheet}.webp"
+ },
+ "specs": [
+  [
+   "Capacité maximale permise",
+   "184 tiges NQ ou 240 tiges BQ"
+  ],
+  [
+   "Longueur des tiges",
+   "3 m au plus"
+  ],
+  [
+   "Angle d'empilement",
+   "80° et plus par rapport au sol"
+  ],
+  [
+   "Empilement",
+   "Par rangée, dans le sens de la traverse ; pas d'appui sur les côtés du support"
+  ],
+  [
+   "Conditions de blocage",
+   "Membrures appuyées au mur, support sécurisé par les attaches, pattes appuyées au sol"
+  ],
+  [
+   "Matériaux",
+   "Plaques : acier 300W (Su 450 MPa, Sy 300 MPa) ; HSS : acier 350W (Su 450 MPa, Sy 350 MPa)"
+  ],
+  [
+   "Charge de calcul",
+   "1 070 lb sur la traverse supérieure"
+  ],
+  [
+   "Résultats",
+   "Contraintes sous 230 MPa (hors concentrations), facteur de sécurité 1,5 ; déplacement maximal 6,2 mm"
+  ]
+ ],
+ "weights": [
+  [
+   "Réaction des tiges sur la traverse",
+   "1 070 lb"
+  ]
+ ],
+ "sheetTitles": {
+  "P01": "Objet et modèle 3D du support (figure 1)",
+  "P02": "Données de validation ; support avec tiges NQ (figure 2)",
+  "P03": "Conditions de blocage et charge sur le support (figures 3 et 4)",
+  "P04": "Conclusion de conformité ; contrainte de Von Mises (figure 5)",
+  "P05": "Déplacement (figure 6) et facteur de sécurité",
+  "P06": "Capacité maximale permise et responsabilités du client"
+ },
+ "root": "P02",
+ "assemblies": {
+  "P02": {
+   "title": "Support chargé de 184 tiges NQ, appuyé au mur",
+   "titleFr": "Support chargé de 184 tiges NQ, appuyé au mur",
+   "sheets": [
+    "P02",
+    "P03"
+   ],
+   "note": "Reconstitution 3D d'après les figures 2 et 3 du rapport de certification Forcetech P19113 : 8 rangées de 23 tiges NQ de 3 m, pieds au sol, appuyées sur la traverse supérieure à 82° (80° et plus exigé), sans toucher les côtés du support. Conditions de blocage : membrures appuyées au mur, support sécurisé par les attaches, pattes appuyées au sol. Capacité maximale permise : 184 tiges NQ ou 240 tiges BQ (la disposition des tiges BQ n'est pas illustrée dans le rapport). Mur et sol fictifs.",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "Support de tiges de forage",
+     {
+      "link": "P01",
+      "pseudo": true
+     }
+    ],
+    [
+     "2",
+     "",
+     184,
+     "Tige de forage NQ de 3 m",
+     {
+      "pnText": "NQ, 3 m",
+      "note": "Capacité maximale permise ; 240 en tiges BQ."
+     }
+    ],
+    [
+     "M",
+     "",
+     null,
+     "Mur (contexte : appui des membrures)",
+     {
+      "pseudo": true
+     }
+    ],
+    [
+     "S",
+     "",
+     null,
+     "Sol (contexte : appui des pattes et des tiges)",
+     {
+      "pseudo": true
+     }
+    ]
+   ]
+  },
+  "P01": {
+   "title": "Support de tiges de forage (vide)",
+   "titleFr": "Support de tiges de forage (vide)",
+   "sheets": [
+    "P01",
+    "P03",
+    "P04",
+    "P05",
+    "P06"
+   ],
+   "note": "Reconstitution 3D d'après la figure 1 (modèle fourni par le client à Forcetech) et les figures 2 à 6. Le rapport ne donne ni cotes ni liste de pièces : les dimensions sont estimées sur les vues, à partir de la largeur de 23 tiges NQ entre les poteaux, et les noms des pièces sont descriptifs (« membrures », « attaches » et « pattes » sont les mots du rapport). Support peint en rouge en entier (le rapport le montre gris avec les pattes rouges). Le client est responsable de fabriquer, de souder et d'assembler le support selon son modèle.",
+   "parts": [
+    [
+     "1",
+     "",
+     2,
+     "Poteau en profilé carré, percé pour le réglage des pattes",
+     {
+      "pnText": "HSS, acier 350W"
+     }
+    ],
+    [
+     "2",
+     "",
+     2,
+     "Patte réglable avec appui au pied",
+     {
+      "pnText": "HSS, acier 350W",
+      "note": "Doit être correctement appuyée au sol."
+     }
+    ],
+    [
+     "3",
+     "",
+     1,
+     "Traverse supérieure, section intérieure",
+     {
+      "pnText": "HSS, acier 350W",
+      "note": "Reçoit la réaction des tiges : 1 070 lb."
+     }
+    ],
+    [
+     "4",
+     "",
+     1,
+     "Traverse supérieure, section extérieure (manchon)",
+     {
+      "pnText": "HSS, acier 350W"
+     }
+    ],
+    [
+     "5",
+     "",
+     1,
+     "Traverse inférieure, section intérieure",
+     {
+      "pnText": "HSS, acier 350W"
+     }
+    ],
+    [
+     "6",
+     "",
+     1,
+     "Traverse inférieure, section extérieure (manchon)",
+     {
+      "pnText": "HSS, acier 350W"
+     }
+    ],
+    [
+     "7",
+     "",
+     2,
+     "Membrure d'appui au mur",
+     {
+      "pnText": "HSS, acier 350W",
+      "note": "Doit être correctement appuyée au mur."
+     }
+    ],
+    [
+     "8",
+     "",
+     2,
+     "Rallonge télescopique de membrure, côté tiges",
+     {
+      "pnText": "HSS, acier 350W"
+     }
+    ],
+    [
+     "9",
+     "",
+     6,
+     "Goupille (traverses, rallonges de membrure, pattes)",
+     {
+      "note": "Nombre d'après les trous visibles sur les figures."
+     }
+    ],
+    [
+     "10",
+     "",
+     2,
+     "Attache : anneau en plaque sur le poteau",
+     {
+      "pnText": "Plaque, acier 300W",
+      "note": "Le support doit être correctement sécurisé à l'aide des attaches."
+     }
+    ],
+    [
+     "11",
+     "",
+     2,
+     "Chaîne et sa patte d'accrochage",
+     {}
+    ]
+   ]
+  }
+ },
+ "documents": []
+}
