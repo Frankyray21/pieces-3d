@@ -1,6 +1,14 @@
 {
   "equipment": [
     {
+      "id": "coffre-dd",
+      "name": "Coffre à outils de chantier",
+      "manufacturer": "Machines Roger International",
+      "category": "Coffre de rangement en acier",
+      "thumbnail": "equipment/coffre-dd/thumbnail.webp",
+      "status": "3D d'après deux photos (dimensions estimées) : coffre fermé et coffre ouvert, portes inclinées, tablettes à cases, tiroir, panier, passages de fourche et oreilles de levage"
+    },
+    {
       "id": "cubex-mri-5200",
       "name": "Cubex / MRI 5200",
       "manufacturer": "Machines Roger International",

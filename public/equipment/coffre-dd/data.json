@@ -1,0 +1,295 @@
+{
+ "id": "coffre-dd",
+ "name": "Coffre à outils de chantier",
+ "manufacturer": "Machines Roger International",
+ "category": "Coffre de rangement en acier",
+ "document": {
+  "title": "Photos du coffre (fermé et ouvert)",
+  "reference": "Photo",
+  "sheets": 2,
+  "pagePattern": "pages/{sheet}.webp"
+ },
+ "specs": [
+  [
+   "Dimensions hors tout (estimées)",
+   "Environ 48 × 36 × 51 po (1,22 × 0,91 × 1,30 m)"
+  ],
+  [
+   "Manutention",
+   "2 passages de fourche sous la caisse ; 4 oreilles de levage sur le dessus"
+  ],
+  [
+   "Portes",
+   "2 portes inclinées, charnières sur les côtés, barre de verrouillage et oreilles de cadenas au centre"
+  ],
+  [
+   "Rangement",
+   "2 tablettes à trois cases, 1 tiroir, 1 panier en métal déployé, crochets dans la porte gauche"
+  ],
+  [
+   "Fini",
+   "Rouge à l'extérieur, blanc à l'intérieur"
+  ]
+ ],
+ "weights": [],
+ "sheetTitles": {
+  "P01": "Coffre fermé",
+  "P02": "Coffre ouvert : rangement intérieur"
+ },
+ "root": "P01",
+ "assemblies": {
+  "P01": {
+   "title": "Coffre fermé",
+   "titleFr": "Coffre fermé",
+   "sheets": [
+    "P01"
+   ],
+   "note": "Reconstitution 3D d'après deux photos du coffre, sans plan ni cote : toutes les dimensions sont estimées (environ 48 po de large, 36 po de profond et 51 po de haut) et les noms des pièces sont descriptifs. Le contenu du coffre (palan à levier, seau, boyau, pièces) et le plat galvanisé à coulisseau du côté droit ne sont pas modélisés. La vue éclatée dégage les portes et sort le rangement intérieur.",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "Caisse soudée : plancher, fond, côtés, dessus et panneau avant",
+     {
+      "note": "Tôle peinte rouge à l'extérieur, blanc à l'intérieur."
+     }
+    ],
+    [
+     "2",
+     "",
+     2,
+     "Passage de fourche (tube rectangulaire sous la caisse)",
+     {}
+    ],
+    [
+     "3",
+     "",
+     4,
+     "Oreille de levage en plaque, aux coins du dessus",
+     {}
+    ],
+    [
+     "4",
+     "",
+     1,
+     "Porte gauche",
+     {}
+    ],
+    [
+     "5",
+     "",
+     1,
+     "Porte droite, avec le couvre-joint",
+     {}
+    ],
+    [
+     "6",
+     "",
+     4,
+     "Charnière",
+     {}
+    ],
+    [
+     "7",
+     "",
+     2,
+     "Poignée de porte en rond plié",
+     {}
+    ],
+    [
+     "8",
+     "",
+     1,
+     "Barre de verrouillage, à cheval sur le joint des portes",
+     {}
+    ],
+    [
+     "9",
+     "",
+     2,
+     "Oreille de cadenas",
+     {}
+    ],
+    [
+     "10",
+     "",
+     1,
+     "Tablette du haut à trois cases",
+     {}
+    ],
+    [
+     "11",
+     "",
+     1,
+     "Tablette du bas à trois cases",
+     {}
+    ],
+    [
+     "12",
+     "",
+     1,
+     "Tiroir sous la tablette du bas, avec poignée et loquet",
+     {}
+    ],
+    [
+     "13",
+     "",
+     2,
+     "Glissière du tiroir",
+     {}
+    ],
+    [
+     "14",
+     "",
+     1,
+     "Panier en métal déployé, au bas à droite",
+     {}
+    ],
+    [
+     "15",
+     "",
+     1,
+     "Support à crochets, à l'intérieur de la porte gauche",
+     {}
+    ],
+    [
+     "16",
+     "",
+     1,
+     "Autocollant Machines Roger International",
+     {
+      "note": "Emplacement et proportions seulement ; le lettrage n'est pas reproduit."
+     }
+    ]
+   ]
+  },
+  "P02": {
+   "title": "Coffre ouvert : rangement intérieur",
+   "titleFr": "Coffre ouvert : rangement intérieur",
+   "sheets": [
+    "P02"
+   ],
+   "note": "Reconstitution 3D d'après deux photos du coffre, sans plan ni cote : toutes les dimensions sont estimées (environ 48 po de large, 36 po de profond et 51 po de haut) et les noms des pièces sont descriptifs. Le contenu du coffre (palan à levier, seau, boyau, pièces) et le plat galvanisé à coulisseau du côté droit ne sont pas modélisés.",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "Caisse soudée : plancher, fond, côtés, dessus et panneau avant",
+     {
+      "note": "Tôle peinte rouge à l'extérieur, blanc à l'intérieur."
+     }
+    ],
+    [
+     "2",
+     "",
+     2,
+     "Passage de fourche (tube rectangulaire sous la caisse)",
+     {}
+    ],
+    [
+     "3",
+     "",
+     4,
+     "Oreille de levage en plaque, aux coins du dessus",
+     {}
+    ],
+    [
+     "4",
+     "",
+     1,
+     "Porte gauche",
+     {}
+    ],
+    [
+     "5",
+     "",
+     1,
+     "Porte droite, avec le couvre-joint",
+     {}
+    ],
+    [
+     "6",
+     "",
+     4,
+     "Charnière",
+     {}
+    ],
+    [
+     "7",
+     "",
+     2,
+     "Poignée de porte en rond plié",
+     {}
+    ],
+    [
+     "8",
+     "",
+     1,
+     "Barre de verrouillage, à cheval sur le joint des portes",
+     {}
+    ],
+    [
+     "9",
+     "",
+     2,
+     "Oreille de cadenas",
+     {}
+    ],
+    [
+     "10",
+     "",
+     1,
+     "Tablette du haut à trois cases",
+     {}
+    ],
+    [
+     "11",
+     "",
+     1,
+     "Tablette du bas à trois cases",
+     {}
+    ],
+    [
+     "12",
+     "",
+     1,
+     "Tiroir sous la tablette du bas, avec poignée et loquet",
+     {}
+    ],
+    [
+     "13",
+     "",
+     2,
+     "Glissière du tiroir",
+     {}
+    ],
+    [
+     "14",
+     "",
+     1,
+     "Panier en métal déployé, au bas à droite",
+     {}
+    ],
+    [
+     "15",
+     "",
+     1,
+     "Support à crochets, à l'intérieur de la porte gauche",
+     {}
+    ],
+    [
+     "16",
+     "",
+     1,
+     "Autocollant Machines Roger International",
+     {
+      "note": "Emplacement et proportions seulement ; le lettrage n'est pas reproduit."
+     }
+    ]
+   ]
+  }
+ },
+ "documents": []
+}
