@@ -33,7 +33,7 @@
 // et moteurs hydrauliques noirs. Repère : layout.js.
 import { lister, each, entretien, SLED, AXIS_Y, BEAM, PIVOT, FOOT_X } from './layout.js';
 import { SPY, HEAD_PORTS as HEAD_LOCAL, HEAD_PORT_N } from './head.js';
-import { BASE as WB, AXE as W_AXE, PAD as W_PAD, MOTOR_PORTS, CAPOT_HAUT, cableGuide, tangente, arcPts, hull, circle } from './winch.js';
+import { BASE as WB, AXE as W_AXE, PAD as W_PAD, MOTOR_PORTS, CAPOT_HAUT, PIV as W_PIV, ARM_TOP as W_ARM_TOP, cadre as wCadre, cableGuide, tangente, arcPts, hull, circle } from './winch.js';
 
 // Table et tête à l'avant de la course (page 1.01, vue à 0° : table de 0,848 à 1,669 m de la pointe du traîneau, soit
 // 1,074 m de son milieu à la face du pied ; course de 1 808 mm vers l'arrière).
@@ -570,20 +570,8 @@ export function P010(api) {
     P('FBRA-002-305BB', group(...foot), [0.45, 0, 0]);
   }
 
-  // 7 — Boîte du serre-tiges FTD-148-300TF (P013) : U renversé, plaque du dessus 301TF (4 boutonnières, 8 B375-1500),
-  // plaque avant 302TF (grande ouverture, 9 B500-3000 et W500) et plaque arrière 303TF (ouverture à encoche, 9 B500-2750
-  // dans des trous oblongs), sans fond ni côtés : le serre-tiges se voit par les côtés.
-  const HT = 1.437; // dessous de la plaque du dessus
-  const about = [[-0.19, HT], [-0.19, 1.3], [-0.175, 1.252], ...arc([0, 1.252], 0.175, Math.PI, 2 * Math.PI, 28).slice(1, -1), [0.175, 1.252], [0.19, 1.3], [0.19, HT]];
-  const encoche = [...arc([0, AXIS_Y], 0.125, Math.PI / 2 + 0.17, 2.5 * Math.PI - 0.17, 36), [0.021, AXIS_Y + 0.155], [-0.021, AXIS_Y + 0.155]];
-  const ring9 = (x, ax) => boltCircle(9, 0.147, 0.0127, 0.019, 'steel', { axis: ax, pos: [x, AXIS_Y, 0], phase: ax === 'x' ? Math.PI : 0 }); // un boulon en haut
-  P('FTD-148-300TF', group(
-    profilX(about, [[0, AXIS_Y, 0.13]], 0.02, HX + 0.155),
-    profilX(about, [encoche], 0.02, HX - 0.155),
-    at(plate(0.33, 0.38, 0.015, 'red', { r: 0.004, cutouts: [-1, 1].flatMap((s) => [-1, 1].map((u) => [s * 0.07, u * 0.1, 0.05, 0.014])) }), [HX, HT + 0.0075, 0]),
-    boltSet([-1, 1].flatMap((s) => [-0.15, -0.06, 0.06, 0.15].map((z) => [HX + s * 0.155, HT + 0.015, z])), 0.0095, 0.03, 'steel'),
-    ring9(HX + 0.165, 'x'), ring9(HX - 0.165, '-x'),
-  ), [0.25, 0.4, 0]);
+  // 7 — Boîte du serre-tiges FTD-148-300TF (page 1.3 : plaques 301TF, 302TF et 303TF) : non montée, à la demande de
+  // l'utilisateur. Sur la machine en service, le serre-tiges est nu sur sa base, derrière la plaque de pied.
 
   // 16 — Serre-tiges Boyles 12HH UM-079-100A-12 (P031, P032) : corps Ø 313 mm entre les plaques d'about, moyeux dans
   // leurs ouvertures, bride avant à trois têtes B750 ; poignée en U et levier côté −Z, deux pattes de pied (boulons à
@@ -937,7 +925,7 @@ export function P010(api) {
   // Corps reliés par les boyaux (animation) : le long de la poutre avec le mât, au sol avec le traîneau.
   skin(feedRecul, 'Mat', 'Traineau', [0.48, 0.64]);
   skin(feedAvance, 'Mat', 'Traineau', [0.1, 0.6]);
-  motorHoses.forEach((h) => skin(h, 'Treuil', 'Traineau', [0.1, 0.9])); // le treuil recule sur le traîneau pour les trous ascendants
+  motorHoses.forEach((h) => { h.userData.body = 'Treuil_Boyaux'; }); // masqués quand le treuil est glissé sous le support (trou ascendant)
   skin(tiltHoses[0], 'Traineau', 'VerinBascule_D_Fut', [0.3, 0.9]);
   skin(tiltHoses[1], 'Traineau', 'VerinBascule_G_Fut', [0.3, 0.9]);
   skin(tiltHoses[2], 'VerinBascule_D_Fut', 'VerinBascule_G_Fut', [0.2, 0.8]);
@@ -962,7 +950,10 @@ export const MECA = {
   drive: [HB + SPY + 0.045, 0.35], ratio: 12 / 21, // pignon menant (y, z) ; 12 dents → 21 dents sur la broche
   tilt: { foot: TILT.foot, head: TILT.head, z: TILT.z, lugs: PATTES, lugY: PATTE_Y, rest: TILT.L },
   dump: { foot: DUMP.foot, head: DUMP.head },
-  winch: { x: WINCH.x, y: WINCH.y, drum: [WINCH.x + W_AXE[0], WINCH.y + W_AXE[1]] },
+  // Treuil : axe du tambour (le capot pivote autour), axe bas des bras sur le bâti, axe haut sur le capot (position haute).
+  winch: { x: WINCH.x, y: WINCH.y, drum: [WINCH.x + W_AXE[0], WINCH.y + W_AXE[1]], capot: CAPOT_HAUT,
+    piv: [WINCH.x + W_PIV[0], WINCH.y + W_PIV[1]], armTop: wCadre((CAPOT_HAUT * Math.PI) / 180, ...W_ARM_TOP).map((c, i) => c + (i ? WINCH.y : WINCH.x)) },
+  legEar: [1.035, 0.455, PZ], // oreille d'ancrage de la jambe, face avant du poteau avant (trou ascendant)
   sheaves: SHEAVES, sheaveR: SHEAVE_R, roller: ROLLER,
 };
 

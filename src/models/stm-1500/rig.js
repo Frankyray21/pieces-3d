@@ -16,11 +16,11 @@
 //   d'huile ; leurs mors, dans le carter, ne sont pas animés ;
 // — tête basculante (pages 1.8, 2.1) : boulons à œil desserrés, la tête pivote sur son axe de charnière pour dégager
 //   l'axe du trou ;
-// — trou ascendant (page 1.01, « drill 45° up ») : le treuil recule derrière le traîneau, la rallonge et sa poulie
-//   sont retirées, le vérin de relevage avance le mât de 0,6 m dans son support, les vérins de bascule sont reportés
-//   sur les pattes arrière du support, le mât bascule de 45° sur le tube arrière et les deux jambes UM-064-400D
-//   (page 1.10) le tiennent, des paliers avant libérés aux trous du flanc de la poutre. Le bas du mât descend alors
-//   15 cm sous le traîneau (9 cm sur le dessin du manuel) : la foreuse se pose sur son plancher ;
+// — trou ascendant (page 1.01 et photo de la machine en service) : le treuil est sous la foreuse, glissé entre les
+//   poteaux sous le support, capot baissé (page 8.0, « top shield down position ») ; la rallonge et sa poulie sont
+//   retirées, le vérin de relevage avance le mât de 0,6 m dans son support, les vérins de bascule sont reportés sur
+//   les pattes arrière du support, le mât bascule de 30° sur le tube arrière et les deux jambes UM-064-400D
+//   (page 1.10) le tiennent, des oreilles des poteaux avant aux trous du flanc de la poutre ;
 // — treuil (pages 8.0 à 8.4) : moteur White → chaîne 80 (14 → 28 dents) → tambour ; chaîne 35 (11 → 70 dents) →
 //   vis-mère à double filet qui promène le guide-câble d'un flasque à l'autre (trancannage).
 //
@@ -28,6 +28,7 @@
 // (pièces entières, désignées par leur numéro). La tige de forage (taille B, Ø 55,6 mm) ne figure pas au manuel :
 // elle n'est ajoutée qu'à l'export animé (scripts/export-anim.mjs), jamais au modèle du site.
 import * as THREE from 'three';
+import { buildProcedural } from '../../viewer/assembly.js';
 import REFS from './refs.js';
 import { MECA } from './drill.js';
 
@@ -35,12 +36,12 @@ const DEG = Math.PI / 180;
 const { pivots: PV, feed: FEED, headX: HX, swivelX: SWX, footX: FX, axisY: AY } = MECA;
 
 /**
- * Position de trou ascendant à 45° (page 1.01) : recul du treuil, avance du mât, et jambes. Une jambe va du palier
- * avant du traîneau (a) au trou du flanc de la poutre (b, au repos) ; rest : pied de la jambe couchée au sol.
+ * Position de trou ascendant : treuil glissé sous le support, avance du mât, angle, et jambes. Une jambe va de
+ * l'oreille du poteau avant (a) au trou du flanc de la poutre (b, au repos) ; rest : pied de la jambe couchée au sol.
  */
-export const UP = { angle: 45 * DEG, relevage: 0.6, treuil: 1.48 };
+export const UP = { angle: 30 * DEG, relevage: 0.6, treuil: 0.25 - MECA.winch.drum[0], capot: (MECA.winch.capot + 5) * DEG }; // tambour à 0,25 m devant le tube arrière
 export const LEG = (() => {
-  const a = [PV.x[0], PV.y, 0.4], b = [1.18, 0.88, 0.31];
+  const a = MECA.legEar, b = [1.18, 0.88, 0.31];
   const c = Math.cos(UP.angle), s = Math.sin(UP.angle), dx = b[0] + UP.relevage - PV.x[1], dy = b[1] - PV.y;
   const top = [PV.x[1] + dx * c - dy * s, PV.y + dx * s + dy * c, b[2]]; // trou de la poutre, mât avancé et basculé
   return { a, b, top, L: Math.hypot(top[0] - a[0], top[1] - a[1], top[2] - a[2]), rest: [-0.25, 0.04, 0.72] };
@@ -86,19 +87,25 @@ export const BONES = [
     ];
   }),
   // Treuil : axes relevés sur le modèle (resolve), rapports des chaînes 80 et 35.
-  { name: 'Treuil', parent: 'Traineau', type: 'pri', axis: [-1, 0, 0], origin: [MECA.winch.x, 0.15, 0], q: (v) => v.treuilRecul },
+  // Treuil : glissé vers l'avant sous le support (trou ascendant) ; capot pivotant sur l'axe du tambour (vis-mère,
+  // guide-câble, volant), tenu par deux bras à trous de réglage ; boyaux du moteur masqués quand le treuil est déplacé.
+  { name: 'Treuil', parent: 'Traineau', type: 'pri', axis: [1, 0, 0], origin: [MECA.winch.x, 0.15, 0], q: (v) => v.treuilAvance },
+  { name: 'Treuil_Boyaux', parent: 'Traineau', type: 'fixed', origin: [-0.3, 0.2, -0.23], scale: (v) => v.boyauxTreuil },
+  { name: 'Treuil_Capot', parent: 'Treuil', type: 'rev', axis: [0, 0, 1], origin: [...MECA.winch.drum, 0], q: (v) => v.capot },
+  ...[['Bas', 'fut'], ['Haut', 'tige']].map(([n, side]) => ({ name: `Treuil_Bras${n}`, parent: 'Treuil', type: 'aim', side, origin: [...(side === 'fut' ? MECA.winch.piv : MECA.winch.armTop), 0],
+    ram: { a: [...MECA.winch.piv, 0], onA: 'Treuil', b: [...MECA.winch.armTop, 0], on: 'Treuil_Capot' } })),
   { name: 'Cable', parent: 'Treuil', type: 'fixed', origin: [MECA.winch.drum[0], MECA.winch.drum[1] + 0.2, 0], scale: (v) => v.cable },
   { name: 'Treuil_Tambour', parent: 'Treuil', type: 'rev', axis: [0, 0, 1], origin: [...MECA.winch.drum, 0], q: (v) => v.treuil },
   { name: 'Treuil_Moteur', parent: 'Treuil', type: 'rev', axis: [0, 0, 1], origin: 'P042/UM-032-111F', q: (v) => (v.treuil * 28) / 14 },
-  { name: 'Treuil_VisMere', parent: 'Treuil', type: 'rev', axis: [0, 0, 1], origin: 'P041/UM-032-226F', q: (v) => (v.treuil * 11) / 70 },
-  { name: 'Treuil_Guide', parent: 'Treuil', type: 'pri', axis: [0, 0, 1], origin: 'P041/UM-041-020F', q: (v) => trancannage(v.treuil) },
+  { name: 'Treuil_VisMere', parent: 'Treuil_Capot', type: 'rev', axis: [0, 0, 1], origin: 'P041/UM-032-226F', q: (v) => (v.treuil * 11) / 70 },
+  { name: 'Treuil_Guide', parent: 'Treuil_Capot', type: 'pri', axis: [0, 0, 1], origin: 'P041/UM-041-020F', q: (v) => trancannage(v.treuil) },
   // Jambes UM-064-400D : couchées au sol le long du traîneau, puis posées entre le palier avant et la poutre.
   ...['D', 'G'].map((c) => ({ name: `Jambe_${c}`, parent: 'Traineau', type: 'leg', side: c === 'D' ? 1 : -1, origin: [LEG.rest[0], LEG.rest[1], (c === 'D' ? 1 : -1) * LEG.rest[2]] })),
 ];
 
 /** Grandeurs animées et leur valeur de repos. */
 export const REST = { basculeBas: 0, basculeHaut: 0, relevage: 0, avance: 0, ouverture: 0, rotation: 0, tige: 0, emerillon: 1, treuil: 0,
-  treuilRecul: 0, rallonge: 1, cable: 1, report: 0, jambes: 0 };
+  treuilAvance: 0, capot: 0, boyauxTreuil: 1, rallonge: 1, cable: 1, report: 0, jambes: 0 };
 
 /** Va-et-vient du guide-câble entre les flasques (z de −0,17 à +0,22 m), un diamètre de câble par tour. */
 function trancannage(angle) {
@@ -110,7 +117,7 @@ function trancannage(angle) {
 /** Pièces entières rattachées à un corps : assemblage, numéros de pièce, corps. */
 export const RULES = [
   ['P010', ['FBRA-002-600BB'], 'Support'],
-  ['P010', ['FBRA-002-300BB', 'FBRA-002-305BB', 'FTD-148-300TF', 'UM-079-100A-12', 'UM-064-800B'], 'Mat'],
+  ['P010', ['FBRA-002-300BB', 'FBRA-002-305BB', 'UM-079-100A-12', 'UM-064-800B'], 'Mat'],
   ['P010', ['UM-064-200C'], 'Rallonge'],
   ['P010', ['FBRA-002-400HH'], 'Treuil'],
   ['P010', ['UM-064-200DS'], 'Table'],
@@ -123,6 +130,8 @@ export const RULES = [
   ['P042', ['UM-032-102A', 'UM-032-112F'], 'Treuil_Tambour'],
   ['P040', ['UM-032-162F', 'UM-032-109F'], 'Treuil_Tambour'],
   ['P042', ['UM-032-111F'], 'Treuil_Moteur'],
+  ['P041', ['UM-032-115F'], 'Treuil_BrasBas'],
+  ['P041', ['UM-032-116F'], 'Treuil_BrasHaut'],
   ['P041', ['UM-032-226F'], 'Treuil_VisMere'],
   ['P040', ['UM-032-110F'], 'Treuil_VisMere'],
   ['P039', ['UM-032-169F', 'UM-032-102F', 'SP250-1250', 'SP375-3000'], 'Treuil_VisMere'],
@@ -135,8 +144,20 @@ export const RULES = [
  * Pose les étiquettes de corps des règles sur un modèle P010 construit, et relève les axes du treuil.
  * Renvoie les corps avec leur origine en coordonnées (repère de la foreuse).
  */
-export function resolve(root) {
+export function resolve(root, builders) {
   root.updateMatrixWorld(true);
+  // Capot du treuil : toute pièce qui change de place quand le treuil est construit avec un autre angle de capot.
+  if (builders) {
+    const pieces = (r) => { const out = []; r.traverse((o) => { if (o.userData.partRef !== undefined && !o.userData.isAssembly) out.push(o); }); return out; };
+    const centre = (o) => new THREE.Box3().setFromObject(o).getCenter(new THREE.Vector3());
+    const build = (capot) => { const m = buildProcedural(builders, 'P042', { capot, guide: 0, cable: false, cadre: true }); m.root.updateMatrixWorld(true); return pieces(m.root).map(centre); };
+    const c1 = build(MECA.winch.capot), c2 = build(MECA.winch.capot - 20);
+    let treuil = null;
+    root.traverse((o) => { if (o.userData.assemblyId === 'P042') treuil = o; });
+    const cibles = pieces(treuil);
+    if (cibles.length !== c1.length) throw new Error('rig : le treuil de P010 ne correspond pas à P042');
+    cibles.forEach((o, i) => { if (c1[i].distanceTo(c2[i]) > 1e-4) o.userData.body = 'Treuil_Capot'; });
+  }
   const center = (o) => new THREE.Box3().setFromObject(o).getCenter(new THREE.Vector3());
   // Pièces par (assemblage, numéro).
   const index = new Map();
@@ -192,11 +213,11 @@ export function pose(bones, values) {
   // Vérins : fût sur son axe de fond, pointé vers l'œil de tige ; tige posée sur la patte, même orientation.
   for (const b of bones) {
     if (b.type !== 'aim') continue;
-    const A = new THREE.Vector3(...b.ram.a), B0 = new THREE.Vector3(...b.ram.b);
-    const B = B0.clone().applyMatrix4(J.get(b.ram.on));
-    const a0 = Math.atan2(B0.y - A.y, B0.x - A.x);
+    const A0 = new THREE.Vector3(...b.ram.a), B0 = new THREE.Vector3(...b.ram.b);
+    const A = A0.clone().applyMatrix4(J.get(b.ram.onA || 'Traineau')), B = B0.clone().applyMatrix4(J.get(b.ram.on));
+    const a0 = Math.atan2(B0.y - A0.y, B0.x - A0.x);
     let a = Math.atan2(B.y - A.y, B.x - A.x);
-    if (v.report > 0) {
+    if (v.report > 0 && b.ram.b2) {
       // Vérin reporté sur la patte arrière : il tourne sur son axe de fond, de l'une à l'autre (angle et longueur).
       const B2 = new THREE.Vector3(...b.ram.b2).applyMatrix4(J.get(b.ram.on));
       const a2 = Math.atan2(B2.y - A.y, B2.x - A.x), L = A.distanceTo(B) + (A.distanceTo(B2) - A.distanceTo(B)) * v.report;
@@ -204,7 +225,7 @@ export function pose(bones, values) {
       B.set(A.x + L * Math.cos(a), A.y + L * Math.sin(a), A.z);
     }
     const R = new THREE.Matrix4().makeRotationZ(a - a0);
-    const P = b.side === 'fut' ? A : B, P0 = b.side === 'fut' ? A : B0;
+    const P = b.side === 'fut' ? A : B, P0 = b.side === 'fut' ? A0 : B0;
     J.set(b.name, new THREE.Matrix4().makeTranslation(P.x, P.y, P.z).multiply(R).multiply(m.makeTranslation(-P0.x, -P0.y, -P0.z)));
     b.length = A.distanceTo(B);
   }
@@ -246,8 +267,9 @@ function integrate(keys, t) {
 const S = FEED.stroke; // 1,808 m
 const ROD_L = 3.048; // tige de 10 pi
 const S2 = ROD_L - S; // seconde course : 1,240 m
-const ROD5 = 1.524, S_UP = 1.25; // trou ascendant : tige de 5 pi, course limitée par le moteur de la tête au-dessus du traîneau
-const HAUT_SANS_RALLONGE = { rallonge: 0.001, cable: 0.001 }; // rallonge, poulie et câble retirés
+const ROD5 = 1.524, S_UP = 1.0; // trou ascendant : tige de 5 pi, forée en deux courses
+// Trou ascendant : treuil sous le support, capot baissé ; rallonge, poulie, câble et boyaux du treuil non montrés.
+const ASCENDANT = { treuilAvance: UP.treuil, capot: UP.capot, rallonge: 0.001, cable: 0.001, boyauxTreuil: 0.001 };
 
 /**
  * Séquences : nom, durée (s), boucle, résumé, puis grandeurs animées en fonction du temps.
@@ -294,25 +316,24 @@ export const CLIPS = [
     values: (t) => ({ treuil: integrate([[0, 0], [1.5, 1], [10.5, 1], [12, 0]], t) }),
   },
   {
-    name: 'Ascendant_45_Mise_En_Place', duration: 36, loop: false,
-    summary: 'Mise en position de trou ascendant à 45° (page 1.01) : le treuil recule derrière le traîneau, le mât avance de 0,6 m dans son support, les vérins de bascule sont reportés sur les pattes arrière, le mât bascule sur le tube arrière, puis les deux jambes sont posées.',
+    name: 'Ascendant_30_Mise_En_Place', duration: 28, loop: false,
+    summary: 'Mise en position de trou ascendant à 30°, treuil sous la foreuse (capot baissé) : le mât avance de 0,6 m dans son support, les vérins de bascule sont reportés sur les pattes arrière, le mât bascule sur le tube arrière, puis les deux jambes sont posées.',
     values: (t) => ({
-      ...HAUT_SANS_RALLONGE,
-      treuilRecul: track([[0, 0], [5, UP.treuil]], t),
-      relevage: track([[5, 0], [11, UP.relevage]], t),
-      report: track([[11, 0], [15, 1]], t),
-      basculeHaut: track([[15, 0], [27, UP.angle]], t),
-      jambes: track([[27, 0], [33, 1]], t),
+      ...ASCENDANT,
+      relevage: track([[0, 0], [6, UP.relevage]], t),
+      report: track([[6, 0], [10, 1]], t),
+      basculeHaut: track([[10, 0], [20, UP.angle]], t),
+      jambes: track([[20, 0], [26, 1]], t),
     }),
   },
   {
-    name: 'Ascendant_45_Forage', duration: 20, loop: false,
-    summary: 'Forage ascendant à 45°, tige de 5 pi : course de 1,25 m (la tête ne recule pas davantage, son moteur toucherait le traîneau), reprise de course, puis fin de la tige.',
+    name: 'Ascendant_30_Forage', duration: 20, loop: false,
+    summary: 'Forage ascendant à 30°, tige de 5 pi : course de 1 m, reprise de course, puis fin de la tige.',
     values: (t) => ({
-      ...HAUT_SANS_RALLONGE, treuilRecul: UP.treuil, relevage: UP.relevage, report: 1, basculeHaut: UP.angle, jambes: 1,
-      rotation: integrate([[0, 0], [1, 1], [9, 1], [10, 0], [14.5, 0], [15.5, 1], [18, 1], [19, 0]], t),
-      avance: track([[0, S_UP], [1, S_UP], [9, 0], [11, 0], [13.5, ROD5 - S_UP], [15.5, ROD5 - S_UP], [18, 0]], t),
-      tige: track([[0, -ROD5], [1, -ROD5], [9, S_UP - ROD5], [15.5, S_UP - ROD5], [18, 0]], t),
+      ...ASCENDANT, relevage: UP.relevage, report: 1, basculeHaut: UP.angle, jambes: 1,
+      rotation: integrate([[0, 0], [1, 1], [8, 1], [9, 0], [13.5, 0], [14.5, 1], [18, 1], [19, 0]], t),
+      avance: track([[0, S_UP], [1, S_UP], [8, 0], [10, 0], [12.5, ROD5 - S_UP], [14.5, ROD5 - S_UP], [18, 0]], t),
+      tige: track([[0, -ROD5], [1, -ROD5], [8, S_UP - ROD5], [14.5, S_UP - ROD5], [18, 0]], t),
     }),
   },
   {

@@ -55,7 +55,7 @@
       "id": "F",
       "type": "graisseur",
       "titre": "Serre-tiges de pied Boyles 12HH",
-      "lieu": "Dessus du corps du serre-tiges (2920455), sous la plaque du boîtier FTD-148-300TF qui porte le support FTD-148-800K du vérin supérieur : graisseur ZNPT250 (1/4 NPT selon la liste)",
+      "lieu": "Dessus du corps du serre-tiges (2920455) : graisseur ZNPT250 (1/4 NPT selon la liste)",
       "assemblage": "P032",
       "pages": ["P008", "P031", "P032", "P028"],
       "source": "Page 1.04, détail F ; pages 1.20 à 1.22 (ZNPT250) ; page 1.15, détail A"

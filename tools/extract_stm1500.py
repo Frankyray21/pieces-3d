@@ -392,6 +392,9 @@ for aid, (title, fr, pn, sheets) in ASM.items():
         if aid == 'P010' and r['pn'] in ('FTD-030-100ZZ', 'FTD-148-800K'):
             extra['note'] = 'Non monté en 3D : retiré du modèle à la demande de l\'utilisateur (voir les pages 1.12 et 1.15).'
             extra['no3d'] = True
+        if aid == 'P010' and r['pn'] == 'FTD-148-300TF':
+            extra['note'] = 'Non monté en 3D : retiré du modèle à la demande de l\'utilisateur (sur la machine, le serre-tiges n\'a pas de boîtier ; voir la page 1.3).'
+            extra['no3d'] = True
         if aid == 'P010' and r['pn'] == 'UM-064-351D':
             extra['note'] = 'Non monté en 3D : la page 1.01 ne le montre posé dans aucune vue (voir 1.10).'
             extra['no3d'] = True

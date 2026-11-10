@@ -30,7 +30,7 @@ const out = args[0] || 'stm-1500-foreuse-animee.glb';
 
 const model = buildProcedural(builders, 'P010');
 const root = model.root;
-const bones = resolve(root);
+const bones = resolve(root, builders);
 const boneIndex = new Map(bones.map((b, i) => [b.name, i]));
 root.updateMatrixWorld(true);
 

@@ -53,9 +53,9 @@ const R_MOYEU = 0.0381; // alésage Ø 3 po du moyeu des 131FB (bague 236F, anne
 const Z105 = [0.393, 0.405]; // flancs du capot arrière
 const Z103 = [-0.425, -0.473]; // carter de la chaîne 35
 const POST = { x: [0.304, 0.355], z: [0.247, 0.298], h: 0.228 }; // montants avant
-const PIV = [0.155, 0.188]; // axe bas des bras (sur le bâti)
+export const PIV = [0.155, 0.188]; // axe bas des bras (sur le bâti)
 const BAR = [0.115, 0.19]; // barre transversale à goupilles (oreilles sur les longerons supérieurs)
-const ARM_TOP = [0.286, 0.15]; // axe haut des bras (cadre pivotant)
+export const ARM_TOP = [0.286, 0.15]; // axe haut des bras (cadre pivotant)
 const ARM_L = 0.36; // longueur du bras supérieur 116F (trou de réglage à 0,33 de l'axe haut)
 // Bras inférieur 115F (page 8.3, détail B) : dix trous de réglage au pas de 1 po, du n° 10 (64 mm de l'axe bas)
 // au n° 1 (293 mm) ; longueur propre au 115F.
@@ -278,7 +278,8 @@ export function P042(api, opts = {}) {
       ...TROUS_UG.map(([y, z]) => at(bolt(0.0127, 0, 'steel', { axis: '-x' }), [L / 2 - t, y, z])),
       ...TROUS_UG.map(([y, z]) => at(nut(0.019, 0.011, 'steel', { axis: 'x' }), [x0 + t + 0.0055, y, z])),
     ];
-    api.add(group(...ug));
+    // Le cadre reste sur le traîneau quand le treuil est glissé sous le support (corps « Traineau » de l'animation).
+    api.add(Object.assign(group(...ug), { userData: { body: 'Traineau' } }));
   }
 
   // 9 — Tambour UM-032-102A : fût, flasques, arbre Ø 2 po ; câble de la couche extérieure (spires

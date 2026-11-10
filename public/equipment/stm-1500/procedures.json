@@ -65,11 +65,11 @@
           "parts": ["5"]
         },
         {
-          "title": "Avance, rallonge, plaque de pied et boîtier du serre-tiges",
+          "title": "Avance, rallonge et plaque de pied",
           "sheet": "P013",
           "page": "1.3",
-          "text": "Page 1.3 : poutre d'avance FBRA-002-300BB (repère 2), rallonge UM-064-200C (repère 10), plaque de pied FBRA-002-305BB (repère 3) et boîtier du serre-tiges FTD-148-300TF (repère 7), tous dans la liste de la page 1.3.",
-          "parts": ["2", "10", "3", "7"]
+          "text": "Page 1.3 : poutre d'avance FBRA-002-300BB (repère 2), rallonge UM-064-200C (repère 10) et plaque de pied FBRA-002-305BB (repère 3), tous dans la liste de la page 1.3 (le boîtier du serre-tiges FTD-148-300TF, repère 7, n'est pas monté).",
+          "parts": ["2", "10", "3"]
         },
         {
           "title": "Base du serre-tiges de pied",

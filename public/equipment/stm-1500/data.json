@@ -284,7 +284,11 @@
      "7",
      "FTD-148-300TF",
      1,
-     "FOOT CLAMP HOUSING (BOYLE)"
+     "FOOT CLAMP HOUSING (BOYLE)",
+     {
+      "note": "Non monté en 3D : retiré du modèle à la demande de l'utilisateur (sur la machine, le serre-tiges n'a pas de boîtier ; voir la page 1.3).",
+      "no3d": true
+     }
     ],
     [
      "8",
