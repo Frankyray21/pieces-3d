@@ -45,6 +45,14 @@
       "status": "3D de la procédure (juillet 2026) : plancher 16 × 32 pi pièce par pièce, blocages, cage, marches, garde-corps, plancher secondaire, démantèlement et critères de choix"
     },
     {
+      "id": "rack-tiges-dd",
+      "name": "Support de tiges de forage (rack à rods)",
+      "manufacturer": "Machines Roger International",
+      "category": "Rapport de certification P19113",
+      "thumbnail": "equipment/rack-tiges-dd/thumbnail.webp",
+      "status": "3D du rapport de certification Forcetech (novembre 2019) : support peint en rouge, vide pièce par pièce, et chargé de 184 tiges NQ appuyé au mur"
+    },
+    {
       "id": "stm-1500",
       "name": "Usinage Marcotte STM-1500",
       "manufacturer": "Usinage Marcotte",
@@ -52,6 +60,14 @@
       "thumbnail": "equipment/stm-1500/thumbnail.webp",
       "extras": ["bulles", "donnees", "entretien", "procedures", "systemes"],
       "status": "Manuel de pièces s/n STM-1500-128 (96 pages) : 42 assemblages et 7 documents ; 3D réaliste de la foreuse (traîneau, avance à 0°, tête Boyles, serre-tiges, vérins, treuil), du groupe hydraulique 125 HP et de la console ; rendus Blender"
+    },
+    {
+      "id": "table-a-core",
+      "name": "Table à carottes C16080960",
+      "manufacturer": "Foresco (pour Machines Roger)",
+      "category": "Table d'atelier en aluminium",
+      "thumbnail": "equipment/table-a-core/thumbnail.webp",
+      "status": "3D tirée de la CAO SolidWorks du fabricant (8 pièces, facettes exactes), montée et rendue dans Blender ; plan d'assemblage et développé de la jupe"
     }
   ]
 }

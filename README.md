@@ -106,6 +106,15 @@ pièces (numéro, quantité, page du manuel).
   porte son numéro d'étape (`userData.step`) pour animer le montage
   (vidéo de formation).
 
+- **Support de tiges de forage — « rack à rods »** (`rack-tiges-dd`, rapport de
+  certification Forcetech P19113 du 2019-11-27 pour Machines Roger
+  International, 6 pages) : le support vide pièce par pièce (P01 : poteaux,
+  pattes réglables, traverses télescopiques, membrures d'appui au mur et leurs
+  rallonges, goupilles, attaches, chaînes) et le support chargé de 184 tiges NQ
+  de 3 m à 82°, appuyé au mur (P02, figures 2 et 3). Le rapport ne donne pas de
+  cotes : dimensions estimées sur les figures (23 tiges NQ entre les poteaux).
+  Support peint en rouge en entier (le rapport le montre gris, pattes rouges).
+
 - **Usinage Marcotte STM-1500** (`stm-1500`, foreuse souterraine
   s/n STM-1500-128, manuel de pièces de Machines Roger, 96 pages) : 42
   assemblages et 7 documents (transmission Funk, refroidisseur, accumulateur,
@@ -149,6 +158,19 @@ pièces (numéro, quantité, page du manuel).
   `tools/extract_stm1500.py` (nettoyage, pages scannées transcrites, liens,
   `src/models/stm-1500/refs.js`). Rendus photoréalistes Blender dans
   `public/equipment/stm-1500/renders/`.
+
+- **Table à carottes C16080960** (`table-a-core`, table d'atelier en aluminium
+  6061-T6 fabriquée par Foresco pour Machines Roger, projet 07-0006, 64 × 65 ×
+  34 5/8 po) : la 3D ne vient pas d'un manuel mais de la CAO du fabricant.
+  `tools/solidworks_asm.py` lit le fichier d'assemblage SolidWorks (.SLDASM)
+  sans SolidWorks : arbre des composants, poses et facettes d'affichage de
+  chaque pièce (bandes de triangles) ; `tools/blender_table_core.py` monte la
+  scène dans Blender (soudure, arêtes vives, aluminium nu, contreplaqué), écrit
+  `table-a-core.blend`, `table-a-core.glb`, les rendus Cycles
+  (`public/equipment/table-a-core/renders/`) et les maillages du site
+  (`src/models/table-a-core/mesh.js`). Repères 1 à 7 : nomenclature du plan
+  d'assemblage ; 8 : le contreplaqué du modèle. Pages : plan d'assemblage
+  (aperçu du .SLDDRW) et développé de la jupe C16080961 retracé d'après le DWG.
 
 La page d'accueil (adresse sans « # », ou le logo en haut à gauche) liste
 les équipements et permet de passer de l'un à l'autre. Les adresses du premier équipement restent `#F05` ; celles des autres
