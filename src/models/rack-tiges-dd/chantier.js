@@ -137,13 +137,18 @@ export function place(S, o) {
   return g;
 }
 
-/** Décor du chantier : { rock (paroi, sol de roche, grillage, soutènement), deck (plancher de foreuse) }. */
+/**
+ * Décor du chantier : { rock (paroi, sol de roche, grillage, soutènement), deck (plancher de
+ * foreuse), cibles (fonds de trous marqués sur le front de taille : départ des lignes de tir) }.
+ */
 export function decor(api) {
   const S = api.S;
   const gal = gallery(S);
   gal.remove(gal.children[2]); // paroi d'en face : la vue reste dégagée
+  const marks = gal.children.filter((o) => o.userData.cible);
+  marks.forEach((o) => gal.remove(o));
   const rock = S.group(place(S, cropX(api.THREE, still(gal), SEC + 0.3)));
   rock.add(groundSupport(api, -MINE.x0 + 0.05, SEC + 0.25 - MINE.x0));
   const deck = place(S, S.group(['P04', 'P07'].map((id) => still(buildProcedural(plancher, id, { inPlace: true, quality: 0.4 }).root))));
-  return { rock, deck };
+  return { rock, deck, cibles: place(S, S.group(marks)) };
 }

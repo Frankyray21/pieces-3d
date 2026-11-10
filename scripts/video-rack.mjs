@@ -11,6 +11,7 @@
 // Tournage (images par passage dans <out>/images/<passage>/, puis encodage) :
 //   node scripts/video-rack.mjs --out scratch/rack/video [--fps 24] [--url http://localhost:5174]
 //   node scripts/video-rack.mjs --out scratch/rack/video --only etape-05,etape-12   (re-tourne ces passages, garde les autres)
+//   … --only titre,etape-00 --no-encode    (tournage seul : deux tournages en parallèle se partagent les passages)
 //   node scripts/video-rack.mjs --out scratch/rack/video --encode-only [--voix video/rack/voix.mp3]
 //
 // Réglage des plans (serveur d'images fixes, une page gardée ouverte) :
@@ -24,7 +25,7 @@
 //   GET /segments        passages du scénario (identifiant, étape, début, durée, plans)
 //   GET /eval?js=…       exécute du code dans la page (essais d'ambiance : fond, lumières)
 import { createRequire } from 'node:module';
-import { mkdirSync, rmSync, existsSync, readdirSync, symlinkSync } from 'node:fs';
+import { mkdirSync, rmSync, existsSync, readdirSync, symlinkSync, linkSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { createServer } from 'node:http';
 import { join, resolve, dirname } from 'node:path';
@@ -82,7 +83,7 @@ async function open() {
   const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
   page.on('pageerror', (e) => console.log('ERREUR', e.message));
   await page.clock.install();
-  const ctx = { browser, page, inSteps: false, at: -1, tags: 'null', inset: false, card: false, badge: null };
+  const ctx = { browser, page, inSteps: false, at: -1, tags: 'null', hide: '[]', over: '', busy: false, camKey: '', last: null, count: { rendues: 0, habillées: 0, reprises: 0 } };
   ctx.load = async (first) => {
     if (first) await page.goto(`${base}/#rack-tiges-dd.P02`, { waitUntil: 'networkidle' });
     else { await page.clock.resume(); await page.reload({ waitUntil: 'networkidle' }); }
@@ -142,7 +143,7 @@ async function open() {
     // Horloge arrêtée : le temps n'avance plus que par runFor.
     await page.clock.pauseAt(new Date(Date.now() + 3000));
     await page.clock.runFor(500);
-    Object.assign(ctx, { inSteps: true, at: 0, tags: 'null', inset: false, card: false, badge: null }); // la page s'ouvre en montage par étapes, à l'étape 0
+    Object.assign(ctx, { inSteps: true, at: 0, tags: 'null', hide: '[]', over: '', busy: false, camKey: '', last: null }); // la page s'ouvre en montage par étapes, à l'étape 0
   };
   await ctx.load(true);
   return ctx;
@@ -188,40 +189,63 @@ async function enter(ctx, s) {
 
 const fade = (t, from, to, d = 0.4) => Math.max(0, Math.min(1, (t - from) / d, (to - t) / d));
 
-/** Habillage du passage à l'instant t : thèmes de repères, pastille du plan, incrustation, carton. */
+/**
+ * Habillage du passage à l'instant t : thèmes de repères, pièces masquées, pastille du plan,
+ * incrustation, carton. Retourne ce qui a changé : { scene } la 3D, { overlay } l'habillage.
+ */
 async function dress(ctx, s, t) {
+  let scene = false;
   const tags = JSON.stringify(script.tagsAt(s, t));
-  if (tags !== ctx.tags) { ctx.tags = tags; await ctx.page.evaluate((x) => window.viewer.setStepTags(x), JSON.parse(tags)); }
+  if (tags !== ctx.tags) { ctx.tags = tags; scene = true; await ctx.page.evaluate((x) => window.viewer.setStepTags(x), JSON.parse(tags)); }
   const shot = script.shotAt(s, t);
-  const badge = shot.badge || null;
-  if (badge !== ctx.badge) { ctx.badge = badge; await ctx.page.evaluate((x) => window.__badge(x), badge); }
   // Pièces masquées pendant le plan (hide : repères de la liste, ex. la paroi pour une vue en coupe).
-  await ctx.page.evaluate((refs) => {
-    const v = window.viewer, was = window.__hidden || [];
-    for (const r of was) if (!refs.includes(r)) for (const o of v.model.refs.get(r) || []) o.visible = true;
-    for (const r of refs) for (const o of v.model.refs.get(r) || []) o.visible = false;
-    if (was.length || refs.length) v.invalidate();
-    window.__hidden = refs;
-  }, shot.hide || []);
+  const hide = JSON.stringify(shot.hide || []);
+  if (hide !== ctx.hide) {
+    ctx.hide = hide; scene = true;
+    await ctx.page.evaluate((refs) => {
+      const v = window.viewer;
+      for (const r of window.__hidden || []) if (!refs.includes(r)) for (const o of v.model.refs.get(r) || []) o.visible = true;
+      for (const r of refs) for (const o of v.model.refs.get(r) || []) o.visible = false;
+      window.__hidden = refs;
+      v.invalidate();
+    }, shot.hide || []);
+  }
   const i = s.inset, onI = !!i && t >= i.from && t < i.to;
-  if (onI || ctx.inset) {
-    ctx.inset = onI;
-    await ctx.page.evaluate((x) => window.__inset(x), onI ? { url: `${base}/equipment/rack-tiges-dd/pages/${i.page}.webp`, crop: i.crop, w: i.w, ratio: i.ratio || 1705 / 1318, caption: i.caption, alpha: fade(t, i.from, i.to) } : null);
-  }
   const c = s.card, onC = !!c && t >= c.from && t < c.to;
-  if (onC || ctx.card) {
-    ctx.card = onC;
-    await ctx.page.evaluate((x) => window.__card(x), onC ? { title: c.title, alpha: fade(t, c.from, c.to), rows: c.rows.map((r) => ({ cells: r.cells, alpha: fade(t, c.from + (r.t || 0), 1e9) })) } : null);
+  const inset = onI ? { url: `${base}/equipment/rack-tiges-dd/pages/${i.page}.webp`, crop: i.crop, w: i.w, ratio: i.ratio || 1705 / 1318, caption: i.caption, alpha: fade(t, i.from, i.to) } : null;
+  const card = onC ? { title: c.title, alpha: fade(t, c.from, c.to), rows: c.rows.map((r) => ({ cells: r.cells, alpha: fade(t, c.from + (r.t || 0), 1e9) })) } : null;
+  const over = JSON.stringify([shot.badge || null, inset, card]);
+  const overlay = over !== ctx.over;
+  if (overlay) {
+    ctx.over = over;
+    await ctx.page.evaluate(([b, x, y]) => { window.__badge(b); window.__inset(x); window.__card(y); }, [shot.badge || null, inset, card]);
   }
+  return { scene, overlay };
 }
 
-/** Une image : caméra posée, horloge avancée de dt, rendu, capture. */
-async function shoot(ctx, cam, dt, file) {
+/**
+ * Une image : caméra posée, horloge avancée de dt, puis seulement ce qu'il faut refaire. Le rendu 3D
+ * (coûteux) n'est refait que si la scène a changé : caméra, animation en cours, étape, repères. La
+ * capture de la page n'est refaite que si l'écran a changé ; sinon l'image précédente est reprise (lien).
+ */
+async function shoot(ctx, cam, dt, file, { scene = false, overlay = false } = {}) {
+  const key = JSON.stringify([cam.pos, cam.tgt, cam.fov]);
   await ctx.page.evaluate(([p, t, f]) => window.__cam(p, t, f), [cam.pos, cam.tgt, cam.fov]);
   await ctx.page.clock.runFor(dt);
   // La caméra de l'étape (interface) ne doit pas reprendre la main entre deux images.
-  await ctx.page.evaluate(([p, t, f]) => { window.__cam(p, t, f); window.__flush(); }, [cam.pos, cam.tgt, cam.fov]);
-  await ctx.page.screenshot({ path: file, type: 'jpeg', quality: 92, timeout: 240000 });
+  const busy = await ctx.page.evaluate(([p, t, f]) => { window.__cam(p, t, f); return window.viewer.tweens.some((x) => x.kind !== 'camera'); }, [cam.pos, cam.tgt, cam.fov]);
+  const render = scene || busy || ctx.busy || key !== ctx.camKey || !ctx.last;
+  ctx.busy = busy;
+  ctx.camKey = key;
+  if (render) await ctx.page.evaluate(() => window.__flush());
+  if (render || overlay) {
+    await ctx.page.screenshot({ path: file, type: 'jpeg', quality: 92, timeout: 240000 });
+    ctx.last = file;
+    ctx.count[render ? 'rendues' : 'habillées']++;
+  } else {
+    linkSync(ctx.last, file);
+    ctx.count.reprises++;
+  }
 }
 
 const vec = (s) => s.split(',').map(Number);
@@ -265,20 +289,21 @@ if (servePort) {
       s = segs.find((x) => x.step === n) || segs[0];
       cam = { pos: vec(q.get('pos')), tgt: vec(q.get('tgt')), fov: q.get('fov') ? Number(q.get('fov')) : undefined };
       const tags = !q.get('tags') || q.get('tags') === '-' ? null : q.get('tags').split(',');
-      ctx.tags = JSON.stringify(tags);
-      await ctx.page.evaluate(([x, hide]) => {
+      const hide = q.get('hide') ? q.get('hide').split(',') : [];
+      await ctx.page.evaluate(([x, h]) => {
         const v = window.viewer;
         v.setStepTags(x); window.__badge(null); window.__inset(null); window.__card(null);
         for (const r of window.__hidden || []) for (const o of v.model.refs.get(r) || []) o.visible = true;
-        for (const r of hide) for (const o of v.model.refs.get(r) || []) o.visible = false;
-        window.__hidden = hide;
-      }, [tags, q.get('hide') ? q.get('hide').split(',') : []]);
-      Object.assign(ctx, { badge: null, inset: false, card: false });
+        for (const r of h) for (const o of v.model.refs.get(r) || []) o.visible = false;
+        window.__hidden = h;
+      }, [tags, hide]);
+      Object.assign(ctx, { tags: JSON.stringify(tags), hide: JSON.stringify(hide), over: '' });
       if (q.get('anim') != null && n != null) await ctx.page.evaluate(([k, a]) => { for (const x of window.__anims()) if (x.step === k) x.update(a); window.viewer.invalidate(); }, [n, Number(q.get('anim'))]);
     }
     await band(ctx, q.get('band') === '0' ? null : s);
     const lab = await ctx.page.evaluate(() => document.querySelector('#btn-labels').getAttribute('aria-pressed') === 'true');
     if (lab !== (q.get('labels') === '1')) await click(ctx, '#btn-labels');
+    ctx.last = null; // image fixe : toujours rendue et capturée
     await shoot(ctx, cam, 400, file);
     return { ok: true, out: file, cam };
   };
@@ -303,16 +328,21 @@ if (servePort) {
       await band(ctx, s);
       const count = Math.round(s.dur * FPS);
       let cur = s.step;
+      ctx.last = null; // nouveau passage, nouveau bandeau : première image toujours rendue
+      ctx.count = { rendues: 0, habillées: 0, reprises: 0 };
       for (let f = 0; f < count; f++) {
         const t = f / FPS, st = script.stepAt(s, t);
-        if (st !== cur) { await showStep(ctx, st); cur = st; }
-        await dress(ctx, s, t);
-        await shoot(ctx, script.cameraAt(segs, i, t), 1000 / FPS, join(dir, `f${String(f).padStart(5, '0')}.jpg`));
+        const stepped = st !== cur;
+        if (stepped) { await showStep(ctx, st); cur = st; }
+        const d = await dress(ctx, s, t);
+        await shoot(ctx, script.cameraAt(segs, i, t), 1000 / FPS, join(dir, `f${String(f).padStart(5, '0')}.jpg`), { scene: d.scene || stepped, overlay: d.overlay });
       }
-      console.log(`${s.id} : ${count} images (${((Date.now() - t0) / 1000).toFixed(0)} s)`);
+      console.log(`${s.id} : ${count} images, dont ${ctx.count.rendues} rendues, ${ctx.count['habillées']} habillées, ${ctx.count.reprises} reprises (${((Date.now() - t0) / 1000).toFixed(0)} s)`);
     }
     await ctx.browser.close();
   }
+  // --no-encode : tournage seul (plusieurs tournages en parallèle, chacun ses passages, puis un seul encodage).
+  if (args.includes('--no-encode')) process.exit(0);
   // Encodage : les passages bout à bout, dans l'ordre du scénario (suite d'images numérotée par liens).
   const seq = join(out, 'suite');
   rmSync(seq, { recursive: true, force: true });

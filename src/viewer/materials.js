@@ -93,10 +93,12 @@ const defs = {
   fluoRed: { color: 0xff3020, emissive: 0x5a0800, emissiveIntensity: 1, roughness: 0.6 },
   fluoOrange: { color: 0xff7a10, emissive: 0x4a1800, emissiveIntensity: 1, roughness: 0.55 },
   // Tiges de forage usagées : acier terni, brun de rouille plus ou moins marqué.
-  rodWorn: { color: 0x5a4f47, metalness: 0.55, roughness: 0.7, fin: 'cast' },
-  rodRust: { color: 0x6e4630, metalness: 0.35, roughness: 0.82, fin: 'cast' },
-  rodRustDark: { color: 0x4a3226, metalness: 0.4, roughness: 0.85, fin: 'cast' },
-  rodDull: { color: 0x4b4a48, metalness: 0.6, roughness: 0.66, fin: 'cast' },
+  // Mat, en éclairage diffus simple (lambert) : 184 tiges empilées couvrent l'écran sur 8 épaisseurs,
+  // et le matériau physique à relief coûtait à lui seul les trois quarts du temps de rendu.
+  rodWorn: { color: 0x62574e, lambert: true },
+  rodRust: { color: 0x7a4e35, lambert: true },
+  rodRustDark: { color: 0x52382a, lambert: true },
+  rodDull: { color: 0x53524f, lambert: true },
   // Repères de mesure du montage par étapes : vert = permis, zones translucides.
   repereVert: { color: 0x2fd06a, emissive: 0x0c5a26, emissiveIntensity: 1, roughness: 0.55 },
   zoneVerte: { color: 0x35d06a, emissive: 0x0c5a26, emissiveIntensity: 0.7, roughness: 0.7, transparent: true, opacity: 0.4, depthWrite: false, side: THREE.DoubleSide },
@@ -334,9 +336,10 @@ export function mat(name) {
   if (!m) {
     const d = defs[name];
     if (!d) throw new Error(`Matériau inconnu : ${name}`);
-    const { fin, ...p } = d;
+    const { fin, lambert, ...p } = d;
     const physical = ['clearcoat', 'ior', 'specularIntensity'].some((k) => k in p);
-    m = physical ? new THREE.MeshPhysicalMaterial(p) : new THREE.MeshStandardMaterial(p);
+    // lambert : matériau mat à éclairage diffus, bien moins coûteux (objets très nombreux).
+    m = lambert ? new THREE.MeshLambertMaterial(p) : physical ? new THREE.MeshPhysicalMaterial(p) : new THREE.MeshStandardMaterial(p);
     // Faces légèrement repoussées en profondeur : les contours dessinés
     // exactement sur les arêtes restent nets (pas de scintillement).
     m.polygonOffset = true;

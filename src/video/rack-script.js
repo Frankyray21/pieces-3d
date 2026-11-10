@@ -6,6 +6,9 @@
 // plans de caméra, choisis selon ce qui est expliqué (ensemble, gros plan,
 // profil pour un angle, plongée pour le quinconce, coupe pour le trou).
 //
+// Les plans sont fixes ; la caméra ne dérive que pendant une animation (perçage, pose du boulon,
+// support qu'on incline, serrage) : hors de là, l'image ne change pas et le tournage la reprend.
+//
 // Plans (shots) : repère du chantier (mètres : X le long de la paroi, Y vers
 // le haut depuis le plancher, +Z vers l'intérieur de la galerie ; paroi à
 // Z ≈ −1, pieds du support à Z = 0). Un plan commence à l'instant t du
@@ -28,19 +31,22 @@ const PASSAGES = [
     id: 'titre', step: null, num: 'PRO-DD-ST-008', title: 'Installer le support de tiges de forage',
     text: 'Procédure de travail · Machines Roger International',
     voix: 'Installer le support de tiges de forage. Procédure de travail PRO-DD-ST-008.',
-    shots: [{ t: 0, pos: [-3.2, 2.05, 4.7], tgt: [0, 1.25, -0.1], to: { pos: [-2.6, 1.9, 4.0] } }],
+    shots: [
+      { t: 0, pos: [-2.9, 1.95, 4.35], tgt: [0, 1.25, -0.1] },
+    ],
   },
   {
     id: 'etape-00', step: null, num: 'Avant de commencer', title: 'Les responsabilités', text: '',
-    voix: "Avant de commencer. Comme travailleur, tu respectes la procédure, surtout la quantité de tiges et l'angle d'empilage dans le support. Le superviseur fait respecter la procédure en tout temps, et fait reprendre toute installation non conforme. Avant de quitter le site, la mine fore des trous de service, pour y introduire des boulons à œil.",
-    card: { from: 1.2, to: 24.3, title: 'Qui fait quoi', rows: [
+    voix: "Avant de commencer. Comme travailleur, tu respectes la procédure, surtout la quantité de tiges et l'angle d'empilage dans le support. Le superviseur fait respecter la procédure en tout temps, et fait reprendre toute installation non conforme. Avant de quitter le site de forage au diamant, la mine fore des trous de service, pour y introduire des boulons à œil.",
+    card: { from: 1.2, to: 25.8, title: 'Qui fait quoi', rows: [
       { t: 0.4, cells: ['Travailleur', 'Quantité de tiges et angle d’empilage'] },
       { t: 7.4, cells: ['Superviseur', 'Fait reprendre toute installation non conforme'] },
       { t: 14.4, cells: ['Mine', 'Fore les trous de service (boulons à œil)'] },
     ] },
     shots: [
-      { t: 0, pos: [-2.6, 1.9, 4.0], tgt: [0, 1.25, -0.1], to: { pos: [-0.6, 1.75, 4.3] }, glide: 0.1 },
-      { t: 12, pos: [-0.6, 1.75, 4.3], tgt: [0, 1.25, -0.1], to: { pos: [1.7, 1.7, 3.7] }, glide: 0.1 },
+      { t: 0, pos: [3.7, 1.55, 1.5], tgt: [0.2, 1.35, -0.15], cut: true },
+      { t: 8.4, pos: [-0.3, 1.7, 4.6], tgt: [0, 1.3, -0.1], cut: true },
+      { t: 15.4, pos: [-1.35, 1.72, -0.5], tgt: [0, 1.5, -0.92], cut: true },
     ],
   },
   {
@@ -49,7 +55,9 @@ const PASSAGES = [
     voix: 'Étape 1. Choisis un endroit près du mur, et loin de la ligne de tir des trous de forage. La procédure donne des exemples de positionnement.',
     reveal: [{ t: 0, tags: ['mur'] }, { t: 3.6, tags: ['mur', 'tir'] }],
     inset: { page: 'P11', crop: [0.285, 0.112, 0.722, 0.365], from: 8, to: 12.3, caption: 'Exemples de positionnement (procédure, page 5)' },
-    shots: [{ t: 0, pos: [2.1, 3.6, 4.0], tgt: [-0.9, 0.3, 0.6], to: { pos: [1.5, 3.0, 3.3] }, cut: true }],
+    shots: [
+      { t: 0, pos: [1.8, 3.3, 3.65], tgt: [-0.9, 0.3, 0.6], cut: true },
+    ],
   },
   {
     id: 'etape-02', step: 2, num: 'Étape 2 / 15', title: 'Percer le trou au mur',
@@ -58,9 +66,9 @@ const PASSAGES = [
     anim: { delay: 5000, dur: 4400 },
     reveal: [{ t: 0, tags: ['centre'] }, { t: 4.2, tags: ['+coupe'] }, { t: 10.2, tags: ['haut'] }],
     shots: [
-      { t: 0, pos: [-1.2, 1.7, 3.1], tgt: [0, 1.3, -0.9], to: { pos: [-1.0, 1.68, 2.7] }, glide: 2 },
+      { t: 0, pos: [-1.1, 1.69, 2.9], tgt: [0, 1.3, -0.9], cut: true },
       { t: 4.2, pos: [1.2, 1.58, -0.9], tgt: [0, 1.5, -0.88], to: { pos: [1.0, 1.57, -1.08], tgt: [0, 1.5, -1.06] }, cut: true, badge: 'Vue en coupe', hide: ['M'] },
-      { t: 10.2, pos: [-2.0, 1.3, 1.6], tgt: [-0.3, 0.8, -0.9], to: { pos: [-1.75, 1.28, 1.35] }, cut: true },
+      { t: 10.2, pos: [-1.85, 1.29, 1.45], tgt: [-0.3, 0.8, -0.9], cut: true },
     ],
   },
   {
@@ -72,7 +80,7 @@ const PASSAGES = [
     inset: { page: 'P08', crop: [0.43, 0.172, 0.63, 0.272], w: 300, from: 0.6, to: 3.6, caption: 'Boulon à œil (procédure, page 2)' },
     shots: [
       { t: 0, pos: [0.75, 1.64, -0.2], tgt: [0, 1.52, -0.84], to: { pos: [0.6, 1.62, -0.33] }, cut: true },
-      { t: 3.8, pos: [1.0, 1.57, -1.08], tgt: [0, 1.5, -1.06], to: { pos: [0.9, 1.56, -1.12], tgt: [0, 1.5, -1.1] }, cut: true, badge: 'Vue en coupe', hide: ['M'] },
+      { t: 3.8, pos: [0.95, 1.565, -1.1], tgt: [0, 1.5, -1.08], cut: true, badge: 'Vue en coupe', hide: ['M'] },
     ],
   },
   {
@@ -83,7 +91,7 @@ const PASSAGES = [
     reveal: [{ t: 0, tags: [] }, { t: 5.2, tags: ['appui'] }],
     shots: [
       { t: 0, pos: [-3.9, 2.25, 1.2], tgt: [-0.2, 1.5, -0.45], to: { pos: [-3.5, 2.2, 1.0] }, cut: true },
-      { t: 6, pos: [-2.1, 2.62, 0.05], tgt: [-0.55, 2.28, -0.9], to: { pos: [-1.85, 2.56, -0.1] }, cut: true },
+      { t: 6, pos: [-1.95, 2.59, -0.03], tgt: [-0.55, 2.28, -0.9], cut: true },
     ],
   },
   {
@@ -92,15 +100,18 @@ const PASSAGES = [
     voix: "Étape 5. Assure-toi que l'angle du support est entre 75 et 80 degrés.",
     inset: { page: 'P08', crop: [0.43, 0.38, 0.63, 0.58], w: 230, from: 5.4, to: 8.8, caption: 'Niveau (procédure, page 2)' },
     shots: [
-      { t: 0, pos: [3.5, 1.05, -0.25], tgt: [0.9, 0.9, -0.3], to: { pos: [3.1, 1.02, -0.25] }, cut: true },
-      { t: 5, pos: [2.2, 1.42, -0.1], tgt: [0.87, 1.36, -0.27], to: { pos: [1.9, 1.4, -0.15] } },
+      { t: 0, pos: [3.3, 1.03, -0.25], tgt: [0.9, 0.9, -0.3], cut: true },
+      { t: 5, pos: [2.0, 1.41, -0.13], tgt: [0.87, 1.36, -0.27] },
     ],
   },
   {
     id: 'etape-06', step: 6, num: 'Étape 6 / 15', title: 'Chaîne dans le boulon à œil',
     text: 'Jusqu’au milieu de la chaîne',
     voix: "Étape 6. Passe une chaîne dans le boulon à œil, jusqu'à son milieu.",
-    shots: [{ t: 0, pos: [1.0, 1.5, 0.35], tgt: [0, 1.0, -0.86], to: { pos: [0.75, 1.42, 0.1] }, cut: true }],
+    shots: [
+      { t: 0, pos: [1.0, 1.62, 0.4], tgt: [0, 1.5, -0.86], cut: true },
+      { t: 3.6, pos: [0.5, 1.25, 2.6], tgt: [0, 0.95, -0.86], cut: true },
+    ],
   },
   {
     id: 'etape-07', step: 7, num: 'Étape 7 / 15', title: 'Chaîne dans les œillets',
@@ -108,8 +119,8 @@ const PASSAGES = [
     voix: "Étape 7. Passe chaque bout de la chaîne dans l'œillet du support qui lui est destiné, de l'extérieur vers l'intérieur.",
     anim: { delay: 1800, dur: 6000 },
     shots: [
-      { t: 0, pos: [1.75, 2.25, 0.05], tgt: [0.62, 1.95, -0.6], to: { pos: [1.6, 2.2, -0.05] }, glide: 1.6 },
-      { t: 5.3, pos: [-1.75, 2.25, 0.05], tgt: [-0.62, 1.95, -0.6], to: { pos: [-1.6, 2.2, -0.05] }, cut: true },
+      { t: 0, pos: [1.65, 2.22, 0.0], tgt: [0.62, 1.95, -0.6], cut: true },
+      { t: 5.3, pos: [-1.65, 2.22, 0.0], tgt: [-0.62, 1.95, -0.6], cut: true },
     ],
   },
   {
@@ -119,8 +130,8 @@ const PASSAGES = [
     anim: { delay: 2600, dur: 5600 },
     inset: { page: 'P08', crop: [0.25, 0.745, 0.81, 0.915], from: 8.8, to: 13.3, caption: 'Tendeur à cliquet ou « bear trap » (procédure, page 2)' },
     shots: [
-      { t: 0, pos: [0.6, 2.42, 0.55], tgt: [0, 2.02, -0.55], to: { pos: [0.42, 2.36, 0.38] }, glide: 1.8 },
-      { t: 8.6, pos: [-1.4, 2.0, 1.4], tgt: [0, 1.78, -0.62], to: { pos: [-1.15, 1.96, 1.15] }, glide: 2 },
+      { t: 0, pos: [0.6, 2.42, 0.55], tgt: [0, 2.02, -0.55], to: { pos: [0.42, 2.36, 0.38] }, cut: true },
+      { t: 8.6, pos: [-1.25, 1.98, 1.25], tgt: [0, 1.78, -0.62], glide: 1.8 },
     ],
   },
   {
@@ -129,7 +140,7 @@ const PASSAGES = [
     voix: 'Étape 9. Place les tiges dans le support en quinconce, rangée par rangée, en partant de la gauche.',
     shots: [
       { t: 0, pos: [0, 9.5, 0.9], tgt: [0, 2.9, -0.3], fov: 14, cut: true },
-      { t: 10.5, pos: [-2.5, 1.75, 3.3], tgt: [0, 1.5, 0], to: { pos: [-2.1, 1.72, 2.9] }, cut: true },
+      { t: 10.5, pos: [-2.3, 1.73, 3.1], tgt: [0, 1.5, 0], cut: true },
     ],
   },
   {
@@ -138,8 +149,8 @@ const PASSAGES = [
     voix: 'Étape 10. Appuie les tiges sur la barre transversale du fond, et non sur les côtés.',
     reveal: [{ t: 0, tags: ['fond'] }, { t: 4.6, tags: ['fond', 'cotes'] }],
     shots: [
-      { t: 0, pos: [0.1, 3.25, -0.92], tgt: [0, 2.45, -0.35], to: { pos: [0.35, 3.2, -0.9] }, cut: true },
-      { t: 4.6, pos: [1.35, 3.1, -0.78], tgt: [0.62, 2.45, -0.3], to: { pos: [1.22, 3.02, -0.8] }, glide: 1.6 },
+      { t: 0, pos: [0.22, 3.22, -0.91], tgt: [0, 2.45, -0.35], cut: true },
+      { t: 4.6, pos: [1.28, 3.05, -0.79], tgt: [0.62, 2.45, -0.3], cut: true },
     ],
   },
   {
@@ -147,8 +158,8 @@ const PASSAGES = [
     text: 'Accrochée solidement dans les 2 crochets fermés',
     voix: 'Étape 11. Place la chaîne de retenue des tiges. Accroche-la solidement dans les 2 crochets fermés, de chaque côté du support.',
     shots: [
-      { t: 0, pos: [-2.2, 1.75, 2.6], tgt: [0, 1.6, 0], to: { pos: [-1.8, 1.75, 2.2] }, cut: true },
-      { t: 5.6, pos: [1.6, 1.92, 0.4], tgt: [0.87, 1.76, -0.3], to: { pos: [1.45, 1.87, 0.28] }, cut: true },
+      { t: 0, pos: [-2.0, 1.75, 2.4], tgt: [0, 1.6, 0], cut: true },
+      { t: 5.6, pos: [1.5, 1.89, 0.33], tgt: [0.87, 1.76, -0.3], cut: true },
     ],
   },
   {
@@ -156,26 +167,30 @@ const PASSAGES = [
     text: 'Si les tiges chutent vers un travailleur : jamais plus de 80°',
     voix: 'Étape 12. Ajuste la chaîne pour que les tiges ne puissent pas dépasser 80 degrés si elles chutent vers un travailleur.',
     anim: { delay: 3200, dur: 6000 },
-    shots: [{ t: 0, pos: [4.6, 1.6, 0.3], tgt: [0.9, 1.45, 0.12], to: { pos: [4.1, 1.58, 0.3] }, cut: true }],
+    shots: [
+      { t: 0, pos: [4.3, 1.59, 0.3], tgt: [0.9, 1.45, 0.12], cut: true },
+    ],
   },
   {
     id: 'etape-13', step: 13, num: 'Étape 13 / 15', title: 'La chaîne, en tout temps',
     text: 'Crochets : 66 à 72 po du sol · chaîne : jamais à moins de 5 pi du sol au centre',
-    voix: "Étape 13. La chaîne de retenue est utilisée en tout temps, sauf pendant l'ajout et le retrait des tiges en continu. Les crochets sont à 66 pouces au minimum, et à 72 pouces au maximum du sol. Ainsi, même lousse, la chaîne n'est jamais à moins de 5 pieds du sol au centre.",
-    reveal: [{ t: 0, tags: [] }, { t: 8.7, tags: ['crochets'] }, { t: 15.6, tags: ['g5'] }],
-    inset: { page: 'P09', crop: [0.36, 0.565, 0.89, 0.9], w: 360, from: 17.5, to: 23.6, caption: 'Marques à 5 pieds du sol (procédure, page 3)' },
+    voix: "Étape 13. La chaîne de retenue doit être utilisée en tout temps, sauf pendant l'ajout et le retrait des tiges en continu. Les crochets doivent être à 66 pouces au minimum, et à 72 pouces au maximum du sol, pour que la chaîne, même lousse, ne soit jamais à moins de 5 pieds du sol au centre.",
+    reveal: [{ t: 0, tags: [] }, { t: 9.2, tags: ['crochets'] }, { t: 16.3, tags: ['g5'] }],
+    inset: { page: 'P09', crop: [0.36, 0.565, 0.89, 0.9], w: 360, from: 18.2, to: 25, caption: 'Marques à 5 pieds du sol (procédure, page 3)' },
     shots: [
-      { t: 0, pos: [-1.9, 1.72, 2.6], tgt: [0, 1.6, 0.1], to: { pos: [-1.2, 1.7, 2.1] }, cut: true },
-      { t: 8.7, pos: [4.0, 1.3, 2.7], tgt: [1.0, 0.85, -0.1], to: { pos: [3.7, 1.3, 2.5] }, cut: true },
-      { t: 15.6, pos: [-3.0, 1.45, 2.9], tgt: [-0.25, 1.2, 0.1], to: { pos: [-2.6, 1.45, 2.5] }, cut: true },
+      { t: 0, pos: [-1.5, 1.71, 2.3], tgt: [0, 1.6, 0.1], cut: true },
+      { t: 9.2, pos: [3.85, 1.3, 2.6], tgt: [1.0, 0.85, -0.1], cut: true },
+      { t: 16.3, pos: [-2.8, 1.45, 2.7], tgt: [-0.25, 1.2, 0.1], cut: true },
     ],
   },
   {
     id: 'etape-14', step: 14, num: 'Étape 14 / 15', title: 'Prendre les tiges',
     text: 'Tiges graissées : un tournevis plat pour les séparer',
-    voix: "Étape 14. Quand tu prends les tiges, la graisse peut les rendre difficiles à saisir. Sers-toi d'un tournevis plat pour les séparer et t'aider à les prendre.",
-    inset: { page: 'P10', crop: [0.37, 0.17, 0.685, 0.49], w: 270, from: 5.2, to: 12, caption: 'Procédure, page 4' },
-    shots: [{ t: 0, pos: [-0.75, 1.52, 1.4], tgt: [-0.05, 1.33, 0.3], to: { pos: [-0.45, 1.45, 0.98] }, cut: true }],
+    voix: "Étape 14. Quand tu prends les tiges, la graisse peut les rendre difficiles à saisir. Un tournevis plat est préconisé pour les séparer et t'aider à les prendre.",
+    inset: { page: 'P10', crop: [0.37, 0.17, 0.685, 0.49], w: 270, from: 5.2, to: 12.6, caption: 'Procédure, page 4' },
+    shots: [
+      { t: 0, pos: [-0.55, 1.47, 1.1], tgt: [-0.03, 1.33, 0.3], cut: true },
+    ],
   },
   {
     id: 'etape-15', step: 15, num: 'Étape 15 / 15', title: 'Capacité maximale',
@@ -188,24 +203,25 @@ const PASSAGES = [
     ] },
     shots: [
       { t: 0, pos: [0, 9.5, 0.9], tgt: [0, 2.9, -0.3], fov: 14, cut: true },
-      { t: 6.2, pos: [-2.9, 1.95, 4.1], tgt: [0, 1.35, 0], to: { pos: [-2.4, 1.85, 3.5] }, cut: true },
+      { t: 6.2, pos: [-2.65, 1.9, 3.8], tgt: [0, 1.35, 0], cut: true },
     ],
   },
   {
     id: 'fin', step: 5, still: true, num: 'À retenir', title: 'Incliné, ancré, retenu', text: '',
-    voix: "À retenir. Le support est incliné entre 75 et 80 degrés, et ancré par une chaîne serrée au maximum. Les tiges sont en quinconce, appuyées sur la barre du fond. Et la chaîne de retenue est utilisée en tout temps, sauf pendant l'ajout et le retrait des tiges en continu.",
-    cues: [{ t: 5.4, step: 8 }, { t: 9, step: 10 }, { t: 13.6, step: null }],
+    voix: "À retenir. Le support est incliné entre 75 et 80 degrés, et ancré par une chaîne, tendeur serré au maximum. Les tiges sont en quinconce, appuyées sur la barre du fond, sans dépasser la capacité maximale. Et la chaîne de retenue doit être utilisée en tout temps, sauf pendant l'ajout et le retrait des tiges en continu.",
+    cues: [{ t: 5.3, step: 8 }, { t: 9, step: 10 }, { t: 15.8, step: null }],
     card: { from: 0.8, to: 99, title: 'À retenir', rows: [
       { t: 0.5, cells: ['1', 'Support incliné : 75° à 80°'] },
-      { t: 4.8, cells: ['2', 'Ancré : chaîne serrée au maximum'] },
-      { t: 8.4, cells: ['3', 'Tiges en quinconce, appuyées au fond'] },
-      { t: 13, cells: ['4', 'Chaîne de retenue en tout temps'] },
+      { t: 4.5, cells: ['2', 'Ancré : chaîne, tendeur serré au maximum'] },
+      { t: 8.2, cells: ['3', 'Tiges en quinconce, appuyées au fond'] },
+      { t: 12.7, cells: ['4', 'Capacité maximale : 108 HQ · 184 NQ · 240 BQ'] },
+      { t: 15, cells: ['5', 'Chaîne de retenue en tout temps, sauf ajout et retrait en continu'] },
     ] },
     shots: [
-      { t: 0, pos: [3.5, 1.05, -0.25], tgt: [0.9, 0.9, -0.3], to: { pos: [3.2, 1.03, -0.25] }, cut: true },
-      { t: 5.4, pos: [-1.5, 2.0, 1.5], tgt: [0, 1.78, -0.62], to: { pos: [-1.25, 1.96, 1.25] }, cut: true },
-      { t: 9, pos: [0.25, 3.3, -0.95], tgt: [0, 2.45, -0.35], to: { pos: [-0.2, 3.25, -0.95] }, cut: true },
-      { t: 13.6, pos: [-1.9, 1.75, 2.7], tgt: [0, 1.5, 0.1], to: { pos: [-2.9, 2.0, 4.4], tgt: [0, 1.3, -0.1] }, cut: true },
+      { t: 0, pos: [3.3, 1.03, -0.25], tgt: [0.9, 0.9, -0.3], cut: true },
+      { t: 5.3, pos: [-1.25, 1.98, 1.25], tgt: [0, 1.78, -0.62], cut: true },
+      { t: 9, pos: [0.22, 3.22, -0.91], tgt: [0, 2.45, -0.35], cut: true },
+      { t: 15.8, pos: [-2.0, 1.75, 2.7], tgt: [0, 1.5, 0.1], cut: true },
     ],
   },
 ];

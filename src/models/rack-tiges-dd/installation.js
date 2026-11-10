@@ -86,7 +86,7 @@ export function P02(api) {
   };
 
   // ------------------------------------------------------------------ décor
-  const { rock, deck } = decor(api);
+  const { rock, deck, cibles } = decor(api);
   put('M', rock, [0, 0, 0], -1, { noLabel: true });
   put('S', deck, [0, 0, 0], -1, { noLabel: true });
 
@@ -99,6 +99,8 @@ export function P02(api) {
     lanes.add(pointille(S, [0, DECK + 0.014, DRILL.z + dz], [SEC, DECK + 0.014, DRILL.z + dz], { material: 'fluoRed', r: 0.008, dash: 0.25, gap: 0.15 }));
   }
   guide(place(S, lanes), [1], 'tir');
+  // Cibles rouges des fonds de trous : avec les lignes de tir seulement (ailleurs, le rouge veut dire « limite »).
+  guide(cibles, [1], 'tir');
   guide(S.box(2 * XP + 0.5, 0.004, 1.05, 'zoneVerte', { pos: [0, 0.006, 0.1] }), [1], 'mur');
 
   // ------------------------------------------ étape 2 : percer le trou au mur
@@ -364,7 +366,7 @@ export function P02(api) {
   for (const o of [drillPart, boltPart, rack, anchor, b, retenue]) anims.push(o.userData.stepAnim);
   anims.sort((x, y) => x.step - y.step).forEach((a) => a.update(1));
 
-  return { view: { dir: [0.95, 0.6, 1.2], steps: STEPS, stepsAuto: true, stepFlash: true, notes: NOTES, video: 'equipment/rack-tiges-dd/video/' } };
+  return { view: { dir: [0.95, 0.6, 1.2], steps: STEPS, stepsAuto: true, stepFlash: true, notes: NOTES } }; // video: 'equipment/rack-tiges-dd/video/' (lien remis quand la nouvelle vidéo est publiée)
 }
 
 // Caméras du montage par étapes du site (reculées de 55 % par l'interface).
@@ -382,7 +384,7 @@ const CAM = {
 
 // Étapes de la procédure PRO-DD-ST-008 (l'indice est le numéro de l'étape).
 export const STEPS = [
-  { n: 0, cam: CAM.wide, page: 'P07', title: 'Avant de commencer', text: "Le travailleur respecte la procédure, particulièrement la quantité et l'angle d'empilage dans le support. Le superviseur fait respecter la procédure en tout temps et fait reprendre toute installation non conforme. La mine fore des trous de service pour y introduire des boulons à œil." },
+  { n: 0, cam: CAM.wide, page: 'P07', title: 'Avant de commencer', text: "Le travailleur respecte la procédure, particulièrement la quantité et l'angle d'empilage dans le support. Le superviseur fait respecter la procédure en tout temps et fait reprendre toute installation non conforme. La mine fore des trous de service, à l'aide de son équipement de forage pour le soutènement, avant de quitter le site de forage au diamant, pour y introduire des boulons à œil." },
   { n: 1, cam: CAM.site, page: 'P07', title: "Choisir l'endroit", text: 'Opter pour un endroit près du mur et loin de la ligne de tir des trous de forage (voir les exemples de positionnement, page P11).' },
   { n: 2, cam: CAM.wall, page: 'P08', title: 'Percer le trou au mur', text: 'Au mur, situer le centre du support et faire un trou de 18 po de profond avec la foreuse à percussion électrique, à ± 5 pi du plancher.' },
   { n: 3, cam: CAM.bolt, page: 'P08', title: 'Insérer le boulon à œil', text: "Insérer le boulon à œil (eye bolt), mais ne pas l'enfoncer jusqu'au fond du trou." },
@@ -395,7 +397,7 @@ export const STEPS = [
   { n: 10, cam: CAM.top, page: 'P09', title: 'Appuyer les tiges au fond', text: "S'assurer d'appuyer les tiges sur la barre transversale du fond, et non sur les côtés." },
   { n: 11, cam: CAM.front, page: 'P09', title: 'Placer la chaîne de retenue', text: 'Placer une chaîne de retenue de tiges, accrochée solidement dans les 2 crochets fermés de chaque côté du support.' },
   { n: 12, cam: CAM.profile, page: 'P09', title: 'Ajuster la chaîne', text: 'La chaîne doit être ajustée de façon que les tiges ne puissent dépasser 80° si elles chutent vers un travailleur.' },
-  { n: 13, cam: CAM.front, page: 'P09', title: 'La chaîne, en tout temps', text: "La chaîne de retenue doit être utilisée en tout temps, sauf pendant l'ajout et le retrait des tiges en continu. Les crochets doivent être à 72 po au maximum et à 66 po au minimum du sol : la chaîne lâche n'est ainsi jamais à moins de 5 pi du sol au centre." },
+  { n: 13, cam: CAM.front, page: 'P09', title: 'La chaîne, en tout temps', text: "La chaîne de retenue doit être utilisée en tout temps, sauf pendant l'ajout et le retrait des tiges en continu. Les crochets doivent être à 72 po au maximum et à 66 po au minimum du sol, pour s'assurer que la chaîne lâche (« lousse ») ne soit jamais à moins de 5 pi du sol au centre." },
   { n: 14, cam: CAM.front, page: 'P10', title: 'Prendre les tiges', text: 'La graisse sur les tiges peut les rendre difficiles à prendre : un tournevis plat est préconisé pour les séparer et aider à les prendre.' },
   { n: 15, cam: CAM.wide, page: 'P10', title: 'Capacité maximale', text: 'Selon la résistance du support — HQ : 108 tiges (324 m). NQ : 184 tiges (552 m). BQ : 240 tiges (720 m).' },
 ];
@@ -427,7 +429,7 @@ const NOTES = [
   { steps: [12], pos: polar(XP + 0.1, FOOT_FRONT, 2.05, 81.5), text: 'Limite : 80°', kind: 'no' },
   { steps: [13], tag: 'crochets', pos: [XP + 0.55, HOOK_MAX + 0.07, zHook], text: '72 po au maximum', kind: 'ok' },
   { steps: [13], tag: 'crochets', pos: [XP + 0.55, HOOK_MIN - 0.01, zHook], text: '66 po au minimum', kind: 'ok' },
-  { steps: [13], tag: 'g5', pos: [-XP - 0.3, FT5 + 0.16, frontAt(0, FT5, 0.04)[2]], text: 'Jamais sous 5 pi', kind: 'ok' },
+  { steps: [13], tag: 'g5', pos: [0, FT5 - 0.1, frontAt(0, FT5, 0.04)[2]], text: 'Au centre : jamais à moins de 5 pi du sol', kind: 'ok' },
   { steps: [14], pos: W(0, 1.52, FRONT + 0.25), text: 'Tournevis plat pour séparer les tiges' },
   { steps: [15], pos: [0, W(0, NQ.len, 0)[1] + 0.42, W(0, NQ.len, 0.12)[2]], text: '8 rangées × 23 tiges = 184 tiges NQ' },
 ];
