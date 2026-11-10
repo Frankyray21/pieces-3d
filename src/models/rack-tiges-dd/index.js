@@ -161,17 +161,18 @@ function P02(api) {
     const s = (y0 - r * cos) / sin; // du point d'appui au pied, le long de la tige
     const mid = NQ.len / 2 - s;
     for (let c = 0; c < NQ.cols; c++) {
-      const rod = S.shell(r, NQ.id / 2, NQ.len, 'darkSteel', { seg: 14 });
+      const rod = S.shell(r, NQ.id / 2, NQ.len, 'steel', { seg: 14 });
       rod.rotation.x = -tilt;
       S.at(rod, [(c - (NQ.cols - 1) / 2) * NQ.od, y0 + mid * sin, z0 - mid * cos]);
       api.part('2', rod, [0, 0, 1.1 + k * 0.05], { noLabel: k + c > 0 });
     }
   }
-  const wall = S.box(3.6, 3.4, 0.3, 'rock', { pos: [0, 1.7, -WALL - 0.15] });
+  // Mur en panneau translucide : la vue de la figure 3 (côté mur) reste dégagée.
+  const wall = S.box(3.6, 3.4, 0.05, 'glass', { pos: [0, 1.7, -WALL - 0.025] });
   api.part('M', wall, [0, 0, 0], { noLabel: true });
   const floor = S.box(3.6, 0.2, 2.6, 'rockFloor', { pos: [0, -0.1, 1.3 - WALL] });
   api.part('S', floor, [0, 0, 0], { noLabel: true });
-  return { view: { dir: [1.35, 0.7, 0.3] } };
+  return { view: { dir: [-1.0, 0.55, -1.15] } };
 }
 
 export default { P01, P02 };

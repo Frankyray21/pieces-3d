@@ -69,7 +69,7 @@
     "P02",
     "P03"
    ],
-   "note": "Reconstitution 3D d'après les figures 2 et 3 du rapport de certification Forcetech P19113 : 8 rangées de 23 tiges NQ de 3 m, pieds au sol, appuyées sur la traverse supérieure à 82° (80° et plus exigé), sans toucher les côtés du support. Conditions de blocage : membrures appuyées au mur, support sécurisé par les attaches, pattes appuyées au sol. Capacité maximale permise : 184 tiges NQ ou 240 tiges BQ (la disposition des tiges BQ n'est pas illustrée dans le rapport). Mur et sol fictifs.",
+   "note": "Reconstitution 3D d'après les figures 2 et 3 du rapport de certification Forcetech P19113 : 8 rangées de 23 tiges NQ de 3 m, pieds au sol, appuyées sur la traverse supérieure à 82° (80° et plus exigé), sans toucher les côtés du support. Conditions de blocage : membrures appuyées au mur, support sécurisé par les attaches, pattes appuyées au sol. Capacité maximale permise : 184 tiges NQ ou 240 tiges BQ (la disposition des tiges BQ n'est pas illustrée dans le rapport). Vue du côté du mur, comme la figure 3 : le mur est montré en panneau translucide pour laisser voir les tiges dans le support. Mur et sol fictifs.",
    "parts": [
     [
      "1",
@@ -95,7 +95,7 @@
      "M",
      "",
      null,
-     "Mur (contexte : appui des membrures)",
+     "Mur (contexte, en panneau translucide : appui des membrures)",
      {
       "pseudo": true
      }
