@@ -243,7 +243,13 @@ async function shoot(ctx, cam, dt, file, { scene = false, overlay = false } = {}
   const render = scene || busy || ctx.busy || key !== ctx.camKey || !ctx.last;
   ctx.busy = busy;
   ctx.camKey = key;
-  if (render) await ctx.page.evaluate(() => window.__flush());
+  if (render) {
+    await ctx.page.evaluate(() => window.__flush());
+    // Première image d'un passage : on laisse au navigateur le temps (réel) de présenter le canevas, puis on
+    // redessine. Constaté : juste après le chargement de la page, la capture pouvait précéder le canevas et
+    // donner une image vide, reprise ensuite pendant tout un plan fixe (contrôle : scripts/video-rack-vides.py).
+    if (!ctx.last) { await new Promise((r) => setTimeout(r, 150)); await ctx.page.evaluate(() => window.__flush()); await new Promise((r) => setTimeout(r, 50)); }
+  }
   if (render || overlay) {
     await ctx.page.screenshot({ path: file, type: 'jpeg', quality: 92, timeout: 240000 });
     ctx.last = file;

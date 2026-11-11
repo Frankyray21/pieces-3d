@@ -229,6 +229,16 @@ check('Étape 8 — tendeur accroché aux deux bouts de la chaîne à chaque cou
 at(8, 1);
 only(variants.at(-1));
 
+// Étape 14 : le travailleur tient le tournevis par le manche, l'autre main sur une tige, les pieds sur le
+// plancher, devant les pieds des tiges.
+const preneur = by(model.root, 'role', 'preneur')[0];
+const tool = meshBoxes(parts('9')[0]), rodBoxes = rods.map((r) => new THREE.Box3().setFromObject(r));
+const hands = by(preneur, 'gant').map((g) => [reach(centre(g), tool), reach(centre(g), rodBoxes)]);
+check('Étape 14 — une main au manche du tournevis, l’autre sur une tige (écart du centre des gants)', `${mm(Math.min(...hands.map((h) => h[0])))} et ${mm(Math.min(...hands.map((h) => h[1])))}`, Math.min(...hands.map((h) => h[0])) < 0.03 && hands.every((h) => Math.min(h[0], h[1]) < 0.04), ' mm');
+const s14 = soles(preneur);
+const toes = Math.min(...s14.map((f) => Math.min(...rodBoxes.map((b) => (f.box.intersectsBox(b) ? 0 : f.box.distanceToPoint(b.getCenter(new THREE.Vector3())))))));
+check('Étape 14 — pieds du travailleur sur le plancher, sans toucher les tiges', s14.map((f) => mm(f.gap)).join(' et '), s14.every((f) => f.gap < 0.01 && f.sur === 'plancher') && toes > 0, ' mm');
+
 // Étape 12 : au plus fort du basculement, la chaîne de retenue arrête les tiges avant 80° ; puis elles
 // reviennent s'appuyer au fond.
 const rodDeg = () => deg(Math.asin(new THREE.Vector3(0, 1, 0).transformDirection(rods[rods.length - 1].matrixWorld).y));

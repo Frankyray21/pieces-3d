@@ -433,13 +433,20 @@ export function P02(api) {
   driver.userData.stepOnly = [14];
   driver.visible = false;
   api.part('9', driver, [0, 0, 1.4], { noLabel: true });
+  // Le travailleur qui prend une tige (photo de la procédure : une main gantée glisse le tournevis entre
+  // deux tiges) : une main au manche du tournevis, l'autre sur une tige voisine.
+  driver.updateMatrix();
+  const manche = new api.THREE.Vector3(0, 0, 0.2).applyMatrix4(driver.matrix).toArray();
+  const preneur = guide(S.at(travailleur(S), [manche[0] - 0.14, 0, manche[2] + 0.47]), [14]);
+  preneur.userData.role = 'preneur';
+  preneur.userData.pose({ bassin: [0, -0.02, -0.04], penche: 0.12, pieds: [[-0.1, 0.06], [0.1, -0.1]], mains: [frontAt(manche[0] - 0.18, 1.25, 0.022), manche] });
 
   // Hors du montage par étapes, le modèle est dans son état final : chaque animation à son terme, dans l'ordre des étapes.
   const anims = [];
   for (const o of [drillPart, boltPart, rack, anchor, b, retenue]) anims.push(o.userData.stepAnim);
   anims.sort((x, y) => x.step - y.step).forEach((a) => a.update(1));
 
-  return { view: { dir: [0.95, 0.6, 1.2], steps: STEPS, stepsAuto: true, stepFlash: true, notes: NOTES } }; // video: 'equipment/rack-tiges-dd/video/' (lien remis quand la nouvelle vidéo est publiée)
+  return { view: { dir: [0.95, 0.6, 1.2], steps: STEPS, stepsAuto: true, stepFlash: true, notes: NOTES, video: 'equipment/rack-tiges-dd/video/' } };
 }
 
 // Caméras du montage par étapes du site (reculées de 55 % par l'interface).
@@ -506,6 +513,6 @@ const NOTES = [
   { steps: [13], tag: 'crochets', pos: [XP + 0.55, HOOK_MAX + 0.07, zHook], text: '72 po au maximum', kind: 'ok' },
   { steps: [13], tag: 'crochets', pos: [XP + 0.55, HOOK_MIN - 0.01, zHook], text: '66 po au minimum', kind: 'ok' },
   { steps: [13], tag: 'g5', pos: [-0.2, FT5 - 0.3, frontAt(0, FT5, 0.04)[2]], text: 'Au centre : jamais à moins de 5 pi du sol', kind: 'no' },
-  { steps: [14], pos: W(0, 1.52, FRONT + 0.25), text: 'Tournevis plat pour séparer les tiges' },
+  { steps: [14], tag: 'tournevis', pos: W(-0.04, 1.44, FRONT + 0.04), text: 'Tournevis plat pour séparer les tiges' },
   { steps: [15], pos: [0, W(0, NQ.len, 0)[1] + 0.42, W(0, NQ.len, 0.12)[2]], text: '8 rangées × 23 tiges = 184 tiges NQ' },
 ];

@@ -202,8 +202,10 @@ const PASSAGES = [
     text: 'Tiges graissées : un tournevis plat pour les séparer',
     voix: "Étape 14. Quand tu prends les tiges, la graisse peut les rendre difficiles à saisir. Un tournevis plat est préconisé pour les séparer et t'aider à les prendre.",
     inset: { page: 'P10', crop: [0.37, 0.17, 0.685, 0.49], w: 270, from: 5.2, to: 12.6, caption: 'Tournevis plat (procédure, page 4)' },
+    reveal: [{ t: 0, tags: [] }, { t: 5.2, tags: ['tournevis'] }],
     shots: [
-      { t: 0, pos: [-0.55, 1.47, 1.1], tgt: [-0.03, 1.33, 0.3], cut: true },
+      { t: 0, pos: [0.95, 1.62, 1.35], tgt: [-0.1, 1.3, 0.35], cut: true }, // le travailleur qui prend une tige
+      { t: 5.2, pos: [0.55, 1.75, 0.75], tgt: [-0.05, 1.33, 0.33], cut: true }, // la main au tournevis, comme sur la photo
     ],
   },
   {

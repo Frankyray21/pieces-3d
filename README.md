@@ -137,7 +137,8 @@ pièces (numéro, quantité, page du manuel).
     numérique), `travailleur.js` (silhouette articulée : les mains et les
     pieds vont où on les pose, par cinématique inverse à deux segments ; le
     foreur tient la foreuse par ses deux poignées, les deux porteurs tiennent
-    les poteaux, pieds en place).
+    les poteaux, pieds en place ; à l'étape 14, une main tient le tournevis,
+    comme sur la photo de la procédure).
   Repères de mesure : orange = mesure, vert = permis, rouge = limite ou
   interdit, bleu = sens du geste ; chacun n'est montré qu'à son étape
   (`userData.stepOnly`) et peut porter un thème (`userData.stepTag`,
@@ -149,7 +150,7 @@ pièces (numéro, quantité, page du manuel).
   chaîne passée bout par bout, serrage au cliquet (le tendeur pend à la
   chaîne lâche, ses vis rentrent d'un cran par coup de levier, la chaîne
   garde sa longueur), paquet de tiges qui bascule et que la chaîne retient.
-  Conformité à la procédure : `node scripts/check-rack.mjs` prend 47 mesures
+  Conformité à la procédure : `node scripts/check-rack.mjs` prend 49 mesures
   sur le modèle construit — l'installation finie (hauteur et centrage du
   trou, appui des pattes du haut, angle, chaîne passée par l'extérieur des
   œillets, levier du tendeur, quinconce, tiges qui se touchent sans se
@@ -159,7 +160,8 @@ pièces (numéro, quantité, page du manuel).
   jusqu'au fond, gants sur la foreuse et sur les poteaux, bottes sur le
   plancher, aucun fil du grillage devant le trou, surplus de chaîne posé au
   sol, même nombre de maillons à chaque état, tendeur accroché à chaque coup
-  de levier, tiges retenues avant 80° puis revenues à 78°).
+  de levier, tiges retenues avant 80° puis revenues à 78°, main au manche
+  du tournevis).
   **Vidéo de la procédure** (premier contact avec la méthode, 4 min 04,
   1280 × 720, 24 i/s, muette, sous-titrée) : scénario dans
   `src/video/rack-script.js` — par passage, bandeau, réplique du formateur,
@@ -175,11 +177,13 @@ pièces (numéro, quantité, page du manuel).
   l'image précédente est reprise ; images par passage, re-tournage partiel
   avec `--only`, deux tournages en parallèle avec `--no-encode`, serveur
   d'images fixes `--serve` pour régler les plans, planche-contact
-  `scripts/video-rack-planche.py`). Script de voix minuté et
+  `scripts/video-rack-planche.py`, contrôle des images vides
+  `scripts/video-rack-vides.py`). Script de voix minuté et
   sous-titres : `node scripts/video-rack-script.mjs` (`video/rack/`,
   `sous-titres.vtt`) ; la voix enregistrée s'ajoute avec `--voix`. Publiée
   dans `public/equipment/rack-tiges-dd/video/` (lecteur `index.html`, relié
-  au montage par `view.video`).
+  au montage par `view.video` ; tant que la vidéo est muette, le texte de la
+  voix défile sous l'image, sans couvrir le bandeau ni les mesures).
 
 - **Usinage Marcotte STM-1500** (`stm-1500`, foreuse souterraine
   s/n STM-1500-128, manuel de pièces de Machines Roger, 96 pages) : 42
