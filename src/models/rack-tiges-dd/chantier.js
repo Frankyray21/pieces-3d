@@ -7,7 +7,7 @@
 import { buildProcedural } from '../../viewer/assembly.js';
 import plancher from '../plancher-dd/index.js';
 import { gallery, wallZ as rockZ } from '../plancher-dd/site.js';
-import { DECK, SEC, DRILL } from '../plancher-dd/plan.js';
+import { DECK, SEC, DRILL, ground } from '../plancher-dd/plan.js';
 
 export { DECK, SEC, DRILL };
 import { IN, T2, XP, H_TOP, WALL, W } from './support.js';
@@ -42,6 +42,11 @@ export const rockAt = (x, y) => {
   const qx = x * c - WALL_Z * sn + MINE.x0;
   return -(qx - MINE.x0) * sn + (rockZ(-1, qx, y + DECK) - MINE.zq) * c;
 };
+/** Hauteur du sol de roche (Y, repère du chantier) sous le point (x, z) : le plancher ne va pas jusqu'à la paroi. */
+export const solAt = (x, z) => {
+  const c = Math.cos(MINE.yaw), sn = Math.sin(MINE.yaw);
+  return ground(x * c - z * sn + MINE.x0, x * sn + z * c + MINE.zq) - DECK;
+};
 /** Point du repère du plancher (plancher-dd) → repère du chantier. */
 export const fromDeck = (qx, qy, qz) => {
   const c = Math.cos(MINE.yaw), sn = Math.sin(MINE.yaw);
@@ -70,7 +75,9 @@ function groundSupport(api, x0, x1) {
   // Fils horizontaux par tronçons de 2 mailles, fils verticaux par-dessus.
   for (let j = 0; j <= ny; j++) for (let i = 0; i < nx; i += 2) wire(at(x0 + i * PITCH, y0 + j * PITCH), at(x0 + Math.min(nx, i + 2) * PITCH, y0 + j * PITCH));
   for (let i = 0; i <= nx; i++) for (let j = 0; j < ny; j += 2) wire(at(x0 + i * PITCH, y0 + j * PITCH, OFF + 0.005), at(x0 + i * PITCH, y0 + Math.min(ny, j + 2) * PITCH, OFF + 0.005));
-  const g = S.group(S.merged(wires, 'zinc'));
+  const grille = S.merged(wires, 'zinc');
+  grille.userData.grillage = true; // repéré par le contrôle chiffré (scripts/check-rack.mjs)
+  const g = S.group(grille);
   // Boulons : rangées à 0,6, 1,45 et 2,2 m, aux 1,2 m, décalées d'une rangée à l'autre.
   let n = 0;
   [[0.6, 0.6], [1.45, 0], [2.2, 0.6]].forEach(([y, shift]) => {
@@ -148,7 +155,8 @@ export function decor(api) {
   const marks = gal.children.filter((o) => o.userData.cible);
   marks.forEach((o) => gal.remove(o));
   const rock = S.group(place(S, cropX(api.THREE, still(gal), SEC + 0.3)));
-  rock.add(groundSupport(api, -MINE.x0 + 0.05, SEC + 0.25 - MINE.x0));
+  // Grillage calé pour que le trou du boulon à œil (x = 0) tombe au milieu d'une maille : on perce dans une maille, pas dans un fil.
+  rock.add(groundSupport(api, -MINE.x0 + 0.1, SEC + 0.25 - MINE.x0));
   const deck = place(S, S.group(['P04', 'P07'].map((id) => still(buildProcedural(plancher, id, { inPlace: true, quality: 0.4 }).root))));
   return { rock, deck, cibles: place(S, S.group(marks)) };
 }

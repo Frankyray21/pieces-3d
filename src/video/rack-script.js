@@ -15,7 +15,8 @@
 // passage (s) et dérive lentement de (pos, tgt) à to ; d'un plan au suivant la
 // caméra glisse en `glide` secondes (1,4 par défaut), ou coupe net (cut).
 // fov : angle de champ (38° par défaut ; plus petit = plus serré). badge :
-// pastille affichée pendant le plan (« Vue en coupe »).
+// pastille affichée pendant le plan (« Vue en coupe »). hide : pièces masquées
+// pendant le plan. clip : plan de coupe [nx, ny, nz, d] (on garde le côté de la normale).
 //
 // step : étape du montage 3D jouée à l'arrivée du passage (null : montage
 // fermé, tout est affiché) ; still : affichée sans animation. anim : durées
@@ -25,6 +26,14 @@
 // fois, dans l'ordre de la voix). inset : détail d'une page de la procédure
 // incrusté de from à to (crop en fractions de la page, w en pixels). card :
 // carton de from à to, dont chaque rangée paraît à son instant t.
+
+import { W, H_TOP, T2, SIN, COS } from '../models/rack-tiges-dd/support.js';
+
+// Coupe au ras de la traverse du haut, perpendiculaire aux tiges : on garde ce qui est dessous
+// (étape 10 : on voit, de dessus, les tiges appuyées sur la barre du fond et le jeu sur les côtés).
+const RAS = W(0, H_TOP + T2 / 2 + 0.02, 0);
+const COUPE_TRAVERSE = [0, -COS, SIN, COS * RAS[1] - SIN * RAS[2]];
+const DESSUS = 'Vue en coupe · de dessus';
 
 const PASSAGES = [
   {
@@ -54,7 +63,7 @@ const PASSAGES = [
     text: 'Près du mur · loin de la ligne de tir des trous de forage',
     voix: 'Étape 1. Choisis un endroit près du mur, et loin de la ligne de tir des trous de forage. La procédure donne des exemples de positionnement.',
     reveal: [{ t: 0, tags: ['mur'] }, { t: 3.6, tags: ['mur', 'tir'] }],
-    inset: { page: 'P11', crop: [0.285, 0.112, 0.722, 0.365], from: 8, to: 12.3, caption: 'Exemples de positionnement (procédure, page 5)' },
+    inset: { page: 'P11', crop: [0.285, 0.112, 0.722, 0.365], from: 8, to: 14.6, caption: 'Exemples de positionnement (procédure, page 5)' },
     shots: [
       { t: 0, pos: [1.8, 3.3, 3.65], tgt: [-0.9, 0.3, 0.6], cut: true },
     ],
@@ -66,20 +75,20 @@ const PASSAGES = [
     anim: { delay: 5000, dur: 4400 },
     reveal: [{ t: 0, tags: ['centre'] }, { t: 4.2, tags: ['+coupe'] }, { t: 10.2, tags: ['haut'] }],
     shots: [
-      { t: 0, pos: [-1.1, 1.69, 2.9], tgt: [0, 1.3, -0.9], cut: true },
+      { t: 0, pos: [1.55, 1.75, 2.75], tgt: [0, 1.3, -0.9], cut: true },
       { t: 4.2, pos: [1.2, 1.58, -0.9], tgt: [0, 1.5, -0.88], to: { pos: [1.0, 1.57, -1.08], tgt: [0, 1.5, -1.06] }, cut: true, badge: 'Vue en coupe', hide: ['M'] },
-      { t: 10.2, pos: [-1.85, 1.29, 1.45], tgt: [-0.3, 0.8, -0.9], cut: true },
+      { t: 10.2, pos: [-2.5, 1.3, 2.35], tgt: [-0.3, 0.6, -0.9], cut: true },
     ],
   },
   {
     id: 'etape-03', step: 3, num: 'Étape 3 / 15', title: 'Insérer le boulon à œil',
     text: 'Ne pas l’enfoncer jusqu’au fond du trou',
     voix: "Étape 3. Insère le boulon à œil, mais ne l'enfonce pas jusqu'au fond du trou.",
-    anim: { delay: 900, dur: 2400 },
+    anim: { delay: 4000, dur: 2000 },
     reveal: [{ t: 0, tags: [] }, { t: 3.8, tags: ['+coupe'] }],
     inset: { page: 'P08', crop: [0.43, 0.172, 0.63, 0.272], w: 300, from: 0.6, to: 3.6, caption: 'Boulon à œil (procédure, page 2)' },
     shots: [
-      { t: 0, pos: [0.75, 1.64, -0.2], tgt: [0, 1.52, -0.84], to: { pos: [0.6, 1.62, -0.33] }, cut: true },
+      { t: 0, pos: [1.2, 1.68, 0.2], tgt: [0.05, 1.5, -0.66], cut: true }, // le boulon entier, présenté devant le trou
       { t: 3.8, pos: [0.95, 1.565, -1.1], tgt: [0, 1.5, -1.08], cut: true, badge: 'Vue en coupe', hide: ['M'] },
     ],
   },
@@ -90,7 +99,7 @@ const PASSAGES = [
     anim: { delay: 1600, dur: 3600 },
     reveal: [{ t: 0, tags: [] }, { t: 5.2, tags: ['appui'] }],
     shots: [
-      { t: 0, pos: [-3.9, 2.25, 1.2], tgt: [-0.2, 1.5, -0.45], to: { pos: [-3.5, 2.2, 1.0] }, cut: true },
+      { t: 0, pos: [-3.6, 1.85, 3.3], tgt: [-0.1, 1.12, -0.25], to: { pos: [-3.2, 1.8, 3.0] }, cut: true },
       { t: 6, pos: [-1.95, 2.59, -0.03], tgt: [-0.55, 2.28, -0.9], cut: true },
     ],
   },
@@ -100,7 +109,7 @@ const PASSAGES = [
     voix: "Étape 5. Assure-toi que l'angle du support est entre 75 et 80 degrés.",
     inset: { page: 'P08', crop: [0.43, 0.38, 0.63, 0.58], w: 230, from: 5.4, to: 8.8, caption: 'Niveau (procédure, page 2)' },
     shots: [
-      { t: 0, pos: [3.3, 1.03, -0.25], tgt: [0.9, 0.9, -0.3], cut: true },
+      { t: 0, pos: [4.4, 0.95, -0.25], tgt: [0.9, 0.66, -0.3], cut: true },
       { t: 5, pos: [2.0, 1.41, -0.13], tgt: [0.87, 1.36, -0.27] },
     ],
   },
@@ -118,6 +127,7 @@ const PASSAGES = [
     text: 'Chaque bout dans son œillet · de l’extérieur vers l’intérieur',
     voix: "Étape 7. Passe chaque bout de la chaîne dans l'œillet du support qui lui est destiné, de l'extérieur vers l'intérieur.",
     anim: { delay: 1800, dur: 6000 },
+    reveal: [{ t: 0, tags: ['oeilD'] }, { t: 5.3, tags: ['oeilG'] }],
     shots: [
       { t: 0, pos: [1.65, 2.22, 0.0], tgt: [0.62, 1.95, -0.6], cut: true },
       { t: 5.3, pos: [-1.65, 2.22, 0.0], tgt: [-0.62, 1.95, -0.6], cut: true },
@@ -127,8 +137,9 @@ const PASSAGES = [
     id: 'etape-08', step: 8, num: 'Étape 8 / 15', title: 'Tendre la chaîne',
     text: 'Tendeur à cliquet, serré au maximum · ou tendeur « bear trap »',
     voix: 'Étape 8. Relie les deux bouts de la chaîne avec un tendeur à cliquet, et serre-le au maximum. Tu peux aussi utiliser un tendeur de type bear trap.',
-    anim: { delay: 2600, dur: 5600 },
-    inset: { page: 'P08', crop: [0.25, 0.745, 0.81, 0.915], from: 8.8, to: 13.3, caption: 'Tendeur à cliquet ou « bear trap » (procédure, page 2)' },
+    anim: { delay: 500, dur: 7700 },
+    reveal: [{ t: 0, tags: [] }, { t: 5.6, tags: ['serrer'] }],
+    inset: { page: 'P08', crop: [0.25, 0.745, 0.81, 0.915], from: 8.8, to: 13.3, caption: 'À gauche : tendeur à cliquet · à droite : « bear trap » (procédure, page 2)' },
     shots: [
       { t: 0, pos: [0.6, 2.42, 0.55], tgt: [0, 2.02, -0.55], to: { pos: [0.42, 2.36, 0.38] }, cut: true },
       { t: 8.6, pos: [-1.25, 1.98, 1.25], tgt: [0, 1.78, -0.62], glide: 1.8 },
@@ -138,6 +149,7 @@ const PASSAGES = [
     id: 'etape-09', step: 9, num: 'Étape 9 / 15', title: 'Placer les tiges en quinconce',
     text: 'Par rangée · à partir de la gauche',
     voix: 'Étape 9. Place les tiges dans le support en quinconce, rangée par rangée, en partant de la gauche.',
+    inset: { page: 'P09', crop: [0.40, 0.135, 0.655, 0.25], w: 300, from: 3, to: 10, caption: 'Quinconce (procédure, page 3)' },
     shots: [
       { t: 0, pos: [0, 9.5, 0.9], tgt: [0, 2.9, -0.3], fov: 14, cut: true },
       { t: 10.5, pos: [-2.3, 1.73, 3.1], tgt: [0, 1.5, 0], cut: true },
@@ -147,16 +159,17 @@ const PASSAGES = [
     id: 'etape-10', step: 10, num: 'Étape 10 / 15', title: 'Appuyer les tiges au fond',
     text: 'Sur la barre transversale du fond · pas sur les côtés',
     voix: 'Étape 10. Appuie les tiges sur la barre transversale du fond, et non sur les côtés.',
-    reveal: [{ t: 0, tags: ['fond'] }, { t: 4.6, tags: ['fond', 'cotes'] }],
+    reveal: [{ t: 0, tags: ['+fond'] }, { t: 4.6, tags: ['+fond', '+cotes'] }],
     shots: [
-      { t: 0, pos: [0.22, 3.22, -0.91], tgt: [0, 2.45, -0.35], cut: true },
-      { t: 4.6, pos: [1.28, 3.05, -0.79], tgt: [0.62, 2.45, -0.3], cut: true },
+      { t: 0, pos: [0, 9.5, 0.9], tgt: [0, 2.5, -0.2], fov: 13, cut: true, badge: DESSUS, clip: COUPE_TRAVERSE },
+      { t: 4.6, pos: [0.62, 6.2, 0.55], tgt: [0.62, 2.5, -0.25], fov: 13, glide: 1.6, badge: DESSUS, clip: COUPE_TRAVERSE },
     ],
   },
   {
     id: 'etape-11', step: 11, num: 'Étape 11 / 15', title: 'Placer la chaîne de retenue',
     text: 'Accrochée solidement dans les 2 crochets fermés',
     voix: 'Étape 11. Place la chaîne de retenue des tiges. Accroche-la solidement dans les 2 crochets fermés, de chaque côté du support.',
+    reveal: [{ t: 0, tags: ['crochetG', 'crochetD'] }, { t: 5.6, tags: ['crochetD'] }],
     shots: [
       { t: 0, pos: [-2.0, 1.75, 2.4], tgt: [0, 1.6, 0], cut: true },
       { t: 5.6, pos: [1.5, 1.89, 0.33], tgt: [0.87, 1.76, -0.3], cut: true },
@@ -166,9 +179,10 @@ const PASSAGES = [
     id: 'etape-12', step: 12, num: 'Étape 12 / 15', title: 'Ajuster la chaîne',
     text: 'Si les tiges chutent vers un travailleur : jamais plus de 80°',
     voix: 'Étape 12. Ajuste la chaîne pour que les tiges ne puissent pas dépasser 80 degrés si elles chutent vers un travailleur.',
-    anim: { delay: 3200, dur: 6000 },
+    anim: { delay: 4200, dur: 6500 },
     shots: [
-      { t: 0, pos: [4.3, 1.59, 0.3], tgt: [0.9, 1.45, 0.12], cut: true },
+      { t: 0, pos: [5.4, 0.9, 0.55], tgt: [0.9, 0.74, 0.28], cut: true }, // le plancher et le sommet de l'angle au-dessus du bandeau
+      { t: 6.3, pos: [1.25, 1.95, 3.7], tgt: [-0.1, 1.6, 0.3], cut: true },
     ],
   },
   {
@@ -180,14 +194,14 @@ const PASSAGES = [
     shots: [
       { t: 0, pos: [-1.5, 1.71, 2.3], tgt: [0, 1.6, 0.1], cut: true },
       { t: 9.2, pos: [3.85, 1.3, 2.6], tgt: [1.0, 0.85, -0.1], cut: true },
-      { t: 16.3, pos: [-2.8, 1.45, 2.7], tgt: [-0.25, 1.2, 0.1], cut: true },
+      { t: 16.3, pos: [-3.3, 1.15, 3.5], tgt: [-0.2, 0.72, 0.1], cut: true },
     ],
   },
   {
     id: 'etape-14', step: 14, num: 'Étape 14 / 15', title: 'Prendre les tiges',
     text: 'Tiges graissées : un tournevis plat pour les séparer',
     voix: "Étape 14. Quand tu prends les tiges, la graisse peut les rendre difficiles à saisir. Un tournevis plat est préconisé pour les séparer et t'aider à les prendre.",
-    inset: { page: 'P10', crop: [0.37, 0.17, 0.685, 0.49], w: 270, from: 5.2, to: 12.6, caption: 'Procédure, page 4' },
+    inset: { page: 'P10', crop: [0.37, 0.17, 0.685, 0.49], w: 270, from: 5.2, to: 12.6, caption: 'Tournevis plat (procédure, page 4)' },
     shots: [
       { t: 0, pos: [-0.55, 1.47, 1.1], tgt: [-0.03, 1.33, 0.3], cut: true },
     ],
@@ -210,6 +224,7 @@ const PASSAGES = [
     id: 'fin', step: 5, still: true, num: 'À retenir', title: 'Incliné, ancré, retenu', text: '',
     voix: "À retenir. Le support est incliné entre 75 et 80 degrés, et ancré par une chaîne, tendeur serré au maximum. Les tiges sont en quinconce, appuyées sur la barre du fond, sans dépasser la capacité maximale. Et la chaîne de retenue doit être utilisée en tout temps, sauf pendant l'ajout et le retrait des tiges en continu.",
     cues: [{ t: 5.3, step: 8 }, { t: 9, step: 10 }, { t: 15.8, step: null }],
+    reveal: [{ t: 9, tags: ['+fond'] }, { t: 15.8, tags: null }],
     card: { from: 0.8, to: 99, title: 'À retenir', rows: [
       { t: 0.5, cells: ['1', 'Support incliné : 75° à 80°'] },
       { t: 4.5, cells: ['2', 'Ancré : chaîne, tendeur serré au maximum'] },
@@ -218,16 +233,17 @@ const PASSAGES = [
       { t: 15, cells: ['5', 'Chaîne de retenue en tout temps, sauf ajout et retrait en continu'] },
     ] },
     shots: [
-      { t: 0, pos: [3.3, 1.03, -0.25], tgt: [0.9, 0.9, -0.3], cut: true },
-      { t: 5.3, pos: [-1.25, 1.98, 1.25], tgt: [0, 1.78, -0.62], cut: true },
-      { t: 9, pos: [0.22, 3.22, -0.91], tgt: [0, 2.45, -0.35], cut: true },
+      // Mêmes vues qu'aux étapes 5, 8 et 10, décalées pour laisser le carton à droite, en haut.
+      { t: 0, pos: [4.4, 0.95, -0.95], tgt: [0.9, 0.66, -1.0], cut: true },
+      { t: 5.3, pos: [-0.85, 2.0, 1.4], tgt: [0.55, 1.72, -0.62], cut: true },
+      { t: 9, pos: [0, 9.5, 0.5], tgt: [0, 2.5, -0.6], fov: 13, cut: true, badge: DESSUS, clip: COUPE_TRAVERSE },
       { t: 15.8, pos: [-2.0, 1.75, 2.7], tgt: [0, 1.5, 0.1], cut: true },
     ],
   },
 ];
 
 // Durée minimale à l'écran (s) : animations d'étape (pose des 184 tiges) et temps de lecture des repères.
-const MIN = { 'etape-05': 9, 'etape-09': 17, 'etape-12': 11.5, 'etape-15': 11 };
+const MIN = { 'etape-01': 15, 'etape-05': 9, 'etape-09': 17, 'etape-12': 11.5, 'etape-15': 11 };
 const words = (s) => s.split(/\s+/).filter(Boolean).length;
 /** Durée d'un passage : débit de 2,4 mots par seconde, plus une respiration. */
 const dur = (voix, min = 0) => Math.max(min, Math.ceil((words(voix) / 2.4 + 1.6) * 2) / 2);

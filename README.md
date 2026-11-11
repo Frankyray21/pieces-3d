@@ -134,28 +134,41 @@ pièces (numéro, quantité, page du manuel).
   - `chantier.js` (paroi de roche grillagée et soutènement, plancher repris
     de `plancher-dd`), `outils.js` (boulon à œil, tendeur, foreuse à
     percussion sans fil, tournevis), `reperes.js` (cotes, arcs, zones, niveau
-    numérique), `travailleur.js` (silhouette provisoire).
+    numérique), `travailleur.js` (silhouette articulée : les mains et les
+    pieds vont où on les pose, par cinématique inverse à deux segments ; le
+    foreur tient la foreuse par ses deux poignées, les deux porteurs tiennent
+    les poteaux, pieds en place).
   Repères de mesure : orange = mesure, vert = permis, rouge = limite ou
   interdit, bleu = sens du geste ; chacun n'est montré qu'à son étape
   (`userData.stepOnly`) et peut porter un thème (`userData.stepTag`,
   `Viewer.setStepTags`) pour n'en montrer qu'un à la fois ; un thème en « + »
-  (vue en coupe du trou) n'est montré qu'à la demande. Animations d'étape
-  (`userData.stepAnim`, jouées par `Viewer.setStep`) : perçage, pose du
-  boulon, support qu'on incline à deux, chaîne passée bout par bout, serrage
-  au cliquet, paquet de tiges qui bascule et que la chaîne retient.
-  Conformité à la procédure : `node scripts/check-rack.mjs` prend 30 mesures
-  sur le modèle construit (hauteur, centrage et profondeur du trou, appui des
-  pattes du haut, angle, chaîne passée par l'extérieur des œillets, levier du
-  tendeur, quinconce, tiges qui se touchent sans se traverser, appui au fond
-  et jeu sur les côtés, rallonges, crochets entre 66 et 72 po, angle d'arrêt
-  de la chaîne, point bas à 5 pi au moins, marques).
-  **Vidéo de la procédure** (premier contact avec la méthode, 4 min 01,
+  (vue en coupe du trou, repères de la coupe de l'étape 10) n'est montré
+  qu'à la demande. Animations d'étape (`userData.stepAnim`, jouées par
+  `Viewer.setStep`, qui en rend la durée pour que la lecture automatique les
+  laisse finir) : perçage, pose du boulon, support qu'on incline à deux,
+  chaîne passée bout par bout, serrage au cliquet (le tendeur pend à la
+  chaîne lâche, ses vis rentrent d'un cran par coup de levier, la chaîne
+  garde sa longueur), paquet de tiges qui bascule et que la chaîne retient.
+  Conformité à la procédure : `node scripts/check-rack.mjs` prend 47 mesures
+  sur le modèle construit — l'installation finie (hauteur et centrage du
+  trou, appui des pattes du haut, angle, chaîne passée par l'extérieur des
+  œillets, levier du tendeur, quinconce, tiges qui se touchent sans se
+  traverser, appui au fond et jeu sur les côtés, rallonges, crochets entre 66
+  et 72 po, point bas à 5 pi au moins, marques), puis les états
+  intermédiaires des animations (avance de la mèche de 18 po, boulon pas
+  jusqu'au fond, gants sur la foreuse et sur les poteaux, bottes sur le
+  plancher, aucun fil du grillage devant le trou, surplus de chaîne posé au
+  sol, même nombre de maillons à chaque état, tendeur accroché à chaque coup
+  de levier, tiges retenues avant 80° puis revenues à 78°).
+  **Vidéo de la procédure** (premier contact avec la méthode, 4 min 04,
   1280 × 720, 24 i/s, muette, sous-titrée) : scénario dans
   `src/video/rack-script.js` — par passage, bandeau, réplique du formateur,
   plans de caméra choisis selon ce qui est expliqué (ensemble, gros plan,
-  profil pour un angle, plongée pour le quinconce, coupe pour le trou),
-  repères révélés une idée à la fois (`reveal`), photos de la procédure
-  incrustées (`inset`), cartons (`card`), rappels (`cues`). Les plans sont
+  profil pour un angle avec le plancher d'où il se mesure, plongée pour le
+  quinconce, coupe pour le trou, coupe au ras de la traverse pour l'appui au
+  fond : `clip`, `Viewer.setClip`), repères révélés une idée à la fois
+  (`reveal`), photos et schémas de la procédure incrustés (`inset`), cartons
+  (`card`), rappels (`cues`). Les plans sont
   fixes ; la caméra ne bouge que pendant une animation. Tournage image par
   image sous une horloge arrêtée : `scripts/video-rack.mjs` (le rendu 3D,
   coûteux sans carte graphique, n'est refait que si la scène a changé, sinon

@@ -360,6 +360,7 @@ export class Viewer {
     this._stepAnims = null;
     this._stepTags = null;
     this._stepFresh = null;
+    this.renderer.clippingPlanes = [];
     this._notes = [];
     this._drops = [];
     this.step = null;
@@ -482,7 +483,8 @@ export class Viewer {
    * l'ordre de pose (userData.seq, puis le long du plancher, en travers, de bas
    * en haut) : chacune descend en place, en surbrillance. Les objets
    * userData.stepOnly (outils, laser) et les annotations view.notes ne
-   * s'affichent qu'à leurs étapes. Retourne la durée de la pose (ms).
+   * s'affichent qu'à leurs étapes. Retourne la durée de la pose et de
+   * l'animation de l'étape (ms).
    */
   setStep(n, { animate = true } = {}) {
     if (!this.model) return 0;
@@ -550,6 +552,8 @@ export class Viewer {
         } });
       });
       total = fresh.length ? (fresh.length - 1) * gap + 420 : 0;
+      // L'animation de l'étape compte aussi : la lecture automatique la laisse finir.
+      for (const a of this._stepAnims) if (a.step === n) total = Math.max(total, (a.delay || 0) + (a.dur || 3000));
     }
     // view.stepFlash : la surbrillance d'une pièce s'éteint peu après sa pose (elle
     // reprend sa vraie couleur) au lieu de durer toute l'étape ; sans animation, aucune surbrillance.
@@ -571,6 +575,21 @@ export class Viewer {
     this._refreshLabels();
     this.invalidate();
     return total;
+  }
+
+  /**
+   * Vue en coupe : ne garde du modèle que ce qui est du côté de la normale du
+   * plan [nx, ny, nz, d] (points où n·p + d ≥ 0, repère du modèle) ; null :
+   * modèle entier. Sert à la vidéo (coupe au ras d'une traverse).
+   */
+  setClip(plane = null) {
+    const planes = [];
+    if (plane && this.model) {
+      this.model.root.updateMatrixWorld(true);
+      planes.push(new THREE.Plane(new THREE.Vector3(plane[0], plane[1], plane[2]), plane[3]).applyMatrix4(this.model.root.matrixWorld));
+    }
+    this.renderer.clippingPlanes = planes;
+    this.invalidate();
   }
 
   /** Objets et annotations propres à une étape : affichés à leur étape, selon leur thème (voir setStepTags). */

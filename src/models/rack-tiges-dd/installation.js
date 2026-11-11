@@ -11,9 +11,9 @@
 // être montré seul (vidéo : une idée à la fois) ; un thème en « + » n'est
 // montré qu'à la demande (vue en coupe du trou). Couleurs des repères :
 // orange = mesure, vert = permis, rouge = limite ou interdit, bleu = sens du geste.
-import { IN, T2, T15, T25, NQ, SIDE, CLEAR, SPLIT, XP, H_TOP, H_LOW, WALL, FRONT, ANGLE, TILT, SIN, COS, LIFT, W, HOOK, LUG, CHAIN, chainAlong, pathLength } from './support.js';
-import { WALL_Z, FT5, rockAt, fromDeck, decor, place, DECK, SEC, DRILL } from './chantier.js';
-import { HOLE, BOLT, LEVER, eyeBolt, hole, binder, hammerDrill, tournevis } from './outils.js';
+import { IN, T2, T15, T25, NQ, SIDE, CLEAR, SPLIT, XP, H_TOP, H_LOW, WALL, FRONT, ANGLE, TILT, SIN, COS, LIFT, W, HOOK, LUG, CHAIN, chainAlong } from './support.js';
+import { WALL_Z, FT5, rockAt, solAt, fromDeck, decor, place, DECK, SEC, DRILL } from './chantier.js';
+import { HOLE, BOLT, LEVER, TENDEUR, eyeBolt, hole, binder, hammerDrill, tournevis } from './outils.js';
 import { cote, pointille, arc, rayon, secteur, fleche, bande, niveau, polar } from './reperes.js';
 import { travailleur } from './travailleur.js';
 
@@ -104,22 +104,33 @@ export function P02(api) {
   guide(S.box(2 * XP + 0.5, 0.004, 1.05, 'zoneVerte', { pos: [0, 0.006, 0.1] }), [1], 'mur');
 
   // ------------------------------------------ étape 2 : percer le trou au mur
+  // La bouche du trou paraît quand la mèche mord la roche.
   const collar = S.at(hole(S), [0, FT5, ROCK_EYE]);
   collar.userData.step = 2;
+  collar.userData.noDrop = true;
   api.add(collar);
-  // Foreuse à percussion et travailleur qui la tient : ils avancent de 18 po pendant le perçage.
-  const drilling = S.group(hammerDrill(S));
+  // Foreuse à percussion : la mèche avance de 18 po. Le foreur la tient à deux mains (poignée fermée et
+  // poignée latérale) et la suit, pieds en place : il passe d'une jambe sur l'autre, se penche, allonge les bras.
+  const drill = hammerDrill(S);
+  const drilling = S.group(drill);
   const drillPart = S.at(S.group(drilling), [0, FT5, ROCK_EYE]);
   drillPart.userData.stepOnly = [2];
   drillPart.visible = false;
   api.part('8', drillPart, [0, 0, 0.6], { noLabel: true });
-  const driller = S.group(S.at(travailleur(S, 'perce'), [0.02, -FT5, 1.52]));
-  guide(S.at(S.group(driller), [0, FT5, ROCK_EYE]), [2]);
+  const foreur = guide(S.at(travailleur(S), [-0.13, 0, 0.18]), [2]);
+  foreur.userData.role = 'foreur';
+  const prise = (q, dz) => [q[0], FT5 + q[1], ROCK_EYE + q[2] + dz];
   // Le trou en coupe (voir plus bas) se creuse à mesure que la mèche avance.
   const groove = S.box(0.003, 0.034, HOLE, 'rockFloor');
   drillPart.userData.stepAnim = { step: 2, delay: 900, dur: 5200, update: (k) => {
-    drilling.position.z = -HOLE * k + (k > 0 && k < 1 ? 0.004 * Math.sin(k * 260) : 0);
-    driller.position.z = -HOLE * k;
+    const dz = -HOLE * k + (k > 0 && k < 1 ? 0.004 * Math.sin(k * 260) : 0);
+    drilling.position.z = dz;
+    foreur.userData.pose({
+      bassin: [0, -0.095, -0.26 * k], penche: 0.05 + 0.15 * k, tourne: -0.5, regard: 0.4,
+      pieds: [[-0.11, -0.38], [0.12, 0.1]],
+      mains: [prise(drill.userData.prises.cote, dz), prise(drill.userData.prises.arriere, dz)],
+    });
+    collar.scale.setScalar(k > 0 ? 1 : 0.001);
     groove.scale.z = Math.max(0.001, k);
     groove.position.set(-0.0015, FT5, ROCK_EYE - (HOLE * k) / 2);
   } };
@@ -141,8 +152,8 @@ export function P02(api) {
   // l'axe du trou, vue de l'intérieur de la roche ; le trou y paraît en sombre.
   guide(S.group(S.box(0.02, 1.5, 1.5, 'rock', { pos: [-0.012, FT5, ROCK_EYE - 0.75 - 0.004] }), groove), [2, 3], '+coupe');
   guide(cote(S, [0.03, FT5 + 0.11, ROCK_EYE - HOLE], [0.03, FT5 + 0.11, ROCK_EYE], { side: [0, 1, 0], tick: 0.05, r: 0.004 }), [2, 3], '+coupe');
-  // Étape 3 : espace laissé au fond du trou, au bout de la tige du boulon.
-  guide(S.box(0.004, 0.034, HOLE - BOLT.in, 'zoneVerte', { pos: [0.016, FT5, ROCK_EYE - (HOLE + BOLT.in) / 2] }), [3], '+coupe');
+  // Étape 3 : fond du trou, où la tige du boulon ne doit pas aller (rouge : limite).
+  guide(S.box(0.004, 0.034, HOLE - BOLT.in, 'zoneRouge', { pos: [0.016, FT5, ROCK_EYE - (HOLE + BOLT.in) / 2] }), [3], '+coupe');
 
   // ------------------------------------- étape 3 : insérer le boulon à œil
   const bolt = eyeBolt(S);
@@ -153,17 +164,31 @@ export function P02(api) {
   // --------------------------- étape 4 : à deux, lever et appuyer le support
   const rack = api.sub('P01', { inPlace: true, loaded: true });
   put('1', rack, [0, 0, 0], 4, { noDrop: true });
-  const lifters = S.group([-1, 1].map((s) => S.at(travailleur(S, 'porte'), [s * XP, 0, 0.3])));
-  guide(lifters, [4]);
+  // Un porteur de chaque côté, en dehors de la rallonge de la patte du bas, tourné vers son poteau
+  // qu'il tient à deux mains (une sur la face avant, l'autre sur le flanc extérieur).
+  const lifters = [-1, 1].map((s) => guide(S.at(travailleur(S), [s * (XP + 0.31), 0, 0.33], [0, s * Math.atan2(0.31, 0.33), 0]), [4]));
+  lifters.forEach((w) => { w.userData.role = 'porteur'; });
   // Appui des pattes du haut sur la paroi (anneaux verts, quand le support y est).
   const contacts = S.group([-1, 1].map((s) => S.ring(0.075, 0.058, 0.004, 'repereVert', { axis: 'z', pos: [s * XP, ARM_END[1], WALL_Z + 0.02], seg: 28 })));
   guide(contacts, [4], 'appui');
-  // Le support, tenu debout à deux, est incliné jusqu'à ce que les pattes du haut s'appuient au mur.
+  // Le support, tenu debout à deux, est incliné jusqu'à ce que les pattes du haut s'appuient au mur :
+  // les porteurs, pieds en place, l'accompagnent (bassin et buste vers l'avant, bras qui s'allongent).
   rack.userData.stepAnim = { step: 4, delay: 700, dur: 3400, update: (k) => {
-    const tilt = TILT * smooth(k);
+    const u = smooth(k), tilt = TILT * u;
     rack.rotation.x = -tilt;
     rack.position.y = (T25 / 2) * Math.sin(tilt);
-    lifters.position.z = 0.3 * (1 - smooth(k));
+    rack.updateMatrix();
+    const sur = (x, y, z) => new api.THREE.Vector3(x, y, z).applyMatrix4(rack.matrix).toArray(); // point du support → chantier
+    lifters.forEach((w, i) => {
+      const s = i ? 1 : -1;
+      const devant = sur(s * XP, 1.14, T2 / 2 + 0.02), dehors = sur(s * (XP + T2 / 2 + 0.02), 1.5, 0);
+      w.userData.pose({
+        bassin: [0, -0.04, -0.16 * u], penche: 0.03 + 0.13 * u,
+        // Le pied du côté du support reste en arrière : il ne chevauche pas la rallonge de la patte du bas.
+        pieds: s > 0 ? [[-0.1, 0.1], [0.1, -0.14]] : [[-0.1, -0.14], [0.1, 0.1]],
+        mains: s > 0 ? [devant, dehors] : [dehors, devant],
+      });
+    });
     contacts.scale.setScalar(k >= 0.97 ? 1 : 0.001);
   } };
 
@@ -183,35 +208,56 @@ export function P02(api) {
   ), [5]);
 
   // ------------------- étapes 6 à 8 : chaîne d'ancrage et tendeur à cliquet
+  /** Longueur d'une chaîne posée sur ces points (la courbe que suit chainAlong). */
+  const curve = (pts) => new api.THREE.CatmullRomCurve3(pts.map((q) => new api.THREE.Vector3(...q)), false, 'centripetal').getLength();
   const lz = -T2 / 2 - 0.055, ly = LUG - 0.01; // trou de l'œillet (repère du support)
   const mid = W(0, ly, lz);
-  // Tendue (slack = 0) ou lâche : de l'œil du boulon à l'œillet, puis vers le tendeur au centre.
-  const half = (s, slack) => [
-    W(s * 0.15, ly, lz), [s * XP * 0.5, mid[1] - 0.16 * slack, mid[2] + 0.02 * slack], W(s * (XP - 0.14), ly, lz), W(s * XP, ly, lz),
-    W(s * (XP + 0.07), ly - 0.03, lz - 0.05),
-    [s * XP * 0.55, (mid[1] + FT5) / 2 - 0.05 - 0.22 * slack, (mid[2] + EYE[2]) / 2],
-  ];
   const chain = (pts) => chainAlong(api, pts, 'chaineOr', CHAIN);
-  const LEVELS = 5;
-  const tension = Array.from({ length: LEVELS }, (_, i) => {
-    const slack = 1 - i / (LEVELS - 1);
-    return chain([...half(-1, slack), EYE, ...half(1, slack).reverse()]);
+  // De l'œil du boulon à l'œillet, puis vers le crochet du tendeur, au centre. Tant qu'il reste du mou
+  // (slack de 1 à 0), les vis du tendeur sont sorties : la chaîne fait un creux vers le boulon et le
+  // tendeur, accroché aux deux bouts, pend de `drop` sous la ligne des œillets.
+  const half = (s, slack = 0, drop = 0) => {
+    const H = [s * (TENDEUR.crochet + 0.015 + TENDEUR.course * slack), mid[1] - drop, mid[2]];
+    const L = W(s * XP, ly, lz);
+    const vers = (t, sag = 0) => [L[0] + (H[0] - L[0]) * t, L[1] + (H[1] - L[1]) * t - sag, L[2] + (H[2] - L[2]) * t];
+    const O = W(s * (XP + 0.07), ly - 0.03, lz - 0.05); // la chaîne contourne le poteau par l'extérieur
+    // Du poteau au boulon à œil : en ligne droite une fois tendue, en creux tant qu'il reste du mou.
+    return [H, vers(0.5, 0.012 * slack), vers(0.19), L, O, [(O[0] + EYE[0]) / 2, (O[1] + EYE[1]) / 2 - 0.12 * Math.sqrt(slack), (O[2] + EYE[2]) / 2]];
+  };
+  const around = (slack, drop) => [...half(-1, slack, drop), EYE, ...half(1, slack, drop).reverse()];
+  // La chaîne ne change pas de longueur : c'est le tendeur qui reprend le mou (2 × TENDEUR.course) en
+  // rentrant ses vis. À chaque cran, la hauteur où pend le tendeur est celle qui garde cette longueur.
+  const LEN = curve(around(0, 0));
+  const SLACK = [1, 0.8, 0.6, 0.4, 0.22, 0.08, 0];
+  const DROP = SLACK.map((slack) => {
+    if (!slack) return 0;
+    let d0 = 0, d1 = 0.6;
+    for (let i = 0; i < 40; i++) { const m = (d0 + d1) / 2; if (curve(around(slack, m)) < LEN) d0 = m; else d1 = m; }
+    return d0;
   });
-  const LEN = pathLength([...half(-1, 0), EYE, ...half(1, 0).reverse()]); // la même chaîne aux étapes 6 et 7
-  // Étape 6 : passée dans le boulon à œil jusqu'à son milieu ; les deux moitiés pendent, le surplus posé sur le plancher.
-  const ez = EYE[2], lay = Math.max(0.1, LEN / 2 - FT5);
-  const hang = (s) => [[s * (0.06 + lay), 0.016, ez + 0.12], [s * 0.08, 0.018, ez + 0.04], [s * 0.035, 0.35, ez + 0.005], [s * 0.028, FT5 - 0.14, ez]];
+  const tension = SLACK.map((slack, i) => chain(around(slack, DROP[i])));
+  const LEVELS = SLACK.length;
+  // Aux étapes 6 et 7, c'est la même chaîne : la longueur qui pend ou qui traîne est celle qui reste.
+  const reste = (path, lo, hi) => { for (let i = 0; i < 40; i++) { const m = (lo + hi) / 2; if (curve(path(m)) < LEN) lo = m; else hi = m; } return lo; };
+  // Étape 6 : passée dans le boulon à œil jusqu'à son milieu ; les deux moitiés pendent jusqu'au sol de
+  // roche, entre le plancher et la paroi, où repose le surplus (il suit le sol).
+  const ez = EYE[2];
+  const hang = (s, lay) => [
+    ...[1, 0.5, 0].map((t) => { const x = s * (0.05 + lay * t); return [x, solAt(x, ez + 0.05) + 0.004, ez + 0.05 - 0.03 * (1 - t)]; }),
+    [s * 0.035, solAt(0, ez) + 0.35, ez + 0.005], [s * 0.028, FT5 - 0.14, ez],
+  ];
   const loop = [0, FT5 - 0.016, ez]; // la chaîne repose au bas de l'œil
-  const hanging = chain([...hang(-1), loop, ...hang(1).reverse()]);
+  const LAY = reste((m) => [...hang(-1, m), loop, ...hang(1, m).reverse()], 0.02, 1.2);
+  const hanging = chain([...hang(-1, LAY), loop, ...hang(1, LAY).reverse()]);
   // Étape 7 : chaque bout passé dans son œillet, de l'extérieur vers l'intérieur ; les bouts pendent, pas encore reliés.
   const lugW = W(XP, ly, lz);
-  const tail = Math.max(0.2, LEN / 2 - Math.hypot(XP + 0.07, mid[1] - FT5, mid[2] - EYE[2]) - 0.1);
-  const thread = (s) => [
+  const thread = (s, tail) => [
     [s * (XP - 0.06), lugW[1] - tail, lugW[2] + 0.02], [s * (XP - 0.055), lugW[1] - 0.12, lugW[2] + 0.005], [s * (XP - 0.03), lugW[1] - 0.005, lugW[2]],
     W(s * (XP + 0.07), ly - 0.03, lz - 0.05), [s * XP * 0.55, (mid[1] + FT5) / 2 - 0.27, (mid[2] + EYE[2]) / 2],
   ];
-  const oneSide = chain([...hang(-1), EYE, ...thread(1).reverse()]); // un bout passé, l'autre pend encore
-  const threaded = chain([...thread(-1), EYE, ...thread(1).reverse()]);
+  const TAIL = reste((m) => [...thread(-1, m), EYE, ...thread(1, m).reverse()], 0.13, 2);
+  const oneSide = chain([...hang(-1, LAY), EYE, ...thread(1, TAIL).reverse()]); // un bout passé, l'autre pend encore
+  const threaded = chain([...thread(-1, TAIL), EYE, ...thread(1, TAIL).reverse()]);
   const variants = [hanging, oneSide, threaded, ...tension];
   const show = (m) => variants.forEach((v) => { v.visible = v === m; });
   show(tension[LEVELS - 1]);
@@ -219,15 +265,21 @@ export function P02(api) {
   anchor.userData.stepAnim = { step: 7, delay: 900, dur: 4000, update: (k) => show(k < 0.2 ? hanging : k < 0.7 ? oneSide : threaded) };
   put('4', anchor, [0, 0.35, 0.2], 6, { noDrop: true });
   // Sens du passage dans les œillets : de l'extérieur vers l'intérieur.
-  for (const s of [-1, 1]) guide(fleche(S, [s * (XP + 0.32), lugW[1] + 0.09, lugW[2]], [s * (XP + 0.04), lugW[1] + 0.09, lugW[2]], { r: 0.008, head: 0.08 }), [7]);
-  // Étape 8 : les bouts sont reliés par le tendeur, le levier du cliquet est pompé et la chaîne se tend.
+  for (const s of [-1, 1]) guide(fleche(S, [s * (XP + 0.32), lugW[1] + 0.09, lugW[2]], [s * (XP + 0.04), lugW[1] + 0.09, lugW[2]], { r: 0.008, head: 0.08 }), [7], s > 0 ? 'oeilD' : 'oeilG');
+  // Étape 8 : les bouts sont reliés par le tendeur, qui pend à la chaîne encore lâche (premier quart de
+  // l'animation : on voit l'accrochage) ; puis, à chaque coup de levier, ses vis rentrent d'un cran, la
+  // chaîne se tend et le tendeur remonte à la hauteur des œillets.
   const b = binder(S);
   put('5', S.at(S.group(b), mid), [0, 0.6, 0.2], 8);
-  const PUMPS = 6;
-  b.userData.stepAnim = { step: 8, delay: 1100, dur: 6000, update: (k) => {
-    b.userData.lever.rotation.x = LEVER.rest + (k > 0 && k < 1 ? LEVER.travel * (0.5 - 0.5 * Math.cos(k * PUMPS * 2 * Math.PI)) : 0);
+  const ACCROCHE = 0.25;
+  b.userData.stepAnim = { step: 8, delay: 500, dur: 8000, update: (k) => {
+    const u = Math.max(0, (k - ACCROCHE) / (1 - ACCROCHE)); // avancement du serrage
+    const i = Math.round(u * (LEVELS - 1));
+    b.userData.lever.rotation.x = LEVER.rest + (u > 0 && u < 1 ? LEVER.travel * (0.5 - 0.5 * Math.cos(u * (LEVELS - 1) * 2 * Math.PI)) : 0);
+    b.userData.regler(TENDEUR.course * SLACK[i]);
+    b.position.y = -DROP[i];
     // k = 0 : la chaîne garde l'état de l'étape 7 (animation de la chaîne, jouée avant celle-ci).
-    if (k > 0) show(tension[Math.round(k * (LEVELS - 1))]);
+    if (k > 0) show(tension[i]);
   } };
 
   // ------------------ étapes 9 et 10 : tiges en quinconce, appuyées au fond
@@ -265,6 +317,21 @@ export function P02(api) {
     cotes.add(S.at(side, W(s * (CLEAR / 2 - 0.003), H_TOP - 0.02, FRONT / 2)));
   }
   guide(cotes, [10], 'cotes');
+  // Vue en coupe au ras de la traverse du haut (à la demande : vidéo) : le dessus de la barre du fond en
+  // vert (appui), une croix rouge sur chaque côté (pas d'appui).
+  const yCoupe = H_TOP + T2 / 2 + 0.004;
+  const barre = S.group();
+  for (const [x0, x1, t] of [[-CLEAR / 2, SPLIT, T15], [SPLIT, CLEAR / 2, T2]]) {
+    const top = S.box(x1 - x0, 0.004, t - 0.004, 'repereVert');
+    top.rotation.x = -TILT;
+    barre.add(S.at(top, W((x0 + x1) / 2, H_TOP + t / 2 + 0.004, 0)));
+  }
+  guide(barre, [10], '+fond');
+  const croix = S.group();
+  for (const s of [-1, 1]) {
+    for (const d of [-1, 1]) croix.add(S.rod(W(s * XP - 0.055, yCoupe, FRONT / 2 - d * 0.055), W(s * XP + 0.055, yCoupe, FRONT / 2 + d * 0.055), 0.008, 'fluoRed', 8));
+  }
+  guide(croix, [10], '+cotes');
 
   // ------------------------------- étapes 11 à 13 : chaîne de retenue
   // D'un crochet fermé à l'autre, devant les tiges ; lâche, elle ne descend jamais sous 5 pi au centre.
@@ -283,7 +350,6 @@ export function P02(api) {
     return [ring(-1), mid(ring(-1), span[0]), ...span, mid(ring(1), span[4]), ring(1)];
   };
   // Longueur de la chaîne, et avance du paquet qu'elle permet avant d'être tendue : l'angle où elle l'arrête.
-  const curve = (pts) => new api.THREE.CatmullRomCurve3(pts.map((q) => new api.THREE.Vector3(...q)), false, 'centripetal').getLength();
   RETENUE.longueur = curve(restPts);
   let p0 = 0, p1 = 0.5;
   for (let i = 0; i < 40; i++) { const m = (p0 + p1) / 2; if (curve(tautPts(m)) < RETENUE.longueur) p0 = m; else p1 = m; }
@@ -300,6 +366,12 @@ export function P02(api) {
   showRet(0);
   const retenue = S.group(retVariants);
   put('6', retenue, [0, 0, 1.9], 11, { noDrop: true });
+  // Les deux crochets fermés, entourés de vert : c'est là qu'on accroche la chaîne.
+  for (const s of [-1, 1]) {
+    const o = S.ring(0.062, 0.049, 0.004, 'repereVert', { axis: 'z', seg: 28 });
+    o.rotation.x = -TILT;
+    guide(S.at(o, [s * XP, hookW[1], hookW[2] + 0.012]), [11], s > 0 ? 'crochetD' : 'crochetG');
+  }
 
   // Étape 12 : les tiges ne doivent pas pouvoir dépasser 80° en chutant vers un travailleur.
   // Animation : le paquet bascule vers le travailleur, chaque tige sur son pied ; la chaîne
@@ -323,7 +395,8 @@ export function P02(api) {
   const g80 = S.group(
     secteur(S, xr, FOOT_FRONT, 0.3, 2.2, LIMIT, 93, { material: 'zoneRouge' }),
     rayon(S, xr, FOOT_FRONT, 2.75, LIMIT, { material: 'fluoRed', r: 0.007 }),
-    arc(S, xr, FOOT_FRONT, 0.5, 0, LIMIT, { material: 'fluoRed', r: 0.004 }),
+    arc(S, xr, FOOT_FRONT, 0.9, 0, LIMIT, { material: 'fluoRed', r: 0.007 }),
+    rayon(S, xr, FOOT_FRONT, 1.1, 0, { material: 'fluoRed', r: 0.005 }), // au plancher (sans dépasser son bord) : c'est de là que se prend l'angle
   );
   guide(g80, [12]);
 
@@ -341,7 +414,7 @@ export function P02(api) {
   guide(crochets, [13], 'crochets');
   const z5 = frontAt(0, FT5, 0.04)[2];
   guide(S.group(
-    pointille(S, [-XP - 0.34, FT5, z5], [XP + 0.06, FT5, z5], { material: 'repereVert', r: 0.007, dash: 0.1, gap: 0.06 }),
+    pointille(S, [-XP - 0.34, FT5, z5], [XP + 0.06, FT5, z5], { material: 'fluoRed', r: 0.007, dash: 0.1, gap: 0.06 }),
     cote(S, [-XP - 0.28, 0, z5], [-XP - 0.28, FT5, z5], { side: [1, 0, 0] }),
   ), [13], 'g5');
   // Marques à 5 pi du sol sur les poteaux (photo de la procédure).
@@ -379,7 +452,7 @@ const CAM = {
   anchor: { pos: [0.9, 2.5, 0.9], tgt: [0, 1.85, -0.65] },
   top: { pos: [0.3, 5.2, 1.3], tgt: [0, 2.6, -0.3] },
   front: { pos: [-1.6, 1.75, 2.5], tgt: [0, 1.45, 0.2] },
-  profile: { pos: [3.6, 1.5, 0.3], tgt: [0.9, 1.4, 0.15] },
+  profile: { pos: [3.9, 1.15, 0.45], tgt: [0.9, 0.85, 0.2] }, // le plancher à l'image : l'angle se prend de là
 };
 
 // Étapes de la procédure PRO-DD-ST-008 (l'indice est le numéro de l'étape).
@@ -411,25 +484,28 @@ const NOTES = [
   { steps: [2], tag: 'prof', pos: [-0.13, FT5 + 0.32, ROCK_EYE + HOLE * 0.5], text: '18 po de profond' },
   { steps: [2], tag: 'haut', pos: [-0.42, FT5 * 0.5, ROCK_EYE + 0.07], text: '± 5 pi du plancher' },
   { steps: [2, 3], tag: '+coupe', pos: [0.03, FT5 + 0.17, ROCK_EYE - HOLE / 2], text: 'Trou : 18 po de profond' },
-  { steps: [3], tag: '+coupe', pos: [0.03, FT5 - 0.07, ROCK_EYE - (HOLE + BOLT.in) / 2], text: 'Pas jusqu’au fond', kind: 'ok' },
+  { steps: [3], tag: '+coupe', pos: [0.03, FT5 - 0.07, ROCK_EYE - (HOLE + BOLT.in) / 2], text: 'Pas jusqu’au fond', kind: 'no' },
   { steps: [3], tag: 'boulon', pos: [0, FT5 + 0.24, EYE[2]], text: 'Pas jusqu’au fond du trou' },
   { steps: [4], tag: 'appui', pos: [0, ARM_END[1] + 0.02, WALL_Z + 0.06], text: 'Pattes du haut bien appuyées au mur', kind: 'ok' },
   { steps: [5], pos: polar(XP + 0.1, PIED, 0.7, 40), text: `${ANGLE}°` },
   { steps: [5], pos: polar(XP + 0.1, PIED, 1.46, 73.2), text: '75°', kind: 'ok' },
   { steps: [5], pos: polar(XP + 0.1, PIED, 1.46, 81.8), text: '80°', kind: 'ok' },
   { steps: [6], pos: [0, FT5 + 0.26, EYE[2]], text: 'Jusqu’au milieu de la chaîne' },
-  { steps: [7], pos: [XP + 0.2, W(0, LUG, 0)[1] + 0.2, W(0, LUG, -0.08)[2]], text: "De l'extérieur vers l'intérieur" },
-  { steps: [7], pos: [-XP - 0.2, W(0, LUG, 0)[1] + 0.2, W(0, LUG, -0.08)[2]], text: "De l'extérieur vers l'intérieur" },
-  { steps: [8], pos: [0, W(0, LUG, 0)[1] + 0.46, W(0, LUG, -0.08)[2]], text: 'Serrer au maximum' },
-  { steps: [9], pos: [0, W(0, NQ.len, 0)[1] + 0.42, W(0, NQ.len, 0.12)[2]], text: 'À partir de la gauche · 23 tiges NQ par rangée' },
+  { steps: [7], tag: 'oeilD', pos: [XP + 0.2, W(0, LUG, 0)[1] + 0.2, W(0, LUG, -0.08)[2]], text: "De l'extérieur vers l'intérieur" },
+  { steps: [7], tag: 'oeilG', pos: [-XP - 0.2, W(0, LUG, 0)[1] + 0.2, W(0, LUG, -0.08)[2]], text: "De l'extérieur vers l'intérieur" },
+  { steps: [8], tag: 'serrer', pos: [-0.34, W(0, LUG, 0)[1] + 0.12, W(0, LUG, -0.08)[2]], text: 'Serrer au maximum' },
+  { steps: [9], pos: [0, W(0, NQ.len, 0)[1] + 0.42, W(0, NQ.len, 0.12)[2]], text: 'À partir de la gauche' },
   { steps: [10], tag: 'fond', pos: [0, W(0, H_TOP, 0)[1] + 0.3, W(0, H_TOP, 0)[2] - 0.05], text: 'Appui : barre du fond', kind: 'ok' },
   { steps: [10], tag: 'cotes', pos: W(XP - 0.02, H_TOP + 0.28, T2 / 2 + FRONT * 0.75), text: 'Pas sur les côtés', kind: 'no' },
-  { steps: [11], pos: [XP, HOOK * COS + 0.2, zHook], text: 'Crochet fermé' },
-  { steps: [11], pos: [-XP, HOOK * COS + 0.2, zHook], text: 'Crochet fermé' },
+  { steps: [10], tag: '+fond', pos: W(0.3, H_TOP + T2 / 2, -0.07), text: 'Appui : barre du fond', kind: 'ok' },
+  { steps: [10], tag: '+cotes', pos: W(XP + 0.06, H_TOP + T2 / 2, FRONT / 2 + 0.14), text: 'Pas sur les côtés', kind: 'no' },
+  { steps: [10], tag: '+cotes', pos: W(-XP - 0.06, H_TOP + T2 / 2, FRONT / 2 + 0.14), text: 'Pas sur les côtés', kind: 'no' },
+  { steps: [11], tag: 'crochetD', pos: [XP + 0.2, HOOK * COS - 0.015, zHook], text: 'Crochet fermé', kind: 'ok' },
+  { steps: [11], tag: 'crochetG', pos: [-XP - 0.2, HOOK * COS - 0.015, zHook], text: 'Crochet fermé', kind: 'ok' },
   { steps: [12], pos: polar(XP + 0.1, FOOT_FRONT, 2.05, 81.5), text: 'Limite : 80°', kind: 'no' },
   { steps: [13], tag: 'crochets', pos: [XP + 0.55, HOOK_MAX + 0.07, zHook], text: '72 po au maximum', kind: 'ok' },
   { steps: [13], tag: 'crochets', pos: [XP + 0.55, HOOK_MIN - 0.01, zHook], text: '66 po au minimum', kind: 'ok' },
-  { steps: [13], tag: 'g5', pos: [0, FT5 - 0.1, frontAt(0, FT5, 0.04)[2]], text: 'Au centre : jamais à moins de 5 pi du sol', kind: 'ok' },
+  { steps: [13], tag: 'g5', pos: [-0.2, FT5 - 0.3, frontAt(0, FT5, 0.04)[2]], text: 'Au centre : jamais à moins de 5 pi du sol', kind: 'no' },
   { steps: [14], pos: W(0, 1.52, FRONT + 0.25), text: 'Tournevis plat pour séparer les tiges' },
   { steps: [15], pos: [0, W(0, NQ.len, 0)[1] + 0.42, W(0, NQ.len, 0.12)[2]], text: '8 rangées × 23 tiges = 184 tiges NQ' },
 ];

@@ -23,6 +23,7 @@
 //                  band=0 (sans bandeau) · labels=1 (repères)
 //   GET /reload          recharge la page (après une modification du modèle ou du scénario)
 //   GET /segments        passages du scénario (identifiant, étape, début, durée, plans)
+//   (image libre : &clip=nx,ny,nz,d pour une vue en coupe)
 //   GET /eval?js=…       exécute du code dans la page (essais d'ambiance : fond, lumières)
 import { createRequire } from 'node:module';
 import { mkdirSync, rmSync, existsSync, readdirSync, symlinkSync, linkSync } from 'node:fs';
@@ -67,14 +68,16 @@ const CSS = `
   #vinset, #vcard { position: fixed; top: 26px; right: 28px; z-index: 61; opacity: 0; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 34px rgba(0, 0, 0, .55); }
   #vinset { width: 500px; background: #fff; border: 2px solid #ff9d4d; }
   #vinset .i { background-repeat: no-repeat; background-color: #fff; }
-  #vinset .c { font: 600 15px 'IBM Plex Sans', sans-serif; color: #fff; background: #1b222b; padding: 7px 12px; }
+  #vinset .c { font: 600 18px 'IBM Plex Sans', sans-serif; color: #fff; background: #1b222b; padding: 7px 12px; }
   #vcard { min-width: 400px; background: rgba(16, 21, 27, .93); border: 1px solid rgba(255, 157, 77, .7); color: #fff; font-family: 'IBM Plex Sans', sans-serif; padding: 14px 20px 16px; }
   #vcard .h { font: 600 15px 'IBM Plex Mono', monospace; color: #ff9d4d; letter-spacing: .07em; text-transform: uppercase; margin-bottom: 8px; }
   #vcard table { border-collapse: collapse; width: 100%; }
   #vcard td { padding: 6px 18px 6px 0; font-size: 23px; line-height: 1.25; vertical-align: baseline; }
   #vcard td:first-child { font: 700 27px 'Barlow Condensed', sans-serif; letter-spacing: .03em; text-transform: uppercase; color: #ffd0a6; white-space: nowrap; }
   #vcard td:last-child { padding-right: 0; }
-  .balloon.caption.note { font-size: 17px !important; font-weight: 600; padding: 6px 11px !important; max-width: 22em !important; }
+  .balloon.caption.note { font-size: 21px !important; font-weight: 600; padding: 6px 12px !important; max-width: 22em !important; }
+  /* Les étiquettes suivent la caméra à l'image près (la transition de l'interface les ferait traîner et sauter aux coupes). */
+  .balloon, .balloon * { transition: none !important; animation: none !important; }
 `;
 
 /** Ouvre la page du montage, horloge arrêtée ; le rendu 3D est fait une fois par image, à la demande. */
@@ -210,6 +213,9 @@ async function dress(ctx, s, t) {
       v.invalidate();
     }, shot.hide || []);
   }
+  // Vue en coupe pendant le plan (clip : plan [nx, ny, nz, d] du repère du chantier ; on garde le côté de la normale).
+  const clip = JSON.stringify(shot.clip || null);
+  if (clip !== ctx.clip) { ctx.clip = clip; scene = true; await ctx.page.evaluate((x) => window.viewer.setClip(x), shot.clip || null); }
   const i = s.inset, onI = !!i && t >= i.from && t < i.to;
   const c = s.card, onC = !!c && t >= c.from && t < c.to;
   const inset = onI ? { url: `${base}/equipment/rack-tiges-dd/pages/${i.page}.webp`, crop: i.crop, w: i.w, ratio: i.ratio || 1705 / 1318, caption: i.caption, alpha: fade(t, i.from, i.to) } : null;
@@ -290,14 +296,15 @@ if (servePort) {
       cam = { pos: vec(q.get('pos')), tgt: vec(q.get('tgt')), fov: q.get('fov') ? Number(q.get('fov')) : undefined };
       const tags = !q.get('tags') || q.get('tags') === '-' ? null : q.get('tags').split(',');
       const hide = q.get('hide') ? q.get('hide').split(',') : [];
-      await ctx.page.evaluate(([x, h]) => {
+      const clip = q.get('clip') ? vec(q.get('clip')) : null;
+      await ctx.page.evaluate(([x, h, c]) => {
         const v = window.viewer;
-        v.setStepTags(x); window.__badge(null); window.__inset(null); window.__card(null);
+        v.setStepTags(x); v.setClip(c); window.__badge(null); window.__inset(null); window.__card(null);
         for (const r of window.__hidden || []) for (const o of v.model.refs.get(r) || []) o.visible = true;
         for (const r of h) for (const o of v.model.refs.get(r) || []) o.visible = false;
         window.__hidden = h;
-      }, [tags, hide]);
-      Object.assign(ctx, { tags: JSON.stringify(tags), hide: JSON.stringify(hide), over: '' });
+      }, [tags, hide, clip]);
+      Object.assign(ctx, { tags: JSON.stringify(tags), hide: JSON.stringify(hide), clip: JSON.stringify(clip), over: '' });
       if (q.get('anim') != null && n != null) await ctx.page.evaluate(([k, a]) => { for (const x of window.__anims()) if (x.step === k) x.update(a); window.viewer.invalidate(); }, [n, Number(q.get('anim'))]);
     }
     await band(ctx, q.get('band') === '0' ? null : s);

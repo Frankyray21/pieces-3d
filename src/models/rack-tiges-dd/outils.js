@@ -30,11 +30,14 @@ export function hole(S) {
 }
 
 export const LEVER = { rest: -0.45, travel: -0.6 }; // levier du cliquet : inclinaison au repos, course d'un coup de pompe (rad, vers la paroi)
+export const TENDEUR = { crochet: 0.135, course: 0.05 }; // tendeur : demi-entraxe des crochets une fois serré, course de chaque vis
 
 /**
  * Tendeur à cliquet de chaîne (étape 8), le long de X, centré à l'origine :
- * corps fileté, boîtier du cliquet, un crochet à chaque bout, levier articulé
- * (userData.lever) pompé pendant le serrage.
+ * corps fileté, boîtier du cliquet, levier articulé (userData.lever) pompé
+ * pendant le serrage, une vis à crochet à chaque bout. Les vis sortent du
+ * corps de `x` chacune (userData.regler(x), de 0 à TENDEUR.course) : c'est en
+ * les rentrant que le tendeur reprend le mou de la chaîne.
  */
 export function binder(S) {
   const g = S.group(
@@ -46,25 +49,35 @@ export function binder(S) {
   S.at(lever, [0.02, 0, -0.03], [LEVER.rest, 0, -0.25]);
   g.add(lever);
   g.userData.lever = lever;
-  for (const s of [-1, 1]) g.add(S.torus(0.016, 0.005, 'darkSteel', { axis: 'z', pos: [s * 0.135, 0, 0] }));
+  const bouts = [-1, 1].map((s) => {
+    const bout = S.group(S.cyl(0.0065, 0.1, 'steel', { axis: 'x', pos: [-s * 0.064, 0, 0], seg: 10 }), S.torus(0.016, 0.005, 'darkSteel', { axis: 'z' }));
+    bout.userData.crochet = true; // repéré par le contrôle chiffré (scripts/check-rack.mjs)
+    g.add(bout);
+    return bout;
+  });
+  g.userData.regler = (x) => bouts.forEach((bout, i) => { bout.position.x = (i ? 1 : -1) * (TENDEUR.crochet + x); });
+  g.userData.regler(0);
   return g;
 }
 
 /**
  * Foreuse à percussion électrique sans fil (étape 2), d'après la photo d'un
  * marteau perforateur à poignée fermée, avec batterie : mèche le long de −Z,
- * pointe à l'origine ; butée de profondeur réglée à 18 po.
+ * pointe à l'origine ; butée de profondeur réglée à 18 po. La mèche (30 mm)
+ * perce le trou où glisse la tige du boulon à œil (22 mm). userData.prises :
+ * où la tiennent les deux mains (poignée fermée à l'arrière, poignée latérale
+ * à gauche), depuis la pointe de la mèche.
  */
 export function hammerDrill(S, bit = 0.5) {
   const z0 = bit; // nez du mandrin
-  return S.group(
-    S.cyl(0.008, bit, 'steel', { axis: 'z', pos: [0, 0, bit / 2], seg: 10 }),
+  const g = S.group(
+    S.cyl(0.015, bit, 'steel', { axis: 'z', pos: [0, 0, bit / 2], seg: 12 }),
     S.cyl(0.026, 0.035, 'black', { axis: 'z', pos: [0, 0, z0 + 0.0175] }),
     S.cyl(0.034, 0.06, 'black', { axis: 'z', pos: [0, 0, z0 + 0.065] }),
-    // Collier et poignée latérale ; la butée de profondeur s'arrête à 18 po de la pointe.
+    // Collier et poignée latérale, à gauche ; la butée de profondeur s'arrête à 18 po de la pointe.
     S.cyl(0.041, 0.03, 'black', { axis: 'z', pos: [0, 0, z0 + 0.115] }),
-    S.cyl(0.021, 0.13, 'black', { axis: 'y', pos: [0, -0.115, z0 + 0.115] }),
-    S.cyl(0.03, 0.012, 'black', { axis: 'y', pos: [0, -0.052, z0 + 0.115] }),
+    S.cyl(0.021, 0.13, 'black', { axis: 'x', pos: [-0.115, 0, z0 + 0.115] }),
+    S.cyl(0.03, 0.012, 'black', { axis: 'x', pos: [-0.052, 0, z0 + 0.115] }),
     S.cyl(0.004, z0 + 0.13 - HOLE, 'steel', { axis: 'z', pos: [0.012, 0.052, (HOLE + z0 + 0.13) / 2], seg: 8 }),
     // Carter rouge : canon, boîtier du moteur.
     S.cyl(0.04, 0.2, 'red', { axis: 'z', pos: [0, 0, z0 + 0.225] }),
@@ -82,6 +95,8 @@ export function hammerDrill(S, bit = 0.5) {
     S.box(0.045, 0.035, 0.1, 'red', { r: 0.008, pos: [0, -0.175, z0 + 0.365] }),
     S.box(0.02, 0.05, 0.016, 'black', { pos: [0, -0.02, z0 + 0.395] }),
   );
+  g.userData.prises = { arriere: [0, -0.07, z0 + 0.42], cote: [-0.125, 0, z0 + 0.115] };
+  return g;
 }
 
 /** Tournevis plat (étape 14), lame le long de −Z, pointe à l'origine. */

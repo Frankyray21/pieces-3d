@@ -1,12 +1,15 @@
 // Contrôle du support de tiges installé (rack-tiges-dd, P02) contre les
 // exigences de la procédure PRO-DD-ST-008 : chaque mesure est prise sur le
 // modèle 3D construit (boîtes, lancers de rayon, positions des tiges), pas sur
-// les constantes qui ont servi à le dessiner.   node scripts/check-rack.mjs
+// les constantes qui ont servi à le dessiner. D'abord l'installation finie,
+// puis les états intermédiaires que montre le montage pas à pas (animations
+// d'étape : perçage, levage à deux, chaîne pendue, serrage, paquet retenu).
+//   node scripts/check-rack.mjs
 import * as THREE from 'three';
 import { buildProcedural } from '../src/viewer/assembly.js';
 import builders, { RETENUE } from '../src/models/rack-tiges-dd/index.js';
 import { NQ, T2, T15, CLEAR, SPLIT, FRONT, ANGLE } from '../src/models/rack-tiges-dd/support.js';
-import { HOLE, BOLT, LEVER } from '../src/models/rack-tiges-dd/outils.js';
+import { LEVER } from '../src/models/rack-tiges-dd/outils.js';
 
 const IN = 0.0254;
 const model = buildProcedural(builders, 'P02');
@@ -37,7 +40,6 @@ const holeY = (bolt.min.y + bolt.max.y) / 2 / IN;
 check('Étape 2 — hauteur du trou (± 5 pi = 60 po du plancher)', holeY.toFixed(1), Math.abs(holeY - 60) <= 3, ' po');
 const off = Math.abs((bolt.min.x + bolt.max.x) / 2 - (rb.min.x + rb.max.x) / 2);
 check('Étape 2 — trou au centre du support (écart)', (off * 1000).toFixed(0), off < 0.02, ' mm');
-check('Étape 2 — profondeur du trou (18 po)', (HOLE / IN).toFixed(1), Math.abs(HOLE / IN - 18) < 0.05, ' po');
 
 // Étape 3 : boulon à œil pas enfoncé jusqu'au fond du trou.
 const wall = parts('M')[0];
@@ -45,8 +47,7 @@ const ray = new THREE.Raycaster();
 const rockHit = (from) => { ray.set(from, new THREE.Vector3(0, 0, -1)); return ray.intersectObject(wall, true).find((h) => h.object.geometry.attributes.position.count > 5000); };
 const face = rockHit(new THREE.Vector3((bolt.min.x + bolt.max.x) / 2 + 0.06, (bolt.min.y + bolt.max.y) / 2 + 0.06, 0.2));
 const inRock = face.point.z - bolt.min.z; // longueur de tige dans la roche
-check('Étape 3 — tige du boulon dans le trou', (inRock / IN).toFixed(1), inRock > 0.2 && inRock < HOLE - 0.02, ` po sur 18 (${((HOLE - inRock) * 100).toFixed(0)} cm libres au fond)`);
-check('Étape 3 — boulon tel que dessiné : pas jusqu’au fond', ((HOLE - BOLT.in) * 100).toFixed(1), BOLT.in < HOLE, ' cm de jeu');
+// (comparée plus bas à la profondeur du trou, mesurée par l'avance de la mèche)
 
 // Étape 4 : pattes du haut appuyées au mur (lancer de rayon du bout de chaque membrure vers la paroi).
 for (const a of find(rack, '7')) {
@@ -115,8 +116,15 @@ const jeu = Math.min(all.min.x - leftEdge, rightEdge - all.max.x);
 check('Étape 10 — jeu entre les tiges et les côtés du support', (jeu * 1000).toFixed(0), jeu > 0.005, ' mm');
 const rodAngle = deg(Math.asin(new THREE.Vector3(0, 1, 0).transformDirection(rods[0].matrixWorld).y));
 check('Étape 10 — tiges au même angle que le support', rodAngle.toFixed(1), Math.abs(rodAngle - angle) < 0.05, '°');
-const floorGap = Math.max(...rods.map((r) => Math.abs(new THREE.Box3().setFromObject(r).min.y)));
-check('Pieds des tiges sur le plancher (plus grand écart)', (floorGap * 1000).toFixed(1), floorGap < 0.004, ' mm');
+const deck = parts('S')[0];
+/** Dessus du plancher ou du sol de roche sous un point : { y, sur }. */
+const ground = (x, z) => {
+  ray.set(new THREE.Vector3(x, 1, z), new THREE.Vector3(0, -1, 0));
+  const hits = [[deck, 'plancher'], [wall, 'roche']].flatMap(([o, sur]) => ray.intersectObject(o, true).filter((h) => !h.object.userData.grillage).map((h) => ({ y: h.point.y, sur })));
+  return hits.sort((a, b) => b.y - a.y)[0] || { y: NaN, sur: 'rien' };
+};
+const feet = rods.map((r) => { const b = new THREE.Box3().setFromObject(r); return Math.abs(b.min.y - ground(r.position.x, b.max.z - 0.04).y); });
+check('Pieds des tiges sur le plancher (plus grand écart au dessus du plancher)', (Math.max(...feet) * 1000).toFixed(1), Math.max(...feet) < 0.006, ' mm');
 
 // Rallonges du haut et du bas : elles dépassent le devant du paquet de 8 rangées.
 for (const [ref, nom] of [['8', 'du haut'], ['13', 'de patte du bas']]) {
@@ -128,8 +136,6 @@ for (const [ref, nom] of [['8', 'du haut'], ['13', 'de patte du bas']]) {
 
 // Étape 11 et encadré de l'étape 13 : crochets fermés entre 66 et 72 po du sol.
 for (const h of find(rack, '11')) { const b = box(h); const y = (b.min.y + b.max.y) / 2 / IN; check('Étape 13 — hauteur d’un crochet fermé (66 à 72 po du sol)', y.toFixed(1), y >= 66 && y <= 72, ' po'); }
-// Étape 12 : la chaîne arrête le paquet avant 80°.
-check('Étape 12 — angle où la chaîne de retenue arrête le paquet (80° au plus)', RETENUE.arret.toFixed(2), RETENUE.arret > ANGLE && RETENUE.arret <= 80, `° (chaîne de ${RETENUE.longueur.toFixed(2)} m, avance de ${(RETENUE.avance * 100).toFixed(1)} cm)`);
 // Étape 13 : chaîne lâche jamais à moins de 5 pi du sol au centre ; marques à 5 pi.
 const chain = box(parts('6')[0]);
 check('Étape 13 — point le plus bas de la chaîne de retenue (5 pi = 60 po au moins)', (chain.min.y / IN).toFixed(1), chain.min.y / IN >= 60, ' po');
@@ -139,4 +145,97 @@ for (const m of parts('7')) { const b = box(m); const y = (b.min.y + b.max.y) / 
 let rodLen = 0;
 rods[0].traverse((o) => { if (o.isMesh) { o.geometry.computeBoundingBox(); const z = o.geometry.boundingBox.getSize(new THREE.Vector3()); rodLen = Math.max(z.x, z.y, z.z); } });
 check('Longueur des tiges (3 m au plus)', rodLen.toFixed(2), rodLen <= 3.001, ' m');
+
+// ---------------------------------------------------------------------------
+// États intermédiaires : chaque animation d'étape est mise à son début (0), en
+// cours ou à sa fin (1), puis remise à sa fin.
+const anims = {};
+model.root.traverse((o) => { if (o.userData.stepAnim) anims[o.userData.stepAnim.step] = o.userData.stepAnim; });
+const at = (step, k) => { anims[step].update(k); model.root.updateMatrixWorld(true); };
+const by = (root, key, value = true) => { const out = []; root.traverse((o) => { if (o.userData[key] === value) out.push(o); }); return out; };
+const meshBoxes = (...objs) => objs.flatMap((o) => { const out = []; o.traverse((m) => { if (m.isMesh) out.push(new THREE.Box3().setFromObject(m)); }); return out; });
+const centre = (o) => new THREE.Box3().setFromObject(o).getCenter(new THREE.Vector3());
+const reach = (p, bs) => Math.min(...bs.map((b) => b.distanceToPoint(p)));
+const mm = (v) => (v * 1000).toFixed(0);
+const quand = (k) => (k === 0 ? 'début' : k === 1 ? 'fin' : 'milieu');
+
+// Étape 2 : la mèche part de la face de la roche et avance de 18 po ; le foreur tient la foreuse à deux
+// mains, les deux pieds sur le plancher ; aucun fil du grillage devant le trou.
+const drill = parts('8')[0];
+const foreur = by(model.root, 'role', 'foreur')[0];
+const cy = (bolt.min.y + bolt.max.y) / 2;
+const tip = (k) => { at(2, k); return new THREE.Box3().setFromObject(drill).min.z; };
+const rockFace = rockHit(new THREE.Vector3(0, cy, 0.2)).point.z;
+const start = tip(0), depth = start - tip(1);
+check('Étape 2 — pointe de la mèche sur la roche au départ (écart)', mm(Math.abs(start - rockFace)), Math.abs(start - rockFace) < 0.005, ' mm');
+check('Étape 2 — profondeur du trou, mesurée par l’avance de la mèche (18 po)', (depth / IN).toFixed(1), Math.abs(depth / IN - 18) < 0.1, ' po');
+check('Étape 3 — tige du boulon dans le trou, pas jusqu’au fond', (inRock / IN).toFixed(1), inRock > 0.2 && inRock < depth - 0.02, ` po sur ${(depth / IN).toFixed(0)} (${((depth - inRock) * 100).toFixed(0)} cm libres au fond)`);
+for (const k of [0, 0.5, 1]) {
+  at(2, k);
+  const d = by(foreur, 'gant').map((g) => reach(centre(g), meshBoxes(drill)));
+  check(`Étape 2 — le foreur tient la foreuse à deux mains (${quand(k)} du perçage ; centre des gants à)`, d.map(mm).join(' et '), Math.max(...d) < 0.03, ' mm de la foreuse');
+}
+const soles = (w) => by(w, 'botte').map((b) => { const bb = new THREE.Box3().setFromObject(b), c = bb.getCenter(new THREE.Vector3()); return { gap: Math.abs(bb.min.y - ground(c.x, c.z).y), sur: ground(c.x, c.z).sur, box: bb }; });
+const sf = soles(foreur);
+check('Étape 2 — pieds du foreur sur le plancher (écart)', sf.map((f) => mm(f.gap)).join(' et '), sf.every((f) => f.gap < 0.01 && f.sur === 'plancher'), ' mm');
+at(2, 1);
+const wireRay = (dx, dy) => { ray.set(new THREE.Vector3(dx, cy + dy, 0.2), new THREE.Vector3(0, 0, -1)); return !!ray.intersectObject(wall, true)[0]?.object.userData.grillage; };
+const wiresHit = [[0, 0], ...Array.from({ length: 12 }, (_, i) => [0.03 * Math.cos((i * Math.PI) / 6), 0.03 * Math.sin((i * Math.PI) / 6)])].filter(([dx, dy]) => wireRay(dx, dy)).length;
+check('Étape 2 — fils du grillage à moins de 30 mm de l’axe du trou', wiresHit, wiresHit === 0);
+
+// Étape 4 : du support debout au support appuyé, chaque porteur tient son poteau à deux mains, les pieds
+// sur le plancher, sans chevaucher les pattes du bas ni leurs rallonges.
+const porteurs = by(model.root, 'role', 'porteur');
+for (const k of [0, 0.5, 1]) {
+  at(4, k);
+  const posts = meshBoxes(...find(rack, '1'));
+  const d = porteurs.flatMap((w) => by(w, 'gant').map((g) => reach(centre(g), posts)));
+  check(`Étape 4 — les deux porteurs tiennent les poteaux à deux mains (${quand(k)} ; centre des gants à)`, d.map(mm).join(', '), d.length === 4 && Math.max(...d) < 0.03, ' mm des poteaux');
+  const low = meshBoxes(...find(rack, '2'), ...find(rack, '13'));
+  const s4 = porteurs.flatMap(soles);
+  const clear = Math.min(...s4.map((f) => Math.min(...low.map((b) => (f.box.intersectsBox(b) ? 0 : Math.hypot(Math.max(b.min.x - f.box.max.x, 0, f.box.min.x - b.max.x), Math.max(b.min.z - f.box.max.z, 0, f.box.min.z - b.max.z)))))));
+  check(`Étape 4 — bottes des porteurs sur le plancher, hors des pattes du bas (${quand(k)} ; plus petit écart)`, mm(clear), clear > 0.01 && s4.every((f) => f.gap < 0.01 && f.sur === 'plancher'), ' mm');
+}
+at(4, 0);
+const upright = deg(Math.asin(new THREE.Vector3(0, 1, 0).transformDirection(find(rack, '1')[0].matrixWorld).y));
+check('Étape 4 — support debout au début du levage', upright.toFixed(1), upright > 89.5, '°');
+at(4, 1);
+
+// Étapes 6 à 8 : la même chaîne du début à la fin (nombre de maillons), son surplus posé au sol quand
+// elle pend au boulon, le tendeur accroché à ses deux bouts pendant le serrage.
+const LINK = 192; // sommets par maillon (tore de 4 × 8 facettes, voir chainAlong)
+const links = (m) => m.geometry.attributes.position.count / LINK;
+const world = (m, i) => new THREE.Vector3().fromBufferAttribute(m.geometry.attributes.position, i).applyMatrix4(m.matrixWorld);
+const linkAt = (m, n) => { const c = new THREE.Vector3(); for (let i = 0; i < LINK; i++) c.add(world(m, n * LINK + i)); return c.multiplyScalar(1 / LINK); };
+const counts = variants.map(links);
+check('Étapes 6 à 8 — la même chaîne à chaque état (maillons : pendue, un bout passé, passée, puis serrage)', counts.join(' '), Math.max(...counts) - Math.min(...counts) <= 1);
+check('Étape 8 — c’est le tendeur qui reprend le mou : la chaîne garde sa longueur pendant le serrage (maillons)', counts.slice(3).join(' '), Math.max(...counts.slice(3)) - Math.min(...counts.slice(3)) <= 1);
+only(variants[0]);
+model.root.updateMatrixWorld(true);
+const laid = [];
+for (let n = 0; n < links(variants[0]); n++) { const c = linkAt(variants[0], n); if (c.y < hang.min.y + 0.04) laid.push(c.y - 0.014 - ground(c.x, c.z).y); }
+check('Étape 6 — surplus de la chaîne pendue posé au sol (plus grand écart sous les maillons couchés)', `${mm(Math.max(...laid.map(Math.abs)))} mm, ${laid.length} maillons`, laid.length > 0 && Math.max(...laid.map(Math.abs)) < 0.03);
+const hooks = () => by(binder, 'crochet').map((o) => o.getWorldPosition(new THREE.Vector3())).sort((a, b) => a.x - b.x);
+const LEVELS = variants.length - 3;
+let worst = 0, sag = 0;
+for (let i = 0; i < LEVELS; i++) {
+  at(8, 0.25 + 0.75 * Math.max(1e-6, i / (LEVELS - 1))); // le premier quart de l'animation montre l'accrochage
+  const v = variants.find((m) => m.visible), h = hooks();
+  const ends = [linkAt(v, 0), linkAt(v, links(v) - 1)].sort((a, b) => a.x - b.x);
+  worst = Math.max(worst, ends[0].distanceTo(h[0]), ends[1].distanceTo(h[1]));
+  if (i === 0) sag = lugs[0].getCenter(new THREE.Vector3()).y - h[0].y;
+}
+check('Étape 8 — tendeur accroché aux deux bouts de la chaîne à chaque coup de levier (plus grand écart)', mm(worst), worst < 0.03, ` mm ; il pend ${(sag * 100).toFixed(0)} cm sous les œillets avant le serrage`);
+at(8, 1);
+only(variants.at(-1));
+
+// Étape 12 : au plus fort du basculement, la chaîne de retenue arrête les tiges avant 80° ; puis elles
+// reviennent s'appuyer au fond.
+const rodDeg = () => deg(Math.asin(new THREE.Vector3(0, 1, 0).transformDirection(rods[rods.length - 1].matrixWorld).y));
+at(12, 0.5);
+const stop = rodDeg();
+check('Étape 12 — angle des tiges retenues par la chaîne, mesuré au plus fort du basculement (80° au plus)', stop.toFixed(2), stop > angle && stop <= 80, `° (chaîne de ${RETENUE.longueur.toFixed(2)} m, avance de ${(RETENUE.avance * 100).toFixed(1)} cm)`);
+at(12, 1);
+check('Étape 12 — tiges revenues à l’angle du support', rodDeg().toFixed(2), Math.abs(rodDeg() - angle) < 0.05, '°');
+
 process.exit(failed ? 1 : 0);
