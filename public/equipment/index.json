@@ -53,6 +53,14 @@
       "status": "3D de la procédure (juillet 2026) : plancher 16 × 32 pi pièce par pièce, blocages, cage, marches, garde-corps, plancher secondaire, démantèlement et critères de choix"
     },
     {
+      "id": "rack-outil",
+      "name": "Rack à outils 15083000",
+      "manufacturer": "Machines Roger International",
+      "category": "Assemblage soudé en acier",
+      "thumbnail": "equipment/rack-outil/thumbnail.webp",
+      "status": "3D d'après le plan d'assemblage 15083000 (2021-08-31) : plaque en U de 30 × 14 1/2 po, 2 tubes ronds, 7 crochets en L, 2 tuyaux noirs, 4 crochets d'accrochage, peint en rouge Machines Roger ; masse du modèle à 0,1 lb de celle du plan (11,2 lb)"
+    },
+    {
       "id": "rack-tiges-dd",
       "name": "Support de tiges de forage (rack à rods)",
       "manufacturer": "Machines Roger International",

@@ -1,0 +1,134 @@
+{
+ "id": "rack-outil",
+ "name": "Rack à outils 15083000",
+ "manufacturer": "Machines Roger International",
+ "category": "Assemblage soudé en acier",
+ "document": {
+  "title": "Plan d'assemblage 15083000 « RACK OUTIL »",
+  "reference": "15083000",
+  "preparedBy": "Machines Roger International, dessiné par V. Chyhrynau, approuvé par K. Béchard",
+  "date": "2021-08-31",
+  "sheets": 1,
+  "pagePattern": "pages/{sheet}.webp"
+ },
+ "specs": [
+  [
+   "Largeur hors tout",
+   "30 po (762 mm)"
+  ],
+  [
+   "Hauteur hors tout",
+   "14 1/2 po (368 mm)"
+  ],
+  [
+   "Profondeur hors tout",
+   "3 9/16 po (90 mm)"
+  ],
+  [
+   "Plaque 15083001",
+   "En U, 3/16 po d'épais (relevé à l'échelle), montants de 2 1/2 po"
+  ],
+  [
+   "Accrochage",
+   "4 crochets de 3 po au dos des montants, fente de 1/4 po"
+  ],
+  [
+   "Rangement",
+   "2 tubes ronds Ø 2 7/8 po, 7 crochets en L au pas de 2 1/4 po, 1 tuyau Ø 1,050 po debout, 1 tuyau Ø 1,900 po couché"
+  ],
+  [
+   "Soudures",
+   "3/16 po (symboles du plan)"
+  ],
+  [
+   "Tolérances générales",
+   "Fraction ± 1/16 po (± 1,5 mm), angle ± 1/2°"
+  ],
+  [
+   "Échelle du plan",
+   "1:4"
+  ],
+  [
+   "Couleur de surface",
+   "Rouge Machines Roger (demande du client ; non précisée au plan)"
+  ]
+ ],
+ "weights": [
+  [
+   "Masse (cartouche du plan)",
+   "11,2 lb (5,1 kg)"
+  ]
+ ],
+ "sheetTitles": {
+  "P01": "Plan d'assemblage 15083000 : vues de face, de côté, de dessous et isométrique, nomenclature"
+ },
+ "root": "P01",
+ "assemblies": {
+  "P01": {
+   "title": "RACK OUTIL",
+   "titleFr": "Rack à outils",
+   "pn": "15083000",
+   "sheets": [
+    "P01"
+   ],
+   "note": "Modèle 3D construit d'après le plan d'assemblage 15083000 (assemblage soudé, échelle 1:4). Les cotes inscrites au plan sont reprises telles quelles : 30 × 14 1/2 po hors tout, 3 9/16 po de profondeur, positions des tubes et des crochets, crochets d'accrochage de 3 po avec une fente de 1/4 po, crochets en L de 3/8 po qui dépassent de 2 po. Ce que le plan ne cote pas est relevé à l'échelle sur le dessin : plaque de 3/16 po, montants et traverse de 2 1/2 po, rayon intérieur de 3 po, coins du bas de 1 3/16 po, tubes ronds de 2 7/8 po de diamètre extérieur et de 2 1/2 po de haut, profil des crochets. Contrôle : le volume d'acier du modèle donne 11,1 lb, pour 11,2 lb inscrits au cartouche. Les titres en majuscules sont ceux de la nomenclature du plan ; les descriptions entre parenthèses décrivent la pièce d'après sa forme. Cordons de soudure de 3/16 po montrés aux tubes, aux tuyaux et aux crochets en L (symboles du plan) ; les tenons des crochets d'accrochage sont soudés dans les fentes de la plaque. Peint en rouge Machines Roger, à la demande du client : le plan ne précise pas de couleur de surface.",
+   "parts": [
+    [
+     "1",
+     "15083001",
+     1,
+     "PLAQUE (plaque en U de 30 × 14 1/2 po, quatre fentes de tenon au haut des montants)",
+     {
+      "note": "Épaisseur de 3/16 po, montants de 2 1/2 po et rayons relevés à l'échelle sur le plan (non cotés)."
+     }
+    ],
+    [
+     "2",
+     "15083002",
+     2,
+     "TUBE ROND (godet debout, Ø 2 7/8 po, 2 1/2 po de haut)",
+     {
+      "note": "Axes à 1 7/16 et 5 1/16 po du bord gauche, 3/4 po entre les deux tubes. Diamètres et hauteur relevés à l'échelle : Ø ext. 2 7/8 po, Ø int. 2 1/2 po."
+     }
+    ],
+    [
+     "3",
+     "15083003",
+     4,
+     "PLAQUE (crochet d'accrochage de 3 po, au dos de la plaque)",
+     {
+      "note": "Plaque de 1/4 po ; fente de 1/4 po entre la patte et le dos de la plaque ; tenon soudé dans la fente du montant."
+     }
+    ],
+    [
+     "4",
+     "15083004",
+     1,
+     "TUYAU NOIR 1,900X0,109 (couché, 2 1/4 po de long)",
+     {
+      "note": "Axe à 28 3/4 po du bord gauche, à 5/16 po du bord droit et du bas de la plaque ; soudé tout le tour."
+     }
+    ],
+    [
+     "5",
+     "15083005",
+     1,
+     "TUYAU NOIR 1.050X0.113 (debout, 2 1/2 po de haut)",
+     {
+      "note": "Axe à 24 1/4 po du bord gauche, à 1 11/16 po du dernier crochet et à 3 po du tuyau couché. Hauteur relevée à l'échelle."
+     }
+    ],
+    [
+     "6",
+     "15083006",
+     7,
+     "PLAQUE (crochet en L de 3/8 po, 2 po de saillie)",
+     {
+      "note": "De 8 3/16 à 21 11/16 po du bord gauche, au pas de 2 1/4 po (1 7/8 po entre deux crochets) ; dessous à 1 1/16 po du bas de la plaque ; soudure d'angle de 3/16 po des deux côtés."
+     }
+    ]
+   ]
+  }
+ },
+ "documents": []
+}
