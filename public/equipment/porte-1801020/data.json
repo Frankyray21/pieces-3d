@@ -58,7 +58,7 @@
   ],
   [
    "Couleur de surface",
-   "Non précisée aux plans"
+   "Non précisée aux plans ; modèle peint en noir (visserie zinguée, barrure à son fini)"
   ]
  ],
  "weights": [
@@ -88,7 +88,7 @@
    "sheets": [
     "P01"
    ],
-   "note": "Modèle 3D construit d'après le plan 1801020 (échelle 1:16) et le plan 15250402 du trépied. Cotes inscrites aux plans reprises telles quelles : 42 po de large, 88 3/8 po de haut, pieds de 36 po, joints des pentures à 13 1/8, 48 3/8 et 81 po du dessus des pieds, plaques de butée à 1/4 po de la face arrière du cadre. Tout le reste est relevé à l'échelle sur les tracés vectoriels du plan : tubes du cadre (1 1/2 po) et du battant (1 po), jeu de 1/2 po, grillage, anneaux, poignée, patte et formes de la barrure. Épaisseurs que le plan ne montre pas (plaque du loquet, patte : 1/4 po) estimées. Contrôle (node scripts/check-porte.mjs, 51 mesures) : le volume de matière du modèle est à 2 % de celui du plan. Les masses des cartouches (19,74 lb et 5,42 lb) correspondent à la densité par défaut de SolidWorks (1 g/cm³) : en acier, la porte pèserait environ 155 lb. La porte s'ouvre vers l'avant, du côté des pentures et du loquet : les plaques de butée sont derrière le battant. Montrée en acier nu, grillage et visserie zingués : les plans ne précisent pas de couleur. Les titres en majuscules sont ceux de la nomenclature ; les descriptions entre parenthèses décrivent la pièce d'après sa forme. Fichiers pour Unreal Engine : voir « Fonctionnement » et docs/porte-unreal.md.",
+   "note": "Modèle 3D construit d'après le plan 1801020 (échelle 1:16) et le plan 15250402 du trépied. Cotes inscrites aux plans reprises telles quelles : 42 po de large, 88 3/8 po de haut, pieds de 36 po, joints des pentures à 13 1/8, 48 3/8 et 81 po du dessus des pieds, plaques de butée à 1/4 po de la face arrière du cadre. Tout le reste est relevé à l'échelle sur les tracés vectoriels du plan : tubes du cadre (1 1/2 po) et du battant (1 po), jeu de 1/2 po, grillage, anneaux, poignée, patte et formes de la barrure. Épaisseurs que le plan ne montre pas (plaque du loquet, patte : 1/4 po) estimées. Contrôle (node scripts/check-porte.mjs, 51 mesures) : le volume de matière du modèle est à 2 % de celui du plan. Les masses des cartouches (19,74 lb et 5,42 lb) correspondent à la densité par défaut de SolidWorks (1 g/cm³) : en acier, la porte pèserait environ 155 lb. La porte s'ouvre vers l'avant, du côté des pentures et du loquet : les plaques de butée sont derrière le battant. Peinte en noir (cadre, battant, grillage, trépied, butées et pentures), visserie zinguée et barrure à leur fini : couleur choisie pour le modèle, les plans n'en précisent pas. Les titres en majuscules sont ceux de la nomenclature ; les descriptions entre parenthèses décrivent la pièce d'après sa forme. Fichiers pour Unreal Engine : voir « Fonctionnement » et docs/porte-unreal.md.",
    "parts": [
     [
      "1",

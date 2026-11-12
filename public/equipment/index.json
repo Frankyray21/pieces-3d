@@ -1,12 +1,28 @@
 {
   "equipment": [
     {
+      "id": "cles-a-tuyau",
+      "name": "Clés à tuyau droites, 6 à 60 po",
+      "manufacturer": "RIDGID (cotes publiées)",
+      "category": "Outils à main",
+      "thumbnail": "equipment/cles-a-tuyau/thumbnail.webp",
+      "status": "Neuf grandeurs (6, 8, 10, 14, 18, 24, 36, 48 et 60 po) ajustées aux cotes publiées par les détaillants : longueur fermée, largeur de tête, épaisseur et poids ; modèle et textures de Poly Haven (CC0)"
+    },
+    {
       "id": "coffre-dd",
       "name": "Coffre à outils ITH",
       "manufacturer": "Machines Roger International",
       "category": "Dessin 087",
       "thumbnail": "equipment/coffre-dd/thumbnail.webp",
       "status": "3D aux cotes du dessin 087 (juin 2011) : caisse de 48 × 39 1/2 × 54 po tôle par tôle, portes inclinées, tablettes à cases, tubes de base, oreilles de levage, barre de verrouillage, support de tube D-D (dessin 0102803) sur le dessus ; coffre ouvert avec les ajouts des photos"
+    },
+    {
+      "id": "core-knocker",
+      "name": "Core knocker NQ 15222420",
+      "manufacturer": "Machines Roger International",
+      "category": "Outil de carottage (assemblage soudé)",
+      "thumbnail": "equipment/core-knocker/thumbnail.webp",
+      "status": "3D d'après les plans 15222420, 15222405 et 3760014504 (2022-02-28) : tube de 16 1/4 po à poignée soudée, tige de frappe de 1 po rappelée par un ressort, bague, plaque de Ø 4 po ; sert à frapper les bouts de carotte coincés dans le ressort à carotte du tube carottier ; 33 mesures contrôlées contre les plans"
     },
     {
       "id": "cubex-mri-5200",
@@ -84,6 +100,14 @@
       "thumbnail": "equipment/stm-1500/thumbnail.webp",
       "extras": ["bulles", "donnees", "entretien", "procedures", "systemes"],
       "status": "Manuel de pièces s/n STM-1500-128 (96 pages) : 42 assemblages et 7 documents ; 3D réaliste de la foreuse (traîneau, avance à 0°, tête Boyles, serre-tiges, vérins, treuil), du groupe hydraulique 125 HP et de la console ; rendus Blender"
+    },
+    {
+      "id": "support-pipewrench",
+      "name": "Support à pipewrench 0102806",
+      "manufacturer": "Machines Roger International",
+      "category": "Assemblage soudé en acier 44W",
+      "thumbnail": "equipment/support-pipewrench/thumbnail.webp",
+      "status": "3D d'après le plan d'assemblage soudé 0102806 (2022-11-17) : base pliée, montant découpé à trois trous, traverse en pente et ses oreilles, goupille et tube, peint en rouge ; mises en situation avec une clé à tuyau de 18, 24 ou 36 po et une tige NQ"
     },
     {
       "id": "table-a-core",

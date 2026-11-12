@@ -138,7 +138,8 @@ pièces (numéro, quantité, page du manuel).
   (15250400), trois pentures à souder de 6 po, deux plaques de butée, barrure à
   tête d'interverrouillage (2210300), trépied à douilles boulonnées (P02). Les
   cotes des plans sont reprises telles quelles ; le reste est relevé à l'échelle
-  sur les tracés vectoriels des PDF. Les masses des cartouches (19,74 lb et
+  sur les tracés vectoriels des PDF. Peinte en noir (couleur choisie pour le
+  modèle, les plans n'en précisent pas), visserie zinguée. Les masses des cartouches (19,74 lb et
   5,42 lb) sont calculées à la densité par défaut de SolidWorks (1 g/cm³) : elles
   donnent le volume de matière, que `node scripts/check-porte.mjs` compare à
   celui du modèle parmi 51 contrôles (trépied à 0,1 %, porte à 2 % ; environ
@@ -154,6 +155,26 @@ pièces (numéro, quantité, page du manuel).
   `tools/blender_porte_fbx.py` ; mode d'emploi dans `docs/porte-unreal.md`.
   Page d'essai du fichier de jeu : `equipment/porte-1801020/essai.html` (clic
   sur le verrou, puis sur le battant).
+
+- **Core knocker NQ 15222420** (`core-knocker`, Machines Roger International,
+  trois plans du 2022-02-28 : assemblage 15222420 en coupe A-A, corps soudé
+  15222405, ressort 3760014504) : outil qui sert à frapper les bouts de carotte
+  coincés dans le ressort à carotte (core spring) du tube carottier. Tube de
+  16 1/4 po à poignée soudée en rond de 3/8 po (corps, sous-assemblage P02),
+  tige de frappe de 1 po × 6 po à collet (15222410), plaque de Ø 4 po
+  (15222413), ressort de compression (3760014504) et bague à fond percé
+  (15222415), avec les cordons de soudure des plans. La vue en coupe du site
+  reprend la coupe A-A (plan Z = 0). Les cotes des plans sont reprises ; ce
+  qu'ils ne cotent pas (diamètre intérieur du tube, tige, bague, collet, fil du
+  ressort, pliage de la poignée) est relevé à l'échelle sur les tracés
+  vectoriels des PDF. Le tube est coté Ø 2 11/16 po, cote arrondie au 1/16 :
+  le tracé donne 2,715 po, valeur du modèle. Montré en acier nu (les plans ne
+  précisent pas de couleur). Contrôle chiffré :
+  `node scripts/check-core-knocker.mjs` compare 33 mesures du modèle aux plans.
+  Masses : le tube seul donne 6,25 lb (6,3 lb au cartouche du corps) et
+  l'assemblage sans la poignée ni le ressort 9,3 lb (9,4 lb au cartouche) ; les
+  cartouches semblent donc ne compter ni la poignée (0,34 lb) ni le ressort
+  (0,08 lb ; 0,01 lb à son cartouche), avec lesquels le modèle pèse 9,7 lb.
 
 - **Rack à outils 15083000** (`rack-outil`, Machines Roger International, plan
   d'assemblage soudé du 2021-08-31, une page, échelle 1:4) : plaque en U de
@@ -298,6 +319,33 @@ pièces (numéro, quantité, page du manuel).
   (`src/models/table-a-core/mesh.js`). Repères 1 à 7 : nomenclature du plan
   d'assemblage ; 8 : le contreplaqué du modèle. Pages : plan d'assemblage
   (aperçu du .SLDDRW) et développé de la jupe C16080961 retracé d'après le DWG.
+
+- **Support à pipewrench 0102806** (`support-pipewrench`, assemblage soudé en
+  acier 44W de Machines Roger International, plan d'assemblage du 2022-11-17,
+  1 page, 25 1/2 × 9 × 28 3/4 po) : les 8 articles de la nomenclature — base
+  pliée de 1/2 po à coins en onglet, plaque de bout, montant découpé (deux
+  fenêtres, disque à trois trous), traverse pliée en pente avec sa butée,
+  oreilles percées du haut et du bas, goupille et tube — et les cordons de
+  soudure du plan. Le plan ne porte qu'une dizaine de cotes : les autres
+  dimensions sont relevées sur le tracé vectoriel du PDF (échelle 1:8,
+  environ 1/64 po près). Aucun fini n'est précisé : peint en rouge, comme sur
+  la photo du support fabriqué. Le cartouche inscrit 23,1 lb alors que le
+  volume du modèle donne environ 96 lb en acier (signalé dans la note de la
+  page). P002 à P004 (`situation.js`) : mises en situation hors plan, avec
+  une clé à tuyau de 18, 24 ou 36 po posée en contre-clé (mâchoires vers le
+  haut) et un tronçon de tige NQ déposé dans les mâchoires ; la pose est
+  calculée (repos par gravité sur la traverse, `pose()`), pas relevée.
+
+- **Clés à tuyau droites, 6 à 60 po** (`cles-a-tuyau`) : neuf grandeurs (6, 8,
+  10, 14, 18, 24, 36, 48 et 60 po) sur une page. Maillage et textures : clé à
+  tuyau de Poly Haven (CC0, Will Evarts ; `tools/cle_polyhaven_mesh.mjs` écrit
+  `src/models/cles-a-tuyau/mesh.js`). Chaque grandeur est ajustée aux cotes
+  publiées des clés RIDGID « heavy-duty » droites (`forme.js` : longueur
+  fermée, largeur de tête, épaisseur à l'écrou, puis section du manche réglée
+  sur le poids du catalogue). Les cotes viennent de fiches de détaillants, pas
+  d'un plan du fabricant ; c'est la même clé étirée par zones. Matériau
+  texturé hors palette (`equipment/cles-a-tuyau/textures/`), qui demande un
+  nouveau rendu à la visionneuse une fois chargé (`pieces3d:redessiner`).
 
 La page d'accueil (adresse sans « # », ou le logo en haut à gauche) liste
 les équipements et permet de passer de l'un à l'autre. Les adresses du premier équipement restent `#F05` ; celles des autres

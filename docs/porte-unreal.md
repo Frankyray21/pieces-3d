@@ -97,8 +97,11 @@ Les `.fbx` contiennent les mêmes maillages pour les versions d'Unreal ou les lo
 
 ## Limites
 
-- Les plans ne précisent pas de couleur : acier nu, grillage et visserie zingués. Un métal pur sort noir dans une
-  scène sans ciel ni captures de reflets (galerie de mine) : régler le matériau dans Unreal, ou réexporter avec
+- Les plans ne précisent pas de couleur : la porte est peinte en noir (cadre, battant, grillage, trépied, butées,
+  pentures : `M_Porte_Cadre`, `M_Porte_Battant`, `M_Porte_Grillage`, `M_Porte_Trepied`, `M_Porte_Pentures`, peinture
+  non métallique), la visserie est zinguée et la barrure garde son fini. Chaque section reste un matériau à part, à
+  recolorer dans Unreal. Les métaux nus (visserie, barrure) sortent noirs dans une scène sans ciel ni captures de
+  reflets (galerie de mine) : régler ces matériaux dans Unreal, ou réexporter avec
   `node scripts/export-porte.mjs --metal-max 0.3`.
 - La barrure est simplifiée d'après ses contours sur le plan (le dessin porte le marquage
   « www.fortressinterlocks.com ») ; son mécanisme intérieur et son câblage ne sont pas modélisés.

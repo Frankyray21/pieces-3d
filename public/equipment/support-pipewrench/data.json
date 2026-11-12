@@ -1,0 +1,266 @@
+{
+  "id": "support-pipewrench",
+  "name": "Support à pipewrench 0102806",
+  "manufacturer": "Machines Roger International",
+  "category": "Assemblage soudé en acier 44W",
+  "serial": "0102806",
+  "document": {
+    "title": "Plan d'assemblage soudé 0102806 « SUPPORT A PIPEWRENCH »",
+    "reference": "0102806",
+    "preparedBy": "Machines Roger International, dessiné par V. Chyhrynau, approuvé par G. Gélineau",
+    "date": "2022-11-17",
+    "sheets": 4,
+    "pagePattern": "pages/{sheet}.webp"
+  },
+  "specs": [
+    [
+      "Longueur hors tout",
+      "25 1/2 po"
+    ],
+    [
+      "Largeur de la base",
+      "9 po"
+    ],
+    [
+      "Hauteur hors tout",
+      "28 3/4 po"
+    ],
+    [
+      "Matériau",
+      "Acier 44W (toutes les pièces)"
+    ],
+    [
+      "Fini",
+      "Peint en rouge (d'après la photo du support ; le plan ne précise aucun fini)"
+    ],
+    [
+      "Soudures",
+      "Filets de 1/2 po des deux côtés du montant sur la base ; filets de 1/4 po ailleurs (TYP)"
+    ],
+    [
+      "Tolérances",
+      "Assemblage soudé ± 1/16 po ; découpe et usinage ± 0,015 po"
+    ],
+    [
+      "Échelle du plan",
+      "1:8"
+    ]
+  ],
+  "weights": [
+    [
+      "Poids inscrit au cartouche",
+      "23,1 lb"
+    ],
+    [
+      "Masse calculée du modèle 3D (acier, 7,85 g/cm³)",
+      "Environ 96 lb (44 kg)"
+    ]
+  ],
+  "sheetTitles": {
+    "P001": "Plan 0102806 : vues, symboles de soudure, nomenclature",
+    "P002": "Mise en situation : clé à tuyau de 18 po et tige NQ",
+    "P003": "Mise en situation : clé à tuyau de 24 po et tige NQ",
+    "P004": "Mise en situation : clé à tuyau de 36 po et tige NQ"
+  },
+  "root": "P001",
+  "assemblies": {
+    "P001": {
+      "title": "SUPPORT A PIPEWRENCH",
+      "titleFr": "Support à pipewrench",
+      "pn": "0102806",
+      "sheets": [
+        "P001"
+      ],
+      "note": "Modèle 3D construit d'après le plan d'assemblage 0102806. Cotes inscrites au plan : 25 1/2 × 9 × 28 3/4 po hors tout, montant à 2 15/16 po du bout, tube à 2 1/2 po du bout, 2 po entre les oreilles, goupille à 2 po du bout et à 1 1/2 po du bord avant, plaque de bout en retrait de 1/4 po. Les autres dimensions (épaisseurs, découpes, rayons, trous) sont relevées sur le tracé vectoriel du PDF, à l'échelle 1:8, avec une précision d'environ 1/64 po. Repères 1 à 8 : articles de la nomenclature ; les descriptions entre parenthèses décrivent la pièce d'après sa forme. Le plan ne précise aucun fini (case « couleur de surface » vide) : le support est montré peint en rouge, comme sur la photo du support fabriqué. Les cordons de soudure suivent les symboles du plan. Attention au poids : le cartouche inscrit 23,1 lb, mais le volume du modèle aux épaisseurs relevées (base et montant de 1/2 po) donne environ 96 lb en acier — à vérifier avant de s'y fier pour la manutention.",
+      "parts": [
+        [
+          "1",
+          "152111401",
+          1,
+          "PLAQUE (base pliée de 1/2 po : 25 × 9 po, hauteur 3 1/2 po, deux longs bords et un bout rabattus)",
+          {
+            "note": "Acier 44W. Plis au rayon extérieur de 1 po ; coins coupés en onglet."
+          }
+        ],
+        [
+          "2",
+          "152111402",
+          1,
+          "PLAQUE (plaque de bout de la base, 8 1/2 × 3 1/4 × 1/2 po)",
+          {
+            "note": "Acier 44W. En retrait de 1/4 po sur le pourtour, filet de 1/4 po."
+          }
+        ],
+        [
+          "3",
+          "152111403",
+          1,
+          "PLAQUE (montant découpé de 1/2 po, 19 5/8 po de large : deux fenêtres, disque central de 10 po à trois trous de 2 3/4 po)",
+          {
+            "note": "Acier 44W. Dessus en pente comme la traverse ; deux tenons de 1/2 po dans les sièges de la traverse. Filets de 1/2 po des deux côtés sur la base."
+          }
+        ],
+        [
+          "4",
+          "152111404",
+          1,
+          "PLAQUE (traverse pliée de 1/4 po, 2 1/4 po de large : butée relevée, siège du haut, pente d'environ 9,5°, siège du bas)",
+          {
+            "note": "Acier 44W. Soudée sur le dessus du montant, filets de 1/4 po."
+          }
+        ],
+        [
+          "5",
+          "152111405",
+          2,
+          "PLAQUE (oreille du haut, 2 × 2 po, trou de 9/16 po)",
+          {
+            "note": "Acier 44W, 1/4 po. Une de chaque côté du siège du haut, contre la butée ; 2 po entre les deux."
+          }
+        ],
+        [
+          "6",
+          "152111406",
+          2,
+          "PLAQUE (oreille du bas de la pente, 2 × 5 po, bout arrondi, trou de 9/16 po)",
+          {
+            "note": "Acier 44W, 1/4 po. Une de chaque côté du siège du bas ; 2 po entre les deux."
+          }
+        ],
+        [
+          "7",
+          "152111407",
+          1,
+          "BARRE RONDE (goupille de 1 po de diamètre, 3 po de haut, dessus arrondi)",
+          {
+            "note": "Acier 44W. Soudée sur la base, filet de 1/4 po."
+          }
+        ],
+        [
+          "8",
+          "152111408",
+          1,
+          "TUBE ROND (2 po extérieur, 1 1/2 po intérieur, 8 po de haut)",
+          {
+            "note": "Acier 44W. Debout sur la base, derrière le montant ; filet de 1/4 po."
+          }
+        ]
+      ]
+    },
+    "P002": {
+      "title": "SUPPORT A PIPEWRENCH + 18\" PIPE WRENCH",
+      "titleFr": "Support avec clé à tuyau de 18 po et tige NQ",
+      "sheets": [
+        "P002"
+      ],
+      "note": "Contre-clé : la clé posée sur le support retient la tige de forage pendant qu'on y visse l'émerillon d'eau. Le manche descend de 5,7 po dans la pente, sans toucher la butée du haut : plus haut, la tige tomberait sur les oreilles du bas. La clé repose presque de niveau (−0,7°). Tige à 24,2 po du bout plié de la base, axe à 26,7 po du sol. La clé et la tige ne figurent pas au plan 0102806 : la pose est calculée (clé sur le chant dans la traverse, mâchoires vers le haut, au repos par gravité), pas relevée. Clé aux cotes publiées de sa grandeur, mâchoires ouvertes à 69,9 mm ; voir l'équipement « Clés à tuyau droites ».",
+      "parts": [
+        [
+          "1",
+          "0102806",
+          1,
+          "Support à pipewrench (assemblage soudé)",
+          {
+            "link": "P001"
+          }
+        ],
+        [
+          "2",
+          "31025",
+          1,
+          "Clé à tuyau droite de 18 po, mâchoires ouvertes pour la tige NQ",
+          {
+            "note": "Hors plan. Clé RIDGID « heavy-duty » droite, cotes publiées."
+          }
+        ],
+        [
+          "3",
+          "",
+          1,
+          "Tige de forage NQ (tronçon de 1,2 m, 69,9 mm de diamètre extérieur)",
+          {
+            "note": "Hors plan. Tube simple, sans filet ni émerillon.",
+            "pnText": "NQ"
+          }
+        ]
+      ]
+    },
+    "P003": {
+      "title": "SUPPORT A PIPEWRENCH + 24\" PIPE WRENCH",
+      "titleFr": "Support avec clé à tuyau de 24 po et tige NQ",
+      "sheets": [
+        "P003"
+      ],
+      "note": "Contre-clé : la clé posée sur le support retient la tige de forage pendant qu'on y visse l'émerillon d'eau. Le bout du manche est dans la chape du haut, à 0,1 po de la butée, et la tête repose entre les oreilles du bas : la clé est presque de niveau (1,4°). Le trou d'accrochage du manche arrive en face des trous de 9/16 po des oreilles du haut. Tige à 24,2 po du bout plié, axe à 26,9 po du sol. La clé et la tige ne figurent pas au plan 0102806 : la pose est calculée (clé sur le chant dans la traverse, mâchoires vers le haut, au repos par gravité), pas relevée. Clé aux cotes publiées de sa grandeur, mâchoires ouvertes à 69,9 mm ; voir l'équipement « Clés à tuyau droites ».",
+      "parts": [
+        [
+          "1",
+          "0102806",
+          1,
+          "Support à pipewrench (assemblage soudé)",
+          {
+            "link": "P001"
+          }
+        ],
+        [
+          "2",
+          "31030",
+          1,
+          "Clé à tuyau droite de 24 po, mâchoires ouvertes pour la tige NQ",
+          {
+            "note": "Hors plan. Clé RIDGID « heavy-duty » droite, cotes publiées."
+          }
+        ],
+        [
+          "3",
+          "",
+          1,
+          "Tige de forage NQ (tronçon de 1,2 m, 69,9 mm de diamètre extérieur)",
+          {
+            "note": "Hors plan. Tube simple, sans filet ni émerillon.",
+            "pnText": "NQ"
+          }
+        ]
+      ]
+    },
+    "P004": {
+      "title": "SUPPORT A PIPEWRENCH + 36\" PIPE WRENCH",
+      "titleFr": "Support avec clé à tuyau de 36 po et tige NQ",
+      "sheets": [
+        "P004"
+      ],
+      "note": "Contre-clé : la clé posée sur le support retient la tige de forage pendant qu'on y visse l'émerillon d'eau. Le bout du manche touche la butée du haut et la clé est de niveau, mais son centre de gravité est 1,3 po au-delà du bout de la traverse : elle bascule si rien ne la retient. Elle est montrée tenue dans la chape du haut ; le trou d'accrochage du manche y arrive en face des trous de 9/16 po des oreilles. Tige à 31,8 po du bout plié, soit 6,3 po au-delà de la base, axe à 27,4 po du sol. La clé et la tige ne figurent pas au plan 0102806 : la pose est calculée (clé sur le chant dans la traverse, mâchoires vers le haut, au repos par gravité), pas relevée. Clé aux cotes publiées de sa grandeur, mâchoires ouvertes à 69,9 mm ; voir l'équipement « Clés à tuyau droites ».",
+      "parts": [
+        [
+          "1",
+          "0102806",
+          1,
+          "Support à pipewrench (assemblage soudé)",
+          {
+            "link": "P001"
+          }
+        ],
+        [
+          "2",
+          "31035",
+          1,
+          "Clé à tuyau droite de 36 po, mâchoires ouvertes pour la tige NQ",
+          {
+            "note": "Hors plan. Clé RIDGID « heavy-duty » droite, cotes publiées."
+          }
+        ],
+        [
+          "3",
+          "",
+          1,
+          "Tige de forage NQ (tronçon de 1,2 m, 69,9 mm de diamètre extérieur)",
+          {
+            "note": "Hors plan. Tube simple, sans filet ni émerillon.",
+            "pnText": "NQ"
+          }
+        ]
+      ]
+    }
+  },
+  "documents": []
+}

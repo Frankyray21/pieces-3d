@@ -1,0 +1,174 @@
+{
+ "id": "core-knocker",
+ "name": "Core knocker NQ 15222420",
+ "manufacturer": "Machines Roger International",
+ "category": "Outil de carottage (assemblage soudé)",
+ "document": {
+  "title": "Plans 15222420 « CORE KNOCKE NQ », 15222405 « CORPS NQ » et 3760014504 « COMPRESSION SPRING »",
+  "reference": "15222420",
+  "preparedBy": "Machines Roger International, dessiné par V. Chyhrynau, approuvé par G. Gélineau",
+  "date": "2022-02-28",
+  "sheets": 3,
+  "pagePattern": "pages/{sheet}.webp"
+ },
+ "specs": [
+  [
+   "Usage",
+   "Frapper les bouts de carotte coincés dans le ressort à carotte (core spring) du tube carottier"
+  ],
+  [
+   "Longueur hors tout",
+   "17 3/4 po (451 mm)"
+  ],
+  [
+   "Plaque",
+   "Ø 4 po (102 mm), 1/4 po d'épais (relevé)"
+  ],
+  [
+   "Hauteur",
+   "6 1/8 po du bas de la plaque à l'axe du dessus de la poignée ; 6 5/16 po hors tout (relevé)"
+  ],
+  [
+   "Tube du corps",
+   "16 1/4 po de long, Ø 2 11/16 po au plan (2,715 po relevé), Ø int. 2 3/8 po (relevé)"
+  ],
+  [
+   "Poignée",
+   "Rond de 3/8 po en U, 6 po d'entraxe, à 4 15/16 po du bout ouvert"
+  ],
+  [
+   "Tige",
+   "Ø 1 po × 6 po (relevés) ; dépasse de 1 1/2 po du bout du tube, soit 1 1/4 po de la plaque"
+  ],
+  [
+   "Profondeur libre du tube",
+   "11 3/4 po du bout ouvert au bout de la tige"
+  ],
+  [
+   "Ressort",
+   "Compression, 2 1/2 po libre ; fil de 0,113 po et Ø ext. 1,46 po (relevés)"
+  ],
+  [
+   "Soudures",
+   "1/8 po tout le tour des jambes de la poignée ; 1/4 po tout le tour, plaque sur tube"
+  ],
+  [
+   "Tolérances générales",
+   "Fraction ± 1/16 po (± 1,5 mm), angle ± 1/2°"
+  ],
+  [
+   "Échelle des plans",
+   "1:3 (assemblage et corps), 1:1 (ressort)"
+  ]
+ ],
+ "weights": [
+  [
+   "Core knocker NQ (cartouche du plan 15222420)",
+   "9,4 lb (4,3 kg)"
+  ],
+  [
+   "Corps NQ (cartouche du plan 15222405)",
+   "6,3 lb (2,9 kg)"
+  ],
+  [
+   "Ressort (cartouche du plan 3760014504)",
+   "0,01 lb"
+  ]
+ ],
+ "sheetTitles": {
+  "P01": "Plan 15222420 : core knocker NQ — vue de bout, coupe A-A, nomenclature",
+  "P02": "Plan 15222405 : corps NQ — vues de côté et de bout, nomenclature",
+  "P03": "Plan 3760014504 : ressort de compression — vues de bout et de côté"
+ },
+ "root": "P01",
+ "assemblies": {
+  "P01": {
+   "title": "CORE KNOCKE NQ",
+   "titleFr": "Core knocker NQ",
+   "pn": "15222420",
+   "sheets": [
+    "P01",
+    "P03"
+   ],
+   "note": "Outil qui sert à frapper les bouts de carotte restés coincés dans le ressort à carotte (core spring) du tube carottier. Modèle 3D construit d'après le plan d'assemblage 15222420 (coupe A-A, échelle 1:3), le plan du corps 15222405 et celui du ressort 3760014504. Les cotes inscrites aux plans sont reprises : 17 3/4 po hors tout, plaque de Ø 4 po, tige qui dépasse de 1 1/2 po du bout du tube, tube de 16 1/4 po, poignée à 4 15/16 po du bout ouvert. Ce que les plans ne cotent pas est relevé à l'échelle sur leurs tracés : tube de Ø int. 2 3/8 po, tige de Ø 1 po × 6 po, plaque de 1/4 po, bague (fond de 1/8 po et manchon de 2 1/2 po), collet de la tige, fil du ressort. Lecture de la coupe : la tige coulisse dans la plaque et dans le fond de la bague ; le ressort, entre le fond de la bague et le collet de la tige, ramène le collet contre la plaque. Le bout de la tige est à 11 3/4 po du bout ouvert du tube. La cote de 6 1/8 po du plan va du bas de la plaque à l'axe du dessus de la poignée ; le dessus de la poignée est à 6 5/16 po (relevé). Soudure de 1/4 po tout le tour, plaque sur tube, à faire après la pose de la bague, de la tige et du ressort (note du plan) ; un second symbole de 1/8 po pointe le bord intérieur du tube, au même bout : il n'est pas montré. Contrôle : sans la poignée ni le ressort, le modèle donne 9,3 lb pour 9,4 lb au cartouche ; avec eux, 9,7 lb (voir la note du corps). Les titres en majuscules sont ceux des nomenclatures ; les descriptions entre parenthèses décrivent la pièce d'après sa forme. Montré en acier nu : les plans ne précisent pas de couleur de surface.",
+   "parts": [
+    [
+     "1",
+     "15222405",
+     1,
+     "CORPS NQ (tube de 16 1/4 po et poignée soudée)",
+     {
+      "link": "P02",
+      "note": "Plan 15222405. Le bout ouvert est du côté de la poignée ; la plaque ferme l'autre bout."
+     }
+    ],
+    [
+     "2",
+     "15222410",
+     1,
+     "PIN (tige de frappe, rond de 1 po × 6 po, collet de 1 1/2 po)",
+     {
+      "note": "Diamètre et longueur relevés à l'échelle. Dépasse de 1 1/2 po du bout du tube (cote du plan). Le collet de Ø 1 1/2 × 1/8 po, appuyé sur la plaque, est dessiné comme une rondelle sans repère : il est rattaché à la tige, qu'il retient."
+     }
+    ],
+    [
+     "3",
+     "15222413",
+     1,
+     "PLAQUE (disque de Ø 4 po, 1/4 po d'épais, alésage de 1 1/32 po)",
+     {
+      "note": "Ø 4 po coté au plan ; épaisseur et alésage relevés à l'échelle. Soudée au bout du tube, 1/4 po tout le tour, après la pose de la bague, de la tige et du ressort."
+     }
+    ],
+    [
+     "4",
+     "3760014504",
+     1,
+     "COMPRESSION SPRING (ressort de compression, 2 1/2 po libre)",
+     {
+      "note": "Plan 3760014504 (acier). Fil de 0,113 po, Ø ext. 1,46 po, pas de 0,4 po, relevés à l'échelle ; monté sur 2 3/8 po entre le fond de la bague et le collet de la tige. Le numéro du plan s'écrit 37600014504 au cartouche, 3760014504 à l'inventaire et à la nomenclature."
+     }
+    ],
+    [
+     "5",
+     "15222415",
+     1,
+     "BUSHING NQ (bague : fond percé de 1/8 po et manchon de 2 1/2 po)",
+     {
+      "note": "Relevée à l'échelle : fond de Ø 2 1/4 po, alésage de 1 1/32 po ; manchon de Ø 2 3/8 × 2,067 po, du fond jusqu'à la plaque. Le repère du plan pointe la jonction du fond et du manchon : les deux sont montrés comme une seule pièce."
+     }
+    ]
+   ]
+  },
+  "P02": {
+   "title": "CORPS NQ",
+   "titleFr": "Corps NQ",
+   "pn": "15222405",
+   "sheets": [
+    "P02"
+   ],
+   "note": "Assemblage soudé : tube de 16 1/4 po et poignée en rond de 3/8 po pliée en U, soudée de 1/8 po tout le tour de chaque jambe (symbole « TYP » du plan). Le plan cote Ø 2 11/16 po pour le tube, cote arrondie au 1/16 : le tracé donne 2,715 po (69 mm), valeur du modèle. Diamètre intérieur de 2 3/8 po, rayons de pliage et hauteur de la poignée relevés à l'échelle. La cote de 5 5/8 po va du dessous du tube au dessus de la poignée. Contrôle : le tube seul donne 6,25 lb, pour 6,3 lb au cartouche ; avec la poignée (0,34 lb), le modèle donne 6,6 lb. La nomenclature nomme le tube « ROD BQ » alors que le corps est « NQ » : le titre est repris tel quel.",
+   "parts": [
+    [
+     "1",
+     "15222402",
+     1,
+     "ROD BQ (tube de 16 1/4 po, Ø 2 11/16 po au plan)",
+     {
+      "note": "Ø ext. 2,715 po et Ø int. 2 3/8 po relevés à l'échelle."
+     }
+    ],
+    [
+     "2",
+     "15222403",
+     1,
+     "BRAS (poignée : rond de 3/8 po plié en U)",
+     {
+      "note": "Face extérieure de la première jambe à 4 15/16 po du bout ouvert ; 6 po d'entraxe, axe du dessus à 2 3/4 po au-dessus du tube, rayon de pliage de 9/16 po à l'axe (relevés à l'échelle)."
+     }
+    ]
+   ]
+  }
+ },
+ "documents": []
+}
