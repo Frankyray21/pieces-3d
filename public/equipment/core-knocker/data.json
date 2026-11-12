@@ -59,6 +59,10 @@
   [
    "Échelle des plans",
    "1:3 (assemblage et corps), 1:1 (ressort)"
+  ],
+  [
+   "Couleur de surface",
+   "Rouge Machines Roger sur le corps et la plaque, avec un peu de rouille (demande du client ; non précisée aux plans)"
   ]
  ],
  "weights": [
@@ -90,7 +94,7 @@
     "P01",
     "P03"
    ],
-   "note": "Outil qui sert à frapper les bouts de carotte restés coincés dans le ressort à carotte (core spring) du tube carottier. Modèle 3D construit d'après le plan d'assemblage 15222420 (coupe A-A, échelle 1:3), le plan du corps 15222405 et celui du ressort 3760014504. Les cotes inscrites aux plans sont reprises : 17 3/4 po hors tout, plaque de Ø 4 po, tige qui dépasse de 1 1/2 po du bout du tube, tube de 16 1/4 po, poignée à 4 15/16 po du bout ouvert. Ce que les plans ne cotent pas est relevé à l'échelle sur leurs tracés : tube de Ø int. 2 3/8 po, tige de Ø 1 po × 6 po, plaque de 1/4 po, bague (fond de 1/8 po et manchon de 2 1/2 po), collet de la tige, fil du ressort. Lecture de la coupe : la tige coulisse dans la plaque et dans le fond de la bague ; le ressort, entre le fond de la bague et le collet de la tige, ramène le collet contre la plaque. Le bout de la tige est à 11 3/4 po du bout ouvert du tube. La cote de 6 1/8 po du plan va du bas de la plaque à l'axe du dessus de la poignée ; le dessus de la poignée est à 6 5/16 po (relevé). Soudure de 1/4 po tout le tour, plaque sur tube, à faire après la pose de la bague, de la tige et du ressort (note du plan) ; un second symbole de 1/8 po pointe le bord intérieur du tube, au même bout : il n'est pas montré. Contrôle : sans la poignée ni le ressort, le modèle donne 9,3 lb pour 9,4 lb au cartouche ; avec eux, 9,7 lb (voir la note du corps). Les titres en majuscules sont ceux des nomenclatures ; les descriptions entre parenthèses décrivent la pièce d'après sa forme. Montré en acier nu : les plans ne précisent pas de couleur de surface.",
+   "note": "Outil qui sert à frapper les bouts de carotte restés coincés dans le ressort à carotte (core spring) du tube carottier. Modèle 3D construit d'après le plan d'assemblage 15222420 (coupe A-A, échelle 1:3), le plan du corps 15222405 et celui du ressort 3760014504. Les cotes inscrites aux plans sont reprises : 17 3/4 po hors tout, plaque de Ø 4 po, tige qui dépasse de 1 1/2 po du bout du tube, tube de 16 1/4 po, poignée à 4 15/16 po du bout ouvert. Ce que les plans ne cotent pas est relevé à l'échelle sur leurs tracés : tube de Ø int. 2 3/8 po, tige de Ø 1 po × 6 po, plaque de 1/4 po, bague (fond de 1/8 po et manchon de 2 1/2 po), collet de la tige, fil du ressort. Lecture de la coupe : la tige coulisse dans la plaque et dans le fond de la bague ; le ressort, entre le fond de la bague et le collet de la tige, ramène le collet contre la plaque. Le bout de la tige est à 11 3/4 po du bout ouvert du tube. La cote de 6 1/8 po du plan va du bas de la plaque à l'axe du dessus de la poignée ; le dessus de la poignée est à 6 5/16 po (relevé). Soudure de 1/4 po tout le tour, plaque sur tube, à faire après la pose de la bague, de la tige et du ressort (note du plan) ; un second symbole de 1/8 po pointe le bord intérieur du tube, au même bout : il n'est pas montré. Contrôle : sans la poignée ni le ressort, le modèle donne 9,3 lb pour 9,4 lb au cartouche ; avec eux, 9,7 lb (voir la note du corps). Les titres en majuscules sont ceux des nomenclatures ; les descriptions entre parenthèses décrivent la pièce d'après sa forme. Peint en rouge Machines Roger, avec un peu de rouille où la peinture a sauté, à la demande du client : les plans ne précisent pas de couleur de surface. Le corps soudé et la plaque sont peints ; la tige, le ressort et la bague sont montrés en acier nu.",
    "parts": [
     [
      "1",
