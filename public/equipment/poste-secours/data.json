@@ -1,0 +1,194 @@
+{
+ "id": "poste-secours",
+ "name": "Poste de premiers soins et d'extincteur",
+ "manufacturer": "Fabricant non indiqué",
+ "category": "Poste de sécurité sur cage grillagée",
+ "serial": "",
+ "document": {
+  "title": "Photo du poste installé (aucun plan)",
+  "reference": "Photo",
+  "preparedBy": "",
+  "date": "",
+  "sheets": 1,
+  "pagePattern": "pages/{sheet}.webp"
+ },
+ "specs": [
+  [
+   "Source",
+   "Une photo du poste installé ; dimensions estimées, à mesurer sur place"
+  ],
+  [
+   "Cadre",
+   "Tôle découpée d'environ 34 × 24 po, 3/16 po d'épais (apparence d'aluminium)"
+  ],
+  [
+   "Pourtour",
+   "Environ 2 1/2 po, couvert d'un ruban réfléchissant rouge et blanc de 2 po"
+  ],
+  [
+   "Panneau ajouré",
+   "Ferme à poinçon en haut, deux diagonales en croix dessous, environ 10 po de large"
+  ],
+  [
+   "Armoire",
+   "Environ 16 po de large × 8 po de profond, 19 po de haut au dos et 15 1/2 po au devant"
+  ],
+  [
+   "Toit",
+   "Environ 20 × 12 1/2 po, en pente d'environ 24° vers l'avant"
+  ],
+  [
+   "Façade",
+   "Transparente, croix rouge d'environ 9 po à bras de 3 po"
+  ],
+  [
+   "Contenu",
+   "1 trousse de premiers soins, 2 bouteilles de rince-œil"
+  ],
+  [
+   "Extincteur",
+   "Portatif à poudre, format 5 lb (cylindre de 4 1/4 po, environ 14 1/2 po de haut), pendu à un crochet"
+  ],
+  [
+   "Support",
+   "Grillage soudé de la cage, maille d'environ 2 po"
+  ]
+ ],
+ "weights": [],
+ "sheetTitles": {
+  "P01": "Photo du poste installé sur le grillage de la cage"
+ },
+ "root": "P01",
+ "assemblies": {
+  "P01": {
+   "title": "Poste de premiers soins et d'extincteur",
+   "titleFr": "Poste de premiers soins et d'extincteur",
+   "sheets": [
+    "P01"
+   ],
+   "note": "Reconstitution 3D d'après une seule photo du poste installé sur le grillage de la cage : il n'y a ni plan ni cote. L'échelle vient de deux objets de taille connue, le ruban réfléchissant de 2 po de large et l'extincteur à poudre de 5 lb (cylindre de 4 1/4 po) ; toutes les dimensions sont donc estimées, à environ 1 po près, et sont à mesurer sur place avant toute fabrication. Visible sur la photo : le pourtour et son ruban rouge et blanc (haut, droite, coin du bas), la ferme ajourée du haut à droite (poinçon, deux contrefiches, quatre découpes en triangle), les deux diagonales en croix sous la ferme, le crochet de l'extincteur et son boulon du haut, l'armoire blanche à toit incliné, sa façade transparente à croix rouge, la trousse, deux bouteilles de rince-œil, l'extincteur avec son boyau, sa sangle, ses étiquettes et ses deux étiquettes d'inspection, deux étiquettes à code QR. Supposé, parce que caché : la tôle pleine derrière l'armoire, la suite du ruban du bas et de gauche, le dos et le fond de l'armoire. Non modélisé, parce qu'invisible : les fixations du cadre au grillage, celles de l'armoire à la tôle et le mode d'ouverture de la façade. Les numéros des étiquettes et la marque de l'extincteur sont illisibles sur la photo : aucun numéro de pièce n'est donc inscrit.",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "CADRE : tôle découpée d'environ 34 × 24 po, pleine à gauche, ajourée à droite",
+     {
+      "note": "Épaisseur de 3/16 po et métal (aluminium) estimés à l'œil. La partie derrière l'armoire est cachée : supposée pleine, comme le haut qui porte une étiquette.",
+      "pseudo": true
+     }
+    ],
+    [
+     "2",
+     "",
+     1,
+     "RUBAN RÉFLÉCHISSANT rouge et blanc de 2 po, sur le pourtour du cadre",
+     {
+      "note": "17 tronçons au modèle. Longueurs relevées sur la photo pour le haut, la droite et le coin du bas ; les tronçons cachés par l'armoire alternent de la même façon.",
+      "pseudo": true
+     }
+    ],
+    [
+     "3",
+     "",
+     1,
+     "ARMOIRE : caisson blanc (dos, fond, deux côtés en pente)",
+     {
+      "note": "Environ 16 × 8 po, 19 po au dos, 15 1/2 po au devant ; parois de 1/4 po estimées.",
+      "pseudo": true
+     }
+    ],
+    [
+     "4",
+     "",
+     1,
+     "TOIT de l'armoire : panneau blanc incliné d'environ 20 × 12 1/2 po",
+     {
+      "note": "Déborde d'environ 2 po de chaque côté et de 3 po au devant ; épaisseur de 3/8 po estimée.",
+      "pseudo": true
+     }
+    ],
+    [
+     "5",
+     "",
+     1,
+     "FAÇADE transparente à croix rouge",
+     {
+      "note": "Croix d'environ 9 po, bras de 3 po. La photo ne montre ni charnière ni poignée : le mode d'ouverture n'est pas modélisé.",
+      "pseudo": true
+     }
+    ],
+    [
+     "6",
+     "",
+     1,
+     "TROUSSE DE PREMIERS SOINS en plastique blanc, debout sur son côté",
+     {
+      "note": "Environ 9 1/2 × 13 1/2 × 3 1/2 po ; l'inscription « Trousse de premiers soins » se lit de bas en haut.",
+      "pseudo": true
+     }
+    ],
+    [
+     "7",
+     "",
+     2,
+     "BOUTEILLE DE RINCE-ŒIL, étiquette verte, bouchon vert foncé",
+     {
+      "note": "Environ 2 5/8 po de diamètre et 8 1/2 po de haut ; contenance illisible sur la photo.",
+      "pseudo": true
+     }
+    ],
+    [
+     "8",
+     "",
+     1,
+     "EXTINCTEUR portatif à poudre, format 5 lb, avec boyau, sangle et manomètre",
+     {
+      "note": "Format déduit des proportions ; marque, modèle et classe à lire sur l'appareil. Les étiquettes du modèle sont génériques.",
+      "pseudo": true
+     }
+    ],
+    [
+     "9",
+     "",
+     1,
+     "CROCHET de l'extincteur, boulonné sur le poinçon du cadre",
+     {
+      "note": "Seul le boulon du haut est visible ; le bas du crochet est caché par le robinet.",
+      "pseudo": true
+     }
+    ],
+    [
+     "10",
+     "",
+     2,
+     "ÉTIQUETTE D'INSPECTION de l'extincteur (une bleue, une jaune par-dessus)",
+     {
+      "pseudo": true
+     }
+    ],
+    [
+     "11",
+     "",
+     2,
+     "ÉTIQUETTE À CODE QR (une sur la façade, une sur le haut du cadre)",
+     {
+      "note": "Numéro illisible sur la photo.",
+      "pseudo": true
+     }
+    ],
+    [
+     "12",
+     "",
+     1,
+     "GRILLAGE de la cage (support du poste, hors poste)",
+     {
+      "note": "Tronçon de 40 × 30 po montré pour situer le poste ; maille d'environ 2 po et fil estimés. Les fixations du cadre au grillage ne sont pas visibles.",
+      "pseudo": true
+     }
+    ]
+   ]
+  }
+ },
+ "documents": []
+}
