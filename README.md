@@ -152,6 +152,26 @@ pièces (numéro, quantité, page du manuel).
   Page d'essai du fichier de jeu : `equipment/porte-1801020/essai.html` (clic
   sur le verrou, puis sur le battant).
 
+- **Core knocker NQ 15222420** (`core-knocker`, Machines Roger International,
+  trois plans du 2022-02-28 : assemblage 15222420 en coupe A-A, corps soudé
+  15222405, ressort 3760014504) : outil qui sert à frapper les bouts de carotte
+  coincés dans le ressort à carotte (core spring) du tube carottier. Tube de
+  16 1/4 po à poignée soudée en rond de 3/8 po (corps, sous-assemblage P02),
+  tige de frappe de 1 po × 6 po à collet (15222410), plaque de Ø 4 po
+  (15222413), ressort de compression (3760014504) et bague à fond percé
+  (15222415), avec les cordons de soudure des plans. La vue en coupe du site
+  reprend la coupe A-A (plan Z = 0). Les cotes des plans sont reprises ; ce
+  qu'ils ne cotent pas (diamètre intérieur du tube, tige, bague, collet, fil du
+  ressort, pliage de la poignée) est relevé à l'échelle sur les tracés
+  vectoriels des PDF. Le tube est coté Ø 2 11/16 po, cote arrondie au 1/16 :
+  le tracé donne 2,715 po, valeur du modèle. Montré en acier nu (les plans ne
+  précisent pas de couleur). Contrôle chiffré :
+  `node scripts/check-core-knocker.mjs` compare 33 mesures du modèle aux plans.
+  Masses : le tube seul donne 6,25 lb (6,3 lb au cartouche du corps) et
+  l'assemblage sans la poignée ni le ressort 9,3 lb (9,4 lb au cartouche) ; les
+  cartouches semblent donc ne compter ni la poignée (0,34 lb) ni le ressort
+  (0,08 lb ; 0,01 lb à son cartouche), avec lesquels le modèle pèse 9,7 lb.
+
 - **Rack à outils 15083000** (`rack-outil`, Machines Roger International, plan
   d'assemblage soudé du 2021-08-31, une page, échelle 1:4) : plaque en U de
   30 × 14 1/2 po (15083001), deux tubes ronds debout (15083002), quatre
