@@ -20,21 +20,21 @@
   },
   {
    "nom": "M_Porte_Cadre",
-   "couleur": "#b9bdc2",
-   "metal": 1,
-   "rugosite": 0.3
+   "couleur": "#2c2e33",
+   "metal": 0,
+   "rugosite": 0.42
   },
   {
    "nom": "M_Porte_Pentures",
-   "couleur": "#4f545a",
-   "metal": 0.85,
+   "couleur": "#2c2e33",
+   "metal": 0,
    "rugosite": 0.42
   },
   {
    "nom": "M_Porte_Trepied",
-   "couleur": "#b9bdc2",
-   "metal": 1,
-   "rugosite": 0.3
+   "couleur": "#2c2e33",
+   "metal": 0,
+   "rugosite": 0.42
   },
   {
    "nom": "M_Porte_Visserie",
@@ -44,15 +44,15 @@
   },
   {
    "nom": "M_Porte_Battant",
-   "couleur": "#b9bdc2",
-   "metal": 1,
-   "rugosite": 0.3
+   "couleur": "#2c2e33",
+   "metal": 0,
+   "rugosite": 0.42
   },
   {
    "nom": "M_Porte_Grillage",
-   "couleur": "#c6ccd2",
-   "metal": 1,
-   "rugosite": 0.34
+   "couleur": "#2c2e33",
+   "metal": 0,
+   "rugosite": 0.42
   },
   {
    "nom": "M_Porte_Barrure_Barre",
@@ -267,9 +267,9 @@
  ],
  "fps": 30,
  "fichiers": {
-  "SM_Porte_Cadre.glb": 329160,
-  "SM_Porte_Battant.glb": 262332,
+  "SM_Porte_Cadre.glb": 329172,
+  "SM_Porte_Battant.glb": 262344,
   "SM_Porte_Verrou.glb": 40376,
-  "porte-1801020.glb": 643820
+  "porte-1801020.glb": 643844
  }
 }

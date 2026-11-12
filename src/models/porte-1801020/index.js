@@ -20,6 +20,9 @@ const X = (x) => (x - L / 2) * IN; // x du plan (po) → mètres, modèle centr�
 const P = (x, y, z) => new THREE.Vector3(X(x), y * IN, z * IN);
 const pos = (x, y, z) => [X(x), y * IN, z * IN];
 const Zp = new THREE.Vector3(0, 0, 1);
+// Peinture noire sur tout ce qui est soudé (cadre, battant, grillage, trépied, butées, pentures) : couleur
+// demandée pour le modèle, les plans n'en précisent pas. Visserie zinguée et barrure gardent leur fini.
+const PEINTURE = 'black';
 
 /** Étiquette un objet : corps mobile et section de matériau. */
 function tag(obj, body, lot) {
@@ -74,7 +77,7 @@ function gousset(S, x, s, material) {
 
 export function P02(api) {
   const S = api.S;
-  const M = 'steel';
+  const M = PEINTURE;
   const { plaque, douille } = TREPIED;
   const seen = new Set();
   const put = (ref, obj, explode) => { api.part(ref, tag(obj, null, 'Trepied'), explode, { noLabel: seen.has(ref) }); seen.add(ref); };
@@ -97,7 +100,7 @@ export function P02(api) {
 // ------------------------------------------------------------------ cadre 15250413
 
 function cadre(S) {
-  const M = 'steel', a = CADRE.tube / 2;
+  const M = PEINTURE, a = CADRE.tube / 2;
   const g = S.group(nom(tube([[a, TREPIED.plaque.ep], [a, H - a], [L - a, H - a], [L - a, TREPIED.plaque.ep]], CADRE, 0, M), 'tube'));
   // Anneaux : trois debout sur la traverse du haut, quatre couchés de chaque côté.
   const { rond: d, long, large, haut, cote } = ANNEAU;
@@ -118,13 +121,13 @@ function butee(S, haut) {
   const { cote: a, coin: c, ep, retrait, bas } = BUTEE;
   const x = CADRE.tube, y = haut ? H - CADRE.tube : bas, s = haut ? -1 : 1;
   const z0 = -FACE + retrait; // à 1/4 po de la face arrière du cadre, contre le dos du battant
-  return tag(S.group(decoupe(S, [[x + c, y], [x + a, y], [x, y + s * a], [x, y + s * c]], z0, z0 + ep, 'steel')), 'Cadre', 'Cadre');
+  return tag(S.group(decoupe(S, [[x + c, y], [x + a, y], [x, y + s * a], [x, y + s * c]], z0, z0 + ep, PEINTURE)), 'Cadre', 'Cadre');
 }
 
 // ------------------------------------------------------------------ battant 15250400
 
 function battant(S) {
-  const B = BATTANT, t = B.tube / 2, z = FACE - t, M = 'steel';
+  const B = BATTANT, t = B.tube / 2, z = FACE - t, M = PEINTURE;
   const g = S.group(
     nom(tube([[B.x0 + t, B.y0 + t], [B.x1 - t, B.y0 + t], [B.x1 - t, B.y1 - t], [B.x0 + t, B.y1 - t]], B, z, M, true), 'tube'),
     nom(tube([[B.x0 + B.tube, B.traverse], [B.x1 - B.tube, B.traverse]], B, z, M), 'traverse'),
@@ -133,10 +136,10 @@ function battant(S) {
   const n = 10, r = (B.fil / 2) * IN, fils = [];
   const panneaux = [[B.y0 + B.tube, B.traverse - t, B.filBas], [B.traverse + t, B.y1 - B.tube, B.filHaut]];
   for (const [y0, y1, [h0, h1]] of panneaux) {
-    for (let x = B.filX[0]; x <= B.filX[1] + 1e-6; x += B.pas) fils.push(S.cyl(r, (y1 - y0) * IN, 'zinc', { seg: n, pos: pos(x, (y0 + y1) / 2, z) }));
-    for (let y = h0; y <= h1 + 1e-6; y += B.pas) fils.push(S.cyl(r, (B.x1 - B.x0 - 2 * B.tube) * IN, 'zinc', { axis: 'x', seg: n, pos: pos((B.x0 + B.x1) / 2, y, z) }));
+    for (let x = B.filX[0]; x <= B.filX[1] + 1e-6; x += B.pas) fils.push(S.cyl(r, (y1 - y0) * IN, PEINTURE, { seg: n, pos: pos(x, (y0 + y1) / 2, z) }));
+    for (let y = h0; y <= h1 + 1e-6; y += B.pas) fils.push(S.cyl(r, (B.x1 - B.x0 - 2 * B.tube) * IN, PEINTURE, { axis: 'x', seg: n, pos: pos((B.x0 + B.x1) / 2, y, z) }));
   }
-  const grillage = nom(tag(S.merged(fils, 'zinc'), null, 'Grillage'), 'grillage');
+  const grillage = nom(tag(S.merged(fils, PEINTURE), null, 'Grillage'), 'grillage');
   grillage.userData.kVolume = 1 / tauxPolygone(n);
   g.add(grillage);
   // Plaque du loquet, à fleur de la face avant.
@@ -153,7 +156,7 @@ function battant(S) {
 
 /** Penture à souder : moitié basse sur le cadre, moitié haute (graisseur) sur le battant. */
 function penture(S, joint) {
-  const { r, demi } = PENTURE, M = 'darkSteel', k = IN;
+  const { r, demi } = PENTURE, M = PEINTURE, k = IN;
   const bas = S.lathe([[0, (-demi - 0.33) * k], [0.2 * k, (-demi - 0.29) * k], [0.34 * k, (-demi - 0.14) * k], [r * k, -demi * k], [r * k, 0], [0, 0]], M, { seg: 20 });
   const haut = S.group(
     S.lathe([[0, 0], [r * k, 0], [r * k, demi * k], [0.24 * k, (demi + 0.37) * k], [0, (demi + 0.37) * k]], M, { seg: 20 }),

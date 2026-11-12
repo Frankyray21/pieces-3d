@@ -134,7 +134,8 @@ pièces (numéro, quantité, page du manuel).
   (15250400), trois pentures à souder de 6 po, deux plaques de butée, barrure à
   tête d'interverrouillage (2210300), trépied à douilles boulonnées (P02). Les
   cotes des plans sont reprises telles quelles ; le reste est relevé à l'échelle
-  sur les tracés vectoriels des PDF. Les masses des cartouches (19,74 lb et
+  sur les tracés vectoriels des PDF. Peinte en noir (couleur choisie pour le
+  modèle, les plans n'en précisent pas), visserie zinguée. Les masses des cartouches (19,74 lb et
   5,42 lb) sont calculées à la densité par défaut de SolidWorks (1 g/cm³) : elles
   donnent le volume de matière, que `node scripts/check-porte.mjs` compare à
   celui du modèle parmi 51 contrôles (trépied à 0,1 %, porte à 2 % ; environ
