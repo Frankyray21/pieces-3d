@@ -228,7 +228,7 @@
    "sheets": [
     "P01"
    ],
-   "note": "La même porte, animée en trois temps : verrou engagé, verrou tiré (course de 1 po, estimée), battant ouvert à 90° autour de l'axe des trois pentures. Ces mouvements ne sont pas cotés au plan : ils découlent de sa géométrie (pentures devant le jeu, plaques de butée derrière le battant, languette dans la tête d'interverrouillage). Le battant bute contre le gousset avant du trépied vers 107° (calculé). Ce sont les trois corps livrés pour Unreal Engine (cadre, battant, verrou) : fichiers dans equipment/porte-1801020/unreal/, mode d'emploi dans docs/porte-unreal.md.",
+   "note": "La même porte, animée en trois temps : verrou engagé, verrou tiré (course de 1 po, estimée), battant ouvert à 90° autour de l'axe des trois pentures. Ces mouvements ne sont pas cotés au plan : ils découlent de sa géométrie (pentures devant le jeu, plaques de butée derrière le battant, languette dans la tête d'interverrouillage). Le battant bute contre le gousset avant du trépied vers 107° (calculé). Ce sont les trois corps livrés pour Unreal Engine (cadre, battant, verrou) : fichiers dans equipment/porte-1801020/unreal/, page d'essai equipment/porte-1801020/essai.html, mode d'emploi dans docs/porte-unreal.md.",
    "parts": [
     [
      "1",

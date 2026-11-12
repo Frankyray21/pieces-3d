@@ -26,6 +26,16 @@ du fichier.
 `M_Porte_Pentures`, `M_Porte_Visserie`, `M_Porte_Barrure_Corps`, `M_Porte_Barrure_Barre`, `M_Porte_Barrure_Bouton`,
 `M_Porte_Barrure_Voyant`), UV en projection par boîte (1 unité = 1 m).
 
+## Essai interactif dans le navigateur
+
+`public/equipment/porte-1801020/essai.html` (sur le site :
+https://frankyray21.github.io/pieces-3d/equipment/porte-1801020/essai.html) charge le même `porte-1801020.glb` et
+anime chaque élément autour de son origine avec les valeurs de ses « extras » glTF (`mouvement`, `axe_local`,
+`angle_ouvert_deg`, `butee_deg`, `course_m`) : clic sur le bouton du verrou, puis sur le battant (ou les deux
+boutons). Le battant refuse de tourner tant que le verrou est engagé, et le verrou de s'engager tant que le battant
+est ouvert. Si un pivot ou un sens de rotation est faux dans le fichier, on le voit ici avant l'import dans le
+moteur. three.js est celui du coffre à outils (`equipment/coffre-dd/lib/`, pas de CDN).
+
 ## Comment la porte fonctionne
 
 | Mouvement | Mécanisme (d'après les plans) |
@@ -80,7 +90,8 @@ Les `.fbx` contiennent les mêmes maillages pour les versions d'Unreal ou les lo
 - Vérifié : 51 mesures du modèle contre les plans (`scripts/check-porte.mjs`), dont le volume de matière, à 2 % de
   celui du plan pour la porte et à 0,1 % pour le trépied ; les `.glb` relus dans Blender (hiérarchie, pivots, tailles,
   sections, UV, quatre actions) et la séquence `Porte_Ouvrir` rendue image par image ; les `.fbx` relus dans Blender
-  (même boîte que le `.glb`, origine à zéro).
+  (même boîte que le `.glb`, origine à zéro) ; la page d'essai jouée dans Chromium (clic sur le battant refusé verrou
+  engagé, verrou tiré de 2,54 cm, battant à 90°, refermé et verrouillé).
 - Pas vérifié : l'import dans Unreal lui-même. Aucun éditeur Unreal n'était disponible : les étapes ci-dessus
   suivent l'import glTF d'Interchange déjà utilisé pour la foreuse STM-1500 (`docs/animation-stm-1500.md`).
 

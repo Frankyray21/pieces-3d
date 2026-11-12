@@ -148,6 +148,8 @@ pièces (numéro, quantité, page du manuel).
   fichier complet animé et la fiche des pivots dans
   `public/equipment/porte-1801020/unreal/` ; FBX par
   `tools/blender_porte_fbx.py` ; mode d'emploi dans `docs/porte-unreal.md`.
+  Page d'essai du fichier de jeu : `equipment/porte-1801020/essai.html` (clic
+  sur le verrou, puis sur le battant).
 
 - **Rack à outils 15083000** (`rack-outil`, Machines Roger International, plan
   d'assemblage soudé du 2021-08-31, une page, échelle 1:4) : plaque en U de

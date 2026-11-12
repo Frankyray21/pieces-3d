@@ -12,6 +12,8 @@
 //   porte-1801020.glb     les trois maillages montés (Cadre > Battant > Verrou) et les animations
 //                         Porte_Ouvrir, Porte_Fermer, Verrou_Tirer, Battant_Ouvrir
 //   porte-1801020.json    pivots, courses, sections, unités (mètres du glTF et centimètres d'Unreal)
+// Chaque nœud porte son mouvement dans ses « extras » (mouvement, axe_local, angle_ouvert_deg, course_m), comme le
+// coffre à outils (scripts/export-coffre-jeu.mjs) ; public/equipment/porte-1801020/essai.html les essaie.
 //
 // Usage : node scripts/export-porte.mjs [dossier de sortie] [--fps 30] [--metal-max 0.3]
 // --metal-max : plafonne le caractère métallique des matériaux (un métal pur sort noir dans une scène
@@ -50,6 +52,12 @@ const PIVOT = {
   Verrou: new THREE.Vector3((BARRURE.bouton.x - L / 2) * IN, BARRURE.y * IN, FACE * IN),
 };
 const PARENT = { Cadre: null, Battant: 'Cadre', Verrou: 'Battant' };
+// Valeurs de mouvement inscrites dans les « extras » de chaque nœud du glTF (axes du fichier, Y vers le haut).
+const EXTRAS = {
+  Cadre: { role: 'cadre fixe', origine: 'au plancher, au milieu de la largeur, dans le plan milieu du cadre' },
+  Battant: { role: 'battant', origine: 'sur l\'axe des pentures, au plancher', mouvement: 'rotation', axe_local: 'Y', angle_ferme_deg: 0, angle_ouvert_deg: OUVERTURE.usage, butee_deg: OUVERTURE.max },
+  Verrou: { role: 'verrou de la barrure', origine: 'sur l\'axe du bouton, à la face avant du battant', mouvement: 'translation', axe_local: 'X', course_m: +(BARRURE.course * IN).toFixed(4), condition: 'le battant ne tourne que verrou tiré' },
+};
 const NOM = (corps) => `SM_Porte_${corps}`;
 
 /** Section de matériau d'un maillage : son lot, précisé par le matériau pour la barrure ; la visserie zinguée ensemble. */
@@ -137,6 +145,7 @@ function maillage(nomCorps) {
   geo.computeBoundingBox();
   const m = new THREE.Mesh(geo, mats);
   m.name = NOM(nomCorps);
+  m.userData = { ...EXTRAS[nomCorps] };
   return m;
 }
 
