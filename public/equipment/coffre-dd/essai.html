@@ -31,7 +31,7 @@
 </div>
 <script type="module">
 // Essai du fichier coffre-ith.glb tel qu'il est exporté pour un moteur de jeu :
-// chaque élément mobile tourne ou glisse autour de sa propre origine, avec les
+// chaque élément mobile tourne autour de sa propre origine ou glisse le long de son axe, avec les
 // valeurs inscrites dans les « extras » du fichier (mouvement, axe, angle, course).
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
@@ -64,7 +64,7 @@ const dire = (texte) => { etat.textContent = texte; };
 /** Ce qui empêche le mouvement demandé, ou '' si rien. */
 function blocage(nom, ouvrir) {
   const ouvert = (n) => mobiles.get(n).cible > 0;
-  if (nom.startsWith('SM_Coffre_Porte') && ouvrir && !ouvert('SM_Coffre_Barre')) return 'Relevez d\'abord la barre de verrouillage.';
+  if (nom.startsWith('SM_Coffre_Porte') && ouvrir && !ouvert('SM_Coffre_Barre')) return 'Glissez d\'abord la barre de verrouillage vers la droite.';
   if (nom === 'SM_Coffre_Tiroir' && ouvrir && !(ouvert('SM_Coffre_Porte_G') && ouvert('SM_Coffre_Porte_D'))) return 'Ouvrez d\'abord les deux portes.';
   if (nom.startsWith('SM_Coffre_Porte') && !ouvrir && ouvert('SM_Coffre_Tiroir')) return 'Refermez d\'abord le tiroir.';
   if (nom === 'SM_Coffre_Barre' && !ouvrir && !(mobiles.get('SM_Coffre_Porte_G').t === 0 && mobiles.get('SM_Coffre_Porte_D').t === 0)) return 'Fermez d\'abord les deux portes.';
@@ -85,7 +85,8 @@ new GLTFLoader().load('./coffre-ith.glb', (gltf) => {
   scene.add(gltf.scene);
   gltf.scene.traverse((o) => {
     if (!o.userData.mouvement) return;
-    mobiles.set(o.name, { node: o, base: { rot: o.rotation.y, pos: o.position.z }, cible: 0, t: 0 });
+    const axe = new THREE.Vector3(...({ X: [1, 0, 0], Y: [0, 1, 0], Z: [0, 0, 1] })[o.userData.axe_local]).applyQuaternion(o.quaternion);
+    mobiles.set(o.name, { node: o, base: { rot: o.rotation.y, pos: o.position.clone() }, axe, cible: 0, t: 0 });
   });
   for (const nom of ORDRE) {
     const b = document.createElement('button');
@@ -126,7 +127,7 @@ renderer.setAnimationLoop(() => {
     const k = m.t * m.t * (3 - 2 * m.t); // départ et arrivée en douceur
     const e = m.node.userData;
     if (e.mouvement === 'rotation') m.node.rotation.y = m.base.rot + THREE.MathUtils.degToRad(e.angle_ouvert_deg) * k;
-    else m.node.position.z = m.base.pos + e.course_m * k;
+    else m.node.position.copy(m.base.pos).addScaledVector(m.axe, e.course_m * k);
   }
   controls.update();
   renderer.render(scene, camera);

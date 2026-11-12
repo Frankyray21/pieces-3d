@@ -1,7 +1,7 @@
 // Exporte le coffre à outils ITH (coffre-dd) en glTF binaire prêt pour un
 // moteur de jeu (Unreal Engine, Unity, Godot) : un maillage par élément mobile,
-// origine de chaque maillage sur son pivot (pentures des portes, axe de la
-// barre de verrouillage, façade du tiroir), matériaux PBR nommés, logo en
+// origine de chaque maillage sur son pivot ou son point de départ (pentures des
+// portes, barre de verrouillage coulissante, façade du tiroir), matériaux PBR nommés, logo en
 // texture incorporée, unités en mètres. Voir docs/coffre-unreal.md.
 //
 // Usage : node scripts/export-coffre-jeu.mjs [sortie.glb] [--ucx]
@@ -36,12 +36,12 @@ const IN = 0.0254;
 const ELEMENTS = [
   { name: 'SM_Coffre_Caisse', pivot: new THREE.Matrix4(), parts: ['1', '2', '3', '4', '5', '7', '8', '9', '10', '11', '12', '18', '20', '21'].flatMap((r) => ref(r)),
     extras: { role: 'caisse fixe', origine: 'au sol, au centre du coffre' } },
-  { name: 'SM_Coffre_Porte_G', pivot: doorG, parts: [...ref('6', 0), ...ref('13', 0), ...ref('15'), ...ref('16'), ...ref('17'), ...ref('22')],
+  { name: 'SM_Coffre_Porte_G', pivot: doorG, parts: [...ref('6', 0), ...ref('13', 0), ...ref('15'), ...ref('17'), ...ref('22')],
     extras: { role: 'porte gauche', mouvement: 'rotation', axe_local: 'Y', angle_ferme_deg: 0, angle_ouvert_deg: -110 } },
-  { name: 'SM_Coffre_Barre', parent: 'SM_Coffre_Porte_G', pivot: doorG.clone().multiply(T(RIG.barPivot)), parts: ref('14'),
-    extras: { role: 'barre de verrouillage', mouvement: 'rotation', axe_local: 'Y', angle_ferme_deg: 0, angle_ouvert_deg: -120 } },
-  { name: 'SM_Coffre_Porte_D', pivot: doorD, parts: [...ref('6', 1), ...ref('13', 1)],
+  { name: 'SM_Coffre_Porte_D', pivot: doorD, parts: [...ref('6', 1), ...ref('13', 1), ...ref('24')],
     extras: { role: 'porte droite', mouvement: 'rotation', axe_local: 'Y', angle_ferme_deg: 0, angle_ouvert_deg: 110 } },
+  { name: 'SM_Coffre_Barre', parent: 'SM_Coffre_Porte_D', pivot: doorD.clone().multiply(T(RIG.bar)), parts: [...ref('14'), ...ref('16')],
+    extras: { role: 'barre de verrouillage coulissante', mouvement: 'translation', axe_local: 'X', course_m: +RIG.barTravel.toFixed(4) } },
   { name: 'SM_Coffre_Tiroir', pivot: T(RIG.drawer), parts: ref('19'),
     extras: { role: 'tiroir', mouvement: 'translation', axe_local: 'Z', course_m: +RIG.drawerTravel.toFixed(3) } },
   { name: 'SM_Coffre_Support_Tube', pivot: T(RIG.support), parts: ref('23'),
