@@ -1,291 +1,413 @@
 {
  "id": "coffre-dd",
- "name": "Coffre à outils de chantier",
+ "name": "Coffre à outils ITH",
  "manufacturer": "Machines Roger International",
  "category": "Coffre de rangement en acier",
+ "serial": "",
  "document": {
-  "title": "Photos du coffre (fermé et ouvert)",
-  "reference": "Photo",
-  "sheets": 2,
+  "title": "Dessin 087 « Coffre à outil ITH »",
+  "reference": "087",
+  "preparedBy": "M.R.I. Inc., dessiné par D. Côté",
+  "date": "2011-06",
+  "sheets": 3,
   "pagePattern": "pages/{sheet}.webp"
  },
  "specs": [
   [
-   "Dimensions hors tout (estimées)",
-   "Environ 48 × 36 × 51 po (1,22 × 0,91 × 1,30 m)"
+   "Caisse",
+   "48 po de large × 39 1/2 po de profond × 54 po de haut"
   ],
   [
-   "Manutention",
-   "2 passages de fourche sous la caisse ; 4 oreilles de levage sur le dessus"
+   "Hauteur avec les tubes de base",
+   "58 po, plus les oreilles de levage (4 po)"
+  ],
+  [
+   "Devant",
+   "21 po de haut"
+  ],
+  [
+   "Dessus",
+   "20 po de profond"
   ],
   [
    "Portes",
-   "2 portes inclinées, charnières sur les côtés, barre de verrouillage et oreilles de cadenas au centre"
+   "2 portes de 24 × 39 po, inclinées (38 5/8 po le long de la pente)"
   ],
   [
-   "Rangement",
-   "2 tablettes à trois cases, 1 tiroir, 1 panier en métal déployé, crochets dans la porte gauche"
+   "Tablettes",
+   "2 tablettes de 16 po de profond à 3 cases de 16 po, devant de 4 po, 12 po entre les tablettes"
   ],
   [
-   "Fini",
+   "Base",
+   "2 tubes 4 × 4 × 1/4 po à 36 po d'entraxe, bouts fermés"
+  ],
+  [
+   "Levage",
+   "2 oreilles en plaque de 3/8 po, trou de 2 1/2 po"
+  ],
+  [
+   "Fini (photos)",
    "Rouge à l'extérieur, blanc à l'intérieur"
   ]
  ],
  "weights": [],
  "sheetTitles": {
-  "P01": "Coffre fermé",
-  "P02": "Coffre ouvert : rangement intérieur"
+  "P01": "Dessin 087 : plan de coupes, vues et détails 1 à 3",
+  "P02": "Photo : coffre fermé",
+  "P03": "Photo : coffre ouvert"
  },
  "root": "P01",
  "assemblies": {
   "P01": {
-   "title": "Coffre fermé",
-   "titleFr": "Coffre fermé",
+   "title": "Coffre à outil ITH",
+   "titleFr": "Coffre à outils ITH, fermé",
+   "pn": "087",
    "sheets": [
-    "P01"
+    "P01",
+    "P02"
    ],
-   "note": "Reconstitution 3D d'après deux photos du coffre, sans plan ni cote : toutes les dimensions sont estimées (environ 48 po de large, 36 po de profond et 51 po de haut) et les noms des pièces sont descriptifs. Le contenu du coffre (palan à levier, seau, boyau, pièces) et le plat galvanisé à coulisseau du côté droit ne sont pas modélisés. La vue éclatée dégage les portes et sort le rangement intérieur.",
+   "note": "Modèle 3D aux cotes du dessin 087 « Coffre à outil ITH » (M.R.I. Inc., D. Côté, juin 2011) : tôles du plan de coupes, trois vues et détails 1 à 3. Le dessin ne donne ni l'épaisseur des tôles ni le détail des pentures (estimés) ; le montage du pivot de la barre de verrouillage (repères 1 à 3 du détail 3) est interprété. Peinture d'après les photos : rouge à l'extérieur, blanc à l'intérieur. La vue éclatée sépare les tôles et dégage les tablettes.",
    "parts": [
     [
      "1",
      "",
      1,
-     "Caisse soudée : plancher, fond, côtés, dessus et panneau avant",
-     {
-      "note": "Tôle peinte rouge à l'extérieur, blanc à l'intérieur."
-     }
+     "DERRIÈRE : tôle de 48 × 54 po",
+     {}
     ],
     [
      "2",
      "",
-     2,
-     "Passage de fourche (tube rectangulaire sous la caisse)",
-     {}
+     1,
+     "FOND : tôle de 48 × 42 po",
+     {
+      "note": "42 po au plan de coupes pour une caisse de 39 1/2 po de profond."
+     }
     ],
     [
      "3",
      "",
-     4,
-     "Oreille de levage en plaque, aux coins du dessus",
+     2,
+     "CÔTÉ : tôle de 40 × 54 po, coupée à 21 po au devant et à 20 po au dessus",
      {}
     ],
     [
      "4",
      "",
      1,
-     "Porte gauche",
+     "DESSUS : tôle de 48 × 20 po",
      {}
     ],
     [
      "5",
      "",
      1,
-     "Porte droite, avec le couvre-joint",
+     "DEVANT : tôle de 48 × 21 po",
      {}
     ],
     [
      "6",
      "",
-     4,
-     "Charnière",
-     {}
+     2,
+     "PORTE : tôle de 24 × 39 po",
+     {
+      "note": "38 5/8 po le long de la pente sur la vue de côté."
+     }
     ],
     [
      "7",
      "",
      2,
-     "Poignée de porte en rond plié",
+     "FOND DES TABLETTES : tôle de 48 × 16 po",
      {}
     ],
     [
      "8",
      "",
-     1,
-     "Barre de verrouillage, à cheval sur le joint des portes",
+     2,
+     "DEVANT TABLETTES : tôle de 48 × 4 po",
      {}
     ],
     [
      "9",
      "",
-     2,
-     "Oreille de cadenas",
+     4,
+     "DIVISIONS : tôle de 16 × 12 po (cases de 16 po)",
      {}
     ],
     [
      "10",
      "",
-     1,
-     "Tablette du haut à trois cases",
-     {}
+     2,
+     "Tube de base 4 × 4 × 1/4 po, 39 1/2 po de long, à 36 po d'entraxe",
+     {
+      "pnText": "Tubing 4 × 4 × 1/4",
+      "note": "Fermer les bouts."
+     }
     ],
     [
      "11",
      "",
-     1,
-     "Tablette du bas à trois cases",
-     {}
+     4,
+     "Penture",
+     {
+      "note": "À 5 po du haut et du bas des portes ; non détaillée sur le dessin."
+     }
     ],
     [
      "12",
      "",
-     1,
-     "Tiroir sous la tablette du bas, avec poignée et loquet",
-     {}
+     2,
+     "Oreille de levage (détail 1) : plaque de 3/8 po, 6 × 4 po, rond de 3 1/2 po, trou de 2 1/2 po",
+     {
+      "pnText": "Détail 1",
+      "note": "2 requis."
+     }
     ],
     [
      "13",
      "",
      2,
-     "Glissière du tiroir",
-     {}
+     "Poignée de porte (détail 2) : tige de 3/4 po, 12 × 4 po",
+     {
+      "pnText": "Détail 2",
+      "note": "2 requis. À 3 po du joint des portes."
+     }
     ],
     [
      "14",
      "",
      1,
-     "Panier en métal déployé, au bas à droite",
-     {}
+     "Barre de verrouillage (détail 3) : plat de 13 × 1 1/2 × 3/8 po à fente de 1/2 po, poignée en tige de 3/4 po de 6 × 3 po",
+     {
+      "pnText": "Détail 3"
+     }
     ],
     [
      "15",
      "",
      1,
-     "Support à crochets, à l'intérieur de la porte gauche",
-     {}
+     "Fer angle 1/4 po, 2 × 2 po, aile de 3/4 po (repère 1 du détail 3)",
+     {
+      "note": "Position sous la barre interprétée d'après la vue de face."
+     }
     ],
     [
      "16",
      "",
      1,
+     "Plaque 1/4 po, 1 1/2 × 1 1/2 po, trou de 3/8 po (repère 2 du détail 3)",
+     {}
+    ],
+    [
+     "17",
+     "",
+     1,
+     "Plaque 1/4 po, 1 1/2 × 2 po, trou de 3/8 po (repère 3 du détail 3)",
+     {}
+    ],
+    [
+     "18",
+     "",
+     1,
      "Autocollant Machines Roger International",
      {
-      "note": "Emplacement et proportions seulement ; le lettrage n'est pas reproduit."
+      "note": "D'après la photo, absent du dessin ; emplacement et proportions seulement."
      }
     ]
    ]
   },
   "P02": {
-   "title": "Coffre ouvert : rangement intérieur",
-   "titleFr": "Coffre ouvert : rangement intérieur",
+   "title": "Coffre ouvert",
+   "titleFr": "Coffre ouvert : tablettes et ajouts de la photo",
+   "pn": "087",
    "sheets": [
-    "P02"
+    "P03",
+    "P01"
    ],
-   "note": "Reconstitution 3D d'après deux photos du coffre, sans plan ni cote : toutes les dimensions sont estimées (environ 48 po de large, 36 po de profond et 51 po de haut) et les noms des pièces sont descriptifs. Le contenu du coffre (palan à levier, seau, boyau, pièces) et le plat galvanisé à coulisseau du côté droit ne sont pas modélisés.",
+   "note": "Modèle 3D aux cotes du dessin 087 « Coffre à outil ITH » (M.R.I. Inc., D. Côté, juin 2011) : tôles du plan de coupes, trois vues et détails 1 à 3. Le dessin ne donne ni l'épaisseur des tôles ni le détail des pentures (estimés) ; le montage du pivot de la barre de verrouillage (repères 1 à 3 du détail 3) est interprété. Peinture d'après les photos : rouge à l'extérieur, blanc à l'intérieur. Le tiroir, le panier et le support à crochets sont des ajouts visibles sur la photo du coffre ouvert, absents du dessin (dimensions estimées). Le contenu du coffre n'est pas modélisé.",
    "parts": [
     [
      "1",
      "",
      1,
-     "Caisse soudée : plancher, fond, côtés, dessus et panneau avant",
-     {
-      "note": "Tôle peinte rouge à l'extérieur, blanc à l'intérieur."
-     }
+     "DERRIÈRE : tôle de 48 × 54 po",
+     {}
     ],
     [
      "2",
      "",
-     2,
-     "Passage de fourche (tube rectangulaire sous la caisse)",
-     {}
+     1,
+     "FOND : tôle de 48 × 42 po",
+     {
+      "note": "42 po au plan de coupes pour une caisse de 39 1/2 po de profond."
+     }
     ],
     [
      "3",
      "",
-     4,
-     "Oreille de levage en plaque, aux coins du dessus",
+     2,
+     "CÔTÉ : tôle de 40 × 54 po, coupée à 21 po au devant et à 20 po au dessus",
      {}
     ],
     [
      "4",
      "",
      1,
-     "Porte gauche",
+     "DESSUS : tôle de 48 × 20 po",
      {}
     ],
     [
      "5",
      "",
      1,
-     "Porte droite, avec le couvre-joint",
+     "DEVANT : tôle de 48 × 21 po",
      {}
     ],
     [
      "6",
      "",
-     4,
-     "Charnière",
-     {}
+     2,
+     "PORTE : tôle de 24 × 39 po",
+     {
+      "note": "38 5/8 po le long de la pente sur la vue de côté."
+     }
     ],
     [
      "7",
      "",
      2,
-     "Poignée de porte en rond plié",
+     "FOND DES TABLETTES : tôle de 48 × 16 po",
      {}
     ],
     [
      "8",
      "",
-     1,
-     "Barre de verrouillage, à cheval sur le joint des portes",
+     2,
+     "DEVANT TABLETTES : tôle de 48 × 4 po",
      {}
     ],
     [
      "9",
      "",
-     2,
-     "Oreille de cadenas",
+     4,
+     "DIVISIONS : tôle de 16 × 12 po (cases de 16 po)",
      {}
     ],
     [
      "10",
      "",
-     1,
-     "Tablette du haut à trois cases",
-     {}
+     2,
+     "Tube de base 4 × 4 × 1/4 po, 39 1/2 po de long, à 36 po d'entraxe",
+     {
+      "pnText": "Tubing 4 × 4 × 1/4",
+      "note": "Fermer les bouts."
+     }
     ],
     [
      "11",
      "",
-     1,
-     "Tablette du bas à trois cases",
-     {}
+     4,
+     "Penture",
+     {
+      "note": "À 5 po du haut et du bas des portes ; non détaillée sur le dessin."
+     }
     ],
     [
      "12",
      "",
-     1,
-     "Tiroir sous la tablette du bas, avec poignée et loquet",
-     {}
+     2,
+     "Oreille de levage (détail 1) : plaque de 3/8 po, 6 × 4 po, rond de 3 1/2 po, trou de 2 1/2 po",
+     {
+      "pnText": "Détail 1",
+      "note": "2 requis."
+     }
     ],
     [
      "13",
      "",
      2,
-     "Glissière du tiroir",
-     {}
+     "Poignée de porte (détail 2) : tige de 3/4 po, 12 × 4 po",
+     {
+      "pnText": "Détail 2",
+      "note": "2 requis. À 3 po du joint des portes."
+     }
     ],
     [
      "14",
      "",
      1,
-     "Panier en métal déployé, au bas à droite",
-     {}
+     "Barre de verrouillage (détail 3) : plat de 13 × 1 1/2 × 3/8 po à fente de 1/2 po, poignée en tige de 3/4 po de 6 × 3 po",
+     {
+      "pnText": "Détail 3"
+     }
     ],
     [
      "15",
      "",
      1,
-     "Support à crochets, à l'intérieur de la porte gauche",
-     {}
+     "Fer angle 1/4 po, 2 × 2 po, aile de 3/4 po (repère 1 du détail 3)",
+     {
+      "note": "Position sous la barre interprétée d'après la vue de face."
+     }
     ],
     [
      "16",
      "",
      1,
+     "Plaque 1/4 po, 1 1/2 × 1 1/2 po, trou de 3/8 po (repère 2 du détail 3)",
+     {}
+    ],
+    [
+     "17",
+     "",
+     1,
+     "Plaque 1/4 po, 1 1/2 × 2 po, trou de 3/8 po (repère 3 du détail 3)",
+     {}
+    ],
+    [
+     "18",
+     "",
+     1,
      "Autocollant Machines Roger International",
      {
-      "note": "Emplacement et proportions seulement ; le lettrage n'est pas reproduit."
+      "note": "D'après la photo, absent du dessin ; emplacement et proportions seulement."
+     }
+    ],
+    [
+     "19",
+     "",
+     1,
+     "Tiroir sous la tablette du bas, avec poignée et loquet",
+     {
+      "note": "Visible sur la photo du coffre ouvert, absent du dessin 087 ; dimensions estimées."
+     }
+    ],
+    [
+     "20",
+     "",
+     2,
+     "Glissière du tiroir",
+     {
+      "note": "Visible sur la photo du coffre ouvert, absent du dessin 087 ; dimensions estimées."
+     }
+    ],
+    [
+     "21",
+     "",
+     1,
+     "Panier en métal déployé, au bas à droite",
+     {
+      "note": "Visible sur la photo du coffre ouvert, absent du dessin 087 ; dimensions estimées."
+     }
+    ],
+    [
+     "22",
+     "",
+     1,
+     "Support à crochets, à l'intérieur de la porte gauche",
+     {
+      "note": "Visible sur la photo du coffre ouvert, absent du dessin 087 ; dimensions estimées."
      }
     ]
    ]

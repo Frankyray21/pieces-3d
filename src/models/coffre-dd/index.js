@@ -1,77 +1,77 @@
-// Coffre à outils de chantier (Machines Roger International) : modèle 3D d'après
-// deux photos (coffre fermé, coffre ouvert). Aucun plan ni cote : toutes les
-// dimensions sont estimées sur les photos. Le contenu du coffre (palan, seau,
-// boyau, pièces) n'est pas modélisé.
+// Coffre à outils ITH (Machines Roger International) : modèle 3D d'après le
+// dessin 087 « Coffre à outil ITH » (M.R.I. Inc., D. Côté, juin 2011) : plan de
+// coupes des tôles, trois vues cotées et détails 1 à 3. L'épaisseur des tôles
+// et les pentures ne sont pas détaillées sur le dessin (estimées). La peinture
+// (rouge dehors, blanc dedans) et les ajouts du coffre ouvert (tiroir, panier,
+// crochets, autocollant) viennent des photos ; le contenu n'est pas modélisé.
 // Repère : X largeur, Y vers le haut, +Z côté portes.
 
-const W = 1.22, D = 0.91, H = 1.3; // hors tout (estimé : environ 48 × 36 × 51 po)
-const Y0 = 0.1; // dessous de la caisse, posée sur les passages de fourche
-const YK = 0.52; // haut du panneau avant droit, bas des portes
-const ZT = -0.045; // arête avant du dessus
-const T = 0.006; // tôle (peinte rouge dehors, blanc dedans)
+const IN = 0.0254;
+const W = 48 * IN, D = 39.5 * IN; // largeur, profondeur (vue de côté)
+const Y0 = 4 * IN; // dessous de la caisse, posée sur les tubes 4 × 4 × 1/4
+const H = Y0 + 54 * IN; // dessus de la caisse (derrière de 54 po)
+const YK = Y0 + 21 * IN; // haut du devant, bas des portes
+const ZT = -D / 2 + 20 * IN; // arête avant du dessus (20 po)
+const T = 0.125 * IN; // tôle : épaisseur non indiquée sur le dessin
 const RUN = D / 2 - ZT, RISE = H - YK;
 const TILT = Math.atan2(RUN, RISE); // inclinaison des portes par rapport à la verticale
-const L = Math.hypot(RUN, RISE); // hauteur des portes le long de la pente
-const WI = W - 2 * T - 0.004; // largeur intérieure utile
-const ZB = -D / 2 + T; // face intérieure du fond arrière
-const YA = 1.04, YB = 0.72; // tablettes du haut et du bas
+const L = Math.hypot(RUN, RISE); // hauteur des portes le long de la pente (38 5/8 po sur le dessin)
+const WI = W - 2 * T - 0.002; // largeur intérieure
+const ZB = -D / 2 + T; // face intérieure du derrière
+const SH_D = 16 * IN, LIP = 4 * IN, DIV_H = 12 * IN; // tablettes : fond, devant, divisions
+const YA = H - DIV_H, YB = H - 2 * DIV_H; // dessus des tablettes du haut et du bas
+const ROD = 0.375 * IN; // rayon de la tige de 3/4 po
 
-/** Position en Z de la face inclinée à la hauteur y. */
-const zs = (y) => D / 2 - ((y - YK) * RUN) / RISE;
-
-/** Tôle à deux couches : rouge du côté de la normale n (axe 0-2, signe), blanc de l'autre. */
+/** Tôle à deux couches : rouge du côté de la normale (axe 0-2, signe), blanc de l'autre. */
 function panel(S, size, pos, axis, sign) {
   const out = [...size], inn = [...size], po = [...pos], pi = [...pos];
   out[axis] = inn[axis] = T / 2;
   for (let k = 0; k < 3; k++) if (k !== axis) inn[k] -= 2 * T;
   po[axis] += (sign * T) / 4;
   pi[axis] -= (sign * T) / 4;
-  return [S.box(...out, 'red', { pos: po }), S.box(...inn, 'white', { pos: pi })];
+  return S.group(S.box(...out, 'red', { pos: po }), S.box(...inn, 'white', { pos: pi }));
 }
 
 /** Tôle découpée dans le plan ZY (profil [z, y]), épaisseur selon X. */
-function cheek(S, pts, t, material, x) {
-  const m = S.extrude(pts, t, material);
+function cheek(S, pts, t, material, x, holes = []) {
+  const m = S.extrude(pts, t, material, { holes });
   m.rotation.y = -Math.PI / 2;
   m.position.x = x;
   return m;
 }
 
-/** Caisse soudée : plancher, fond, côtés, dessus et panneau avant. */
-function body(S) {
+/** Côté : tôle de 40 × 54 po, coupée à 21 po au devant et à 20 po au dessus. */
+function side(S, s) {
   const prof = [[-D / 2, Y0], [D / 2, Y0], [D / 2, YK], [ZT, H], [-D / 2, H]];
-  const e = T; // retrait de la couche blanche
+  const e = T;
   const profIn = [[-D / 2 + e, Y0 + e], [D / 2 - e, Y0 + e], [D / 2 - e, YK], [ZT, H - e], [-D / 2 + e, H - e]];
-  const g = S.group(
-    ...panel(S, [W, T, D], [0, Y0 + T / 2, 0], 1, -1),
-    ...panel(S, [W, H - Y0, T], [0, (H + Y0) / 2, -D / 2 + T / 2], 2, -1),
-    ...panel(S, [W, T, ZT + D / 2], [0, H - T / 2, (ZT - D / 2) / 2], 1, 1),
-    ...panel(S, [W, YK - Y0, T], [0, (YK + Y0) / 2, D / 2 - T / 2], 2, 1),
-  );
-  for (const s of [-1, 1]) {
-    g.add(cheek(S, prof, T / 2, 'red', s * (W / 2 - T / 4)), cheek(S, profIn, T / 2, 'white', s * (W / 2 - (3 * T) / 4)));
-  }
-  return g;
+  return S.group(cheek(S, prof, T / 2, 'red', s * (W / 2 - T / 4)), cheek(S, profIn, T / 2, 'white', s * (W / 2 - (3 * T) / 4)));
 }
 
-/** Passage de fourche : tube rectangulaire sous la caisse, d'avant en arrière. */
-function forkPocket(S) {
-  const w = 0.2, h = Y0, t = 0.005, len = D - 0.02;
-  return S.merged([
-    S.box(w, t, len, 'red', { pos: [0, t / 2, 0] }), S.box(w, t, len, 'red', { pos: [0, h - t / 2, 0] }),
-    S.box(t, h - 2 * t, len, 'red', { pos: [(w - t) / 2, h / 2, 0] }), S.box(t, h - 2 * t, len, 'red', { pos: [-(w - t) / 2, h / 2, 0] }),
-  ], 'red');
+/** Tube de base 4 × 4 × 1/4 po, bouts fermés, d'avant en arrière. */
+function baseTube(S) {
+  return S.box(Y0, Y0, D, 'red', { r: 0.009, pos: [0, Y0 / 2, 0] });
 }
 
-/** Oreille de levage en plaque, debout sur le dessus. */
+/** Oreille de levage (détail 1) : plaque de 6 × 4 po, rond de 3 1/2 po, trou de 2 1/2 po. */
 function liftLug(S) {
-  const pts = [[-0.045, 0], [0.045, 0], [0.045, 0.06]];
-  for (let i = 1; i < 12; i++) { const a = (i / 12) * Math.PI; pts.push([0.045 * Math.cos(a), 0.06 + 0.045 * Math.sin(a)]); }
-  pts.push([-0.045, 0.06]);
-  return S.extrude(pts, 0.012, 'red', { holes: [[0, 0.062, 0.02]] });
+  const r = 1.75 * IN, cy = 4 * IN - r, bx = 3 * IN;
+  const d = Math.hypot(bx, cy), a0 = Math.atan2(-cy, bx) + Math.acos(r / d);
+  const pts = [[-bx, 0], [bx, 0]];
+  for (let i = 0; i <= 16; i++) { const a = a0 + (i / 16) * (Math.PI - 2 * a0); pts.push([r * Math.cos(a), cy + r * Math.sin(a)]); }
+  return cheek(S, pts, 0.375 * IN, 'red', 0, [[0, cy, 1.25 * IN]]);
 }
 
-/** Repère d'une porte : origine au bas de sa ligne de charnières, Y le long de la pente, Z vers l'extérieur. */
+/** Tige pliée en U : pattes en a = 0 et a = len, hauteur h, coins arrondis ; map place le point (a, b) du profil. */
+function uRod(S, len, h, map, material = 'red') {
+  const rc = 1 * IN, pts = [[0, 0]];
+  for (let i = 0; i <= 6; i++) { const a = Math.PI - (i / 6) * (Math.PI / 2); pts.push([rc + rc * Math.cos(a), h - rc + rc * Math.sin(a)]); }
+  for (let i = 0; i <= 6; i++) { const a = Math.PI / 2 - (i / 6) * (Math.PI / 2); pts.push([len - rc + rc * Math.cos(a), h - rc + rc * Math.sin(a)]); }
+  pts.push([len, 0]);
+  return S.tube(pts.map(([a, b]) => map(a, b)), ROD, material, { sharp: true, seg: 90, radial: 12 });
+}
+
+/** Repère d'une porte : origine au bas de sa ligne de pentures, Y le long de la pente, Z vers l'extérieur. */
 function doorFrame(THREE, s, angle) {
   const m = new THREE.Matrix4().makeTranslation(0, YK, D / 2);
   m.multiply(new THREE.Matrix4().makeRotationX(-TILT));
@@ -79,55 +79,62 @@ function doorFrame(THREE, s, angle) {
   return m.multiply(new THREE.Matrix4().makeRotationY(s * angle));
 }
 
-const DW = W / 2 - 0.003; // largeur d'une porte
+const DW = W / 2 - 0.0015; // largeur d'une porte (24 po, jeu au joint)
 
-/** Porte : tôle rouge, blanche à l'intérieur ; la droite porte le couvre-joint. */
+/** Porte : tôle de 24 × 39 po. */
 function door(S, s) {
   const x = (-s * DW) / 2;
-  const g = S.group(
+  return S.group(
     S.box(DW, L, T / 2, 'red', { pos: [x, L / 2, (3 * T) / 4] }),
     S.box(DW - 0.004, L - 0.004, T / 2, 'white', { pos: [x, L / 2, T / 4] }),
   );
-  if (s > 0) g.add(S.box(0.05, L - 0.02, 0.006, 'red', { pos: [-W / 2, L / 2, T + 0.003] }));
-  return g;
 }
 
-/** Poignée en rond plié en U, pattes inclinées vers le centre du coffre. */
+/** Poignée de porte (détail 2) : tige de 3/4 po, 12 × 4 po, à 3 po du joint et à 12 po du bas. */
 function handle(S, s) {
-  const xa = -s * (W / 2 - 0.16), xb = -s * (W / 2 - 0.34), y1 = 0.44, y2 = 0.76, h = 0.085;
-  return S.tube([[xa, y1, T], [xb, y1, h], [xb, y2, h], [xa, y2, T]], 0.009, 'red', { sharp: true, seg: 60, radial: 10 });
+  // Longueur le long de la pente, pattes vers l'extérieur.
+  return S.at(S.group(uRod(S, 12 * IN, 4 * IN, (a, b) => [0, a, b])), [-s * (W / 2 - 3 * IN), 12 * IN, T]);
 }
 
-const LATCH_Y = 0.5;
+const BAR_Y = L - 12 * IN, BAR_T = 0.375 * IN; // barre du détail 3, à 12 po du haut des portes
 
-/** Barre de verrouillage à plat, à cheval sur le joint des portes, et son pivot. */
+/** Barre de verrouillage (détail 3) : plat de 13 × 1 1/2 × 3/8 po à fente, poignée de 6 × 3 po. */
 function latchBar(S) {
-  const z = T + 0.006 + 0.004;
-  return S.group(
-    S.box(0.24, 0.036, 0.008, 'red', { pos: [-W / 2, LATCH_Y, z] }),
-    S.cyl(0.011, 0.012, 'red', { axis: 'z', pos: [-W / 2 + 0.07, LATCH_Y, z + 0.006], seg: 12 }),
-  );
+  const bar = S.plate(13 * IN, 1.5 * IN, BAR_T, 'red', { cutouts: [[2.5 * IN, 0, 6 * IN, 0.5 * IN]], r: 0.002 });
+  bar.rotation.x = Math.PI / 2;
+  const u = uRod(S, 6 * IN, 3 * IN, (a, b) => [a, 0, b]);
+  return S.at(S.group(bar, S.at(u, [-0.5 * IN, 0, BAR_T / 2])), [W / 2, BAR_Y, T + BAR_T / 2]);
 }
 
-/** Oreille de cadenas : plaque percée, debout sur la porte. */
-function padlockEar(S, s) {
-  const m = S.extrude([[0, -0.028], [0.045, -0.028], [0.045, 0.028], [0, 0.028]], 0.006, 'red', { holes: [[0.028, 0, 0.008]] });
-  m.rotation.y = -Math.PI / 2; // la plaque sort vers +Z
-  return S.at(S.group(m), [-s * (W / 2 - 0.15), LATCH_Y, T]);
+/** Plaque de 1/4 po percée à 3/8 po, debout sur la porte (repères 2 et 3 du détail 3). */
+function pivotPlate(S, h, dy) {
+  const a = 0.75 * IN;
+  const m = S.extrude([[-a, 0], [a, 0], [a, h], [-a, h]], 0.25 * IN, 'red', { holes: [[0, h - a, 0.1875 * IN]] });
+  m.rotation.x = Math.PI / 2; // la plaque sort vers +Z, épaisseur le long de la pente
+  return S.at(S.group(m), [W / 2 - 5.75 * IN, BAR_Y + dy, T]);
 }
 
-/** Charnière : gond et patte soudés au côté, patte de la porte (qui suit l'ouverture). */
+/** Fer angle de 1/4 po, 2 × 2 po, aile de 3/4 po (repère 1 du détail 3), sous la barre à 3 po du joint. */
+function angleRest(S) {
+  const t = 0.25 * IN;
+  return S.at(S.group(
+    S.box(2 * IN, 2 * IN, t, 'red', { pos: [0, -1 * IN, t / 2] }),
+    S.box(2 * IN, t, 0.75 * IN, 'red', { pos: [0, -t / 2, 0.375 * IN] }),
+  ), [W / 2 - 3 * IN, BAR_Y - 0.75 * IN - 0.001, T]);
+}
+
+/** Penture : gond et patte soudés au côté, patte de la porte (qui suit l'ouverture). */
 function hinge(S, s, y, angle) {
-  const leaf = S.group(S.box(0.06, 0.06, 0.005, 'red', { pos: [-s * 0.04, 0, T + 0.0025] }));
+  const leaf = S.group(S.box(0.045, 0.07, 0.004, 'red', { pos: [-s * 0.03, 0, T + 0.002] }));
   leaf.rotation.y = s * angle;
   return S.at(S.group(
-    S.cyl(0.011, 0.085, 'red', { pos: [s * 0.006, 0, 0.011], seg: 14 }),
-    S.box(0.005, 0.07, 0.05, 'red', { pos: [s * 0.0025, 0, -0.022] }),
+    S.cyl(0.011, 3 * IN, 'red', { pos: [s * 0.006, 0, 0.011], seg: 14 }),
+    S.box(0.004, 0.07, 0.045, 'red', { pos: [s * 0.002, 0, -0.02] }),
     leaf,
   ), [0, y, 0]);
 }
 
-/** Support à crochets, à l'intérieur de la porte gauche. */
+/** Support à crochets, à l'intérieur de la porte gauche (photo). */
 function hookPlate(S) {
   const x0 = 0.3, y = 0.6;
   const g = S.group(S.box(0.26, 0.07, 0.003, 'white', { pos: [x0, y, -0.0015] }));
@@ -138,38 +145,24 @@ function hookPlate(S) {
   return g;
 }
 
-/** Tablette à cases : fond, rebord avant incliné comme les portes, séparateurs jusqu'à yTop. */
-function shelf(S, y, yTop, lipH, fracs) {
-  const zf = zs(y) - 0.022, t = 0.004;
-  const g = S.group(S.box(WI, t, zf - ZB, 'white', { pos: [0, y - t / 2, (zf + ZB) / 2] }));
-  const lip = S.box(WI, lipH, t, 'white');
-  lip.rotation.x = -TILT;
-  g.add(S.at(lip, [0, y + (lipH / 2) * Math.cos(TILT), zf - (lipH / 2) * Math.sin(TILT)]));
-  const pts = [[ZB, y], [zf - 0.012, y], [zs(yTop) - 0.034, yTop], [ZB, yTop]];
-  for (const f of fracs) g.add(cheek(S, pts, t, 'white', (f - 0.5) * WI));
-  return g;
-}
+const DRAWER = { x: -0.1, w: 0.58, h: 0.1, d: 0.38, zf: ZB + SH_D };
 
-const DRAWER = { x: -0.1, w: 0.58, h: 0.1, d: 0.42, zf: 0.3 };
-
-/** Tiroir suspendu sous la tablette du bas, avec poignée et loquet. */
+/** Tiroir suspendu sous la tablette du bas, avec poignée et loquet (photo). */
 function drawer(S) {
   const { w, h, d } = DRAWER, t = 0.003;
-  const g = S.group(
+  return S.group(
     S.box(w, t, d, 'white', { pos: [0, t / 2, -d / 2] }),
     S.box(w, h, t, 'white', { pos: [0, h / 2, -t / 2] }),
     S.box(w, h - 0.01, t, 'white', { pos: [0, h / 2, -d + t / 2] }),
     S.box(t, h - 0.01, d, 'white', { pos: [w / 2 - t / 2, h / 2, -d / 2] }),
     S.box(t, h - 0.01, d, 'white', { pos: [-w / 2 + t / 2, h / 2, -d / 2] }),
     S.tube([[-0.075, h / 2, 0], [-0.075, h / 2, 0.035], [0.075, h / 2, 0.035], [0.075, h / 2, 0]], 0.006, 'white', { sharp: true, radial: 8 }),
-    // Loquet à gauche de la façade.
     S.box(0.02, 0.05, 0.006, 'white', { pos: [-w / 2 + 0.03, h - 0.02, 0.003] }),
     S.cyl(0.006, 0.014, 'white', { axis: 'z', pos: [-w / 2 + 0.03, h - 0.005, 0.008], seg: 10 }),
   );
-  return g;
 }
 
-/** Glissière du tiroir : cornière pendue sous la tablette. */
+/** Glissière du tiroir : cornière pendue sous la tablette (photo). */
 function slide(S, s) {
   const { h, d } = DRAWER, t = 0.004;
   return S.group(
@@ -221,8 +214,11 @@ function decal(S) {
   );
 }
 
-/** Coffre complet ; open : angle d'ouverture des portes [gauche, droite] en radians. */
-function build(api, open) {
+/**
+ * Coffre complet. open : angle d'ouverture des portes [gauche, droite] en
+ * radians ; extras : ajouts visibles sur la photo du coffre ouvert.
+ */
+function build(api, open, extras) {
   const S = api.S;
   const seen = new Set();
   const put = (ref, obj, explode) => {
@@ -238,40 +234,59 @@ function build(api, open) {
     return g;
   };
 
-  put('1', body(S), [0, 0, 0]);
-  for (const s of [-1, 1]) put('2', S.at(forkPocket(S), [s * 0.33, 0, 0]), [0, -0.3, 0]);
-  for (const sx of [-1, 1]) for (const z of [ZT - 0.03, -D / 2 + 0.03]) put('3', S.at(liftLug(S), [sx * (W / 2 - 0.06), H, z]), [0, 0.3, 0]);
+  // Tôles du plan de coupes.
+  put('1', panel(S, [W, H - Y0, T], [0, (H + Y0) / 2, -D / 2 + T / 2], 2, -1), [0, 0, -0.55]);
+  put('2', panel(S, [W, T, D], [0, Y0 + T / 2, 0], 1, -1), [0, -0.3, 0]);
+  for (const s of [-1, 1]) put('3', side(S, s), [s * 0.55, 0, 0]);
+  put('4', panel(S, [W, T, ZT + D / 2], [0, H - T / 2, (ZT - D / 2) / 2], 1, 1), [0, 0.5, 0]);
+  put('5', panel(S, [W, YK - Y0, T], [0, (YK + Y0) / 2, D / 2 - T / 2], 2, 1), [0, 0, 0.6]);
+
+  // Tablettes : fond de 16 po, devant de 4 po, divisions de 16 × 12 po (cases de 16 po).
+  const t = T / 2, zf = ZB + SH_D;
+  for (const [k, y] of [[0, YA], [1, YB]]) {
+    put('7', S.box(WI, t, SH_D, 'white', { pos: [0, y - t / 2, ZB + SH_D / 2] }), [0, k ? -0.12 : 0.02, 0.05]);
+    put('8', S.box(WI, LIP, t, 'white', { pos: [0, y + LIP / 2, zf + t / 2] }), [0, k ? -0.12 : 0.02, 0.4]);
+    for (const sx of [-1, 1]) {
+      put('9', S.box(t, DIV_H - t - 0.001, SH_D, 'white', { pos: [sx * 8 * IN, y + (DIV_H - t) / 2, ZB + SH_D / 2] }), [0, k ? 0.02 : 0.16, 0.05]);
+    }
+  }
+
+  for (const s of [-1, 1]) put('10', S.at(baseTube(S), [s * 18 * IN, 0, 0]), [0, -0.55, 0]);
+  for (const s of [-1, 1]) put('12', S.at(liftLug(S), [s * (W / 2 - 0.1875 * IN), H, ZT - 3 * IN]), [0, 0.8, 0]);
 
   for (const s of [-1, 1]) {
     const a = open[s < 0 ? 0 : 1];
-    const side = s * (0.35 + 0.25 * Math.sin(a));
-    put(s < 0 ? '4' : '5', onDoor(door(S, s), s, a), out(0.55, side));
-    put('7', onDoor(handle(S, s), s, a), out(0.85, side));
-    put('9', onDoor(padlockEar(S, s), s, a), out(0.7, side));
-    for (const y of [0.15, L - 0.15]) put('6', onDoor(hinge(S, s, y, a), s, 0), [s * 0.3, 0, 0]);
-    if (s > 0) put('8', onDoor(latchBar(S), s, a), out(1.0, side));
-    else put('15', onDoor(hookPlate(S), s, a), out(0.3, side));
+    const dx = s * (0.3 + 0.3 * Math.sin(a));
+    put('6', onDoor(door(S, s), s, a), out(0.7, dx));
+    put('13', onDoor(handle(S, s), s, a), out(1.0, dx));
+    for (const y of [5 * IN, L - 5 * IN]) put('11', onDoor(hinge(S, s, y, a), s, 0), [s * 0.8, 0, 0]);
   }
+  // Détail 3 : la barre pivote sur la porte gauche et se rabat sur la droite.
+  const a = open[0], dx = -(0.3 + 0.3 * Math.sin(a));
+  put('14', onDoor(latchBar(S), -1, a), out(1.3, dx));
+  put('15', onDoor(angleRest(S), -1, a), out(0.95, dx));
+  put('16', onDoor(pivotPlate(S, 1.5 * IN, 0.5 * IN), -1, a), out(1.15, dx - 0.12));
+  put('17', onDoor(pivotPlate(S, 2 * IN, 0.75 * IN + 0.125 * IN + 0.001), -1, a), out(0.95, dx - 0.12));
 
-  put('10', shelf(S, YA, H - T, 0.07, [0.3, 0.64]), [0, 0.25, 1.0]);
-  put('11', shelf(S, YB, YA - 0.004, 0.085, [0.32, 0.65]), [0, 0.05, 1.25]);
-  put('12', S.at(drawer(S), [DRAWER.x, YB - 0.004 - DRAWER.h - 0.006, DRAWER.zf]), [0, -0.1, 1.7]);
+  put('18', S.at(decal(S), [-0.1, Y0 + (YK - Y0) * 0.42, D / 2]), [0, 0, 0.9]);
+  if (!extras) return;
+  put('19', S.at(drawer(S), [DRAWER.x, YB - t - DRAWER.h - 0.006, DRAWER.zf]), [0, -0.12, 0.9]);
   for (const s of [-1, 1]) {
-    put('13', S.at(slide(S, s), [DRAWER.x + s * (DRAWER.w / 2 + 0.004), YB - 0.004, DRAWER.zf - DRAWER.d / 2]), [s * 0.12, -0.1, 1.25]);
+    put('20', S.at(slide(S, s), [DRAWER.x + s * (DRAWER.w / 2 + 0.004), YB - t, DRAWER.zf - DRAWER.d / 2]), [s * 0.1, -0.12, 0.45]);
   }
-  put('14', S.at(basket(S), [W / 2 - T - 0.105, Y0 + T, D / 2 - T - 0.15]), [0.25, 0.2, 1.1]);
-  put('16', S.at(decal(S), [-0.1, Y0 + (YK - Y0) * 0.42, D / 2]), [0, 0, 0.3]);
+  put('21', S.at(basket(S), [W / 2 - T - 0.105, Y0 + T, D / 2 - T - 0.15]), [0, 0.15, 1.2]);
+  put('22', onDoor(hookPlate(S), -1, a), out(0.4, dx));
 }
 
-/** Coffre fermé (photo 1). */
+/** Coffre fermé, tôle par tôle (dessin 087). */
 function P01(api) {
-  build(api, [0, 0]);
+  build(api, [0, 0], false);
   return { view: { dir: [0.75, 0.5, 1.25] } };
 }
 
-/** Coffre ouvert : rangement intérieur (photo 2). */
+/** Coffre ouvert : tablettes du dessin et ajouts visibles sur la photo. */
 function P02(api) {
-  build(api, [1.95, 1.7]);
+  build(api, [1.95, 1.7], true);
   return { view: { dir: [0.35, 0.45, 1.3] } };
 }
 

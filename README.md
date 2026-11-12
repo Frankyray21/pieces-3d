@@ -106,13 +106,15 @@ pièces (numéro, quantité, page du manuel).
   porte son numéro d'étape (`userData.step`) pour animer le montage
   (vidéo de formation).
 
-- **Coffre à outils de chantier** (`coffre-dd`, Machines Roger International) :
-  3D d'après deux photos, sans plan ni cote (dimensions estimées, environ
-  48 × 36 × 51 po) : coffre fermé (P01) et coffre ouvert (P02) ; caisse rouge
-  à intérieur blanc, deux portes inclinées avec poignées, barre de
-  verrouillage et oreilles de cadenas, deux tablettes à trois cases, tiroir,
-  panier en métal déployé, passages de fourche et oreilles de levage. Le
-  contenu du coffre n'est pas modélisé.
+- **Coffre à outils ITH** (`coffre-dd`, dessin 087 « Coffre à outil ITH » de
+  M.R.I. Inc., D. Côté, juin 2011, et deux photos) : 3D aux cotes du dessin,
+  tôle par tôle (P01 : caisse de 48 × 39 1/2 × 54 po, devant de 21 po, dessus
+  de 20 po, portes inclinées de 24 × 39 po, deux tablettes de 16 po à trois
+  cases, tubes de base 4 × 4 × 1/4, oreilles de levage du détail 1, poignées
+  du détail 2, barre de verrouillage du détail 3) et coffre ouvert (P02) avec
+  les ajouts visibles sur la photo (tiroir, panier, crochets). Épaisseur des
+  tôles et pentures non détaillées sur le dessin (estimées) ; peinture d'après
+  les photos ; le contenu du coffre n'est pas modélisé.
 
 - **Support de tiges de forage — « rack à rods »** (`rack-tiges-dd`, rapport de
   certification Forcetech P19113 du 2019-11-27 pour Machines Roger
