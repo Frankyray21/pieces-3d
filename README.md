@@ -122,6 +122,8 @@ pièces (numéro, quantité, page du manuel).
   Export pour moteur de jeu (Unreal Engine) : `scripts/export-coffre-jeu.mjs`
   écrit `coffre-ith.glb`, un maillage par élément mobile sur son pivot (portes,
   barre de verrouillage, tiroir) ; voir `docs/coffre-unreal.md`.
+  Essai interactif du fichier dans le navigateur :
+  `equipment/coffre-dd/essai.html` (clic sur la barre, les portes, le tiroir).
 
 - **Rack à outils 15083000** (`rack-outil`, Machines Roger International, plan
   d'assemblage soudé du 2021-08-31, une page, échelle 1:4) : plaque en U de

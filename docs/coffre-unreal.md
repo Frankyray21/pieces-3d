@@ -13,6 +13,16 @@ Cet export n'a pas été essayé dans Unreal Engine : il est relu ici avec le
 chargeur glTF de three.js (portes ouvertes sur leurs pivots, tiroir sorti, logo
 à l'endroit). Les réglages d'import ci-dessous sont à valider dans l'éditeur.
 
+## Essai interactif dans le navigateur
+
+`public/equipment/coffre-dd/essai.html` (sur le site :
+`equipment/coffre-dd/essai.html`) charge le même `coffre-ith.glb` et anime
+chaque élément autour de son origine avec les valeurs des `extras` : clic sur
+la barre, une porte ou le tiroir (ou boutons), dans l'ordre réel (barre, portes,
+tiroir). Si un pivot ou un sens de rotation est faux dans le fichier, on le
+voit ici avant l'import dans le moteur. three.js est copié dans `lib/` (pas de
+CDN).
+
 ## Contenu du fichier
 
 Unités en mètres, Y vers le haut (convention glTF ; Unreal convertit en
