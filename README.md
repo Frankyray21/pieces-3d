@@ -304,9 +304,24 @@ pièces (numéro, quantité, page du manuel).
   oreilles percées du haut et du bas, goupille et tube — et les cordons de
   soudure du plan. Le plan ne porte qu'une dizaine de cotes : les autres
   dimensions sont relevées sur le tracé vectoriel du PDF (échelle 1:8,
-  environ 1/64 po près). Aucun fini n'est précisé : montré en acier nu. Le
-  cartouche inscrit 23,1 lb alors que le volume du modèle donne environ 96 lb
-  en acier (signalé dans la note de la page).
+  environ 1/64 po près). Aucun fini n'est précisé : peint en rouge, comme sur
+  la photo du support fabriqué. Le cartouche inscrit 23,1 lb alors que le
+  volume du modèle donne environ 96 lb en acier (signalé dans la note de la
+  page). P002 à P004 (`situation.js`) : mises en situation hors plan, avec
+  une clé à tuyau de 18, 24 ou 36 po posée en contre-clé (mâchoires vers le
+  haut) et un tronçon de tige NQ déposé dans les mâchoires ; la pose est
+  calculée (repos par gravité sur la traverse, `pose()`), pas relevée.
+
+- **Clés à tuyau droites, 6 à 60 po** (`cles-a-tuyau`) : neuf grandeurs (6, 8,
+  10, 14, 18, 24, 36, 48 et 60 po) sur une page. Maillage et textures : clé à
+  tuyau de Poly Haven (CC0, Will Evarts ; `tools/cle_polyhaven_mesh.mjs` écrit
+  `src/models/cles-a-tuyau/mesh.js`). Chaque grandeur est ajustée aux cotes
+  publiées des clés RIDGID « heavy-duty » droites (`forme.js` : longueur
+  fermée, largeur de tête, épaisseur à l'écrou, puis section du manche réglée
+  sur le poids du catalogue). Les cotes viennent de fiches de détaillants, pas
+  d'un plan du fabricant ; c'est la même clé étirée par zones. Matériau
+  texturé hors palette (`equipment/cles-a-tuyau/textures/`), qui demande un
+  nouveau rendu à la visionneuse une fois chargé (`pieces3d:redessiner`).
 
 La page d'accueil (adresse sans « # », ou le logo en haut à gauche) liste
 les équipements et permet de passer de l'un à l'autre. Les adresses du premier équipement restent `#F05` ; celles des autres

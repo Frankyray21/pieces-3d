@@ -336,6 +336,9 @@ export class Viewer {
     this._watchTheme();
 
     this.resizeObserver = new ResizeObserver(() => this.resize());
+    // Une texture chargée après coup (matériau hors palette) demande un nouveau rendu.
+    this._redraw = () => this.invalidate();
+    window.addEventListener('pieces3d:redessiner', this._redraw);
     this.resizeObserver.observe(container);
     this.resize();
 
@@ -1768,6 +1771,7 @@ export class Viewer {
   dispose() {
     this.renderer.setAnimationLoop(null);
     this.resizeObserver.disconnect();
+    window.removeEventListener('pieces3d:redessiner', this._redraw);
     this._themeObserver?.disconnect();
     if (this.model) { this._clearEdges(); disposeObject(this.model.root); }
     if (this.post) { this.post.rt.dispose(); this.post.gtao.dispose(); this.post.quad.dispose(); }

@@ -6,18 +6,20 @@
 // oreilles (bord arrière à 3 1/2 po), goupille à 2 po du bout et 1 1/2 po du
 // bord avant, retrait de 1/4 po de la plaque de bout. Les autres dimensions
 // sont relevées sur le tracé vectoriel du PDF (précision d'environ 1/64 po).
-// Repères = articles de la nomenclature. Le plan ne précise aucun fini :
-// l'assemblage est montré en acier nu.
+// Repères = articles de la nomenclature. Le plan ne précise aucun fini : le
+// support est peint en rouge, comme sur la photo du support fabriqué.
+// P002 à P004 (situation.js) : mises en situation avec une clé à tuyau et une tige NQ.
 //
 // Repère du plan, en pouces : x le long de la base (0 = bout plié, 25 1/2 =
 // plaque de bout), y vers le haut, d = profondeur depuis le bord avant (côté
 // goupille). Modèle : X = x centré, Y = y, +Z vers l'avant.
 import * as THREE from 'three';
 import { mat } from '../../viewer/materials.js';
+import { situation } from './situation.js';
 
 const IN = 0.0254;
 const LEN = 25.5, DEPTH = 9;
-const M = 'steel';
+const M = 'red';
 
 const px = (x) => (x - LEN / 2) * IN;
 const pz = (d) => (DEPTH / 2 - d) * IN;
@@ -287,4 +289,20 @@ export function P001(api) {
   return { view: { dir: [0.95, 0.55, 1.15] } };
 }
 
-export default { P001 };
+/** Dessus de la traverse (po) à l'abscisse x du plan : la clé s'y pose. Hors de la traverse : 99 derrière la butée, −99 au-delà du bout. */
+export function dessusTraverse(x) {
+  const k = T_BAR * Math.tan(SLOPE / 2);
+  if (x < UP.x0 - 1e-4) return 99;
+  if (x < UP.x0 + T_BAR) return SEAT_L + 2 * T_BAR - Math.sqrt(Math.max(0, T_BAR ** 2 - Math.min(T_BAR, UP.x0 + T_BAR - x) ** 2));
+  if (x <= KNEE_L + k) return SEAT_L + T_BAR;
+  if (x <= KNEE_R + k) return SEAT_L + T_BAR - (x - KNEE_L - k) * Math.tan(SLOPE);
+  return x <= UP.x1 ? SEAT_R + T_BAR : -99;
+}
+/** Cotes du plan utiles à la pose de la clé (po). */
+export const PLAN = { butee: UP.x0, bout: UP.x1, milieu: LEN / 2 };
+
+const P002 = (api) => situation(api, 18);
+const P003 = (api) => situation(api, 24);
+const P004 = (api) => situation(api, 36);
+
+export default { P001, P002, P003, P004 };
