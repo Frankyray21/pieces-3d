@@ -1,0 +1,112 @@
+{
+ "id": "grillage-cage",
+ "name": "Panneau de grillage rigide à plis en V, maille 2 × 6 po",
+ "manufacturer": "Type Oméga II Architectural (marque à confirmer sur place)",
+ "category": "Treillis soudé galvanisé de la cage",
+ "serial": "",
+ "document": {
+  "title": "Photo de la cage et données publiées du fabricant (aucun plan)",
+  "reference": "Photo",
+  "preparedBy": "",
+  "date": "",
+  "sheets": 2,
+  "pagePattern": "pages/{sheet}.webp"
+ },
+ "specs": [
+  [
+   "Source",
+   "Une photo de la cage (identification du type et relevé de la maille) et les données publiées pour le panneau Oméga II Architectural ; à confirmer en mesurant un panneau"
+  ],
+  [
+   "Type",
+   "Panneau rigide de treillis soudé à plis de renfort en V, galvanisé"
+  ],
+  [
+   "Fil",
+   "Calibre 6 (0,192 po, 4,88 mm), horizontal et vertical, soudé à chaque croisement — donnée du fabricant"
+  ],
+  [
+   "Maille",
+   "1 31/32 × 6 po (50 × 152,4 mm) — donnée du fabricant ; environ 2 × 6 po sur la photo"
+  ],
+  [
+   "Largeur",
+   "92 3/4 po (2355 mm) : 48 fils verticaux — donnée du fabricant"
+  ],
+  [
+   "Hauteur",
+   "70 po au catalogue (série 49, 61, 70 et 97 po) ; 70 11/16 po au modèle"
+  ],
+  [
+   "Plis en V",
+   "3 au modèle, pans de 3 po à 30°, saillie de 1 1/2 po : deux relevés sur la photo, celui du pied supposé ; angle estimé"
+  ],
+  [
+   "Pointes",
+   "Fils verticaux dépassant d'environ 1 po le fil du haut (photo)"
+  ],
+  [
+   "Fini",
+   "Galvanisé (aspect sur la photo) ; au catalogue : prégalvanisé et peint à la poudre de polyester"
+  ],
+  [
+   "Épaisseur hors tout",
+   "Environ 1 7/8 po, plis compris"
+  ]
+ ],
+ "weights": [
+  [
+   "Panneau (calculé : 416 pi de fil de calibre 6, acier à 0,2836 lb/po³)",
+   "41 lb"
+  ]
+ ],
+ "sheetTitles": {
+  "P01": "Photo de la cage : panneau de grillage à droite du coffre",
+  "P02": "Relevé de la maille sur la photo"
+ },
+ "root": "P01",
+ "assemblies": {
+  "P01": {
+   "title": "Panneau de grillage rigide à plis en V",
+   "titleFr": "Panneau de grillage rigide à plis en V",
+   "sheets": [
+    "P01",
+    "P02"
+   ],
+   "note": "Type de grillage identifié sur la photo de la cage : panneau rigide de treillis soudé galvanisé, à plis de renfort en V. Indices relevés (page P02) : fils verticaux tous les 2 po environ, fils horizontaux tous les 6 po environ, deux bandes de trois fils rapprochés à environ 9 po et 38 po sous le bout des fils verticaux (ce sont les plis en V, avec un fil au creux), fils verticaux qui dépassent en pointes d'environ 1 po au-dessus de la traverse du haut. Une maille de 2 × 6 po à plis en V correspond au panneau Oméga II Architectural (Metaltech-Oméga, Laval) ; des panneaux équivalents existent (Ameristar WireWorks Plus, Betafence Prism 3D). La marque n'est pas lisible sur la photo : elle reste à confirmer sur place. Cotes du modèle tirées des données publiées du fabricant, lues dans les résultats de recherche (le site du fabricant n'a pas pu être ouvert depuis cette session) : fil de calibre 6 (0,192 po), maille de 1 31/32 × 6 po, largeur de 92 3/4 po, hauteur de catalogue de 70 po. Relevé sur la photo, à 2 po près : place des deux plis du haut et pointes de 1 po. Supposé : le fil horizontal du haut (caché par la traverse de la cage), le troisième pli au pied du panneau (illisible sur la photo ; trois plis sont habituels pour un panneau de 6 pi), l'angle de 30° des pans (les bandes pliées paraissent environ 14 % plus courtes qu'une maille plate), le côté où sortent les plis et le côté des fils horizontaux. Avec 12 mailles de 6 po mesurées à plat, 3 plis à 30° et les pointes, le modèle fait 70 11/16 po de haut pour 70 po au catalogue. Non modélisé : la traverse et les poteaux de la cage, les attaches du panneau et les objets accrochés (aucune donnée). À mesurer sur un panneau avant toute commande : hauteur, largeur, diamètre du fil, nombre et place des plis.",
+   "parts": [
+    [
+     "1",
+     "",
+     48,
+     "FIL VERTICAL de calibre 6 (0,192 po), plié en V à chaque pli, pointe de 1 po en haut",
+     {
+      "note": "Au pas de 1 31/32 po sur 92 3/4 po de large (donnée du fabricant). Longueur développée d'environ 73 po.",
+      "pseudo": true
+     }
+    ],
+    [
+     "2",
+     "",
+     13,
+     "FIL HORIZONTAL de calibre 6, 92 3/4 po, soudé aux limites de maille (tous les 6 po mesurés à plat)",
+     {
+      "note": "Onze sont lisibles sur la photo ; celui du haut est caché par la traverse de la cage, celui du bas se perd au ras du plancher.",
+      "pseudo": true
+     }
+    ],
+    [
+     "3",
+     "",
+     3,
+     "FIL HORIZONTAL du creux d'un pli en V, calibre 6, 92 3/4 po",
+     {
+      "note": "Deux sont relevés sur la photo, à environ 9 po et 38 po sous le bout des fils verticaux ; celui du pied est supposé.",
+      "pseudo": true
+     }
+    ]
+   ]
+  }
+ },
+ "documents": []
+}

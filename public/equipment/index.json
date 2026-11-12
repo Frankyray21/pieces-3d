@@ -61,6 +61,14 @@
       "status": "Catalogue « Core Drilling Tools — In-The-Hole » : têtes, overshots, carottiers, émerillons et presse-étoupes ; 3D refaite d'après les dessins pour les outils souterrains (BU, NU, HU, PU)"
     },
     {
+      "id": "grillage-cage",
+      "name": "Panneau de grillage rigide à plis en V, maille 2 × 6 po",
+      "manufacturer": "Type Oméga II Architectural (marque à confirmer)",
+      "category": "Treillis soudé galvanisé de la cage",
+      "thumbnail": "equipment/grillage-cage/thumbnail.webp",
+      "status": "Type identifié sur une photo de la cage, 3D aux données publiées du fabricant : 48 fils verticaux et 16 fils horizontaux de calibre 6 (0,192 po), maille de 1 31/32 × 6 po, 92 3/4 × 70 po, 3 plis en V, pointes de 1 po, environ 41 lb ; place des plis relevée sur la photo, à confirmer en mesurant un panneau"
+    },
+    {
       "id": "plancher-dd",
       "name": "Plancher pour foreuse aux diamants",
       "manufacturer": "Machines Roger International",
