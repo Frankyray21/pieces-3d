@@ -128,6 +128,8 @@ pièces (numéro, quantité, page du manuel).
   liste de matériel du coffre 629 (calibre N) dans le coffre ouvert : deux têtes
   NU Excore, l'overshot Excore II, core lifters, core lifter cases, stop rings
   et landing ring, repris des modèles Epiroc (`reuse`).
+  Crochet double sur le côté gauche, marteau dans la boîte à clés, masses de 2
+  et 10 lb (`outils.js`, formes génériques sans dessin).
   Essai interactif du fichier dans le navigateur :
   `equipment/coffre-dd/essai.html` (clic sur la barre, les portes, le tiroir).
 
@@ -366,6 +368,20 @@ pièces (numéro, quantité, page du manuel).
   suite du ruban) est supposé et signalé dans la note de la page ; les
   fixations, invisibles, ne sont pas modélisées. Étiquettes dessinées sur un
   canevas (génériques : marque et numéros illisibles sur la photo).
+
+- **Panneau de grillage rigide à plis en V, maille 2 × 6 po** (`grillage-cage`) :
+  type de grillage de la cage, identifié sur une photo (P01) et son relevé
+  (P02 : fils verticaux tous les 2 po environ, fils horizontaux tous les 6 po,
+  deux bandes de trois fils rapprochés qui sont les plis en V, pointes de 1 po
+  au-dessus de la traverse). Ce type correspond au panneau Oméga II
+  Architectural (Metaltech-Oméga) ; la marque reste à confirmer sur place.
+  Cotes du modèle (`src/models/grillage-cage/index.js`) aux données publiées
+  du fabricant : fil de calibre 6 (0,192 po), maille de 1 31/32 × 6 po, 92 3/4
+  po de large (48 fils verticaux), 70 po de haut au catalogue (70 11/16 po au
+  modèle : 12 mailles de 6 po, 3 plis à 30°, pointes de 1 po), environ 41 lb
+  calculées. Supposé, et signalé dans la note de la page : fil du haut caché
+  par la traverse, pli du pied, angle des plis, côté des fils horizontaux. La
+  traverse, les poteaux et les attaches de la cage ne sont pas modélisés.
 
 - **Poubelle DD 154011700** (`poubelle-dd`, Machines Roger International, plans
   154011700 « POUBELLE » du 2024-01-17 à l'échelle 1:5 et 0103001 « COUVERCLE DE

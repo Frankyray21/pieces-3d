@@ -273,6 +273,33 @@
       "link": "P04",
       "note": "Placée d'après une photo du coffre : vers le bas du côté gauche, à mi-profondeur (haut de la plaque à environ 20 po du fond). Position non cotée."
      }
+    ],
+    [
+     "26",
+     "",
+     1,
+     "Crochet double sur le côté gauche (plaque et deux tiges de 1/2 po)",
+     {
+      "note": "Ajouté à la demande du client ; aucun dessin : forme, dimensions et position estimées."
+     }
+    ],
+    [
+     "36",
+     "",
+     1,
+     "Marteau",
+     {
+      "note": "Liste de matériel du coffre 629. Aucun dessin : forme générique, dimensions estimées. Suspendu dans la boîte à clés, comme sur la photo."
+     }
+    ],
+    [
+     "38",
+     "",
+     1,
+     "Masse de 10 lbs",
+     {
+      "note": "Liste de matériel du coffre 629. Aucun dessin : forme générique, dimensions estimées. Suspendue au crochet du côté gauche."
+     }
     ]
    ]
   },
@@ -286,7 +313,7 @@
     "P04",
     "P05"
    ],
-   "note": "Modèle 3D aux cotes du dessin 087 « Coffre à outil ITH » (M.R.I. Inc., D. Côté, juin 2011) : tôles du plan de coupes, trois vues et détails 1 à 3. Le dessin ne donne ni l'épaisseur des tôles ni le détail des pentures (estimés) ; le montage du pivot de la barre de verrouillage (repères 1 à 3 du détail 3) est interprété. Peinture d'après les photos : rouge à l'extérieur, blanc à l'intérieur. Le tiroir, le panier et le support à crochets sont des ajouts visibles sur la photo du coffre ouvert, absents du dessin (dimensions estimées). Contenu : premières pièces de la liste de matériel du coffre 629 en calibre N (repères 30 à 35 : deux têtes Excore, l'overshot pump-in, core lifters, core lifter cases, stop rings, landing ring), reprises du catalogue Epiroc et placées de façon plausible ; le reste de la liste n'est pas encore modélisé. Le support de tube D-D (dessin 0102803) est posé sur le dessus, à gauche ; sa position exacte n'est pas cotée. La boîte à clés (dessin Foresco C16062863) est posée vers le bas du côté gauche, d'après une photo ; sa position exacte n'est pas cotée.",
+   "note": "Modèle 3D aux cotes du dessin 087 « Coffre à outil ITH » (M.R.I. Inc., D. Côté, juin 2011) : tôles du plan de coupes, trois vues et détails 1 à 3. Le dessin ne donne ni l'épaisseur des tôles ni le détail des pentures (estimés) ; le montage du pivot de la barre de verrouillage (repères 1 à 3 du détail 3) est interprété. Peinture d'après les photos : rouge à l'extérieur, blanc à l'intérieur. Le tiroir, le panier et le support à crochets sont des ajouts visibles sur la photo du coffre ouvert, absents du dessin (dimensions estimées). Contenu : premières pièces de la liste de matériel du coffre 629 en calibre N (repères 30 à 35 : deux têtes Excore, l'overshot pump-in, core lifters, core lifter cases, stop rings, landing ring), reprises du catalogue Epiroc et placées de façon plausible, puis marteau et masses de 2 et 10 lb (repères 36 à 38, formes génériques) ; le reste de la liste n'est pas encore modélisé. Le support de tube D-D (dessin 0102803) est posé sur le dessus, à gauche ; sa position exacte n'est pas cotée. La boîte à clés (dessin Foresco C16062863) est posée vers le bas du côté gauche, d'après une photo ; sa position exacte n'est pas cotée.",
    "parts": [
     [
      "1",
@@ -557,6 +584,42 @@
      {
       "link": "P04",
       "note": "Placée d'après une photo du coffre : vers le bas du côté gauche, à mi-profondeur (haut de la plaque à environ 20 po du fond). Position non cotée."
+     }
+    ],
+    [
+     "26",
+     "",
+     1,
+     "Crochet double sur le côté gauche (plaque et deux tiges de 1/2 po)",
+     {
+      "note": "Ajouté à la demande du client ; aucun dessin : forme, dimensions et position estimées."
+     }
+    ],
+    [
+     "36",
+     "",
+     1,
+     "Marteau",
+     {
+      "note": "Liste de matériel du coffre 629. Aucun dessin : forme générique, dimensions estimées. Suspendu dans la boîte à clés, comme sur la photo."
+     }
+    ],
+    [
+     "38",
+     "",
+     1,
+     "Masse de 10 lbs",
+     {
+      "note": "Liste de matériel du coffre 629. Aucun dessin : forme générique, dimensions estimées. Suspendue au crochet du côté gauche."
+     }
+    ],
+    [
+     "37",
+     "",
+     1,
+     "Masse de 2 lbs",
+     {
+      "note": "Liste de matériel du coffre 629. Aucun dessin : forme générique, dimensions estimées. Posée sur la tablette du bas, case de gauche (emplacement supposé)."
      }
     ]
    ]

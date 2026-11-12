@@ -12,6 +12,7 @@
 
 import epiroc from '../epiroc-ith/index.js';
 import { reuse } from '../reuse.js';
+import { masse, marteau, crochet } from './outils.js';
 
 // Contenu du coffre (liste de matériel du coffre 629, calibre N) : outils du
 // catalogue Epiroc repris tels quels — carottier NU Excore (P076), tête (P077),
@@ -32,6 +33,8 @@ const WI = W - 2 * T - 0.002; // largeur intérieure
 const ZB = -D / 2 + T; // face intérieure du derrière
 const SH_D = 16 * IN, LIP = 4 * IN, DIV_H = 12 * IN; // tablettes : fond, devant, divisions
 const YA = H - DIV_H, YB = H - 2 * DIV_H; // dessus des tablettes du haut et du bas
+const KEY_BOX = [-W / 2, Y0 + 20 * IN, 2 * IN]; // haut de la boîte à clés, sur le côté gauche (d'après la photo)
+const HOOK = [-W / 2, Y0 + 44 * IN, -D / 2 + 9 * IN]; // crochet du côté gauche (position supposée)
 const ROD = 0.375 * IN; // rayon de la tige de 3/4 po
 
 /** Tôle à deux couches : rouge du côté de la normale (axe 0-2, signe), blanc de l'autre. */
@@ -394,9 +397,17 @@ export function build(api, open, extras) {
   // Boîte à clés sur le côté gauche du coffre, vers le bas (d'après la photo), glissières ouvertes vers le haut.
   const box = api.sub('P04', { inPlace: true });
   box.rotation.y = -Math.PI / 2;
-  put('25', S.at(box, [-W / 2, Y0 + 20 * IN, 2 * IN]), [-0.5, 0, 0]);
+  put('25', S.at(box, KEY_BOX), [-0.5, 0, 0]);
 
   put('18', S.at(decal(api), [0, Y0 + (YK - Y0) / 2, D / 2]), [0, 0, 0.9]);
+
+  // Crochet double sur le côté gauche, vers le haut et l'arrière, avec la masse
+  // de 10 lb suspendue par la tête ; marteau dans la boîte à clés, la tête
+  // coincée entre les cornières (liste de matériel du coffre 629).
+  put('26', S.at(crochet(S), HOOK), [-0.45, 0.1, 0]);
+  const m10 = { a: 2.25 * IN, len: 6 * IN, hl: 30 * IN, hr: 0.7 * IN };
+  put('38', S.at(masse(S, m10), [HOOK[0] - 1.6 * IN, HOOK[1] + 0.25 * IN + m10.a / 2, HOOK[2]]), [-0.75, 0.25, 0]);
+  put('36', S.at(marteau(S), [KEY_BOX[0] - 1.125 * IN, KEY_BOX[1] - 3.2 * IN, KEY_BOX[2]]), [-0.75, 0.2, 0]);
   if (!extras) return;
   put('19', S.at(drawer(S), [DRAWER.x, YB - t - DRAWER.h - 0.006, DRAWER.zf]), [0, -0.12, 0.9]);
   for (const s of [-1, 1]) {
@@ -441,6 +452,10 @@ function contents(api, put) {
   row('33', '15', 2, -0.08, zc - 0.07, 0.16); // core lifter cases
   row('34', '13', 2, 0.29, zc + 0.06, 0.1); // stop rings
   row('35', '9', 1, 0.34, zc - 0.07, 0); // landing ring
+  // Masse de 2 lb couchée dans la case de gauche de la tablette du bas.
+  const m2 = masse(S, { a: 1.5 * IN, len: 3.75 * IN, hl: 9 * IN, hr: 0.55 * IN });
+  m2.rotation.set(0, Math.PI / 2, Math.PI / 2); // manche vers la droite, tête d'avant en arrière
+  put('37', S.at(S.group(m2), [-0.52, shelf + 0.75 * IN, zc]), [0, 0.1, 0.9]);
 }
 
 /** Coffre fermé, tôle par tôle (dessin 087). */
@@ -461,7 +476,7 @@ export const RIG = {
   drawer: [DRAWER.x, YB - T / 2 - DRAWER.h - 0.006, DRAWER.zf], // origine du tiroir (façade)
   drawerTravel: DRAWER.d - 0.05,
   support: [-W / 2 + 3 * IN, H, -D / 2 + 8 * IN],
-  keyBox: [-W / 2, Y0 + 20 * IN, 2 * IN],
+  keyBox: KEY_BOX,
   size: { W, D, H, Y0, YK, ZT, T, L, TILT },
 };
 
