@@ -533,10 +533,18 @@ export function rod(a, b, r, material = 'steel', seg = 16) {
   return m;
 }
 
-/** Profil 2D extrudé. points : [[x, y], ...] dans le plan XY, épaisseur selon Z. */
+/**
+ * Profil 2D extrudé. points : [[x, y], ...] dans le plan XY, épaisseur selon Z.
+ * holes : trous ronds [x, y, r] ou découpes en polygone [[x, y], ...] (fente de tenon).
+ */
 export function extrude(points, depth, material = 'red', { holes = [], bevel = 0, center = true } = {}) {
   const shape = new THREE.Shape(points.map(([x, y]) => new THREE.Vector2(x, y)));
-  holes.forEach(([x, y, r]) => {
+  holes.forEach((h) => {
+    if (Array.isArray(h[0])) {
+      shape.holes.push(new THREE.Path(h.map(([x, y]) => new THREE.Vector2(x, y))));
+      return;
+    }
+    const [x, y, r] = h;
     const p = new THREE.Path();
     p.absarc(x, y, r, 0, Math.PI * 2, true);
     shape.holes.push(p);

@@ -119,6 +119,21 @@ pièces (numéro, quantité, page du manuel).
   berceau en Y de 3/4 po, base de 8 × 3 po, gousset ; 17 1/2 po de haut), dont
   la position sur le coffre n'est cotée sur aucun dessin.
 
+- **Rack à outils 15083000** (`rack-outil`, Machines Roger International, plan
+  d'assemblage soudé du 2021-08-31, une page, échelle 1:4) : plaque en U de
+  30 × 14 1/2 po (15083001), deux tubes ronds debout (15083002), quatre
+  crochets d'accrochage de 3 po au dos des montants, tenon dans une fente de
+  la plaque (15083003), un tuyau noir de 1,900 po couché (15083004), un tuyau
+  noir de 1,050 po debout (15083005) et sept crochets en L de 3/8 po
+  (15083006), avec les cordons de soudure de 3/16 po du plan. Les cotes du
+  plan sont reprises telles quelles ; ce qu'il ne cote pas (plaque de 3/16 po,
+  montants de 2 1/2 po, rayons, diamètre et hauteur des tubes ronds, profil
+  des crochets) est relevé à l'échelle sur les tracés vectoriels du PDF.
+  Montré en acier nu (le plan ne précise pas de couleur). Contrôle chiffré :
+  `node scripts/check-rack-outil.mjs` compare 38 mesures du modèle aux cotes
+  du plan, dont la masse d'acier (11,07 lb pour 11,2 lb au cartouche).
+  `S.extrude` accepte maintenant des découpes en polygone (fentes de tenon).
+
 - **Support de tiges de forage — « rack à rods »** (`rack-tiges-dd`, procédure
   d'installation PRO-DD-ST-008 de Machines Roger International, révision août
   2024, 5 pages, et rapport de certification Forcetech P19113 du 2019-11-27,
