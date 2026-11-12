@@ -380,8 +380,12 @@ pièces (numéro, quantité, page du manuel).
   po de large (48 fils verticaux), 70 po de haut au catalogue (70 11/16 po au
   modèle : 12 mailles de 6 po, 3 plis à 30°, pointes de 1 po), environ 41 lb
   calculées. Supposé, et signalé dans la note de la page : fil du haut caché
-  par la traverse, pli du pied, angle des plis, côté des fils horizontaux. La
-  traverse, les poteaux et les attaches de la cage ne sont pas modélisés.
+  par la traverse, pli du pied, angle des plis, côté des fils horizontaux.
+  Traverse et poteaux de la cage (P03, repères 4 et 5) relevés sur la même
+  photo, sans cote : tube carré galvanisé d'environ 1 1/2 po, traverse devant
+  le haut du panneau, arrêtée à environ 3 po du poteau de droite ; le poteau de
+  gauche, hors de la photo, est supposé. Crochet du poteau, attaches et ancrage
+  au plancher non modélisés.
 
 La page d'accueil (adresse sans « # », ou le logo en haut à gauche) liste
 les équipements et permet de passer de l'un à l'autre. Les adresses du premier équipement restent `#F05` ; celles des autres

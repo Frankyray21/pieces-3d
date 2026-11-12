@@ -13,11 +13,17 @@
 // panneau, illisible sur la photo), l'angle des plis et le côté des fils
 // horizontaux sont supposés ; voir la note de la page.
 //
+// Traverse et poteaux de la cage (repères 4 et 5) : relevés sur la même photo,
+// sans cote. La traverse passe devant le haut du panneau (elle cache les fils,
+// dont les pointes ressortent au-dessus) et s'arrête à environ 3 po du poteau
+// de droite ; le poteau monte jusqu'au niveau de la traverse. Section en tube
+// carré d'environ 1 1/2 po estimée à l'œil ; poteau de gauche supposé.
+//
 // Repère du modèle : X largeur (0 au milieu), Y vers le haut (0 à l'axe du fil
 // horizontal du bas), +Z vers l'avant (côté où sortent les plis). Mètres.
 import * as THREE from 'three';
 import { mat } from '../../viewer/materials.js';
-import { balayer, cercle, tauxPolygone } from '../porte-1801020/formes.js';
+import { balayer, carreArrondi, cercle, tauxPolygone } from '../porte-1801020/formes.js';
 
 const IN = 0.0254;
 const RAD = Math.PI / 180;
@@ -34,6 +40,11 @@ export const MAILLES = { n: 12, pas: 6 };
 export const PLIS = { mailles: [0, 5, 10], angle: 30 };
 /** Pointes : dépassement des fils verticaux au-dessus du fil horizontal du haut. */
 export const POINTE = 1;
+
+/** Tube carré de la traverse et des poteaux (estimé sur la photo). */
+export const TUBE = { cote: 1.5, rayon: 1 / 8 };
+/** Traverse : arrêt avant le poteau de droite ; poteaux : jeu au bord du panneau. */
+export const CAGE = { arret: 3, jeu: 1 / 4 };
 
 const PAN = MAILLES.pas / 2; // longueur d'un pan du V
 const SAILLIE = PAN * Math.sin(PLIS.angle * RAD); // profondeur du pli
@@ -108,6 +119,12 @@ function filHorizontal(large) {
   return fil([new THREE.Vector3(-h, 0, 0), new THREE.Vector3(h, 0, 0)], new THREE.Vector3(0, 0, 1));
 }
 
+/** Repères 4 et 5 : tube carré galvanisé entre deux points (po, repère du modèle), dans un plan de normale B. */
+function tube(a, b, B) {
+  const geo = balayer([a, b].map(([x, y, z]) => new THREE.Vector3(x * IN, y * IN, z * IN)), carreArrondi(TUBE.cote * IN, TUBE.rayon * IN), B);
+  return new THREE.Mesh(geo, mat('zinc'));
+}
+
 // ------------------------------------------------------------------ assemblage
 
 export function P01(api) {
@@ -142,6 +159,17 @@ export function P01(api) {
   // Fil du creux de chaque V : tangent aux deux pans, par derrière.
   const zCreux = SAILLIE - FIL / Math.cos(PLIS.angle * RAD);
   for (const y of sommets) put('3', pose(y, zCreux), [0, 0, -0.22]);
+
+  // Cage : les poteaux au bord du panneau, face avant au ras des fils verticaux ;
+  // la traverse devant, son dessus au ras du fil horizontal du haut.
+  const { hauteur } = profil();
+  const c = TUBE.cote;
+  const zPoteau = FIL / 2 - c / 2, zTraverse = FIL / 2 + c / 2;
+  const xPoteau = large / 2 + CAGE.jeu + c / 2;
+  const yHaut = hauteur + FIL / 2;
+  const Zp = new THREE.Vector3(0, 0, 1);
+  put('4', tube([-xPoteau - c / 2, yHaut - c / 2, zTraverse], [xPoteau - c / 2 - CAGE.arret, yHaut - c / 2, zTraverse], Zp), [0, 0.08, 0.3]);
+  for (const s of [-1, 1]) put('5', tube([s * xPoteau, -FIL / 2, zPoteau], [s * xPoteau, yHaut, zPoteau], Zp), [s * 0.25, 0, 0]);
 
   return { view: { dir: [-0.55, 0.22, 1] } };
 }

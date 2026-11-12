@@ -9,7 +9,7 @@
   "reference": "Photo",
   "preparedBy": "",
   "date": "",
-  "sheets": 2,
+  "sheets": 3,
   "pagePattern": "pages/{sheet}.webp"
  },
  "specs": [
@@ -50,8 +50,20 @@
    "Galvanisé (aspect sur la photo) ; au catalogue : prégalvanisé et peint à la poudre de polyester"
   ],
   [
-   "Épaisseur hors tout",
+   "Épaisseur du panneau",
    "Environ 1 7/8 po, plis compris"
+  ],
+  [
+   "Traverse de la cage",
+   "Tube carré galvanisé d'environ 1 1/2 po, devant le haut du panneau ; elle s'arrête à environ 3 po du poteau de droite et se poursuit vers la gauche (photo, sans cote)"
+  ],
+  [
+   "Poteaux de la cage",
+   "Tube carré galvanisé d'environ 1 1/2 po, environ 70 po de haut, au bord du panneau ; un seul est visible sur la photo"
+  ],
+  [
+   "Largeur avec les poteaux",
+   "Environ 96 1/4 po hors tout au modèle"
   ]
  ],
  "weights": [
@@ -62,18 +74,20 @@
  ],
  "sheetTitles": {
   "P01": "Photo de la cage : panneau de grillage à droite du coffre",
-  "P02": "Relevé de la maille sur la photo"
+  "P02": "Relevé de la maille sur la photo",
+  "P03": "Traverse et poteau de la cage sur la photo"
  },
  "root": "P01",
  "assemblies": {
   "P01": {
-   "title": "Panneau de grillage rigide à plis en V",
-   "titleFr": "Panneau de grillage rigide à plis en V",
+   "title": "Panneau de grillage, traverse et poteaux de la cage",
+   "titleFr": "Panneau de grillage, traverse et poteaux de la cage",
    "sheets": [
     "P01",
-    "P02"
+    "P02",
+    "P03"
    ],
-   "note": "Type de grillage identifié sur la photo de la cage : panneau rigide de treillis soudé galvanisé, à plis de renfort en V. Indices relevés (page P02) : fils verticaux tous les 2 po environ, fils horizontaux tous les 6 po environ, deux bandes de trois fils rapprochés à environ 9 po et 38 po sous le bout des fils verticaux (ce sont les plis en V, avec un fil au creux), fils verticaux qui dépassent en pointes d'environ 1 po au-dessus de la traverse du haut. Une maille de 2 × 6 po à plis en V correspond au panneau Oméga II Architectural (Metaltech-Oméga, Laval) ; des panneaux équivalents existent (Ameristar WireWorks Plus, Betafence Prism 3D). La marque n'est pas lisible sur la photo : elle reste à confirmer sur place. Cotes du modèle tirées des données publiées du fabricant, lues dans les résultats de recherche (le site du fabricant n'a pas pu être ouvert depuis cette session) : fil de calibre 6 (0,192 po), maille de 1 31/32 × 6 po, largeur de 92 3/4 po, hauteur de catalogue de 70 po. Relevé sur la photo, à 2 po près : place des deux plis du haut et pointes de 1 po. Supposé : le fil horizontal du haut (caché par la traverse de la cage), le troisième pli au pied du panneau (illisible sur la photo ; trois plis sont habituels pour un panneau de 6 pi), l'angle de 30° des pans (les bandes pliées paraissent environ 14 % plus courtes qu'une maille plate), le côté où sortent les plis et le côté des fils horizontaux. Avec 12 mailles de 6 po mesurées à plat, 3 plis à 30° et les pointes, le modèle fait 70 11/16 po de haut pour 70 po au catalogue. Non modélisé : la traverse et les poteaux de la cage, les attaches du panneau et les objets accrochés (aucune donnée). À mesurer sur un panneau avant toute commande : hauteur, largeur, diamètre du fil, nombre et place des plis.",
+   "note": "Type de grillage identifié sur la photo de la cage : panneau rigide de treillis soudé galvanisé, à plis de renfort en V. Indices relevés (page P02) : fils verticaux tous les 2 po environ, fils horizontaux tous les 6 po environ, deux bandes de trois fils rapprochés à environ 9 po et 38 po sous le bout des fils verticaux (ce sont les plis en V, avec un fil au creux), fils verticaux qui dépassent en pointes d'environ 1 po au-dessus de la traverse du haut. Une maille de 2 × 6 po à plis en V correspond au panneau Oméga II Architectural (Metaltech-Oméga, Laval) ; des panneaux équivalents existent (Ameristar WireWorks Plus, Betafence Prism 3D). La marque n'est pas lisible sur la photo : elle reste à confirmer sur place. Cotes du modèle tirées des données publiées du fabricant, lues dans les résultats de recherche (le site du fabricant n'a pas pu être ouvert depuis cette session) : fil de calibre 6 (0,192 po), maille de 1 31/32 × 6 po, largeur de 92 3/4 po, hauteur de catalogue de 70 po. Relevé sur la photo, à 2 po près : place des deux plis du haut et pointes de 1 po. Supposé : le fil horizontal du haut (caché par la traverse de la cage), le troisième pli au pied du panneau (illisible sur la photo ; trois plis sont habituels pour un panneau de 6 pi), l'angle de 30° des pans (les bandes pliées paraissent environ 14 % plus courtes qu'une maille plate), le côté où sortent les plis et le côté des fils horizontaux. Avec 12 mailles de 6 po mesurées à plat, 3 plis à 30° et les pointes, le modèle fait 70 11/16 po de haut pour 70 po au catalogue. Traverse et poteaux de la cage (page P03) : relevés sur la même photo, sans cote. La traverse passe devant le haut du grillage (elle cache les fils, dont les pointes ressortent au-dessus) et s'arrête à environ 3 po du poteau de droite ; elle se poursuit à gauche au-delà du panneau, où le modèle la coupe. Le poteau visible monte jusqu'au niveau de la traverse, contre le bord du panneau. Sections estimées à l'œil : tube carré d'environ 1 1/2 po (entre 1 1/2 et 1 3/4 po sur la photo ; c'est aussi le tube du cadre de la porte 1801020). Supposé : le poteau de gauche (hors de la photo), la forme carrée des tubes, leur place en profondeur par rapport au grillage. Non modélisé, faute de données : le crochet au sommet du poteau, les pattes vers la porte, l'attache jaune sur la traverse et les autres attaches du panneau, l'ancrage des poteaux au plancher, les objets accrochés au grillage. À mesurer sur place avant toute commande : hauteur, largeur, diamètre du fil, nombre et place des plis du panneau ; section, longueur et entraxe de la traverse et des poteaux.",
    "parts": [
     [
      "1",
@@ -102,6 +116,26 @@
      "FIL HORIZONTAL du creux d'un pli en V, calibre 6, 92 3/4 po",
      {
       "note": "Deux sont relevés sur la photo, à environ 9 po et 38 po sous le bout des fils verticaux ; celui du pied est supposé.",
+      "pseudo": true
+     }
+    ],
+    [
+     "4",
+     "",
+     1,
+     "TRAVERSE de la cage : tube carré galvanisé d'environ 1 1/2 po, devant le haut du panneau",
+     {
+      "note": "Environ 91 3/4 po au modèle, du poteau de gauche jusqu'à 3 po du poteau de droite ; sur la photo elle se poursuit vers la gauche. Section et épaisseur de paroi non cotées.",
+      "pseudo": true
+     }
+    ],
+    [
+     "5",
+     "",
+     2,
+     "POTEAU de la cage : tube carré galvanisé d'environ 1 1/2 po, environ 70 po de haut",
+     {
+      "note": "Un seul est visible sur la photo, à droite du panneau ; celui de gauche est supposé. Ancrage au plancher non visible.",
       "pseudo": true
      }
     ]
