@@ -74,7 +74,7 @@ function uRod(S, len, h, map, material = 'red') {
 }
 
 /** Repère d'une porte : origine au bas de sa ligne de pentures, Y le long de la pente, Z vers l'extérieur. */
-function doorFrame(THREE, s, angle) {
+export function doorFrame(THREE, s, angle) {
   const m = new THREE.Matrix4().makeTranslation(0, YK, D / 2);
   m.multiply(new THREE.Matrix4().makeRotationX(-TILT));
   m.multiply(new THREE.Matrix4().makeTranslation((s * W) / 2, 0, 0));
@@ -100,23 +100,42 @@ function handle(S, s) {
 
 const BAR_Y = L - 12 * IN, BAR_T = 0.375 * IN; // barre du détail 3, à 12 po du haut des portes
 
-/** Barre de verrouillage (détail 3) : plat de 13 × 1 1/2 × 3/8 po à fente, poignée de 6 × 3 po. */
-function latchBar(S) {
+const BAR_TRAVEL = 5.5 * IN; // course de la barre : longueur de la fente moins l'axe
+
+/**
+ * Barre de verrouillage (détail 3) : plat de 13 × 1 1/2 × 3/8 po à fente, poignée de 6 × 3 po.
+ * Elle coulisse à plat sur les portes, retenue sur la porte droite par un axe
+ * de 1/2 po dans la fente. Repère de la porte droite ; slide : recul vers la droite.
+ */
+function latchBar(S, slide) {
   const bar = S.plate(13 * IN, 1.5 * IN, BAR_T, 'red', { cutouts: [[2.5 * IN, 0, 6 * IN, 0.5 * IN]], r: 0.002 });
   bar.rotation.x = Math.PI / 2;
   const u = uRod(S, 6 * IN, 3 * IN, (a, b) => [a, 0, b]);
-  return S.at(S.group(bar, S.at(u, [-0.5 * IN, 0, BAR_T / 2])), [W / 2, BAR_Y, T + BAR_T / 2]);
+  return S.at(S.group(bar, S.at(u, [-0.5 * IN, 0, BAR_T / 2])), [-W / 2 + slide, BAR_Y, T + BAR_T / 2]);
 }
 
-/** Plaque de 1/4 po percée à 3/8 po, debout sur la porte (repères 2 et 3 du détail 3). */
-function pivotPlate(S, h, dy) {
+/** Axe de 1/2 po à tête, soudé à la porte droite, dans la fente de la barre (au bout droit de la fente, barre fermée). */
+function slotPin(S) {
+  return S.at(S.group(
+    S.cyl(0.25 * IN, BAR_T + 0.004, 'red', { axis: 'z', pos: [0, 0, (BAR_T + 0.004) / 2], seg: 14 }),
+    S.cyl(0.5 * IN, 0.006, 'red', { axis: 'z', pos: [0, 0, BAR_T + 0.004 + 0.003], seg: 18 }),
+  ), [-W / 2 + 5.25 * IN, BAR_Y, T]);
+}
+
+/**
+ * Plaque de 1/4 po percée à 3/8 po (repères 2 et 3 du détail 3), debout, épaisseur
+ * le long de la pente : oreilles de cadenas, l'une sur le bout gauche de la barre,
+ * l'autre sur la porte gauche ; leurs trous s'alignent quand la barre est fermée.
+ * x : position par rapport au joint des portes ; z : face d'appui.
+ */
+function earPlate(S, h, x, dy, z) {
   const a = 0.75 * IN;
   const m = S.extrude([[-a, 0], [a, 0], [a, h], [-a, h]], 0.25 * IN, 'red', { holes: [[0, h - a, 0.1875 * IN]] });
-  m.rotation.x = Math.PI / 2; // la plaque sort vers +Z, épaisseur le long de la pente
-  return S.at(S.group(m), [W / 2 - 5.75 * IN, BAR_Y + dy, T]);
+  m.rotation.x = Math.PI / 2; // la plaque sort vers +Z
+  return S.at(S.group(m), [x, BAR_Y + dy, z]);
 }
 
-/** Fer angle de 1/4 po, 2 × 2 po, aile de 3/4 po (repère 1 du détail 3), sous la barre à 3 po du joint. */
+/** Fer angle de 1/4 po, 2 × 2 po, aile de 3/4 po (repère 1 du détail 3) : appui sous la barre, sur la porte gauche à 3 po du joint. */
 function angleRest(S) {
   const t = 0.25 * IN;
   return S.at(S.group(
@@ -207,13 +226,28 @@ function basket(S) {
   return g;
 }
 
-/** Autocollant du panneau avant (emplacement et proportions ; sans le lettrage). */
-function decal(S) {
-  return S.group(
-    S.box(0.4, 0.2, 0.001, 'lightGrey', { r: 0.02, pos: [0, 0, 0.0005] }),
-    S.box(0.36, 0.105, 0.0006, 'charcoal', { pos: [0, 0, 0.0013] }),
-    S.cyl(0.024, 0.0006, 'red', { axis: 'z', pos: [-0.085, 0, 0.0019], seg: 24 }),
-  );
+const LOGO_W = 20 * IN, LOGO_H = (LOGO_W * 109) / 277; // proportions du logo du cartouche (dessin 0102803)
+let logoMaterial = null;
+
+/** Logo Machines Roger International : image du cartouche du dessin 0102803, sur un autocollant à fond noir. */
+function decal(api) {
+  const { S, THREE } = api;
+  const g = S.group(S.box(LOGO_W + 0.02, LOGO_H + 0.02, 0.001, 'black', { r: 0.008, pos: [0, 0, 0.0005] }));
+  if (!logoMaterial) {
+    logoMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.45, metalness: 0 });
+    logoMaterial.name = 'logo';
+    // Hors navigateur (contrôle et export dans Node), l'image n'est pas chargée ici :
+    // l'export pour moteur de jeu l'incorpore lui-même (scripts/export-coffre-jeu.mjs).
+    if (typeof document !== 'undefined') {
+      logoMaterial.map = new THREE.TextureLoader().load(`${import.meta.env.BASE_URL}equipment/coffre-dd/logo.png`);
+      logoMaterial.map.colorSpace = THREE.SRGBColorSpace;
+      logoMaterial.map.anisotropy = 8;
+    } else logoMaterial.color.set(0x111111);
+  }
+  const face = new THREE.Mesh(new THREE.PlaneGeometry(LOGO_W, LOGO_H), logoMaterial);
+  face.position.z = 0.002;
+  g.add(face);
+  return g;
 }
 
 /**
@@ -250,7 +284,7 @@ function P03(api) {
  * Coffre complet. open : angle d'ouverture des portes [gauche, droite] en
  * radians ; extras : ajouts visibles sur la photo du coffre ouvert.
  */
-function build(api, open, extras) {
+export function build(api, open, extras) {
   const S = api.S;
   const seen = new Set();
   const put = (ref, obj, explode) => {
@@ -293,12 +327,17 @@ function build(api, open, extras) {
     put('13', onDoor(handle(S, s), s, a), out(1.0, dx));
     for (const y of [5 * IN, L - 5 * IN]) put('11', onDoor(hinge(S, s, y, a), s, 0), [s * 0.8, 0, 0]);
   }
-  // Détail 3 : la barre pivote sur la porte gauche et se rabat sur la droite.
-  const a = open[0], dx = -(0.3 + 0.3 * Math.sin(a));
-  put('14', onDoor(latchBar(S), -1, a), out(1.3, dx));
-  put('15', onDoor(angleRest(S), -1, a), out(0.95, dx));
-  put('16', onDoor(pivotPlate(S, 1.5 * IN, 0.5 * IN), -1, a), out(1.15, dx - 0.12));
-  put('17', onDoor(pivotPlate(S, 2 * IN, 0.75 * IN + 0.125 * IN + 0.001), -1, a), out(0.95, dx - 0.12));
+  // Détail 3 : la barre coulisse sur les portes. Fermée, elle chevauche le joint,
+  // posée sur le fer angle de la porte gauche ; reculée vers la droite, elle
+  // quitte l'appui et suit la porte droite, qui la retient par l'axe de la fente.
+  const aG = open[0], aD = open[1];
+  const dxG = -(0.3 + 0.3 * Math.sin(aG)), dxD = 0.3 + 0.3 * Math.sin(aD);
+  const recul = aD > 0 ? BAR_TRAVEL : 0;
+  put('14', onDoor(latchBar(S, recul), 1, aD), out(1.3, dxD));
+  put('16', onDoor(earPlate(S, 1.5 * IN, -W / 2 - 5.75 * IN + recul, 0.5 * IN, T + BAR_T), 1, aD), out(1.5, dxD - 0.1));
+  put('24', onDoor(slotPin(S), 1, aD), out(0.95, dxD));
+  put('15', onDoor(angleRest(S), -1, aG), out(0.95, dxG));
+  put('17', onDoor(earPlate(S, 2 * IN, W / 2 - 5.75 * IN, 0.75 * IN + 0.125 * IN + 0.001, T), -1, aG), out(0.95, dxG - 0.12));
 
   // Support de tube D-D sur le dessus, à gauche : berceau en travers du coffre
   // (tube couché dans la largeur), gousset vers le centre.
@@ -306,14 +345,14 @@ function build(api, open, extras) {
   sup.rotation.y = Math.PI / 2;
   put('23', S.at(sup, [-W / 2 + 3 * IN, H, -D / 2 + 8 * IN]), [-0.25, 0.9, 0]);
 
-  put('18', S.at(decal(S), [-0.1, Y0 + (YK - Y0) * 0.42, D / 2]), [0, 0, 0.9]);
+  put('18', S.at(decal(api), [0, Y0 + (YK - Y0) / 2, D / 2]), [0, 0, 0.9]);
   if (!extras) return;
   put('19', S.at(drawer(S), [DRAWER.x, YB - t - DRAWER.h - 0.006, DRAWER.zf]), [0, -0.12, 0.9]);
   for (const s of [-1, 1]) {
     put('20', S.at(slide(S, s), [DRAWER.x + s * (DRAWER.w / 2 + 0.004), YB - t, DRAWER.zf - DRAWER.d / 2]), [s * 0.1, -0.12, 0.45]);
   }
   put('21', S.at(basket(S), [W / 2 - T - 0.105, Y0 + T, D / 2 - T - 0.15]), [0, 0.15, 1.2]);
-  put('22', onDoor(hookPlate(S), -1, a), out(0.4, dx));
+  put('22', onDoor(hookPlate(S), -1, aG), out(0.4, dxG));
 }
 
 /** Coffre fermé, tôle par tôle (dessin 087). */
@@ -327,5 +366,15 @@ function P02(api) {
   build(api, [1.95, 1.7], true);
   return { view: { dir: [0.35, 0.45, 1.3] } };
 }
+
+/** Cotes utiles à l'export pour moteur de jeu (pivots et courses). */
+export const RIG = {
+  bar: [-W / 2, BAR_Y, T], // origine de la barre (sur le joint), dans le repère de la porte droite
+  barTravel: BAR_TRAVEL,
+  drawer: [DRAWER.x, YB - T / 2 - DRAWER.h - 0.006, DRAWER.zf], // origine du tiroir (façade)
+  drawerTravel: DRAWER.d - 0.05,
+  support: [-W / 2 + 3 * IN, H, -D / 2 + 8 * IN],
+  size: { W, D, H, Y0, YK, ZT, T, L, TILT },
+};
 
 export default { P01, P02, P03 };

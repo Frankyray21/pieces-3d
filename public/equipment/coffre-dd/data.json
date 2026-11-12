@@ -52,6 +52,10 @@
   [
    "Support de tube D-D (0102803)",
    "17 1/2 po de haut, base de 8 × 3 po ; plaques d'acier 44W de 3/4 et 1/2 po"
+  ],
+  [
+   "Export pour moteur de jeu",
+   "coffre-ith.glb (glTF binaire, mètres) : caisse, portes, barre coulissante, tiroir et support en maillages séparés — voir docs/coffre-unreal.md"
   ]
  ],
  "weights": [
@@ -77,7 +81,7 @@
     "P02",
     "P04"
    ],
-   "note": "Modèle 3D aux cotes du dessin 087 « Coffre à outil ITH » (M.R.I. Inc., D. Côté, juin 2011) : tôles du plan de coupes, trois vues et détails 1 à 3. Le dessin ne donne ni l'épaisseur des tôles ni le détail des pentures (estimés) ; le montage du pivot de la barre de verrouillage (repères 1 à 3 du détail 3) est interprété. Peinture d'après les photos : rouge à l'extérieur, blanc à l'intérieur. La vue éclatée sépare les tôles et dégage les tablettes. Le support de tube D-D (dessin 0102803) est posé sur le dessus, à gauche ; sa position exacte n'est pas cotée.",
+   "note": "Modèle 3D aux cotes du dessin 087 « Coffre à outil ITH » (M.R.I. Inc., D. Côté, juin 2011) : tôles du plan de coupes, trois vues et détails 1 à 3. Le dessin ne donne ni l'épaisseur des tôles ni le détail des pentures (estimés) ; le montage de la barre de verrouillage coulissante (axe dans la fente, repères 1 à 3 du détail 3) est interprété. Peinture d'après les photos : rouge à l'extérieur, blanc à l'intérieur. La vue éclatée sépare les tôles et dégage les tablettes. Le support de tube D-D (dessin 0102803) est posé sur le dessus, à gauche ; sa position exacte n'est pas cotée.",
    "parts": [
     [
      "1",
@@ -191,7 +195,8 @@
      1,
      "Barre de verrouillage (détail 3) : plat de 13 × 1 1/2 × 3/8 po à fente de 1/2 po, poignée en tige de 3/4 po de 6 × 3 po",
      {
-      "pnText": "Détail 3"
+      "pnText": "Détail 3",
+      "note": "Coulisse à plat sur les portes : fermée, elle chevauche le joint ; reculée de 5 1/2 po vers la droite, elle libère la porte gauche et suit la porte droite."
      }
     ],
     [
@@ -200,7 +205,7 @@
      1,
      "Fer angle 1/4 po, 2 × 2 po, aile de 3/4 po (repère 1 du détail 3)",
      {
-      "note": "Position sous la barre interprétée d'après la vue de face."
+      "note": "Interprété comme l'appui de la barre sur la porte gauche, à 3 po du joint (vue de face)."
      }
     ],
     [
@@ -208,22 +213,26 @@
      "",
      1,
      "Plaque 1/4 po, 1 1/2 × 1 1/2 po, trou de 3/8 po (repère 2 du détail 3)",
-     {}
+     {
+      "note": "Interprétée comme l'oreille de cadenas soudée au bout gauche de la barre."
+     }
     ],
     [
      "17",
      "",
      1,
      "Plaque 1/4 po, 1 1/2 × 2 po, trou de 3/8 po (repère 3 du détail 3)",
-     {}
+     {
+      "note": "Interprétée comme l'oreille de cadenas soudée à la porte gauche ; son trou s'aligne avec celui du repère 2 quand la barre est fermée."
+     }
     ],
     [
      "18",
      "",
      1,
-     "Autocollant Machines Roger International",
+     "Logo Machines Roger International, au bas du devant",
      {
-      "note": "D'après la photo, absent du dessin ; emplacement et proportions seulement."
+      "note": "Image du logo tirée du cartouche du dessin 0102803 ; autocollant visible sur la photo, absent du dessin 087. Taille et position estimées (20 po de large, centré sur le devant)."
      }
     ],
     [
@@ -234,6 +243,15 @@
      {
       "link": "P03",
       "note": "Position et orientation sur le coffre non cotées (aucun dessin ne les donne) : berceau en travers du coffre, à 3 po du bord gauche."
+     }
+    ],
+    [
+     "24",
+     "",
+     1,
+     "Axe de 1/2 po dans la fente de la barre, sur la porte droite",
+     {
+      "note": "Le détail 3 cote la fente à 1/2 po sans détailler l'axe : retenue de la barre interprétée."
      }
     ]
    ]
@@ -247,7 +265,7 @@
     "P01",
     "P04"
    ],
-   "note": "Modèle 3D aux cotes du dessin 087 « Coffre à outil ITH » (M.R.I. Inc., D. Côté, juin 2011) : tôles du plan de coupes, trois vues et détails 1 à 3. Le dessin ne donne ni l'épaisseur des tôles ni le détail des pentures (estimés) ; le montage du pivot de la barre de verrouillage (repères 1 à 3 du détail 3) est interprété. Peinture d'après les photos : rouge à l'extérieur, blanc à l'intérieur. Le tiroir, le panier et le support à crochets sont des ajouts visibles sur la photo du coffre ouvert, absents du dessin (dimensions estimées). Le contenu du coffre n'est pas modélisé. Le support de tube D-D (dessin 0102803) est posé sur le dessus, à gauche ; sa position exacte n'est pas cotée.",
+   "note": "Modèle 3D aux cotes du dessin 087 « Coffre à outil ITH » (M.R.I. Inc., D. Côté, juin 2011) : tôles du plan de coupes, trois vues et détails 1 à 3. Le dessin ne donne ni l'épaisseur des tôles ni le détail des pentures (estimés) ; le montage de la barre de verrouillage coulissante (axe dans la fente, repères 1 à 3 du détail 3) est interprété. Peinture d'après les photos : rouge à l'extérieur, blanc à l'intérieur. Le tiroir, le panier et le support à crochets sont des ajouts visibles sur la photo du coffre ouvert, absents du dessin (dimensions estimées). Le contenu du coffre n'est pas modélisé. Le support de tube D-D (dessin 0102803) est posé sur le dessus, à gauche ; sa position exacte n'est pas cotée.",
    "parts": [
     [
      "1",
@@ -361,7 +379,8 @@
      1,
      "Barre de verrouillage (détail 3) : plat de 13 × 1 1/2 × 3/8 po à fente de 1/2 po, poignée en tige de 3/4 po de 6 × 3 po",
      {
-      "pnText": "Détail 3"
+      "pnText": "Détail 3",
+      "note": "Coulisse à plat sur les portes : fermée, elle chevauche le joint ; reculée de 5 1/2 po vers la droite, elle libère la porte gauche et suit la porte droite."
      }
     ],
     [
@@ -370,7 +389,7 @@
      1,
      "Fer angle 1/4 po, 2 × 2 po, aile de 3/4 po (repère 1 du détail 3)",
      {
-      "note": "Position sous la barre interprétée d'après la vue de face."
+      "note": "Interprété comme l'appui de la barre sur la porte gauche, à 3 po du joint (vue de face)."
      }
     ],
     [
@@ -378,22 +397,26 @@
      "",
      1,
      "Plaque 1/4 po, 1 1/2 × 1 1/2 po, trou de 3/8 po (repère 2 du détail 3)",
-     {}
+     {
+      "note": "Interprétée comme l'oreille de cadenas soudée au bout gauche de la barre."
+     }
     ],
     [
      "17",
      "",
      1,
      "Plaque 1/4 po, 1 1/2 × 2 po, trou de 3/8 po (repère 3 du détail 3)",
-     {}
+     {
+      "note": "Interprétée comme l'oreille de cadenas soudée à la porte gauche ; son trou s'aligne avec celui du repère 2 quand la barre est fermée."
+     }
     ],
     [
      "18",
      "",
      1,
-     "Autocollant Machines Roger International",
+     "Logo Machines Roger International, au bas du devant",
      {
-      "note": "D'après la photo, absent du dessin ; emplacement et proportions seulement."
+      "note": "Image du logo tirée du cartouche du dessin 0102803 ; autocollant visible sur la photo, absent du dessin 087. Taille et position estimées (20 po de large, centré sur le devant)."
      }
     ],
     [
@@ -440,6 +463,15 @@
      {
       "link": "P03",
       "note": "Position et orientation sur le coffre non cotées (aucun dessin ne les donne) : berceau en travers du coffre, à 3 po du bord gauche."
+     }
+    ],
+    [
+     "24",
+     "",
+     1,
+     "Axe de 1/2 po dans la fente de la barre, sur la porte droite",
+     {
+      "note": "Le détail 3 cote la fente à 1/2 po sans détailler l'axe : retenue de la barre interprétée."
      }
     ]
    ]

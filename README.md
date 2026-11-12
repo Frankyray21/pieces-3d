@@ -118,6 +118,12 @@ pièces (numéro, quantité, page du manuel).
   Sur le dessus, à gauche : support de tube D-D du dessin 0102803 (P03 :
   berceau en Y de 3/4 po, base de 8 × 3 po, gousset ; 17 1/2 po de haut), dont
   la position sur le coffre n'est cotée sur aucun dessin.
+  Logo Machines Roger (image du cartouche du dessin 0102803) au bas du devant.
+  Export pour moteur de jeu (Unreal Engine) : `scripts/export-coffre-jeu.mjs`
+  écrit `coffre-ith.glb`, un maillage par élément mobile sur son pivot (portes,
+  barre de verrouillage, tiroir) ; voir `docs/coffre-unreal.md`.
+  Essai interactif du fichier dans le navigateur :
+  `equipment/coffre-dd/essai.html` (clic sur la barre, les portes, le tiroir).
 
 - **Porte assemblée 1801020** (`porte-1801020`, Machines Roger International, plans
   1801020 « PORTE ASSEMBLÉ » à l'échelle 1:16 et 15250402 « TREPIED » à l'échelle
@@ -153,7 +159,8 @@ pièces (numéro, quantité, page du manuel).
   plan sont reprises telles quelles ; ce qu'il ne cote pas (plaque de 3/16 po,
   montants de 2 1/2 po, rayons, diamètre et hauteur des tubes ronds, profil
   des crochets) est relevé à l'échelle sur les tracés vectoriels du PDF.
-  Montré en acier nu (le plan ne précise pas de couleur). Contrôle chiffré :
+  Peint en rouge Machines Roger (demande du client ; le plan ne précise pas
+  de couleur). Contrôle chiffré :
   `node scripts/check-rack-outil.mjs` compare 38 mesures du modèle aux cotes
   du plan, dont la masse d'acier (11,07 lb pour 11,2 lb au cartouche).
   `S.extrude` accepte maintenant des découpes en polygone (fentes de tenon).
