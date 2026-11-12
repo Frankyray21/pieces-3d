@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Installer le support de tiges de forage — vidéo de la procédure PRO-DD-ST-008</title>
+<style>
+  :root { color-scheme: dark; }
+  body { margin: 0; background: #10151b; color: #e8ecf1; font: 16px/1.5 system-ui, -apple-system, 'Segoe UI', sans-serif; }
+  main { max-width: 1100px; margin: 0 auto; padding: 20px 16px 40px; }
+  h1 { font-size: 22px; line-height: 1.25; margin: 0 0 4px; }
+  p { margin: 6px 0; color: #b9c2cc; }
+  video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; background: #000; border-radius: 8px 8px 0 0; margin: 14px 0 0; }
+  /* Texte de la voix, sous l'image : il ne couvre ni le bandeau ni les mesures. */
+  .voix { margin: 0 0 12px; padding: 12px 16px; min-height: 3em; background: #1b222b; border-radius: 0 0 8px 8px; border-top: 2px solid #ff9d4d; color: #fff; font-size: 18px; line-height: 1.5; }
+  .voix:empty::before { content: 'Le texte du formateur s’affiche ici pendant la lecture.'; color: #7f8b98; }
+  a { color: #ff9d4d; }
+  ul { margin: 8px 0 0; padding-left: 20px; color: #b9c2cc; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Installer le support de tiges de forage</h1>
+  <p>Procédure de travail PRO-DD-ST-008 · Machines Roger International · vidéo de premier contact avec la méthode (4 min 04).</p>
+  <video id="video" controls preload="metadata" poster="poster.jpg">
+    <source src="installation.mp4" type="video/mp4">
+    <track kind="subtitles" srclang="fr" label="Français (texte de la voix)" src="sous-titres.vtt">
+  </video>
+  <p class="voix" id="voix" aria-live="off"></p>
+  <p>La vidéo n'a pas encore de voix : le texte du formateur défile sous l'image. En plein écran, active les sous-titres (bouton « CC » du lecteur).</p>
+  <ul>
+    <li><a href="../../../#rack-tiges-dd.P02">Revoir l'installation en 3D, étape par étape</a></li>
+    <li><a href="../../../#rack-tiges-dd.P01">Le support, pièce par pièce</a></li>
+  </ul>
+</main>
+<script>
+  // Les répliques (sous-titres.vtt) sont lues sans être affichées sur l'image : elles défilent dessous.
+  const piste = document.getElementById('video').textTracks[0];
+  const voix = document.getElementById('voix');
+  if (piste.mode === 'disabled') piste.mode = 'hidden';
+  piste.addEventListener('cuechange', () => {
+    const c = piste.activeCues && piste.activeCues[0];
+    voix.textContent = c ? c.text : '';
+  });
+</script>
+</body>
+</html>

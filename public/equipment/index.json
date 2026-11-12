@@ -56,9 +56,9 @@
       "id": "rack-tiges-dd",
       "name": "Support de tiges de forage (rack à rods)",
       "manufacturer": "Machines Roger International",
-      "category": "Rapport de certification P19113",
+      "category": "Procédure PRO-DD-ST-008",
       "thumbnail": "equipment/rack-tiges-dd/thumbnail.webp",
-      "status": "3D du rapport de certification Forcetech (novembre 2019) : support peint en rouge, vide pièce par pièce, et chargé de 184 tiges NQ appuyé au mur"
+      "status": "3D de la procédure d'installation (août 2024) et du rapport de certification Forcetech : support incliné à 78°, ancré au boulon à œil, 184 tiges NQ en quinconce, chaîne de retenue ; montage en 15 étapes"
     },
     {
       "id": "stm-1500",

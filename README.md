@@ -116,14 +116,76 @@ pièces (numéro, quantité, page du manuel).
   tôles et pentures non détaillées sur le dessin (estimées) ; peinture d'après
   les photos ; le contenu du coffre n'est pas modélisé.
 
-- **Support de tiges de forage — « rack à rods »** (`rack-tiges-dd`, rapport de
-  certification Forcetech P19113 du 2019-11-27 pour Machines Roger
-  International, 6 pages) : le support vide pièce par pièce (P01 : poteaux,
-  pattes réglables, traverses télescopiques, membrures d'appui au mur et leurs
-  rallonges, goupilles, attaches, chaînes) et le support chargé de 184 tiges NQ
-  de 3 m à 82°, appuyé au mur (P02, figures 2 et 3). Le rapport ne donne pas de
-  cotes : dimensions estimées sur les figures (23 tiges NQ entre les poteaux).
-  Support peint en rouge en entier (le rapport le montre gris, pattes rouges).
+- **Support de tiges de forage — « rack à rods »** (`rack-tiges-dd`, procédure
+  d'installation PRO-DD-ST-008 de Machines Roger International, révision août
+  2024, 5 pages, et rapport de certification Forcetech P19113 du 2019-11-27,
+  6 pages). Aucun des deux documents ne donne de cotes : dimensions estimées
+  sur les figures (23 tiges NQ en quinconce entre les poteaux). Modules dans
+  `src/models/rack-tiges-dd/` :
+  - `support.js` (P01) : le support pièce par pièce, peint en rouge, avec les
+    rallonges du haut et du bas qui dépassent les 8 rangées de tiges ;
+  - `installation.js` (P02) : l'installation selon la procédure, en 15 étapes
+    (la page s'ouvre en montage par étapes, `view.stepsAuto`) : trou de 18 po
+    au centre du support à ± 5 pi du plancher, boulon à œil pas enfoncé
+    jusqu'au fond, support levé à deux et incliné à 78° (75° à 80° exigé),
+    chaîne d'ancrage passée dans le boulon puis dans les œillets et serrée au
+    tendeur à cliquet, 184 tiges NQ de 3 m en quinconce appuyées sur les
+    barres du fond (empilement calculé tige par tige), chaîne de retenue dans
+    les crochets fermés, qui arrête le paquet avant 80° (angle calculé d'après
+    sa longueur), marques à 5 pi ;
+  - `chantier.js` (paroi de roche grillagée et soutènement, plancher repris
+    de `plancher-dd`), `outils.js` (boulon à œil, tendeur, foreuse à
+    percussion sans fil, tournevis), `reperes.js` (cotes, arcs, zones, niveau
+    numérique), `travailleur.js` (silhouette articulée : les mains et les
+    pieds vont où on les pose, par cinématique inverse à deux segments ; le
+    foreur tient la foreuse par ses deux poignées, les deux porteurs tiennent
+    les poteaux, pieds en place ; à l'étape 14, une main tient le tournevis,
+    comme sur la photo de la procédure).
+  Repères de mesure : orange = mesure, vert = permis, rouge = limite ou
+  interdit, bleu = sens du geste ; chacun n'est montré qu'à son étape
+  (`userData.stepOnly`) et peut porter un thème (`userData.stepTag`,
+  `Viewer.setStepTags`) pour n'en montrer qu'un à la fois ; un thème en « + »
+  (vue en coupe du trou, repères de la coupe de l'étape 10) n'est montré
+  qu'à la demande. Animations d'étape (`userData.stepAnim`, jouées par
+  `Viewer.setStep`, qui en rend la durée pour que la lecture automatique les
+  laisse finir) : perçage, pose du boulon, support qu'on incline à deux,
+  chaîne passée bout par bout, serrage au cliquet (le tendeur pend à la
+  chaîne lâche, ses vis rentrent d'un cran par coup de levier, la chaîne
+  garde sa longueur), paquet de tiges qui bascule et que la chaîne retient.
+  Conformité à la procédure : `node scripts/check-rack.mjs` prend 49 mesures
+  sur le modèle construit — l'installation finie (hauteur et centrage du
+  trou, appui des pattes du haut, angle, chaîne passée par l'extérieur des
+  œillets, levier du tendeur, quinconce, tiges qui se touchent sans se
+  traverser, appui au fond et jeu sur les côtés, rallonges, crochets entre 66
+  et 72 po, point bas à 5 pi au moins, marques), puis les états
+  intermédiaires des animations (avance de la mèche de 18 po, boulon pas
+  jusqu'au fond, gants sur la foreuse et sur les poteaux, bottes sur le
+  plancher, aucun fil du grillage devant le trou, surplus de chaîne posé au
+  sol, même nombre de maillons à chaque état, tendeur accroché à chaque coup
+  de levier, tiges retenues avant 80° puis revenues à 78°, main au manche
+  du tournevis).
+  **Vidéo de la procédure** (premier contact avec la méthode, 4 min 04,
+  1280 × 720, 24 i/s, muette, sous-titrée) : scénario dans
+  `src/video/rack-script.js` — par passage, bandeau, réplique du formateur,
+  plans de caméra choisis selon ce qui est expliqué (ensemble, gros plan,
+  profil pour un angle avec le plancher d'où il se mesure, plongée pour le
+  quinconce, coupe pour le trou, coupe au ras de la traverse pour l'appui au
+  fond : `clip`, `Viewer.setClip`), repères révélés une idée à la fois
+  (`reveal`), photos et schémas de la procédure incrustés (`inset`), cartons
+  (`card`), rappels (`cues`). Les plans sont
+  fixes ; la caméra ne bouge que pendant une animation. Tournage image par
+  image sous une horloge arrêtée : `scripts/video-rack.mjs` (le rendu 3D,
+  coûteux sans carte graphique, n'est refait que si la scène a changé, sinon
+  l'image précédente est reprise ; images par passage, re-tournage partiel
+  avec `--only`, deux tournages en parallèle avec `--no-encode`, serveur
+  d'images fixes `--serve` pour régler les plans, planche-contact
+  `scripts/video-rack-planche.py`, contrôle des images vides
+  `scripts/video-rack-vides.py`). Script de voix minuté et
+  sous-titres : `node scripts/video-rack-script.mjs` (`video/rack/`,
+  `sous-titres.vtt`) ; la voix enregistrée s'ajoute avec `--voix`. Publiée
+  dans `public/equipment/rack-tiges-dd/video/` (lecteur `index.html`, relié
+  au montage par `view.video` ; tant que la vidéo est muette, le texte de la
+  voix défile sous l'image, sans couvrir le bandeau ni les mesures).
 
 - **Usinage Marcotte STM-1500** (`stm-1500`, foreuse souterraine
   s/n STM-1500-128, manuel de pièces de Machines Roger, 96 pages) : 42

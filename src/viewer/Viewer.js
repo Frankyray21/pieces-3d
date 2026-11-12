@@ -357,7 +357,10 @@ export class Viewer {
     this.model = model;
     this.nodes = [];
     this._stepLeaves = null;
+    this._stepAnims = null;
+    this._stepTags = null;
     this._stepFresh = null;
+    this.renderer.clippingPlanes = [];
     this._notes = [];
     this._drops = [];
     this.step = null;
@@ -480,7 +483,8 @@ export class Viewer {
    * l'ordre de pose (userData.seq, puis le long du plancher, en travers, de bas
    * en haut) : chacune descend en place, en surbrillance. Les objets
    * userData.stepOnly (outils, laser) et les annotations view.notes ne
-   * s'affichent qu'à leurs étapes. Retourne la durée de la pose (ms).
+   * s'affichent qu'à leurs étapes. Retourne la durée de la pose et de
+   * l'animation de l'étape (ms).
    */
   setStep(n, { animate = true } = {}) {
     if (!this.model) return 0;
@@ -510,8 +514,21 @@ export class Viewer {
     // Pose en cours interrompue : pièces remises en place.
     for (const d of this._drops || []) { d.obj.position.copy(d.target); d.obj.visible = true; }
     this._drops = [];
-    this.tweens = this.tweens.filter((t) => t.kind !== 'drop');
+    this.tweens = this.tweens.filter((t) => t.kind !== 'drop' && t.kind !== 'stepanim');
     this.step = n;
+    // Animations d'étape (userData.stepAnim : { step, dur, delay, update(k) }, ex. le
+    // serrage d'une chaîne) : état de départ avant leur étape, état final après,
+    // jouées en arrivant à leur étape.
+    if (!this._stepAnims) {
+      this._stepAnims = [];
+      root.traverse((o) => { if (o.userData.stepAnim) this._stepAnims.push(o.userData.stepAnim); });
+    }
+    for (const a of this._stepAnims) {
+      if (n != null && n === a.step && animate) {
+        a.update(0);
+        this.tweens.push({ kind: 'stepanim', start: performance.now() + (a.delay || 0), dur: a.dur || 3000, step: (k) => { a.update(Math.max(0, k)); this.invalidate(); } });
+      } else a.update(n == null || n >= a.step ? 1 : 0);
+    }
     const fresh = this._stepLeaves.filter((o) => n != null && o.userData.step === n);
     const gap = fresh.length ? Math.max(70, Math.min(550, 6500 / fresh.length)) : 0;
     const now = performance.now();
@@ -535,13 +552,23 @@ export class Viewer {
         } });
       });
       total = fresh.length ? (fresh.length - 1) * gap + 420 : 0;
+      // L'animation de l'étape compte aussi : la lecture automatique la laisse finir.
+      for (const a of this._stepAnims) if (a.step === n) total = Math.max(total, (a.delay || 0) + (a.dur || 3000));
     }
-    for (const o of this._stepOnly) {
-      const only = [].concat(o.userData.stepOnly);
-      o.visible = n != null && only.includes(n);
+    // view.stepFlash : la surbrillance d'une pièce s'éteint peu après sa pose (elle
+    // reprend sa vraie couleur) au lieu de durer toute l'étape ; sans animation, aucune surbrillance.
+    const flash = !!this.model.view?.stepFlash;
+    this.tweens = this.tweens.filter((t) => t.kind !== 'stepflash');
+    if (flash && animate && n != null) {
+      fresh.forEach((o, i) => {
+        this.tweens.push({ kind: 'stepflash', start: now + i * gap + 420 + 1300, dur: 1, step: (k) => {
+          if (k < 0 || !this._stepFresh?.delete(o)) return;
+          this._refreshStates();
+        } });
+      });
     }
-    for (const note of this._notes || []) note.label.visible = n != null && note.steps.includes(n);
-    this._stepFresh = new Set(fresh);
+    this._applyStepOnly();
+    this._stepFresh = new Set(flash && !(animate && n != null) ? [] : fresh);
     this._refreshStates();
     this._cullDirty = true;
     this.labels.forEach((l) => { l.culled = false; });
@@ -550,19 +577,62 @@ export class Viewer {
     return total;
   }
 
-  /** Annotations du montage (view.notes : { steps, pos, text }), en étiquettes posées dans la scène. */
+  /**
+   * Vue en coupe : ne garde du modèle que ce qui est du côté de la normale du
+   * plan [nx, ny, nz, d] (points où n·p + d ≥ 0, repère du modèle) ; null :
+   * modèle entier. Sert à la vidéo (coupe au ras d'une traverse).
+   */
+  setClip(plane = null) {
+    const planes = [];
+    if (plane && this.model) {
+      this.model.root.updateMatrixWorld(true);
+      planes.push(new THREE.Plane(new THREE.Vector3(plane[0], plane[1], plane[2]), plane[3]).applyMatrix4(this.model.root.matrixWorld));
+    }
+    this.renderer.clippingPlanes = planes;
+    this.invalidate();
+  }
+
+  /** Objets et annotations propres à une étape : affichés à leur étape, selon leur thème (voir setStepTags). */
+  _applyStepOnly() {
+    const n = this.step;
+    const tags = this._stepTags;
+    // Sans choix de thèmes : tout, sauf les thèmes « à la demande » (nom en « + »).
+    const ok = (tag) => !tag || (tags ? tags.includes(tag) : tag[0] !== '+');
+    for (const o of this._stepOnly || []) {
+      const only = [].concat(o.userData.stepOnly);
+      o.visible = n != null && only.includes(n) && ok(o.userData.stepTag);
+    }
+    for (const note of this._notes || []) note.label.visible = n != null && note.steps.includes(n) && ok(note.tag);
+  }
+
+  /**
+   * Thèmes affichés parmi les repères et annotations d'étape qui en portent un
+   * (userData.stepTag, note.tag) : null les affiche tous, sauf ceux « à la
+   * demande » (« +coupe ») ; une liste n'affiche que les siens. Les objets
+   * sans thème suivent seulement leur étape. Sert à montrer une idée à la fois (vidéo).
+   */
+  setStepTags(tags = null) {
+    this._stepTags = tags;
+    if (!this._stepLeaves) return;
+    this._applyStepOnly();
+    this._refreshLabels();
+    this.invalidate();
+  }
+
+  /** Annotations du montage (view.notes : { steps, pos, text, kind, tag }), en étiquettes posées dans la scène. */
   _createNotes() {
     this._notes = [];
     for (const nt of this.model.view.notes || []) {
       const el = document.createElement('div');
-      el.className = 'balloon caption note';
+      // kind : 'ok' (permis, vert) ou 'no' (limite ou interdit, rouge) ; sinon couleur d'accent.
+      el.className = `balloon caption note${nt.kind ? ` ${nt.kind}` : ''}`;
       el.textContent = nt.text;
       const label = new CSS2DObject(el);
       label.center.set(0.5, 1);
       label.position.set(...nt.pos);
       label.visible = false;
       this.model.root.add(label);
-      this._notes.push({ label, steps: [].concat(nt.steps) });
+      this._notes.push({ label, steps: [].concat(nt.steps), tag: nt.tag });
     }
   }
 
@@ -814,18 +884,23 @@ export class Viewer {
     const pts = [];
     const b = new THREE.Box3();
     root.updateMatrixWorld(true);
-    root.traverse((o) => {
-      if (!o.isMesh || !o.visible) return;
-      if (o.isInstancedMesh) {
-        if (!o.boundingBox) o.computeBoundingBox();
-        b.copy(o.boundingBox);
-      } else {
-        if (!o.geometry.boundingBox) o.geometry.computeBoundingBox();
-        b.copy(o.geometry.boundingBox);
+    const walk = (o) => {
+      // Outils et repères montrés à une seule étape du montage : hors du cadrage du modèle.
+      if (o.userData.stepOnly) return;
+      if (o.isMesh && o.visible) {
+        if (o.isInstancedMesh) {
+          if (!o.boundingBox) o.computeBoundingBox();
+          b.copy(o.boundingBox);
+        } else {
+          if (!o.geometry.boundingBox) o.geometry.computeBoundingBox();
+          b.copy(o.geometry.boundingBox);
+        }
+        b.applyMatrix4(o.matrixWorld);
+        for (const x of [b.min.x, b.max.x]) for (const y of [b.min.y, b.max.y]) for (const z of [b.min.z, b.max.z]) pts.push(new THREE.Vector3(x, y, z));
       }
-      b.applyMatrix4(o.matrixWorld);
-      for (const x of [b.min.x, b.max.x]) for (const y of [b.min.y, b.max.y]) for (const z of [b.min.z, b.max.z]) pts.push(new THREE.Vector3(x, y, z));
-    });
+      for (const c of o.children) walk(c);
+    };
+    walk(root);
     return pts;
   }
 

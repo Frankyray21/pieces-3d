@@ -72,7 +72,7 @@
         <div class="st-head">
           <button type="button" class="tbtn" id="st-prev" title="Étape précédente" aria-label="Étape précédente">◀</button>
           <span class="st-num" id="st-num"></span>
-          <button type="button" class="tbtn" id="st-next" title="Étape suivante" aria-label="Étape suivante">▶</button>
+          <button type="button" class="tbtn strong" id="st-next" title="Étape suivante">Étape suivante ▶</button>
           <button type="button" class="tbtn" id="st-replay" title="Rejouer la pose de cette étape" aria-label="Rejouer l'étape">↻</button>
           <label class="sr" for="st-range">Étape du montage</label>
           <input id="st-range" type="range" min="0" max="18" value="0">
@@ -81,7 +81,10 @@
         </div>
         <strong class="st-title" id="st-title"></strong>
         <p class="st-text" id="st-text"></p>
-        <button type="button" class="lnk st-page" id="st-page"></button>
+        <div class="st-links">
+          <button type="button" class="lnk st-page" id="st-page"></button>
+          <a class="lnk st-page" id="st-video" target="_blank" rel="noopener" hidden>Voir la vidéo de la procédure</a>
+        </div>
       </div>
       <div class="titleblock" id="titleblock"></div>
       <div class="loading" id="loading" hidden>Construction du modèle…</div>

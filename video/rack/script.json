@@ -1,0 +1,164 @@
+[
+ {
+  "passage": "titre",
+  "etape": null,
+  "titre": "Installer le support de tiges de forage",
+  "texte": "Installer le support de tiges de forage. Procédure de travail P-R-O, D-D, S-T, zéro zéro huit.",
+  "mots": 11,
+  "debut": 0.6,
+  "duree": 6.5
+ },
+ {
+  "passage": "etape-00",
+  "etape": null,
+  "titre": "Les responsabilités",
+  "texte": "Avant de commencer. Comme travailleur, tu respectes la procédure, surtout la quantité de tiges et l'angle d'empilage dans le support. Le superviseur fait respecter la procédure en tout temps, et fait reprendre toute installation non conforme. Avant de quitter le site de forage au diamant, la mine fore des trous de service, pour y introduire des boulons à œil.",
+  "mots": 59,
+  "debut": 7.1,
+  "duree": 26.5
+ },
+ {
+  "passage": "etape-01",
+  "etape": 1,
+  "titre": "Choisir l’endroit",
+  "texte": "Étape 1. Choisis un endroit près du mur, et loin de la ligne de tir des trous de forage. La procédure donne des exemples de positionnement.",
+  "mots": 26,
+  "debut": 33.6,
+  "duree": 15
+ },
+ {
+  "passage": "etape-02",
+  "etape": 2,
+  "titre": "Percer le trou au mur",
+  "texte": "Étape 2. Au mur, situe le centre du support. Avec la foreuse à percussion électrique, perce un trou de 18 pouces de profond, à plus ou moins 5 pieds du plancher.",
+  "mots": 31,
+  "debut": 48.6,
+  "duree": 15
+ },
+ {
+  "passage": "etape-03",
+  "etape": 3,
+  "titre": "Insérer le boulon à œil",
+  "texte": "Étape 3. Insère le boulon à œil, mais ne l'enfonce pas jusqu'au fond du trou.",
+  "mots": 15,
+  "debut": 63.6,
+  "duree": 8
+ },
+ {
+  "passage": "etape-04",
+  "etape": 4,
+  "titre": "Lever le support à deux",
+  "texte": "Étape 4. À deux, soulevez le support, et placez les pattes du haut pour qu'elles soient bien appuyées au mur.",
+  "mots": 20,
+  "debut": 71.6,
+  "duree": 10
+ },
+ {
+  "passage": "etape-05",
+  "etape": 5,
+  "titre": "Vérifier l’angle",
+  "texte": "Étape 5. Assure-toi que l'angle du support est entre 75 et 80 degrés.",
+  "mots": 13,
+  "debut": 81.6,
+  "duree": 9
+ },
+ {
+  "passage": "etape-06",
+  "etape": 6,
+  "titre": "Chaîne dans le boulon à œil",
+  "texte": "Étape 6. Passe une chaîne dans le boulon à œil, jusqu'à son milieu.",
+  "mots": 13,
+  "debut": 90.6,
+  "duree": 7.5
+ },
+ {
+  "passage": "etape-07",
+  "etape": 7,
+  "titre": "Chaîne dans les œillets",
+  "texte": "Étape 7. Passe chaque bout de la chaîne dans l'œillet du support qui lui est destiné, de l'extérieur vers l'intérieur.",
+  "mots": 20,
+  "debut": 98.1,
+  "duree": 10
+ },
+ {
+  "passage": "etape-08",
+  "etape": 8,
+  "titre": "Tendre la chaîne",
+  "texte": "Étape 8. Relie les deux bouts de la chaîne avec un tendeur à cliquet, et serre-le au maximum. Tu peux aussi utiliser un tendeur de type « bear trap ».",
+  "mots": 28,
+  "debut": 108.1,
+  "duree": 13.5
+ },
+ {
+  "passage": "etape-09",
+  "etape": 9,
+  "titre": "Placer les tiges en quinconce",
+  "texte": "Étape 9. Place les tiges dans le support en quinconce, rangée par rangée, en partant de la gauche.",
+  "mots": 18,
+  "debut": 121.6,
+  "duree": 17
+ },
+ {
+  "passage": "etape-10",
+  "etape": 10,
+  "titre": "Appuyer les tiges au fond",
+  "texte": "Étape 10. Appuie les tiges sur la barre transversale du fond, et non sur les côtés.",
+  "mots": 16,
+  "debut": 138.6,
+  "duree": 8.5
+ },
+ {
+  "passage": "etape-11",
+  "etape": 11,
+  "titre": "Placer la chaîne de retenue",
+  "texte": "Étape 11. Place la chaîne de retenue des tiges. Accroche-la solidement dans les 2 crochets fermés, de chaque côté du support.",
+  "mots": 21,
+  "debut": 147.1,
+  "duree": 10.5
+ },
+ {
+  "passage": "etape-12",
+  "etape": 12,
+  "titre": "Ajuster la chaîne",
+  "texte": "Étape 12. Ajuste la chaîne pour que les tiges ne puissent pas dépasser 80 degrés si elles chutent vers un travailleur.",
+  "mots": 21,
+  "debut": 157.6,
+  "duree": 11.5
+ },
+ {
+  "passage": "etape-13",
+  "etape": 13,
+  "titre": "La chaîne, en tout temps",
+  "texte": "Étape 13. La chaîne de retenue doit être utilisée en tout temps, sauf pendant l'ajout et le retrait des tiges en continu. Les crochets doivent être à 66 pouces au minimum, et à 72 pouces au maximum du sol, pour que la chaîne, même lousse, ne soit jamais à moins de 5 pieds du sol au centre.",
+  "mots": 57,
+  "debut": 169.1,
+  "duree": 25.5
+ },
+ {
+  "passage": "etape-14",
+  "etape": 14,
+  "titre": "Prendre les tiges",
+  "texte": "Étape 14. Quand tu prends les tiges, la graisse peut les rendre difficiles à saisir. Un tournevis plat est préconisé pour les séparer et t'aider à les prendre.",
+  "mots": 28,
+  "debut": 194.6,
+  "duree": 13.5
+ },
+ {
+  "passage": "etape-15",
+  "etape": 15,
+  "titre": "Capacité maximale",
+  "texte": "Étape 15. Respecte la capacité maximale du support : 108 tiges H-Q, 184 tiges N-Q, ou 240 tiges B-Q.",
+  "mots": 19,
+  "debut": 208.1,
+  "duree": 11
+ },
+ {
+  "passage": "fin",
+  "etape": 5,
+  "titre": "Incliné, ancré, retenu",
+  "texte": "À retenir. Le support est incliné entre 75 et 80 degrés, et ancré par une chaîne, tendeur serré au maximum. Les tiges sont en quinconce, appuyées sur la barre du fond, sans dépasser la capacité maximale. Et la chaîne de retenue doit être utilisée en tout temps, sauf pendant l'ajout et le retrait des tiges en continu.",
+  "mots": 57,
+  "debut": 219.1,
+  "duree": 25.5
+ }
+]

@@ -183,6 +183,8 @@ body.stage-full .stage { position: fixed; inset: 0; z-index: 50; width: auto; he
 body.stage-full .topbar, body.stage-full .mtabs { display: none; }
 /* Annotations du montage par étapes : légende en accent, sous le point visé. */
 .balloon.caption.note { max-width: 15em; border-color: var(--accent-text); color: var(--accent-ink); background: var(--accent-text); pointer-events: none; }
+.balloon.caption.note.ok { border-color: #1c8748; background: #1c8748; color: #fff; }
+.balloon.caption.note.no { border-color: #c2281f; background: #c2281f; color: #fff; }
 /* Montage par étapes (plancher de foreuse) : panneau en bas à gauche de la scène. */
 .stepsbar {
   position: absolute; left: 12px; right: 12px; bottom: 12px; max-width: 640px; box-sizing: border-box; padding: 8px 12px 10px; border-radius: 10px;
@@ -194,6 +196,7 @@ body.stage-full .topbar, body.stage-full .mtabs { display: none; }
 .st-num { min-width: 92px; text-align: center; font: 600 13px/1 var(--f-body); color: var(--accent-text); white-space: nowrap; }
 .st-title { font-size: 15px; line-height: 1.25; }
 .st-text { margin: 0; font-size: 13px; line-height: 1.4; color: var(--ink); }
+.st-links { display: flex; flex-wrap: wrap; gap: 4px 16px; }
 .st-page { justify-self: start; font-size: 12px; color: var(--muted); background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; }
 .stage.stepping .hint, .stage.stepping .titleblock { display: none; }
 .hint {
@@ -392,3 +395,7 @@ table.parts { width: 100%; border-collapse: collapse; font-size: 13px; }
   * { transition: none !important; }
 }
 .docview figure.portrait { width: min(100%, 860px); }
+
+/* Montage par étapes : le dock « Atelier » ne recouvre pas le texte de l'étape (la page de la procédure reste accessible par le lien de l'étape). */
+body:has(.stage.stepping) #dock { display: none; }
+@media (max-width: 700px) { .stage.stepping .st-num { flex: 1 0 auto; } }

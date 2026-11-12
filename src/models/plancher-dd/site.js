@@ -134,6 +134,7 @@ function target(S, z, y) {
     S.cyl(0.025, 0.006, 'fluoRed', { axis: 'x' }),
   );
   g.position.set(faceX(z, y) + 0.012, y, z);
+  g.userData.cible = true; // repère d'un fond de trou (un autre modèle peut le montrer à part)
   return g;
 }
 

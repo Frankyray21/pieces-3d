@@ -92,6 +92,26 @@ const defs = {
   rockFloor: { color: 0x3d3f42, metalness: 0, roughness: 0.95, fin: 'rock' },
   fluoRed: { color: 0xff3020, emissive: 0x5a0800, emissiveIntensity: 1, roughness: 0.6 },
   fluoOrange: { color: 0xff7a10, emissive: 0x4a1800, emissiveIntensity: 1, roughness: 0.55 },
+  // Tiges de forage usagées : acier terni, brun de rouille plus ou moins marqué.
+  // Mat, en éclairage diffus simple (lambert) : 184 tiges empilées couvrent l'écran sur 8 épaisseurs,
+  // et le matériau physique à relief coûtait à lui seul les trois quarts du temps de rendu.
+  rodWorn: { color: 0x62574e, lambert: true },
+  rodRust: { color: 0x7a4e35, lambert: true },
+  rodRustDark: { color: 0x52382a, lambert: true },
+  rodDull: { color: 0x53524f, lambert: true },
+  // Repères de mesure du montage par étapes : vert = permis, zones translucides.
+  repereVert: { color: 0x2fd06a, emissive: 0x0c5a26, emissiveIntensity: 1, roughness: 0.55 },
+  zoneVerte: { color: 0x35d06a, emissive: 0x0c5a26, emissiveIntensity: 0.7, roughness: 0.7, transparent: true, opacity: 0.4, depthWrite: false, side: THREE.DoubleSide },
+  zoneRouge: { color: 0xff4030, emissive: 0x5a0800, emissiveIntensity: 0.7, roughness: 0.7, transparent: true, opacity: 0.34, depthWrite: false, side: THREE.DoubleSide },
+  // Chaîne de transport (grade 70) : chromate jaune terni.
+  chaineOr: { color: 0xa98a3c, metalness: 1, roughness: 0.46, fin: 'machined' },
+  // Boulon à œil forgé (photo de la procédure) : acier brut, bruni.
+  boulonForge: { color: 0x8e7359, metalness: 0.55, roughness: 0.66, fin: 'cast' },
+  // Travailleur (silhouette sobre) : combinaison, bandes réfléchissantes, gants, peau.
+  tissuOrange: { color: 0xd9641a, metalness: 0, roughness: 0.92, fin: 'rubber' },
+  bandeReflet: { color: 0xdfe36a, emissive: 0x4a4d10, emissiveIntensity: 0.55, metalness: 0, roughness: 0.55 },
+  gantBleu: { color: 0x2a5aa8, metalness: 0, roughness: 0.85, fin: 'rubber' },
+  peau: { color: 0xc9a184, metalness: 0, roughness: 0.78 },
   blackCast: { color: 0x2a2c30, metalness: 0.1, roughness: 0.55, clearcoat: 0.3, clearcoatRoughness: 0.35, fin: 'paintDark' },};
 
 // ------------------------------------------------------- relief de surface
@@ -316,9 +336,10 @@ export function mat(name) {
   if (!m) {
     const d = defs[name];
     if (!d) throw new Error(`Matériau inconnu : ${name}`);
-    const { fin, ...p } = d;
+    const { fin, lambert, ...p } = d;
     const physical = ['clearcoat', 'ior', 'specularIntensity'].some((k) => k in p);
-    m = physical ? new THREE.MeshPhysicalMaterial(p) : new THREE.MeshStandardMaterial(p);
+    // lambert : matériau mat à éclairage diffus, bien moins coûteux (objets très nombreux).
+    m = lambert ? new THREE.MeshLambertMaterial(p) : physical ? new THREE.MeshPhysicalMaterial(p) : new THREE.MeshStandardMaterial(p);
     // Faces légèrement repoussées en profondeur : les contours dessinés
     // exactement sur les arêtes restent nets (pas de scintillement).
     m.polygonOffset = true;
