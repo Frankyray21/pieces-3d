@@ -77,6 +77,14 @@
       "status": "3D d'après les plans 1801020 et 15250402 (2022-04-05) : cadre de 42 × 88 3/8 po sur trépied, battant grillagé, 3 pentures, barrure à interverrouillage ; battant et verrou animés, fichiers prêts pour Unreal Engine (cadre, battant, verrou, pivot sur l'axe des pentures)"
     },
     {
+      "id": "poste-secours",
+      "name": "Poste de premiers soins et d'extincteur",
+      "manufacturer": "Fabricant non indiqué",
+      "category": "Poste de sécurité sur cage grillagée",
+      "thumbnail": "equipment/poste-secours/thumbnail.webp",
+      "status": "3D d'après une photo du poste installé : cadre en tôle découpée d'environ 34 × 24 po à ruban réfléchissant rouge et blanc, armoire blanche à toit incliné et façade à croix rouge (trousse, 2 rince-œil), extincteur à poudre de 5 lb sur son crochet ; dimensions estimées, à mesurer sur place"
+    },
+    {
       "id": "rack-outil",
       "name": "Rack à outils 15083000",
       "manufacturer": "Machines Roger International",

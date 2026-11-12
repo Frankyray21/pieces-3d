@@ -347,6 +347,20 @@ pièces (numéro, quantité, page du manuel).
   texturé hors palette (`equipment/cles-a-tuyau/textures/`), qui demande un
   nouveau rendu à la visionneuse une fois chargé (`pieces3d:redessiner`).
 
+- **Poste de premiers soins et d'extincteur** (`poste-secours`) : reconstitution
+  d'après une seule photo du poste installé sur le grillage de la cage, sans
+  plan ni cote. L'échelle vient du ruban réfléchissant (2 po de large) et de
+  l'extincteur à poudre de 5 lb (cylindre de 4 1/4 po) : toutes les dimensions
+  sont estimées, à environ 1 po près. Cadre en tôle découpée d'environ 34 × 24
+  po (plein derrière l'armoire, ferme à poinçon et croix à droite), ruban rouge
+  et blanc sur le pourtour, armoire blanche à toit incliné et façade
+  transparente à croix rouge, trousse, deux bouteilles de rince-œil, extincteur
+  pendu à son crochet avec ses étiquettes d'inspection, tronçon du grillage
+  pour situer le poste. Ce qui est caché sur la photo (tôle derrière l'armoire,
+  suite du ruban) est supposé et signalé dans la note de la page ; les
+  fixations, invisibles, ne sont pas modélisées. Étiquettes dessinées sur un
+  canevas (génériques : marque et numéros illisibles sur la photo).
+
 La page d'accueil (adresse sans « # », ou le logo en haut à gauche) liste
 les équipements et permet de passer de l'un à l'autre. Les adresses du premier équipement restent `#F05` ; celles des autres
 sont préfixées : `#du311.P032`, `#du311-std.P050`, `#epiroc-ith.P019`.
