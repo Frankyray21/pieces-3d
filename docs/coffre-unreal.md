@@ -39,7 +39,7 @@ Epiroc du contenu), 1 texture.
 | `SM_Coffre_Tiroir` | milieu du bas de la façade | translation sur Z local, course 0,33 m |
 | `SM_Coffre_Support_Tube` | sous la base du support | fixe (dessin 0102803), séparé pour pouvoir le déplacer ou l'enlever |
 | `SM_Coffre_Boite_Cle` | haut de la plaque, contre le côté gauche | fixe (dessin Foresco C16062863, placé d'après une photo), séparé pour pouvoir le déplacer |
-| `SM_Contenu_…` (12 maillages) | centre de chaque pièce | contenu du coffre, objets à prendre : têtes Excore (2), overshot Excore II, core lifters (4), core lifter cases (2), stop rings (2), landing ring ; numéro de pièce dans les `extras` |
+| `SM_Contenu_…` (15 maillages) | centre de chaque pièce (tête, pour les outils à manche) | contenu du coffre, objets à prendre : têtes Excore (2), overshot Excore II, core lifters (4), core lifter cases (2), stop rings (2), landing ring, marteau, masses de 2 et 10 lb ; numéro de pièce dans les `extras` quand il existe |
 
 Chaque nœud porte ces valeurs dans ses `extras` glTF (`mouvement`,
 `axe_local`, `angle_ouvert_deg`, `course_m`). Les axes et les signes sont ceux
