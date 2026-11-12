@@ -263,6 +263,18 @@ pièces (numéro, quantité, page du manuel).
   d'assemblage ; 8 : le contreplaqué du modèle. Pages : plan d'assemblage
   (aperçu du .SLDDRW) et développé de la jupe C16080961 retracé d'après le DWG.
 
+- **Support à pipewrench 0102806** (`support-pipewrench`, assemblage soudé en
+  acier 44W de Machines Roger International, plan d'assemblage du 2022-11-17,
+  1 page, 25 1/2 × 9 × 28 3/4 po) : les 8 articles de la nomenclature — base
+  pliée de 1/2 po à coins en onglet, plaque de bout, montant découpé (deux
+  fenêtres, disque à trois trous), traverse pliée en pente avec sa butée,
+  oreilles percées du haut et du bas, goupille et tube — et les cordons de
+  soudure du plan. Le plan ne porte qu'une dizaine de cotes : les autres
+  dimensions sont relevées sur le tracé vectoriel du PDF (échelle 1:8,
+  environ 1/64 po près). Aucun fini n'est précisé : montré en acier nu. Le
+  cartouche inscrit 23,1 lb alors que le volume du modèle donne environ 96 lb
+  en acier (signalé dans la note de la page).
+
 La page d'accueil (adresse sans « # », ou le logo en haut à gauche) liste
 les équipements et permet de passer de l'un à l'autre. Les adresses du premier équipement restent `#F05` ; celles des autres
 sont préfixées : `#du311.P032`, `#du311-std.P050`, `#epiroc-ith.P019`.

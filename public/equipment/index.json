@@ -78,6 +78,14 @@
       "status": "Manuel de pièces s/n STM-1500-128 (96 pages) : 42 assemblages et 7 documents ; 3D réaliste de la foreuse (traîneau, avance à 0°, tête Boyles, serre-tiges, vérins, treuil), du groupe hydraulique 125 HP et de la console ; rendus Blender"
     },
     {
+      "id": "support-pipewrench",
+      "name": "Support à pipewrench 0102806",
+      "manufacturer": "Machines Roger International",
+      "category": "Assemblage soudé en acier 44W",
+      "thumbnail": "equipment/support-pipewrench/thumbnail.webp",
+      "status": "3D d'après le plan d'assemblage soudé 0102806 (2022-11-17) : base pliée, montant découpé à trois trous, traverse en pente et ses oreilles, goupille et tube, 8 articles de la nomenclature ; cotes relevées sur le tracé du plan"
+    },
+    {
       "id": "table-a-core",
       "name": "Table à carottes C16080960",
       "manufacturer": "Foresco (pour Machines Roger)",
