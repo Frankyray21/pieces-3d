@@ -342,6 +342,12 @@ pièces (numéro, quantité, page du manuel).
   d'un plan du fabricant ; c'est la même clé étirée par zones. Matériau
   texturé hors palette (`equipment/cles-a-tuyau/textures/`), qui demande un
   nouveau rendu à la visionneuse une fois chargé (`pieces3d:redessiner`).
+  **Unreal Engine** : `node scripts/export-cles-unreal.mjs --textures <dossier>`
+  écrit `SM_Cles_A_Tuyau.glb` (les neuf grandeurs) dans
+  `public/equipment/cles-a-tuyau/unreal/`, et `SM_Support_Pipewrench.glb`,
+  `support-avec-cles.glb` (clés de 18, 24 et 36 po en place, tiges NQ) et la
+  fiche des poses dans `public/equipment/support-pipewrench/unreal/` ; mode
+  d'emploi dans `docs/cles-unreal.md`.
 
 La page d'accueil (adresse sans « # », ou le logo en haut à gauche) liste
 les équipements et permet de passer de l'un à l'autre. Les adresses du premier équipement restent `#F05` ; celles des autres
@@ -454,6 +460,7 @@ tools/extract_stm1500*.py                   listes du manuel STM-1500 (brouillon
 tools/blender_render.py                     rendu Cycles d'un .glb (scripts/export-glb.mjs)
 scripts/export-anim.mjs                     foreuse STM-1500 animée en .glb (squelette et séquences, voir docs/animation-stm-1500.md)
 scripts/export-porte.mjs                    porte 1801020 en maillages statiques à pivot pour Unreal (voir docs/porte-unreal.md)
+scripts/export-cles-unreal.mjs              clés à tuyau et support à pipewrench en .glb pour Unreal (voir docs/cles-unreal.md)
 tools/blender_fbx.py                        conversion du .glb animé en FBX pour Unreal Engine
 tools/blender_porte_fbx.py                  conversion des maillages de la porte 1801020 en FBX
 tools/ocr_pages.py, tools/ocr_bulles.py     OCR des planches (texte, bulles de repère)

@@ -1,0 +1,133 @@
+{
+ "unites": "glTF : mètres, Y vers le haut, +Z vers l'avant du support (côté goupille). Unreal : centimètres, X = X du glTF, Y = Z du glTF, Z = Y du glTF.",
+ "origine": "au sol, au milieu de la base du support",
+ "tige": {
+  "calibre": "NQ",
+  "diametre_exterieur_mm": 69.9,
+  "diametre_interieur_mm": 60.3,
+  "longueur_m": 1.2,
+  "axe": "Z du glTF (Y d'Unreal)"
+ },
+ "cles": {
+  "18 po": {
+   "maillage": "SM_Cle_A_Tuyau_18po_NQ",
+   "catalogue": "31025",
+   "angle_du_manche_deg": -0.7,
+   "sens": "positif : la tête descend vers le bout du support",
+   "manche": "descendu de 5.7 po dans la pente",
+   "tenue": "au repos par gravité",
+   "cle": {
+    "gltf_m": [
+     0.0975,
+     0.6727,
+     0
+    ],
+    "rotation_gltf_xyzw": [
+     0.7028,
+     0.7114,
+     0,
+     0
+    ],
+    "unreal_cm": {
+     "X": 9.75,
+     "Y": 0,
+     "Z": 67.27
+    }
+   },
+   "tige": {
+    "gltf_m": [
+     0.2905,
+     0.6785,
+     0
+    ],
+    "unreal_cm": {
+     "X": 29.05,
+     "Y": 0,
+     "Z": 67.85
+    },
+    "distance_du_bout_plie_po": 24.19,
+    "hauteur_de_l_axe_po": 26.71
+   }
+  },
+  "24 po": {
+   "maillage": "SM_Cle_A_Tuyau_24po_NQ",
+   "catalogue": "31030",
+   "angle_du_manche_deg": 1.38,
+   "sens": "positif : la tête descend vers le bout du support",
+   "manche": "descendu de 0.12 po dans la pente",
+   "tenue": "au repos par gravité",
+   "cle": {
+    "gltf_m": [
+     0.0351,
+     0.6851,
+     0
+    ],
+    "rotation_gltf_xyzw": [
+     0.7156,
+     0.6985,
+     0,
+     0
+    ],
+    "unreal_cm": {
+     "X": 3.51,
+     "Y": 0,
+     "Z": 68.51
+    }
+   },
+   "tige": {
+    "gltf_m": [
+     0.2905,
+     0.6827,
+     0
+    ],
+    "unreal_cm": {
+     "X": 29.05,
+     "Y": 0,
+     "Z": 68.27
+    },
+    "distance_du_bout_plie_po": 24.19,
+    "hauteur_de_l_axe_po": 26.88
+   }
+  },
+  "36 po": {
+   "maillage": "SM_Cle_A_Tuyau_36po_NQ",
+   "catalogue": "31035",
+   "angle_du_manche_deg": 0,
+   "sens": "positif : la tête descend vers le bout du support",
+   "manche": "contre la butée du haut",
+   "tenue": "bascule sans goupille : montrée tenue dans la chape du haut",
+   "cle": {
+    "gltf_m": [
+     0.142,
+     0.6908,
+     0
+    ],
+    "rotation_gltf_xyzw": [
+     0.7071,
+     0.7071,
+     0,
+     0
+    ],
+    "unreal_cm": {
+     "X": 14.2,
+     "Y": 0,
+     "Z": 69.08
+    }
+   },
+   "tige": {
+    "gltf_m": [
+     0.4834,
+     0.6962,
+     0
+    ],
+    "unreal_cm": {
+     "X": 48.34,
+     "Y": 0,
+     "Z": 69.62
+    },
+    "distance_du_bout_plie_po": 31.78,
+    "hauteur_de_l_axe_po": 27.41
+   }
+  }
+ }
+}

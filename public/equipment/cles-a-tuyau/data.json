@@ -25,6 +25,10 @@
     [
       "Textures",
       "Peinture rouge écaillée et rouille ; la marque « 18\" » reste la même sur toutes les grandeurs"
+    ],
+    [
+      "Export pour moteur de jeu",
+      "unreal/SM_Cles_A_Tuyau.glb (glTF binaire, mètres) : les neuf grandeurs, un maillage par grandeur à l'échelle 1, textures 2K partagées — voir docs/cles-unreal.md"
     ]
   ],
   "weights": [
