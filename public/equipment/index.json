@@ -17,6 +17,14 @@
       "status": "3D aux cotes du dessin 087 (juin 2011) : caisse de 48 × 39 1/2 × 54 po tôle par tôle, portes inclinées, tablettes à cases, tubes de base, oreilles de levage, barre de verrouillage, support de tube D-D (dessin 0102803) sur le dessus ; coffre ouvert avec les ajouts des photos"
     },
     {
+      "id": "core-knocker",
+      "name": "Core knocker NQ 15222420",
+      "manufacturer": "Machines Roger International",
+      "category": "Outil de carottage (assemblage soudé)",
+      "thumbnail": "equipment/core-knocker/thumbnail.webp",
+      "status": "3D d'après les plans 15222420, 15222405 et 3760014504 (2022-02-28) : tube de 16 1/4 po à poignée soudée, tige de frappe de 1 po rappelée par un ressort, bague, plaque de Ø 4 po ; sert à frapper les bouts de carotte coincés dans le ressort à carotte du tube carottier ; 33 mesures contrôlées contre les plans"
+    },
+    {
       "id": "cubex-mri-5200",
       "name": "Cubex / MRI 5200",
       "manufacturer": "Machines Roger International",
