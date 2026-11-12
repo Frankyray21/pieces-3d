@@ -52,6 +52,10 @@
   [
    "Support de tube D-D (0102803)",
    "17 1/2 po de haut, base de 8 × 3 po ; plaques d'acier 44W de 3/4 et 1/2 po"
+  ],
+  [
+   "Export pour moteur de jeu",
+   "coffre-ith.glb (glTF binaire, mètres) : caisse, portes, barre, tiroir et support en maillages séparés sur leurs pivots — voir docs/coffre-unreal.md"
   ]
  ],
  "weights": [
@@ -191,7 +195,8 @@
      1,
      "Barre de verrouillage (détail 3) : plat de 13 × 1 1/2 × 3/8 po à fente de 1/2 po, poignée en tige de 3/4 po de 6 × 3 po",
      {
-      "pnText": "Détail 3"
+      "pnText": "Détail 3",
+      "note": "Tourne à plat sur la porte gauche autour du boulon de son bout gauche : fermée, elle chevauche le joint ; tournée de 180°, elle libère les portes."
      }
     ],
     [
@@ -200,7 +205,7 @@
      1,
      "Fer angle 1/4 po, 2 × 2 po, aile de 3/4 po (repère 1 du détail 3)",
      {
-      "note": "Position sous la barre interprétée d'après la vue de face."
+      "note": "Interprété comme l'appui de la barre fermée, sur la porte gauche à 3 po du joint (vue de face)."
      }
     ],
     [
@@ -208,22 +213,26 @@
      "",
      1,
      "Plaque 1/4 po, 1 1/2 × 1 1/2 po, trou de 3/8 po (repère 2 du détail 3)",
-     {}
+     {
+      "note": "Interprétée comme la plaque de retenue sur la barre, au pivot."
+     }
     ],
     [
      "17",
      "",
      1,
      "Plaque 1/4 po, 1 1/2 × 2 po, trou de 3/8 po (repère 3 du détail 3)",
-     {}
+     {
+      "note": "Interprétée comme la plaque d'appui soudée à la porte gauche, sous le bout de la barre, au pivot."
+     }
     ],
     [
      "18",
      "",
      1,
-     "Autocollant Machines Roger International",
+     "Logo Machines Roger International, au bas du devant",
      {
-      "note": "D'après la photo, absent du dessin ; emplacement et proportions seulement."
+      "note": "Image du logo tirée du cartouche du dessin 0102803 ; autocollant visible sur la photo, absent du dessin 087. Taille et position estimées (20 po de large, centré sur le devant)."
      }
     ],
     [
@@ -234,6 +243,15 @@
      {
       "link": "P03",
       "note": "Position et orientation sur le coffre non cotées (aucun dessin ne les donne) : berceau en travers du coffre, à 3 po du bord gauche."
+     }
+    ],
+    [
+     "24",
+     "",
+     1,
+     "Boulon de 3/8 po : pivot de la barre de verrouillage, sur la porte gauche",
+     {
+      "note": "Le détail 3 cote les trous de 3/8 po sans détailler le boulon."
      }
     ]
    ]
@@ -361,7 +379,8 @@
      1,
      "Barre de verrouillage (détail 3) : plat de 13 × 1 1/2 × 3/8 po à fente de 1/2 po, poignée en tige de 3/4 po de 6 × 3 po",
      {
-      "pnText": "Détail 3"
+      "pnText": "Détail 3",
+      "note": "Tourne à plat sur la porte gauche autour du boulon de son bout gauche : fermée, elle chevauche le joint ; tournée de 180°, elle libère les portes."
      }
     ],
     [
@@ -370,7 +389,7 @@
      1,
      "Fer angle 1/4 po, 2 × 2 po, aile de 3/4 po (repère 1 du détail 3)",
      {
-      "note": "Position sous la barre interprétée d'après la vue de face."
+      "note": "Interprété comme l'appui de la barre fermée, sur la porte gauche à 3 po du joint (vue de face)."
      }
     ],
     [
@@ -378,22 +397,26 @@
      "",
      1,
      "Plaque 1/4 po, 1 1/2 × 1 1/2 po, trou de 3/8 po (repère 2 du détail 3)",
-     {}
+     {
+      "note": "Interprétée comme la plaque de retenue sur la barre, au pivot."
+     }
     ],
     [
      "17",
      "",
      1,
      "Plaque 1/4 po, 1 1/2 × 2 po, trou de 3/8 po (repère 3 du détail 3)",
-     {}
+     {
+      "note": "Interprétée comme la plaque d'appui soudée à la porte gauche, sous le bout de la barre, au pivot."
+     }
     ],
     [
      "18",
      "",
      1,
-     "Autocollant Machines Roger International",
+     "Logo Machines Roger International, au bas du devant",
      {
-      "note": "D'après la photo, absent du dessin ; emplacement et proportions seulement."
+      "note": "Image du logo tirée du cartouche du dessin 0102803 ; autocollant visible sur la photo, absent du dessin 087. Taille et position estimées (20 po de large, centré sur le devant)."
      }
     ],
     [
@@ -440,6 +463,15 @@
      {
       "link": "P03",
       "note": "Position et orientation sur le coffre non cotées (aucun dessin ne les donne) : berceau en travers du coffre, à 3 po du bord gauche."
+     }
+    ],
+    [
+     "24",
+     "",
+     1,
+     "Boulon de 3/8 po : pivot de la barre de verrouillage, sur la porte gauche",
+     {
+      "note": "Le détail 3 cote les trous de 3/8 po sans détailler le boulon."
      }
     ]
    ]

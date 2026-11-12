@@ -118,6 +118,39 @@ pièces (numéro, quantité, page du manuel).
   Sur le dessus, à gauche : support de tube D-D du dessin 0102803 (P03 :
   berceau en Y de 3/4 po, base de 8 × 3 po, gousset ; 17 1/2 po de haut), dont
   la position sur le coffre n'est cotée sur aucun dessin.
+  Logo Machines Roger (image du cartouche du dessin 0102803) au bas du devant.
+  Export pour moteur de jeu (Unreal Engine) : `scripts/export-coffre-jeu.mjs`
+  écrit `coffre-ith.glb`, un maillage par élément mobile sur son pivot (portes,
+  barre de verrouillage, tiroir) ; voir `docs/coffre-unreal.md`.
+  Essai interactif du fichier dans le navigateur :
+  `equipment/coffre-dd/essai.html` (clic sur la barre, les portes, le tiroir).
+
+- **Porte assemblée 1801020** (`porte-1801020`, Machines Roger International, plans
+  1801020 « PORTE ASSEMBLÉ » à l'échelle 1:16 et 15250402 « TREPIED » à l'échelle
+  1:10, du 2022-04-05) : porte grillagée sur trépied, 42 po de large, 88 3/8 po de
+  haut, pieds de 36 po. Cadre en tube de 1 1/2 po à coins d'onglet avec onze
+  anneaux et la patte du loquet (15250413), battant de 38 × 85 1/2 po en tube de
+  1 po avec grillage de 3/16 po au pas de 2 po, plaque du loquet et poignée
+  (15250400), trois pentures à souder de 6 po, deux plaques de butée, barrure à
+  tête d'interverrouillage (2210300), trépied à douilles boulonnées (P02). Les
+  cotes des plans sont reprises telles quelles ; le reste est relevé à l'échelle
+  sur les tracés vectoriels des PDF. Peinte en noir (couleur choisie pour le
+  modèle, les plans n'en précisent pas), visserie zinguée. Les masses des cartouches (19,74 lb et
+  5,42 lb) sont calculées à la densité par défaut de SolidWorks (1 g/cm³) : elles
+  donnent le volume de matière, que `node scripts/check-porte.mjs` compare à
+  celui du modèle parmi 51 contrôles (trépied à 0,1 %, porte à 2 % ; environ
+  155 lb en acier). Le modèle est fait de trois corps (`userData.body` : Cadre,
+  Battant, Verrou) : `cinematique.js` fait tourner le battant autour de l'axe
+  des pentures et glisser le verrou, et calcule la butée d'ouverture (107°,
+  contre le gousset du trépied) ; la page P03 les anime en trois temps.
+  **Unreal Engine** : `node scripts/export-porte.mjs` écrit trois maillages
+  statiques (`SM_Porte_Cadre`, `SM_Porte_Battant`, `SM_Porte_Verrou`, pivot à
+  l'origine de chaque fichier, une section par matériau, UV par boîte), le
+  fichier complet animé et la fiche des pivots dans
+  `public/equipment/porte-1801020/unreal/` ; FBX par
+  `tools/blender_porte_fbx.py` ; mode d'emploi dans `docs/porte-unreal.md`.
+  Page d'essai du fichier de jeu : `equipment/porte-1801020/essai.html` (clic
+  sur le verrou, puis sur le battant).
 
 - **Rack à outils 15083000** (`rack-outil`, Machines Roger International, plan
   d'assemblage soudé du 2021-08-31, une page, échelle 1:4) : plaque en U de
@@ -385,7 +418,9 @@ tools/extract_epiroc.py                     extraction du catalogue Epiroc (tabl
 tools/extract_stm1500*.py                   listes du manuel STM-1500 (brouillon, nettoyage, liens)
 tools/blender_render.py                     rendu Cycles d'un .glb (scripts/export-glb.mjs)
 scripts/export-anim.mjs                     foreuse STM-1500 animée en .glb (squelette et séquences, voir docs/animation-stm-1500.md)
+scripts/export-porte.mjs                    porte 1801020 en maillages statiques à pivot pour Unreal (voir docs/porte-unreal.md)
 tools/blender_fbx.py                        conversion du .glb animé en FBX pour Unreal Engine
+tools/blender_porte_fbx.py                  conversion des maillages de la porte 1801020 en FBX
 tools/ocr_pages.py, tools/ocr_bulles.py     OCR des planches (texte, bulles de repère)
 tools/atelier_review.py                     planches de relecture des textes lus
 tools/build_atelier.py                      bulles, donnees, entretien, consignes, schemas et systemes (.json)

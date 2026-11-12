@@ -13,7 +13,9 @@
     "check:3d": "node scripts/check-models.mjs --eq epiroc-ith && node scripts/check-models.mjs --eq epiroc-ith --from P064 --qty --max-tris 180000",
     "shots": "node scripts/shots.mjs",
     "export:glb": "node scripts/export-glb.mjs",
-    "export:anim": "node scripts/export-anim.mjs"
+    "export:anim": "node scripts/export-anim.mjs",
+    "export:porte": "node scripts/export-porte.mjs",
+    "check:porte": "node scripts/check-porte.mjs"
   },
   "dependencies": {
     "three": "^0.169.0"

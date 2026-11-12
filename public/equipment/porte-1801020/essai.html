@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Porte 1801020 — essai interactif</title>
+<style>
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #8a939c; font: 15px/1.4 system-ui, sans-serif; color: #14181c; }
+  canvas { display: block; touch-action: none; }
+  #panneau { position: fixed; left: 12px; top: 12px; max-width: min(340px, calc(100vw - 24px)); background: #ffffffe6; border-radius: 10px; padding: 12px 14px; box-shadow: 0 2px 10px #0003; }
+  #panneau h1 { font-size: 16px; margin: 0 0 4px; }
+  #panneau p { margin: 0 0 8px; }
+  #boutons { display: flex; flex-wrap: wrap; gap: 6px; }
+  button { font: inherit; padding: 6px 10px; border: 1px solid #9aa3ab; border-radius: 6px; background: #fff; cursor: pointer; }
+  button[aria-pressed="true"] { background: #b5121a; border-color: #b5121a; color: #fff; }
+  #etat { margin-top: 8px; font-size: 13px; color: #444; min-height: 1.4em; }
+</style>
+<!-- three.js : la copie du coffre à outils (pas de CDN). -->
+<script type="importmap">
+{ "imports": {
+  "three": "../coffre-dd/lib/three.module.min.js",
+  "three/addons/": "../coffre-dd/lib/"
+} }
+</script>
+</head>
+<body>
+<div id="panneau">
+  <h1>Porte assemblée 1801020 — essai interactif</h1>
+  <p>Cliquez sur le verrou (bouton noir de la barrure), puis sur le battant, ou servez-vous des boutons. Glissez pour tourner, molette pour le zoom.</p>
+  <div id="boutons"></div>
+  <div id="etat">Chargement…</div>
+</div>
+<script type="module">
+// Essai du fichier unreal/porte-1801020.glb tel qu'il est exporté pour Unreal Engine : le battant
+// tourne autour de sa propre origine (l'axe des pentures) et le verrou glisse le long de son axe,
+// avec les valeurs inscrites dans les « extras » du fichier (mouvement, axe, angle, course).
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+document.body.appendChild(renderer.domElement);
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x8a939c);
+scene.add(new THREE.HemisphereLight(0xffffff, 0x50555a, 2.4));
+const sun = new THREE.DirectionalLight(0xffffff, 2.2);
+sun.position.set(-2.5, 4, 5);
+scene.add(sun);
+scene.add(new THREE.GridHelper(8, 16, 0x6c747c, 0x7b848c));
+const camera = new THREE.PerspectiveCamera(38, 1, 0.05, 60);
+camera.position.set(-2.4, 1.8, 4.0);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.target.set(0, 1.1, 0.2);
+controls.enableDamping = true;
+controls.maxPolarAngle = Math.PI * 0.52;
+
+const NOMS = { SM_Porte_Verrou: 'Verrou', SM_Porte_Battant: 'Battant' };
+const DUREE = { SM_Porte_Verrou: 0.6, SM_Porte_Battant: 2.4 }; // secondes, comme les séquences du fichier
+const ORDRE = Object.keys(NOMS);
+const mobiles = new Map(); // nom → { node, base, axe, cible (0-1), t (0-1), bouton }
+const etat = document.querySelector('#etat');
+const dire = (texte) => { etat.textContent = texte; };
+
+/** Ce qui empêche le mouvement demandé, ou '' si rien. */
+function blocage(nom, ouvrir) {
+  if (nom === 'SM_Porte_Battant' && ouvrir && mobiles.get('SM_Porte_Verrou').t < 1) return 'Tirez d\'abord le verrou : sa languette est dans la tête d\'interverrouillage.';
+  if (nom === 'SM_Porte_Verrou' && !ouvrir && mobiles.get('SM_Porte_Battant').t > 0) return 'Refermez d\'abord le battant.';
+  return '';
+}
+
+function basculer(nom) {
+  const m = mobiles.get(nom);
+  const ouvrir = m.cible === 0;
+  const raison = blocage(nom, ouvrir);
+  if (raison) return dire(raison);
+  m.cible = ouvrir ? 1 : 0;
+  m.bouton.setAttribute('aria-pressed', String(ouvrir));
+  const e = m.node.userData;
+  dire(nom === 'SM_Porte_Verrou'
+    ? `Verrou : ${ouvrir ? 'tiré' : 'engagé'} (course de ${(e.course_m * 100).toFixed(2)} cm)`
+    : `Battant : ${ouvrir ? `ouverture à ${e.angle_ouvert_deg}° (butée à ${e.butee_deg}°)` : 'fermeture'}`);
+}
+
+new GLTFLoader().load('./unreal/porte-1801020.glb', (gltf) => {
+  scene.add(gltf.scene);
+  gltf.scene.traverse((o) => {
+    // Sans carte de reflets, un métal pur sortirait noir : rendu moins métallique, pour cet essai seulement.
+    if (o.isMesh) for (const mt of [o.material].flat()) mt.metalness = Math.min(mt.metalness, 0.35);
+    if (!o.userData.mouvement) return;
+    const axe = new THREE.Vector3(...({ X: [1, 0, 0], Y: [0, 1, 0], Z: [0, 0, 1] })[o.userData.axe_local]).applyQuaternion(o.quaternion);
+    // Boîte de l'élément dans son propre repère (ses maillages, sans ses enfants mobiles).
+    const boite = new THREE.Box3();
+    for (const c of o.isMesh ? [o] : o.children.filter((x) => x.isMesh)) { c.geometry.computeBoundingBox(); boite.union(c.geometry.boundingBox); }
+    mobiles.set(o.name, { node: o, base: { rot: o.rotation.y, pos: o.position.clone() }, axe, boite, cible: 0, t: 0 });
+  });
+  for (const nom of ORDRE) {
+    const b = document.createElement('button');
+    b.textContent = NOMS[nom];
+    b.setAttribute('aria-pressed', 'false');
+    b.onclick = () => basculer(nom);
+    mobiles.get(nom).bouton = b;
+    document.querySelector('#boutons').appendChild(b);
+  }
+  dire('Prêt. Commencez par le verrou.');
+  window.porte = { mobiles, basculer, camera }; // pour les essais automatisés
+}, undefined, (e) => dire(`Le fichier porte-1801020.glb ne se charge pas : ${e.message || e}`));
+
+// Clic sur un élément mobile (sans confondre avec un glissement de caméra).
+const ray = new THREE.Raycaster();
+let appui = null;
+renderer.domElement.addEventListener('pointerdown', (e) => { appui = [e.clientX, e.clientY]; });
+renderer.domElement.addEventListener('pointerup', (e) => {
+  if (!appui || Math.hypot(e.clientX - appui[0], e.clientY - appui[1]) > 6 || !mobiles.size) return;
+  ray.setFromCamera(new THREE.Vector2((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1), camera);
+  // Le battant est un grillage : on vise la boîte de chaque élément (dans son repère), pas ses fils.
+  // Si plusieurs boîtes sont visées, la plus petite l'emporte (le verrou, posé sur le battant).
+  let choix = null;
+  const cote = new THREE.Vector3();
+  for (const [nom, m] of mobiles) {
+    const local = ray.ray.clone().applyMatrix4(m.node.matrixWorld.clone().invert());
+    if (!local.intersectsBox(m.boite)) continue;
+    m.boite.getSize(cote);
+    const volume = cote.x * cote.y * cote.z;
+    if (!choix || volume < choix.volume) choix = { nom, volume };
+  }
+  if (choix) basculer(choix.nom);
+});
+
+function taille() {
+  renderer.setSize(innerWidth, innerHeight);
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+}
+addEventListener('resize', taille);
+taille();
+
+const horloge = new THREE.Clock();
+renderer.setAnimationLoop(() => {
+  const dt = Math.min(horloge.getDelta(), 0.05);
+  for (const [nom, m] of mobiles) {
+    m.t = THREE.MathUtils.clamp(m.t + Math.sign(m.cible - m.t) * dt / DUREE[nom], 0, 1);
+    const k = m.t * m.t * (3 - 2 * m.t); // départ et arrivée en douceur
+    const e = m.node.userData;
+    if (e.mouvement === 'rotation') m.node.rotation.y = m.base.rot + THREE.MathUtils.degToRad(e.angle_ouvert_deg) * k;
+    else m.node.position.copy(m.base.pos).addScaledVector(m.axe, e.course_m * k);
+  }
+  controls.update();
+  renderer.render(scene, camera);
+});
+</script>
+</body>
+</html>
