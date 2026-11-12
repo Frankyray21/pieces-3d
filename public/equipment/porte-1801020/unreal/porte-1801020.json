@@ -1,0 +1,275 @@
+{
+ "source": "Machines Roger International, plans 1801020 « PORTE ASSEMBLÉ » et 15250402 « TREPIED » (2022-04-05)",
+ "unites": {
+  "gltf": "mètres, Y vers le haut, +Z vers l'avant (côté où la porte s'ouvre), pentures du côté +X",
+  "unreal": "centimètres, Z vers le haut ; X = X du glTF, Y = Z du glTF, Z = Y du glTF (conversion de l'import glTF d'Unreal) : la porte s'ouvre vers +Y"
+ },
+ "triangles": 12032,
+ "materiaux": [
+  {
+   "nom": "M_Porte_Barrure_Corps",
+   "couleur": "#b8bcc0",
+   "metal": 0.85,
+   "rugosite": 0.5
+  },
+  {
+   "nom": "M_Porte_Barrure_Voyant",
+   "couleur": "#1e2023",
+   "metal": 0.75,
+   "rugosite": 0.32
+  },
+  {
+   "nom": "M_Porte_Cadre",
+   "couleur": "#b9bdc2",
+   "metal": 1,
+   "rugosite": 0.3
+  },
+  {
+   "nom": "M_Porte_Pentures",
+   "couleur": "#4f545a",
+   "metal": 0.85,
+   "rugosite": 0.42
+  },
+  {
+   "nom": "M_Porte_Trepied",
+   "couleur": "#b9bdc2",
+   "metal": 1,
+   "rugosite": 0.3
+  },
+  {
+   "nom": "M_Porte_Visserie",
+   "couleur": "#c6ccd2",
+   "metal": 1,
+   "rugosite": 0.34
+  },
+  {
+   "nom": "M_Porte_Battant",
+   "couleur": "#b9bdc2",
+   "metal": 1,
+   "rugosite": 0.3
+  },
+  {
+   "nom": "M_Porte_Grillage",
+   "couleur": "#c6ccd2",
+   "metal": 1,
+   "rugosite": 0.34
+  },
+  {
+   "nom": "M_Porte_Barrure_Barre",
+   "couleur": "#b9bdc2",
+   "metal": 1,
+   "rugosite": 0.3
+  },
+  {
+   "nom": "M_Porte_Barrure_Bouton",
+   "couleur": "#1e2023",
+   "metal": 0.75,
+   "rugosite": 0.32
+  }
+ ],
+ "corps": [
+  {
+   "nom": "SM_Porte_Cadre",
+   "fichier": "SM_Porte_Cadre.glb",
+   "parent": null,
+   "triangles": 6292,
+   "sommets": 7755,
+   "sections": [
+    "M_Porte_Barrure_Corps",
+    "M_Porte_Barrure_Voyant",
+    "M_Porte_Cadre",
+    "M_Porte_Pentures",
+    "M_Porte_Trepied",
+    "M_Porte_Visserie"
+   ],
+   "pivot_dans_le_parent": {
+    "gltf_m": {
+     "x": 0,
+     "y": 0,
+     "z": 0
+    },
+    "unreal_cm": {
+     "X": 0,
+     "Y": 0,
+     "Z": 0
+    }
+   },
+   "boite_autour_du_pivot": {
+    "gltf_m": {
+     "min": {
+      "x": -0.571,
+      "y": 0,
+      "z": -0.4572
+     },
+     "max": {
+      "x": 0.5652,
+      "y": 2.2765,
+      "z": 0.4572
+     }
+    },
+    "unreal_cm": {
+     "min": {
+      "X": -57.1,
+      "Y": -45.72,
+      "Z": 0
+     },
+     "max": {
+      "X": 56.52,
+      "Y": 45.72,
+      "Z": 227.65
+     }
+    }
+   }
+  },
+  {
+   "nom": "SM_Porte_Battant",
+   "fichier": "SM_Porte_Battant.glb",
+   "parent": "SM_Porte_Cadre",
+   "triangles": 4968,
+   "sommets": 6186,
+   "sections": [
+    "M_Porte_Barrure_Corps",
+    "M_Porte_Battant",
+    "M_Porte_Grillage",
+    "M_Porte_Pentures",
+    "M_Porte_Visserie"
+   ],
+   "pivot_dans_le_parent": {
+    "gltf_m": {
+     "x": 0.4889,
+     "y": 0,
+     "z": 0.0292
+    },
+    "unreal_cm": {
+     "X": 48.89,
+     "Y": 2.92,
+     "Z": 0
+    }
+   },
+   "boite_autour_du_pivot": {
+    "gltf_m": {
+     "min": {
+      "x": -0.9715,
+      "y": 0.0222,
+      "z": -0.0356
+     },
+     "max": {
+      "x": 0.0102,
+      "y": 2.1939,
+      "z": 0.0978
+     }
+    },
+    "unreal_cm": {
+     "min": {
+      "X": -97.15,
+      "Y": -3.56,
+      "Z": 2.22
+     },
+     "max": {
+      "X": 1.02,
+      "Y": 9.78,
+      "Z": 219.39
+     }
+    }
+   }
+  },
+  {
+   "nom": "SM_Porte_Verrou",
+   "fichier": "SM_Porte_Verrou.glb",
+   "parent": "SM_Porte_Battant",
+   "triangles": 772,
+   "sommets": 873,
+   "sections": [
+    "M_Porte_Barrure_Barre",
+    "M_Porte_Barrure_Bouton",
+    "M_Porte_Barrure_Corps"
+   ],
+   "pivot_dans_le_parent": {
+    "gltf_m": {
+     "x": -0.8313,
+     "y": 1.1587,
+     "z": -0.0102
+    },
+    "unreal_cm": {
+     "X": -83.13,
+     "Y": -1.02,
+     "Z": 115.87
+    }
+   },
+   "boite_autour_du_pivot": {
+    "gltf_m": {
+     "min": {
+      "x": -0.1681,
+      "y": -0.0345,
+      "z": 0.0066
+     },
+     "max": {
+      "x": 0.1449,
+      "y": 0.0351,
+      "z": 0.0787
+     }
+    },
+    "unreal_cm": {
+     "min": {
+      "X": -16.81,
+      "Y": 0.66,
+      "Z": -3.45
+     },
+     "max": {
+      "X": 14.49,
+      "Y": 7.87,
+      "Z": 3.51
+     }
+    }
+   }
+  }
+ ],
+ "mouvements": {
+  "battant": {
+   "liaison": "pivot autour de l'axe vertical des pentures (origine de SM_Porte_Battant)",
+   "gltf": "rotation autour de +Y, de 0 à 90° (butée calculée : 107.2°, contre le gousset avant du trépied)",
+   "unreal": "lacet (Yaw) de 0 à -90° ; butée à -107.2°",
+   "usage_deg": 90,
+   "butee_deg": 107.2
+  },
+  "verrou": {
+   "liaison": "glissière le long du battant, vers les pentures (X local de SM_Porte_Verrou)",
+   "course_m": 0.0254,
+   "course_cm": 2.54,
+   "note": "Course estimée d'après la lumière oblongue de la barre sur le plan. Verrou engagé à 0 : le battant ne doit pas tourner."
+  }
+ },
+ "sequences": [
+  {
+   "nom": "Porte_Ouvrir",
+   "duree_s": 3,
+   "images": 91,
+   "resume": "Le verrou se tire, puis le battant s'ouvre de 90°"
+  },
+  {
+   "nom": "Porte_Fermer",
+   "duree_s": 3,
+   "images": 91,
+   "resume": "Le battant se referme, puis le verrou s'engage"
+  },
+  {
+   "nom": "Verrou_Tirer",
+   "duree_s": 0.6,
+   "images": 19,
+   "resume": "Le verrou seul, de engagé à tiré"
+  },
+  {
+   "nom": "Battant_Ouvrir",
+   "duree_s": 2.4,
+   "images": 73,
+   "resume": "Le battant seul, de 0 à 90°, verrou tiré"
+  }
+ ],
+ "fps": 30,
+ "fichiers": {
+  "SM_Porte_Cadre.glb": 329160,
+  "SM_Porte_Battant.glb": 262332,
+  "SM_Porte_Verrou.glb": 40376,
+  "porte-1801020.glb": 643820
+ }
+}
