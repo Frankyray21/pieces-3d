@@ -367,6 +367,27 @@ pièces (numéro, quantité, page du manuel).
   fixations, invisibles, ne sont pas modélisées. Étiquettes dessinées sur un
   canevas (génériques : marque et numéros illisibles sur la photo).
 
+- **Poubelle DD 154011700** (`poubelle-dd`, Machines Roger International, plans
+  154011700 « POUBELLE » du 2024-01-17 à l'échelle 1:5 et 0103001 « COUVERCLE DE
+  POUBELLE POUR DRUM 50KG » du 2024-12-02 à l'échelle 1:4) : poubelle en acier
+  du chantier de forage au diamant et son couvercle. Poubelle (P02) : virole
+  roulée de Ø 14 1/4 × 27 po en plaque de 1/8 po, fond de Ø 14 po en retrait de
+  3/16 po, tenu par deux tenons de 3/16 po dans deux encoches de la virole et
+  soudé de 1/8 po des deux côtés, tout le tour. Couvercle (P03), en plaque de
+  1/16 po : dessus de Ø 15 po, jupe de Ø int. 14 5/8 po et 4 po de haut, anneau
+  d'appui à 1/8 po sous le dessus, poignée en bande pliée à 2 1/2 po du bord.
+  Les cotes des plans sont reprises ; ce qu'ils ne cotent pas (épaisseurs,
+  encoches, tenons, joint de la virole, hauteur de la jupe, anneau, poignée) est
+  relevé à l'échelle sur les tracés vectoriels des PDF. Aucun plan ne montre le
+  couvercle sur la poubelle : la pose de l'ensemble (P01) est déduite des cotes
+  (l'anneau porte sur le bord de la virole, la jupe descend autour avec 3/16 po
+  de jeu au rayon). La vue en coupe du site reprend le plan des deux coupes A-A
+  (X = 0). Couleur de surface non précisée aux plans : montrée en rouge Machines
+  Roger. Contrôle chiffré : `node scripts/check-poubelle-dd.mjs` compare 51
+  mesures du modèle aux plans, vérifie que les maillages sont fermés et calcule
+  les masses : 47,9 lb pour la poubelle et 6,85 lb pour le couvercle, pour
+  47,9 lb et 6,9 lb aux cartouches.
+
 La page d'accueil (adresse sans « # », ou le logo en haut à gauche) liste
 les équipements et permet de passer de l'un à l'autre. Les adresses du premier équipement restent `#F05` ; celles des autres
 sont préfixées : `#du311.P032`, `#du311-std.P050`, `#epiroc-ith.P019`.

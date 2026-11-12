@@ -13,6 +13,7 @@ import coffreModels from './models/coffre-dd/index.js';
 import coreKnockerModels from './models/core-knocker/index.js';
 import porteModels from './models/porte-1801020/index.js';
 import posteSecoursModels from './models/poste-secours/index.js';
+import poubelleModels from './models/poubelle-dd/index.js';
 import rackOutilModels from './models/rack-outil/index.js';
 import rackModels from './models/rack-tiges-dd/index.js';
 import stmModels from './models/stm-1500/index.js';
@@ -32,7 +33,7 @@ import { keyRows } from './ui/rows.js';
 const FEATURES = import.meta.glob(['./ui/features/*.js', '!./ui/features/_*.js'], { eager: true });
 
 // Modèles 3D disponibles par équipement (builders procéduraux).
-const MODELS = { 'cles-a-tuyau': clesModels, 'coffre-dd': coffreModels, 'core-knocker': coreKnockerModels, 'cubex-mri-5200': cubexModels, du311: du311Models, 'du311-std': du311StdModels, 'epiroc-ith': epirocModels, 'plancher-dd': plancherModels, 'porte-1801020': porteModels, 'poste-secours': posteSecoursModels, 'rack-outil': rackOutilModels, 'rack-tiges-dd': rackModels, 'stm-1500': stmModels, 'support-pipewrench': supportPipewrenchModels, 'table-a-core': tableCoreModels };
+const MODELS = { 'cles-a-tuyau': clesModels, 'coffre-dd': coffreModels, 'core-knocker': coreKnockerModels, 'cubex-mri-5200': cubexModels, du311: du311Models, 'du311-std': du311StdModels, 'epiroc-ith': epirocModels, 'plancher-dd': plancherModels, 'porte-1801020': porteModels, 'poste-secours': posteSecoursModels, 'poubelle-dd': poubelleModels, 'rack-outil': rackOutilModels, 'rack-tiges-dd': rackModels, 'stm-1500': stmModels, 'support-pipewrench': supportPipewrenchModels, 'table-a-core': tableCoreModels };
 // Vue d'ensemble légère : sous-assemblages simplifiés affichés d'abord, remplacés
 // un à un par leur version détaillée (facettes allégées) une fois la vue montrée.
 const OVERVIEW = { 'du311-std': du311StdOverview };

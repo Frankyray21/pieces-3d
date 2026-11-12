@@ -85,6 +85,14 @@
       "status": "3D d'après une photo du poste installé : cadre en tôle découpée d'environ 34 × 24 po à ruban réfléchissant rouge et blanc, armoire blanche à toit incliné et façade à croix rouge (trousse, 2 rince-œil), extincteur à poudre de 5 lb sur son crochet ; dimensions estimées, à mesurer sur place"
     },
     {
+      "id": "poubelle-dd",
+      "name": "Poubelle DD 154011700",
+      "manufacturer": "Machines Roger International",
+      "category": "Assemblage soudé en acier",
+      "thumbnail": "equipment/poubelle-dd/thumbnail.webp",
+      "status": "3D d'après les plans 154011700 (2024-01-17) et 0103001 (2024-12-02) : virole roulée de Ø 14 1/4 × 27 po en plaque de 1/8 po, fond à tenons en retrait de 3/16 po, soudé tout le tour ; couvercle de Ø 15 po en plaque de 1/16 po, à jupe, anneau d'appui et poignée ; masses du modèle égales à celles des plans (47,9 lb et 6,9 lb), 51 mesures contrôlées"
+    },
+    {
       "id": "rack-outil",
       "name": "Rack à outils 15083000",
       "manufacturer": "Machines Roger International",
