@@ -1,0 +1,316 @@
+{
+ "id": "porte-1801020",
+ "name": "Porte assemblée 1801020",
+ "manufacturer": "Machines Roger International",
+ "category": "Porte grillagée sur trépied",
+ "document": {
+  "title": "Plans 1801020 « PORTE ASSEMBLÉ » et 15250402 « TREPIED »",
+  "reference": "1801020",
+  "preparedBy": "Machines Roger International, dessiné par V. Chyhrynau, approuvé par G. Gélineau",
+  "date": "2022-04-05",
+  "sheets": 2,
+  "pagePattern": "pages/{sheet}.webp"
+ },
+ "specs": [
+  [
+   "Largeur hors tout",
+   "42 po (1 067 mm)"
+  ],
+  [
+   "Hauteur hors tout",
+   "88 3/8 po (2 245 mm)"
+  ],
+  [
+   "Pieds",
+   "36 po (914 mm), centrés sur le cadre"
+  ],
+  [
+   "Cadre 15250413",
+   "Tube carré de 1 1/2 po, paroi de 1/8 po (relevés à l'échelle)"
+  ],
+  [
+   "Battant 15250400",
+   "38 × 85 1/2 po, tube carré de 1 po, grillage de 3/16 po au pas de 2 po (relevés à l'échelle)"
+  ],
+  [
+   "Pentures",
+   "3 pentures à souder de 6 po ; joints à 13 1/8, 48 3/8 et 81 po du dessus des pieds"
+  ],
+  [
+   "Barrure 2210300",
+   "Verrou à coulisse avec tête d'interverrouillage (marquage Fortress Interlocks sur le dessin)"
+  ],
+  [
+   "Ouverture",
+   "Vers l'avant (côté des pentures et du loquet) ; butée calculée à 107° contre le gousset du trépied"
+  ],
+  [
+   "Soudures",
+   "1/8 po (symboles des plans)"
+  ],
+  [
+   "Tolérances générales",
+   "Fraction ± 1/16 po (± 1,5 mm), angle ± 1/2°"
+  ],
+  [
+   "Échelle des plans",
+   "1:16 (porte), 1:4 (coupe A-A), 1:10 (trépied)"
+  ],
+  [
+   "Couleur de surface",
+   "Non précisée aux plans"
+  ]
+ ],
+ "weights": [
+  [
+   "Cartouche du plan 1801020",
+   "19,74 lb — calculée à 1 g/cm³ (matériau non assigné), soit 546 po³ de matière"
+  ],
+  [
+   "Cartouche du plan 15250402",
+   "5,42 lb — même densité, soit 150 po³"
+  ],
+  [
+   "Estimation en acier (modèle)",
+   "environ 155 lb (70 kg), dont 43 lb pour le trépied"
+  ]
+ ],
+ "sheetTitles": {
+  "P01": "Plan 1801020 : porte assemblée — vues de face et de côté, coupe A-A, nomenclature",
+  "P02": "Plan 15250402 : trépied — vues de dessus, de côté et isométrique, nomenclature"
+ },
+ "root": "P01",
+ "assemblies": {
+  "P01": {
+   "title": "PORTE ASSEMBLÉ",
+   "titleFr": "Porte assemblée",
+   "pn": "1801020",
+   "sheets": [
+    "P01"
+   ],
+   "note": "Modèle 3D construit d'après le plan 1801020 (échelle 1:16) et le plan 15250402 du trépied. Cotes inscrites aux plans reprises telles quelles : 42 po de large, 88 3/8 po de haut, pieds de 36 po, joints des pentures à 13 1/8, 48 3/8 et 81 po du dessus des pieds, plaques de butée à 1/4 po de la face arrière du cadre. Tout le reste est relevé à l'échelle sur les tracés vectoriels du plan : tubes du cadre (1 1/2 po) et du battant (1 po), jeu de 1/2 po, grillage, anneaux, poignée, patte et formes de la barrure. Épaisseurs que le plan ne montre pas (plaque du loquet, patte : 1/4 po) estimées. Contrôle (node scripts/check-porte.mjs, 51 mesures) : le volume de matière du modèle est à 2 % de celui du plan. Les masses des cartouches (19,74 lb et 5,42 lb) correspondent à la densité par défaut de SolidWorks (1 g/cm³) : en acier, la porte pèserait environ 155 lb. La porte s'ouvre vers l'avant, du côté des pentures et du loquet : les plaques de butée sont derrière le battant. Montrée en acier nu, grillage et visserie zingués : les plans ne précisent pas de couleur. Les titres en majuscules sont ceux de la nomenclature ; les descriptions entre parenthèses décrivent la pièce d'après sa forme. Fichiers pour Unreal Engine : voir « Fonctionnement » et docs/porte-unreal.md.",
+   "parts": [
+    [
+     "1",
+     "15250400",
+     1,
+     "PORTE (battant grillagé de 38 × 85 1/2 po, tube carré de 1 po)",
+     {
+      "note": "Dimensions relevées à l'échelle : tube de 1 × 1 po, traverse à mi-hauteur, grillage soudé en fil de 3/16 po au pas de 2 po, plaque du loquet de 9 1/2 × 3 po, poignée en rond de 1/2 po. Jeu de 1/2 po tout le tour ; à fleur de la face avant du cadre (coupe A-A)."
+     }
+    ],
+    [
+     "2",
+     "15250402",
+     1,
+     "TREPIED (deux pieds de 36 po, traverse, deux douilles)",
+     {
+      "link": "P02",
+      "note": "Plan 15250402. Les montants du cadre entrent dans les douilles et y sont boulonnés."
+     }
+    ],
+    [
+     "3",
+     "15250413",
+     1,
+     "CADRE DE PORTE (tube carré de 1 1/2 po, 42 × 88 po)",
+     {
+      "note": "Tube et paroi relevés à l'échelle (coupe A-A) ; onze anneaux ovales de 2 × 1 1/4 po en rond de 1/4 po (trois en haut, quatre de chaque côté) et la patte du loquet, soudés au cadre."
+     }
+    ],
+    [
+     "4",
+     "15250417",
+     2,
+     "PLAQUE (butée triangulaire de 1/4 po, derrière le battant)",
+     {
+      "note": "Aux coins du haut et du bas, côté loquet ; à 1/4 po de la face arrière du cadre (coupe A-A), soudure d'angle de 1/8 po des deux côtés. Triangle de 2 13/16 po relevé à l'échelle."
+     }
+    ],
+    [
+     "5",
+     "2210300",
+     1,
+     "BARRURE PORTE STM-1500 (verrou à coulisse et tête d'interverrouillage)",
+     {
+      "note": "Le dessin porte le marquage « www.fortressinterlocks.com ». Coulisse, bouton et languette sur le battant ; tête et boîtier sur la patte du cadre. Formes simplifiées relevées sur le plan ; course de 1 po estimée d'après la lumière oblongue de la barre."
+     }
+    ],
+    [
+     "6",
+     "0105233",
+     3,
+     "PENTURE 6\" (penture à souder, graisseur en haut)",
+     {
+      "note": "Joints à 13 1/8, 48 3/8 et 81 po du dessus des pieds (cotes du plan). Fût de 0,8 po devant le jeu entre le battant et le cadre ; moitié basse sur le cadre, moitié haute sur le battant (répartition supposée)."
+     }
+    ],
+    [
+     "7",
+     "HNUT 0.5000-13-D-N",
+     2,
+     "ECROU (écrou 1/2-13 des boulons de douille)",
+     {}
+    ],
+    [
+     "8",
+     "HBOLT 0.5000-13x2.75x1.25-S",
+     2,
+     "BOLT (boulon 1/2-13 × 2 3/4 po, à travers la douille et le montant)",
+     {
+      "note": "À 5 7/8 po du plancher (relevé), tête devant."
+     }
+    ],
+    [
+     "9",
+     "HBOLT 0.3125-18x0.75x0.75-S",
+     4,
+     "BOLT (vis 5/16-18 × 3/4 po de la barrure)",
+     {
+      "note": "Fixent le socle de la barrure à la plaque du battant."
+     }
+    ],
+    [
+     "F",
+     "",
+     null,
+     "Fonctionnement : verrou et ouverture du battant (animation en trois temps)",
+     {
+      "link": "P03",
+      "pseudo": true,
+      "no3d": true
+     }
+    ]
+   ]
+  },
+  "P02": {
+   "title": "TREPIED",
+   "titleFr": "Trépied",
+   "pn": "15250402",
+   "sheets": [
+    "P02"
+   ],
+   "note": "Assemblage soudé d'après le plan 15250402 (échelle 1:10), cotes du plan : 42 po de large, douilles hautes de 7 3/8 po, à 17 1/4 po du bout des pieds, 1 1/2 po entre les deux plaques d'une douille, goussets à 9/16 po du bord du pied. Plaques de 3/8 po, pieds de 36 × 3 po et goussets en plat de 2 po à 45° relevés à l'échelle. Soudures d'angle de 1/8 po (symboles du plan), non montrées. Contrôle : le volume du modèle donne 5,43 lb à la densité du plan, pour 5,42 lb au cartouche ; en acier, environ 43 lb.",
+   "parts": [
+    [
+     "1",
+     "15250408",
+     3,
+     "PLAQUE (plaque de 36 × 3 × 3/8 po : deux pieds et la traverse)",
+     {
+      "note": "Trois plaques identiques ; la traverse relie les deux pieds à mi-longueur."
+     }
+    ],
+    [
+     "2",
+     "15250411",
+     4,
+     "PLAQUE (plaque de douille de 7 × 1 1/2 × 3/8 po, debout)",
+     {
+      "note": "Deux par montant, à 1 1/2 po l'une de l'autre ; percées pour le boulon de 1/2 po (trou non modélisé)."
+     }
+    ],
+    [
+     "3",
+     "15250412",
+     4,
+     "PLAQUE (gousset : plat de 2 × 3/8 po à 45°)",
+     {
+      "note": "Du flanc de la douille (4 1/2 po au-dessus du pied) au dessus du pied (4 1/2 po de la douille)."
+     }
+    ]
+   ]
+  },
+  "P03": {
+   "title": "FONCTIONNEMENT",
+   "titleFr": "Fonctionnement : verrou et ouverture",
+   "pn": "1801020",
+   "sheets": [
+    "P01"
+   ],
+   "note": "La même porte, animée en trois temps : verrou engagé, verrou tiré (course de 1 po, estimée), battant ouvert à 90° autour de l'axe des trois pentures. Ces mouvements ne sont pas cotés au plan : ils découlent de sa géométrie (pentures devant le jeu, plaques de butée derrière le battant, languette dans la tête d'interverrouillage). Le battant bute contre le gousset avant du trépied vers 107° (calculé). Ce sont les trois corps livrés pour Unreal Engine (cadre, battant, verrou) : fichiers dans equipment/porte-1801020/unreal/, mode d'emploi dans docs/porte-unreal.md.",
+   "parts": [
+    [
+     "1",
+     "15250400",
+     1,
+     "PORTE (battant grillagé de 38 × 85 1/2 po, tube carré de 1 po)",
+     {
+      "note": "Dimensions relevées à l'échelle : tube de 1 × 1 po, traverse à mi-hauteur, grillage soudé en fil de 3/16 po au pas de 2 po, plaque du loquet de 9 1/2 × 3 po, poignée en rond de 1/2 po. Jeu de 1/2 po tout le tour ; à fleur de la face avant du cadre (coupe A-A)."
+     }
+    ],
+    [
+     "2",
+     "15250402",
+     1,
+     "TREPIED (deux pieds de 36 po, traverse, deux douilles)",
+     {
+      "note": "Plan 15250402. Les montants du cadre entrent dans les douilles et y sont boulonnés."
+     }
+    ],
+    [
+     "3",
+     "15250413",
+     1,
+     "CADRE DE PORTE (tube carré de 1 1/2 po, 42 × 88 po)",
+     {
+      "note": "Tube et paroi relevés à l'échelle (coupe A-A) ; onze anneaux ovales de 2 × 1 1/4 po en rond de 1/4 po (trois en haut, quatre de chaque côté) et la patte du loquet, soudés au cadre."
+     }
+    ],
+    [
+     "4",
+     "15250417",
+     2,
+     "PLAQUE (butée triangulaire de 1/4 po, derrière le battant)",
+     {
+      "note": "Aux coins du haut et du bas, côté loquet ; à 1/4 po de la face arrière du cadre (coupe A-A), soudure d'angle de 1/8 po des deux côtés. Triangle de 2 13/16 po relevé à l'échelle."
+     }
+    ],
+    [
+     "5",
+     "2210300",
+     1,
+     "BARRURE PORTE STM-1500 (verrou à coulisse et tête d'interverrouillage)",
+     {
+      "note": "Le dessin porte le marquage « www.fortressinterlocks.com ». Coulisse, bouton et languette sur le battant ; tête et boîtier sur la patte du cadre. Formes simplifiées relevées sur le plan ; course de 1 po estimée d'après la lumière oblongue de la barre."
+     }
+    ],
+    [
+     "6",
+     "0105233",
+     3,
+     "PENTURE 6\" (penture à souder, graisseur en haut)",
+     {
+      "note": "Joints à 13 1/8, 48 3/8 et 81 po du dessus des pieds (cotes du plan). Fût de 0,8 po devant le jeu entre le battant et le cadre ; moitié basse sur le cadre, moitié haute sur le battant (répartition supposée)."
+     }
+    ],
+    [
+     "7",
+     "HNUT 0.5000-13-D-N",
+     2,
+     "ECROU (écrou 1/2-13 des boulons de douille)",
+     {}
+    ],
+    [
+     "8",
+     "HBOLT 0.5000-13x2.75x1.25-S",
+     2,
+     "BOLT (boulon 1/2-13 × 2 3/4 po, à travers la douille et le montant)",
+     {
+      "note": "À 5 7/8 po du plancher (relevé), tête devant."
+     }
+    ],
+    [
+     "9",
+     "HBOLT 0.3125-18x0.75x0.75-S",
+     4,
+     "BOLT (vis 5/16-18 × 3/4 po de la barrure)",
+     {
+      "note": "Fixent le socle de la barrure à la plaque du battant."
+     }
+    ]
+   ]
+  }
+ },
+ "documents": []
+}

@@ -53,6 +53,14 @@
       "status": "3D de la procédure (juillet 2026) : plancher 16 × 32 pi pièce par pièce, blocages, cage, marches, garde-corps, plancher secondaire, démantèlement et critères de choix"
     },
     {
+      "id": "porte-1801020",
+      "name": "Porte assemblée 1801020",
+      "manufacturer": "Machines Roger International",
+      "category": "Porte grillagée sur trépied",
+      "thumbnail": "equipment/porte-1801020/thumbnail.webp",
+      "status": "3D d'après les plans 1801020 et 15250402 (2022-04-05) : cadre de 42 × 88 3/8 po sur trépied, battant grillagé, 3 pentures, barrure à interverrouillage ; battant et verrou animés, fichiers prêts pour Unreal Engine (cadre, battant, verrou, pivot sur l'axe des pentures)"
+    },
+    {
       "id": "rack-outil",
       "name": "Rack à outils 15083000",
       "manufacturer": "Machines Roger International",
