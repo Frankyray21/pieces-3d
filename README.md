@@ -122,6 +122,8 @@ pièces (numéro, quantité, page du manuel).
   Export pour moteur de jeu (Unreal Engine) : `scripts/export-coffre-jeu.mjs`
   écrit `coffre-ith.glb`, un maillage par élément mobile sur son pivot (portes,
   barre de verrouillage, tiroir) ; voir `docs/coffre-unreal.md`.
+  Sur le côté gauche : boîte à clés du dessin Foresco C16062863 (P04), placée
+  d'après une photo (vers le bas du côté, à mi-profondeur).
   Tubes de base creux, bouts ouverts pour les fourches. Premier contenu de la
   liste de matériel du coffre 629 (calibre N) dans le coffre ouvert : deux têtes
   NU Excore, l'overshot Excore II, core lifters, core lifter cases, stop rings

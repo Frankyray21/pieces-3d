@@ -38,6 +38,7 @@ Epiroc du contenu), 1 texture.
 | `SM_Coffre_Porte_D` | bas de la ligne de pentures droite | rotation autour de Y local, 0 à +110° |
 | `SM_Coffre_Tiroir` | milieu du bas de la façade | translation sur Z local, course 0,33 m |
 | `SM_Coffre_Support_Tube` | sous la base du support | fixe (dessin 0102803), séparé pour pouvoir le déplacer ou l'enlever |
+| `SM_Coffre_Boite_Cle` | haut de la plaque, contre le côté gauche | fixe (dessin Foresco C16062863, placé d'après une photo), séparé pour pouvoir le déplacer |
 | `SM_Contenu_…` (12 maillages) | centre de chaque pièce | contenu du coffre, objets à prendre : têtes Excore (2), overshot Excore II, core lifters (4), core lifter cases (2), stop rings (2), landing ring ; numéro de pièce dans les `extras` |
 
 Chaque nœud porte ces valeurs dans ses `extras` glTF (`mouvement`,

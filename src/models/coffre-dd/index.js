@@ -6,6 +6,8 @@
 // crochets, autocollant) viennent des photos ; le contenu n'est pas modélisé.
 // Sur le dessus, à gauche : support de tube D-D du dessin 0102803 (P03) ; sa
 // position et son orientation sur le coffre ne figurent sur aucun dessin.
+// Sur le côté gauche : boîte à clés du dessin Foresco C16062863 (P04), placée
+// d'après une photo du coffre (vers le bas du côté, à mi-profondeur), non cotée.
 // Repère : X largeur, Y vers le haut, +Z côté portes.
 
 import epiroc from '../epiroc-ith/index.js';
@@ -299,6 +301,34 @@ function P03(api) {
 }
 
 /**
+ * Boîte à clés (dessin Foresco C16062863 « BOITE CLE ») : plaque en trapèze de
+ * 9 3/16 po au haut et 4 po de haut, deux cornières en V qui forment avec elle
+ * deux glissières inclinées ; 2 1/4 po de profond hors tout.
+ * Repère : plaque dans le plan XY, dos en z = 0, haut en y = 0.
+ * L'épaisseur (1/4 po), la largeur du bas et l'angle sont mesurés sur le dessin à l'échelle.
+ */
+function P04(api) {
+  const S = api.S;
+  const top = 9.1875 / 2, bot = 2.285, hgt = 4, t = 0.25, y0 = -0.5625, deep = 2;
+  const k = (top - bot) / hgt; // pente des bords
+  const xo = (y) => -(top + y * k); // bord gauche de la plaque à la hauteur y
+  const mm = (pts) => pts.map(([x, y]) => [x * IN, y * IN]);
+  api.part('1', S.at(S.extrude(mm([[-top, 0], [top, 0], [bot, -hgt], [-bot, -hgt]]), t * IN, 'red'), [0, 0, (t / 2) * IN]), [0, 0, -0.08]);
+  const th = t * Math.hypot(1, k), face = -xo(-hgt); // épaisseur et largeur de face mesurées à l'horizontale
+  for (const [ref, s] of [['2', 1], ['3', -1]]) {
+    const wall = [[xo(y0), y0], [xo(y0) + th, y0], [xo(-hgt) + th, -hgt], [xo(-hgt), -hgt]];
+    const front = [[xo(y0), y0], [xo(y0) + face, y0], [xo(-hgt) + face, -hgt], [xo(-hgt), -hgt]];
+    const sx = (pts) => mm(pts.map(([x, y]) => [s * x, y]));
+    const g = S.group(
+      S.at(S.extrude(sx(wall), (deep - t) * IN, 'red'), [0, 0, (t + (deep - t) / 2) * IN]),
+      S.at(S.extrude(sx(front), t * IN, 'red'), [0, 0, (deep + t / 2) * IN]),
+    );
+    api.part(ref, g, [s * -0.07, 0, 0.08]);
+  }
+  return { view: { dir: [0.7, 0.5, 1.2] } };
+}
+
+/**
  * Coffre complet. open : angle d'ouverture des portes [gauche, droite] en
  * radians ; extras : ajouts visibles sur la photo du coffre ouvert.
  */
@@ -360,6 +390,11 @@ export function build(api, open, extras) {
   const sup = api.sub('P03', { inPlace: true });
   sup.rotation.y = Math.PI / 2;
   put('23', S.at(sup, [-W / 2 + 3 * IN, H, -D / 2 + 8 * IN]), [-0.25, 0.9, 0]);
+
+  // Boîte à clés sur le côté gauche du coffre, vers le bas (d'après la photo), glissières ouvertes vers le haut.
+  const box = api.sub('P04', { inPlace: true });
+  box.rotation.y = -Math.PI / 2;
+  put('25', S.at(box, [-W / 2, Y0 + 20 * IN, 2 * IN]), [-0.5, 0, 0]);
 
   put('18', S.at(decal(api), [0, Y0 + (YK - Y0) / 2, D / 2]), [0, 0, 0.9]);
   if (!extras) return;
@@ -426,7 +461,8 @@ export const RIG = {
   drawer: [DRAWER.x, YB - T / 2 - DRAWER.h - 0.006, DRAWER.zf], // origine du tiroir (façade)
   drawerTravel: DRAWER.d - 0.05,
   support: [-W / 2 + 3 * IN, H, -D / 2 + 8 * IN],
+  keyBox: [-W / 2, Y0 + 20 * IN, 2 * IN],
   size: { W, D, H, Y0, YK, ZT, T, L, TILT },
 };
 
-export default { P01, P02, P03, ...EPIROC };
+export default { P01, P02, P03, P04, ...EPIROC };

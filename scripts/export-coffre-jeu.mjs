@@ -46,6 +46,8 @@ const ELEMENTS = [
     extras: { role: 'tiroir', mouvement: 'translation', axe_local: 'Z', course_m: +RIG.drawerTravel.toFixed(3) } },
   { name: 'SM_Coffre_Support_Tube', pivot: T(RIG.support), parts: ref('23'),
     extras: { role: 'support de tube D-D (dessin 0102803), fixe', origine: 'sous la base du support' } },
+  { name: 'SM_Coffre_Boite_Cle', pivot: T(RIG.keyBox), parts: ref('25'),
+    extras: { role: 'boîte à clés (dessin C16062863), fixe', origine: 'haut de la plaque, contre le côté gauche' } },
 ];
 
 // Contenu du coffre (liste de matériel) : un maillage par pièce, origine au centre de la pièce.
