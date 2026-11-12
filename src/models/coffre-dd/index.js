@@ -8,6 +8,14 @@
 // position et son orientation sur le coffre ne figurent sur aucun dessin.
 // Repère : X largeur, Y vers le haut, +Z côté portes.
 
+import epiroc from '../epiroc-ith/index.js';
+import { reuse } from '../reuse.js';
+
+// Contenu du coffre (liste de matériel du coffre 629, calibre N) : outils du
+// catalogue Epiroc repris tels quels — carottier NU Excore (P076), tête (P077),
+// overshot Excore II (P080) et leurs sous-assemblages.
+const EPIROC = reuse(epiroc, { E076: 'P076', E077: 'P077', E080: 'P080', E098: 'P098', E100: 'P100', E096: 'P096' });
+
 const IN = 0.0254;
 const W = 48 * IN, D = 39.5 * IN; // largeur, profondeur (vue de côté)
 const Y0 = 4 * IN; // dessous de la caisse, posée sur les tubes 4 × 4 × 1/4
@@ -50,9 +58,19 @@ function side(S, s) {
   return S.group(cheek(S, prof, T / 2, 'red', s * (W / 2 - T / 4)), cheek(S, profIn, T / 2, 'white', s * (W / 2 - (3 * T) / 4)));
 }
 
-/** Tube de base 4 × 4 × 1/4 po, bouts fermés, d'avant en arrière. */
+/**
+ * Tube de base 4 × 4 × 1/4 po, d'avant en arrière, soudé sous le fond. Bouts
+ * ouverts pour y glisser les fourches (le dessin 087 demande de les fermer).
+ */
 function baseTube(S) {
-  return S.box(Y0, Y0, D, 'red', { r: 0.009, pos: [0, Y0 / 2, 0] });
+  const a = Y0, t = 0.25 * IN, o = (a - t) / 2;
+  const tube = S.merged([
+    S.box(a, t, D, 'red', { pos: [0, t / 2, 0] }), S.box(a, t, D, 'red', { pos: [0, a - t / 2, 0] }),
+    S.box(t, a - 2 * t, D, 'red', { pos: [o, a / 2, 0] }), S.box(t, a - 2 * t, D, 'red', { pos: [-o, a / 2, 0] }),
+  ], 'red');
+  // Cordons de soudure le long des deux arêtes du haut, contre le fond de la caisse.
+  const z = D / 2 - 0.02;
+  return S.group(tube, ...[-1, 1].map((s) => S.weld([[s * (a / 2 + 0.002), a - 0.003, -z], [s * (a / 2 + 0.002), a - 0.003, z]], 0.006, 'red')));
 }
 
 /** Oreille de levage (détail 1) : plaque de 6 × 4 po, rond de 3 1/2 po, trou de 2 1/2 po. */
@@ -351,6 +369,43 @@ export function build(api, open, extras) {
   }
   put('21', S.at(basket(S), [W / 2 - T - 0.105, Y0 + T, D / 2 - T - 0.15]), [0, 0.15, 1.2]);
   put('22', onDoor(hookPlate(S), -1, aG), out(0.4, dxG));
+  contents(api, put);
+}
+
+/**
+ * Premières pièces de la liste de matériel du coffre 629 (calibre N), posées
+ * dans le coffre. L'emplacement de chaque pièce n'est pas documenté : têtes et
+ * overshot couchés sur le fond, petites pièces dans les cases de la tablette du bas.
+ */
+function contents(api, put) {
+  const { S, THREE } = api;
+  /** Pose un objet centré en x et z, appuyé en y ; debout : son axe (X) mis à la verticale. */
+  const place = (obj, [x, y, z], debout = false) => {
+    obj.updateMatrixWorld(true);
+    const box = new THREE.Box3().setFromObject(obj);
+    const c = box.getCenter(new THREE.Vector3()), size = box.getSize(new THREE.Vector3());
+    const g = S.group(obj);
+    obj.position.sub(c);
+    if (debout) g.rotation.z = Math.PI / 2;
+    g.position.set(x, y + (debout ? size.x : size.y) / 2, z);
+    return g;
+  };
+  const floor = Y0 + T, shelf = YB;
+  // Deux têtes Excore complètes et l'overshot pump-in, couchés sur le fond.
+  put('30', place(api.sub('E077', { quality: 0.5 }), [-0.14, floor, -0.02]), [0, 0.1, 1.5]);
+  put('30', place(api.sub('E077', { quality: 0.5 }), [-0.14, floor, 0.1]), [0, 0.25, 1.5]);
+  put('31', place(api.sub('E080', { quality: 0.5 }), [-0.14, floor, 0.24]), [0, 0.4, 1.5]);
+  // Petites pièces du carottier NU Excore, tirées de son modèle (repères de la page P076).
+  const barrel = api.sub('E076', { quality: 0.5 });
+  const piece = (ref) => barrel.userData.parts.find((o) => o.userData.partRef === ref);
+  const row = (ref, src, n, x0, z, dx) => {
+    for (let i = 0; i < n; i++) put(ref, place(i ? piece(src).clone() : piece(src), [x0 + i * dx, shelf, z], true), [0, 0.1, 0.9]);
+  };
+  const zc = ZB + SH_D / 2;
+  row('32', '14', 4, -0.12, zc + 0.06, 0.08); // core lifters
+  row('33', '15', 2, -0.08, zc - 0.07, 0.16); // core lifter cases
+  row('34', '13', 2, 0.29, zc + 0.06, 0.1); // stop rings
+  row('35', '9', 1, 0.34, zc - 0.07, 0); // landing ring
 }
 
 /** Coffre fermé, tôle par tôle (dessin 087). */
@@ -374,4 +429,4 @@ export const RIG = {
   size: { W, D, H, Y0, YK, ZT, T, L, TILT },
 };
 
-export default { P01, P02, P03 };
+export default { P01, P02, P03, ...EPIROC };

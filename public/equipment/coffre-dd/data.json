@@ -39,7 +39,7 @@
   ],
   [
    "Base",
-   "2 tubes 4 × 4 × 1/4 po à 36 po d'entraxe, bouts fermés"
+   "2 tubes 4 × 4 × 1/4 po à 36 po d'entraxe, soudés sous le fond, bouts ouverts pour les fourches (fermés au dessin)"
   ],
   [
    "Levage",
@@ -154,10 +154,10 @@
      "10",
      "",
      2,
-     "Tube de base 4 × 4 × 1/4 po, 39 1/2 po de long, à 36 po d'entraxe",
+     "Tube de base 4 × 4 × 1/4 po, 39 1/2 po de long, à 36 po d'entraxe, soudé sous le fond",
      {
       "pnText": "Tubing 4 × 4 × 1/4",
-      "note": "Fermer les bouts."
+      "note": "Bouts montrés ouverts pour le passage des fourches (ouverture intérieure de 3 1/2 po) ; le dessin 087 indique « Fermer les bouts »."
      }
     ],
     [
@@ -258,14 +258,14 @@
   },
   "P02": {
    "title": "Coffre ouvert",
-   "titleFr": "Coffre ouvert : tablettes et ajouts de la photo",
+   "titleFr": "Coffre ouvert : tablettes, ajouts de la photo et premier matériel",
    "pn": "087",
    "sheets": [
     "P03",
     "P01",
     "P04"
    ],
-   "note": "Modèle 3D aux cotes du dessin 087 « Coffre à outil ITH » (M.R.I. Inc., D. Côté, juin 2011) : tôles du plan de coupes, trois vues et détails 1 à 3. Le dessin ne donne ni l'épaisseur des tôles ni le détail des pentures (estimés) ; le montage du pivot de la barre de verrouillage (repères 1 à 3 du détail 3) est interprété. Peinture d'après les photos : rouge à l'extérieur, blanc à l'intérieur. Le tiroir, le panier et le support à crochets sont des ajouts visibles sur la photo du coffre ouvert, absents du dessin (dimensions estimées). Le contenu du coffre n'est pas modélisé. Le support de tube D-D (dessin 0102803) est posé sur le dessus, à gauche ; sa position exacte n'est pas cotée.",
+   "note": "Modèle 3D aux cotes du dessin 087 « Coffre à outil ITH » (M.R.I. Inc., D. Côté, juin 2011) : tôles du plan de coupes, trois vues et détails 1 à 3. Le dessin ne donne ni l'épaisseur des tôles ni le détail des pentures (estimés) ; le montage du pivot de la barre de verrouillage (repères 1 à 3 du détail 3) est interprété. Peinture d'après les photos : rouge à l'extérieur, blanc à l'intérieur. Le tiroir, le panier et le support à crochets sont des ajouts visibles sur la photo du coffre ouvert, absents du dessin (dimensions estimées). Contenu : premières pièces de la liste de matériel du coffre 629 en calibre N (repères 30 à 35 : deux têtes Excore, l'overshot pump-in, core lifters, core lifter cases, stop rings, landing ring), reprises du catalogue Epiroc et placées de façon plausible ; le reste de la liste n'est pas encore modélisé. Le support de tube D-D (dessin 0102803) est posé sur le dessus, à gauche ; sa position exacte n'est pas cotée.",
    "parts": [
     [
      "1",
@@ -338,10 +338,10 @@
      "10",
      "",
      2,
-     "Tube de base 4 × 4 × 1/4 po, 39 1/2 po de long, à 36 po d'entraxe",
+     "Tube de base 4 × 4 × 1/4 po, 39 1/2 po de long, à 36 po d'entraxe, soudé sous le fond",
      {
       "pnText": "Tubing 4 × 4 × 1/4",
-      "note": "Fermer les bouts."
+      "note": "Bouts montrés ouverts pour le passage des fourches (ouverture intérieure de 3 1/2 po) ; le dessin 087 indique « Fermer les bouts »."
      }
     ],
     [
@@ -472,6 +472,60 @@
      "Boulon de 3/8 po : pivot de la barre de verrouillage, sur la porte gauche",
      {
       "note": "Le détail 3 cote les trous de 3/8 po sans détailler le boulon."
+     }
+    ],
+    [
+     "30",
+     "3760016030",
+     2,
+     "Excore head assembly complete (backin) — tête NU Excore complète",
+     {
+      "note": "Liste de matériel du coffre 629, calibre N. Modèle repris du catalogue Epiroc (page P077) ; emplacement dans le coffre non documenté."
+     }
+    ],
+    [
+     "31",
+     "3760016279",
+     1,
+     "Excore pump-in overshot assembly — overshot NU Excore II",
+     {
+      "note": "Liste de matériel du coffre 629, calibre N. Modèle repris du catalogue Epiroc (page P080) ; emplacement dans le coffre non documenté."
+     }
+    ],
+    [
+     "32",
+     "3760006241",
+     4,
+     "Core lifter",
+     {
+      "note": "Liste de matériel du coffre 629, calibre N. Modèle repris du catalogue Epiroc (page P076, repère 14) ; emplacement dans le coffre non documenté."
+     }
+    ],
+    [
+     "33",
+     "3760006242",
+     2,
+     "Core lifter case",
+     {
+      "note": "Liste de matériel du coffre 629, calibre N. Modèle repris du catalogue Epiroc (page P076, repère 15) ; emplacement dans le coffre non documenté."
+     }
+    ],
+    [
+     "34",
+     "3760006240",
+     2,
+     "Stop ring",
+     {
+      "note": "Liste de matériel du coffre 629, calibre N. Modèle repris du catalogue Epiroc (page P076, repère 13) ; emplacement dans le coffre non documenté."
+     }
+    ],
+    [
+     "35",
+     "3760006243",
+     1,
+     "Landing ring",
+     {
+      "note": "Liste de matériel du coffre 629, calibre N. Modèle repris du catalogue Epiroc (page P076, repère 9) ; emplacement dans le coffre non documenté."
      }
     ]
    ]

@@ -122,6 +122,10 @@ pièces (numéro, quantité, page du manuel).
   Export pour moteur de jeu (Unreal Engine) : `scripts/export-coffre-jeu.mjs`
   écrit `coffre-ith.glb`, un maillage par élément mobile sur son pivot (portes,
   barre de verrouillage, tiroir) ; voir `docs/coffre-unreal.md`.
+  Tubes de base creux, bouts ouverts pour les fourches. Premier contenu de la
+  liste de matériel du coffre 629 (calibre N) dans le coffre ouvert : deux têtes
+  NU Excore, l'overshot Excore II, core lifters, core lifter cases, stop rings
+  et landing ring, repris des modèles Epiroc (`reuse`).
   Essai interactif du fichier dans le navigateur :
   `equipment/coffre-dd/essai.html` (clic sur la barre, les portes, le tiroir).
 

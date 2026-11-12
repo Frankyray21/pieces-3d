@@ -48,6 +48,16 @@ const ELEMENTS = [
     extras: { role: 'support de tube D-D (dessin 0102803), fixe', origine: 'sous la base du support' } },
 ];
 
+// Contenu du coffre (liste de matériel) : un maillage par pièce, origine au centre de la pièce.
+const CONTENU = { 30: ['Tete_Excore', '3760016030'], 31: ['Overshot_Excore_II', '3760016279'], 32: ['Core_Lifter', '3760006241'], 33: ['Core_Lifter_Case', '3760006242'], 34: ['Stop_Ring', '3760006240'], 35: ['Landing_Ring', '3760006243'] };
+for (const [r, [nom, pn]] of Object.entries(CONTENU)) {
+  ref(r).forEach((obj, i, all) => {
+    const c = new THREE.Box3().setFromObject(obj).getCenter(new THREE.Vector3());
+    ELEMENTS.push({ name: `SM_Contenu_${nom}${all.length > 1 ? `_${i + 1}` : ''}`, pivot: T(c.toArray()), parts: [obj],
+      extras: { role: 'contenu du coffre, objet à prendre', numero_de_piece: pn, calibre: 'N' } });
+  });
+}
+
 // Matériaux PBR simples, un par couleur de la palette.
 const NAMES = { red: 'M_Coffre_Rouge', white: 'M_Coffre_Blanc', black: 'M_Coffre_Noir', logo: 'M_Coffre_Logo' };
 const materials = new Map();
