@@ -9,7 +9,7 @@
   "reference": "087",
   "preparedBy": "M.R.I. Inc., dessiné par D. Côté",
   "date": "2011-06",
-  "sheets": 4,
+  "sheets": 5,
   "pagePattern": "pages/{sheet}.webp"
  },
  "specs": [
@@ -54,6 +54,10 @@
    "17 1/2 po de haut, base de 8 × 3 po ; plaques d'acier 44W de 3/4 et 1/2 po"
   ],
   [
+   "Boîte à clés (C16062863)",
+   "9 3/16 po de large, 4 po de haut, 2 1/4 po de profond ; plaque d'acier 44W et deux cornières"
+  ],
+  [
    "Export pour moteur de jeu",
    "coffre-ith.glb (glTF binaire, mètres) : caisse, portes, barre, tiroir et support en maillages séparés sur leurs pivots — voir docs/coffre-unreal.md"
   ]
@@ -62,13 +66,18 @@
   [
    "Support de tube D-D (poids inscrit au dessin 0102803)",
    "2,42 lb"
+  ],
+  [
+   "Boîte à clés (poids inscrit au dessin C16062863)",
+   "4,0 lb"
   ]
  ],
  "sheetTitles": {
   "P01": "Dessin 087 : plan de coupes, vues et détails 1 à 3",
   "P02": "Photo : coffre fermé",
   "P03": "Photo : coffre ouvert",
-  "P04": "Dessin 0102803 : support de tube D-D"
+  "P04": "Dessin 0102803 : support de tube D-D",
+  "P05": "Dessin Foresco C16062863 : boîte à clés"
  },
  "root": "P01",
  "assemblies": {
@@ -79,9 +88,10 @@
    "sheets": [
     "P01",
     "P02",
-    "P04"
+    "P04",
+    "P05"
    ],
-   "note": "Modèle 3D aux cotes du dessin 087 « Coffre à outil ITH » (M.R.I. Inc., D. Côté, juin 2011) : tôles du plan de coupes, trois vues et détails 1 à 3. Le dessin ne donne ni l'épaisseur des tôles ni le détail des pentures (estimés) ; le montage du pivot de la barre de verrouillage (repères 1 à 3 du détail 3) est interprété. Peinture d'après les photos : rouge à l'extérieur, blanc à l'intérieur. La vue éclatée sépare les tôles et dégage les tablettes. Le support de tube D-D (dessin 0102803) est posé sur le dessus, à gauche ; sa position exacte n'est pas cotée.",
+   "note": "Modèle 3D aux cotes du dessin 087 « Coffre à outil ITH » (M.R.I. Inc., D. Côté, juin 2011) : tôles du plan de coupes, trois vues et détails 1 à 3. Le dessin ne donne ni l'épaisseur des tôles ni le détail des pentures (estimés) ; le montage du pivot de la barre de verrouillage (repères 1 à 3 du détail 3) est interprété. Peinture d'après les photos : rouge à l'extérieur, blanc à l'intérieur. La vue éclatée sépare les tôles et dégage les tablettes. Le support de tube D-D (dessin 0102803) est posé sur le dessus, à gauche ; sa position exacte n'est pas cotée. La boîte à clés (dessin Foresco C16062863) est posée vers le bas du côté gauche, d'après une photo ; sa position exacte n'est pas cotée.",
    "parts": [
     [
      "1",
@@ -253,6 +263,43 @@
      {
       "note": "Le détail 3 cote les trous de 3/8 po sans détailler le boulon."
      }
+    ],
+    [
+     "25",
+     "C16062863",
+     1,
+     "BOITE CLE (boîte à clés), sur le côté gauche",
+     {
+      "link": "P04",
+      "note": "Placée d'après une photo du coffre : vers le bas du côté gauche, à mi-profondeur (haut de la plaque à environ 20 po du fond). Position non cotée."
+     }
+    ],
+    [
+     "26",
+     "",
+     1,
+     "Crochet double sur le côté gauche (plaque et deux tiges de 1/2 po)",
+     {
+      "note": "Ajouté à la demande du client ; aucun dessin : forme, dimensions et position estimées."
+     }
+    ],
+    [
+     "36",
+     "",
+     1,
+     "Marteau",
+     {
+      "note": "Liste de matériel du coffre 629. Aucun dessin : forme générique, dimensions estimées. Suspendu dans la boîte à clés, comme sur la photo."
+     }
+    ],
+    [
+     "38",
+     "",
+     1,
+     "Masse de 10 lbs",
+     {
+      "note": "Liste de matériel du coffre 629. Aucun dessin : forme générique, dimensions estimées. Suspendue au crochet du côté gauche."
+     }
     ]
    ]
   },
@@ -263,9 +310,10 @@
    "sheets": [
     "P03",
     "P01",
-    "P04"
+    "P04",
+    "P05"
    ],
-   "note": "Modèle 3D aux cotes du dessin 087 « Coffre à outil ITH » (M.R.I. Inc., D. Côté, juin 2011) : tôles du plan de coupes, trois vues et détails 1 à 3. Le dessin ne donne ni l'épaisseur des tôles ni le détail des pentures (estimés) ; le montage du pivot de la barre de verrouillage (repères 1 à 3 du détail 3) est interprété. Peinture d'après les photos : rouge à l'extérieur, blanc à l'intérieur. Le tiroir, le panier et le support à crochets sont des ajouts visibles sur la photo du coffre ouvert, absents du dessin (dimensions estimées). Contenu : premières pièces de la liste de matériel du coffre 629 en calibre N (repères 30 à 35 : deux têtes Excore, l'overshot pump-in, core lifters, core lifter cases, stop rings, landing ring), reprises du catalogue Epiroc et placées de façon plausible ; le reste de la liste n'est pas encore modélisé. Le support de tube D-D (dessin 0102803) est posé sur le dessus, à gauche ; sa position exacte n'est pas cotée.",
+   "note": "Modèle 3D aux cotes du dessin 087 « Coffre à outil ITH » (M.R.I. Inc., D. Côté, juin 2011) : tôles du plan de coupes, trois vues et détails 1 à 3. Le dessin ne donne ni l'épaisseur des tôles ni le détail des pentures (estimés) ; le montage du pivot de la barre de verrouillage (repères 1 à 3 du détail 3) est interprété. Peinture d'après les photos : rouge à l'extérieur, blanc à l'intérieur. Le tiroir, le panier et le support à crochets sont des ajouts visibles sur la photo du coffre ouvert, absents du dessin (dimensions estimées). Contenu : premières pièces de la liste de matériel du coffre 629 en calibre N (repères 30 à 35 : deux têtes Excore, l'overshot pump-in, core lifters, core lifter cases, stop rings, landing ring), reprises du catalogue Epiroc et placées de façon plausible, puis marteau et masses de 2 et 10 lb (repères 36 à 38, formes génériques) ; le reste de la liste n'est pas encore modélisé. Le support de tube D-D (dessin 0102803) est posé sur le dessus, à gauche ; sa position exacte n'est pas cotée. La boîte à clés (dessin Foresco C16062863) est posée vers le bas du côté gauche, d'après une photo ; sa position exacte n'est pas cotée.",
    "parts": [
     [
      "1",
@@ -527,6 +575,52 @@
      {
       "note": "Liste de matériel du coffre 629, calibre N. Modèle repris du catalogue Epiroc (page P076, repère 9) ; emplacement dans le coffre non documenté."
      }
+    ],
+    [
+     "25",
+     "C16062863",
+     1,
+     "BOITE CLE (boîte à clés), sur le côté gauche",
+     {
+      "link": "P04",
+      "note": "Placée d'après une photo du coffre : vers le bas du côté gauche, à mi-profondeur (haut de la plaque à environ 20 po du fond). Position non cotée."
+     }
+    ],
+    [
+     "26",
+     "",
+     1,
+     "Crochet double sur le côté gauche (plaque et deux tiges de 1/2 po)",
+     {
+      "note": "Ajouté à la demande du client ; aucun dessin : forme, dimensions et position estimées."
+     }
+    ],
+    [
+     "36",
+     "",
+     1,
+     "Marteau",
+     {
+      "note": "Liste de matériel du coffre 629. Aucun dessin : forme générique, dimensions estimées. Suspendu dans la boîte à clés, comme sur la photo."
+     }
+    ],
+    [
+     "38",
+     "",
+     1,
+     "Masse de 10 lbs",
+     {
+      "note": "Liste de matériel du coffre 629. Aucun dessin : forme générique, dimensions estimées. Suspendue au crochet du côté gauche."
+     }
+    ],
+    [
+     "37",
+     "",
+     1,
+     "Masse de 2 lbs",
+     {
+      "note": "Liste de matériel du coffre 629. Aucun dessin : forme générique, dimensions estimées. Posée sur la tablette du bas, case de gauche (emplacement supposé)."
+     }
     ]
    ]
   },
@@ -564,6 +658,44 @@
      "PLAQUE (gousset)",
      {
       "note": "Acier 44W, 1/2 po."
+     }
+    ]
+   ]
+  },
+  "P04": {
+   "title": "BOITE CLE",
+   "titleFr": "Boîte à clés",
+   "pn": "C16062863",
+   "sheets": [
+    "P05"
+   ],
+   "note": "Assemblage soudé du dessin Foresco C16062863 (V. Chyhrynau, 2016-06-30) : plaque en trapèze de 9 3/16 po au haut et 4 po de haut, deux cornières à 9/16 po sous le haut, 2 1/4 po de profond hors tout. L'épaisseur (1/4 po), la largeur du bas de la plaque et l'inclinaison des cornières (environ 30°) ne sont pas cotées : mesurées sur le dessin à l'échelle. Couleur de surface non indiquée : montrée en rouge comme le coffre.",
+   "parts": [
+    [
+     "1",
+     "C16062860",
+     1,
+     "PLAQUE (dos en trapèze)",
+     {
+      "note": "Acier 44W."
+     }
+    ],
+    [
+     "2",
+     "C16062861",
+     1,
+     "CORNIERE (glissière de gauche)",
+     {
+      "note": "Acier."
+     }
+    ],
+    [
+     "3",
+     "C16062862",
+     1,
+     "CORNIERE (glissière de droite)",
+     {
+      "note": "Acier."
      }
     ]
    ]

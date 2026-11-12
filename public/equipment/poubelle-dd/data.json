@@ -1,0 +1,206 @@
+{
+ "id": "poubelle-dd",
+ "name": "Poubelle DD 154011700",
+ "manufacturer": "Machines Roger International",
+ "category": "Assemblage soudé en acier",
+ "document": {
+  "title": "Plans 154011700 « POUBELLE » et 0103001 « COUVERCLE DE POUBELLE POUR DRUM 50KG »",
+  "reference": "154011700",
+  "preparedBy": "Machines Roger International, dessiné par V. Chyhrynau, approuvé par G. Gélineau",
+  "date": "2024-12-02",
+  "sheets": 2,
+  "pagePattern": "pages/{sheet}.webp"
+ },
+ "specs": [
+  [
+   "Usage",
+   "Poubelle en acier du chantier de forage au diamant (DD), avec son couvercle à poignée"
+  ],
+  [
+   "Hauteur",
+   "27 po (686 mm) ; 29 1/4 po (743 mm) avec le couvercle et sa poignée"
+  ],
+  [
+   "Diamètre extérieur",
+   "14 1/4 po (362 mm) : rayon de 7 1/8 po coté au plan ; couvercle de Ø 15 po (381 mm)"
+  ],
+  [
+   "Virole",
+   "Plaque de 1/8 po roulée, joint de 1/32 po (relevés) ; développé d'environ 44 3/8 × 27 po"
+  ],
+  [
+   "Fond",
+   "Disque de Ø 14 po, 1/8 po d'épais (relevés), en retrait de 3/16 po du bord du bas (coté)"
+  ],
+  [
+   "Tenons et encoches",
+   "Deux tenons de 3/16 po sur le fond, dans deux encoches de 5/16 po de la virole, face à face (relevés)"
+  ],
+  [
+   "Soudure de la poubelle",
+   "Soudure d'angle de 1/8 po des deux côtés du fond, tout le tour"
+  ],
+  [
+   "Volume intérieur",
+   "Environ 67 L (17,8 gal US)"
+  ],
+  [
+   "Couvercle",
+   "Plaque de 1/16 po (relevé) : dessus de Ø 15 po, jupe de Ø int. 14 5/8 po et 4 po de haut (relevé), anneau d'appui à 1/8 po sous le dessus"
+  ],
+  [
+   "Poignée du couvercle",
+   "Bande de 1 po pliée en U, 6 po de long et 2 po de haut (relevés), à 2 1/2 po du bord"
+  ],
+  [
+   "Jeu du couvercle",
+   "3/16 po au rayon entre la jupe et la poubelle ; la jupe descend de 3 13/16 po le long de la virole"
+  ],
+  [
+   "Soudures du couvercle",
+   "1/16 po, symbole « 3-3 », tout le tour (anneau sur jupe) ; 1/16 po des deux côtés des pieds de la poignée"
+  ],
+  [
+   "Tolérances générales",
+   "Fraction ± 1/32 po (± 0,8 mm), angle ± 1/2°"
+  ],
+  [
+   "Échelle des plans",
+   "1:5 (poubelle), 1:4 (couvercle)"
+  ],
+  [
+   "Couleur de surface",
+   "Non précisée aux plans ; montrée en rouge Machines Roger"
+  ]
+ ],
+ "weights": [
+  [
+   "Poubelle (cartouche du plan 154011700)",
+   "47,9 lb (21,7 kg)"
+  ],
+  [
+   "Couvercle (cartouche du plan 0103001)",
+   "6,9 lb (3,1 kg)"
+  ],
+  [
+   "Poubelle avec son couvercle",
+   "54,8 lb (24,9 kg)"
+  ]
+ ],
+ "sheetTitles": {
+  "P01": "Plan 154011700 : poubelle — vue de bout, coupe A-A, nomenclature",
+  "P02": "Plan 0103001 : couvercle de poubelle pour drum 50 kg — vue de dessus, coupe A-A, nomenclature"
+ },
+ "root": "P01",
+ "assemblies": {
+  "P01": {
+   "title": "POUBELLE DD",
+   "titleFr": "Poubelle DD",
+   "pn": "154011700",
+   "sheets": [
+    "P01",
+    "P02"
+   ],
+   "note": "Poubelle en acier du plan Machines Roger 154011700 (2024-01-17) et son couvercle du plan 0103001 (2024-12-02), dont les pièces portent la suite des numéros de la poubelle (154011703 à 154011706). Chaque pièce suit son plan. Aucun plan ne montre le couvercle sur la poubelle ; la pose est déduite des cotes : l'anneau du couvercle (Ø 14 5/8 × 13 7/8 po) porte sur le bord de la virole (Ø 14 1/4 × 14 po) et la jupe (Ø int. 14 5/8 po) descend de 3 13/16 po autour de la poubelle, avec 3/16 po de jeu au rayon. Hauteur hors tout de 29 1/4 po avec la poignée. L'orientation du couvercle est libre : il est montré la poignée à l'opposé de la vue, le long du plan de coupe. La coupe du site reprend le plan des deux coupes A-A. Le numéro 154011700 est celui de la poubelle seule ; l'ensemble n'a pas de numéro. Couleur de surface non précisée aux plans : montrée en rouge Machines Roger. Masse : 47,9 lb pour la poubelle et 6,9 lb pour le couvercle (cartouches), soit 54,8 lb.",
+   "parts": [
+    [
+     "1",
+     "154011700",
+     1,
+     "POUBELLE (virole roulée de Ø 14 1/4 × 27 po et fond soudé)",
+     {
+      "link": "P02",
+      "note": "Plan 154011700. Ouverte en haut ; le fond est en retrait de 3/16 po : la poubelle repose sur le bord de la virole."
+     }
+    ],
+    [
+     "2",
+     "0103001",
+     1,
+     "COUVERCLE DE POUBELLE POUR DRUM 50KG (dessus de Ø 15 po, jupe, anneau d'appui et poignée)",
+     {
+      "link": "P03",
+      "note": "Plan 0103001. Posé sur le bord de la poubelle par son anneau ; se retire à la main, par la poignée."
+     }
+    ]
+   ]
+  },
+  "P02": {
+   "title": "POUBELLE",
+   "titleFr": "Poubelle",
+   "pn": "154011700",
+   "sheets": [
+    "P01"
+   ],
+   "note": "Assemblage soudé de deux plaques : une virole roulée et un fond. Cotes du plan : rayon extérieur de 7 1/8 po (Ø 14 1/4 po), 27 po de haut, fond en retrait de 3/16 po du bord du bas, soudure d'angle de 1/8 po des deux côtés du fond, tout le tour. Le reste est relevé à l'échelle sur les tracés du plan (1:5) : virole et fond de 1/8 po d'épais, joint de la virole de 1/32 po, deux encoches de 5/16 po de large au bord du bas de la virole, face à face et à 90° du joint, deux tenons de 3/16 po de large sur le fond, qui dépassent la virole de 1/16 po. Lecture de la coupe A-A : la bande de 3/16 po sans hachures au bout de la virole est le bord qui dépasse sous le fond ; les tenons, logés dans les encoches, placent le fond avant la soudure. Les encoches sont visibles sur 3/16 po, jusqu'au fond ; leur partie derrière le fond, cachée à la coupe, est supposée de l'épaisseur du fond (5/16 po en tout). Le plan ne montre pas de soudure au joint de la virole : il est laissé ouvert, comme au tracé. Contrôle : le volume d'acier du modèle donne 47,9 lb, comme au cartouche. Les deux pièces portent le titre « PLAQUE » à la nomenclature ; les descriptions entre parenthèses décrivent leur forme. Couleur de surface non précisée : montrée en rouge Machines Roger.",
+   "parts": [
+    [
+     "1",
+     "154011701",
+     1,
+     "PLAQUE (virole roulée, 1/8 po, Ø 14 1/4 × 27 po)",
+     {
+      "note": "Rayon et hauteur cotés au plan ; épaisseur de 1/8 po, joint de 1/32 po et encoches de 5/16 po relevés à l'échelle. Développé d'environ 44 3/8 × 27 po à la fibre moyenne. Environ 42,4 lb."
+     }
+    ],
+    [
+     "2",
+     "154011702",
+     1,
+     "PLAQUE (fond : disque de Ø 14 po, 1/8 po, deux tenons)",
+     {
+      "note": "En retrait de 3/16 po du bord du bas (coté). Diamètre, épaisseur et tenons de 3/16 po relevés à l'échelle. Soudé à la virole, 1/8 po des deux côtés, tout le tour. Environ 5,5 lb."
+     }
+    ]
+   ]
+  },
+  "P03": {
+   "title": "COUVERCLE DE POUBELLE POUR DRUM 50KG",
+   "titleFr": "Couvercle de poubelle",
+   "pn": "0103001",
+   "sheets": [
+    "P02"
+   ],
+   "note": "Assemblage soudé de quatre plaques (plan 0103001, 2024-12-02, échelle 1:4). Cotes du plan : dessus de Ø 15 po, jupe de Ø 14 5/8 po (diamètre intérieur, d'après le tracé), 1/8 po entre l'anneau et le dessus, poignée à 2 1/2 po du bord et ses bouts à 4 1/2 po du bord. Le reste est relevé à l'échelle sur les tracés : toutes les plaques font 1/16 po d'épais, la jupe 4 po de haut, l'anneau Ø 14 5/8 × 13 7/8 po (3/8 po de large), la poignée 1 po de large, 6 po de long et 2 po de haut, pliée à 1/16 po de rayon intérieur. Lecture de la coupe A-A : la jupe s'appuie sous le dessus ; l'anneau, à l'intérieur de la jupe, est une couronne (hachures sur 3/8 po seulement, bord intérieur vu au-delà du plan de coupe) : c'est lui qui porte sur le bord de la poubelle. La poignée n'est pas au centre : son axe est à 4 1/2 po du centre du couvercle. Soudures du plan : 1/16 po, symbole « 3-3 », tout le tour, entre l'anneau et la jupe (montrée en cordon continu) ; 1/16 po des deux côtés de chaque pied de la poignée (« 2 COTES »). Le plan ne donne pas de symbole pour la jonction du dessus et de la jupe : aucun cordon n'y est montré. Contrôle : le volume d'acier du modèle donne 6,85 lb, pour 6,9 lb au cartouche. Les quatre pièces portent le titre « PLAQUE » à la nomenclature ; les descriptions entre parenthèses décrivent leur forme. Couleur de surface non précisée : montrée en rouge Machines Roger.",
+   "parts": [
+    [
+     "1",
+     "154011703",
+     1,
+     "PLAQUE (anneau d'appui, Ø 14 5/8 × 13 7/8 po, 1/16 po)",
+     {
+      "note": "Relevé à l'échelle. À 1/8 po sous le dessus (coté) ; porte sur le bord de la poubelle. Soudé à la jupe, 1/16 po, symbole « 3-3 », tout le tour. Environ 0,3 lb."
+     }
+    ],
+    [
+     "2",
+     "154011704",
+     1,
+     "PLAQUE (jupe roulée, Ø int. 14 5/8 po, 4 po de haut, 1/16 po)",
+     {
+      "note": "Diamètre coté au plan ; hauteur et épaisseur relevées à l'échelle. Le plan ne montre pas son joint : elle est montrée fermée. Environ 3,3 lb."
+     }
+    ],
+    [
+     "3",
+     "154011705",
+     1,
+     "PLAQUE (dessus : disque de Ø 15 po, 1/16 po)",
+     {
+      "note": "Diamètre coté au plan ; épaisseur relevée à l'échelle. Dépasse la jupe de 1/8 po au rayon. Environ 3,1 lb."
+     }
+    ],
+    [
+     "4",
+     "154011706",
+     1,
+     "PLAQUE (poignée : bande de 1 po pliée en U, 6 × 2 po, 1/16 po)",
+     {
+      "note": "À 2 1/2 po du bord du dessus, bouts à 4 1/2 po du bord (cotés) ; largeur, longueur, hauteur, épaisseur et pliage relevés à l'échelle. Soudée au dessus, 1/16 po des deux côtés de chaque pied. Environ 0,15 lb."
+     }
+    ]
+   ]
+  }
+ },
+ "documents": []
+}

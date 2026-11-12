@@ -61,6 +61,14 @@
       "status": "Catalogue « Core Drilling Tools — In-The-Hole » : têtes, overshots, carottiers, émerillons et presse-étoupes ; 3D refaite d'après les dessins pour les outils souterrains (BU, NU, HU, PU)"
     },
     {
+      "id": "grillage-cage",
+      "name": "Panneau de grillage rigide à plis en V, maille 2 × 6 po",
+      "manufacturer": "Type Oméga II Architectural (marque à confirmer)",
+      "category": "Treillis soudé galvanisé de la cage",
+      "thumbnail": "equipment/grillage-cage/thumbnail.webp",
+      "status": "Type identifié sur une photo de la cage, 3D aux données publiées du fabricant : 48 fils verticaux et 16 fils horizontaux de calibre 6 (0,192 po), maille de 1 31/32 × 6 po, 92 3/4 × 70 po, 3 plis en V, pointes de 1 po, environ 41 lb ; place des plis relevée sur la photo, à confirmer en mesurant un panneau"
+    },
+    {
       "id": "plancher-dd",
       "name": "Plancher pour foreuse aux diamants",
       "manufacturer": "Machines Roger International",
@@ -75,6 +83,22 @@
       "category": "Porte grillagée sur trépied",
       "thumbnail": "equipment/porte-1801020/thumbnail.webp",
       "status": "3D d'après les plans 1801020 et 15250402 (2022-04-05) : cadre de 42 × 88 3/8 po sur trépied, battant grillagé, 3 pentures, barrure à interverrouillage ; battant et verrou animés, fichiers prêts pour Unreal Engine (cadre, battant, verrou, pivot sur l'axe des pentures)"
+    },
+    {
+      "id": "poste-secours",
+      "name": "Poste de premiers soins et d'extincteur",
+      "manufacturer": "Fabricant non indiqué",
+      "category": "Poste de sécurité sur cage grillagée",
+      "thumbnail": "equipment/poste-secours/thumbnail.webp",
+      "status": "3D d'après une photo du poste installé : cadre en tôle découpée d'environ 34 × 24 po à ruban réfléchissant rouge et blanc, armoire blanche à toit incliné et façade à croix rouge (trousse, 2 rince-œil), extincteur à poudre de 5 lb sur son crochet ; dimensions estimées, à mesurer sur place"
+    },
+    {
+      "id": "poubelle-dd",
+      "name": "Poubelle DD 154011700",
+      "manufacturer": "Machines Roger International",
+      "category": "Assemblage soudé en acier",
+      "thumbnail": "equipment/poubelle-dd/thumbnail.webp",
+      "status": "3D d'après les plans 154011700 (2024-01-17) et 0103001 (2024-12-02) : virole roulée de Ø 14 1/4 × 27 po en plaque de 1/8 po, fond à tenons en retrait de 3/16 po, soudé tout le tour ; couvercle de Ø 15 po en plaque de 1/16 po, à jupe, anneau d'appui et poignée ; masses du modèle égales à celles des plans (47,9 lb et 6,9 lb), 51 mesures contrôlées"
     },
     {
       "id": "rack-outil",

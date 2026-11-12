@@ -122,10 +122,14 @@ pièces (numéro, quantité, page du manuel).
   Export pour moteur de jeu (Unreal Engine) : `scripts/export-coffre-jeu.mjs`
   écrit `coffre-ith.glb`, un maillage par élément mobile sur son pivot (portes,
   barre de verrouillage, tiroir) ; voir `docs/coffre-unreal.md`.
+  Sur le côté gauche : boîte à clés du dessin Foresco C16062863 (P04), placée
+  d'après une photo (vers le bas du côté, à mi-profondeur).
   Tubes de base creux, bouts ouverts pour les fourches. Premier contenu de la
   liste de matériel du coffre 629 (calibre N) dans le coffre ouvert : deux têtes
   NU Excore, l'overshot Excore II, core lifters, core lifter cases, stop rings
   et landing ring, repris des modèles Epiroc (`reuse`).
+  Crochet double sur le côté gauche, marteau dans la boîte à clés, masses de 2
+  et 10 lb (`outils.js`, formes génériques sans dessin).
   Essai interactif du fichier dans le navigateur :
   `equipment/coffre-dd/essai.html` (clic sur la barre, les portes, le tiroir).
 
@@ -377,6 +381,55 @@ pièces (numéro, quantité, page du manuel).
   d'un plan du fabricant ; c'est la même clé étirée par zones. Matériau
   texturé hors palette (`equipment/cles-a-tuyau/textures/`), qui demande un
   nouveau rendu à la visionneuse une fois chargé (`pieces3d:redessiner`).
+
+- **Poste de premiers soins et d'extincteur** (`poste-secours`) : reconstitution
+  d'après une seule photo du poste installé sur le grillage de la cage, sans
+  plan ni cote. L'échelle vient du ruban réfléchissant (2 po de large) et de
+  l'extincteur à poudre de 5 lb (cylindre de 4 1/4 po) : toutes les dimensions
+  sont estimées, à environ 1 po près. Cadre en tôle découpée d'environ 34 × 24
+  po (plein derrière l'armoire, ferme à poinçon et croix à droite), ruban rouge
+  et blanc sur le pourtour, armoire blanche à toit incliné et façade
+  transparente à croix rouge, trousse, deux bouteilles de rince-œil, extincteur
+  pendu à son crochet avec ses étiquettes d'inspection, tronçon du grillage
+  pour situer le poste. Ce qui est caché sur la photo (tôle derrière l'armoire,
+  suite du ruban) est supposé et signalé dans la note de la page ; les
+  fixations, invisibles, ne sont pas modélisées. Étiquettes dessinées sur un
+  canevas (génériques : marque et numéros illisibles sur la photo).
+
+- **Panneau de grillage rigide à plis en V, maille 2 × 6 po** (`grillage-cage`) :
+  type de grillage de la cage, identifié sur une photo (P01) et son relevé
+  (P02 : fils verticaux tous les 2 po environ, fils horizontaux tous les 6 po,
+  deux bandes de trois fils rapprochés qui sont les plis en V, pointes de 1 po
+  au-dessus de la traverse). Ce type correspond au panneau Oméga II
+  Architectural (Metaltech-Oméga) ; la marque reste à confirmer sur place.
+  Cotes du modèle (`src/models/grillage-cage/index.js`) aux données publiées
+  du fabricant : fil de calibre 6 (0,192 po), maille de 1 31/32 × 6 po, 92 3/4
+  po de large (48 fils verticaux), 70 po de haut au catalogue (70 11/16 po au
+  modèle : 12 mailles de 6 po, 3 plis à 30°, pointes de 1 po), environ 41 lb
+  calculées. Supposé, et signalé dans la note de la page : fil du haut caché
+  par la traverse, pli du pied, angle des plis, côté des fils horizontaux. La
+  traverse, les poteaux et les attaches de la cage ne sont pas modélisés.
+
+- **Poubelle DD 154011700** (`poubelle-dd`, Machines Roger International, plans
+  154011700 « POUBELLE » du 2024-01-17 à l'échelle 1:5 et 0103001 « COUVERCLE DE
+  POUBELLE POUR DRUM 50KG » du 2024-12-02 à l'échelle 1:4) : poubelle en acier
+  du chantier de forage au diamant et son couvercle. Poubelle (P02) : virole
+  roulée de Ø 14 1/4 × 27 po en plaque de 1/8 po, fond de Ø 14 po en retrait de
+  3/16 po, tenu par deux tenons de 3/16 po dans deux encoches de la virole et
+  soudé de 1/8 po des deux côtés, tout le tour. Couvercle (P03), en plaque de
+  1/16 po : dessus de Ø 15 po, jupe de Ø int. 14 5/8 po et 4 po de haut, anneau
+  d'appui à 1/8 po sous le dessus, poignée en bande pliée à 2 1/2 po du bord.
+  Les cotes des plans sont reprises ; ce qu'ils ne cotent pas (épaisseurs,
+  encoches, tenons, joint de la virole, hauteur de la jupe, anneau, poignée) est
+  relevé à l'échelle sur les tracés vectoriels des PDF. Aucun plan ne montre le
+  couvercle sur la poubelle : la pose de l'ensemble (P01) est déduite des cotes
+  (l'anneau porte sur le bord de la virole, la jupe descend autour avec 3/16 po
+  de jeu au rayon). La vue en coupe du site reprend le plan des deux coupes A-A
+  (X = 0). Couleur de surface non précisée aux plans : montrée en rouge Machines
+  Roger. Contrôle chiffré : `node scripts/check-poubelle-dd.mjs` compare 51
+  mesures du modèle aux plans, vérifie que les maillages sont fermés et calcule
+  les masses : 47,9 lb pour la poubelle et 6,85 lb pour le couvercle, pour
+  47,9 lb et 6,9 lb aux cartouches.
 
 La page d'accueil (adresse sans « # », ou le logo en haut à gauche) liste
 les équipements et permet de passer de l'un à l'autre. Les adresses du premier équipement restent `#F05` ; celles des autres
