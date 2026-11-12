@@ -42,9 +42,9 @@ export const COUVERCLE = {
   soudure: 1 / 16,
 };
 
-// Couleur de surface non précisée aux plans : rouge Machines Roger, comme les
-// autres accessoires soudés.
-const PEINT = 'red';
+// Peinture : poubelle et couvercle en noir (demande du client ; les plans ne
+// donnent pas de couleur de surface).
+const PEINT = 'black';
 const SEG = 96; // facettes sur le tour
 
 /** Marque un cordon de soudure (hors cotes et hors masse dans scripts/check-poubelle-dd.mjs). */

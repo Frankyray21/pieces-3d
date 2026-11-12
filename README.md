@@ -425,8 +425,8 @@ pièces (numéro, quantité, page du manuel).
   couvercle sur la poubelle : la pose de l'ensemble (P01) est déduite des cotes
   (l'anneau porte sur le bord de la virole, la jupe descend autour avec 3/16 po
   de jeu au rayon). La vue en coupe du site reprend le plan des deux coupes A-A
-  (X = 0). Couleur de surface non précisée aux plans : montrée en rouge Machines
-  Roger. Contrôle chiffré : `node scripts/check-poubelle-dd.mjs` compare 51
+  (X = 0). Poubelle et couvercle peints en noir, à la demande du client (les
+  plans ne précisent pas de couleur de surface). Contrôle chiffré : `node scripts/check-poubelle-dd.mjs` compare 51
   mesures du modèle aux plans, vérifie que les maillages sont fermés et calcule
   les masses : 47,9 lb pour la poubelle et 6,85 lb pour le couvercle, pour
   47,9 lb et 6,9 lb aux cartouches.
