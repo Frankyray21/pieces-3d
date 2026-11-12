@@ -44,6 +44,10 @@
     [
       "Échelle du plan",
       "1:8"
+    ],
+    [
+      "Export pour moteur de jeu",
+      "unreal/SM_Support_Pipewrench.glb (support seul), unreal/support-avec-cles.glb (support, clés de 18, 24 et 36 po en place, tiges NQ) et unreal/support-avec-cles.json (poses) — voir docs/cles-unreal.md"
     ]
   ],
   "weights": [
