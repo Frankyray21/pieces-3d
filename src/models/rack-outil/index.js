@@ -141,8 +141,9 @@ function accroche(S, material) {
 
 export function P01(api) {
   const S = api.S;
-  // Acier nu : le plan ne donne pas de couleur de surface. Les « tuyaux noirs » sont plus sombres.
-  const TOLE = 'steel', NOIR = 'castIron';
+  // Peinture : tout le rack en rouge Machines Roger (demande du client ; le plan ne donne pas de
+  // couleur de surface). Les « tuyaux noirs » de la nomenclature sont peints comme le reste.
+  const TOLE = 'red', NOIR = 'red';
   const seen = new Set();
   const put = (ref, obj, explode) => {
     api.part(ref, obj, explode, { noLabel: seen.has(ref) });

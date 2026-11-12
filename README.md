@@ -129,7 +129,8 @@ pièces (numéro, quantité, page du manuel).
   plan sont reprises telles quelles ; ce qu'il ne cote pas (plaque de 3/16 po,
   montants de 2 1/2 po, rayons, diamètre et hauteur des tubes ronds, profil
   des crochets) est relevé à l'échelle sur les tracés vectoriels du PDF.
-  Montré en acier nu (le plan ne précise pas de couleur). Contrôle chiffré :
+  Peint en rouge Machines Roger (demande du client ; le plan ne précise pas
+  de couleur). Contrôle chiffré :
   `node scripts/check-rack-outil.mjs` compare 38 mesures du modèle aux cotes
   du plan, dont la masse d'acier (11,07 lb pour 11,2 lb au cartouche).
   `S.extrude` accepte maintenant des découpes en polygone (fentes de tenon).

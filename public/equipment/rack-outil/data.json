@@ -50,7 +50,7 @@
   ],
   [
    "Couleur de surface",
-   "Non précisée au plan"
+   "Rouge Machines Roger (demande du client ; non précisée au plan)"
   ]
  ],
  "weights": [
@@ -71,7 +71,7 @@
    "sheets": [
     "P01"
    ],
-   "note": "Modèle 3D construit d'après le plan d'assemblage 15083000 (assemblage soudé, échelle 1:4). Les cotes inscrites au plan sont reprises telles quelles : 30 × 14 1/2 po hors tout, 3 9/16 po de profondeur, positions des tubes et des crochets, crochets d'accrochage de 3 po avec une fente de 1/4 po, crochets en L de 3/8 po qui dépassent de 2 po. Ce que le plan ne cote pas est relevé à l'échelle sur le dessin : plaque de 3/16 po, montants et traverse de 2 1/2 po, rayon intérieur de 3 po, coins du bas de 1 3/16 po, tubes ronds de 2 7/8 po de diamètre extérieur et de 2 1/2 po de haut, profil des crochets. Contrôle : le volume d'acier du modèle donne 11,1 lb, pour 11,2 lb inscrits au cartouche. Les titres en majuscules sont ceux de la nomenclature du plan ; les descriptions entre parenthèses décrivent la pièce d'après sa forme. Cordons de soudure de 3/16 po montrés aux tubes, aux tuyaux et aux crochets en L (symboles du plan) ; les tenons des crochets d'accrochage sont soudés dans les fentes de la plaque. Montré en acier nu : le plan ne précise pas de couleur de surface.",
+   "note": "Modèle 3D construit d'après le plan d'assemblage 15083000 (assemblage soudé, échelle 1:4). Les cotes inscrites au plan sont reprises telles quelles : 30 × 14 1/2 po hors tout, 3 9/16 po de profondeur, positions des tubes et des crochets, crochets d'accrochage de 3 po avec une fente de 1/4 po, crochets en L de 3/8 po qui dépassent de 2 po. Ce que le plan ne cote pas est relevé à l'échelle sur le dessin : plaque de 3/16 po, montants et traverse de 2 1/2 po, rayon intérieur de 3 po, coins du bas de 1 3/16 po, tubes ronds de 2 7/8 po de diamètre extérieur et de 2 1/2 po de haut, profil des crochets. Contrôle : le volume d'acier du modèle donne 11,1 lb, pour 11,2 lb inscrits au cartouche. Les titres en majuscules sont ceux de la nomenclature du plan ; les descriptions entre parenthèses décrivent la pièce d'après sa forme. Cordons de soudure de 3/16 po montrés aux tubes, aux tuyaux et aux crochets en L (symboles du plan) ; les tenons des crochets d'accrochage sont soudés dans les fentes de la plaque. Peint en rouge Machines Roger, à la demande du client : le plan ne précise pas de couleur de surface.",
    "parts": [
     [
      "1",
