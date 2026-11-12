@@ -4,6 +4,8 @@
 // et les pentures ne sont pas détaillées sur le dessin (estimées). La peinture
 // (rouge dehors, blanc dedans) et les ajouts du coffre ouvert (tiroir, panier,
 // crochets, autocollant) viennent des photos ; le contenu n'est pas modélisé.
+// Sur le dessus, à gauche : support de tube D-D du dessin 0102803 (P03) ; sa
+// position et son orientation sur le coffre ne figurent sur aucun dessin.
 // Repère : X largeur, Y vers le haut, +Z côté portes.
 
 const IN = 0.0254;
@@ -215,6 +217,36 @@ function decal(S) {
 }
 
 /**
+ * Support de tube D-D (dessin 0102803) : berceau en Y de 3/4 po, base de
+ * 8 × 3 × 1/2 po à quatre trous, gousset de 1/2 po ; 17 1/2 po de haut.
+ * Repère : plaque du berceau dans le plan XY, base posée en y = 0, gousset vers +Z.
+ * Le rayon du berceau (4 po) et les trous de la base sont mesurés sur le dessin à l'échelle.
+ */
+function P03(api) {
+  const S = api.S;
+  const cy = 16.5, ro = 6, ri = 4, hw = 1.5, tb = 0.5, tp = 0.75;
+  const pts = [[-hw, tb], [hw, tb]];
+  const arc = (cx, r, a0, a1, n) => { for (let i = 0; i <= n; i++) { const a = a0 + ((a1 - a0) * i) / n; pts.push([cx + r * Math.cos(a), cy + r * Math.sin(a)]); } };
+  const a = Math.asin(hw / ro); // raccord du montant de 3 po au rayon extérieur
+  arc(0, ro, -Math.PI / 2 + a, 0, 20);
+  arc(5, 1, 0, Math.PI, 10);
+  arc(0, ri, 0, -Math.PI, 36);
+  arc(-5, 1, 0, Math.PI, 10);
+  arc(0, ro, Math.PI, Math.PI * 1.5 - a, 20);
+  const zp = -1.5 + tp / 2; // la plaque affleure le bord arrière de la base
+  const fork = S.at(S.extrude(pts.map(([x, y]) => [x * IN, y * IN]), tp * IN, 'red'), [0, 0, zp * IN]);
+  const holes = [];
+  for (const sx of [-1, 1]) for (const sz of [-1, 1]) holes.push([sx * 3.5 * IN, sz * 1 * IN, 0.28 * IN]);
+  const base = S.at(S.plate(8 * IN, 3 * IN, tb * IN, 'red', { holes, r: 0.25 * IN }), [0, (tb / 2) * IN, 0]);
+  const z0 = zp + tp / 2;
+  const gusset = cheek(S, [[z0, tb], [1.5, tb], [1.5, tb + 0.1], [z0 + 0.25, 11.5], [z0, 11.5]].map(([z, y]) => [z * IN, y * IN]), 0.5 * IN, 'red', 0);
+  api.part('1', fork, [0, 0.12, -0.2]);
+  api.part('2', base, [0, -0.15, 0]);
+  api.part('3', gusset, [0, 0.05, 0.25]);
+  return { view: { dir: [0.9, 0.4, 1.2] } };
+}
+
+/**
  * Coffre complet. open : angle d'ouverture des portes [gauche, droite] en
  * radians ; extras : ajouts visibles sur la photo du coffre ouvert.
  */
@@ -268,6 +300,12 @@ function build(api, open, extras) {
   put('16', onDoor(pivotPlate(S, 1.5 * IN, 0.5 * IN), -1, a), out(1.15, dx - 0.12));
   put('17', onDoor(pivotPlate(S, 2 * IN, 0.75 * IN + 0.125 * IN + 0.001), -1, a), out(0.95, dx - 0.12));
 
+  // Support de tube D-D sur le dessus, à gauche : berceau en travers du coffre
+  // (tube couché dans la largeur), gousset vers le centre.
+  const sup = api.sub('P03', { inPlace: true });
+  sup.rotation.y = Math.PI / 2;
+  put('23', S.at(sup, [-W / 2 + 3 * IN, H, -D / 2 + 8 * IN]), [-0.25, 0.9, 0]);
+
   put('18', S.at(decal(S), [-0.1, Y0 + (YK - Y0) * 0.42, D / 2]), [0, 0, 0.9]);
   if (!extras) return;
   put('19', S.at(drawer(S), [DRAWER.x, YB - t - DRAWER.h - 0.006, DRAWER.zf]), [0, -0.12, 0.9]);
@@ -290,4 +328,4 @@ function P02(api) {
   return { view: { dir: [0.35, 0.45, 1.3] } };
 }
 
-export default { P01, P02 };
+export default { P01, P02, P03 };

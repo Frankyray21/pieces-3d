@@ -9,7 +9,7 @@
   "reference": "087",
   "preparedBy": "M.R.I. Inc., dessiné par D. Côté",
   "date": "2011-06",
-  "sheets": 3,
+  "sheets": 4,
   "pagePattern": "pages/{sheet}.webp"
  },
  "specs": [
@@ -48,13 +48,23 @@
   [
    "Fini (photos)",
    "Rouge à l'extérieur, blanc à l'intérieur"
+  ],
+  [
+   "Support de tube D-D (0102803)",
+   "17 1/2 po de haut, base de 8 × 3 po ; plaques d'acier 44W de 3/4 et 1/2 po"
   ]
  ],
- "weights": [],
+ "weights": [
+  [
+   "Support de tube D-D (poids inscrit au dessin 0102803)",
+   "2,42 lb"
+  ]
+ ],
  "sheetTitles": {
   "P01": "Dessin 087 : plan de coupes, vues et détails 1 à 3",
   "P02": "Photo : coffre fermé",
-  "P03": "Photo : coffre ouvert"
+  "P03": "Photo : coffre ouvert",
+  "P04": "Dessin 0102803 : support de tube D-D"
  },
  "root": "P01",
  "assemblies": {
@@ -64,9 +74,10 @@
    "pn": "087",
    "sheets": [
     "P01",
-    "P02"
+    "P02",
+    "P04"
    ],
-   "note": "Modèle 3D aux cotes du dessin 087 « Coffre à outil ITH » (M.R.I. Inc., D. Côté, juin 2011) : tôles du plan de coupes, trois vues et détails 1 à 3. Le dessin ne donne ni l'épaisseur des tôles ni le détail des pentures (estimés) ; le montage du pivot de la barre de verrouillage (repères 1 à 3 du détail 3) est interprété. Peinture d'après les photos : rouge à l'extérieur, blanc à l'intérieur. La vue éclatée sépare les tôles et dégage les tablettes.",
+   "note": "Modèle 3D aux cotes du dessin 087 « Coffre à outil ITH » (M.R.I. Inc., D. Côté, juin 2011) : tôles du plan de coupes, trois vues et détails 1 à 3. Le dessin ne donne ni l'épaisseur des tôles ni le détail des pentures (estimés) ; le montage du pivot de la barre de verrouillage (repères 1 à 3 du détail 3) est interprété. Peinture d'après les photos : rouge à l'extérieur, blanc à l'intérieur. La vue éclatée sépare les tôles et dégage les tablettes. Le support de tube D-D (dessin 0102803) est posé sur le dessus, à gauche ; sa position exacte n'est pas cotée.",
    "parts": [
     [
      "1",
@@ -214,6 +225,16 @@
      {
       "note": "D'après la photo, absent du dessin ; emplacement et proportions seulement."
      }
+    ],
+    [
+     "23",
+     "0102803",
+     1,
+     "SUPPORT DE TUBE D-D, sur le dessus à gauche",
+     {
+      "link": "P03",
+      "note": "Position et orientation sur le coffre non cotées (aucun dessin ne les donne) : berceau en travers du coffre, à 3 po du bord gauche."
+     }
     ]
    ]
   },
@@ -223,9 +244,10 @@
    "pn": "087",
    "sheets": [
     "P03",
-    "P01"
+    "P01",
+    "P04"
    ],
-   "note": "Modèle 3D aux cotes du dessin 087 « Coffre à outil ITH » (M.R.I. Inc., D. Côté, juin 2011) : tôles du plan de coupes, trois vues et détails 1 à 3. Le dessin ne donne ni l'épaisseur des tôles ni le détail des pentures (estimés) ; le montage du pivot de la barre de verrouillage (repères 1 à 3 du détail 3) est interprété. Peinture d'après les photos : rouge à l'extérieur, blanc à l'intérieur. Le tiroir, le panier et le support à crochets sont des ajouts visibles sur la photo du coffre ouvert, absents du dessin (dimensions estimées). Le contenu du coffre n'est pas modélisé.",
+   "note": "Modèle 3D aux cotes du dessin 087 « Coffre à outil ITH » (M.R.I. Inc., D. Côté, juin 2011) : tôles du plan de coupes, trois vues et détails 1 à 3. Le dessin ne donne ni l'épaisseur des tôles ni le détail des pentures (estimés) ; le montage du pivot de la barre de verrouillage (repères 1 à 3 du détail 3) est interprété. Peinture d'après les photos : rouge à l'extérieur, blanc à l'intérieur. Le tiroir, le panier et le support à crochets sont des ajouts visibles sur la photo du coffre ouvert, absents du dessin (dimensions estimées). Le contenu du coffre n'est pas modélisé. Le support de tube D-D (dessin 0102803) est posé sur le dessus, à gauche ; sa position exacte n'est pas cotée.",
    "parts": [
     [
      "1",
@@ -408,6 +430,54 @@
      "Support à crochets, à l'intérieur de la porte gauche",
      {
       "note": "Visible sur la photo du coffre ouvert, absent du dessin 087 ; dimensions estimées."
+     }
+    ],
+    [
+     "23",
+     "0102803",
+     1,
+     "SUPPORT DE TUBE D-D, sur le dessus à gauche",
+     {
+      "link": "P03",
+      "note": "Position et orientation sur le coffre non cotées (aucun dessin ne les donne) : berceau en travers du coffre, à 3 po du bord gauche."
+     }
+    ]
+   ]
+  },
+  "P03": {
+   "title": "SUPPORT DE TUBE D-D",
+   "titleFr": "Support de tube D-D (tube carottier)",
+   "pn": "0102803",
+   "sheets": [
+    "P04"
+   ],
+   "note": "Assemblage soudé du dessin 0102803 (V. Chyhrynau, approuvé G. Gélineau, 2022-11-15) : 17 1/2 po de haut, base de 8 × 3 po, montant de 3 po de large, gousset à 3 3/4 po, soudures d'angle de 1/2 po. Le rayon du berceau (environ 4 po) et les quatre trous de la base ne sont pas cotés : mesurés sur le dessin à l'échelle. Couleur de surface non indiquée : montré en rouge comme le coffre.",
+   "parts": [
+    [
+     "1",
+     "152111501",
+     1,
+     "PLAQUE (berceau en Y)",
+     {
+      "note": "Acier 44W, 3/4 po."
+     }
+    ],
+    [
+     "2",
+     "152111502",
+     1,
+     "PLAQUE (base de 8 × 3 po, quatre trous)",
+     {
+      "note": "Acier 44W, 1/2 po."
+     }
+    ],
+    [
+     "3",
+     "152111503",
+     1,
+     "PLAQUE (gousset)",
+     {
+      "note": "Acier 44W, 1/2 po."
      }
     ]
    ]
