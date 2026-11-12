@@ -64,7 +64,7 @@ const dire = (texte) => { etat.textContent = texte; };
 /** Ce qui empêche le mouvement demandé, ou '' si rien. */
 function blocage(nom, ouvrir) {
   const ouvert = (n) => mobiles.get(n).cible > 0;
-  if (nom.startsWith('SM_Coffre_Porte') && ouvrir && !ouvert('SM_Coffre_Barre')) return 'Glissez d\'abord la barre de verrouillage vers la droite.';
+  if (nom.startsWith('SM_Coffre_Porte') && ouvrir && !ouvert('SM_Coffre_Barre')) return 'Tournez d\'abord la barre de verrouillage.';
   if (nom === 'SM_Coffre_Tiroir' && ouvrir && !(ouvert('SM_Coffre_Porte_G') && ouvert('SM_Coffre_Porte_D'))) return 'Ouvrez d\'abord les deux portes.';
   if (nom.startsWith('SM_Coffre_Porte') && !ouvrir && ouvert('SM_Coffre_Tiroir')) return 'Refermez d\'abord le tiroir.';
   if (nom === 'SM_Coffre_Barre' && !ouvrir && !(mobiles.get('SM_Coffre_Porte_G').t === 0 && mobiles.get('SM_Coffre_Porte_D').t === 0)) return 'Fermez d\'abord les deux portes.';
@@ -86,7 +86,8 @@ new GLTFLoader().load('./coffre-ith.glb', (gltf) => {
   gltf.scene.traverse((o) => {
     if (!o.userData.mouvement) return;
     const axe = new THREE.Vector3(...({ X: [1, 0, 0], Y: [0, 1, 0], Z: [0, 0, 1] })[o.userData.axe_local]).applyQuaternion(o.quaternion);
-    mobiles.set(o.name, { node: o, base: { rot: o.rotation.y, pos: o.position.clone() }, axe, cible: 0, t: 0 });
+    const local = new THREE.Vector3(...({ X: [1, 0, 0], Y: [0, 1, 0], Z: [0, 0, 1] })[o.userData.axe_local]);
+    mobiles.set(o.name, { node: o, base: { quat: o.quaternion.clone(), pos: o.position.clone() }, axe, local, cible: 0, t: 0 });
   });
   for (const nom of ORDRE) {
     const b = document.createElement('button');
@@ -120,13 +121,14 @@ addEventListener('resize', taille);
 taille();
 
 const horloge = new THREE.Clock();
+const tour = new THREE.Quaternion();
 renderer.setAnimationLoop(() => {
   const dt = Math.min(horloge.getDelta(), 0.05);
   for (const m of mobiles.values()) {
     m.t = THREE.MathUtils.clamp(m.t + Math.sign(m.cible - m.t) * dt / 0.9, 0, 1);
     const k = m.t * m.t * (3 - 2 * m.t); // départ et arrivée en douceur
     const e = m.node.userData;
-    if (e.mouvement === 'rotation') m.node.rotation.y = m.base.rot + THREE.MathUtils.degToRad(e.angle_ouvert_deg) * k;
+    if (e.mouvement === 'rotation') m.node.quaternion.copy(m.base.quat).multiply(tour.setFromAxisAngle(m.local, THREE.MathUtils.degToRad(e.angle_ouvert_deg) * k));
     else m.node.position.copy(m.base.pos).addScaledVector(m.axe, e.course_m * k);
   }
   controls.update();

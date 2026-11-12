@@ -33,15 +33,15 @@ centimètres et en Z vers le haut à l'import). Coffre fermé, environ
 | --- | --- | --- |
 | `SM_Coffre_Caisse` | au sol, au centre du coffre | fixe (caisse, tablettes, tubes de base, pentures, oreilles, panier, glissières, logo) |
 | `SM_Coffre_Porte_G` | bas de la ligne de pentures gauche | rotation autour de l'axe Y local (le long des pentures), 0 à −110° |
+| `SM_Coffre_Barre` (enfant de la porte gauche) | boulon du bout gauche de la barre | rotation autour de Z local (normale à la porte : la barre reste à plat), 0 à +180° par le haut |
 | `SM_Coffre_Porte_D` | bas de la ligne de pentures droite | rotation autour de Y local, 0 à +110° |
-| `SM_Coffre_Barre` (enfant de la porte droite) | sur le joint des portes, à la hauteur de la barre | translation sur X local (vers la droite, à plat sur la porte), course 0,14 m (5 1/2 po) |
 | `SM_Coffre_Tiroir` | milieu du bas de la façade | translation sur Z local, course 0,33 m |
 | `SM_Coffre_Support_Tube` | sous la base du support | fixe (dessin 0102803), séparé pour pouvoir le déplacer ou l'enlever |
 
 Chaque nœud porte ces valeurs dans ses `extras` glTF (`mouvement`,
 `axe_local`, `angle_ouvert_deg`, `course_m`). Les axes et les signes sont ceux
 du fichier glTF : après la conversion d'axes d'Unreal, vérifier le sens de
-rotation dans l'éditeur. Ordre d'ouverture réel : glisser la barre vers la droite, puis
+rotation dans l'éditeur. Ordre d'ouverture réel : tourner la barre de 180°, puis
 ouvrir les portes.
 
 Matériaux : `M_Coffre_Rouge`, `M_Coffre_Blanc`, `M_Coffre_Noir` (couleur
@@ -59,8 +59,8 @@ régénérer dans le moteur si l'on veut des textures ou des lightmaps.
    et du tiroir reviennent à l'origine de la scène.
 3. Assembler un Blueprint d'acteur : la caisse en racine, les portes, le tiroir
    et le support en composants enfants aux positions de la hiérarchie importée,
-   la barre enfant de la porte droite ; animer l'ouverture par une Timeline
-   (rotation relative des portes, position relative de la barre et du tiroir).
+   la barre enfant de la porte gauche ; animer l'ouverture par une Timeline
+   (rotation relative des portes et de la barre, position relative du tiroir).
 4. Collisions : l'intérieur doit rester accessible, donc pas de boîte unique
    sur la caisse. Soit « Use Complex Collision As Simple » sur la caisse, soit
    l'export `--ucx` (boîtes convexes par paroi, tablette, porte, tiroir,
@@ -70,11 +70,10 @@ régénérer dans le moteur si l'on veut des textures ou des lightmaps.
 
 ## Limites
 
-- La barre de verrouillage coulisse à plat sur les portes (elle ne se relève
-  pas). Le détail 3 du dessin 087 ne montre pas ce qui la retient : l'axe de
-  1/2 po dans la fente, sur la porte droite, et le rôle des repères 1 à 3
-  (appui et oreilles de cadenas) sont interprétés.
-
+- La barre de verrouillage tourne de 180° à plat sur la porte gauche (elle ne
+  se relève pas). Le détail 3 du dessin 087 ne montre pas le montage : le
+  pivot au bout gauche, le sens de rotation (par le haut) et le rôle des
+  repères 1 à 3 (appui et plaques du pivot) sont interprétés.
 - L'épaisseur des tôles, les pentures, le tiroir, le panier et les crochets
   sont estimés (voir la fiche du coffre) ; la position du support de tube sur
   le dessus n'est cotée sur aucun dessin.
