@@ -19,6 +19,9 @@ const FIN = {
   // Peinture sur tôle : peau d'orange et ondulation discrètes (une tôle peinte
   // reste lisse en photo ; un relief marqué ferait « peinture martelée »).
   paint: { fine: 0.018, wave: 0.005, rough: 0.16, tint: 0.07, fs: 14, cs: 0.9, env: 1 },
+  // Peinture écaillée : taches de rouille où la peinture a sauté. rust = part de la surface
+  // touchée (0 à 1, à peu près), rs = fréquence des taches (1/m).
+  paintRust: { fine: 0.018, wave: 0.005, rough: 0.16, tint: 0.07, fs: 14, cs: 0.9, env: 1, rust: 0.28, rs: 13 },
   paintSatin: { fine: 0.026, wave: 0.007, rough: 0.2, tint: 0.09, fs: 14, cs: 0.9, env: 1 },
   // Peinture noire : se lit surtout par ses reflets (réflecteurs renforcés).
   paintDark: { fine: 0.02, wave: 0.005, rough: 0.16, tint: 0.07, fs: 14, cs: 0.9, env: 1.8 },
@@ -42,6 +45,8 @@ const PAINT = { metalness: 0, roughness: 0.42, specularIntensity: 1, clearcoat: 
 const defs = {
   red: { ...PAINT, color: 0xb5121a },
   redDark: { ...PAINT, color: 0x7a0c12, roughness: 0.46 },
+  // Rouge d'un outil qui a servi : peinture écaillée par endroits, acier rouillé dessous.
+  redRust: { ...PAINT, color: 0xb5121a, fin: 'paintRust' },
   // Noir : gris très sombre verni ; les reflets du studio dessinent les faces.
   black: { ...PAINT, color: 0x2c2e33, roughness: 0.42, clearcoat: 0.85, clearcoatRoughness: 0.16, fin: 'paintDark' },
   rubber: { color: 0x1f2022, metalness: 0, roughness: 0.78, specularIntensity: 0.55, fin: 'rubber' },
@@ -243,6 +248,31 @@ diffuseColor.rgb *= 1.0 + uSurfAmp.w * ( sBlot * 1.2 + sGrain * 0.4 );
 #include <roughnessmap_fragment>
 roughnessFactor = clamp( roughnessFactor * ( 1.0 + uSurfAmp.z * ( sBlot * 1.6 + sGrain * 0.8 ) ), 0.02, 1.0 );`;
 
+// Rouille (finition avec rust) : taches aux bords déchiquetés, brun mat et rugueux, auréole
+// ternie autour ; rien sur les faces de coupe (faces arrière), qui gardent la teinte de la pièce.
+const RUST_FRAG = /* glsl */`
+vec4 rX = texture2D( uSurfTex, sP.zy * uSurfRust.y + 0.23 );
+vec4 rY = texture2D( uSurfTex, sP.xz * uSurfRust.y + 0.71 );
+vec4 rZ = texture2D( uSurfTex, sP.xy * uSurfRust.y + 0.47 );
+// Second relevé, plus large et tourné : les taches ne se répètent pas le long d'une pièce.
+vec2 rG = vec2( 0.37, 0.43 ) * uSurfRust.y;
+vec4 qX = texture2D( uSurfTex, sP.yz * rG + 0.61 );
+vec4 qY = texture2D( uSurfTex, sP.zx * rG + 0.17 );
+vec4 qZ = texture2D( uSurfTex, sP.yx * rG + 0.83 );
+float rB = dot( sW, vec3( rX.b, rY.b, rZ.b ) );
+float qB = dot( sW, vec3( qX.b, qY.b, qZ.b ) );
+float rA = dot( sW, vec3( rX.a, rY.a, rZ.a ) );
+float rField = 0.5 + ( rB + qB - 1.0 ) * 0.8 + ( rA - 0.5 ) * 0.14 + sGrain * 0.06;
+float rSeuil = 1.0 - uSurfRust.x;
+float rFace = gl_FrontFacing ? 1.0 : 0.0;
+float sRust = smoothstep( rSeuil, rSeuil + 0.035, rField ) * rFace;
+float rHalo = smoothstep( rSeuil - 0.08, rSeuil, rField ) * rFace - sRust;
+vec3 rCol = mix( vec3( 0.032, 0.014, 0.008 ), vec3( 0.125, 0.043, 0.016 ), clamp( rA * 1.4 - 0.2 + sGrain, 0.0, 1.0 ) );
+diffuseColor.rgb = mix( diffuseColor.rgb, diffuseColor.rgb * 0.55 + vec3( 0.03, 0.01, 0.0 ), rHalo * 0.8 );
+diffuseColor.rgb = mix( diffuseColor.rgb, rCol, sRust );
+roughnessFactor = mix( roughnessFactor, 0.94, sRust );
+sDelta *= 1.0 + 5.0 * sRust;`;
+
 /** Injecte le relief de surface dans un shader standard / physique. */
 const GRAIN_VERT = /* glsl */`
 attribute vec3 aGrain;
@@ -272,12 +302,14 @@ function injectSurface(shader, fin) {
   shader.uniforms.uSurfFreq = { value: new THREE.Vector3(fin.fs, fin.cs, fin.stretch || 1) };
   shader.uniforms.uSurfEnv = { value: fin.env ?? 1 };
   const G = !!fin.grain;
+  const R = !!fin.rust;
+  if (R) shader.uniforms.uSurfRust = { value: new THREE.Vector2(fin.rust, fin.rs || 9) };
   shader.vertexShader = shader.vertexShader
     .replace('#include <common>', SURF_VERT_PARS + (G ? GRAIN_VERT : ''))
     .replace('#include <begin_vertex>', SURF_VERT + (G ? '\nvGrain = aGrain;' : ''));
   shader.fragmentShader = shader.fragmentShader
-    .replace('#include <common>', SURF_FRAG_PARS + (G ? '\nvarying vec3 vGrain;\nuniform float uSurfGrain;' : ''))
-    .replace('#include <roughnessmap_fragment>', SURF_FRAG + (G ? GRAIN_FRAG : ''))
+    .replace('#include <common>', SURF_FRAG_PARS + (G ? '\nvarying vec3 vGrain;\nuniform float uSurfGrain;' : '') + (R ? '\nuniform vec2 uSurfRust;' : ''))
+    .replace('#include <roughnessmap_fragment>', SURF_FRAG + (G ? GRAIN_FRAG : '') + (R ? RUST_FRAG : ''))
     .replace('#include <normal_fragment_maps>', `#include <normal_fragment_maps>
 normal = normalize( normal + faceDirection * sDelta );`)
     .replace('#include <clearcoat_normal_fragment_begin>', `#include <clearcoat_normal_fragment_begin>
@@ -290,7 +322,7 @@ normal = normalize( normal + faceDirection * sDelta );`)
 #endif`)
     .replace('#include <lights_physical_fragment>', `#include <lights_physical_fragment>
 #ifdef USE_CLEARCOAT
-  material.clearcoatRoughness = clamp( material.clearcoatRoughness * ( 1.0 + uSurfAmp.z * 2.5 * sBlot ), 0.02, 1.0 );
+  material.clearcoatRoughness = clamp( material.clearcoatRoughness * ( 1.0 + uSurfAmp.z * 2.5 * sBlot ), 0.02, 1.0 );${R ? '\n  material.clearcoat *= 1.0 - sRust;' : ''}
 #endif`);
 }
 
@@ -324,7 +356,7 @@ function setupProgram(m, cap, dir = 1) {
     if (fin) injectSurface(shader, fin);
     if (cap) shader.fragmentShader = shader.fragmentShader.replace('#include <dithering_fragment>', capShader(dir));
   };
-  const key = `${fin ? `surf${fin.grain ? '-grain' : ''}` : ''}${cap ? `-section-cap-${dir}` : ''}`;
+  const key = `${fin ? `surf${fin.grain ? '-grain' : ''}${fin.rust ? '-rust' : ''}` : ''}${cap ? `-section-cap-${dir}` : ''}`;
   m.customProgramCacheKey = () => key;
 }
 

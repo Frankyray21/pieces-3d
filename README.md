@@ -170,8 +170,12 @@ pièces (numéro, quantité, page du manuel).
   qu'ils ne cotent pas (diamètre intérieur du tube, tige, bague, collet, fil du
   ressort, pliage de la poignée) est relevé à l'échelle sur les tracés
   vectoriels des PDF. Le tube est coté Ø 2 11/16 po, cote arrondie au 1/16 :
-  le tracé donne 2,715 po, valeur du modèle. Montré en acier nu (les plans ne
-  précisent pas de couleur). Contrôle chiffré :
+  le tracé donne 2,715 po, valeur du modèle. Corps et plaque peints en rouge Machines
+  Roger, avec un peu de rouille où la peinture a sauté, à la demande du client
+  (les plans ne précisent pas de couleur) ; tige, ressort et bague en acier nu.
+  La rouille est une finition du moteur de matériaux (`redRust`, finition
+  `paintRust` de `src/viewer/materials.js` : part de surface touchée `rust`,
+  fréquence des taches `rs`), réutilisable pour d'autres pièces. Contrôle chiffré :
   `node scripts/check-core-knocker.mjs` compare 33 mesures du modèle aux plans.
   Masses : le tube seul donne 6,25 lb (6,3 lb au cartouche du corps) et
   l'assemblage sans la poignée ni le ressort 9,3 lb (9,4 lb au cartouche) ; les
