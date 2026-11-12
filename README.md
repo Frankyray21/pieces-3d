@@ -180,6 +180,33 @@ pièces (numéro, quantité, page du manuel).
   cartouches semblent donc ne compter ni la poignée (0,34 lb) ni le ressort
   (0,08 lb ; 0,01 lb à son cartouche), avec lesquels le modèle pèse 9,7 lb.
 
+- **Tube à l'eau 1524010812 et flotte 152042600** (`tube-eau`, Machines Roger
+  International) : bac à eau ouvert de 45 3/8 × 35 1/4 po et de 33 15/16 po de
+  haut, soudé en tôle de 3/16 po, d'après le plan du 2024-01-02 (une page,
+  échelle 1:15, coupe A-A, détail B à 1:2). La plaque 1 (1524010806) forme d'un
+  seul pli le fond et les deux grandes faces ; les bouts (1524010807 et
+  1524010808) sont posés contre ses chants (joint d'angle ouvert) ; les quatre
+  côtés ont un rebord replié de 2 3/16 po à retombée de 1 3/16 po. Traverse en
+  oméga ouverte vers le haut, au fond ajouré (1524010809), dont les pattes
+  entrent sous les rebords (« PLACER AVANT DE SOUDER LA PLAQUE №2 »), deux
+  barres de 1 × 17 3/8 po (1524010810), deux pieds en U de 8 × 3 3/4 po
+  (1524010811), deux demi-manchons inox 1 po FNPT (12641) et deux brides à
+  souder 2 po NPT (0700200). Les cotes du plan sont reprises ; le reste
+  (épaisseur, plis, rebords, traverse, ajours, raccords) est relevé sur le
+  tracé vectoriel du PDF. Le boulon 1/4-20 de la nomenclature n'est situé sur
+  aucune vue : il reste sans 3D. La flotte 152042600 « FLOTTE STM-1500 TOBE A
+  L'EAU » (plan du 2022-04-26, page P02) n'a qu'une vue en perspective
+  dimétrique, en image et sans cote : ses dimensions sont mesurées sur l'image
+  (ellipse des joues, axe, bras), à l'échelle 1:3 que donnent les têtes des
+  boulons de 3/8 po (le cartouche inscrit 1:8) ; elles tombent sur des cotes
+  rondes (cylindre de Ø 6 × 12 po, joues de Ø 6 1/4 po, tube carré de 1 po ×
+  20 po). Elle est posée dans le bac à titre indicatif : aucun plan ne donne sa
+  position ni la pièce qui la porte. Bac et corps de la flotte peints en noir
+  (demande du client). Contrôle chiffré : `node scripts/check-tube-eau.mjs`
+  compare 63 mesures aux plans ; masses du modèle : 444,2 lb pour le bac
+  (443,9 lb au cartouche) et 8,8 lb pour la flotte (8,9 lb, avec un cylindre
+  en tôle de calibre 16). La pompe à eau reste à modéliser (plan à venir).
+
 - **Rack à outils 15083000** (`rack-outil`, Machines Roger International, plan
   d'assemblage soudé du 2021-08-31, une page, échelle 1:4) : plaque en U de
   30 × 14 1/2 po (15083001), deux tubes ronds debout (15083002), quatre

@@ -116,6 +116,14 @@
       "category": "Table d'atelier en aluminium",
       "thumbnail": "equipment/table-a-core/thumbnail.webp",
       "status": "3D tirée de la CAO SolidWorks du fabricant (8 pièces, facettes exactes), montée et rendue dans Blender ; plan d'assemblage et développé de la jupe"
+    },
+    {
+      "id": "tube-eau",
+      "name": "Tube à l'eau 1524010812 et flotte 152042600",
+      "manufacturer": "Machines Roger International",
+      "category": "Bac à eau (assemblage soudé)",
+      "thumbnail": "equipment/tube-eau/thumbnail.webp",
+      "status": "3D d'après le plan 1524010812 (2024-01-02) : bac ouvert de 45 3/8 × 35 1/4 × 33 15/16 po en tôle de 3/16 po, rebords repliés, traverse en oméga ajourée, deux barres, pieds en U, raccords de 1 po et brides de 2 po ; flotte 152042600 (cylindre de Ø 6 × 12 po à bras carré) relevée sur la vue du plan ; peints en noir ; masses du modèle à moins de 2 % des cartouches ; pompe à eau à venir"
     }
   ]
 }
