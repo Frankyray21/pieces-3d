@@ -34,7 +34,7 @@ const IN = 0.0254;
 
 // Éléments : nom, pivot (matrice monde), pièces, parent, mouvement (axes du fichier glTF, Y vers le haut).
 const ELEMENTS = [
-  { name: 'SM_Coffre_Caisse', pivot: new THREE.Matrix4(), parts: ['1', '2', '3', '4', '5', '7', '8', '9', '10', '11', '12', '18', '20', '21'].flatMap((r) => ref(r)),
+  { name: 'SM_Coffre_Caisse', pivot: new THREE.Matrix4(), parts: ['1', '2', '3', '4', '5', '7', '8', '9', '10', '11', '12', '18', '20', '21', '26'].flatMap((r) => ref(r)),
     extras: { role: 'caisse fixe', origine: 'au sol, au centre du coffre' } },
   { name: 'SM_Coffre_Porte_G', pivot: doorG, parts: [...ref('6', 0), ...ref('13', 0), ...ref('15'), ...ref('16'), ...ref('17'), ...ref('22'), ...ref('24')],
     extras: { role: 'porte gauche', mouvement: 'rotation', axe_local: 'Y', angle_ferme_deg: 0, angle_ouvert_deg: -110 } },
@@ -46,7 +46,19 @@ const ELEMENTS = [
     extras: { role: 'tiroir', mouvement: 'translation', axe_local: 'Z', course_m: +RIG.drawerTravel.toFixed(3) } },
   { name: 'SM_Coffre_Support_Tube', pivot: T(RIG.support), parts: ref('23'),
     extras: { role: 'support de tube D-D (dessin 0102803), fixe', origine: 'sous la base du support' } },
+  { name: 'SM_Coffre_Boite_Cle', pivot: T(RIG.keyBox), parts: ref('25'),
+    extras: { role: 'boîte à clés (dessin C16062863), fixe', origine: 'haut de la plaque, contre le côté gauche' } },
 ];
+
+// Contenu du coffre (liste de matériel) : un maillage par pièce, origine au centre de la pièce.
+const CONTENU = { 30: ['Tete_Excore', '3760016030'], 31: ['Overshot_Excore_II', '3760016279'], 32: ['Core_Lifter', '3760006241'], 33: ['Core_Lifter_Case', '3760006242'], 34: ['Stop_Ring', '3760006240'], 35: ['Landing_Ring', '3760006243'], 36: ['Marteau'], 37: ['Masse_2lb'], 38: ['Masse_10lb'] };
+for (const [r, [nom, pn]] of Object.entries(CONTENU)) {
+  ref(r).forEach((obj, i, all) => {
+    const c = new THREE.Box3().setFromObject(obj).getCenter(new THREE.Vector3());
+    ELEMENTS.push({ name: `SM_Contenu_${nom}${all.length > 1 ? `_${i + 1}` : ''}`, pivot: T(c.toArray()), parts: [obj],
+      extras: { role: 'contenu du coffre, objet à prendre', ...(pn ? { numero_de_piece: pn, calibre: 'N' } : {}) } });
+  });
+}
 
 // Matériaux PBR simples, un par couleur de la palette.
 const NAMES = { red: 'M_Coffre_Rouge', white: 'M_Coffre_Blanc', black: 'M_Coffre_Noir', logo: 'M_Coffre_Logo' };

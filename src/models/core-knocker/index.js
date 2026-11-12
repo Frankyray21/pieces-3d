@@ -32,6 +32,11 @@ export const BAGUE = { fond: { d: 2.25, t: 1 / 8, trou: 1 + 1 / 32 }, od: 2.375,
 // entre le fond de la bague et le collet (2 3/8 po). Bouts rapprochés.
 export const RESSORT = { fil: 0.113, od: 1.459, actives: 5 };
 
+// Peinture : rouge Machines Roger sur le corps soudé et la plaque, avec un peu de rouille où la
+// peinture a sauté (demandes du client ; les plans ne donnent pas de couleur de surface). La
+// tige, le ressort et la bague restent en acier nu.
+const PEINT = 'redRust';
+
 const SOUDURE_BRAS = 1 / 8; // tout le tour de chaque jambe (plan du corps)
 const SOUDURE_PLAQUE = 1 / 4; // tout le tour, plaque sur tube (plan d'assemblage)
 
@@ -170,8 +175,8 @@ function ressort(api, material) {
 /** Corps NQ 15222405 : tube et poignée soudée. */
 export function P02(api) {
   const S = api.S;
-  api.part('1', tube(S, 'darkSteel'), [0, 0, 0]);
-  api.part('2', bras(api, 'darkSteel'), [0, 0.09, 0]);
+  api.part('1', tube(S, PEINT), [0, 0, 0]);
+  api.part('2', bras(api, PEINT), [0, 0.09, 0]);
   return { view: { dir: [0.75, 0.5, 1] } };
 }
 
@@ -183,7 +188,7 @@ export function P01(api) {
   api.part('5', axe(bague(S, 'zinc')), [0.1, 0, 0]);
   api.part('4', axe(ressort(api, 'blackOxide')), [0.19, 0, 0]);
   api.part('2', axe(tige(S, 'steel')), [0.31, 0, 0]);
-  api.part('3', axe(plaque(S, 'darkSteel')), [0.37, 0, 0]);
+  api.part('3', axe(plaque(S, PEINT)), [0.37, 0, 0]);
   return { view: { dir: [0.75, 0.5, 1] } };
 }
 

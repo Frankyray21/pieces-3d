@@ -52,6 +52,9 @@ const camera = new THREE.PerspectiveCamera(38, 1, 0.05, 60);
 camera.position.set(2.2, 2.0, 3.6);
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.target.set(0, 0.8, 0);
+// ?vue=x,y,z,cx,cy,cz : position de la caméra et point visé (captures d'essai).
+const vue = new URLSearchParams(location.search).get('vue')?.split(',').map(Number);
+if (vue?.length === 6) { camera.position.set(vue[0], vue[1], vue[2]); controls.target.set(vue[3], vue[4], vue[5]); }
 controls.enableDamping = true;
 controls.maxPolarAngle = Math.PI * 0.52;
 

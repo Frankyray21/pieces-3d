@@ -1,0 +1,236 @@
+{
+ "id": "tube-eau",
+ "name": "Tube à l'eau 1524010812 et flotte 152042600",
+ "manufacturer": "Machines Roger International",
+ "category": "Bac à eau (assemblage soudé)",
+ "document": {
+  "title": "Plans 1524010812 « TUBE A L`EAU » et 152042600 « FLOTTE STM-1500 TOBE A L'EAU »",
+  "reference": "1524010812",
+  "preparedBy": "Machines Roger International, dessinés par V. Chyhrynau, approuvés par G. Arcand (bac) et G. Gélineau (flotte)",
+  "date": "2024-01-02",
+  "sheets": 2,
+  "pagePattern": "pages/{sheet}.webp"
+ },
+ "specs": [
+  [
+   "Usage",
+   "Bac à eau ouvert (« tube à l'eau ») ; le titre du plan de la flotte le rattache à la foreuse STM-1500"
+  ],
+  [
+   "Longueur hors tout",
+   "45 3/8 po (1 153 mm), sans les raccords ; ceux de 1 po dépassent de 3/4 po du bout gauche"
+  ],
+  [
+   "Profondeur hors tout",
+   "35 1/4 po (895 mm)"
+  ],
+  [
+   "Hauteur",
+   "33 15/16 po (862 mm) pieds compris ; bac seul 30 3/16 po, pieds de 3 3/4 po (relevés)"
+  ],
+  [
+   "Contenance",
+   "Environ 770 L (204 gal US) à ras bord, calculée d'après les cotes intérieures de 45 × 34 7/8 × 30 po"
+  ],
+  [
+   "Tôle",
+   "3/16 po partout, plis au rayon intérieur de 3/16 po (relevés au détail B)"
+  ],
+  [
+   "Rebord du haut",
+   "Replié de 2 3/16 po vers l'intérieur sur les quatre côtés, retombée de 1 3/16 po (relevés)"
+  ],
+  [
+   "Pieds",
+   "Deux U de 8 × 3 3/4 po sur toute la profondeur, à 3 po des bouts"
+  ],
+  [
+   "Traverse",
+   "Oméga de 17 7/16 po de large et de 2 3/16 po de creux, fond ajouré, à 6 po du rebord du bout droit ; deux barres de 1 × 17 3/8 po en travers"
+  ],
+  [
+   "Raccords",
+   "Deux demi-manchons inox 1 po FNPT sur le bout gauche, à 4 po sous le dessus ; une bride à souder 2 po NPT au bas de chaque bout (positions relevées)"
+  ],
+  [
+   "Flotte 152042600",
+   "Cylindre de Ø 6 × 12 po, joues de Ø 6 1/4 po, bras en tube carré de 1 po × 20 po, deux boulons de 3/8 po (dimensions relevées sur la vue du plan, non cotée)"
+  ],
+  [
+   "Soudures",
+   "3/16 po, typique, des deux côtés (symboles du plan du bac)"
+  ],
+  [
+   "Tolérances générales",
+   "Bac : fraction ± 1/32 po (± 0,8 mm) ; flotte : fraction ± 1/16 po (± 1,5 mm) ; angle ± 1/2°"
+  ],
+  [
+   "Échelle des plans",
+   "Bac : 1:15, détail B à 1:2. Flotte : 1:8 au cartouche, vue dessinée à 1:3 (relevé)"
+  ],
+  [
+   "Couleur de surface",
+   "Noir (demande du client ; non précisée aux plans) : bac, brides soudées et corps de la flotte ; demi-manchons inox, boulons et capuchon à leur fini"
+  ]
+ ],
+ "weights": [
+  [
+   "Tube à l'eau (cartouche du plan 1524010812)",
+   "443,9 lb (201,4 kg)"
+  ],
+  [
+   "Flotte (cartouche du plan 152042600)",
+   "8,9 lb (4,0 kg)"
+  ]
+ ],
+ "sheetTitles": {
+  "P01": "Plan 1524010812 : tube à l'eau — vues de dessus et de face, coupe A-A, détail B, nomenclature",
+  "P02": "Plan 152042600 : flotte STM-1500 du tube à l'eau — vue en perspective, nomenclature"
+ },
+ "root": "P01",
+ "assemblies": {
+  "P01": {
+   "title": "TUBE A L`EAU",
+   "titleFr": "Tube à l'eau",
+   "pn": "1524010812",
+   "sheets": [
+    "P01",
+    "P02"
+   ],
+   "note": "Bac à eau ouvert, soudé en tôle de 3/16 po. Modèle 3D construit d'après le plan 1524010812 (échelle 1:15, coupe A-A, détail B à 1:2). Les cotes inscrites au plan sont reprises : 45 3/8 × 35 1/4 po, 33 15/16 po de haut pieds compris, pieds à 3 po des bouts, traverse à 6 po du rebord du bout droit, raccords de 1 po qui dépassent de 3/4 po. Tout le reste est relevé sur le tracé vectoriel du plan : épaisseur et rayons de pli, rebord du haut (2 3/16 po, retombée de 1 3/16 po), hauteur des pieds (3 3/4 po), profil et ajours de la traverse, barres, position des raccords et des brides. Lecture du plan : la plaque 1 forme d'un seul pli le fond et les deux grandes faces ; les bouts (plaques 2 et 3) sont découpés à son profil intérieur et posés contre ses chants (joint d'angle ouvert, soudé des deux côtés) ; la traverse (plaque 4) est un oméga ouvert vers le haut dont les pattes entrent sous les rebords de la plaque 1, d'où la note « PLACER AVANT DE SOUDER LA PLAQUE №2 ». Le plan ne dit pas à quoi sert la traverse. Contrôle : le volume d'acier du modèle donne 444,2 lb, pour 443,9 lb au cartouche. La flotte 152042600 (plan séparé) est posée dans le bac ; aucun des deux plans ne donne sa position ni la pièce qui la porte : elle est montrée bras à l'horizontale, vis-à-vis du premier raccord de 1 po, à titre indicatif. La pompe à eau n'est pas encore modélisée (plan à venir). Les titres en majuscules sont ceux des nomenclatures ; les descriptions entre parenthèses décrivent la pièce d'après sa forme. Peint en noir, à la demande du client : le cartouche ne précise pas de couleur de surface ; les demi-manchons en inox gardent leur fini.",
+   "parts": [
+    [
+     "1",
+     "1524010806",
+     1,
+     "PLAQUE (fond et deux grandes faces d'un seul pli en U, rebords du haut repliés)",
+     {
+      "note": "45 po de long, entre les deux bouts. Rebord replié de 2 3/16 po vers l'intérieur, retombée de 1 3/16 po (détail B) ; rayon de pli extérieur de 3/8 po."
+     }
+    ],
+    [
+     "2",
+     "1524010807",
+     1,
+     "PLAQUE (bout droit, rebord du haut replié, trou de la bride de 2 po)",
+     {
+      "note": "À souder après la mise en place de la traverse (note du plan). Découpée au profil intérieur de la plaque 1 ; ses oreilles ferment les rebords de la plaque 1."
+     }
+    ],
+    [
+     "3",
+     "1524010808",
+     1,
+     "PLAQUE (bout gauche, percé pour la bride de 2 po et les deux raccords de 1 po)",
+     {
+      "note": "Même forme que le bout droit. Diamètre des trous des raccords non lisible au plan : montré à l'alésage du manchon."
+     }
+    ],
+    [
+     "4",
+     "1524010809",
+     1,
+     "PLAQUE (traverse en oméga ouverte vers le haut, fond ajouré)",
+     {
+      "note": "17 7/16 po de large aux ailes, 2 3/16 po de creux, ailes au niveau du dessus du bac ; son aile droite est à 6 po de la retombée du bout droit (cote du plan). Fond : croix de bandes de 1 po, six ajours triangulaires aux coins de 1/4 po et six trous de Ø 2 po (relevés). Ses flancs se prolongent en pattes arrondies sous les rebords de la plaque 1 (détail B)."
+     }
+    ],
+    [
+     "5",
+     "1524010810",
+     2,
+     "PLAQUE (barre de 1 × 17 3/8 po à bouts ronds, 3/16 po d'épais)",
+     {
+      "note": "Posées en travers des ailes de la traverse, à 7 9/16 po des grandes faces ; un trou de 5/16 po à 3/8 po de chaque bout (relevés)."
+     }
+    ],
+    [
+     "6",
+     "1524010811",
+     2,
+     "PLAQUE (pied en U de 8 × 3 3/4 po, sous le fond)",
+     {
+      "note": "À 3 po des bouts (cotes du plan), sur toute la profondeur du bac ; ailes vers le haut, soudées au fond."
+     }
+    ],
+    [
+     "7",
+     "12641",
+     2,
+     "SPLG, SS PIPE, 1\" FNPT (demi-manchon inox, 1 po NPT femelle)",
+     {
+      "note": "Sur le bout gauche, à 4 po sous le dessus du bac, à 26 9/16 et 31 9/16 po de la face arrière (relevés) ; dépassent de 3/4 po (cote du plan)."
+     }
+    ],
+    [
+     "8",
+     "0700200",
+     2,
+     "WELD FLANGE 2\" NPT (bride à souder, 2 po NPT)",
+     {
+      "note": "Une au bas de chaque bout : axe à 2 11/16 po de la face arrière et à 1 11/16 po du dessous du bac (relevés). Ø 3 11/16 po, 5/16 po de saillie ; la bride descend de 5/32 po sous le fond, comme sur la vue de face."
+     }
+    ],
+    [
+     "9",
+     "HBOLT 0.2500-20x0.5x0.5-N",
+     1,
+     "(boulon à tête hexagonale 1/4-20 × 1/2 po)",
+     {
+      "no3d": true,
+      "note": "Inscrit à la nomenclature sans titre ni repère sur les vues : son emplacement n'est pas indiqué, il n'est pas montré en 3D. Les barres (repère 5) ont quatre trous de 5/16 po."
+     }
+    ],
+    [
+     "10",
+     "152042600",
+     1,
+     "FLOTTE STM-1500 TOBE A L'EAU (flotte à bras, plan séparé)",
+     {
+      "link": "P02",
+      "note": "Hors nomenclature du plan 1524010812. Position dans le bac non indiquée aux plans, ni la pièce à laquelle le bras se boulonne : montrée à titre indicatif, bras à l'horizontale à la hauteur du premier raccord de 1 po, bout du bras à 3 po du bout gauche."
+     }
+    ]
+   ]
+  },
+  "P02": {
+   "title": "FLOTTE STM-1500 TOBE A L'EAU",
+   "titleFr": "Flotte du tube à l'eau (STM-1500)",
+   "pn": "152042600",
+   "sheets": [
+    "P02"
+   ],
+   "note": "Flotte en acier soudé : un cylindre fermé par deux joues en forme de goutte, et un bras en tube carré qui traverse le haut des joues et dépasse d'un côté, où deux boulons de 3/8 po le fixent. Le plan 152042600 n'a qu'une vue en perspective, sans aucune cote : toutes les dimensions du modèle sont relevées sur cette image. Le cartouche inscrit 1:8, mais la vue est dessinée à 1:3 : c'est l'échelle que donnent les têtes des boulons de 3/8 po, et elle ramène tout à des cotes rondes (cylindre de Ø 6 × 12 po, joues de Ø 6 1/4 po et de 1/8 po, tube carré de 1 po × 20 po, axe du bras à 4 po de celui du cylindre). Contrôle : avec un cylindre en tôle de calibre 16, le modèle pèse 8,8 lb, pour 8,9 lb au cartouche. Le cylindre déplace 5,6 L, soit 12,2 lb d'eau : la flotte flotte à peu près aux trois quarts immergée. La flotte est montrée dans la position de la vue du plan (faces du bras à 45° de la verticale). Le plan ne montre ni la pièce à laquelle le bras se boulonne ni les écrous. Corps peint en noir comme le bac, à la demande du client (le cartouche ne précise pas de couleur de surface) ; boulons et capuchon zingués.",
+   "parts": [
+    [
+     "1",
+     "152042605",
+     1,
+     "FLOTTE (cylindre de Ø 6 × 12 po, deux joues, bras en tube carré de 1 po)",
+     {
+      "note": "Assemblage soudé. Joues de Ø 6 1/4 po prolongées en goutte autour du bras (arrondi de 1 po) ; bras de 20 po qui dépasse de 7 5/8 po de la joue arrière et de 1/8 po de la joue avant ; raccord six pans au centre de la joue avant, sous le capuchon. Dimensions relevées sur la vue du plan."
+     }
+    ],
+    [
+     "2",
+     "HBOLT 0.3750-16x1.25x1-C",
+     2,
+     "BOLT (boulon à tête hexagonale 3/8-16 × 1 1/4 po)",
+     {
+      "note": "En travers du bras, à 5/8 et 2 1/2 po de son bout (relevés). Aucun écrou à la nomenclature."
+     }
+    ],
+    [
+     "3",
+     "210292-4S",
+     1,
+     "CAP (capuchon six pans à bout bombé, au centre de la joue avant)",
+     {
+      "note": "Le numéro correspond à un capuchon de raccord évasé à 37° de grandeur -4 (1/4 po), en acier ; il ferme le raccord de la joue avant."
+     }
+    ]
+   ]
+  }
+ },
+ "documents": []
+}

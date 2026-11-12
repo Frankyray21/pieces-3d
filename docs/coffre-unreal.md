@@ -26,8 +26,9 @@ CDN).
 ## Contenu du fichier
 
 Unités en mètres, Y vers le haut (convention glTF ; Unreal convertit en
-centimètres et en Z vers le haut à l'import). Coffre fermé, environ
-14 000 triangles, 4 matériaux, 1 texture.
+centimètres et en Z vers le haut à l'import). Coffre fermé avec
+son premier contenu, environ 105 000 triangles (dont 80 000 pour les outils
+Epiroc du contenu), 1 texture.
 
 | Maillage | Origine (pivot) | Mouvement prévu |
 | --- | --- | --- |
@@ -37,6 +38,8 @@ centimètres et en Z vers le haut à l'import). Coffre fermé, environ
 | `SM_Coffre_Porte_D` | bas de la ligne de pentures droite | rotation autour de Y local, 0 à +110° |
 | `SM_Coffre_Tiroir` | milieu du bas de la façade | translation sur Z local, course 0,33 m |
 | `SM_Coffre_Support_Tube` | sous la base du support | fixe (dessin 0102803), séparé pour pouvoir le déplacer ou l'enlever |
+| `SM_Coffre_Boite_Cle` | haut de la plaque, contre le côté gauche | fixe (dessin Foresco C16062863, placé d'après une photo), séparé pour pouvoir le déplacer |
+| `SM_Contenu_…` (15 maillages) | centre de chaque pièce (tête, pour les outils à manche) | contenu du coffre, objets à prendre : têtes Excore (2), overshot Excore II, core lifters (4), core lifter cases (2), stop rings (2), landing ring, marteau, masses de 2 et 10 lb ; numéro de pièce dans les `extras` quand il existe |
 
 Chaque nœud porte ces valeurs dans ses `extras` glTF (`mouvement`,
 `axe_local`, `angle_ouvert_deg`, `course_m`). Les axes et les signes sont ceux
@@ -80,4 +83,6 @@ régénérer dans le moteur si l'on veut des textures ou des lightmaps.
 - Les tôles sont à deux couches (rouge dehors, blanc dedans) écartées de
   1,6 mm : pas de faces coplanaires, mais des niveaux de détail (LOD) générés
   automatiquement peuvent les faire se toucher de loin.
-- Le contenu du coffre (outils) n'est pas modélisé.
+- Contenu : seules les premières pièces de la liste de matériel du coffre 629
+  (calibre N) sont modélisées ; leur emplacement dans le coffre est supposé.
+- Tubes de base : bouts ouverts pour les fourches (le dessin 087 les ferme).

@@ -122,6 +122,14 @@ pièces (numéro, quantité, page du manuel).
   Export pour moteur de jeu (Unreal Engine) : `scripts/export-coffre-jeu.mjs`
   écrit `coffre-ith.glb`, un maillage par élément mobile sur son pivot (portes,
   barre de verrouillage, tiroir) ; voir `docs/coffre-unreal.md`.
+  Sur le côté gauche : boîte à clés du dessin Foresco C16062863 (P04), placée
+  d'après une photo (vers le bas du côté, à mi-profondeur).
+  Tubes de base creux, bouts ouverts pour les fourches. Premier contenu de la
+  liste de matériel du coffre 629 (calibre N) dans le coffre ouvert : deux têtes
+  NU Excore, l'overshot Excore II, core lifters, core lifter cases, stop rings
+  et landing ring, repris des modèles Epiroc (`reuse`).
+  Crochet double sur le côté gauche, marteau dans la boîte à clés, masses de 2
+  et 10 lb (`outils.js`, formes génériques sans dessin).
   Essai interactif du fichier dans le navigateur :
   `equipment/coffre-dd/essai.html` (clic sur la barre, les portes, le tiroir).
 
@@ -164,13 +172,44 @@ pièces (numéro, quantité, page du manuel).
   qu'ils ne cotent pas (diamètre intérieur du tube, tige, bague, collet, fil du
   ressort, pliage de la poignée) est relevé à l'échelle sur les tracés
   vectoriels des PDF. Le tube est coté Ø 2 11/16 po, cote arrondie au 1/16 :
-  le tracé donne 2,715 po, valeur du modèle. Montré en acier nu (les plans ne
-  précisent pas de couleur). Contrôle chiffré :
+  le tracé donne 2,715 po, valeur du modèle. Corps et plaque peints en rouge Machines
+  Roger, avec un peu de rouille où la peinture a sauté, à la demande du client
+  (les plans ne précisent pas de couleur) ; tige, ressort et bague en acier nu.
+  La rouille est une finition du moteur de matériaux (`redRust`, finition
+  `paintRust` de `src/viewer/materials.js` : part de surface touchée `rust`,
+  fréquence des taches `rs`), réutilisable pour d'autres pièces. Contrôle chiffré :
   `node scripts/check-core-knocker.mjs` compare 33 mesures du modèle aux plans.
   Masses : le tube seul donne 6,25 lb (6,3 lb au cartouche du corps) et
   l'assemblage sans la poignée ni le ressort 9,3 lb (9,4 lb au cartouche) ; les
   cartouches semblent donc ne compter ni la poignée (0,34 lb) ni le ressort
   (0,08 lb ; 0,01 lb à son cartouche), avec lesquels le modèle pèse 9,7 lb.
+
+- **Tube à l'eau 1524010812 et flotte 152042600** (`tube-eau`, Machines Roger
+  International) : bac à eau ouvert de 45 3/8 × 35 1/4 po et de 33 15/16 po de
+  haut, soudé en tôle de 3/16 po, d'après le plan du 2024-01-02 (une page,
+  échelle 1:15, coupe A-A, détail B à 1:2). La plaque 1 (1524010806) forme d'un
+  seul pli le fond et les deux grandes faces ; les bouts (1524010807 et
+  1524010808) sont posés contre ses chants (joint d'angle ouvert) ; les quatre
+  côtés ont un rebord replié de 2 3/16 po à retombée de 1 3/16 po. Traverse en
+  oméga ouverte vers le haut, au fond ajouré (1524010809), dont les pattes
+  entrent sous les rebords (« PLACER AVANT DE SOUDER LA PLAQUE №2 »), deux
+  barres de 1 × 17 3/8 po (1524010810), deux pieds en U de 8 × 3 3/4 po
+  (1524010811), deux demi-manchons inox 1 po FNPT (12641) et deux brides à
+  souder 2 po NPT (0700200). Les cotes du plan sont reprises ; le reste
+  (épaisseur, plis, rebords, traverse, ajours, raccords) est relevé sur le
+  tracé vectoriel du PDF. Le boulon 1/4-20 de la nomenclature n'est situé sur
+  aucune vue : il reste sans 3D. La flotte 152042600 « FLOTTE STM-1500 TOBE A
+  L'EAU » (plan du 2022-04-26, page P02) n'a qu'une vue en perspective
+  dimétrique, en image et sans cote : ses dimensions sont mesurées sur l'image
+  (ellipse des joues, axe, bras), à l'échelle 1:3 que donnent les têtes des
+  boulons de 3/8 po (le cartouche inscrit 1:8) ; elles tombent sur des cotes
+  rondes (cylindre de Ø 6 × 12 po, joues de Ø 6 1/4 po, tube carré de 1 po ×
+  20 po). Elle est posée dans le bac à titre indicatif : aucun plan ne donne sa
+  position ni la pièce qui la porte. Bac et corps de la flotte peints en noir
+  (demande du client). Contrôle chiffré : `node scripts/check-tube-eau.mjs`
+  compare 63 mesures aux plans ; masses du modèle : 444,2 lb pour le bac
+  (443,9 lb au cartouche) et 8,8 lb pour la flotte (8,9 lb, avec un cylindre
+  en tôle de calibre 16). La pompe à eau reste à modéliser (plan à venir).
 
 - **Rack à outils 15083000** (`rack-outil`, Machines Roger International, plan
   d'assemblage soudé du 2021-08-31, une page, échelle 1:4) : plaque en U de
@@ -348,6 +387,55 @@ pièces (numéro, quantité, page du manuel).
   `support-avec-cles.glb` (clés de 18, 24 et 36 po en place, tiges NQ) et la
   fiche des poses dans `public/equipment/support-pipewrench/unreal/` ; mode
   d'emploi dans `docs/cles-unreal.md`.
+
+- **Poste de premiers soins et d'extincteur** (`poste-secours`) : reconstitution
+  d'après une seule photo du poste installé sur le grillage de la cage, sans
+  plan ni cote. L'échelle vient du ruban réfléchissant (2 po de large) et de
+  l'extincteur à poudre de 5 lb (cylindre de 4 1/4 po) : toutes les dimensions
+  sont estimées, à environ 1 po près. Cadre en tôle découpée d'environ 34 × 24
+  po (plein derrière l'armoire, ferme à poinçon et croix à droite), ruban rouge
+  et blanc sur le pourtour, armoire blanche à toit incliné et façade
+  transparente à croix rouge, trousse, deux bouteilles de rince-œil, extincteur
+  pendu à son crochet avec ses étiquettes d'inspection, tronçon du grillage
+  pour situer le poste. Ce qui est caché sur la photo (tôle derrière l'armoire,
+  suite du ruban) est supposé et signalé dans la note de la page ; les
+  fixations, invisibles, ne sont pas modélisées. Étiquettes dessinées sur un
+  canevas (génériques : marque et numéros illisibles sur la photo).
+
+- **Panneau de grillage rigide à plis en V, maille 2 × 6 po** (`grillage-cage`) :
+  type de grillage de la cage, identifié sur une photo (P01) et son relevé
+  (P02 : fils verticaux tous les 2 po environ, fils horizontaux tous les 6 po,
+  deux bandes de trois fils rapprochés qui sont les plis en V, pointes de 1 po
+  au-dessus de la traverse). Ce type correspond au panneau Oméga II
+  Architectural (Metaltech-Oméga) ; la marque reste à confirmer sur place.
+  Cotes du modèle (`src/models/grillage-cage/index.js`) aux données publiées
+  du fabricant : fil de calibre 6 (0,192 po), maille de 1 31/32 × 6 po, 92 3/4
+  po de large (48 fils verticaux), 70 po de haut au catalogue (70 11/16 po au
+  modèle : 12 mailles de 6 po, 3 plis à 30°, pointes de 1 po), environ 41 lb
+  calculées. Supposé, et signalé dans la note de la page : fil du haut caché
+  par la traverse, pli du pied, angle des plis, côté des fils horizontaux. La
+  traverse, les poteaux et les attaches de la cage ne sont pas modélisés.
+
+- **Poubelle DD 154011700** (`poubelle-dd`, Machines Roger International, plans
+  154011700 « POUBELLE » du 2024-01-17 à l'échelle 1:5 et 0103001 « COUVERCLE DE
+  POUBELLE POUR DRUM 50KG » du 2024-12-02 à l'échelle 1:4) : poubelle en acier
+  du chantier de forage au diamant et son couvercle. Poubelle (P02) : virole
+  roulée de Ø 14 1/4 × 27 po en plaque de 1/8 po, fond de Ø 14 po en retrait de
+  3/16 po, tenu par deux tenons de 3/16 po dans deux encoches de la virole et
+  soudé de 1/8 po des deux côtés, tout le tour. Couvercle (P03), en plaque de
+  1/16 po : dessus de Ø 15 po, jupe de Ø int. 14 5/8 po et 4 po de haut, anneau
+  d'appui à 1/8 po sous le dessus, poignée en bande pliée à 2 1/2 po du bord.
+  Les cotes des plans sont reprises ; ce qu'ils ne cotent pas (épaisseurs,
+  encoches, tenons, joint de la virole, hauteur de la jupe, anneau, poignée) est
+  relevé à l'échelle sur les tracés vectoriels des PDF. Aucun plan ne montre le
+  couvercle sur la poubelle : la pose de l'ensemble (P01) est déduite des cotes
+  (l'anneau porte sur le bord de la virole, la jupe descend autour avec 3/16 po
+  de jeu au rayon). La vue en coupe du site reprend le plan des deux coupes A-A
+  (X = 0). Poubelle et couvercle peints en noir, à la demande du client (les
+  plans ne précisent pas de couleur de surface). Contrôle chiffré : `node scripts/check-poubelle-dd.mjs` compare 51
+  mesures du modèle aux plans, vérifie que les maillages sont fermés et calcule
+  les masses : 47,9 lb pour la poubelle et 6,85 lb pour le couvercle, pour
+  47,9 lb et 6,9 lb aux cartouches.
 
 La page d'accueil (adresse sans « # », ou le logo en haut à gauche) liste
 les équipements et permet de passer de l'un à l'autre. Les adresses du premier équipement restent `#F05` ; celles des autres

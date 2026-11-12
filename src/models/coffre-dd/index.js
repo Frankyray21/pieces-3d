@@ -6,7 +6,18 @@
 // crochets, autocollant) viennent des photos ; le contenu n'est pas modélisé.
 // Sur le dessus, à gauche : support de tube D-D du dessin 0102803 (P03) ; sa
 // position et son orientation sur le coffre ne figurent sur aucun dessin.
+// Sur le côté gauche : boîte à clés du dessin Foresco C16062863 (P04), placée
+// d'après une photo du coffre (vers le bas du côté, à mi-profondeur), non cotée.
 // Repère : X largeur, Y vers le haut, +Z côté portes.
+
+import epiroc from '../epiroc-ith/index.js';
+import { reuse } from '../reuse.js';
+import { masse, marteau, crochet } from './outils.js';
+
+// Contenu du coffre (liste de matériel du coffre 629, calibre N) : outils du
+// catalogue Epiroc repris tels quels — carottier NU Excore (P076), tête (P077),
+// overshot Excore II (P080) et leurs sous-assemblages.
+const EPIROC = reuse(epiroc, { E076: 'P076', E077: 'P077', E080: 'P080', E098: 'P098', E100: 'P100', E096: 'P096' });
 
 const IN = 0.0254;
 const W = 48 * IN, D = 39.5 * IN; // largeur, profondeur (vue de côté)
@@ -22,6 +33,8 @@ const WI = W - 2 * T - 0.002; // largeur intérieure
 const ZB = -D / 2 + T; // face intérieure du derrière
 const SH_D = 16 * IN, LIP = 4 * IN, DIV_H = 12 * IN; // tablettes : fond, devant, divisions
 const YA = H - DIV_H, YB = H - 2 * DIV_H; // dessus des tablettes du haut et du bas
+const KEY_BOX = [-W / 2, Y0 + 20 * IN, 2 * IN]; // haut de la boîte à clés, sur le côté gauche (d'après la photo)
+const HOOK = [-W / 2, Y0 + 44 * IN, -D / 2 + 9 * IN]; // crochet du côté gauche (position supposée)
 const ROD = 0.375 * IN; // rayon de la tige de 3/4 po
 
 /** Tôle à deux couches : rouge du côté de la normale (axe 0-2, signe), blanc de l'autre. */
@@ -50,9 +63,19 @@ function side(S, s) {
   return S.group(cheek(S, prof, T / 2, 'red', s * (W / 2 - T / 4)), cheek(S, profIn, T / 2, 'white', s * (W / 2 - (3 * T) / 4)));
 }
 
-/** Tube de base 4 × 4 × 1/4 po, bouts fermés, d'avant en arrière. */
+/**
+ * Tube de base 4 × 4 × 1/4 po, d'avant en arrière, soudé sous le fond. Bouts
+ * ouverts pour y glisser les fourches (le dessin 087 demande de les fermer).
+ */
 function baseTube(S) {
-  return S.box(Y0, Y0, D, 'red', { r: 0.009, pos: [0, Y0 / 2, 0] });
+  const a = Y0, t = 0.25 * IN, o = (a - t) / 2;
+  const tube = S.merged([
+    S.box(a, t, D, 'red', { pos: [0, t / 2, 0] }), S.box(a, t, D, 'red', { pos: [0, a - t / 2, 0] }),
+    S.box(t, a - 2 * t, D, 'red', { pos: [o, a / 2, 0] }), S.box(t, a - 2 * t, D, 'red', { pos: [-o, a / 2, 0] }),
+  ], 'red');
+  // Cordons de soudure le long des deux arêtes du haut, contre le fond de la caisse.
+  const z = D / 2 - 0.02;
+  return S.group(tube, ...[-1, 1].map((s) => S.weld([[s * (a / 2 + 0.002), a - 0.003, -z], [s * (a / 2 + 0.002), a - 0.003, z]], 0.006, 'red')));
 }
 
 /** Oreille de levage (détail 1) : plaque de 6 × 4 po, rond de 3 1/2 po, trou de 2 1/2 po. */
@@ -281,6 +304,34 @@ function P03(api) {
 }
 
 /**
+ * Boîte à clés (dessin Foresco C16062863 « BOITE CLE ») : plaque en trapèze de
+ * 9 3/16 po au haut et 4 po de haut, deux cornières en V qui forment avec elle
+ * deux glissières inclinées ; 2 1/4 po de profond hors tout.
+ * Repère : plaque dans le plan XY, dos en z = 0, haut en y = 0.
+ * L'épaisseur (1/4 po), la largeur du bas et l'angle sont mesurés sur le dessin à l'échelle.
+ */
+function P04(api) {
+  const S = api.S;
+  const top = 9.1875 / 2, bot = 2.285, hgt = 4, t = 0.25, y0 = -0.5625, deep = 2;
+  const k = (top - bot) / hgt; // pente des bords
+  const xo = (y) => -(top + y * k); // bord gauche de la plaque à la hauteur y
+  const mm = (pts) => pts.map(([x, y]) => [x * IN, y * IN]);
+  api.part('1', S.at(S.extrude(mm([[-top, 0], [top, 0], [bot, -hgt], [-bot, -hgt]]), t * IN, 'red'), [0, 0, (t / 2) * IN]), [0, 0, -0.08]);
+  const th = t * Math.hypot(1, k), face = -xo(-hgt); // épaisseur et largeur de face mesurées à l'horizontale
+  for (const [ref, s] of [['2', 1], ['3', -1]]) {
+    const wall = [[xo(y0), y0], [xo(y0) + th, y0], [xo(-hgt) + th, -hgt], [xo(-hgt), -hgt]];
+    const front = [[xo(y0), y0], [xo(y0) + face, y0], [xo(-hgt) + face, -hgt], [xo(-hgt), -hgt]];
+    const sx = (pts) => mm(pts.map(([x, y]) => [s * x, y]));
+    const g = S.group(
+      S.at(S.extrude(sx(wall), (deep - t) * IN, 'red'), [0, 0, (t + (deep - t) / 2) * IN]),
+      S.at(S.extrude(sx(front), t * IN, 'red'), [0, 0, (deep + t / 2) * IN]),
+    );
+    api.part(ref, g, [s * -0.07, 0, 0.08]);
+  }
+  return { view: { dir: [0.7, 0.5, 1.2] } };
+}
+
+/**
  * Coffre complet. open : angle d'ouverture des portes [gauche, droite] en
  * radians ; extras : ajouts visibles sur la photo du coffre ouvert.
  */
@@ -343,7 +394,20 @@ export function build(api, open, extras) {
   sup.rotation.y = Math.PI / 2;
   put('23', S.at(sup, [-W / 2 + 3 * IN, H, -D / 2 + 8 * IN]), [-0.25, 0.9, 0]);
 
+  // Boîte à clés sur le côté gauche du coffre, vers le bas (d'après la photo), glissières ouvertes vers le haut.
+  const box = api.sub('P04', { inPlace: true });
+  box.rotation.y = -Math.PI / 2;
+  put('25', S.at(box, KEY_BOX), [-0.5, 0, 0]);
+
   put('18', S.at(decal(api), [0, Y0 + (YK - Y0) / 2, D / 2]), [0, 0, 0.9]);
+
+  // Crochet double sur le côté gauche, vers le haut et l'arrière, avec la masse
+  // de 10 lb suspendue par la tête ; marteau dans la boîte à clés, la tête
+  // coincée entre les cornières (liste de matériel du coffre 629).
+  put('26', S.at(crochet(S), HOOK), [-0.45, 0.1, 0]);
+  const m10 = { a: 2.25 * IN, len: 6 * IN, hl: 30 * IN, hr: 0.7 * IN };
+  put('38', S.at(masse(S, m10), [HOOK[0] - 1.6 * IN, HOOK[1] + 0.25 * IN + m10.a / 2, HOOK[2]]), [-0.75, 0.25, 0]);
+  put('36', S.at(marteau(S), [KEY_BOX[0] - 1.125 * IN, KEY_BOX[1] - 3.2 * IN, KEY_BOX[2]]), [-0.75, 0.2, 0]);
   if (!extras) return;
   put('19', S.at(drawer(S), [DRAWER.x, YB - t - DRAWER.h - 0.006, DRAWER.zf]), [0, -0.12, 0.9]);
   for (const s of [-1, 1]) {
@@ -351,6 +415,47 @@ export function build(api, open, extras) {
   }
   put('21', S.at(basket(S), [W / 2 - T - 0.105, Y0 + T, D / 2 - T - 0.15]), [0, 0.15, 1.2]);
   put('22', onDoor(hookPlate(S), -1, aG), out(0.4, dxG));
+  contents(api, put);
+}
+
+/**
+ * Premières pièces de la liste de matériel du coffre 629 (calibre N), posées
+ * dans le coffre. L'emplacement de chaque pièce n'est pas documenté : têtes et
+ * overshot couchés sur le fond, petites pièces dans les cases de la tablette du bas.
+ */
+function contents(api, put) {
+  const { S, THREE } = api;
+  /** Pose un objet centré en x et z, appuyé en y ; debout : son axe (X) mis à la verticale. */
+  const place = (obj, [x, y, z], debout = false) => {
+    obj.updateMatrixWorld(true);
+    const box = new THREE.Box3().setFromObject(obj);
+    const c = box.getCenter(new THREE.Vector3()), size = box.getSize(new THREE.Vector3());
+    const g = S.group(obj);
+    obj.position.sub(c);
+    if (debout) g.rotation.z = Math.PI / 2;
+    g.position.set(x, y + (debout ? size.x : size.y) / 2, z);
+    return g;
+  };
+  const floor = Y0 + T, shelf = YB;
+  // Deux têtes Excore complètes et l'overshot pump-in, couchés sur le fond.
+  put('30', place(api.sub('E077', { quality: 0.5 }), [-0.14, floor, -0.02]), [0, 0.1, 1.5]);
+  put('30', place(api.sub('E077', { quality: 0.5 }), [-0.14, floor, 0.1]), [0, 0.25, 1.5]);
+  put('31', place(api.sub('E080', { quality: 0.5 }), [-0.14, floor, 0.24]), [0, 0.4, 1.5]);
+  // Petites pièces du carottier NU Excore, tirées de son modèle (repères de la page P076).
+  const barrel = api.sub('E076', { quality: 0.5 });
+  const piece = (ref) => barrel.userData.parts.find((o) => o.userData.partRef === ref);
+  const row = (ref, src, n, x0, z, dx) => {
+    for (let i = 0; i < n; i++) put(ref, place(i ? piece(src).clone() : piece(src), [x0 + i * dx, shelf, z], true), [0, 0.1, 0.9]);
+  };
+  const zc = ZB + SH_D / 2;
+  row('32', '14', 4, -0.12, zc + 0.06, 0.08); // core lifters
+  row('33', '15', 2, -0.08, zc - 0.07, 0.16); // core lifter cases
+  row('34', '13', 2, 0.29, zc + 0.06, 0.1); // stop rings
+  row('35', '9', 1, 0.34, zc - 0.07, 0); // landing ring
+  // Masse de 2 lb couchée dans la case de gauche de la tablette du bas.
+  const m2 = masse(S, { a: 1.5 * IN, len: 3.75 * IN, hl: 9 * IN, hr: 0.55 * IN });
+  m2.rotation.set(0, Math.PI / 2, Math.PI / 2); // manche vers la droite, tête d'avant en arrière
+  put('37', S.at(S.group(m2), [-0.52, shelf + 0.75 * IN, zc]), [0, 0.1, 0.9]);
 }
 
 /** Coffre fermé, tôle par tôle (dessin 087). */
@@ -371,7 +476,8 @@ export const RIG = {
   drawer: [DRAWER.x, YB - T / 2 - DRAWER.h - 0.006, DRAWER.zf], // origine du tiroir (façade)
   drawerTravel: DRAWER.d - 0.05,
   support: [-W / 2 + 3 * IN, H, -D / 2 + 8 * IN],
+  keyBox: KEY_BOX,
   size: { W, D, H, Y0, YK, ZT, T, L, TILT },
 };
 
-export default { P01, P02, P03 };
+export default { P01, P02, P03, P04, ...EPIROC };
