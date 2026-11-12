@@ -52,6 +52,10 @@
   [
    "Support de tube D-D (0102803)",
    "17 1/2 po de haut, base de 8 × 3 po ; plaques d'acier 44W de 3/4 et 1/2 po"
+  ],
+  [
+   "Export pour moteur de jeu",
+   "coffre-ith.glb (glTF binaire, mètres) : caisse, portes, barre, tiroir et support en maillages séparés sur leurs pivots — voir docs/coffre-unreal.md"
   ]
  ],
  "weights": [
@@ -221,9 +225,9 @@
      "18",
      "",
      1,
-     "Autocollant Machines Roger International",
+     "Logo Machines Roger International, au bas du devant",
      {
-      "note": "D'après la photo, absent du dessin ; emplacement et proportions seulement."
+      "note": "Image du logo tirée du cartouche du dessin 0102803 ; autocollant visible sur la photo, absent du dessin 087. Taille et position estimées (20 po de large, centré sur le devant)."
      }
     ],
     [
@@ -391,9 +395,9 @@
      "18",
      "",
      1,
-     "Autocollant Machines Roger International",
+     "Logo Machines Roger International, au bas du devant",
      {
-      "note": "D'après la photo, absent du dessin ; emplacement et proportions seulement."
+      "note": "Image du logo tirée du cartouche du dessin 0102803 ; autocollant visible sur la photo, absent du dessin 087. Taille et position estimées (20 po de large, centré sur le devant)."
      }
     ],
     [

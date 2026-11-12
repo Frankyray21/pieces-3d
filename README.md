@@ -118,6 +118,10 @@ pièces (numéro, quantité, page du manuel).
   Sur le dessus, à gauche : support de tube D-D du dessin 0102803 (P03 :
   berceau en Y de 3/4 po, base de 8 × 3 po, gousset ; 17 1/2 po de haut), dont
   la position sur le coffre n'est cotée sur aucun dessin.
+  Logo Machines Roger (image du cartouche du dessin 0102803) au bas du devant.
+  Export pour moteur de jeu (Unreal Engine) : `scripts/export-coffre-jeu.mjs`
+  écrit `coffre-ith.glb`, un maillage par élément mobile sur son pivot (portes,
+  barre de verrouillage, tiroir) ; voir `docs/coffre-unreal.md`.
 
 - **Support de tiges de forage — « rack à rods »** (`rack-tiges-dd`, procédure
   d'installation PRO-DD-ST-008 de Machines Roger International, révision août

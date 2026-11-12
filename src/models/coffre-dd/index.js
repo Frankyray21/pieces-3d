@@ -74,7 +74,7 @@ function uRod(S, len, h, map, material = 'red') {
 }
 
 /** Repère d'une porte : origine au bas de sa ligne de pentures, Y le long de la pente, Z vers l'extérieur. */
-function doorFrame(THREE, s, angle) {
+export function doorFrame(THREE, s, angle) {
   const m = new THREE.Matrix4().makeTranslation(0, YK, D / 2);
   m.multiply(new THREE.Matrix4().makeRotationX(-TILT));
   m.multiply(new THREE.Matrix4().makeTranslation((s * W) / 2, 0, 0));
@@ -207,13 +207,28 @@ function basket(S) {
   return g;
 }
 
-/** Autocollant du panneau avant (emplacement et proportions ; sans le lettrage). */
-function decal(S) {
-  return S.group(
-    S.box(0.4, 0.2, 0.001, 'lightGrey', { r: 0.02, pos: [0, 0, 0.0005] }),
-    S.box(0.36, 0.105, 0.0006, 'charcoal', { pos: [0, 0, 0.0013] }),
-    S.cyl(0.024, 0.0006, 'red', { axis: 'z', pos: [-0.085, 0, 0.0019], seg: 24 }),
-  );
+const LOGO_W = 20 * IN, LOGO_H = (LOGO_W * 109) / 277; // proportions du logo du cartouche (dessin 0102803)
+let logoMaterial = null;
+
+/** Logo Machines Roger International : image du cartouche du dessin 0102803, sur un autocollant à fond noir. */
+function decal(api) {
+  const { S, THREE } = api;
+  const g = S.group(S.box(LOGO_W + 0.02, LOGO_H + 0.02, 0.001, 'black', { r: 0.008, pos: [0, 0, 0.0005] }));
+  if (!logoMaterial) {
+    logoMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.45, metalness: 0 });
+    logoMaterial.name = 'logo';
+    // Hors navigateur (contrôle et export dans Node), l'image n'est pas chargée ici :
+    // l'export pour moteur de jeu l'incorpore lui-même (scripts/export-coffre-jeu.mjs).
+    if (typeof document !== 'undefined') {
+      logoMaterial.map = new THREE.TextureLoader().load(`${import.meta.env.BASE_URL}equipment/coffre-dd/logo.png`);
+      logoMaterial.map.colorSpace = THREE.SRGBColorSpace;
+      logoMaterial.map.anisotropy = 8;
+    } else logoMaterial.color.set(0x111111);
+  }
+  const face = new THREE.Mesh(new THREE.PlaneGeometry(LOGO_W, LOGO_H), logoMaterial);
+  face.position.z = 0.002;
+  g.add(face);
+  return g;
 }
 
 /**
@@ -250,7 +265,7 @@ function P03(api) {
  * Coffre complet. open : angle d'ouverture des portes [gauche, droite] en
  * radians ; extras : ajouts visibles sur la photo du coffre ouvert.
  */
-function build(api, open, extras) {
+export function build(api, open, extras) {
   const S = api.S;
   const seen = new Set();
   const put = (ref, obj, explode) => {
@@ -306,7 +321,7 @@ function build(api, open, extras) {
   sup.rotation.y = Math.PI / 2;
   put('23', S.at(sup, [-W / 2 + 3 * IN, H, -D / 2 + 8 * IN]), [-0.25, 0.9, 0]);
 
-  put('18', S.at(decal(S), [-0.1, Y0 + (YK - Y0) * 0.42, D / 2]), [0, 0, 0.9]);
+  put('18', S.at(decal(api), [0, Y0 + (YK - Y0) / 2, D / 2]), [0, 0, 0.9]);
   if (!extras) return;
   put('19', S.at(drawer(S), [DRAWER.x, YB - t - DRAWER.h - 0.006, DRAWER.zf]), [0, -0.12, 0.9]);
   for (const s of [-1, 1]) {
@@ -327,5 +342,14 @@ function P02(api) {
   build(api, [1.95, 1.7], true);
   return { view: { dir: [0.35, 0.45, 1.3] } };
 }
+
+/** Cotes utiles à l'export pour moteur de jeu (pivots et courses). */
+export const RIG = {
+  barPivot: [W / 2 - 5.75 * IN, BAR_Y + 0.5 * IN, T + 0.75 * IN], // axe de la barre, dans le repère de la porte gauche
+  drawer: [DRAWER.x, YB - T / 2 - DRAWER.h - 0.006, DRAWER.zf], // origine du tiroir (façade)
+  drawerTravel: DRAWER.d - 0.05,
+  support: [-W / 2 + 3 * IN, H, -D / 2 + 8 * IN],
+  size: { W, D, H, Y0, YK, ZT, T, L, TILT },
+};
 
 export default { P01, P02, P03 };
