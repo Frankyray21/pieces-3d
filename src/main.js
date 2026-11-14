@@ -5,6 +5,7 @@ import { loadIndex, loadEquipment, sourceLabel, sheetLabel, sizeGroups, isPnText
 import { loadExtras } from './data/extras.js';
 import clesModels from './models/cles-a-tuyau/index.js';
 import cubexModels from './models/cubex-mri-5200/index.js';
+import deadManModels from './models/dead-man/index.js';
 import du311Models from './models/du311/index.js';
 import du311StdModels, { overview as du311StdOverview } from './models/du311-std/index.js';
 import epirocModels from './models/epiroc-ith/index.js';
@@ -35,7 +36,7 @@ import { keyRows } from './ui/rows.js';
 const FEATURES = import.meta.glob(['./ui/features/*.js', '!./ui/features/_*.js'], { eager: true });
 
 // Modèles 3D disponibles par équipement (builders procéduraux).
-const MODELS = { 'cles-a-tuyau': clesModels, 'coffre-dd': coffreModels, 'core-knocker': coreKnockerModels, 'cubex-mri-5200': cubexModels, du311: du311Models, 'du311-std': du311StdModels, 'epiroc-ith': epirocModels, 'grillage-cage': grillageModels, 'plancher-dd': plancherModels, 'porte-1801020': porteModels, 'poste-secours': posteSecoursModels, 'poubelle-dd': poubelleModels, 'rack-outil': rackOutilModels, 'rack-tiges-dd': rackModels, 'stm-1500': stmModels, 'support-pipewrench': supportPipewrenchModels, 'table-a-core': tableCoreModels, 'tube-eau': tubeEauModels };
+const MODELS = { 'cles-a-tuyau': clesModels, 'coffre-dd': coffreModels, 'core-knocker': coreKnockerModels, 'cubex-mri-5200': cubexModels, 'dead-man': deadManModels, du311: du311Models, 'du311-std': du311StdModels, 'epiroc-ith': epirocModels, 'grillage-cage': grillageModels, 'plancher-dd': plancherModels, 'porte-1801020': porteModels, 'poste-secours': posteSecoursModels, 'poubelle-dd': poubelleModels, 'rack-outil': rackOutilModels, 'rack-tiges-dd': rackModels, 'stm-1500': stmModels, 'support-pipewrench': supportPipewrenchModels, 'table-a-core': tableCoreModels, 'tube-eau': tubeEauModels };
 // Vue d'ensemble légère : sous-assemblages simplifiés affichés d'abord, remplacés
 // un à un par leur version détaillée (facettes allégées) une fois la vue montrée.
 const OVERVIEW = { 'du311-std': du311StdOverview };

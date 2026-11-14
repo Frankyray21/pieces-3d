@@ -402,6 +402,26 @@ pièces (numéro, quantité, page du manuel).
   fixations, invisibles, ne sont pas modélisées. Étiquettes dessinées sur un
   canevas (génériques : marque et numéros illisibles sur la photo).
 
+- **Poignée d'homme mort (dead man) Tormach 51213** (`dead-man`) : interrupteur
+  de validation à 3 positions (« Hold-to-Run Safety Switch » du robot ZA6 :
+  relâché = arrêt, mi-course = marche permise, enfoncé à fond = arrêt),
+  reconstitué d'après deux photos du produit (P01 : poignée tenue en main ;
+  P02 : poignée de côté, câble lové et connecteur), sans plan ni cote. Seules
+  données publiées, reprises telles quelles : le câble de 4 m (le modèle mesure
+  4,000 m du bas du boîtier au connecteur, le rayon du lovage est ajusté pour
+  cela) et le connecteur M12. Le reste est estimé à environ 15 % près : la
+  longueur du boîtier (environ 150 mm) vient de la main de la photo P01 et de
+  l'écrou du connecteur M12 de la photo P02, les autres dimensions sont
+  relevées en proportion sur la vue de côté. Coque arrière jaune à dessus en
+  pente, coque avant noire (tête à nez, flancs à cinq nervures, garde, pied),
+  barre du bouton sous les doigts, étiquette à marquage CE dessinée sur un
+  canevas (générique : marque illisible, fabricant d'origine non indiqué),
+  presse-étoupe (taille M20 estimée), protecteur de courbure en spirale qui
+  suit la courbe du câble, câble lové en deux couches sans croisement,
+  connecteur à écrou moleté. Les deux coques sont des volumes passant par des
+  sections en D (`gabarit()` dans `src/models/dead-man/index.js`) ; l'intérieur
+  du boîtier, invisible, n'est pas modélisé.
+
 - **Panneau de grillage rigide à plis en V, maille 2 × 6 po** (`grillage-cage`) :
   type de grillage de la cage, identifié sur une photo (P01) et son relevé
   (P02 : fils verticaux tous les 2 po environ, fils horizontaux tous les 6 po,

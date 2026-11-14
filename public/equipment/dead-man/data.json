@@ -1,0 +1,172 @@
+{
+ "id": "dead-man",
+ "name": "Poignée d'homme mort (dead man) Tormach 51213",
+ "manufacturer": "Tormach (fabricant d'origine non indiqué)",
+ "category": "Interrupteur de validation à 3 positions",
+ "serial": "",
+ "document": {
+  "title": "Photos du produit Tormach 51213 « Hold-to-Run Safety Switch for ZA6 Robot » (aucun plan)",
+  "reference": "51213",
+  "preparedBy": "",
+  "date": "",
+  "sheets": 2,
+  "pagePattern": "pages/{sheet}.webp"
+ },
+ "specs": [
+  [
+   "Source",
+   "Deux photos du produit Tormach 51213 ; aucune cote : dimensions estimées à environ 15 % près"
+  ],
+  [
+   "Fonction",
+   "Interrupteur de validation à 3 positions (« homme mort », hold-to-run) : relâché = arrêt, mi-course = marche permise, enfoncé à fond = arrêt"
+  ],
+  [
+   "Données publiées par Tormach",
+   "Câble de 4 m, connecteur M12, contacts NF et NO ; à mi-course, déplacement manuel du robot ZA6 à 10 % de la vitesse maximale ; requiert le répartiteur M12 n° 51352"
+  ],
+  [
+   "Boîtier",
+   "Environ 150 mm de long (155 mm avec le pied de la garde), 40 mm de large à la tête et à la base, 32 mm à la prise"
+  ],
+  [
+   "Coque jaune (côté paume)",
+   "Environ 29 mm de profond à la base, 24 mm à la prise, 28 mm à la tête ; dessus en pente d'environ 20° vers l'arrière"
+  ],
+  [
+   "Coque noire (côté doigts)",
+   "Nez de la tête à environ 23 mm du joint, flancs à 8 mm, garde à 26 mm ; cinq nervures par flanc, tous les 12 mm"
+  ],
+  [
+   "Bouton",
+   "Barre d'environ 66 × 18 mm sous les quatre doigts, en saillie d'environ 12 mm sur les flancs, bouts en biseau"
+  ],
+  [
+   "Presse-étoupe",
+   "Plastique noir, six-pans d'environ 24 mm sur plats (taille M20 estimée), dans l'axe de la coque jaune"
+  ],
+  [
+   "Protecteur de courbure",
+   "Spirale conique d'environ 53 mm et 6 1/2 tours, de Ø 21 mm au presse-étoupe à Ø 13 mm au bout"
+  ],
+  [
+   "Câble",
+   "4 m (donnée publiée), Ø 5,5 mm estimé ; lové en 9 1/4 tours sur deux couches dans le modèle"
+  ],
+  [
+   "Connecteur",
+   "M12 droit (donnée publiée) : corps surmoulé noir et écrou moleté, environ 44 mm de long ; nombre de broches non indiqué"
+  ]
+ ],
+ "weights": [],
+ "sheetTitles": {
+  "P01": "Photo de la poignée tenue en main (produit Tormach 51213)",
+  "P02": "Photo de la poignée de côté, du câble lové et du connecteur M12"
+ },
+ "root": "P01",
+ "assemblies": {
+  "P01": {
+   "title": "HOLD-TO-RUN SAFETY SWITCH",
+   "titleFr": "Poignée d'homme mort (dead man)",
+   "pn": "51213",
+   "sheets": [
+    "P01",
+    "P02"
+   ],
+   "note": "Reconstitution 3D d'après deux photos du produit, sans plan ni cote. Tormach ne publie que deux données, reprises telles quelles : le câble de 4 m et le connecteur M12. Tout le reste est estimé, à environ 15 % près : la longueur du boîtier (environ 150 mm) vient de la main de la photo P01, dont les quatre doigts couvrent un peu plus de la moitié du boîtier, et de l'écrou du connecteur M12 de la photo P02 ; les autres dimensions sont relevées en proportion sur la vue de côté P02. Visible sur les photos : la coque jaune et son dessus en pente, la coque noire (tête à nez arrondi, flancs à cinq nervures, garde, pied), la barre du bouton sous les doigts, l'étiquette noire à marquage CE, trois empreintes sur le flanc de la coque jaune, deux pièces métalliques sous la garde, le presse-étoupe, le protecteur en spirale, le câble lové et le connecteur. Supposé, parce que caché : le flanc opposé à l'étiquette (symétrique), la largeur du boîtier et celle du bouton, la face avant du bouton. Non modélisé, parce qu'invisible : l'intérieur du boîtier (contacts, ressorts) et les broches du connecteur. La marque et le type inscrits sur l'étiquette sont illisibles : le fabricant d'origine de la poignée n'est pas indiqué, et l'étiquette du modèle est générique. Fonction, selon la fiche Tormach : bouton relâché, le circuit de sécurité arrête le robot ; bouton à mi-course, le déplacement manuel est permis ; bouton enfoncé à fond, le circuit de sécurité arrête de nouveau le robot.",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "COQUE ARRIÈRE jaune (côté paume), dessus en pente",
+     {
+      "note": "Environ 150 mm de long ; profondeur de 29 mm à la base, 24 mm à la prise et 28 mm à la tête, relevées sur la photo P02. Trois empreintes sur le flanc de l'étiquette (rôle inconnu : logements de vis ou d'accrochage) ; celles du flanc opposé sont supposées.",
+      "pseudo": true
+     }
+    ],
+    [
+     "2",
+     "",
+     1,
+     "COQUE AVANT noire : tête à nez arrondi, flancs nervurés, garde et pied",
+     {
+      "note": "Le nez retient l'index, la garde le petit doigt. Cinq nervures par flanc, tous les 12 mm environ. Le pied, en retrait sous la garde, descend d'environ 5 mm sous la coque jaune.",
+      "pseudo": true
+     }
+    ],
+    [
+     "3",
+     "",
+     1,
+     "BOUTON DE VALIDATION à 3 positions (barre sous les doigts)",
+     {
+      "note": "Montré relâché. Barre d'environ 66 mm ; sa largeur (18 mm) et sa face avant, cachées par les doigts sur la photo P01, sont supposées. Matière noire mate, d'apparence caoutchouc.",
+      "pseudo": true
+     }
+    ],
+    [
+     "4",
+     "",
+     1,
+     "ÉTIQUETTE signalétique noire à marquage CE",
+     {
+      "note": "Environ 17 × 27 mm, sur un flanc de la base de la coque jaune. Marque, type et marques d'organismes illisibles sur les photos : le dessin du modèle est générique.",
+      "pseudo": true
+     }
+    ],
+    [
+     "5",
+     "",
+     2,
+     "VIS à tête cylindrique, sous la garde",
+     {
+      "note": "Deux pièces métalliques brillantes visibles sous la garde sur la photo P02, modélisées comme des vis à tête cylindrique ; leur rôle n'est pas confirmé.",
+      "pseudo": true
+     }
+    ],
+    [
+     "6",
+     "",
+     1,
+     "PRESSE-ÉTOUPE en plastique noir, six-pans de 24 mm (taille M20 estimée)",
+     {
+      "note": "Deux six-pans et un dôme, environ 27 mm de long. Taille déduite de sa largeur sur la photo P02.",
+      "pseudo": true
+     }
+    ],
+    [
+     "7",
+     "",
+     1,
+     "PROTECTEUR DE COURBURE en spirale",
+     {
+      "note": "Spirale conique de 6 1/2 tours sur environ 53 mm, à la sortie du presse-étoupe ; elle suit la courbe du câble.",
+      "pseudo": true
+     }
+    ],
+    [
+     "8",
+     "",
+     1,
+     "CÂBLE de 4 m",
+     {
+      "note": "Longueur publiée par Tormach ; le modèle mesure 4 m du bas du boîtier au connecteur. Diamètre de 5,5 mm estimé. Lové à côté de la poignée comme sur la photo P02.",
+      "pseudo": true
+     }
+    ],
+    [
+     "9",
+     "",
+     1,
+     "CONNECTEUR M12 droit, à écrou moleté",
+     {
+      "note": "Type publié par Tormach. Nombre de broches et genre (mâle ou femelle) non indiqués : la face de contact n'est pas détaillée.",
+      "pseudo": true
+     }
+    ]
+   ]
+  }
+ },
+ "documents": []
+}

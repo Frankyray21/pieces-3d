@@ -34,6 +34,14 @@
       "status": "3D procédurale — 14 assemblages, 7 schémas"
     },
     {
+      "id": "dead-man",
+      "name": "Poignée d'homme mort (dead man) Tormach 51213",
+      "manufacturer": "Tormach (fabricant d'origine non indiqué)",
+      "category": "Interrupteur de validation à 3 positions",
+      "thumbnail": "equipment/dead-man/thumbnail.webp",
+      "status": "3D d'après deux photos du produit : boîtier jaune et noir d'environ 150 mm, tête à nez, barre du bouton à 3 positions sous les doigts, garde, étiquette, presse-étoupe, protecteur en spirale, câble de 4 m lové et connecteur M12 (données publiées) ; dimensions du boîtier estimées à environ 15 % près"
+    },
+    {
       "id": "du311",
       "name": "Sandvik DU311-TVK",
       "manufacturer": "Sandvik",
