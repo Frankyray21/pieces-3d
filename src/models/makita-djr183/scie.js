@@ -14,7 +14,7 @@
 // l'arrière, Y vers le haut depuis l'axe du coulisseau, Z vers le flanc de la
 // photo ; z = 0 est le plan de symétrie. Modèle : outil en position de travail,
 // lame vers −X, point le plus bas (avant de l'embase) à Y = 0, en mètres.
-// La scène de sciage (sciage.js) reprend cet assemblage et l'anime.
+// Les scènes de sciage (sciage.js, decoupe.js) reprennent cet assemblage et l'animent.
 import * as THREE from 'three';
 import { mat, withFinish } from '../../viewer/materials.js';
 import { creaseNormals } from '../../viewer/shapes.js';
@@ -122,7 +122,7 @@ export const AXE = -EMBASE.y + EMBASE.jupe * Math.cos(EMBASE.angle * RAD);
 // ------------------------------------------------------------------ outils
 
 /** Triangles orientés vers l'extérieur (volume signé positif), en place. */
-function oriente(t) {
+export function oriente(t) {
   let vol = 0;
   for (let i = 0; i < t.length; i += 9) {
     vol += t[i] * (t[i + 4] * t[i + 8] - t[i + 5] * t[i + 7])
@@ -134,7 +134,7 @@ function oriente(t) {
 }
 
 /** Géométrie (mètres) d'une liste de triangles en millimètres ; arêtes de moins de 32° lissées. */
-function geometrie(t, angle = 32) {
+export function geometrie(t, angle = 32) {
   const geo = new THREE.BufferGeometry();
   geo.setAttribute('position', new THREE.Float32BufferAttribute(t.map((v) => v * MM), 3));
   return creaseNormals(geo, angle * RAD);

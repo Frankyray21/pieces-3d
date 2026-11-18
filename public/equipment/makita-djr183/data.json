@@ -54,8 +54,8 @@
    "Interface à glissières des batteries LXT de 18 V, inclinée d'environ 15°, arrière relevé ; batterie non comprise (outil seul)"
   ],
   [
-   "Scène de sciage",
-   "Animation en trois étapes : la scie coupe le bout d'un 2 × 4 posé sur deux cales ; mise en scène, cadence ralentie (environ 7 courses par seconde à l'écran)"
+   "Scènes de sciage",
+   "Découpe libre d'un 3 × 8, scie à la verticale : le trait, droit ou courbe, se trace dans la vue 3D ; sciage d'un 2 × 4, scie à l'horizontale, animé en trois étapes. Mises en scène, cadence ralentie (environ 7 courses par seconde à l'écran)"
   ]
  ],
  "weights": [],
@@ -63,8 +63,71 @@
   "P01": "Photo du produit Makita DJR183Z, de trois quarts avant, sans batterie",
   "P02": "Vue de côté d'une scie de même forme, avec batterie (vignette coupée en bas)"
  },
- "root": "P02",
+ "root": "P03",
  "assemblies": {
+  "P03": {
+   "title": "FREEHAND VERTICAL CUT",
+   "titleFr": "Découpe libre d'un 3 × 8, scie à la verticale",
+   "pn": "DJR183Z",
+   "sheets": [
+    "P01",
+    "P02"
+   ],
+   "note": "Découpe interactive : glissez sur le bout de la planche qui dépasse des cales pour tracer le trait de coupe, en partant d'un bord ; la scie, tenue à la verticale (lame vers le bas, patin posé sur le dessus de la planche), suit le trait, droit ou courbe. Un trait qui traverse le bois détache un morceau, qui tombe ; un trait qui s'arrête dans le bois laisse une entaille, d'où la scie ressort. Plusieurs coupes se suivent sur la même planche ; « Nouvelle planche » en remet une entière, « Exemple de coupe » montre une coupe en S, un coin arrondi, puis un biais. Le trait est lissé : la lame, large de 19 mm, ne tourne pas dans son trait de 1,6 mm en dessous d'un rayon d'environ 70 mm (calcul sur la lame supposée de la page P01). La coupe est limitée au porte-à-faux, parce que la lame dépasse d'environ 40 à 50 mm sous la planche et passerait dans la cale. ATTENTION : un 3 × 8 brut fait 76 mm d'épaisseur, plus que la capacité de 50 mm publiée par Makita pour le bois ; la scène montre le geste, pas une capacité garantie par le fabricant. Un morceau découpé au milieu du bois (trait qui recoupe son propre trait) n'est pas géré : la coupe s'arrête avant. Avance et cadence sont celles de la lecture à l'écran (environ 34 mm/s et 7 courses par seconde). L'opérateur n'est pas montré ; le décor se limite au bois.",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "SCIE ALTERNATIVE DJR183Z, tenue à la verticale",
+     {
+      "link": "P01",
+      "note": "L'assemblage de la page P01 : lame vers le bas, dents tournées vers l'avance, patin posé sur le dessus de la planche ; la poignée penche du côté où va la coupe.",
+      "pseudo": true
+     }
+    ],
+    [
+     "2",
+     "",
+     1,
+     "PLANCHE : 3 × 8 brut (76 × 203 mm) de 1,10 m, posée à plat",
+     {
+      "pnText": "3 × 8 brut",
+      "note": "En porte-à-faux de 640 mm au-delà de la seconde cale : c'est là qu'on trace. Épaisseur de 76 mm, au-delà de la capacité publiée de 50 mm dans le bois."
+     }
+    ],
+    [
+     "3",
+     "",
+     2,
+     "CALE : bout de 6 × 6 (140 × 140 mm) sous la planche",
+     {
+      "pnText": "6 × 6 brut"
+     }
+    ],
+    [
+     "4",
+     "",
+     null,
+     "SCIURE (animation)",
+     {
+      "note": "Grains rejetés au-dessus du trait et tombant dessous ; dépôt au sol le long de la coupe.",
+      "pseudo": true
+     }
+    ],
+    [
+     "5",
+     "",
+     null,
+     "Sciage d'un 2 × 4, scie à l'horizontale (scène animée)",
+     {
+      "link": "P02",
+      "no3d": true,
+      "pseudo": true
+     }
+    ]
+   ]
+  },
   "P02": {
    "title": "WOOD CUTTING",
    "titleFr": "Sciage du bois (animation)",

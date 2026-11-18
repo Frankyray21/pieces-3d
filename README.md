@@ -435,7 +435,20 @@ pièces (numéro, quantité, page du manuel).
   passant par des sections en super-ellipse relevées sur le profil (`corps()`
   dans `src/models/makita-djr183/scie.js`) ; ouïes, plaques et bandes sont des
   reliefs posés sur ces coques. À la demande du client, le nom de la marque
-  n'est pas écrit sur la plaque du modèle. Page P02 (racine) : scène animée du
+  n'est pas écrit sur la plaque du modèle. Page P03 (racine) : découpe libre
+  d'un 3 × 8, scie tenue à la verticale (`decoupe.js` et la fonction
+  `src/ui/features/decoupe.js`, pour toute vue qui fournit `view.decoupe`) :
+  on trace le trait en glissant sur le bout de la planche qui dépasse des
+  cales, et la scie le suit, droit ou courbe. Le trait est lissé (rayon mini
+  d'environ 70 mm : flèche de la lame de 19 mm dans un trait de 1,6 mm),
+  prolongé jusqu'au bord s'il part du bois, arrêté avant les cales et avant de
+  recouper son propre trait. Le morceau de planche est un polygone du plan du
+  dessus : un trait traversant le sépare en deux (`separer()`), celui qui ne
+  tient plus aux cales tombe ; un trait qui s'arrête laisse une entaille
+  (`entailler()`). Le prisme du morceau est refait à chaque image pendant que
+  la lame avance. Un 3 × 8 brut fait 76 mm d'épaisseur, plus que la capacité de
+  50 mm publiée pour le bois : la scène montre le geste, pas une capacité
+  garantie. Page P02 : scène animée du
   sciage d'un 2 × 4 posé sur deux cales (`sciage.js`), en trois étapes du
   montage par étapes — appuyer le patin, scier, retirer la scie — lues d'elles-
   mêmes à l'ouverture (`view.stepsPlay`). L'état de la scène est une fonction
