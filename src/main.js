@@ -10,6 +10,7 @@ import du311Models from './models/du311/index.js';
 import du311StdModels, { overview as du311StdOverview } from './models/du311-std/index.js';
 import epirocModels from './models/epiroc-ith/index.js';
 import grillageModels from './models/grillage-cage/index.js';
+import makitaDjr183Models from './models/makita-djr183/index.js';
 import plancherModels from './models/plancher-dd/index.js';
 import coffreModels from './models/coffre-dd/index.js';
 import coreKnockerModels from './models/core-knocker/index.js';
@@ -36,7 +37,7 @@ import { keyRows } from './ui/rows.js';
 const FEATURES = import.meta.glob(['./ui/features/*.js', '!./ui/features/_*.js'], { eager: true });
 
 // Modèles 3D disponibles par équipement (builders procéduraux).
-const MODELS = { 'cles-a-tuyau': clesModels, 'coffre-dd': coffreModels, 'core-knocker': coreKnockerModels, 'cubex-mri-5200': cubexModels, 'dead-man': deadManModels, du311: du311Models, 'du311-std': du311StdModels, 'epiroc-ith': epirocModels, 'grillage-cage': grillageModels, 'plancher-dd': plancherModels, 'porte-1801020': porteModels, 'poste-secours': posteSecoursModels, 'poubelle-dd': poubelleModels, 'rack-outil': rackOutilModels, 'rack-tiges-dd': rackModels, 'stm-1500': stmModels, 'support-pipewrench': supportPipewrenchModels, 'table-a-core': tableCoreModels, 'tube-eau': tubeEauModels };
+const MODELS = { 'cles-a-tuyau': clesModels, 'coffre-dd': coffreModels, 'core-knocker': coreKnockerModels, 'cubex-mri-5200': cubexModels, 'dead-man': deadManModels, du311: du311Models, 'du311-std': du311StdModels, 'epiroc-ith': epirocModels, 'grillage-cage': grillageModels, 'makita-djr183': makitaDjr183Models, 'plancher-dd': plancherModels, 'porte-1801020': porteModels, 'poste-secours': posteSecoursModels, 'poubelle-dd': poubelleModels, 'rack-outil': rackOutilModels, 'rack-tiges-dd': rackModels, 'stm-1500': stmModels, 'support-pipewrench': supportPipewrenchModels, 'table-a-core': tableCoreModels, 'tube-eau': tubeEauModels };
 // Vue d'ensemble légère : sous-assemblages simplifiés affichés d'abord, remplacés
 // un à un par leur version détaillée (facettes allégées) une fois la vue montrée.
 const OVERVIEW = { 'du311-std': du311StdOverview };
@@ -560,6 +561,10 @@ async function openAssembly(id, { select: selPath = null } = {}) {
       S.steps = { on: false, n: 0 };
       // Vue qui s'ouvre directement en montage par étapes (view.stepsAuto) : étape 0, puis « Étape suivante ».
       if (S.stepsList && model.view.stepsAuto) setTimeout(() => { if (S.stepsList === model.view.steps && !S.steps.on) toggleSteps(true); }, 0);
+      // Vue animée (view.stepsPlay, ex. la scène de sciage) : la lecture démarre d'elle-même, sauf si les animations sont réduites.
+      if (S.stepsList && model.view.stepsAuto && model.view.stepsPlay && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        setTimeout(() => { if (S.stepsList === model.view.steps && S.steps.on && S.steps.n === 0 && !stepTimer) $('#st-play').click(); }, 1500);
+      }
       S.section.axis = model.view.section?.axis || 'z';
       S.section.pos = model.view.section?.pos ?? 0.5;
       if (S.explode > 0 && !S.view.home) {

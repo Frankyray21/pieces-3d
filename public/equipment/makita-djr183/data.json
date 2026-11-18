@@ -1,0 +1,295 @@
+{
+ "id": "makita-djr183",
+ "name": "Scie alternative sans fil Makita DJR183Z",
+ "manufacturer": "Makita",
+ "category": "Scie alternative sans fil 18 V LXT (outil seul)",
+ "serial": "",
+ "document": {
+  "title": "Images du produit Makita DJR183Z (aucun plan ; manuel d'instructions non consulté)",
+  "reference": "DJR183Z",
+  "preparedBy": "",
+  "date": "",
+  "sheets": 2,
+  "pagePattern": "pages/{sheet}.webp"
+ },
+ "specs": [
+  [
+   "Source",
+   "Deux images du produit (photo de trois quarts et vue de côté) ; aucune cote : dimensions estimées à environ 15 % près"
+  ],
+  [
+   "Données publiées par Makita",
+   "Longueur hors tout de 398 mm (15 5/8 po), course de 13 mm (1/2 po), 0 à 3 000 courses/min, capacité de coupe de 50 mm (2 po) dans le tuyau et le bois, 18 V"
+  ],
+  [
+   "Longueur du modèle",
+   "Environ 375 mm du patin à l'arrière de l'embase, sans lame ni batterie ; la batterie, non modélisée, dépasserait jusqu'aux 398 mm publiés (hypothèse de mise à l'échelle)"
+  ],
+  [
+   "Lame",
+   "Lame de 6 po (152 mm) à soie universelle de 1/2 po, supposée ; à bout de course avant, elle dépasse le patin d'environ 126 mm"
+  ],
+  [
+   "Patin",
+   "Fixe, en tôle noire, environ 86 × 46 mm ; réglable en desserrant son boulon avec une clé hexagonale (manuel)"
+  ],
+  [
+   "Carter du moteur",
+   "Turquoise, environ 70 mm de haut et 64 mm de large (largeur supposée)"
+  ],
+  [
+   "Interrupteurs",
+   "Deux, au choix : levier sous le carter (avec levier de sécurité) ou gâchette sous la poignée (avec bouton de sécurité, qui se pousse d'un côté ou de l'autre) ; vitesse variable selon la pression"
+  ],
+  [
+   "Serre-lame",
+   "Sans outil : le manchon tourne pour libérer la lame ; lames de scie alternative seulement (pas de lames de scie sauteuse)"
+  ],
+  [
+   "Lampe",
+   "À DEL ; elle s'allume avec l'interrupteur et s'éteint de 10 à 15 secondes après son relâchement"
+  ],
+  [
+   "Embase de batterie",
+   "Interface à glissières des batteries LXT de 18 V, inclinée d'environ 15°, arrière relevé ; batterie non comprise (outil seul)"
+  ],
+  [
+   "Scène de sciage",
+   "Animation en trois étapes : la scie coupe le bout d'un 2 × 4 posé sur deux cales ; mise en scène, cadence ralentie (environ 7 courses par seconde à l'écran)"
+  ]
+ ],
+ "weights": [],
+ "sheetTitles": {
+  "P01": "Photo du produit Makita DJR183Z, de trois quarts avant, sans batterie",
+  "P02": "Vue de côté d'une scie de même forme, avec batterie (vignette coupée en bas)"
+ },
+ "root": "P02",
+ "assemblies": {
+  "P02": {
+   "title": "WOOD CUTTING",
+   "titleFr": "Sciage du bois (animation)",
+   "pn": "DJR183Z",
+   "sheets": [
+    "P01",
+    "P02"
+   ],
+   "note": "Scène animée en trois étapes (boutons Lecture, étape suivante, rejouer) : la scie de la page P01 coupe le bout d'un 2 × 4 posé à plat sur deux cales. Du manuel : la course de 13 mm, la mise en marche en deux temps (bouton de sécurité, puis gâchette), la lampe qui s'allume avec l'interrupteur et s'éteint de 10 à 15 secondes après, la vitesse qui suit la pression. Le reste est une mise en scène : la pièce de bois et ses cales, l'avance de la scie et son basculement sur le patin, les vibrations, la sciure, la chute qui tombe et rebondit. La cadence est ralentie pour la lecture : environ 7 courses par seconde à l'écran, contre 50 au plus sur l'outil (3 000 courses/min) ; la coupe dure environ 6 secondes. L'épaisseur sciée (38 mm) respecte la capacité publiée de 50 mm dans le bois. L'opérateur n'est pas montré ; le décor se limite au bois (pièce, chute, cales, sciure).",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "SCIE ALTERNATIVE DJR183Z",
+     {
+      "link": "P01",
+      "note": "L'assemblage de la page P01, animé : la lame, le manchon du serre-lame et le coulisseau battent de 13 mm, le bouton de sécurité et la gâchette s'enfoncent, la lampe s'allume.",
+      "pseudo": true
+     }
+    ],
+    [
+     "2",
+     "",
+     1,
+     "PIÈCE DE BOIS : 2 × 4 raboté (38 × 89 mm), posée à plat",
+     {
+      "pnText": "2 × 4 raboté",
+      "note": "Le trait de scie, large d'environ 1,6 mm, descend avec la lame ; il commence par le chant éloigné, la scie étant tenue poignée relevée."
+     }
+    ],
+    [
+     "3",
+     "",
+     1,
+     "CHUTE : bout de 180 mm, détaché à la fin de la coupe",
+     {
+      "note": "Elle pique du bout libre, touche le sol, rebondit et se couche (mouvement mis en scène).",
+      "pseudo": true
+     }
+    ],
+    [
+     "4",
+     "",
+     2,
+     "CALE : bout de 6 × 6 (140 × 140 mm) sous la pièce",
+     {
+      "pnText": "6 × 6 brut",
+      "note": "Les deux cales sont du côté qui reste : le bout à scier dépasse, et la lame passe à côté de la cale."
+     }
+    ],
+    [
+     "5",
+     "",
+     null,
+     "SCIURE (animation)",
+     {
+      "note": "Grains projetés au-dessus du trait, puis sous la pièce une fois le bois traversé ; petit tas au sol.",
+      "pseudo": true
+     }
+    ]
+   ]
+  },
+  "P01": {
+   "title": "CORDLESS RECIPRO SAW",
+   "titleFr": "Scie alternative sans fil",
+   "pn": "DJR183Z",
+   "sheets": [
+    "P01",
+    "P02"
+   ],
+   "note": "Reconstitution 3D d'après deux images du produit, sans plan ni cote. Données publiées par Makita, reprises telles quelles : longueur hors tout de 398 mm (15 5/8 po), course de 13 mm, 0 à 3 000 courses/min, capacité de 50 mm, 18 V. Tout le reste est estimé, à environ 15 % près : le profil est relevé sur la vue de côté P02, mise à l'échelle pour que la batterie, absente du modèle, finisse à 398 mm du patin (hypothèse : la longueur publiée comprend la batterie) ; les largeurs viennent de la photo P01. La vue de côté P02 est une vignette d'une autre annonce, coupée en bas : la scie y a la même forme que sur la photo P01 (plaque, ouïes, carré turquoise du nez, bouton, bande de la poignée), mais l'annonce n'est pas identifiée. Visible sur les images : la lame, le patin, le manchon du serre-lame et son ergot bleu, le coulisseau, le nez en caoutchouc noir, le carter turquoise et ses ouïes, la plaque du flanc, le levier sous le carter, la poignée noire à bande turquoise, la gâchette, le bouton de sécurité et l'embase. Nommé par le manuel mais invisible sur les images, donc placé par hypothèse : le boulon du patin (sous le nez) et la lampe (sous le coulisseau). Supposé, parce que caché : le flanc opposé (symétrique), le dessous de l'embase (glissières et bornier de l'interface LXT), la forme du levier de sécurité. Non modélisé : l'intérieur (moteur, mécanisme, interrupteurs), la batterie et la clé hexagonale. Le manuel d'instructions n'a pas pu être consulté directement : les noms des pièces et leur fonction viennent d'extraits publiés du manuel. À la demande du client, le nom de la marque n'est pas écrit sur la plaque du modèle. Aucun numéro de pièce Makita n'est indiqué.",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "LAME de scie alternative, dents vers le bas",
+     {
+      "note": "Montrée sur la photo P01, peinte en turquoise, marquage blanc illisible (suggéré sur le modèle). Lame de 6 po (152 mm) à soie universelle de 1/2 po, supposée. Les lames de scie sauteuse ne conviennent pas à la DJR183 (manuel).",
+      "pseudo": true
+     }
+    ],
+    [
+     "2",
+     "",
+     1,
+     "PATIN fixe en tôle noire, à rebord, et son pied",
+     {
+      "note": "Cadre ovale d'environ 86 × 46 mm à grande ouverture. Le pied entre dans le bas du nez ; pour présenter à la pièce une partie neuve de la lame, on desserre le boulon et on déplace le patin (manuel).",
+      "pseudo": true
+     }
+    ],
+    [
+     "3",
+     "",
+     1,
+     "BOULON du patin, à six pans creux",
+     {
+      "note": "Nommé par le manuel (il se desserre avec la clé hexagonale) ; invisible sur les images : emplacement sous le nez et dimensions supposés.",
+      "pseudo": true
+     }
+    ],
+    [
+     "4",
+     "",
+     1,
+     "MANCHON DU SERRE-LAME, à ergot bleu",
+     {
+      "note": "Changement de lame sans outil : on enfonce la lame à fond, le manchon tourne et la bloque ; pour la retirer, on tourne le manchon à fond dans le sens de la flèche (manuel). Environ 30 mm de diamètre, col arrière plus étroit.",
+      "pseudo": true
+     }
+    ],
+    [
+     "5",
+     "",
+     1,
+     "COULISSEAU (tige porte-lame)",
+     {
+      "note": "Course de 13 mm (donnée publiée) ; montré sorti, à bout de course avant (hypothèse : le manchon ne dépasse pas le patin). Diamètre d'environ 13 mm, relevé sur la vue de côté.",
+      "pseudo": true
+     }
+    ],
+    [
+     "6",
+     "",
+     1,
+     "NEZ : gaine avant en caoutchouc noir",
+     {
+      "note": "Capot en haut, mâchoire en bas, face avant en creux d'où sort le coulisseau. Un carré turquoise d'environ 15 mm sur le flanc (rôle inconnu). Profondeur du creux supposée.",
+      "pseudo": true
+     }
+    ],
+    [
+     "7",
+     "",
+     1,
+     "LAMPE à DEL",
+     {
+      "note": "Nommée par le manuel : elle s'allume quand on presse le levier ou la gâchette et s'éteint de 10 à 15 secondes après. Invisible sur les images : emplacement sous le coulisseau supposé.",
+      "pseudo": true
+     }
+    ],
+    [
+     "8",
+     "",
+     1,
+     "CARTER DU MOTEUR turquoise, à ouïes d'aération",
+     {
+      "note": "Environ 145 mm de long et 70 mm de haut ; largeur de 64 mm supposée. Ouïes relevées sur les images ; celles du flanc opposé sont supposées.",
+      "pseudo": true
+     }
+    ],
+    [
+     "9",
+     "",
+     2,
+     "PLAQUE DU FLANC : cadre noir, panneau turquoise",
+     {
+      "note": "Une par flanc (celle du flanc opposé est supposée). Sur l'outil, le panneau porte le nom de la marque en blanc ; il n'est pas écrit sur le modèle, à la demande du client.",
+      "pseudo": true
+     }
+    ],
+    [
+     "10",
+     "",
+     1,
+     "LEVIER D'INTERRUPTEUR, sous le carter",
+     {
+      "note": "L'un des deux interrupteurs : on tire le levier de sécurité, puis le levier ; la vitesse augmente avec la pression (manuel). Environ 120 mm de long, articulé à l'arrière, où il remonte sur les flancs.",
+      "pseudo": true
+     }
+    ],
+    [
+     "11",
+     "",
+     1,
+     "LEVIER DE SÉCURITÉ du levier d'interrupteur",
+     {
+      "note": "Nommé par le manuel. Seuls deux bossages sous le levier sont visibles sur la vue de côté : forme supposée.",
+      "pseudo": true
+     }
+    ],
+    [
+     "12",
+     "",
+     1,
+     "POIGNÉE arrière surmoulée de caoutchouc noir, avec le corps de l'embase",
+     {
+      "note": "Elle descend d'environ 45° vers l'embase, dont elle forme le corps noir. Comprend le dessus noir de l'arrière du carter, le dessous turquoise et la bande turquoise de chaque flanc.",
+      "pseudo": true
+     }
+    ],
+    [
+     "13",
+     "",
+     1,
+     "GÂCHETTE, sous la poignée",
+     {
+      "note": "Le second interrupteur : on enfonce le bouton de sécurité, puis on presse la gâchette (manuel). Seul son bord dépasse sur les images : forme supposée.",
+      "pseudo": true
+     }
+    ],
+    [
+     "14",
+     "",
+     1,
+     "BOUTON DE SÉCURITÉ de la gâchette",
+     {
+      "note": "Traversant : il se pousse d'un côté ou de l'autre (manuel). Environ 9 mm de diamètre.",
+      "pseudo": true
+     }
+    ],
+    [
+     "15",
+     "",
+     1,
+     "EMBASE DE BATTERIE : jupe turquoise, glissières et bornier",
+     {
+      "note": "Environ 92 × 76 mm, inclinée de 15°, arrière relevé ; la batterie s'engage par l'arrière. Interface des batteries LXT de 18 V ; la batterie n'est pas comprise (outil seul). Glissières, bornier et lames de contact invisibles sur les images : supposés.",
+      "pseudo": true
+     }
+    ]
+   ]
+  }
+ },
+ "documents": []
+}

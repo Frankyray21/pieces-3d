@@ -77,6 +77,14 @@
       "status": "Type identifié sur une photo de la cage, 3D aux données publiées du fabricant : 48 fils verticaux et 16 fils horizontaux de calibre 6 (0,192 po), maille de 1 31/32 × 6 po, 92 3/4 × 70 po, 3 plis en V, pointes de 1 po, environ 41 lb ; traverse et poteaux de la cage en tube carré d'environ 1 1/2 po, relevés sur la photo ; place des plis et sections à confirmer en mesurant sur place"
     },
     {
+      "id": "makita-djr183",
+      "name": "Scie alternative sans fil Makita DJR183Z",
+      "manufacturer": "Makita",
+      "category": "Scie alternative sans fil 18 V LXT (outil seul)",
+      "thumbnail": "equipment/makita-djr183/thumbnail.webp",
+      "status": "3D d'après deux images du produit et scène animée du sciage d'un 2 × 4 (lame battante, trait qui descend, sciure, chute qui tombe) : lame, patin, serre-lame à ergot bleu, nez en caoutchouc, carter turquoise à ouïes, levier et gâchette avec leurs sécurités, poignée et embase de batterie LXT ; longueur de 398 mm, course de 13 mm et cadence de 0 à 3 000 courses/min publiées, le reste estimé à environ 15 % près"
+    },
+    {
       "id": "plancher-dd",
       "name": "Plancher pour foreuse aux diamants",
       "manufacturer": "Machines Roger International",

@@ -422,6 +422,29 @@ pièces (numéro, quantité, page du manuel).
   sections en D (`gabarit()` dans `src/models/dead-man/index.js`) ; l'intérieur
   du boîtier, invisible, n'est pas modélisé.
 
+- **Scie alternative sans fil Makita DJR183Z** (`makita-djr183`) : scie
+  alternative 18 V LXT (outil seul), reconstituée d'après deux images du
+  produit (P01 : photo de trois quarts, sans batterie ; P02 : vue de côté d'une
+  scie de même forme, avec batterie), sans plan ni cote. Données publiées,
+  reprises telles quelles : longueur hors tout de 398 mm, course de 13 mm, 0 à
+  3 000 courses/min, capacité de 50 mm, 18 V. Le profil est relevé sur la vue
+  de côté, mise à l'échelle pour que la batterie (non modélisée) finisse à
+  398 mm du patin ; le reste est estimé à environ 15 % près. Le manuel
+  d'instructions n'a pas été consulté directement : noms et fonctions des
+  pièces viennent d'extraits publiés. Nez, carter et poignée sont des coques
+  passant par des sections en super-ellipse relevées sur le profil (`corps()`
+  dans `src/models/makita-djr183/scie.js`) ; ouïes, plaques et bandes sont des
+  reliefs posés sur ces coques. À la demande du client, le nom de la marque
+  n'est pas écrit sur la plaque du modèle. Page P02 (racine) : scène animée du
+  sciage d'un 2 × 4 posé sur deux cales (`sciage.js`), en trois étapes du
+  montage par étapes — appuyer le patin, scier, retirer la scie — lues d'elles-
+  mêmes à l'ouverture (`view.stepsPlay`). L'état de la scène est une fonction
+  pure du temps (`etat(T)`) : lame, manchon et coulisseau battent de 13 mm, la
+  scie descend en basculant sur le patin, le trait de scie suit la ligne des
+  dents, la sciure est projetée puis tombe, la chute se détache et rebondit.
+  Cadence ralentie pour la lecture (environ 7 courses par seconde). Le décor
+  se limite au bois ; l'opérateur n'est pas montré.
+
 - **Panneau de grillage rigide à plis en V, maille 2 × 6 po** (`grillage-cage`) :
   type de grillage de la cage, identifié sur une photo (P01) et son relevé
   (P02 : fils verticaux tous les 2 po environ, fils horizontaux tous les 6 po,
