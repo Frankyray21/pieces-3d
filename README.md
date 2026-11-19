@@ -550,12 +550,18 @@ pièces (numéro, quantité, page du manuel).
   demi-pixel près, longueurs à un pixel près) et arrondi au 1/8 po : poignée
   ronde de Ø 7/8 po sur 22 3/4 po, fût octogonal de 1 1/8 po sur plats sur
   23 3/8 po, pied carré sur 13 7/8 po, biseau d'un seul côté de 2 3/4 po laissé
-  en acier nu, peinture rouge orangé, étiquette enroulée sur le pied (dessin
-  générique : texte illisible). Supposé : le nombre de pans du fût, le
-  tranchant émoussé de 2 mm, les faces cachées de l'étiquette. La barre est un
+  en acier nu, peinture rouge orangé. Supposé : le nombre de pans du fût et le
+  tranchant émoussé de 2 mm. Demandes du client : pas d'étiquette (la photo en
+  montre une sur le pied), et une barre qui a servi — peinture ternie, partie
+  jusqu'à l'acier le long des arêtes, au bout de la poignée et près de la
+  pointe, taches de rouille sur la peinture et sur le biseau ; c'est une mise
+  en apparence, aucune cote ne change. L'usure vient d'un réglage `wear` de
+  `withFinish()` (`src/viewer/materials.js`) et d'un attribut `aWear` par
+  sommet du maillage (1 sur les arêtes et les bouts). La barre est un
   volume passant par des sections de 64 points (rond, octogone, carré ;
   `volume()` dans `src/models/pince-monseigneur/index.js`) ; les repères 1 à 4
-  désignent ses zones, qui ne se séparent pas en vue éclatée. Contrôle de la
+  désignent ses zones, qui s'écartent en vue éclatée pour montrer les trois
+  sections (la barre réelle ne se démonte pas). Contrôle de la
   masse : 7,0 kg (15,4 lb) calculés à 7 850 kg/m³ contre 18 lb publiées, écart
   qui correspond à des sections plus larges d'environ 2 mm, moins d'un pixel de
   la photo ; les détaillants indiquent d'ailleurs 1 1/4 ou 1 1/2 po de large là
