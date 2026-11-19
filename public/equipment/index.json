@@ -58,6 +58,14 @@
       "status": "3D d'après deux photos du produit : boîtier jaune et noir d'environ 150 mm, tête à nez, barre du bouton à 3 positions sous les doigts, garde, étiquette, presse-étoupe, protecteur en spirale, câble de 4 m lové et connecteur M12 (données publiées) ; dimensions du boîtier estimées à environ 15 % près"
     },
     {
+      "id": "dr1500-u",
+      "name": "DR Fabrication DR1500-U",
+      "manufacturer": "DR Fabrication",
+      "category": "Foreuse souterraine",
+      "thumbnail": "equipment/dr1500-u/pages/P001.webp",
+      "status": "3D en cours — manuel de pièces MRI (25 pages) : 20 assemblages (foreuse, tête XBH, mandrin et serre-tiges Boyles 12HH, treuil XW-2100, groupe hydraulique 125 HP, waterpack) affichés pour l'instant avec les dessins du manuel"
+    },
+    {
       "id": "du311",
       "name": "Sandvik DU311-TVK",
       "manufacturer": "Sandvik",

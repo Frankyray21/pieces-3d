@@ -1,0 +1,3229 @@
+{
+ "id": "dr1500-u",
+ "name": "DR Fabrication DR1500-U",
+ "manufacturer": "DR Fabrication",
+ "category": "Foreuse souterraine",
+ "serial": "DR-U-109-20 à DR-U-112-20 (MRI2908 à MRI2911)",
+ "document": {
+  "title": "DR1500-U — Manuel de pièces",
+  "reference": "1500-U",
+  "client": "MRI",
+  "preparedBy": "DR Fabrication, Val-d'Or (dessins de la tête, du treuil, du mandrin et du serre-tiges : Usinage X-Spec)",
+  "sheets": 25,
+  "pagePattern": "pages/{sheet}.webp"
+ },
+ "specs": [
+  [
+   "Modèle",
+   "DR1500-U (foreuse souterraine sur frame skud, mât 1500M)"
+  ],
+  [
+   "Tête de forage",
+   "XBH 91-100 (Usinage X-Spec), broche à manchon NQ, chaîne triple 46 mailles, pignons 12T / 24T"
+  ],
+  [
+   "Moteur de rotation",
+   "Rexroth AA6VM160HD1/63W-VSD52700B"
+  ],
+  [
+   "Transmission",
+   "T2B2D54 « Fairfield » (T2B2C44 sur DR-U-110-20) ; note du manuel : toutes les 1500 ont des Funk 4 vitesses"
+  ],
+  [
+   "Mandrin",
+   "Boyles 12HH (055A, 12,5°)"
+  ],
+  [
+   "Serre-tiges",
+   "Boyles 12HH (055B, 12,5°) sur base 55-4000"
+  ],
+  [
+   "Vérin d'avance",
+   "DR-FE3560H « cylindre de feed 61 po »"
+  ],
+  [
+   "Treuil de câble",
+   "Hoist XW-2100 (206-400), vis d'enroulement 1700/2100 m, chaîne RS40"
+  ],
+  [
+   "Groupe hydraulique",
+   "Moteur électrique 125 HP (444TC), pompes AA4VG125 (hydrostatique) et A11VLO130, transformateur DX5000QHU"
+  ],
+  [
+   "Waterpack",
+   "Pompe Pratissoli KF40, moteur hydraulique Rexroth HA-028, débitmètre MIK-L34360A"
+  ]
+ ],
+ "weights": [
+  [
+   "Treuil Hoist XW-2100",
+   "477,18 lb"
+  ],
+  [
+   "Base du serre-tiges 55-4000",
+   "79,212 lb"
+  ],
+  [
+   "Piston et cylindre du serre-tiges 55-0300",
+   "68,231 lb"
+  ],
+  [
+   "Piston et cylindre du mandrin 55-0200",
+   "65,234 lb"
+  ],
+  [
+   "Vis d'enroulement 206-419",
+   "59,103 lb"
+  ]
+ ],
+ "sheetTitles": {
+  "P001": "Couverture (vue de la foreuse assemblée)",
+  "P002": "Ensemble (vue éclatée)",
+  "P003": "Assise",
+  "P004": "Mât",
+  "P005": "Table",
+  "P006": "Kit de poulie",
+  "P007": "Hydraulic power unit",
+  "P008": "Panneaux",
+  "P009": "Waterpack",
+  "P010": "Pompe à eau",
+  "P011": "Kit d'adaptateur transmission",
+  "P012": "Tête XBH — dessin (091)",
+  "P013": "Tête XBH — liste",
+  "P014": "Hoist XW-2100 — dessin (206-400)",
+  "P015": "Hoist XW-2100 — liste",
+  "P016": "Winding Screw Assy — dessin (206-419)",
+  "P017": "Winding Screw Assy — liste",
+  "P018": "Mandrin Boyles 12HH — dessin (055A)",
+  "P019": "Mandrin Boyles 12HH — liste",
+  "P020": "Piston et cylindre du mandrin (55-0200)",
+  "P021": "Serre-tiges Boyles — dessin (055B)",
+  "P022": "Serre-tiges Boyles — liste",
+  "P023": "Piston et cylindre du serre-tiges (55-0300)",
+  "P024": "Plaque support et bague de guidage (055B)",
+  "P025": "Base du serre-tiges (55-4000)"
+ },
+ "root": "P001",
+ "assemblies": {
+  "P001": {
+   "title": "DR1500-U drill rig",
+   "titleFr": "DR1500-U : foreuse, groupe hydraulique et waterpack",
+   "pn": "",
+   "sheets": [
+    "P001"
+   ],
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "FOREUSE DR1500-U (ensemble, page 2)",
+     {
+      "link": "P002",
+      "pseudo": true
+     }
+    ],
+    [
+     "2",
+     "",
+     1,
+     "HYDRAULIC POWER UNIT (pages 7 et 8)",
+     {
+      "link": "P007",
+      "pseudo": true
+     }
+    ],
+    [
+     "3",
+     "",
+     1,
+     "WATERPACK (pages 9 et 10)",
+     {
+      "link": "P009",
+      "pseudo": true
+     }
+    ]
+   ],
+   "note": "Regroupement ajouté pour le site (pas une liste du manuel) : le manuel présente la foreuse (page 2), le groupe hydraulique (pages 7 et 8) et le waterpack (pages 9 et 10) séparément, sans liste qui les réunisse. Les trois lignes sont des renvois, sans numéro de pièce."
+  },
+  "P002": {
+   "title": "DR1500-U — exploded assembly",
+   "titleFr": "Foreuse DR1500-U (ensemble)",
+   "pn": "",
+   "sheets": [
+    "P002",
+    "P001"
+   ],
+   "parts": [
+    [
+     "1",
+     "MA618",
+     1,
+     "BLOC I/O"
+    ],
+    [
+     "2",
+     "91-100",
+     1,
+     "TÊTE XBH",
+     {
+      "link": "P012"
+     }
+    ],
+    [
+     "3",
+     "MA609",
+     1,
+     "TABLE DE FORAGE 1500M",
+     {
+      "link": "P005"
+     }
+    ],
+    [
+     "5",
+     "MA601",
+     1,
+     "MAT 1500M",
+     {
+      "link": "P004"
+     }
+    ],
+    [
+     "6",
+     "MA616",
+     1,
+     "KIT POULIE BASCULE",
+     {
+      "link": "P006"
+     }
+    ],
+    [
+     "7",
+     "GA601",
+     1,
+     "ASSISE 1500",
+     {
+      "link": "P003"
+     }
+    ],
+    [
+     "8",
+     "PATTE EXTENSION",
+     2,
+     "PATTE D'EXTENSION",
+     {
+      "note": "Le manuel n'a pas de numéro pour cette pièce : la colonne PART NUMBER répète le nom (« PATTE EXTENSION »)."
+     }
+    ],
+    [
+     "9",
+     "MA617",
+     1,
+     "PL ANCRAGE"
+    ],
+    [
+     "10",
+     "55-1500",
+     1,
+     "12HH ROD CLAMP ASSEMBLY",
+     {
+      "link": "P021",
+      "note": "N° DR 55-1500 ; la vue éclatée du serre-tiges est celle d'Usinage X-Spec (055B, pages 21 à 24)."
+     }
+    ],
+    [
+     "12",
+     "HBU3532",
+     2,
+     "CYLINDRE DE TILT"
+    ],
+    [
+     "13",
+     "FA601",
+     1,
+     "FRAME SKUD",
+     {
+      "note": "« SKUD » : coquille du manuel pour « skid » (traîneau)."
+     }
+    ],
+    [
+     "14",
+     "206-400",
+     1,
+     "Hoist XW-2100",
+     {
+      "link": "P014"
+     }
+    ],
+    [
+     "15",
+     "GA608",
+     2,
+     "PIN CYL TILT FRAME"
+    ],
+    [
+     "16",
+     "55-4000",
+     1,
+     "BASE POUR ROD HOLDER 12HH",
+     {
+      "link": "P025"
+     }
+    ]
+   ],
+   "note": "Liste de la page 2 : les repères 4 et 11 n'existent pas dans le manuel (numérotation sautée). Seuls la tête, la table, le mât, le kit de poulie, l'assise, le serre-tiges, le treuil et la base du serre-tiges ont leur page ; le bloc I/O, les pattes d'extension, la plaque d'ancrage, les vérins de tilt, le frame skud et les pins de vérin ne sont dessinés que sur cette vue éclatée et sur la couverture."
+  },
+  "P003": {
+   "title": "Assise 1500",
+   "titleFr": "Assise 1500",
+   "pn": "GA601",
+   "sheets": [
+    "P003"
+   ],
+   "parts": [
+    [
+     "1",
+     "GA601",
+     1,
+     "ASSISE 1500"
+    ],
+    [
+     "2",
+     "GP6009",
+     6,
+     "CLAMP DE MAT"
+    ],
+    [
+     "3",
+     "C4038 BUSHING",
+     4,
+     "BUSHING DE SPLIT-BLOC"
+    ],
+    [
+     "4",
+     "B27.1 - NA1-200",
+     4,
+     "SNAP-RING 2\""
+    ],
+    [
+     "5",
+     "6391K295_OIL-EMBEDDED SLEEVE BEARING",
+     4,
+     "OIL-EMBEDDED SLEEVE BEARING POUR PIN 1-1/4PO"
+    ],
+    [
+     "6",
+     "MA621",
+     2,
+     "PIN CYL AV. MÂT"
+    ],
+    [
+     "7",
+     "GA610",
+     2,
+     "PIN CYLINDRE ANGLE"
+    ],
+    [
+     "8",
+     "HCL-2548",
+     1,
+     "DR-HCL2536",
+     {
+      "note": "Le n° (HCL-2548) et la description (DR-HCL2536) ne concordent pas dans le manuel. Pièce dessinée : vérin hydraulique (avance du mât, d'après la pin MA621 « PIN CYL AV. MÂT »)."
+     }
+    ],
+    [
+     "9",
+     "HBOLT 0.6250-11x2x1.5-C",
+     24,
+     "BOLT 5/8\"-11 UNC, 2\" LONG"
+    ]
+   ]
+  },
+  "P004": {
+   "title": "Mât 1500M",
+   "titleFr": "Mât 1500M",
+   "pn": "MA601",
+   "sheets": [
+    "P004"
+   ],
+   "parts": [
+    [
+     "1",
+     "MA601",
+     1,
+     "MAT 1500M"
+    ],
+    [
+     "2",
+     "MP6019",
+     2,
+     "PL USURE MÂT"
+    ],
+    [
+     "3",
+     "MA611",
+     1,
+     "PIN CYL FEED"
+    ],
+    [
+     "4",
+     "MP6059",
+     1,
+     "STOPPEUR PIN AMOVIBLE"
+    ],
+    [
+     "5",
+     "hbolt 0.7500-10x1.5x1.5-n",
+     1,
+     "BOLT 3/4\"-10UNC, 1-1/2\" LONG"
+    ],
+    [
+     "6",
+     "SCHCSCREW 0.5-13x0.75x0.75-HX-N",
+     38,
+     "BOLT FRAISÉ 1/2\"-13 UNC, 3/4\" LONG"
+    ],
+    [
+     "7",
+     "6391K688_OIL-EMBEDDED SLEEVE BEARING",
+     2,
+     "OIL-EMBEDDED SLEEVE BEARING - SHAFT 2-1/2\""
+    ],
+    [
+     "8",
+     "DR-FE3560H",
+     1,
+     "CYLINDRE DE FEED 61\""
+    ]
+   ]
+  },
+  "P005": {
+   "title": "Table de forage 1500M",
+   "titleFr": "Table de forage 1500M",
+   "pn": "MA609",
+   "sheets": [
+    "P005"
+   ],
+   "parts": [
+    [
+     "1",
+     "MA609",
+     1,
+     "TABLE DE FORAGE 1500M"
+    ],
+    [
+     "2",
+     "MP6021",
+     2,
+     "TÉFLON"
+    ],
+    [
+     "3",
+     "MP6024",
+     2,
+     "POUSSE TÉFLON"
+    ],
+    [
+     "4",
+     "MA613",
+     2,
+     "CÔTÉ DE TABLE"
+    ],
+    [
+     "5",
+     "MP6018",
+     1,
+     "PL SUPP CYL FEED"
+    ],
+    [
+     "7",
+     "A1412 SHAFT",
+     2,
+     "BUSHING BOITIER",
+     {
+      "note": "A1412 : même numéro interne X-Spec que le PIVOT BUSHING 25-886414 de la tête XBH (page 13, repère 40)."
+     }
+    ],
+    [
+     "8",
+     "HFBOLT 0.75-10x5x1.75-C",
+     8,
+     "BOLT HEX 3/4\"-10NC, 5\"LONG"
+    ],
+    [
+     "9",
+     "SSCUPSQR 0.5-13x1-C",
+     6,
+     "VIS PRESSION 1/2\"-13NC, 1\"LONG"
+    ],
+    [
+     "10",
+     "HNUT 0.5000-13-D-N",
+     6,
+     "ÉCROU 1/2\"-13NC"
+    ],
+    [
+     "11",
+     "SSCUPSQR 0.5-13x2.5-C",
+     6,
+     "VIS PRESSION 1/2\"-13NC, 2-1/2\" LONG"
+    ],
+    [
+     "12",
+     "hbolt 0.5000-13x1x1-n",
+     4,
+     "BOLT HEX 1/2\"-13NC, 1\"LONG"
+    ],
+    [
+     "13",
+     "HNUT 0.7500-10-D-N",
+     8,
+     "ÉCROU 3/4\"-10UNC"
+    ]
+   ],
+   "note": "Le repère 6 n'existe pas dans la liste du manuel."
+  },
+  "P006": {
+   "title": "Kit de poulie",
+   "titleFr": "Kit de poulie bascule",
+   "pn": "MA616",
+   "sheets": [
+    "P006"
+   ],
+   "parts": [
+    [
+     "1",
+     "MA616",
+     1,
+     "FRAME POULIE"
+    ],
+    [
+     "2",
+     "MP0028",
+     1,
+     "POULIE AVANT"
+    ],
+    [
+     "3",
+     "MP0367",
+     1,
+     "POULIE ARRIÈRE #2"
+    ],
+    [
+     "4",
+     "MP0059",
+     1,
+     "SHAFT POULIE AVANT"
+    ],
+    [
+     "5",
+     "MP0360",
+     1,
+     "SHAFT POULIE ARRIÈRE #2"
+    ],
+    [
+     "6",
+     "1411148",
+     2,
+     "BEARING POULIE AVANT"
+    ],
+    [
+     "7",
+     "MP0298",
+     2,
+     "WASHER DE POULIE AV."
+    ],
+    [
+     "8",
+     "Preferred Wide FW 0.75",
+     1,
+     "WASHER 3/4\""
+    ],
+    [
+     "9",
+     "HNUT 0.7500-10-D-N",
+     1,
+     "ÉCROU 3/4\"-10NC"
+    ],
+    [
+     "10",
+     "1411123",
+     2,
+     "BEARING POULIE ARRIÈRE"
+    ],
+    [
+     "11",
+     "MP0299",
+     2,
+     "WASHER DE POULIE ARR."
+    ],
+    [
+     "12",
+     "Preferred Wide FW 0.75",
+     1,
+     "WASHER 3/4\""
+    ],
+    [
+     "13",
+     "HNUT 0.7500-10-D-N",
+     1,
+     "ÉCROU 3/4\"-10NC"
+    ],
+    [
+     "14",
+     "HFBOLT 0.5-13x5x1.25-S",
+     1,
+     "BOLT HEX 1/2\"-13NC, 5\"LONG"
+    ],
+    [
+     "15",
+     "MP0374",
+     1,
+     "SPRING POULIE #2"
+    ],
+    [
+     "16",
+     "MP0375",
+     1,
+     "VIS DE RESSORT"
+    ]
+   ]
+  },
+  "P007": {
+   "title": "Hydraulic power unit",
+   "titleFr": "Groupe hydraulique (hydraulic power unit)",
+   "pn": "",
+   "sheets": [
+    "P007"
+   ],
+   "parts": [
+    [
+     "1",
+     "PA713",
+     1,
+     "FRAME POWERPACK"
+    ],
+    [
+     "2",
+     "PA708",
+     1,
+     "RES. HYDRAULIQUE"
+    ],
+    [
+     "3",
+     "PA706",
+     1,
+     "BOITIER ELEC"
+    ],
+    [
+     "4",
+     "DX5000QHU",
+     1,
+     "TRANSFORMETEUR"
+    ],
+    [
+     "5",
+     "M4-12-3",
+     1,
+     "VALVE DIRECTIONNEL"
+    ],
+    [
+     "6",
+     "FR-152",
+     1,
+     "POMPE DE TRANSFERT"
+    ],
+    [
+     "7",
+     "SF070G10BTUBV",
+     1,
+     "PRESSURE FILTE",
+     {
+      "note": "« FILTE » : coquille du manuel (filtre de pression)."
+     }
+    ],
+    [
+     "8",
+     "SBV6-24S-JE-44",
+     1,
+     "DOUBLE COOLER 24V"
+    ],
+    [
+     "9",
+     "2015K-2P-24S-JE-MB",
+     1,
+     "DRAIN COOLER 24V"
+    ],
+    [
+     "10",
+     "444TC",
+     1,
+     "MOTEUR ÉLECTRIQUE 125HP"
+    ],
+    [
+     "11",
+     "BELL HOUSING #197499",
+     1,
+     "BELL HOUSING"
+    ],
+    [
+     "12",
+     "AA4VG125EP4DMT132L-NSF52F001DH?",
+     1,
+     "POMPE HYDROSTATIC",
+     {
+      "note": "Le numéro se termine par un point d'interrogation dans le manuel : numéro à confirmer auprès du fabricant."
+     }
+    ],
+    [
+     "13",
+     "A11VLO130DRS-10L-NSD12N00",
+     1,
+     "POMPE"
+    ],
+    [
+     "p8",
+     "",
+     1,
+     "PANNEAUX (page 8)",
+     {
+      "link": "P008",
+      "pseudo": true,
+      "label": "p. 8"
+     }
+    ]
+   ],
+   "note": "Les panneaux (page 8) habillent ce groupe : ligne « p. 8 » ajoutée pour le site (pas dans la liste du manuel)."
+  },
+  "P008": {
+   "title": "Panneaux",
+   "titleFr": "Panneaux du groupe hydraulique",
+   "pn": "",
+   "sheets": [
+    "P008"
+   ],
+   "parts": [
+    [
+     "1",
+     "PA721",
+     1,
+     "CACHE MOTEUR"
+    ],
+    [
+     "2",
+     "PP7169",
+     1,
+     "PL CÔTÉ PLUG"
+    ],
+    [
+     "3",
+     "PA720",
+     1,
+     "HOOD COLLER #2"
+    ],
+    [
+     "4",
+     "PA719",
+     1,
+     "HOOD COLLER #1"
+    ],
+    [
+     "5",
+     "PA722",
+     1,
+     "PORTE GAUCHE"
+    ],
+    [
+     "6",
+     "PP7112",
+     1,
+     "TOLE HOOD DESSUS PP"
+    ],
+    [
+     "7",
+     "PP7111",
+     1,
+     "HOOD FILTREUR REDUIT"
+    ],
+    [
+     "8",
+     "PP7110",
+     1,
+     "HOOD RES. DIESEL"
+    ],
+    [
+     "9",
+     "PP7177",
+     1,
+     "PL CÔTÉ BULKHEAD HAUT"
+    ],
+    [
+     "10",
+     "PP7178",
+     1,
+     "PL CÔTÉ BULKHEAD BAS"
+    ],
+    [
+     "11",
+     "PP7172",
+     1,
+     "PL CÔTÉ GAUGE RES. HYD."
+    ],
+    [
+     "12",
+     "PA723",
+     1,
+     "PORTE DROITE"
+    ]
+   ]
+  },
+  "P009": {
+   "title": "Waterpack",
+   "titleFr": "Waterpack",
+   "pn": "PA701",
+   "sheets": [
+    "P009"
+   ],
+   "parts": [
+    [
+     "1",
+     "PA701",
+     1,
+     "WATER PACK"
+    ],
+    [
+     "2",
+     "PA715",
+     1,
+     "RÉSERVOIR EAU"
+    ],
+    [
+     "3",
+     "PA037",
+     1,
+     "SUPPORT POMPE A EAU",
+     {
+      "link": "P010"
+     }
+    ],
+    [
+     "4",
+     "PP7129",
+     1,
+     "COUVERT RÉS. A EAU #2"
+    ],
+    [
+     "5",
+     "PP7128",
+     1,
+     "COUVERT RÉSERVOIR A EAU #1"
+    ],
+    [
+     "6",
+     "PP7131",
+     1,
+     "COUVERT RÉS. A EAU #3"
+    ],
+    [
+     "7",
+     "DEBIMETRE ELECTROM MIK",
+     1,
+     "DÉBIMÈTRE MIK-L34360A"
+    ],
+    [
+     "8",
+     "LF 25AUB Z3",
+     1,
+     "WATER PRESSURE REDUCING VALVES"
+    ],
+    [
+     "9",
+     "A-060",
+     1,
+     "FLOAT SERIES 21"
+    ]
+   ]
+  },
+  "P010": {
+   "title": "Pompe à eau",
+   "titleFr": "Pompe à eau (Pratissoli KF40)",
+   "pn": "PA037",
+   "sheets": [
+    "P010"
+   ],
+   "parts": [
+    [
+     "1",
+     "PA037",
+     1,
+     "SUPPORT POMPE A EAU"
+    ],
+    [
+     "2",
+     "KF40",
+     1,
+     "PRATISSOLI WATER PUMP"
+    ],
+    [
+     "3",
+     "PP0210",
+     1,
+     "GARDE MOYEUX POMPE EAU"
+    ],
+    [
+     "4",
+     "18179943",
+     1,
+     "COUPLING - 5015 X 40MM X 12MM"
+    ],
+    [
+     "5",
+     "622183",
+     1,
+     "COUPLING CHAIN"
+    ],
+    [
+     "6",
+     "18179941",
+     1,
+     "COUPLING - 5016 X 1-1/4 X 5/16"
+    ],
+    [
+     "7",
+     "HA-028",
+     1,
+     "REXROTH HYDRAULIC MOTOR"
+    ]
+   ]
+  },
+  "P011": {
+   "title": "Kit d'adaptateur transmission",
+   "titleFr": "Kit d'adaptateur transmission",
+   "pn": "",
+   "sheets": [
+    "P011"
+   ],
+   "parts": [
+    [
+     "1",
+     "AA6VM160HD1/63W-VSD52700B",
+     1,
+     "MOTEUR HYDRAULIQUE"
+    ],
+    [
+     "2",
+     "T2B2D54",
+     1,
+     "TRANSMISSION FAIRFIELD",
+     {
+      "note": "Note rouge de la page : « Toutes les 1500 ont des Funk 4 vitesses », alors que la ligne dit « TRANSMISSION FAIRFIELD ». Le tableau de la page donne T2B2C44* pour DR-U-110-20 (MRI2909) : adaptateur installé (moteur AA6VM160, coupling E-1217, adaptateur UMW-002-001)."
+     }
+    ],
+    [
+     "3",
+     "90-147",
+     1,
+     "SPLINED ADAPTER"
+    ],
+    [
+     "4",
+     "90-148",
+     1,
+     "ADAPTER CASING"
+    ]
+   ],
+   "note": "Moteur Rexroth, transmission et adaptateurs montés sur la tête XBH (dessin de la page). Tableau des numéros DR-U / MRI : voir « Transmission par machine »."
+  },
+  "P012": {
+   "title": "091 - Tête XBH",
+   "titleFr": "Tête XBH (Usinage X-Spec, dessin 091)",
+   "pn": "91-100",
+   "sheets": [
+    "P012",
+    "P013"
+   ],
+   "parts": [
+    [
+     "1",
+     "91-101C",
+     1,
+     "CASING",
+     {
+      "supplier": "91-101"
+     }
+    ],
+    [
+     "2",
+     "13-21086-2921",
+     2,
+     "Oil Seal",
+     {
+      "supplier": "53 X 2921"
+     }
+    ],
+    [
+     "3",
+     "15-6224",
+     1,
+     "Lower Spindle Bearing",
+     {
+      "supplier": "6224.C3"
+     }
+    ],
+    [
+     "4",
+     "13-21086-3062",
+     2,
+     "Radial shaft seal",
+     {
+      "supplier": "53 X 3062"
+     }
+    ],
+    [
+     "5",
+     "15-3222M",
+     1,
+     "ANGULAR CONTACT BALL BEARING",
+     {
+      "supplier": "3222 A"
+     }
+    ],
+    [
+     "6",
+     "91-115",
+     1,
+     "LOWER BEARING CAGE",
+     {
+      "supplier": "A3388"
+     }
+    ],
+    [
+     "7",
+     "91-111",
+     1,
+     "BEARING HOUSING",
+     {
+      "supplier": "A3389"
+     }
+    ],
+    [
+     "8",
+     "91-114",
+     1,
+     "Chuck Adapter Cover",
+     {
+      "supplier": "A3383"
+     }
+    ],
+    [
+     "9",
+     "91-112",
+     1,
+     "Main Spindle, XBH",
+     {
+      "supplier": "A3377"
+     }
+    ],
+    [
+     "10",
+     "91-103",
+     1,
+     "Driven Sprocket (24T)",
+     {
+      "supplier": "91-103"
+     }
+    ],
+    [
+     "11",
+     "91-106",
+     1,
+     "Lower Seal Sleeve",
+     {
+      "supplier": "A3386"
+     }
+    ],
+    [
+     "12",
+     "91-105",
+     1,
+     "Upper Seal Sleeve",
+     {
+      "supplier": "A3385"
+     }
+    ],
+    [
+     "13",
+     "15-6213",
+     2,
+     "Deep Groove Ball Bearing",
+     {
+      "supplier": "6213.C3"
+     }
+    ],
+    [
+     "14",
+     "91-109",
+     1,
+     "Pump Cover, XBH",
+     {
+      "supplier": "A3387"
+     }
+    ],
+    [
+     "15",
+     "90-112",
+     1,
+     "Transmission Seal Cage",
+     {
+      "supplier": "A0011"
+     }
+    ],
+    [
+     "16",
+     "90-203",
+     1,
+     "Oil Seal",
+     {
+      "supplier": "450621"
+     }
+    ],
+    [
+     "17",
+     "82224",
+     1,
+     "O-Ring",
+     {
+      "supplier": "OR-2-224"
+     }
+    ],
+    [
+     "18",
+     "91-102",
+     1,
+     "Head Cover, XBH",
+     {
+      "supplier": "91-102"
+     }
+    ],
+    [
+     "19",
+     "91-116",
+     1,
+     "DRIVE CHAIN",
+     {
+      "supplier": "A5047",
+      "note": "Note rouge de la page 12 : « 46 mailles + maille d'accouplement » (chaîne triple)."
+     }
+    ],
+    [
+     "20",
+     "90-208",
+     1,
+     "Inline Pressure Filter",
+     {
+      "supplier": "FMP0381BAG3"
+     }
+    ],
+    [
+     "21",
+     "90-208A",
+     1,
+     "Filter Element",
+     {
+      "supplier": "SME-015E20B"
+     }
+    ],
+    [
+     "22",
+     "91-107",
+     1,
+     "Lower Locking Ring",
+     {
+      "supplier": "A5051"
+     }
+    ],
+    [
+     "23",
+     "91-108",
+     1,
+     "TIGHTENING RING",
+     {
+      "supplier": "A5299"
+     }
+    ],
+    [
+     "24",
+     "91-110",
+     1,
+     "PUSH RING",
+     {
+      "supplier": "A5300",
+      "note": "Ligne rayée en rouge dans le manuel. Note rouge de la page 12 : « #24 a été modifié sur les DR1500 — nouveau n° de pièce : MP6104 — raison : pour être capable de faire compter les tours (RPM) ». Sur la DR1500, la pièce montée est donc la MP6104."
+     }
+    ],
+    [
+     "25",
+     "91-117",
+     1,
+     "RETAINING CAP",
+     {
+      "supplier": "A5301"
+     }
+    ],
+    [
+     "26",
+     "91-119",
+     1,
+     "SPINDLE BUSHING, NQ",
+     {
+      "supplier": "A5302"
+     }
+    ],
+    [
+     "27",
+     "15212",
+     10,
+     "1/2-13 x 2-1/4\" Grade 8 Yellow Zinc Finish Hex Cap Screw",
+     {
+      "supplier": "HFBOLT 0.5-13x2.25x1.25"
+     }
+    ],
+    [
+     "28",
+     "25667",
+     6,
+     "1/2-13 x 1\" Hex Drive Cup Point Black Oxide Finish Alloy Steel Socket Set Sc",
+     {
+      "supplier": "SSCUPSKT 0.5-13x1-HX"
+     }
+    ],
+    [
+     "29",
+     "25774",
+     9,
+     "3/4-10 x 1\" Hex Drive Cup Point Black Oxide Finish Alloy Steel Socket Set Screw",
+     {
+      "supplier": "SSFLATSKT 0.75-10x1"
+     }
+    ],
+    [
+     "30",
+     "23259",
+     6,
+     "5/16-18 x 1-1/2\" ASTM A574 Hex Drive Black Oxide Finish Alloy Steel Socket Cap Screw",
+     {
+      "supplier": "HX-SHCS 0.3125-18x1.5x1.5"
+     }
+    ],
+    [
+     "31",
+     "15105",
+     12,
+     "3/8-16 x 1\" Grade 8 Yellow Zinc Finish Hex Cap Screw",
+     {
+      "supplier": "HFBOLT 0.375-16x1x1"
+     }
+    ],
+    [
+     "32",
+     "15109",
+     6,
+     "3/8-16 x 1-1/2\" Grade 8 Yellow Zinc Finish Hex Cap Screw",
+     {
+      "supplier": "HFBOLT 0.3750-16x1.5x1"
+     }
+    ],
+    [
+     "33",
+     "25537",
+     4,
+     "3/8-16 x 3/8\" Hex Drive Cup Point Black Oxide Finish Alloy Steel Socket Set Screw",
+     {
+      "supplier": "SSCUPSKT 0.375-16x0.375-HX"
+     }
+    ],
+    [
+     "34",
+     "15003",
+     4,
+     "1/4-20 x 3/4\" Grade 8 Yellow Zinc Finish Hex Cap Screw",
+     {
+      "supplier": "HFBOLT 0.25-20x0.75x0.75"
+     }
+    ],
+    [
+     "35",
+     "15053",
+     4,
+     "5/16-18 x 3/4\" Grade 8 Yellow Zinc Finish Hex Cap Screw",
+     {
+      "supplier": "HFBOLT 0.3125-18x0.75x0.75"
+     }
+    ],
+    [
+     "36",
+     "15013",
+     2,
+     "1/4-20 x 2-1/2\" Grade 8 Yellow Zinc Finish Hex Cap Screw",
+     {
+      "supplier": "HFBOLT 0.25-20x2.5x0.75"
+     }
+    ],
+    [
+     "37",
+     "91-121",
+     1,
+     "CHUCK SPACER",
+     {
+      "supplier": "A6008"
+     }
+    ],
+    [
+     "38",
+     "58831",
+     2,
+     "1/8-27 Straight Steel Zinc Self-Tapping Grease fitting With Ball Check",
+     {
+      "supplier": "ANM-0DEG-0.125NPT"
+     }
+    ],
+    [
+     "39",
+     "91-122",
+     2,
+     "Key",
+     {
+      "supplier": "A7224"
+     }
+    ],
+    [
+     "40",
+     "25-886414",
+     2,
+     "PIVOT BUSHING",
+     {
+      "supplier": "A1412"
+     }
+    ],
+    [
+     "41",
+     "91-104A",
+     1,
+     "Drive Spindle (12T)",
+     {
+      "supplier": "91-104"
+     }
+    ],
+    [
+     "42",
+     "82240",
+     2,
+     "O Ring",
+     {
+      "supplier": "OR-2-242"
+     }
+    ],
+    [
+     "43",
+     "90-113",
+     1,
+     "Access Cap",
+     {
+      "supplier": "A0013"
+     }
+    ],
+    [
+     "44",
+     "90-209",
+     1,
+     "Circulation Pump",
+     {
+      "supplier": "MGG20016-BB1A3"
+     }
+    ],
+    [
+     "45",
+     "90-212",
+     1,
+     "Heat Exchanger",
+     {
+      "supplier": "SB-401-A4-O",
+      "no3d": true,
+      "note": "Ligne rayée en rouge dans le manuel (échangeur de chaleur retiré) : pas montée en 3D."
+     }
+    ],
+    [
+     "46",
+     "66673",
+     2,
+     "1/2\" M-NPT 300 lb Zinc Merchant Steel Square Solid Pipe Plug",
+     {
+      "supplier": "44605K224"
+     }
+    ],
+    [
+     "47",
+     "2501-0608",
+     1,
+     "90° M-JIC #6 / M-NPT #8",
+     {
+      "supplier": "2501-0608"
+     }
+    ],
+    [
+     "48",
+     "",
+     1,
+     "GT200 Thermometer",
+     {
+      "supplier": "GT200 Thermometer",
+      "note": "Les colonnes PART # et DESCRIPTION sont vides dans le manuel ; « GT200 Thermometer » est écrit dans la colonne NUMÉRO INTERNE."
+     }
+    ],
+    [
+     "49",
+     "",
+     1,
+     "WALVOIL - DIVERTER VALVE WITH MECHANICAL CONTROL",
+     {
+      "supplier": "DF5/3 B12L",
+      "note": "Colonne PART # vide dans le manuel ; numéro interne DF5/3 B12L."
+     }
+    ],
+    [
+     "50",
+     "90-133",
+     2,
+     "Cooler Bracket",
+     {
+      "supplier": "A8098"
+     }
+    ],
+    [
+     "p11",
+     "",
+     1,
+     "KIT D'ADAPTATEUR TRANSMISSION (page 11)",
+     {
+      "link": "P011",
+      "pseudo": true,
+      "label": "p. 11"
+     }
+    ],
+    [
+     "p18",
+     "",
+     1,
+     "BOYLES 12HH CHUCK ASSY (pages 18 à 20)",
+     {
+      "link": "P018",
+      "pseudo": true,
+      "label": "p. 18"
+     }
+    ]
+   ],
+   "note": "Dessin et liste d'Usinage X-Spec (091 - TÊTE XBH, page 2 de 2, A5266, 2020-01-28). La colonne NUMÉRO INTERNE du manuel est donnée comme n° fournisseur. Lignes « p. 11 » et « p. 18 » ajoutées pour le site (pas dans la liste) : le kit d'adaptateur transmission et le mandrin 12HH se montent sur cette tête."
+  },
+  "P014": {
+   "title": "206-400 - Hoist XW-2100",
+   "titleFr": "Treuil Hoist XW-2100",
+   "pn": "206-400",
+   "sheets": [
+    "P014",
+    "P015"
+   ],
+   "parts": [
+    [
+     "1",
+     "206-414",
+     1,
+     "Assemblage Fond Hoist X2100"
+    ],
+    [
+     "2",
+     "206-415",
+     1,
+     "Right Side Frame Plate"
+    ],
+    [
+     "3",
+     "206-416",
+     1,
+     "Left Side Frame Plate"
+    ],
+    [
+     "4",
+     "206-417",
+     1,
+     "Drum Hoist XW2100"
+    ],
+    [
+     "5",
+     "206-018",
+     1,
+     "Handle Assy"
+    ],
+    [
+     "6",
+     "206-419",
+     1,
+     "Winding Screw Assy, 1700/2100m",
+     {
+      "link": "P016"
+     }
+    ],
+    [
+     "7",
+     "206-033",
+     1,
+     "Sprocket, C/W Bushing"
+    ],
+    [
+     "8",
+     "206-420",
+     4,
+     "Shaft"
+    ],
+    [
+     "9",
+     "MFC-2",
+     2,
+     "4 Bolts, Piloted Flange Bearing"
+    ],
+    [
+     "10",
+     "206-004",
+     1,
+     "Washer"
+    ],
+    [
+     "11",
+     "9657K338",
+     1,
+     "Compression Spring"
+    ],
+    [
+     "12",
+     "N0.500-10S",
+     1,
+     "Tensioner Sprocket Assy"
+    ],
+    [
+     "13",
+     "206-422",
+     1,
+     "Garde hoist X1300 - X2100"
+    ],
+    [
+     "14",
+     "206-423",
+     1,
+     "Guard"
+    ],
+    [
+     "15",
+     "206-424",
+     1,
+     "Drum Guard"
+    ],
+    [
+     "16",
+     "206-425",
+     1,
+     "Liner, 0.250\""
+    ],
+    [
+     "17",
+     "206-431",
+     1,
+     "Side Guard"
+    ],
+    [
+     "18",
+     "C5213-PL",
+     1,
+     "Plaque"
+    ],
+    [
+     "19",
+     "C5214-PL",
+     1,
+     "Plaque"
+    ],
+    [
+     "20",
+     "206-027",
+     1,
+     "Motor Mount"
+    ],
+    [
+     "21",
+     "206-028",
+     1,
+     "Encoder Ring"
+    ],
+    [
+     "22",
+     "206-029",
+     2,
+     "Shaft"
+    ],
+    [
+     "23",
+     "40BS14-1",
+     1,
+     "40BS14 Sprocket, Bore 1.000\""
+    ],
+    [
+     "24",
+     "15105",
+     9,
+     "3/8-16 x 1\" Grade 8 Yellow Zinc Finish Hex Cap Screw",
+     {
+      "note": "Même numéro (15105) que le repère 29 : deux lignes distinctes dans le manuel (9 et 14 vis)."
+     }
+    ],
+    [
+     "25",
+     "",
+     16,
+     "HFBOLT 0.5-13x1.25x1.25-S",
+     {
+      "note": "Colonne PART # vide dans le manuel ; la désignation interne est dans la colonne DESCRIPTION."
+     }
+    ],
+    [
+     "26",
+     "15103",
+     11,
+     "3/8-16 x 3/4\" Grade 8 Yellow Zinc Finish Hex Cap Screw"
+    ],
+    [
+     "27",
+     "33082",
+     4,
+     "3/8\" x 0.812\" OD Low Carbon Zinc Finish Steel SAE General Purpose Flat Washer"
+    ],
+    [
+     "28",
+     "37024",
+     8,
+     "3/8-16 Grade 2 Zinc Finish NE Steel Nylon Insert Lock Nut"
+    ],
+    [
+     "29",
+     "15105",
+     14,
+     "3/8-16 x 1\" Grade 8 Yellow Zinc Finish Hex Cap Screw",
+     {
+      "note": "Même numéro (15105) que le repère 24 : deux lignes distinctes dans le manuel (14 et 9 vis)."
+     }
+    ],
+    [
+     "30",
+     "15110",
+     8,
+     "3/8-16 x 1-3/4\" Grade 8 Yellow Zinc Finish Hex Cap Screw"
+    ],
+    [
+     "31",
+     "26351",
+     1,
+     "1/2 Shoulder x 1-1/4\" Shoulder Length x 3/8-16 Black Oxide Alloy Steel Socket Shoulder Bolt"
+    ],
+    [
+     "32",
+     "045100-0100",
+     1,
+     "External Retaining Ring"
+    ],
+    [
+     "33",
+     "SE15",
+     1,
+     "Rosta Tensioner"
+    ],
+    [
+     "34",
+     "64285",
+     1,
+     "5/16\" x 2\" Plain Finish Steel Slotted Spring Pin"
+    ],
+    [
+     "35",
+     "38619",
+     1,
+     "M8-1.25 x 40mm DIN 931 Class 8.8 Zinc Finish Hex Cap Screw"
+    ],
+    [
+     "36",
+     "25441",
+     2,
+     "5/16-18 x 3/4\" Hex Drive Cup Point Black Oxide Finish Alloy Steel Socket Set Screw"
+    ]
+   ],
+   "note": "Dessin d'Usinage X-Spec 206-400 rév. B (C6712, 2020-01-28), échelle 1:10 (feuille 2) et 1:7 (feuille 1), poids 477,18 lb. Note de la page 14 : « CHAINE RS40-1-RP, longueur totale 43 po, 1 maille patente et 1 demi-maille RS40 » (pas de ligne dans la liste). Aucun moteur n'est listé (support de moteur 206-027 seulement)."
+  },
+  "P016": {
+   "title": "Winding Screw Assy, 1700/2100m",
+   "titleFr": "Vis d'enroulement (winding screw) 206-419",
+   "pn": "206-419",
+   "sheets": [
+    "P016",
+    "P017"
+   ],
+   "parts": [
+    [
+     "1",
+     "206-001",
+     1,
+     "Right Bearing Holder",
+     {
+      "weightLb": 7.0
+     }
+    ],
+    [
+     "2",
+     "15-6006-2RS",
+     2,
+     "Deep Groove Ball Bearing",
+     {
+      "weightLb": 0.254
+     }
+    ],
+    [
+     "3",
+     "206-002",
+     1,
+     "Left Bearing Holder",
+     {
+      "weightLb": 7.09
+     }
+    ],
+    [
+     "4",
+     "206-403",
+     1,
+     "Winding Screw, XW-1700 / XW-2100",
+     {
+      "weightLb": 9.58
+     }
+    ],
+    [
+     "5",
+     "206-004",
+     1,
+     "Washer",
+     {
+      "weightLb": 0.116
+     }
+    ],
+    [
+     "6",
+     "",
+     1,
+     "HFBOLT 0.5-13x1.25x1.25-S",
+     {
+      "note": "Colonne Part Number vide dans le manuel ; la désignation est dans la colonne Description."
+     }
+    ],
+    [
+     "7",
+     "206-005",
+     1,
+     "Follower Block",
+     {
+      "weightLb": 12.9
+     }
+    ],
+    [
+     "8",
+     "206-006",
+     2,
+     "Bushing, Bronze",
+     {
+      "weightLb": 0.436
+     }
+    ],
+    [
+     "9",
+     "",
+     2,
+     "Truarc N5000-200 - S2",
+     {
+      "note": "Colonne Part Number vide dans le manuel ; la désignation est dans la colonne Description."
+     }
+    ],
+    [
+     "10",
+     "206-407",
+     1,
+     "Guide Shaft, Follower",
+     {
+      "weightLb": 7.95
+     }
+    ],
+    [
+     "11",
+     "206-008",
+     1,
+     "Bushing Thordon, Screw Assy",
+     {
+      "weightLb": 0.091
+     }
+    ],
+    [
+     "12",
+     "",
+     1,
+     "Truarc N5000-175 - S1.75",
+     {
+      "note": "Colonne Part Number vide dans le manuel ; la désignation est dans la colonne Description."
+     }
+    ],
+    [
+     "13",
+     "206-009",
+     1,
+     "Follower, Screw Assy",
+     {
+      "weightLb": 0.486
+     }
+    ],
+    [
+     "14",
+     "206-010",
+     1,
+     "Follower Cap",
+     {
+      "weightLb": 0.672
+     }
+    ],
+    [
+     "15",
+     "15105",
+     2,
+     "3/8-16 x 1\" Grade 8 Yellow Zinc Finish Hex Cap Screw",
+     {
+      "weightLb": 0.0453
+     }
+    ],
+    [
+     "16",
+     "206-411",
+     1,
+     "Flat Bar, Screw Assy",
+     {
+      "weightLb": 3.1
+     }
+    ],
+    [
+     "17",
+     "206-012",
+     1,
+     "Guide Roller Support",
+     {
+      "weightLb": 4.949
+     }
+    ],
+    [
+     "18",
+     "206-013V",
+     2,
+     "Vertical Guide Roller Assy, 1.000\" OD",
+     {
+      "weightLb": 0.297,
+      "note": "Détail 206-013V de la page 16 : rouleau 206-013-3 entre deux bagues à collerette 206-013-2 (numéros du dessin, sans ligne dans la liste)."
+     }
+    ],
+    [
+     "19",
+     "206-013H",
+     2,
+     "Horizontal Guide Roller Assy, 2.000\" OD",
+     {
+      "weightLb": 0.86,
+      "note": "Détail 206-013H de la page 16 : rouleau 206-013-1 et deux bagues à collerette 206-013-2 (numéros du dessin, sans ligne dans la liste)."
+     }
+    ],
+    [
+     "20",
+     "26360",
+     4,
+     "1/2\" Shoulder x 3-1/2\" Shoulder Length x 3/8-16 Black Oxide Alloy Steel Socket Shoulder Bolt",
+     {
+      "weightLb": 0.244
+     }
+    ],
+    [
+     "21",
+     "37024",
+     2,
+     "3/8-16 Grade 2 Zinc Finish NE Steel Nylon Insert Lock Nut",
+     {
+      "weightLb": 0.022
+     }
+    ],
+    [
+     "22",
+     "15057",
+     2,
+     "5/16-18 x 1-1/4\" Grade 8 Yellow Zinc Finish Hex Cap Screw",
+     {
+      "weightLb": 0.037
+     }
+    ],
+    [
+     "23",
+     "58834",
+     2,
+     "1/4-28 Straight Steel Zinc Self-Tapping Grease fitting With Ball Check",
+     {
+      "weightLb": 0.01
+     }
+    ],
+    [
+     "24",
+     "0141571",
+     1,
+     "1/4-28 x 1/4\" Hex Drive Cup Point Zinc Finish Alloy Steel Socket Set Screw",
+     {
+      "weightLb": 0.002
+     }
+    ],
+    [
+     "25",
+     "1133622",
+     4,
+     "3/8 Zinc Finish Medium Split Lock Washer",
+     {
+      "weightLb": 0.006
+     }
+    ],
+    [
+     "26",
+     "15107",
+     4,
+     "3/8-16 x 1-1/4\" Grade 8 Yellow Zinc Finish Hex Cap Screw",
+     {
+      "weightLb": 0.0547
+     }
+    ],
+    [
+     "27",
+     "1133620",
+     2,
+     "5/16 Zinc Finish Medium Split Lock Washer",
+     {
+      "weightLb": 0.004
+     }
+    ]
+   ],
+   "note": "Dessin d'Usinage X-Spec C5181 rév. B (2020-01-28), échelle 1:4,5, poids 59,103 lb. Sur la page 16, les pièces sont désignées par leur numéro (pas par le repère). Colonne « Unit Weight » (lb) reprise dans weightLb."
+  },
+  "P018": {
+   "title": "055A - Boyles 12HH chuck assy (12.5deg)",
+   "titleFr": "Mandrin Boyles 12HH (055A, 12,5°)",
+   "pn": "",
+   "sheets": [
+    "P018",
+    "P019"
+   ],
+   "parts": [
+    [
+     "1",
+     "14-0801",
+     10,
+     "HEX NUT, 1/2-13 UNC",
+     {
+      "supplier": "5173024",
+      "mirow": "NUTHH12013"
+     }
+    ],
+    [
+     "2",
+     "16-081508",
+     3,
+     "HEX BOLT, 1/2-13 UNC X 1-1/2",
+     {
+      "supplier": "5115003",
+      "mirow": "HHCS120131125"
+     }
+    ],
+    [
+     "3",
+     "16-082258",
+     9,
+     "HEX BOLT, 1/2-13 UNC X 2-1/4\"",
+     {
+      "supplier": "5115303",
+      "mirow": "HHCS120132145"
+     }
+    ],
+    [
+     "4",
+     "16-084508",
+     10,
+     "HEX BOLT, 1/2-13 UNC X 4-1/2\"",
+     {
+      "supplier": "5125103",
+      "mirow": "HHCS120134125"
+     }
+    ],
+    [
+     "5",
+     "16-086508",
+     6,
+     "HEX BOLT, 1/2-13 UNC X 6-1/2\"",
+     {
+      "supplier": "5125503",
+      "mirow": "HHCS120136125"
+     }
+    ],
+    [
+     "6",
+     "16-088008",
+     3,
+     "HEX BOLT, 1/2-13 UNC X 8\"",
+     {
+      "supplier": "5125803",
+      "mirow": "HHCS120138005"
+     }
+    ],
+    [
+     "7",
+     "16-161508",
+     3,
+     "HEX BOLT, 3/4-10 UNC X 1-1/2\"",
+     {
+      "supplier": "5119006",
+      "mirow": "HHCS340101125"
+     }
+    ],
+    [
+     "8",
+     "55-0001",
+     1,
+     "ACTUATOR SLEEVE",
+     {
+      "supplier": "3506928",
+      "mirow": "18100123",
+      "same": "13",
+      "note": "Fait partie du sous-ensemble piston/cylindre 55-0200 (page 20) : en 3D, désigne ce sous-ensemble (repère 13)."
+     }
+    ],
+    [
+     "9",
+     "55-0003",
+     1,
+     "TOP CAP HOLDER",
+     {
+      "supplier": "3506906",
+      "mirow": "18100122"
+     }
+    ],
+    [
+     "10",
+     "55-0004",
+     1,
+     "TOP CAP ADAPTER",
+     {
+      "supplier": "3506907",
+      "mirow": "18100071"
+     }
+    ],
+    [
+     "11",
+     "55-0005",
+     1,
+     "CHUCK BOWL",
+     {
+      "supplier": "2920390",
+      "mirow": "18100067"
+     }
+    ],
+    [
+     "12",
+     "55-0006",
+     1,
+     "CHUCK HOUSING",
+     {
+      "supplier": "3506870",
+      "mirow": "18100091"
+     }
+    ],
+    [
+     "13",
+     "55-0007",
+     1,
+     "CYLINDER",
+     {
+      "supplier": "3506909",
+      "mirow": "18100024",
+      "link": "P020",
+      "note": "Le sous-ensemble piston/cylindre 55-0200 (page 20) comprend le cylindre, le piston, les joints, la bague d'appui, l'anneau de retenue, le manchon d'actionnement et la butée."
+     }
+    ],
+    [
+     "14",
+     "55-0008",
+     1,
+     "CHUCK ADAPTER",
+     {
+      "supplier": "3506910",
+      "mirow": "18100147"
+     }
+    ],
+    [
+     "15",
+     "55-0009",
+     1,
+     "BACK UP RING",
+     {
+      "supplier": "3506882",
+      "mirow": "18100086",
+      "same": "13",
+      "note": "Fait partie du sous-ensemble piston/cylindre 55-0200 (page 20) : en 3D, désigne ce sous-ensemble (repère 13)."
+     }
+    ],
+    [
+     "16",
+     "55-0010",
+     1,
+     "PISTON",
+     {
+      "supplier": "3506908",
+      "mirow": "18100023",
+      "same": "13",
+      "note": "Fait partie du sous-ensemble piston/cylindre 55-0200 (page 20) : en 3D, désigne ce sous-ensemble (repère 13)."
+     }
+    ],
+    [
+     "17",
+     "55-0011",
+     3,
+     "TOP SPACER",
+     {
+      "supplier": "3506878",
+      "mirow": "18100058"
+     }
+    ],
+    [
+     "18",
+     "55-0012",
+     9,
+     "BOTTOM SPACER",
+     {
+      "supplier": "3506880",
+      "mirow": "18100059"
+     }
+    ],
+    [
+     "19",
+     "55-0013",
+     1,
+     "KEY LOCKING SPRING",
+     {
+      "supplier": "3506879",
+      "mirow": "18100158"
+     }
+    ],
+    [
+     "20",
+     "55-0014",
+     1,
+     "RETAINING RING",
+     {
+      "supplier": "5054078",
+      "mirow": "18100285",
+      "same": "13",
+      "note": "Fait partie du sous-ensemble piston/cylindre 55-0200 (page 20) : en 3D, désigne ce sous-ensemble (repère 13)."
+     }
+    ],
+    [
+     "21",
+     "55-0015",
+     3,
+     "KEY",
+     {
+      "supplier": "3506881",
+      "mirow": "18100041"
+     }
+    ],
+    [
+     "22",
+     "55-0016",
+     9,
+     "CR - RADIAL SHAFT SEAL",
+     {
+      "supplier": "5040192",
+      "mirow": "18100156",
+      "note": "Marquée A sur le dessin : comprise dans le seal kit #55-0022."
+     }
+    ],
+    [
+     "23",
+     "55-0017",
+     1,
+     "U-CUP SEAL",
+     {
+      "supplier": "5035016",
+      "mirow": "18100062",
+      "same": "13",
+      "note": "Fait partie du sous-ensemble piston/cylindre 55-0200 (page 20) : en 3D, désigne ce sous-ensemble (repère 13). Marquée A sur le dessin : comprise dans le seal kit #55-0022."
+     }
+    ],
+    [
+     "24",
+     "55-0018",
+     1,
+     "WEAR RING",
+     {
+      "supplier": "5035018",
+      "mirow": "18100063",
+      "same": "13",
+      "note": "Fait partie du sous-ensemble piston/cylindre 55-0200 (page 20) : en 3D, désigne ce sous-ensemble (repère 13). Marquée A sur le dessin : comprise dans le seal kit #55-0022."
+     }
+    ],
+    [
+     "25",
+     "55-0019",
+     1,
+     "U-CUP SEAL",
+     {
+      "supplier": "5035015",
+      "mirow": "18100061",
+      "same": "13",
+      "note": "Fait partie du sous-ensemble piston/cylindre 55-0200 (page 20) : en 3D, désigne ce sous-ensemble (repère 13). Marquée A sur le dessin : comprise dans le seal kit #55-0022."
+     }
+    ],
+    [
+     "26",
+     "55-0020",
+     1,
+     "WEAR RING",
+     {
+      "supplier": "5035017",
+      "mirow": "18100064",
+      "same": "13",
+      "note": "Fait partie du sous-ensemble piston/cylindre 55-0200 (page 20) : en 3D, désigne ce sous-ensemble (repère 13). Marquée A sur le dessin : comprise dans le seal kit #55-0022."
+     }
+    ],
+    [
+     "27",
+     "55-0021",
+     1,
+     "V-RING",
+     {
+      "supplier": "5041022",
+      "mirow": "18100065",
+      "same": "13",
+      "note": "Fait partie du sous-ensemble piston/cylindre 55-0200 (page 20) : en 3D, désigne ce sous-ensemble (repère 13). Marquée A sur le dessin : comprise dans le seal kit #55-0022."
+     }
+    ],
+    [
+     "28",
+     "55-0023",
+     18,
+     "SPRING",
+     {
+      "supplier": "5200517",
+      "mirow": "18100155"
+     }
+    ],
+    [
+     "29",
+     "55-0024",
+     1,
+     "THRUST BEARING",
+     {
+      "supplier": "5000199",
+      "mirow": "18100157",
+      "same": "13",
+      "note": "Fait partie du sous-ensemble piston/cylindre 55-0200 (page 20) : en 3D, désigne ce sous-ensemble (repère 13). Marquée B : à garnir de graisse avant le montage dans le mandrin."
+     }
+    ],
+    [
+     "30",
+     "55-0025",
+     1,
+     "GREASE FITTING, STRAIGHT, 1/4-28 UNF",
+     {
+      "supplier": "5200812",
+      "mirow": "GF14028S"
+     }
+    ],
+    [
+     "31",
+     "55-0027",
+     4,
+     "SLOTTED SPRING PIN, Ø3/8\" X 1-3/4\" LG",
+     {
+      "supplier": "5222624",
+      "same": "13",
+      "note": "Fait partie du sous-ensemble piston/cylindre 55-0200 (page 20) : en 3D, désigne ce sous-ensemble (repère 13)."
+     }
+    ]
+   ],
+   "note": "Dessin d'Usinage X-Spec 055A (B0489, 2013-08-15). N° fournisseur affiché : colonne ATLAS COPCO INTERCHANGE (numéros Boyles, les mêmes que ceux du mandrin et du serre-tiges du STM-1500) ; colonne MIROW INTERCHANGE dans mirow. Notes du manuel : A — seal kit #55-0022 (repères marqués A) ; B — garnir de graisse avant le montage ; C — jeu de 9 mâchoires appariées, vendu seulement par 9. Les mâchoires (jaw set) et la bague du mandrin (chuck bushing) n'ont pas de ligne : leur numéro dépend du calibre des tiges (tableau « Mâchoires et bagues 12HH »)."
+  },
+  "P020": {
+   "title": "Chuck piston/cylinder assy",
+   "titleFr": "Piston et cylindre du mandrin 12HH (55-0200)",
+   "pn": "55-0200",
+   "sheets": [
+    "P020"
+   ],
+   "parts": [
+    [
+     "1-14",
+     "55-0200",
+     null,
+     "Chuck Piston/Cylinder Assy (c/w Bearing, Actuator Sleeve and Backup Ring Assembled)",
+     {}
+    ],
+    [
+     "1-10",
+     "55-0205",
+     null,
+     "Chuck Piston/Cylinder Assy (Piston and Cylinder with seals only)",
+     {}
+    ],
+    [
+     "1",
+     "13-VL220",
+     1,
+     "V-Ring",
+     {
+      "weightLb": 0.056
+     }
+    ],
+    [
+     "2",
+     "55-0007",
+     1,
+     "Chuck Cylinder",
+     {
+      "weightLb": 34.467
+     }
+    ],
+    [
+     "3",
+     "55-0010",
+     1,
+     "Chuck Piston, c/w Spring Pins",
+     {
+      "weightLb": 12.277
+     }
+    ],
+    [
+     "4",
+     "55-0017",
+     1,
+     "U-Cup Seal",
+     {
+      "weightLb": 0.055
+     }
+    ],
+    [
+     "5",
+     "55-0018",
+     1,
+     "Wear Ring, Ø8-1/4\"",
+     {
+      "weightLb": 0.034
+     }
+    ],
+    [
+     "6",
+     "55-0019",
+     1,
+     "U-Cup Seal",
+     {
+      "weightLb": 0.106
+     }
+    ],
+    [
+     "7",
+     "55-0020",
+     1,
+     "Wear Ring, Ø10\"",
+     {
+      "weightLb": 0.04
+     }
+    ],
+    [
+     "8",
+     "2501-0604",
+     1,
+     "90° M-JIC #6 / M-NPT #4",
+     {
+      "weightLb": 0.1
+     }
+    ],
+    [
+     "9",
+     "58834",
+     1,
+     "1/4-28 Straight Steel Zinc Self-Tapping Grease fitting With Ball Check",
+     {
+      "weightLb": 0.01
+     }
+    ],
+    [
+     "10",
+     "64313",
+     4,
+     "3/8\" x 1-3/4\" Plain Finish Steel Slotted Spring Pin",
+     {
+      "weightLb": 0.0346
+     }
+    ],
+    [
+     "11",
+     "55-0009",
+     1,
+     "Back Up Ring",
+     {
+      "weightLb": 2.157
+     }
+    ],
+    [
+     "12",
+     "55-0014",
+     1,
+     "Retaining Ring",
+     {
+      "weightLb": 0.302
+     }
+    ],
+    [
+     "13",
+     "55-0001",
+     1,
+     "Actuator Sleeve",
+     {
+      "weightLb": 10.266
+     }
+    ],
+    [
+     "14",
+     "15-51130",
+     1,
+     "Thrust Bearing",
+     {
+      "weightLb": 5.229
+     }
+    ]
+   ],
+   "note": "Dessin d'Usinage X-Spec 55-0200 rév. C (C5872, 2019-02-09), échelle 1:4, poids 65,234 lb. Les deux premières lignes sont les ensembles vendus : 55-0200 (repères 1 à 14) et 55-0205 (repères 1 à 10). Colonne « Unit Weight » (lb) dans weightLb."
+  },
+  "P021": {
+   "title": "055B - Boyles rod clamp assy (12.5deg)",
+   "titleFr": "Serre-tiges Boyles 12HH (055B, 12,5°)",
+   "pn": "55-1500",
+   "sheets": [
+    "P021",
+    "P022"
+   ],
+   "parts": [
+    [
+     "1",
+     "16-081508",
+     3,
+     "HEX BOLT, 1/2-13 UNC X 1-1/2",
+     {
+      "supplier": "5115003",
+      "mirow": "HHCS120131125"
+     }
+    ],
+    [
+     "2",
+     "16-082258",
+     9,
+     "HEX BOLT, 1/2-13 UNC X 2-1/4\"",
+     {
+      "supplier": "5115303",
+      "mirow": "HHCS120132145"
+     }
+    ],
+    [
+     "3",
+     "16-086508",
+     6,
+     "HEX BOLT, 1/2-13 UNC X 6-1/2\"",
+     {
+      "supplier": "5125503",
+      "mirow": "HHCS120136125"
+     }
+    ],
+    [
+     "4",
+     "16-088008",
+     3,
+     "HEX BOLT, 1/2-13 UNC X 8\"",
+     {
+      "supplier": "5125803",
+      "mirow": "HHCS120138005"
+     }
+    ],
+    [
+     "5",
+     "16-161508",
+     3,
+     "HEX BOLT, 3/4-10 UNC X 1-1/2\"",
+     {
+      "supplier": "5119006",
+      "mirow": "HHCS340101125"
+     }
+    ],
+    [
+     "6",
+     "16A-021008",
+     4,
+     "HEX SOCKET HEAD CAP SCREW, 5/16-18 UNC X 1\"",
+     {
+      "supplier": "5102616",
+      "mirow": "SHCS51618100"
+     }
+    ],
+    [
+     "7",
+     "16A-082008",
+     9,
+     "HEX SOCKET HEAD CAP SCREW, 1/2-13 UNC X 2\"",
+     {
+      "supplier": "5115216",
+      "mirow": "SHCS12013200"
+     }
+    ],
+    [
+     "8",
+     "16A-084008",
+     9,
+     "HEX SOCKET HEAD CAP SCREW, 1/2-13 UNC X 4\" LG",
+     {
+      "supplier": "5125016",
+      "mirow": "SHCS12013400"
+     }
+    ],
+    [
+     "9",
+     "55-0003",
+     1,
+     "TOP CAP HOLDER",
+     {
+      "supplier": "3506906",
+      "mirow": "18100122"
+     }
+    ],
+    [
+     "10",
+     "55-0004",
+     1,
+     "TOP CAP ADAPTER",
+     {
+      "supplier": "3506907",
+      "mirow": "18100071"
+     }
+    ],
+    [
+     "11",
+     "55-0005",
+     1,
+     "CHUCK BOWL",
+     {
+      "supplier": "2920390",
+      "mirow": "18100067"
+     }
+    ],
+    [
+     "12",
+     "55-0011",
+     3,
+     "TOP SPACER",
+     {
+      "supplier": "3506878",
+      "mirow": "18100058"
+     }
+    ],
+    [
+     "13",
+     "55-0012",
+     9,
+     "BOTTOM SPACER",
+     {
+      "supplier": "3506880",
+      "mirow": "18100059"
+     }
+    ],
+    [
+     "14",
+     "55-0016",
+     9,
+     "CR - RADIAL SHAFT SEAL",
+     {
+      "supplier": "5040192",
+      "mirow": "18100156",
+      "note": "Marquée A sur le dessin : comprise dans le seal kit #55-0058."
+     }
+    ],
+    [
+     "15",
+     "55-0017",
+     1,
+     "U-CUP SEAL",
+     {
+      "supplier": "5035016",
+      "mirow": "18100062",
+      "same": "23",
+      "note": "Fait partie du sous-ensemble piston/cylindre 55-0300 (page 23) : en 3D, désigne ce sous-ensemble (repère 23). Marquée A sur le dessin : comprise dans le seal kit #55-0058."
+     }
+    ],
+    [
+     "16",
+     "55-0018",
+     1,
+     "WEAR RING",
+     {
+      "supplier": "5035018",
+      "mirow": "18100063",
+      "same": "23",
+      "note": "Fait partie du sous-ensemble piston/cylindre 55-0300 (page 23) : en 3D, désigne ce sous-ensemble (repère 23). Marquée A sur le dessin : comprise dans le seal kit #55-0058."
+     }
+    ],
+    [
+     "17",
+     "55-0019",
+     1,
+     "U-CUP SEAL",
+     {
+      "supplier": "5035015",
+      "mirow": "18100061",
+      "same": "23",
+      "note": "Fait partie du sous-ensemble piston/cylindre 55-0300 (page 23) : en 3D, désigne ce sous-ensemble (repère 23). Marquée A sur le dessin : comprise dans le seal kit #55-0058."
+     }
+    ],
+    [
+     "18",
+     "55-0020",
+     1,
+     "WEAR RING",
+     {
+      "supplier": "5035017",
+      "mirow": "18100064",
+      "same": "23",
+      "note": "Fait partie du sous-ensemble piston/cylindre 55-0300 (page 23) : en 3D, désigne ce sous-ensemble (repère 23). Marquée A sur le dessin : comprise dans le seal kit #55-0058."
+     }
+    ],
+    [
+     "19",
+     "55-0023",
+     18,
+     "SPRING",
+     {
+      "supplier": "5200517",
+      "mirow": "18100155"
+     }
+    ],
+    [
+     "20",
+     "55-0025",
+     1,
+     "GREASE FITTING, STRAIGHT, 1/4-28 UNF",
+     {
+      "supplier": "5200812",
+      "mirow": "GF14028S"
+     }
+    ],
+    [
+     "21",
+     "55-0034",
+     1,
+     "BREATHER PLUG, 1/8 NPT",
+     {
+      "supplier": "7500346",
+      "mirow": "18100173"
+     }
+    ],
+    [
+     "22",
+     "55-0040",
+     1,
+     "ROD CLAMP HOUSING",
+     {
+      "supplier": "2920455",
+      "mirow": "18100070"
+     }
+    ],
+    [
+     "23",
+     "55-0041",
+     1,
+     "CLAMP CYLINDER",
+     {
+      "supplier": "2920332",
+      "mirow": "18100052",
+      "link": "P023",
+      "note": "Le sous-ensemble piston/cylindre 55-0300 (page 23) comprend le cylindre, le piston, les joints, les bagues d'usure et le raccord 2501-0604."
+     }
+    ],
+    [
+     "24",
+     "55-0042",
+     1,
+     "PISTON",
+     {
+      "supplier": "2920331",
+      "mirow": "18100051",
+      "same": "23",
+      "note": "Fait partie du sous-ensemble piston/cylindre 55-0300 (page 23) : en 3D, désigne ce sous-ensemble (repère 23)."
+     }
+    ],
+    [
+     "25",
+     "55-0043",
+     1,
+     "BUSHING RETAINER",
+     {
+      "supplier": "2920452",
+      "mirow": "18100069"
+     }
+    ],
+    [
+     "26",
+     "55-0044",
+     1,
+     "CYLINDER CAP",
+     {
+      "supplier": "2920333",
+      "mirow": "18100066"
+     }
+    ],
+    [
+     "27",
+     "55-0045",
+     2,
+     "BUSHING",
+     {
+      "supplier": "5020126",
+      "mirow": "18100336"
+     }
+    ],
+    [
+     "28",
+     "55-0055",
+     1,
+     "O-RING",
+     {
+      "supplier": "5030250",
+      "mirow": "18100189",
+      "note": "Marquée A sur le dessin : comprise dans le seal kit #55-0058."
+     }
+    ],
+    [
+     "29",
+     "55-0056",
+     1,
+     "O-RING",
+     {
+      "supplier": "5030254",
+      "mirow": "18100200",
+      "note": "Marquée A sur le dessin : comprise dans le seal kit #55-0058."
+     }
+    ],
+    [
+     "30",
+     "55-0057",
+     1,
+     "O-RING",
+     {
+      "supplier": "5030274",
+      "mirow": "18100192",
+      "note": "Marquée A sur le dessin : comprise dans le seal kit #55-0058."
+     }
+    ],
+    [
+     "31",
+     "2501-0604",
+     1,
+     "90° M-JIC / M-NPT ADAPTER",
+     {
+      "supplier": "5290662",
+      "same": "23",
+      "note": "Fait partie du sous-ensemble piston/cylindre 55-0300 (page 23) : en 3D, désigne ce sous-ensemble (repère 23)."
+     }
+    ],
+    [
+     "32",
+     "LW 0.3125",
+     4,
+     "LOCK WASHER, Ø5/16",
+     {
+      "supplier": "5180405"
+     }
+    ],
+    [
+     "33",
+     "LW 0.5",
+     9,
+     "SPRING LOCK WASHER, Ø1/2",
+     {}
+    ],
+    [
+     "p24",
+     "",
+     1,
+     "WEAR BUSHING SUPPORT PLATE / GUIDE BUSHING (page 24)",
+     {
+      "link": "P024",
+      "pseudo": true,
+      "label": "p. 24"
+     }
+    ]
+   ],
+   "note": "Dessin d'Usinage X-Spec 055B (B1686, 2013-08-15). En-tête de la liste : « ATLAS CAOPCO » (coquille pour Atlas Copco). N° fournisseur affiché : colonne ATLAS COPCO INTERCHANGE ; colonne MIROW dans mirow. Notes : A — seal kit #55-0058 ; B — jeu de 9 mâchoires appariées (aucune ligne « jaw set » dans la liste : voir le tableau « Mâchoires et bagues 12HH »). Ligne « p. 24 » ajoutée pour le site : la plaque support de la bague de guidage (page 24, même dessin 055B) se pose sur ce serre-tiges."
+  },
+  "P023": {
+   "title": "Clamp piston/cylinder assy. 12HH",
+   "titleFr": "Piston et cylindre du serre-tiges 12HH (55-0300)",
+   "pn": "55-0300",
+   "sheets": [
+    "P023"
+   ],
+   "parts": [
+    [
+     "1-6",
+     "55-0300",
+     null,
+     "Clamp Piston/Cylinder Assy. 12HH",
+     {}
+    ],
+    [
+     "1",
+     "55-0020",
+     1,
+     "Wear Ring, Ø10\"",
+     {
+      "weightLb": 0.04
+     }
+    ],
+    [
+     "2",
+     "55-0018",
+     1,
+     "Wear Ring, Ø8-1/4\"",
+     {
+      "weightLb": 0.034
+     }
+    ],
+    [
+     "3",
+     "55-0019",
+     1,
+     "U Cup Seal, Ø10\"",
+     {
+      "weightLb": 0.084
+     }
+    ],
+    [
+     "4",
+     "55-0017",
+     1,
+     "U Cup Seal, Ø8-1/4\"",
+     {
+      "weightLb": 0.043
+     }
+    ],
+    [
+     "5",
+     "55-0041",
+     1,
+     "Clamp Cylinder",
+     {
+      "weightLb": 36.013
+     }
+    ],
+    [
+     "6",
+     "55-0042",
+     1,
+     "Clamp Piston",
+     {
+      "weightLb": 31.857
+     }
+    ],
+    [
+     "7",
+     "2501-0604",
+     1,
+     "90° M-JIC #6 / M-NPT #4",
+     {
+      "weightLb": 0.1
+     }
+    ],
+    [
+     "8",
+     "0304C-06",
+     1,
+     "Female JIC Flare Cap, #6",
+     {
+      "weightLb": 0.059
+     }
+    ]
+   ],
+   "note": "Dessin d'Usinage X-Spec C6035 rév. A (2019-02-19), échelle 1:3,25, poids 68,231 lb. L'en-tête donne 55-0300 = repères 1 à 6, mais la liste compte 8 repères (raccord 7 et bouchon 8 en plus). Colonne « Unit Weight » (lb) dans weightLb."
+  },
+  "P024": {
+   "title": "055B - Boyles rod clamp assy — guide bushing",
+   "titleFr": "Plaque support et bague de guidage (055B)",
+   "pn": "",
+   "sheets": [
+    "P024"
+   ],
+   "parts": [
+    [
+     "1",
+     "55-0029",
+     null,
+     "WEAR BUSHING SUPPORT PLATE"
+    ],
+    [
+     "2",
+     "15-6018-2RS",
+     null,
+     "SINGLE ROW BALL BEARING"
+    ],
+    [
+     "3",
+     "04-5100-354",
+     null,
+     "EXTERNAL SNAP RING"
+    ],
+    [
+     "4",
+     "16-081258",
+     null,
+     "HEX BOLT, 1/2-13 UNC X 1-1/4\"",
+     {
+      "qty3d": 2,
+      "note": "Pas de colonne de quantité sur cette page ; le dessin montre 2 vis."
+     }
+    ]
+   ],
+   "note": "Dessin d'Usinage X-Spec 055B (B6279, 2013-08-15) : plaque support de la bague d'usure posée sur le dessus du serre-tiges. La liste n'a pas de colonne de quantité (une pièce de chaque sur le dessin, deux vis 4). La bague de guidage (guide bushing) dépend du calibre : tableau « Bagues de guidage »."
+  },
+  "P025": {
+   "title": "Rod holder base",
+   "titleFr": "Base du serre-tiges 12HH (rod holder base 55-4000)",
+   "pn": "55-4000",
+   "sheets": [
+    "P025"
+   ],
+   "parts": [
+    [
+     "1-9",
+     "55-4000",
+     null,
+     "Rod Holder Base",
+     {
+      "weightLb": 79.212
+     }
+    ],
+    [
+     "1",
+     "B7157",
+     1,
+     "Rod Clamp Base Weldment",
+     {
+      "weightLb": 73.494
+     }
+    ],
+    [
+     "2",
+     "12-12-2750",
+     2,
+     "Eye Bolt, 5/8-11 UNC X 2-3/4\" Lg",
+     {
+      "weightLb": 0.421
+     }
+    ],
+    [
+     "3",
+     "55-0083",
+     1,
+     "Rod Holder Pivot Pin",
+     {
+      "weightLb": 2.882
+     }
+    ],
+    [
+     "4",
+     "90-132",
+     1,
+     "Eye Bolt Pivot Pin",
+     {
+      "weightLb": 0.656
+     }
+    ],
+    [
+     "5",
+     "25-886414",
+     4,
+     "H/T Bushing, Ø1.375\" OD X Ø1.000\" ID X 0.875\" Lg",
+     {
+      "weightLb": 0.201
+     }
+    ],
+    [
+     "6",
+     "37527",
+     1,
+     "1/2-13 Grade 2 Zinc Finish NE Steel Nylon Insert Lock Nut",
+     {
+      "weightLb": 0.05
+     }
+    ],
+    [
+     "7",
+     "400806",
+     2,
+     "Flanged Nut, 5/8-11 UNC",
+     {
+      "weightLb": 0.2
+     }
+    ],
+    [
+     "8",
+     "15109",
+     1,
+     "3/8-16 x 1-1/2\" Grade 8 Yellow Zinc Finish Hex Cap Screw",
+     {
+      "weightLb": 0.0626
+     }
+    ],
+    [
+     "9",
+     "37024",
+     1,
+     "3/8-16 Grade 2 Zinc Finish NE Steel Nylon Insert Lock Nut",
+     {
+      "weightLb": 0.022
+     }
+    ]
+   ],
+   "note": "Dessin d'Usinage X-Spec C6322 (055B - ROD CLAMP BASE, version 2019-05-13), poids 79,212 lb. Plan coté : 7 trous Ø 0,688 po aux entraxes 7,625 + 7,625 po et 4,625 + 4,625 po. Colonne « Unit Weight » (lb) dans weightLb."
+  }
+ },
+ "documents": [
+  {
+   "id": "T011",
+   "title": "Transmission par machine",
+   "titleFr": "Transmission par machine (DR-U / MRI)",
+   "sheets": [
+    "P011"
+   ],
+   "columns": [
+    "ref",
+    "pn",
+    "desc"
+   ],
+   "parts": [
+    [
+     "DR-U-109-20",
+     "T2B2D54",
+     null,
+     "MRI2908 — Transmission T2B2D54"
+    ],
+    [
+     "DR-U-110-20",
+     "T2B2C44",
+     null,
+     "MRI2909 — Transmission T2B2C44* (adaptateur installé)"
+    ],
+    [
+     "DR-U-111-20",
+     "T2B2D54",
+     null,
+     "MRI2910 — Transmission T2B2D54"
+    ],
+    [
+     "DR-U-112-20",
+     "T2B2D54",
+     null,
+     "MRI2911 — Transmission T2B2D54"
+    ],
+    [
+     "1",
+     "AA6VM160",
+     null,
+     "Moteur Rexroth (adaptateur, *)"
+    ],
+    [
+     "2",
+     "E-1217",
+     null,
+     "Coupling (adaptateur, *)"
+    ],
+    [
+     "3",
+     "UMW-002-001",
+     null,
+     "Adaptateur (adaptateur, *)"
+    ]
+   ],
+   "note": "Tableau de la page 11 : numéro DR Fab, numéro MRI et transmission de chaque machine. « *Adaptateur as été installé* » : sur DR-U-110-20 (T2B2C44), moteur AA6VM160 monté avec le coupling E-1217 et l'adaptateur UMW-002-001 (repères 1 à 3 de l'encart)."
+  },
+  {
+   "id": "T019",
+   "title": "Jaw sets and bushings 12HH",
+   "titleFr": "Mâchoires et bagues 12HH (mandrin et serre-tiges)",
+   "sheets": [
+    "P019",
+    "P021"
+   ],
+   "columns": [
+    "ref",
+    "pn",
+    "desc"
+   ],
+   "parts": [
+    [
+     "JKT/AW/AQ ROD — EW CSG",
+     "30-16-00",
+     null,
+     "JAW SET"
+    ],
+    [
+     "JKT/AW/AQ ROD — EW CSG",
+     "55-0046",
+     null,
+     "CHUCK BUSHING (DRILLHEAD & CLAMP) (A)"
+    ],
+    [
+     "JKT/AW/AQ ROD — EW CSG",
+     "55-0050",
+     null,
+     "CLAMP BUSHING (CLAMP ONLY) (B)"
+    ],
+    [
+     "BW/BWL/BQ ROD — AW CSG",
+     "30-16-01",
+     null,
+     "JAW SET"
+    ],
+    [
+     "BW/BWL/BQ ROD — AW CSG",
+     "55-0047",
+     null,
+     "CHUCK BUSHING (DRILLHEAD & CLAMP) (A)"
+    ],
+    [
+     "BW/BWL/BQ ROD — AW CSG",
+     "55-0051",
+     null,
+     "CLAMP BUSHING (CLAMP ONLY) (B)"
+    ],
+    [
+     "NWL/NQ ROD",
+     "30-16-02",
+     null,
+     "JAW SET"
+    ],
+    [
+     "NWL/NQ ROD",
+     "55-0048",
+     null,
+     "CHUCK BUSHING (DRILLHEAD & CLAMP) (A)"
+    ],
+    [
+     "NWL/NQ ROD",
+     "55-0052",
+     null,
+     "CLAMP BUSHING (CLAMP ONLY) (B)"
+    ],
+    [
+     "BW CSG",
+     "30-16-06",
+     null,
+     "JAW SET"
+    ],
+    [
+     "BW CSG",
+     "55-0049",
+     null,
+     "CHUCK BUSHING (DRILLHEAD & CLAMP) (A)"
+    ],
+    [
+     "BW CSG",
+     "55-0053",
+     null,
+     "CLAMP BUSHING (CLAMP ONLY) (B)"
+    ],
+    [
+     "HW/HWL/HQ ROD / NW CSG",
+     "30-16-03",
+     null,
+     "JAW SET"
+    ],
+    [
+     "HW/HWL/HQ ROD / NW CSG",
+     "",
+     null,
+     "CHUCK BUSHING (DRILLHEAD & CLAMP) (A) : N/A",
+     {
+      "pnText": "N/A"
+     }
+    ],
+    [
+     "HW/HWL/HQ ROD / NW CSG",
+     "55-0054",
+     null,
+     "CLAMP BUSHING (CLAMP ONLY) (B)"
+    ]
+   ],
+   "note": "Tableaux des pages 19 (mandrin : jaw set, chuck bushing) et 21 (serre-tiges : jaw set, chuck bushing (A), clamp bushing (B)). Repère = calibre des tiges ou du tubage. Le tableau de la page 19 n'a pas la colonne clamp bushing ; les numéros communs concordent."
+  },
+  {
+   "id": "T024",
+   "title": "Guide bushing",
+   "titleFr": "Bagues de guidage (guide bushing)",
+   "sheets": [
+    "P024"
+   ],
+   "columns": [
+    "ref",
+    "pn",
+    "desc"
+   ],
+   "parts": [
+    [
+     "A W/L",
+     "55-0030",
+     null,
+     "GUIDE BUSHING"
+    ],
+    [
+     "B W/L",
+     "55-0031",
+     null,
+     "GUIDE BUSHING"
+    ],
+    [
+     "N W/L",
+     "55-0032",
+     null,
+     "GUIDE BUSHING"
+    ],
+    [
+     "BW CSG",
+     "55-0033",
+     null,
+     "GUIDE BUSHING"
+    ]
+   ],
+   "note": "Tableau de la page 24 : numéro de la bague de guidage selon le calibre."
+  }
+ ]
+}
