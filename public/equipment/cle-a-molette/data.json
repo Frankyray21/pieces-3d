@@ -1,0 +1,123 @@
+{
+ "id": "cle-a-molette",
+ "name": "Clé à molette (Westcott) de 12 po",
+ "manufacturer": "Modèle libre (OpenGameArt, CC0)",
+ "category": "Outils à main",
+ "document": {
+  "title": "Cotes du modèle et provenance (clé à molette du « Tool Pack 1 » d'OpenGameArt, CC0)",
+  "reference": "Clé",
+  "sheets": 1,
+  "pagePattern": "pages/{sheet}.webp"
+ },
+ "specs": [
+  [
+   "Source",
+   "Clé à molette du « Tool Pack 1 » d'OpenGameArt, auteur LonesomeDucky, licence CC0 (domaine public) — https://opengameart.org/content/tool-pack-1"
+  ],
+  [
+   "Modèle",
+   "Maillage allégé pour le jeu : 1 240 triangles en trois pièces (corps, mâchoire mobile, molette), textures PBR de 1 024 px (couleur, normales, rugosité et métal)"
+  ],
+  [
+   "Grandeur",
+   "12 po : 305 mm de longueur hors tout (le modèle d'origine, de 327 mm, est ramené à l'échelle 0,932)"
+  ],
+  [
+   "Largeur de tête",
+   "68 mm (2,66 po), mâchoire mobile non comprise"
+  ],
+  [
+   "Épaisseur",
+   "16,4 mm au corps, 17,9 mm à la molette"
+  ],
+  [
+   "Ouverture montrée",
+   "25 mm (1,0 po), comme sur le modèle"
+  ],
+  [
+   "Angle de tête",
+   "22,5° entre l'axe du manche et les faces des mâchoires (mesuré sur le modèle)"
+  ],
+  [
+   "Cotes",
+   "Toutes sont celles du modèle mis à l'échelle : aucune ne vient d'un catalogue"
+  ],
+  [
+   "Marquage",
+   "« 12\"-300mm » et « ToolMaster » en relief dans la cuvette du manche, sur les deux faces"
+  ],
+  [
+   "Fini",
+   "Chromé, piqué de rouille (textures du modèle)"
+  ],
+  [
+   "Export pour moteur de jeu",
+   "unreal/SM_Cle_A_Molette_12po.glb (glTF binaire, mètres) : trois maillages à l'échelle 1, la mâchoire et la molette avec leur pivot, un matériau et trois textures — voir docs/cle-a-molette-unreal.md"
+  ]
+ ],
+ "weights": [
+  [
+   "Clé complète (masse calculée du modèle, acier)",
+   "0,65 kg (1,43 lb)"
+  ],
+  [
+   "Corps",
+   "0,52 kg (1,15 lb)"
+  ],
+  [
+   "Mâchoire mobile (valeur approchée)",
+   "0,11 kg (0,23 lb)"
+  ],
+  [
+   "Molette",
+   "0,02 kg (0,04 lb)"
+  ]
+ ],
+ "sheetTitles": {
+  "P001": "Cotes du modèle et provenance"
+ },
+ "root": "P001",
+ "assemblies": {
+  "P001": {
+   "title": "ADJUSTABLE WRENCH 12\"",
+   "titleFr": "Clé à molette (Westcott) de 12 po",
+   "sheets": [
+    "P001"
+   ],
+   "note": "Clé à molette de 12 po couchée à plat, mâchoires entrouvertes, en trois pièces. Le modèle n'a pas été dessiné ici : c'est la clé à molette du « Tool Pack 1 » d'OpenGameArt (auteur LonesomeDucky, licence CC0), un modèle de jeu prêt pour Unreal Engine. Il représente une clé marquée « 12\"-300mm » et mesure 327 mm ; il est ramené à 305 mm de long, d'un seul facteur d'échelle. Largeur de tête, épaisseur et masse sont donc celles du modèle, pas des cotes de catalogue. Les trois pièces sont celles du fichier, rien n'a été ajouté : l'axe de la molette et son ressort, que le modèle ne contient pas, ne sont pas montrés. La mâchoire mobile coulisse dans la tête, perpendiculairement aux faces des mâchoires ; l'angle de tête est de 22,5°. Elle est montrée ouverte de 25 mm (1,0 po), comme sur le modèle ; la molette ne tourne pas quand on la déplace. Masses calculées en acier (7,85 g/cm³) d'après le volume de chaque maillage. La photo reçue montre une clé chromée rangée mâchoires vers le haut ; elle est trop petite (44 × 96 pixels) pour y relever une cote.",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "CORPS : manche et mâchoire fixe, d'une pièce — 305 mm de long, tête de 68 mm, 16,4 mm d'épais",
+     {
+      "pseudo": true,
+      "note": "Cuvette sur les deux faces du manche, marquée « 12\"-300mm » et « ToolMaster » ; trou d'accrochage à six pans au bout du manche ; fenêtre de la molette dans la tête. Masse calculée : 0,52 kg (1,15 lb)."
+     }
+    ],
+    [
+     "2",
+     "",
+     1,
+     "MÂCHOIRE MOBILE, à tige à crémaillère",
+     {
+      "pseudo": true,
+      "note": "La tige ronde coulisse dans la tête ; ses dents sont en prise avec la molette. Masse calculée : 0,11 kg (0,23 lb) (valeur approchée : le maillage de cette pièce n'est pas tout à fait fermé). Le bout de la tige, caché dans la tête une fois la clé montée, n'a pas de texture : il paraît noir en vue éclatée."
+     }
+    ],
+    [
+     "3",
+     "",
+     1,
+     "MOLETTE (vis sans fin) — Ø 17,9 mm",
+     {
+      "pseudo": true,
+      "note": "Pièce la plus épaisse de la clé : elle dépasse des deux faces de la tête pour être tournée du pouce. Masse calculée : 0,02 kg (0,04 lb)."
+     }
+    ]
+   ]
+  }
+ },
+ "documents": []
+}
