@@ -388,6 +388,23 @@ pièces (numéro, quantité, page du manuel).
   fiche des poses dans `public/equipment/support-pipewrench/unreal/` ; mode
   d'emploi dans `docs/cles-unreal.md`.
 
+- **Clés mixtes 12 pans, 1/4 à 1 1/4 po** (`cles-mixtes`) : seize grandeurs
+  (1/4, 5/16, 3/8, 7/16, 1/2, 9/16, 5/8, 11/16, 3/4, 13/16, 7/8, 15/16, 1,
+  1 1/16, 1 1/8 et 1 1/4 po) sur une page, fourche d'un bout et œil 12 pans de
+  l'autre. Maillage et textures : clé mixte de Poly Haven (CC0, auteur BKS ;
+  `tools/cle_mixte_polyhaven_mesh.mjs` écrit `src/models/cles-mixtes/mesh.js`
+  et y mesure la fourche et l'œil). La clé de base est une 1 po ; chaque
+  grandeur est ajustée aux cotes publiées par Gray Tools pour ses clés 12 pans
+  SAE à œil incliné de 15°, n° 3108 à 3140 (`forme.js` : fourche et 12 pans à
+  la grandeur nominale, largeur et épaisseur de la tête à fourche et de l'œil,
+  œil porté de 10° à 15°, manche allongé jusqu'à la longueur hors tout, puis
+  section du manche — non publiée — réglée sur le poids du tableau). Le tableau
+  du fabricant a été relevé par recherche web (son site n'était pas joignable
+  depuis la session) : à confirmer sur le catalogue. C'est la même clé déformée
+  par zones ; la texture d'acier ne porte aucun marquage. Contrôle chiffré :
+  `node scripts/check-cles-mixtes.mjs` mesure 11 cotes sur chacune des 16 clés
+  (176 mesures) et les compare au tableau.
+
 - **Poste de premiers soins et d'extincteur** (`poste-secours`) : reconstitution
   d'après une seule photo du poste installé sur le grillage de la cage, sans
   plan ni cote. L'échelle vient du ruban réfléchissant (2 po de large) et de
@@ -609,6 +626,8 @@ tools/blender_render.py                     rendu Cycles d'un .glb (scripts/expo
 scripts/export-anim.mjs                     foreuse STM-1500 animée en .glb (squelette et séquences, voir docs/animation-stm-1500.md)
 scripts/export-porte.mjs                    porte 1801020 en maillages statiques à pivot pour Unreal (voir docs/porte-unreal.md)
 scripts/export-cles-unreal.mjs              clés à tuyau et support à pipewrench en .glb pour Unreal (voir docs/cles-unreal.md)
+scripts/check-cles-mixtes.mjs               contrôle chiffré des clés mixtes (cotes publiées par grandeur)
+tools/cle_mixte_polyhaven_mesh.mjs          clé mixte de Poly Haven (glTF) → src/models/cles-mixtes/mesh.js
 tools/blender_fbx.py                        conversion du .glb animé en FBX pour Unreal Engine
 tools/blender_porte_fbx.py                  conversion des maillages de la porte 1801020 en FBX
 tools/ocr_pages.py, tools/ocr_bulles.py     OCR des planches (texte, bulles de repère)

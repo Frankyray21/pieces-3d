@@ -9,6 +9,14 @@
       "status": "Neuf grandeurs (6, 8, 10, 14, 18, 24, 36, 48 et 60 po) ajustées aux cotes publiées par les détaillants : longueur fermée, largeur de tête, épaisseur et poids ; modèle et textures de Poly Haven (CC0)"
     },
     {
+      "id": "cles-mixtes",
+      "name": "Clés mixtes 12 pans, 1/4 à 1 1/4 po",
+      "manufacturer": "Gray Tools (cotes publiées)",
+      "category": "Outils à main",
+      "thumbnail": "equipment/cles-mixtes/thumbnail.webp",
+      "status": "Seize grandeurs (1/4 à 1 1/4 po) ajustées aux cotes publiées par le fabricant : longueur hors tout, largeur et épaisseur de la fourche et de l'œil, poids ; fourche et 12 pans à la grandeur nominale, œil incliné de 15° ; modèle et textures de Poly Haven (CC0)"
+    },
+    {
       "id": "coffre-dd",
       "name": "Coffre à outils ITH",
       "manufacturer": "Machines Roger International",

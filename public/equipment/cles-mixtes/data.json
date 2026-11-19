@@ -1,0 +1,269 @@
+{
+  "id": "cles-mixtes",
+  "name": "Clés mixtes 12 pans, 1/4 à 1 1/4 po",
+  "manufacturer": "Gray Tools (cotes publiées)",
+  "category": "Outils à main",
+  "document": {
+    "title": "Cotes retenues par grandeur, d'après le tableau des clés mixtes 12 pans SAE de Gray Tools (n° 3108 à 3140)",
+    "reference": "Clés",
+    "sheets": 1,
+    "pagePattern": "pages/{sheet}.webp"
+  },
+  "specs": [
+    [
+      "Grandeurs",
+      "1/4, 5/16, 3/8, 7/16, 1/2, 9/16, 5/8, 11/16, 3/4, 13/16, 7/8, 15/16, 1, 1 1/16, 1 1/8 et 1 1/4 po (16 clés)"
+    ],
+    [
+      "Type",
+      "Clé mixte : fourche d'un bout, œil 12 pans de l'autre, même grandeur aux deux bouts ; œil incliné de 15°"
+    ],
+    [
+      "Cotes",
+      "Longueur hors tout, largeur et épaisseur de la tête à fourche, largeur et épaisseur de l'œil, poids : tableau du fabricant (Gray Tools, clés 12 pans SAE à œil incliné de 15°, fini chrome miroir), relevé par recherche web — la page du fabricant n'a pas pu être ouverte directement, à confirmer sur son catalogue"
+    ],
+    [
+      "Ouvertures",
+      "Fourche et 12 pans à la grandeur nominale, avec le jeu de la fourche du modèle d'origine (+0,4 %)"
+    ],
+    [
+      "Manche",
+      "Section non publiée : calculée pour que la masse (acier, 7,85 g/cm³) égale le poids publié"
+    ],
+    [
+      "Modèle 3D",
+      "Clé mixte de Poly Haven (CC0, auteur BKS), une clé de 1 po déformée par zones pour chaque grandeur"
+    ],
+    [
+      "Textures",
+      "Acier usé et rayé de Poly Haven (CC0) ; aucun marquage : la grandeur n'est pas frappée sur le manche"
+    ]
+  ],
+  "weights": [
+    [
+      "Clé de 1/4 po",
+      "0,06 lb"
+    ],
+    [
+      "Clé de 5/16 po",
+      "0,06 lb"
+    ],
+    [
+      "Clé de 3/8 po",
+      "0,08 lb"
+    ],
+    [
+      "Clé de 7/16 po",
+      "0,12 lb"
+    ],
+    [
+      "Clé de 1/2 po",
+      "0,16 lb"
+    ],
+    [
+      "Clé de 9/16 po",
+      "0,21 lb"
+    ],
+    [
+      "Clé de 5/8 po",
+      "0,25 lb"
+    ],
+    [
+      "Clé de 11/16 po",
+      "0,33 lb"
+    ],
+    [
+      "Clé de 3/4 po",
+      "0,41 lb"
+    ],
+    [
+      "Clé de 13/16 po",
+      "0,56 lb"
+    ],
+    [
+      "Clé de 7/8 po",
+      "0,67 lb"
+    ],
+    [
+      "Clé de 15/16 po",
+      "0,75 lb"
+    ],
+    [
+      "Clé de 1 po",
+      "0,92 lb"
+    ],
+    [
+      "Clé de 1 1/16 po",
+      "1,14 lb"
+    ],
+    [
+      "Clé de 1 1/8 po",
+      "1,23 lb"
+    ],
+    [
+      "Clé de 1 1/4 po",
+      "1,7 lb"
+    ]
+  ],
+  "sheetTitles": {
+    "P001": "Cotes retenues par grandeur et provenance"
+  },
+  "root": "P001",
+  "assemblies": {
+    "P001": {
+      "title": "COMBINATION WRENCHES",
+      "titleFr": "Clés mixtes 12 pans, 1/4 à 1 1/4 po",
+      "sheets": [
+        "P001"
+      ],
+      "note": "Seize clés mixtes posées à plat, bouts des fourches alignés, de la plus petite à la plus grande. Chaque grandeur est ajustée aux cotes publiées par Gray Tools : longueur hors tout, largeur et épaisseur de la tête à fourche, largeur et épaisseur de l'œil ; la fourche et les 12 pans sont à la grandeur nominale, l'œil est incliné de 15°. La section du manche n'est pas publiée : elle est calculée pour que la masse égale le poids du tableau. C'est la même clé de base (une 1 po de Poly Haven, CC0) déformée par zones : le profil du manche et le marquage propres à chaque grandeur ne sont pas reproduits. Numéros de pièce : numéros de catalogue Gray Tools.",
+      "parts": [
+        [
+          "1",
+          "3108",
+          1,
+          "Clé mixte de 1/4 po — 5 po de long, tête à fourche 0,6 × 0,17 po, œil 0,42 × 0,23 po, 0,06 lb",
+          {
+            "note": "Cotes et poids publiés ; manche calculé sur le poids : 7,3 × 3,1 mm."
+          }
+        ],
+        [
+          "2",
+          "3110",
+          1,
+          "Clé mixte de 5/16 po — 5,5 po de long, tête à fourche 0,7 × 0,18 po, œil 0,54 × 0,25 po, 0,06 lb",
+          {
+            "note": "Cotes et poids publiés ; manche calculé sur le poids : 6 × 2,6 mm. Poids publié identique à celui de la 1/4 po (0,06 lb, arrondi au centième de livre) : le manche calculé sort plus fin que celui de la 1/4 po."
+          }
+        ],
+        [
+          "3",
+          "3112",
+          1,
+          "Clé mixte de 3/8 po — 6 po de long, tête à fourche 0,79 × 0,2 po, œil 0,59 × 0,3 po, 0,08 lb",
+          {
+            "note": "Cotes et poids publiés ; manche calculé sur le poids : 6,5 × 2,8 mm."
+          }
+        ],
+        [
+          "4",
+          "3114",
+          1,
+          "Clé mixte de 7/16 po — 6,5 po de long, tête à fourche 0,92 × 0,23 po, œil 0,69 × 0,33 po, 0,12 lb",
+          {
+            "note": "Cotes et poids publiés ; manche calculé sur le poids : 7,7 × 3,3 mm."
+          }
+        ],
+        [
+          "5",
+          "3116",
+          1,
+          "Clé mixte de 1/2 po — 7 po de long, tête à fourche 1,09 × 0,25 po, œil 0,76 × 0,36 po, 0,16 lb",
+          {
+            "note": "Cotes et poids publiés ; manche calculé sur le poids : 8,4 × 3,6 mm."
+          }
+        ],
+        [
+          "6",
+          "3118",
+          1,
+          "Clé mixte de 9/16 po — 7,5 po de long, tête à fourche 1,2 × 0,28 po, œil 0,84 × 0,35 po, 0,21 lb",
+          {
+            "note": "Cotes et poids publiés ; manche calculé sur le poids : 9,5 × 4 mm. Épaisseur d'œil publiée (0,35 po) inférieure à celle de la 1/2 po (0,36 po) : reprise telle quelle."
+          }
+        ],
+        [
+          "7",
+          "3120",
+          1,
+          "Clé mixte de 5/8 po — 8,06 po de long, tête à fourche 1,32 × 0,29 po, œil 0,93 × 0,41 po, 0,25 lb",
+          {
+            "note": "Cotes et poids publiés ; manche calculé sur le poids : 9,4 × 4 mm."
+          }
+        ],
+        [
+          "8",
+          "3122",
+          1,
+          "Clé mixte de 11/16 po — 8,87 po de long, tête à fourche 1,45 × 0,31 po, œil 1,03 × 0,42 po, 0,33 lb",
+          {
+            "note": "Cotes et poids publiés ; manche calculé sur le poids : 10,5 × 4,5 mm."
+          }
+        ],
+        [
+          "9",
+          "3124",
+          1,
+          "Clé mixte de 3/4 po — 9,75 po de long, tête à fourche 1,57 × 0,33 po, œil 1,09 × 0,45 po, 0,41 lb",
+          {
+            "note": "Cotes et poids publiés ; manche calculé sur le poids : 11,3 × 4,8 mm."
+          }
+        ],
+        [
+          "10",
+          "3126",
+          1,
+          "Clé mixte de 13/16 po — 10,62 po de long, tête à fourche 1,68 × 0,35 po, œil 1,19 × 0,46 po, 0,56 lb",
+          {
+            "note": "Cotes et poids publiés ; manche calculé sur le poids : 13,4 × 5,7 mm."
+          }
+        ],
+        [
+          "11",
+          "3128",
+          1,
+          "Clé mixte de 7/8 po — 11,5 po de long, tête à fourche 1,79 × 0,38 po, œil 1,31 × 0,48 po, 0,67 lb",
+          {
+            "note": "Cotes et poids publiés ; manche calculé sur le poids : 13,7 × 5,8 mm."
+          }
+        ],
+        [
+          "12",
+          "3130",
+          1,
+          "Clé mixte de 15/16 po — 12,37 po de long, tête à fourche 1,9 × 0,41 po, œil 1,39 × 0,51 po, 0,75 lb",
+          {
+            "note": "Cotes et poids publiés ; manche calculé sur le poids : 13,2 × 5,7 mm."
+          }
+        ],
+        [
+          "13",
+          "3132",
+          1,
+          "Clé mixte de 1 po — 13,25 po de long, tête à fourche 2,01 × 0,44 po, œil 1,5 × 0,55 po, 0,92 lb",
+          {
+            "note": "Cotes et poids publiés ; manche calculé sur le poids : 14,1 × 6 mm."
+          }
+        ],
+        [
+          "14",
+          "3134",
+          1,
+          "Clé mixte de 1 1/16 po — 14,12 po de long, tête à fourche 2,14 × 0,47 po, œil 1,61 × 0,58 po, 1,14 lb",
+          {
+            "note": "Cotes et poids publiés ; manche calculé sur le poids : 15,4 × 6,6 mm."
+          }
+        ],
+        [
+          "15",
+          "3136",
+          1,
+          "Clé mixte de 1 1/8 po — 15,37 po de long, tête à fourche 2,26 × 0,5 po, œil 1,69 × 0,61 po, 1,23 lb",
+          {
+            "note": "Cotes et poids publiés ; manche calculé sur le poids : 14,3 × 6,1 mm."
+          }
+        ],
+        [
+          "16",
+          "3140",
+          1,
+          "Clé mixte de 1 1/4 po — 16,75 po de long, tête à fourche 2,51 × 0,48 po, œil 1,86 × 0,7 po, 1,7 lb",
+          {
+            "note": "Cotes et poids publiés ; manche calculé sur le poids : 17,5 × 7,5 mm. Épaisseur de tête à fourche publiée (0,48 po) inférieure à celle de la 1 1/8 po (0,50 po) : reprise telle quelle."
+          }
+        ]
+      ]
+    }
+  },
+  "documents": []
+}
