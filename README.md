@@ -401,6 +401,20 @@ pièces (numéro, quantité, page du manuel).
   maillages, pivots de la mâchoire et de la molette conservés) dans `public/equipment/cle-a-molette/unreal/` ; mode
   d'emploi dans `docs/cle-a-molette-unreal.md`.
 
+- **Étui en cuir pour clé à molette, porté à la ceinture** (`etui-cle-molette`) : reconstitution d'après une
+  seule photo, de 44 × 96 pixels, où la clé est rangée mâchoires vers le haut dans un étui porté à la taille ; ni
+  plan ni cote. L'échelle vient de la clé, prise pour une 12 po (4,1 mm par pixel, lectures à environ 8 mm près) :
+  étui de 5 po de haut, 3 po de large en haut et 2 1/2 po en bas, deux rivets visibles aux coins du bas. Supposé,
+  parce que caché ou illisible : le dos replié en passant de ceinture, les deux rivets du haut, l'épaisseur et la
+  couleur du cuir, et la profondeur (1 1/2 po, celle d'un étui de mineur du commerce). P001 : l'étui (dos,
+  fourreau cintré en U, quatre rivets) ; P002 (racine) : l'étui sur un tronçon de ceinture, la clé de 12 po du
+  site (`cle-a-molette`) rangée manche en bas, à la place calculée par `pose()` — les épaules de sa tête sur la
+  gueule du fourreau. Les bandes de cuir sont des contours extrudés puis resserrés vers le bas (`cuirExtrude()`
+  dans `src/models/etui-cle-molette/index.js`). La fiche et la page du relevé sont écrites par
+  `tools/etui_cle_molette_fiche.mjs`. **Unreal Engine** : `node scripts/export-etui-unreal.mjs --textures
+  <dossier>` écrit `SM_Etui_Cle_A_Molette.glb` (l'étui seul) et `etui-avec-cle.glb` (l'étui et la clé rangée)
+  dans `public/equipment/etui-cle-molette/unreal/` ; mode d'emploi dans `docs/etui-cle-molette-unreal.md`.
+
 - **Poste de premiers soins et d'extincteur** (`poste-secours`) : reconstitution
   d'après une seule photo du poste installé sur le grillage de la cage, sans
   plan ni cote. L'échelle vient du ruban réfléchissant (2 po de large) et de

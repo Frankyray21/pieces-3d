@@ -77,6 +77,14 @@
       "status": "Catalogue « Core Drilling Tools — In-The-Hole » : têtes, overshots, carottiers, émerillons et presse-étoupes ; 3D refaite d'après les dessins pour les outils souterrains (BU, NU, HU, PU)"
     },
     {
+      "id": "etui-cle-molette",
+      "name": "Étui en cuir pour clé à molette, porté à la ceinture",
+      "manufacturer": "Fabricant non indiqué",
+      "category": "Étui de mineur en cuir riveté",
+      "thumbnail": "equipment/etui-cle-molette/thumbnail.webp",
+      "status": "3D d'après une photo de 44 × 96 pixels : étui d'environ 5 po de haut, 3 po de large en haut et 2 1/2 po en bas, fourreau riveté ouvert en haut et en bas, clé à molette de 12 po rangée manche en bas, tronçon de ceinture pour situer ; dos, passant de ceinture et profondeur supposés ; fichiers prêts pour Unreal Engine"
+    },
+    {
       "id": "grillage-cage",
       "name": "Panneau de grillage rigide à plis en V, maille 2 × 6 po",
       "manufacturer": "Type Oméga II Architectural (marque à confirmer)",

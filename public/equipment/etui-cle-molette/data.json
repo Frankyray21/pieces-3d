@@ -1,0 +1,154 @@
+{
+ "id": "etui-cle-molette",
+ "name": "Étui en cuir pour clé à molette, porté à la ceinture",
+ "manufacturer": "Fabricant non indiqué",
+ "category": "Étui de mineur en cuir riveté",
+ "document": {
+  "title": "Photo reçue de l'étui porté à la ceinture, clé rangée (aucun plan), et relevé des cotes",
+  "reference": "Étui",
+  "sheets": 2,
+  "pagePattern": "pages/{sheet}.webp"
+ },
+ "specs": [
+  [
+   "Source",
+   "Une seule photo, de 44 × 96 pixels : la clé à molette rangée mâchoires vers le haut dans un étui porté à la taille ; aucun plan, aucune cote"
+  ],
+  [
+   "Échelle",
+   "La clé, prise pour une 12 po : 304,8 mm sur 74,5 pixels, soit 4,1 mm par pixel ; relevé à environ 8 mm près (deux pixels)"
+  ],
+  [
+   "Hauteur",
+   "5 po (127 mm) — relevée : 127 mm"
+  ],
+  [
+   "Largeur",
+   "3 po (76 mm) en haut, 2 1/2 po (64 mm) en bas — relevées : 78 mm et 63 mm"
+  ],
+  [
+   "Profondeur",
+   "1 1/2 po (38 mm), supposée : celle d'un étui de mineur du commerce (Savaco ETUIDM01, 4 × 2 1/2 × 1 1/2 po)"
+  ],
+  [
+   "Fourreau",
+   "Ouvert en haut et en bas ; 50 mm de large à l'intérieur en haut, 38 mm en bas, 21,6 mm de profond"
+  ],
+  [
+   "Rivets",
+   "4, tête de 9 mm : les deux du bas sont visibles sur la photo, à 55 mm l'un de l'autre (55 mm sur le modèle) ; les deux du haut sont supposés"
+  ],
+  [
+   "Passant de ceinture",
+   "Dos replié par-dessus la ceinture et repris par les rivets du bas : jour de 6 mm, hauteur libre d'environ 88 mm — supposé, caché sur la photo"
+  ],
+  [
+   "Cuir",
+   "3,5 mm d'épais, brun : épaisseur et couleur supposées (la photo, sombre, montre l'étui gris)"
+  ],
+  [
+   "Clé rangée",
+   "Clé à molette de 12 po, mâchoires fermées : la tête dépasse de 67 mm au-dessus de l'étui, le manche de 111 mm au-dessous (photo : 59 mm et 119 mm)"
+  ],
+  [
+   "Ceinture",
+   "Tronçon de 2 1/2 po de large et 5 mm d'épais, pour situer l'étui : cotes supposées"
+  ],
+  [
+   "Export pour moteur de jeu",
+   "unreal/SM_Etui_Cle_A_Molette.glb (l'étui seul) et unreal/etui-avec-cle.glb (l'étui et la clé de 12 po rangée), glTF binaire, mètres — voir docs/etui-cle-molette-unreal.md"
+  ]
+ ],
+ "weights": [],
+ "sheetTitles": {
+  "P001": "Relevé des cotes sur la photo et hypothèses",
+  "P002": "Photo reçue, agrandie 12 fois (44 × 96 pixels à l'origine ; bord gauche coupé)"
+ },
+ "root": "P002",
+ "assemblies": {
+  "P002": {
+   "title": "WRENCH HOLSTER ON BELT",
+   "titleFr": "Étui porté à la ceinture, clé de 12 po rangée",
+   "sheets": [
+    "P002",
+    "P001"
+   ],
+   "note": "Mise en situation, comme sur la photo reçue : l'étui pend à la ceinture, la clé à molette y est rangée manche en bas, mâchoires vers le haut. La clé descend dans le fourreau jusqu'à ce que les épaules de sa tête s'appuient sur la gueule, large de 50 mm à l'intérieur : la tête dépasse alors de 67 mm au-dessus de l'étui et le manche de 111 mm au-dessous (59 mm et 119 mm relevés sur la photo, à 8 mm près). La pose est calculée, pas relevée. Les mâchoires sont fermées : ouverte, la tige de la mâchoire mobile dépasserait du côté de la tête et buterait sur l'étui. Le tronçon de ceinture ne sert qu'à situer l'étui ; sa largeur est supposée.",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "ÉTUI EN CUIR — 5 po de haut, 3 po de large en haut, 2 1/2 po en bas",
+     {
+      "link": "P001",
+      "pseudo": true,
+      "note": "Reconstitution d'après la photo ; dos, passant de ceinture et profondeur supposés."
+     }
+    ],
+    [
+     "2",
+     "",
+     1,
+     "CLÉ À MOLETTE DE 12 PO, mâchoires fermées, rangée manche en bas",
+     {
+      "pseudo": true,
+      "note": "Hors étui : c'est la clé de la page « Clé à molette (Westcott) de 12 po » du site (modèle d'OpenGameArt, CC0)."
+     }
+    ],
+    [
+     "3",
+     "",
+     1,
+     "CEINTURE DE MINEUR, tronçon de 330 mm (pour situer)",
+     {
+      "pseudo": true,
+      "note": "Bande de cuir noir de 2 1/2 po de large et 5 mm d'épais, droite dans le passant et cintrée au-delà. Largeur, épaisseur et couleur supposées : la ceinture n'est pas lisible sur la photo. Ni boucle ni autre accessoire."
+     }
+    ]
+   ]
+  },
+  "P001": {
+   "title": "LEATHER WRENCH HOLSTER",
+   "titleFr": "Étui en cuir pour clé à molette",
+   "sheets": [
+    "P001",
+    "P002"
+   ],
+   "note": "Reconstitution 3D d'après une seule photo, très petite (44 × 96 pixels), sans plan ni cote. L'échelle vient de la clé, prise pour une 12 po (4,1 mm par pixel) : largeur de sa tête (70 mm relevés) et de son manche (25 mm) concordent avec la clé de 12 po du site. Relevé sur la photo, à environ 8 mm près : la hauteur de l'étui (127 mm), sa largeur en haut (78 mm) et en bas (63 mm), et deux rivets brillants aux coins du bas, à 55 mm l'un de l'autre ; ces cotes sont arrondies au demi-pouce. Supposé, parce que caché ou illisible : le dos et le passant de ceinture (dos replié par-dessus la ceinture, repris par les rivets du bas), les deux rivets du haut, l'épaisseur et la couleur du cuir, et la profondeur, reprise d'un étui de mineur du commerce (Savaco ETUIDM01, 4 × 2 1/2 × 1 1/2 po). Non modélisé : coutures, marque ou estampille, que la photo ne montre pas. Une photo plus grande de l'étui, de face et de dos, permettrait de corriger la forme.",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "DOS replié en passant de ceinture — bande de cuir de 3 po à 2 1/2 po de large",
+     {
+      "pseudo": true,
+      "note": "Une seule bande de 3,5 mm d'épais : elle monte contre la clé, se replie en haut par-dessus la ceinture et redescend derrière ; les deux épaisseurs se rejoignent en bas, serrées par les rivets. Jour de 6 mm pour la ceinture, hauteur libre d'environ 88 mm. Entièrement supposé : le dos est caché sur la photo."
+     }
+    ],
+    [
+     "2",
+     "",
+     1,
+     "FOURREAU : bande de cuir cintrée en U, 5 po de haut, ailes de 9,5 mm rivetées sur le dos",
+     {
+      "pseudo": true,
+      "note": "Ouvert en haut et en bas : le manche le traverse, la tête de la clé s'appuie sur la gueule. Largeur intérieure de 50 mm en haut et de 38 mm en bas ; avancée de 25,1 mm devant le dos (profondeur supposée). Hauteur et largeurs relevées sur la photo."
+     }
+    ],
+    [
+     "3",
+     "",
+     4,
+     "RIVET à tête bombée de 9 mm",
+     {
+      "pseudo": true,
+      "note": "Les deux du bas sont visibles sur la photo (points brillants, à 55 mm l'un de l'autre) ; ils traversent l'aile du fourreau et les deux épaisseurs du dos. Les deux du haut, supposés, ne traversent que l'aile et l'avant du dos, pour laisser passer la ceinture. Diamètre et matière (acier nickelé) supposés."
+     }
+    ]
+   ]
+  }
+ },
+ "documents": []
+}
