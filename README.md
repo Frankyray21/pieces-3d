@@ -388,20 +388,18 @@ pièces (numéro, quantité, page du manuel).
   fiche des poses dans `public/equipment/support-pipewrench/unreal/` ; mode
   d'emploi dans `docs/cles-unreal.md`.
 
-- **Clés à molette (Westcott), 6 à 24 po** (`cle-a-molette`) : modèle déjà fait, pas dessiné ici — la clé à
-  molette du « Tool Pack 1 » d'OpenGameArt (CC0, auteur LonesomeDucky ;
-  https://opengameart.org/content/tool-pack-1), un modèle de jeu de 1 240 triangles à textures PBR de 1 024 px,
-  chromé et piqué de rouille, en trois pièces : corps, mâchoire mobile et molette
-  (`tools/cle_molette_mesh.mjs` écrit `src/models/cle-a-molette/mesh.js`). Il représente une clé marquée
-  « 12"-300mm » ; les sept grandeurs (6, 8, 10, 12, 15, 18 et 24 po) en sont des copies à l'échelle, réglées sur la
-  longueur nominale (`forme.js`). Largeur de tête, épaisseur, ouverture et masse sont donc celles du modèle, pas
-  des cotes de catalogue, et le marquage de la texture reste le même sur toutes les grandeurs. P001 : les sept
-  grandeurs ; P002 : la 12 po éclatée en ses trois pièces (l'axe de la molette et son ressort ne font pas partie
-  du modèle). La fiche est écrite par `tools/cle_molette_fiche.mjs`, d'après les cotes mesurées sur le maillage.
-  Textures du site dans `equipment/cle-a-molette/textures/` (WebP). **Unreal Engine** :
-  `node scripts/export-cle-molette-unreal.mjs --textures <dossier>` écrit `SM_Cles_A_Molette.glb` (les sept
-  grandeurs, trois maillages par clé, pivots de la mâchoire et de la molette conservés) dans
-  `public/equipment/cle-a-molette/unreal/` ; mode d'emploi dans `docs/cle-a-molette-unreal.md`.
+- **Clé à molette (Westcott) de 12 po** (`cle-a-molette`) : modèle déjà fait, pas dessiné ici — la clé à molette
+  du « Tool Pack 1 » d'OpenGameArt (CC0, auteur LonesomeDucky ; https://opengameart.org/content/tool-pack-1), un
+  modèle de jeu de 1 240 triangles à textures PBR de 1 024 px, chromé et piqué de rouille, en trois pièces : corps,
+  mâchoire mobile et molette (`tools/cle_molette_mesh.mjs` écrit `src/models/cle-a-molette/mesh.js`). Il
+  représente une clé marquée « 12"-300mm » et mesure 327 mm : il est ramené à 12 po (305 mm) de long, d'un seul
+  facteur d'échelle (`forme.js`). Largeur de tête, épaisseur, ouverture et masse sont donc celles du modèle, pas des
+  cotes de catalogue. Une page, P001 : la clé et sa vue éclatée en trois pièces (l'axe de la molette et son ressort
+  ne font pas partie du modèle). La fiche est écrite par `tools/cle_molette_fiche.mjs`, d'après les cotes mesurées
+  sur le maillage. Textures du site dans `equipment/cle-a-molette/textures/` (WebP). **Unreal Engine** :
+  `node scripts/export-cle-molette-unreal.mjs --textures <dossier>` écrit `SM_Cle_A_Molette_12po.glb` (trois
+  maillages, pivots de la mâchoire et de la molette conservés) dans `public/equipment/cle-a-molette/unreal/` ; mode
+  d'emploi dans `docs/cle-a-molette-unreal.md`.
 
 - **Poste de premiers soins et d'extincteur** (`poste-secours`) : reconstitution
   d'après une seule photo du poste installé sur le grillage de la cage, sans

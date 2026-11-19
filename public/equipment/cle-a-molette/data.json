@@ -1,11 +1,11 @@
 {
  "id": "cle-a-molette",
- "name": "Clés à molette (Westcott), 6 à 24 po",
+ "name": "Clé à molette (Westcott) de 12 po",
  "manufacturer": "Modèle libre (OpenGameArt, CC0)",
  "category": "Outils à main",
  "document": {
-  "title": "Cotes du modèle par grandeur et provenance (clé à molette du « Tool Pack 1 » d'OpenGameArt, CC0)",
-  "reference": "Clés",
+  "title": "Cotes du modèle et provenance (clé à molette du « Tool Pack 1 » d'OpenGameArt, CC0)",
+  "reference": "Clé",
   "sheets": 1,
   "pagePattern": "pages/{sheet}.webp"
  },
@@ -19,24 +19,32 @@
    "Maillage allégé pour le jeu : 1 240 triangles en trois pièces (corps, mâchoire mobile, molette), textures PBR de 1 024 px (couleur, normales, rugosité et métal)"
   ],
   [
-   "Grandeurs",
-   "6, 8, 10, 12, 15, 18 et 24 po : copies à l'échelle du même modèle, réglées sur la longueur nominale"
+   "Grandeur",
+   "12 po : 305 mm de longueur hors tout (le modèle d'origine, de 327 mm, est ramené à l'échelle 0,932)"
   ],
   [
-   "Cotes",
-   "Largeur de tête, épaisseur, ouverture et masse sont celles du modèle mis à l'échelle : aucune ne vient d'un catalogue"
+   "Largeur de tête",
+   "68 mm (2,66 po), mâchoire mobile non comprise"
   ],
   [
-   "Modèle d'origine",
-   "327 mm de long, tête de 72,6 mm, 19,3 mm d'épais à la molette ; ramené à 305 mm pour la 12 po"
+   "Épaisseur",
+   "16,4 mm au corps, 17,9 mm à la molette"
+  ],
+  [
+   "Ouverture montrée",
+   "25 mm (1,0 po), comme sur le modèle"
   ],
   [
    "Angle de tête",
    "22,5° entre l'axe du manche et les faces des mâchoires (mesuré sur le modèle)"
   ],
   [
+   "Cotes",
+   "Toutes sont celles du modèle mis à l'échelle : aucune ne vient d'un catalogue"
+  ],
+  [
    "Marquage",
-   "« 12\"-300mm » et « ToolMaster » en relief dans la cuvette du manche, sur les deux faces ; le même sur toutes les grandeurs"
+   "« 12\"-300mm » et « ToolMaster » en relief dans la cuvette du manche, sur les deux faces"
   ],
   [
    "Fini",
@@ -44,132 +52,39 @@
   ],
   [
    "Export pour moteur de jeu",
-   "unreal/SM_Cles_A_Molette.glb (glTF binaire, mètres) : les sept grandeurs, trois maillages par clé à l'échelle 1, matériau et textures partagés — voir docs/cle-a-molette-unreal.md"
+   "unreal/SM_Cle_A_Molette_12po.glb (glTF binaire, mètres) : trois maillages à l'échelle 1, la mâchoire et la molette avec leur pivot, un matériau et trois textures — voir docs/cle-a-molette-unreal.md"
   ]
  ],
  "weights": [
   [
-   "Clé de 6 po (masse calculée du modèle, acier)",
-   "0,08 kg (0,18 lb)"
+   "Clé complète (masse calculée du modèle, acier)",
+   "0,65 kg (1,43 lb)"
   ],
   [
-   "Clé de 8 po (masse calculée du modèle, acier)",
-   "0,19 kg (0,42 lb)"
+   "Corps",
+   "0,52 kg (1,15 lb)"
   ],
   [
-   "Clé de 10 po (masse calculée du modèle, acier)",
-   "0,38 kg (0,83 lb)"
+   "Mâchoire mobile (valeur approchée)",
+   "0,11 kg (0,23 lb)"
   ],
   [
-   "Clé de 12 po (masse calculée du modèle, acier)",
-   "0,65 kg (1,4 lb)"
-  ],
-  [
-   "Clé de 15 po (masse calculée du modèle, acier)",
-   "1,3 kg (2,8 lb)"
-  ],
-  [
-   "Clé de 18 po (masse calculée du modèle, acier)",
-   "2,2 kg (4,8 lb)"
-  ],
-  [
-   "Clé de 24 po (masse calculée du modèle, acier)",
-   "5,2 kg (11,4 lb)"
+   "Molette",
+   "0,02 kg (0,04 lb)"
   ]
  ],
  "sheetTitles": {
-  "P001": "Cotes du modèle par grandeur et provenance"
+  "P001": "Cotes du modèle et provenance"
  },
  "root": "P001",
  "assemblies": {
   "P001": {
-   "title": "ADJUSTABLE WRENCHES",
-   "titleFr": "Clés à molette (Westcott), 6 à 24 po",
-   "sheets": [
-    "P001"
-   ],
-   "note": "Sept clés à molette couchées à plat, bouts de manche alignés, de la plus petite à la plus grande. Le modèle n'a pas été dessiné ici : c'est la clé à molette du « Tool Pack 1 » d'OpenGameArt (auteur LonesomeDucky, licence CC0), un modèle de jeu prêt pour Unreal Engine. Il représente une clé marquée « 12\"-300mm » ; chaque grandeur en est une copie à l'échelle, réglée sur sa longueur nominale. Largeur de tête, épaisseur et ouverture suivent donc la longueur dans la même proportion, ce qui n'est pas le cas des vraies clés : une petite clé est en réalité plus trapue, une grande plus élancée, et les masses calculées s'écartent d'autant de celles des catalogues aux deux bouts de la gamme. Le marquage « 12\"-300mm » de la texture reste le même sur toutes les grandeurs. La photo reçue montre une clé chromée rangée mâchoires vers le haut ; elle est trop petite (44 × 96 pixels) pour y relever une cote ou une grandeur.",
-   "parts": [
-    [
-     "1",
-     "",
-     1,
-     "Clé à molette de 6 po — 152 mm de long, tête de 34 mm, 9,0 mm d'épais",
-     {
-      "pseudo": true,
-      "note": "Copie à l'échelle 0,466 du modèle d'origine. Épaisseur du corps : 8,2 mm ; mâchoires ouvertes de 13 mm comme sur le modèle. Masse calculée en acier : 0,08 kg (0,18 lb)."
-     }
-    ],
-    [
-     "2",
-     "",
-     1,
-     "Clé à molette de 8 po — 203 mm de long, tête de 45 mm, 12,0 mm d'épais",
-     {
-      "pseudo": true,
-      "note": "Copie à l'échelle 0,621 du modèle d'origine. Épaisseur du corps : 10,9 mm ; mâchoires ouvertes de 17 mm comme sur le modèle. Masse calculée en acier : 0,19 kg (0,42 lb)."
-     }
-    ],
-    [
-     "3",
-     "",
-     1,
-     "Clé à molette de 10 po — 254 mm de long, tête de 56 mm, 15,0 mm d'épais",
-     {
-      "pseudo": true,
-      "note": "Copie à l'échelle 0,777 du modèle d'origine. Épaisseur du corps : 13,7 mm ; mâchoires ouvertes de 21 mm comme sur le modèle. Masse calculée en acier : 0,38 kg (0,83 lb)."
-     }
-    ],
-    [
-     "4",
-     "",
-     1,
-     "Clé à molette de 12 po — 305 mm de long, tête de 68 mm, 17,9 mm d'épais",
-     {
-      "pseudo": true,
-      "note": "La grandeur que le modèle d'origine représente (marquage « 12\"-300mm »). Copie à l'échelle 0,932 du modèle d'origine. Épaisseur du corps : 16,4 mm ; mâchoires ouvertes de 25 mm comme sur le modèle. Masse calculée en acier : 0,65 kg (1,4 lb).",
-      "link": "P002"
-     }
-    ],
-    [
-     "5",
-     "",
-     1,
-     "Clé à molette de 15 po — 381 mm de long, tête de 85 mm, 22,4 mm d'épais",
-     {
-      "pseudo": true,
-      "note": "Copie à l'échelle 1,165 du modèle d'origine. Épaisseur du corps : 20,5 mm ; mâchoires ouvertes de 32 mm comme sur le modèle. Masse calculée en acier : 1,3 kg (2,8 lb)."
-     }
-    ],
-    [
-     "6",
-     "",
-     1,
-     "Clé à molette de 18 po — 457 mm de long, tête de 102 mm, 26,9 mm d'épais",
-     {
-      "pseudo": true,
-      "note": "Copie à l'échelle 1,398 du modèle d'origine. Épaisseur du corps : 24,6 mm ; mâchoires ouvertes de 38 mm comme sur le modèle. Masse calculée en acier : 2,2 kg (4,8 lb)."
-     }
-    ],
-    [
-     "7",
-     "",
-     1,
-     "Clé à molette de 24 po — 610 mm de long, tête de 135 mm, 35,9 mm d'épais",
-     {
-      "pseudo": true,
-      "note": "Copie à l'échelle 1,864 du modèle d'origine. Épaisseur du corps : 32,8 mm ; mâchoires ouvertes de 51 mm comme sur le modèle. Masse calculée en acier : 5,2 kg (11,4 lb)."
-     }
-    ]
-   ]
-  },
-  "P002": {
    "title": "ADJUSTABLE WRENCH 12\"",
-   "titleFr": "Clé à molette de 12 po : les trois pièces",
+   "titleFr": "Clé à molette (Westcott) de 12 po",
    "sheets": [
     "P001"
    ],
-   "note": "La clé de 12 po, celle que le modèle d'origine représente, en trois pièces : ce sont celles du fichier, rien n'a été ajouté. L'axe de la molette et son ressort, que le modèle ne contient pas, ne sont pas montrés. La mâchoire mobile coulisse dans la tête, perpendiculairement aux faces des mâchoires ; l'angle de tête est de 22,5°. Elle est montrée ouverte de 25 mm (1,0 po), comme sur le modèle ; la molette ne tourne pas quand on la déplace. Masses calculées en acier (7,85 g/cm³) d'après le volume de chaque maillage.",
+   "note": "Clé à molette de 12 po couchée à plat, mâchoires entrouvertes, en trois pièces. Le modèle n'a pas été dessiné ici : c'est la clé à molette du « Tool Pack 1 » d'OpenGameArt (auteur LonesomeDucky, licence CC0), un modèle de jeu prêt pour Unreal Engine. Il représente une clé marquée « 12\"-300mm » et mesure 327 mm ; il est ramené à 305 mm de long, d'un seul facteur d'échelle. Largeur de tête, épaisseur et masse sont donc celles du modèle, pas des cotes de catalogue. Les trois pièces sont celles du fichier, rien n'a été ajouté : l'axe de la molette et son ressort, que le modèle ne contient pas, ne sont pas montrés. La mâchoire mobile coulisse dans la tête, perpendiculairement aux faces des mâchoires ; l'angle de tête est de 22,5°. Elle est montrée ouverte de 25 mm (1,0 po), comme sur le modèle ; la molette ne tourne pas quand on la déplace. Masses calculées en acier (7,85 g/cm³) d'après le volume de chaque maillage. La photo reçue montre une clé chromée rangée mâchoires vers le haut ; elle est trop petite (44 × 96 pixels) pour y relever une cote.",
    "parts": [
     [
      "1",
@@ -178,7 +93,7 @@
      "CORPS : manche et mâchoire fixe, d'une pièce — 305 mm de long, tête de 68 mm, 16,4 mm d'épais",
      {
       "pseudo": true,
-      "note": "Cuvette sur les deux faces du manche, marquée « 12\"-300mm » et « ToolMaster » ; trou d'accrochage à six pans au bout du manche ; fenêtre de la molette dans la tête. Masse calculée : 0,52 kg (1,2 lb)."
+      "note": "Cuvette sur les deux faces du manche, marquée « 12\"-300mm » et « ToolMaster » ; trou d'accrochage à six pans au bout du manche ; fenêtre de la molette dans la tête. Masse calculée : 0,52 kg (1,15 lb)."
      }
     ],
     [

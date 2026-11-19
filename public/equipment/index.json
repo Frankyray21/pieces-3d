@@ -2,11 +2,11 @@
   "equipment": [
     {
       "id": "cle-a-molette",
-      "name": "Clés à molette (Westcott), 6 à 24 po",
+      "name": "Clé à molette (Westcott) de 12 po",
       "manufacturer": "Modèle libre (OpenGameArt, CC0)",
       "category": "Outils à main",
       "thumbnail": "equipment/cle-a-molette/thumbnail.webp",
-      "status": "Clé à molette du « Tool Pack 1 » d'OpenGameArt (CC0, LonesomeDucky), chromée et piquée de rouille, en trois pièces (corps, mâchoire mobile, molette) ; sept grandeurs (6, 8, 10, 12, 15, 18 et 24 po) copiées à l'échelle sur la longueur nominale, cotes du modèle et non d'un catalogue ; fichier prêt pour Unreal Engine"
+      "status": "Clé à molette du « Tool Pack 1 » d'OpenGameArt (CC0, LonesomeDucky), chromée et piquée de rouille, ramenée à 12 po (305 mm) de long, en trois pièces (corps, mâchoire mobile, molette) ; cotes du modèle et non d'un catalogue ; fichier prêt pour Unreal Engine"
     },
     {
       "id": "cles-a-tuyau",

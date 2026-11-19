@@ -1,18 +1,17 @@
-// Clé à molette (« Westcott ») à la grandeur voulue, à partir de la clé du « Tool Pack 1 » d'OpenGameArt
+// Clé à molette (« Westcott ») de 12 po, à partir de la clé du « Tool Pack 1 » d'OpenGameArt
 // (CC0, https://opengameart.org/content/tool-pack-1, auteur LonesomeDucky ; mesh.js, 327 × 73 × 19 mm).
 //
-// Le modèle d'origine est une clé marquée « 12" - 300mm », en trois pièces : corps, mâchoire mobile et
-// molette. Chaque grandeur en est une copie à l'échelle, réglée sur sa longueur nominale (un seul facteur pour
-// les trois axes : la tête garde son angle de 22 1/2° et la molette reste ronde). Ce n'est la clé d'aucun
-// catalogue : largeur de tête, épaisseur et masse sont celles du modèle, pas des cotes publiées, et la marque
-// « 12" - 300mm » de la texture reste la même sur toutes les grandeurs.
+// Le modèle d'origine est une clé marquée « 12"-300mm », en trois pièces : corps, mâchoire mobile et molette.
+// Il mesure 327 mm : il est ramené à 12 po (304,8 mm) de longueur hors tout, d'un seul facteur pour les trois
+// axes (la tête garde son angle de 22 1/2° et la molette reste ronde). Ce n'est la clé d'aucun catalogue :
+// largeur de tête, épaisseur et masse sont celles du modèle, pas des cotes publiées.
 import MESH from './mesh.js';
 
 export const IN = 0.0254;
 const RHO = 7850; // acier, kg/m³
 
-/** Grandeurs nominales (po) : longueur hors tout de la clé. */
-export const SIZES = [6, 8, 10, 12, 15, 18, 24];
+/** Grandeur nominale (po) : longueur hors tout de la clé. */
+export const GRANDEUR = 12;
 
 const bytes = (b64) => Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
 const f32 = (b64) => new Float32Array(bytes(b64).buffer);
@@ -66,13 +65,12 @@ export function base() {
   return BASE;
 }
 
-/** Cotes de la clé de grandeur « size » (po) : facteur d'échelle, longueur, largeur de tête, épaisseurs, ouverture montrée (m) et masse calculée en acier (kg). */
-export function dims(size) {
-  if (!SIZES.includes(size)) throw new Error(`Grandeur de clé inconnue : ${size}`);
-  const b = base(), s = (size * IN) / b.L;
+/** Cotes de la clé de 12 po : facteur d'échelle du modèle d'origine, longueur, largeur de tête, épaisseurs, ouverture montrée (m) et masse calculée en acier (kg). */
+export function dims() {
+  const b = base(), s = (GRANDEUR * IN) / b.L;
   const kg = (v) => v * s * s * s * RHO;
   return {
-    size, s, L: b.L * s, W: b.W * s, T: b.T * s, Tcorps: b.Tcorps * s, ouverture: b.ouverture * s,
+    s, L: b.L * s, W: b.W * s, T: b.T * s, Tcorps: b.Tcorps * s, ouverture: b.ouverture * s,
     kg: kg(b.volume.corps + b.volume.machoire + b.volume.molette),
     kgPieces: { corps: kg(b.volume.corps), machoire: kg(b.volume.machoire), molette: kg(b.volume.molette) },
     min: b.boite.map((v) => v[0] * s), max: b.boite.map((v) => v[1] * s),

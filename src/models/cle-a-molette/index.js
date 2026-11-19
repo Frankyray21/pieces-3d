@@ -1,12 +1,11 @@
-// Clés à molette (« Westcott ») de 6 à 24 po : la clé du « Tool Pack 1 » d'OpenGameArt (CC0,
-// https://opengameart.org/content/tool-pack-1, LonesomeDucky), chromée et piquée de rouille, mise à l'échelle
-// de chaque grandeur (voir forme.js). Trois pièces : corps, mâchoire mobile et molette. La marque
-// « 12" - 300mm » de la texture reste la même sur toutes les grandeurs.
+// Clé à molette (« Westcott ») de 12 po : la clé du « Tool Pack 1 » d'OpenGameArt (CC0,
+// https://opengameart.org/content/tool-pack-1, LonesomeDucky), chromée et piquée de rouille, ramenée à 12 po
+// de long (voir forme.js). Trois pièces : corps, mâchoire mobile et molette.
 import * as THREE from 'three';
 import { mat } from '../../viewer/materials.js';
-import { base, dims, SIZES, IN } from './forme.js';
+import { base, dims, GRANDEUR, IN } from './forme.js';
 
-export { base, dims, SIZES, IN };
+export { base, dims, GRANDEUR, IN };
 
 let MATERIAL = null;
 /** Matériau texturé partagé (couleur, normales, rugosité et métal) ; palette simple hors navigateur. */
@@ -32,29 +31,21 @@ function material() {
   return MATERIAL;
 }
 
-const GEO = new Map();
-/** Géométrie d'une pièce du modèle d'origine (partagée par toutes les grandeurs, mises à l'échelle par le maillage). */
-function geometrie(nom) {
-  if (GEO.has(nom)) return GEO.get(nom);
-  const p = base().pieces[nom], geo = new THREE.BufferGeometry();
-  geo.setAttribute('position', new THREE.BufferAttribute(p.P, 3));
-  geo.setAttribute('normal', new THREE.BufferAttribute(p.N, 3));
-  geo.setAttribute('uv', new THREE.BufferAttribute(p.uv, 2));
-  geo.setIndex(new THREE.BufferAttribute(p.I, 1));
-  geo.userData.edgeAngle = 60; // pas de contours sur les arrondis du maillage allégé
-  GEO.set(nom, geo);
-  return geo;
-}
-
 /**
- * Pièces d'une clé de grandeur « size » (po), dans le repère du corps (à plat, manche le long de Z, tête vers
- * −Z, épaisseur le long de Y). ouverture : écart des mâchoires en mètres (null : comme le modèle d'origine).
+ * Les trois pièces de la clé, dans le repère du corps (à plat, manche le long de Z, tête vers −Z, épaisseur le
+ * long de Y). ouverture : écart des mâchoires en mètres (null : comme le modèle d'origine).
  */
-export function pieces(size, ouverture = null) {
-  const b = base(), d = dims(size), out = { d };
+export function pieces(ouverture = null) {
+  const b = base(), d = dims(), out = { d };
   for (const nom of ['corps', 'machoire', 'molette']) {
-    const p = b.pieces[nom], m = new THREE.Mesh(geometrie(nom), material());
-    m.name = `cle_a_molette_${size}po_${nom}`;
+    const p = b.pieces[nom], geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(p.P, 3));
+    geo.setAttribute('normal', new THREE.BufferAttribute(p.N, 3));
+    geo.setAttribute('uv', new THREE.BufferAttribute(p.uv, 2));
+    geo.setIndex(new THREE.BufferAttribute(p.I, 1));
+    geo.userData.edgeAngle = 60; // pas de contours sur les arrondis du maillage allégé
+    const m = new THREE.Mesh(geo, material());
+    m.name = `cle_a_molette_${nom}`;
     m.scale.setScalar(d.s);
     m.position.set(p.t[0] * d.s, p.t[1] * d.s, p.t[2] * d.s);
     m.quaternion.set(...p.q);
@@ -64,22 +55,9 @@ export function pieces(size, ouverture = null) {
   return out;
 }
 
-/** Les sept grandeurs couchées à plat, bouts de manche alignés, de la plus petite à la plus grande. */
+/** La clé couchée à plat, mâchoires entrouvertes ; vue éclatée de ses trois pièces. */
 export function P001(api) {
-  let x = 0;
-  SIZES.forEach((size, k) => {
-    const p = pieces(size), d = p.d;
-    const g = api.S.group(p.corps, p.machoire, p.molette);
-    g.position.set(x - d.min[0], d.T / 2, -d.max[2]);
-    x += d.max[0] - d.min[0] + 0.03;
-    api.part(String(k + 1), g, [0, 0, 0], { caption: `${size} po` });
-  });
-  return { view: { dir: [0.35, 1, 0.75] } };
-}
-
-/** La clé de 12 po, celle que le modèle d'origine représente : vue éclatée de ses trois pièces. */
-export function P002(api) {
-  const p = pieces(12), d = p.d, o = base().ouvre;
+  const p = pieces(), d = p.d, o = base().ouvre;
   // Clé tournée d'un quart de tour : manche le long de X, tête à gauche, mâchoires vers l'avant.
   const pose = (obj) => { const g = api.S.group(obj); g.rotation.y = Math.PI / 2; g.position.y = d.T / 2; return g; };
   const sens = (v, k) => [v[2] * k, v[1] * k, -v[0] * k]; // vecteur du repère du corps, une fois la clé tournée
@@ -89,4 +67,4 @@ export function P002(api) {
   return { view: { dir: [0.25, 1, 0.8], section: { axis: 'y', pos: 0.5 } } };
 }
 
-export default { P001, P002 };
+export default { P001 };
