@@ -46,8 +46,8 @@ export default function P021(api) {
   t.court.forEach((o, i) => P('3', o, X(-0.02, PHI.short[i], 0.17)));
   t.long.forEach((o, i) => P('4', o, X(0.06, PHI.long[i], 0.22)));
   B.ressorts(C).forEach((o) => P('19', o, X(-0.13)));
-  B.entretoisesBas(C).forEach((o) => P('13', o, X(-0.2)));
-  B.jointsRadiaux(C).forEach((o) => P('14', o, X(-0.22)));
+  B.entretoisesBas(C).forEach((o) => P('13', o, X(-0.21)));
+  B.jointsRadiaux(C).forEach((o) => P('14', o, X(-0.17)));
 
   // --- 22 — Carter 55-0040 : tranches percées comme celles du mandrin, tube central (guide du piston, logement de la
   // bague de serrage), taraudages des vis du cylindre ; oreille d'articulation (+Z), patte des boulons à œil et
@@ -64,7 +64,7 @@ export default function P021(api) {
   pts.push([4.6 * eu[0] + ear.w * eu[1], 4.6 * eu[1] - ear.w * eu[0]]);
   const oreille = C.plan(pts.map(([y, z]) => [C.sx * y * IN, z * IN]), ear.d0, ear.d1, 'yellow', [[C.sx * ear.y * IN, ear.z * IN, ear.rb * IN]]);
   // Patte : bloc sous le flanc −Z, deux lumières verticales (largeur 0,72 po, 1,4 po de profond) à d 4,2 et 6,7.
-  const lug = { y0: -5.4, y1: -3.6, z0: -7.4, z1: -3.6, zs: -6.0 };
+  const lug = { y0: -5.4, y1: -3.6, z0: -7.4, z1: -2.6, zs: -6.0 };
   const bloc = (d0, d1, zo) => C.plan([[lug.y0, lug.z1], [lug.y1, lug.z1], [lug.y1, zo], [lug.y0, zo]].map(([y, z]) => [C.sx * y * IN, z * IN]), d0, d1, 'yellow');
   const patte = S.group(bloc(3.2, 3.84, lug.z0), bloc(3.84, 4.56, lug.zs), bloc(4.56, 6.34, lug.z0), bloc(6.34, 7.06, lug.zs), bloc(7.06, 7.7, lug.z0));
   // Poignée en U (rond Ø 3/4) au-dessus de la patte.
@@ -81,42 +81,42 @@ export default function P021(api) {
     C.slab(g.ro, 4.2, g.dP, 8.47, SHCS4.map((f) => [5.6, f, 0.21]), 'yellow', 96),
     C.L([[1.97, g.dB], [2.6, g.dB], [2.6, 12.5], [2.15, 12.5], [2.15, 12.35], [1.97, 12.35]], 'yellow'),
     oreille, patte, poignee,
-  ), X(-0.33));
+  ), X(-0.4));
   // 27 — Bagues 55-0045 (2) aux bouts de l'alésage de l'oreille : Ø 1,25 × Ø 1,0 × 1,0.
   const eR = Math.hypot(ear.y, ear.z), eF = Math.atan2(ear.z, ear.y);
-  [ear.d0, ear.d1 - 1.0].forEach((d) => P('27', C.put(C.L([[0.5, 0], [0.625, 0], [0.625, 1.0], [0.5, 1.0]], 'brass', 24), eR, eF, d), X(-0.33, eF, 0.1)));
+  [ear.d0, ear.d1 - 1.0].forEach((d) => P('27', C.put(C.L([[0.5, 0], [0.625, 0], [0.625, 1.0], [0.5, 1.0]], 'brass', 24), eR, eF, d), X(-0.4, eF, 0.1)));
   // 20 — Graisseur 1/4-28 sur le flanc du carter.
-  P('20', C.radial(B.zerk(S), g.ro, 45 * deg, 4.6), X(-0.33, 45 * deg, 0.06));
+  P('20', C.radial(B.zerk(S), g.ro, 45 * deg, 4.6), X(-0.4, 45 * deg, 0.06));
 
   // --- 23 — Piston et cylindre 55-0300 (page 23) ; lignes 15 à 18, 24 et 31 : même objet.
   const sub = api.sub('P023');
   sub.position.set((DM - U0) * IN, 0, 0);
-  api.part('23', sub, X(-0.55));
+  api.part('23', sub, X(-0.62));
   // 8 — Vis 1/2-13 × 4 (9) : cylindre → carter, têtes lamées sous le cylindre (u 3,4).
-  SHCS4.forEach((f) => P('8', B.shcs(C, 0.5, 4, 5.6, f, U0 + 3.4, { up: true }), X(-0.75)));
+  SHCS4.forEach((f) => P('8', B.shcs(C, 0.5, 4, 5.6, f, U0 + 3.4, { up: true }), X(-0.82)));
   // 29 — Joint torique entre carter et cylindre ; 30 — entre cylindre et chapeau ; 28 — chapeau sur le tube.
-  P('29', B.oRing(C, 4.47, 0.1, 8.47), X(-0.47));
-  P('30', B.oRing(C, 5.25, 0.1, 11.85), X(-0.85));
-  P('28', B.oRing(C, 2.65, 0.1, 12.17), X(-0.6));
+  P('29', B.oRing(C, 4.47, 0.1, 8.47), X(-0.52));
+  P('30', B.oRing(C, 5.25, 0.1, 11.85), X(-0.9));
+  P('28', B.oRing(C, 2.65, 0.1, 12.17), X(-0.66));
 
   // --- 26 — Chapeau de cylindre 55-0044 : anneau percé des 9 vis 1/2-13 × 2 (7) et taraudé pour le reniflard.
-  P('26', C.slab(g.ro, 2.62, 11.85, 12.5, [...SHCS2.map((f) => [5.6, f, 0.28]), [4.0, 180 * deg, 0.15]], 'yellow', 96), X(-0.9));
+  P('26', C.slab(g.ro, 2.62, 11.85, 12.5, [...SHCS2.map((f) => [5.6, f, 0.28]), [4.0, 180 * deg, 0.15]], 'yellow', 96), X(-0.95));
   // 21 — Reniflard 1/8 NPT sous le chapeau.
   const ren = S.group(S.cyl(0.004, 0.006, 'brass', { pos: [0, -0.003, 0], seg: 12 }), S.at(S.nut(0.0111, 0.005, 'brass'), [0, 0.0025, 0]),
     S.cyl(0.0055, 0.008, 'brass', { pos: [0, 0.009, 0], seg: 16 }), S.at(S.ball(0.0055, 'brass'), [0, 0.013, 0]));
   ren.rotation.x = Math.PI; // vers le bas de la colonne (−X)
-  P('21', C.put(ren, 4.0, 180 * deg, 12.5), X(-0.9));
+  P('21', C.put(ren, 4.0, 180 * deg, 12.5), X(-0.95));
   // 7 — Vis 1/2-13 × 2 (9) et 33 — rondelles Grower 1/2 (9) sous le chapeau.
-  SHCS2.forEach((f) => P('33', B.lockWasher(C, 0.44, 0.26, 0.1, 5.6, f, 12.55), X(-0.96)));
-  SHCS2.forEach((f) => P('7', B.shcs(C, 0.5, 2, 5.6, f, 12.6, { up: true }), X(-1.02)));
+  SHCS2.forEach((f) => P('33', B.lockWasher(C, 0.44, 0.26, 0.1, 5.6, f, 12.55), X(-1.01)));
+  SHCS2.forEach((f) => P('7', B.shcs(C, 0.5, 2, 5.6, f, 12.6, { up: true }), X(-1.07)));
 
   // --- Bague de serrage B (clamp bushing NQ 55-0052, hors liste) dans le bout du tube ; 25 — retenue 55-0043 ;
   // 6 — vis 5/16-18 × 1 (4) et 32 — rondelles Grower 5/16 (4), sur r 2,3 à φ = 45° + 90k.
   api.add(W(C.L([[1.45, 10.4], [1.95, 10.4], [1.95, 12.35], [2.13, 12.35], [2.13, 12.5], [1.45, 12.5]], 'steel')));
   const r4 = [45, 135, 225, 315].map((a) => a * deg);
-  P('25', C.slab(2.6, 1.6, 12.5, 12.8, r4.map((f) => [2.3, f, 0.17]), 'steel'), X(-1.08));
-  r4.forEach((f) => P('32', B.lockWasher(C, 0.29, 0.17, 0.08, 2.3, f, 12.84), X(-1.12)));
-  r4.forEach((f) => P('6', B.shcs(C, 0.3125, 1, 2.3, f, 12.88, { up: true }), X(-1.16)));
+  P('25', C.slab(2.6, 1.6, 12.5, 12.8, r4.map((f) => [2.3, f, 0.17]), 'steel'), X(-1.13));
+  r4.forEach((f) => P('32', B.lockWasher(C, 0.29, 0.17, 0.08, 2.3, f, 12.84), X(-1.17)));
+  r4.forEach((f) => P('6', B.shcs(C, 0.3125, 1, 2.3, f, 12.88, { up: true }), X(-1.21)));
 
   // --- p. 24 — Plaque support et bague de guidage, sur l'adaptateur de chapeau.
   const p24 = api.sub('P024');

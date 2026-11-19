@@ -59,11 +59,11 @@ export const H = {
   post: { r: 3.4, rr: 0.3, d0: 6.0, d1: 7.84 },
   // Joints radiaux 55-0016 (9) : dans le plancher autour des entretoises, Ø 1,0 × 0,25 [estimé].
   seal: { ro: 0.5, d0: 6.2, d1: 6.45 },
-  // Boulons de liaison bol → piston, sur r 3,75 à φ = 20° + 40k : 6 × 1/2-13 × 6 1/2 (têtes lamées dans le bol,
+  // Boulons de liaison bol → piston, sur r 3,82 à φ = 20° + 40k : 6 × 1/2-13 × 6 1/2 (têtes lamées dans le bol,
   // d 2,45) et 3 × 1/2-13 × 8 (φ = 60°, 180°, 300°) dont la tête porte sur une entretoise du haut 55-0011
   // (tube Ø 0,75 de d 0,33 à 2,17, au travers de l'adaptateur et du porte-chapeau) [p. 18 : tête au-dessus de
   // l'adaptateur, entretoise en traits cachés ; positions angulaires estimées].
-  tie: { r: 3.75 },
+  tie: { r: 3.82 },
   // Boulons 3/4-10 × 1 1/2 (3) adaptateur → porte-chapeau sur r 3,75 à φ = 0°, 120°, 240° ; boulons 1/2-13 × 2 1/4
   // (9) porte-chapeau → carter sur r 5,55 à φ = 10° + 40k (entre les ressorts) ; boulons 1/2-13 × 1 1/2 (3) de la
   // bague sur r 2,3 à φ = 30°, 150°, 270° [estimé].
@@ -352,7 +352,7 @@ export function bol(C, m = 'steel') {
     // Partie intérieure tournée : cône, dessus conique (parallèle au dessous du porte-chapeau), fond.
     C.L([[rc(b.d0), b.d0], [rIn, b.d0 + 0.07], [rIn, b.d3], [rc(b.d3), b.d3]], m),
     // Couronne percée.
-    C.slab(b.ro, rIn - 0.005, b.d1, b.d2, [...PHI.short.map((f) => [H.tie.r, f, 0.47]), ...PHI.long.map((f) => [H.tie.r, f, 0.28])], m),
+    C.slab(b.ro, rIn - 0.005, b.d1, b.d2, [...PHI.short.map((f) => [H.tie.r, f, 0.44]), ...PHI.long.map((f) => [H.tie.r, f, 0.28])], m),
     C.slab(b.ro, rIn - 0.005, b.d2, b.d3 - 0.06, PHI.ties.map((f) => [H.tie.r, f, 0.28]), m),
     C.L([[rIn - 0.005, b.d3 - 0.06], [b.ro, b.d3 - 0.06], [b.ro - 0.06, b.d3], [rIn - 0.005, b.d3]], m),
   );

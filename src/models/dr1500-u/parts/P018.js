@@ -50,8 +50,8 @@ export default function P018(api) {
   t.court.forEach((o, i) => P('5', o, X(0.02, PHI.short[i], 0.17)));
   t.long.forEach((o, i) => P('6', o, X(-0.06, PHI.long[i], 0.22)));
   B.ressorts(C).forEach((o) => P('28', o, X(0.13)));
-  B.entretoisesBas(C).forEach((o) => P('18', o, X(0.2)));
-  B.jointsRadiaux(C).forEach((o) => P('22', o, X(0.22)));
+  B.entretoisesBas(C).forEach((o) => P('18', o, X(0.21)));
+  B.jointsRadiaux(C).forEach((o) => P('22', o, X(0.17)));
 
   // --- 12 — Carter 55-0006 : tranches percées (logements des ressorts, taraudages du porte-chapeau, plancher des
   // entretoises), fond lamé pour le centrage du cylindre (Ø 10,72) et les têtes des boulons du cylindre.
@@ -64,19 +64,19 @@ export default function P018(api) {
     C.slab(g.rb + 0.005, 2.95, 6.45, 7.5, B.trousPlancher(false), 'yellow'),
     C.slab(g.ro, 4.18, g.dP, 8.12, [], 'yellow', 96),
     C.slab(g.ro, 5.36, 8.12, 8.55, cyl10.map((f) => [5.68, f, 0.34]), 'yellow', 96),
-  ), X(0.33));
+  ), X(0.4));
   // 30 — Graisseur droit 1/4-28 sur le flanc du carter (éclaté p. 18), à hauteur du bol.
-  P('30', C.radial(B.zerk(S), g.ro, 90 * deg, 4.6), X(0.33, 90 * deg, 0.06));
+  P('30', C.radial(B.zerk(S), g.ro, 90 * deg, 4.6), X(0.4, 90 * deg, 0.06));
 
   // --- 13 — Piston et cylindre 55-0200 (page 20) ; lignes 8, 15, 16, 20, 23 à 27, 29 et 31 : même objet.
   const sub = api.sub('P020');
   sub.position.set(X0 + U0 * IN, SPY, 0);
-  api.part('13', sub, X(0.52));
+  api.part('13', sub, X(0.6));
 
   // 4 — Boulons 1/2-13 × 4 1/2 (10) : tête sur la bride du cylindre (dans le fond du carter), au travers de
   // l'adaptateur ; 1 — écrous 1/2-13 (10) noyés sous l'adaptateur.
-  cyl10.forEach((f) => P('4', B.hexBolt(C, 0.5, 4.5, 5.6, f, 8.55), X(0.7)));
-  cyl10.forEach((f) => P('1', B.hexNut(C, 0.75, 0.44, 5.6, f, 12.82), X(0.95)));
+  cyl10.forEach((f) => P('4', B.hexBolt(C, 0.5, 4.5, 5.6, f, 8.55), X(0.78)));
+  cyl10.forEach((f) => P('1', B.hexNut(C, 0.75, 0.44, 5.6, f, 12.82), X(1.0)));
 
   // 14 — Adaptateur de mandrin 55-0008 : bride Ø 14,6 sur la tête (6 trous de fixation sur Ø 13,5 [estimé]), trous
   // des boulons du cylindre et lamages des écrous, logements des 4 goupilles du piston, moyeu Ø 7,4.
@@ -85,14 +85,14 @@ export default function P018(api) {
       ...[45, 135, 225, 315].map((a) => [4.0, a * deg, 0.2])], 'yellow', 120),
     C.slab(7.3, 3.7, 12.6, DF, [...cyl10.map((f) => [5.6, f, 0.5]), ...[30, 90, 150, 210, 270, 330].map((a) => [6.75, a * deg, 0.28])], 'yellow', 120),
     C.L([[3.1, 11.8], [3.7, 11.8], [3.7, DF], [3.18, DF], [3.1, DF - 0.08]], 'yellow'),
-  ), X(0.86));
+  ), X(0.92));
 
   // 21 — Clavettes 55-0015 (3) dans l'alésage du manchon, à φ = 0°, 120°, 240° ; 19 — ressort de verrouillage
   // 55-0013 (jonc en fil qui les retient en tête).
-  [0, 120, 240].forEach((a) => P('21', C.put(S.box(0.5 * IN, 4.5 * IN, 0.45 * IN, 'darkSteel'), 2.37, a * deg, 9.85), X(1.08)));
+  [0, 120, 240].forEach((a) => P('21', C.put(S.box(0.5 * IN, 4.5 * IN, 0.45 * IN, 'darkSteel'), 2.37, a * deg, 9.85), X(1.12)));
   const jonc = new THREE.Mesh(new THREE.TorusGeometry(2.32 * IN, 0.07 * IN, 8, 64, 330 * deg), B.mat('steel'));
   jonc.rotation.x = Math.PI / 2;
-  P('19', C.put(jonc, 0, 0, 7.72), X(1.0));
+  P('19', C.put(jonc, 0, 0, 7.72), X(1.05));
 
   return { view: { dir: [-1, 0.6, 0.95] } };
 }
