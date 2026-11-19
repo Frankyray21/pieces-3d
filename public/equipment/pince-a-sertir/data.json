@@ -1,0 +1,265 @@
+{
+ "id": "pince-a-sertir",
+ "name": "Pince à sertir de 30 po pour manchons de câble (wire line)",
+ "manufacturer": "VEVOR",
+ "category": "Outils à main",
+ "serial": "",
+ "document": {
+  "title": "Capture d'écran d'une recherche d'images : fiche VEVOR Canada et vignettes de détaillants (aucun plan)",
+  "reference": "Pince à sertir 30 po",
+  "preparedBy": "",
+  "date": "",
+  "sheets": 2,
+  "pagePattern": "pages/{sheet}.webp"
+ },
+ "specs": [
+  [
+   "Source",
+   "Capture d'écran reçue d'une recherche d'images (639 × 1 147 pixels) : fiche VEVOR Canada « Pince à sertir de câble » et vignettes de détaillants ; la pince y mesure environ 180 pixels de long. Quatre vignettes montrent la pince à trois empreintes et ont servi ; les autres montrent d'autres modèles (quatre ou cinq empreintes, coupe-câble). Aucun plan."
+  ],
+  [
+   "Usage",
+   "Sertir les manchons ovales et les manchons d'arrêt en aluminium ou en cuivre sur un câble d'acier — par exemple la boucle du câble du wire line. Selon les fiches des détaillants ; rien n'y est dit des manchons d'acier inoxydable."
+  ],
+  [
+   "Données publiées",
+   "Longueur de 30 po (762 mm) ; trois empreintes, pour câble de 5/32, 1/4 et 5/16 po (4, 6 et 8 mm) ; acier allié, mâchoires forgées et trempées, poignées en acier tubulaire, manchons de poignée en caoutchouc ; poids brut (emballé) de 10 lb selon un détaillant"
+  ],
+  [
+   "Empreintes",
+   "n° 1 : câble de 5/32 po (4 mm) ; n° 2 : câble de 1/4 po (6 mm) ; n° 3 : câble de 5/16 po (8 mm). Diamètres non publiés : 8, 12 et 16 mm sur le modèle, estimés sur les photos."
+  ],
+  [
+   "Lu sur la vignette des dimensions (texte flou)",
+   "Longueur « 30 po / 760 mm » et tableau « 3-Cavity » des trois grandeurs : lisibles. Largeur de la tête, ouverture maximale des poignées et poids net : chiffres illisibles, non repris."
+  ],
+  [
+   "Échelle du relevé",
+   "Vue de face : la pince mesure 176 pixels pour 762 mm, soit 4,3 mm par pixel ; chaque cote relevée est juste à un pixel près, environ 5 mm"
+  ],
+  [
+   "Tête",
+   "96 mm de large (22 pixels), 169 mm du bout des mâchoires au bout de leurs queues ; pivots des mâchoires à 65 mm du bout, à 50 mm l'un de l'autre"
+  ],
+  [
+   "Poignées",
+   "Boulons d'articulation à 157 mm du bout, à 60 mm l'un de l'autre ; boulon central à 161 mm ; bras de Ø 22 mm ; manchons de Ø 31 mm et 134 mm de long ; 146 mm hors tout aux manchons, pince fermée"
+  ],
+  [
+   "Épaisseurs (supposées)",
+   "Mâchoires 16 mm, éclisses 6 mm, têtes des poignées 30 mm : aucune vue de côté ne permet de les mesurer"
+  ],
+  [
+   "Mécanisme",
+   "Celui d'un coupe-boulons : mâchoires sur deux pivots, poignées articulées sur les queues des mâchoires et entre elles ; fermée, la pince a ses trois boulons de poignée presque alignés (genouillère)"
+  ],
+  [
+   "Ouverture du modèle",
+   "Jusqu'à ce que les oreilles des deux poignées se rejoignent sur l'axe : mâchoires ouvertes de 10° chacune, poignées de 55° chacune, soit 1057 mm d'un bout à l'autre ; jour aux empreintes : 28 mm (5/32 po), 27 mm (1/4 po), 25 mm (5/16 po) ; 23 mm entre les bouts des mâchoires. Valeurs du modèle, pas du fabricant."
+  ]
+ ],
+ "weights": [],
+ "sheetTitles": {
+  "P01": "Vignettes de la capture d'écran reçue : vue d'ensemble, gros plan de la tête, vue de face et dimensions",
+  "P02": "Relevé sur la vue de face : cotes retenues pour le modèle et hypothèses"
+ },
+ "root": "P01",
+ "assemblies": {
+  "P01": {
+   "title": "HAND SWAGER, 30 IN, 3 CAVITIES",
+   "titleFr": "Pince à sertir de 30 po, à 3 empreintes",
+   "pn": "",
+   "sheets": [
+    "P01",
+    "P02"
+   ],
+   "note": "Reconstitution 3D d'après les vignettes d'une recherche d'images, sans plan ni cote. Données publiées, reprises telles quelles : la longueur de 30 po et les trois empreintes pour câble de 5/32, 1/4 et 5/16 po. Tout le reste est relevé en proportion sur la vue de face, à environ 5 mm près, ou supposé. Visible sur les photos : les deux mâchoires noires et leurs trois empreintes, l'éclisse avant et ses deux boulons, le jour entre les queues des mâchoires, les têtes rouges des poignées et leurs trois boulons alignés, le jour en trou de serrure, les bras tubulaires cintrés, les manchons noirs à bossages. Supposé, parce que caché : toutes les épaisseurs, le dos de la pince (éclisse arrière, écrous), la façon dont les têtes des poignées s'emboîtent sur le boulon central, la grandeur de la visserie. Non modélisé, parce qu'illisible : le détail entre les deux mâchoires derrière l'éclisse, le réglage signalé par une vignette (« boulon réglable »), l'inscription de l'éclisse, le trou d'accrochage des manchons. Les boucles de câble serties qui accompagnent la pince sur la photo du produit ne font pas partie de l'outil. La page « Fonctionnement » montre la pince qui s'ouvre et se referme. Pour faire mieux : la pince elle-même sur une table avec une règle, de face et de côté, ou la fiche du fabricant — les épaisseurs, la visserie et le diamètre des empreintes seraient alors des mesures et non des hypothèses.",
+   "parts": [
+    [
+     "1",
+     "",
+     2,
+     "MÂCHOIRE forgée, noire, à trois demi-empreintes",
+     {
+      "pseudo": true,
+      "note": "Une droite et une gauche, symétriques. Acier allié forgé et trempé selon la fiche du produit. Contour relevé sur la vue de face : tête de 96 mm de large, bout à méplat de 28 mm, queue de 92 mm entre le pivot et l'articulation de la poignée. Épaisseur de 16 mm supposée. Empreintes pour câble de 5/32, 1/4, 5/16 po, de la plus petite (au bout) à la plus grande (près du pivot) ; leurs diamètres (8, 12 et 16 mm) ne sont pas publiés : estimés sur les photos."
+     }
+    ],
+    [
+     "2",
+     "",
+     2,
+     "ÉCLISSE de 78 mm × 26 mm, une devant et une derrière",
+     {
+      "pseudo": true,
+      "note": "Les deux éclisses portent les boulons de pivot des mâchoires, à 50 mm l'un de l'autre. La marque VEVOR est inscrite sur l'éclisse avant (lisible sur le gros plan) : elle n'est pas reproduite. Épaisseur de 6 mm supposée ; l'éclisse arrière, cachée, est supposée identique."
+     }
+    ],
+    [
+     "3",
+     "",
+     2,
+     "BOULON de pivot de mâchoire, tête hexagonale (M12 × 41 supposé)",
+     {
+      "pseudo": true,
+      "note": "Chaque mâchoire tourne sur son boulon. Les photos montrent une tête sombre de chaque côté de l'inscription ; grandeur, longueur et forme exacte de la tête sont supposées."
+     }
+    ],
+    [
+     "4",
+     "",
+     2,
+     "POIGNÉE rouge : tête forgée et bras en acier tubulaire",
+     {
+      "pseudo": true,
+      "note": "Une droite et une gauche. La tête, épaisse de 30 mm (supposé), chevauche la queue de la mâchoire par deux oreilles de Ø 26 mm ; les deux têtes se rejoignent sur le boulon central par une patte à mi-épaisseur (à l'arrière pour la poignée droite, à l'avant pour la gauche : agencement supposé). Entre les deux têtes, un jour en trou de serrure, puis la butée où elles se touchent, pince fermée. Bras de Ø 28 mm à la sortie de la tête puis 22 mm, légèrement cintré vers l'extérieur : écartement des bras relevé sur la vue de face. Le bras est modélisé plein : l'épaisseur de la paroi du tube n'est pas publiée."
+     }
+    ],
+    [
+     "5",
+     "",
+     2,
+     "BOULON d'articulation mâchoire-poignée (M12 × 43 supposé)",
+     {
+      "pseudo": true,
+      "note": "À 30,3 mm du boulon central : c'est la petite bielle de la genouillère. Grandeur supposée."
+     }
+    ],
+    [
+     "6",
+     "",
+     1,
+     "BOULON central des poignées (M12 × 43 supposé)",
+     {
+      "pseudo": true,
+      "note": "Les deux poignées tournent l'une sur l'autre autour de ce boulon, qui se déplace le long de l'axe de la pince quand on ouvre. Une vignette de détaillant signale un « boulon réglable » à la tête des poignées, sans dire lequel des trois ni comment : le réglage n'est pas modélisé."
+     }
+    ],
+    [
+     "7",
+     "",
+     5,
+     "ÉCROU hexagonal M12 (supposé), derrière",
+     {
+      "pseudo": true,
+      "note": "Aucune photo ne montre le dos de la pince : écrous supposés, un par boulon."
+     }
+    ],
+    [
+     "8",
+     "",
+     2,
+     "MANCHON DE POIGNÉE en caoutchouc noir, 134 mm de long",
+     {
+      "pseudo": true,
+      "note": "Garde au départ, quatre bossages pour les doigts du côté intérieur, bout évasé. Le trou d'accrochage visible au bout des manchons sur une vignette n'est pas modélisé."
+     }
+    ],
+    [
+     "9",
+     "",
+     null,
+     "Fonctionnement : la pince s'ouvre et se referme (scène animée)",
+     {
+      "link": "P02",
+      "no3d": true,
+      "pseudo": true
+     }
+    ]
+   ]
+  },
+  "P02": {
+   "title": "HOW IT WORKS",
+   "titleFr": "Fonctionnement : ouvrir, refermer",
+   "pn": "",
+   "sheets": [
+    "P02",
+    "P01"
+   ],
+   "note": "La même pince, animée en trois temps. Les deux mâchoires se touchent, les têtes des poignées sont en butée. Les trois boulons des poignées sont presque alignés : c'est la position où la pince serre le plus fort. Les têtes des poignées tournent autour du boulon central et tirent les queues des mâchoires l'une vers l'autre : les mâchoires s'écartent. Sur le modèle, les poignées s'ouvrent d'environ 55° chacune (106 cm d'un bout à l'autre) et l'empreinte de 5/16 po laisse un jour d'environ 25 mm pour y poser le manchon. En refermant, les trois boulons se réalignent (genouillère) : la course des mâchoires devient très petite pour un grand mouvement des poignées, et l'effort sur le manchon est maximal en fin de course. Le manchon se place dans l'empreinte de la grandeur du câble. La cinématique est celle des cotes relevées sur les photos : l'ouverture maximale du fabricant n'a pas pu être lue. Mode d'emploi (nombre de sertissages par manchon, ordre, contrôle au calibre) : à prendre dans la notice du fabricant des manchons, il ne figure pas sur les vignettes reçues.",
+   "parts": [
+    [
+     "1",
+     "",
+     2,
+     "MÂCHOIRE forgée, noire, à trois demi-empreintes",
+     {
+      "pseudo": true,
+      "note": "Une droite et une gauche, symétriques. Acier allié forgé et trempé selon la fiche du produit. Contour relevé sur la vue de face : tête de 96 mm de large, bout à méplat de 28 mm, queue de 92 mm entre le pivot et l'articulation de la poignée. Épaisseur de 16 mm supposée. Empreintes pour câble de 5/32, 1/4, 5/16 po, de la plus petite (au bout) à la plus grande (près du pivot) ; leurs diamètres (8, 12 et 16 mm) ne sont pas publiés : estimés sur les photos."
+     }
+    ],
+    [
+     "2",
+     "",
+     2,
+     "ÉCLISSE de 78 mm × 26 mm, une devant et une derrière",
+     {
+      "pseudo": true,
+      "note": "Les deux éclisses portent les boulons de pivot des mâchoires, à 50 mm l'un de l'autre. La marque VEVOR est inscrite sur l'éclisse avant (lisible sur le gros plan) : elle n'est pas reproduite. Épaisseur de 6 mm supposée ; l'éclisse arrière, cachée, est supposée identique."
+     }
+    ],
+    [
+     "3",
+     "",
+     2,
+     "BOULON de pivot de mâchoire, tête hexagonale (M12 × 41 supposé)",
+     {
+      "pseudo": true,
+      "note": "Chaque mâchoire tourne sur son boulon. Les photos montrent une tête sombre de chaque côté de l'inscription ; grandeur, longueur et forme exacte de la tête sont supposées."
+     }
+    ],
+    [
+     "4",
+     "",
+     2,
+     "POIGNÉE rouge : tête forgée et bras en acier tubulaire",
+     {
+      "pseudo": true,
+      "note": "Une droite et une gauche. La tête, épaisse de 30 mm (supposé), chevauche la queue de la mâchoire par deux oreilles de Ø 26 mm ; les deux têtes se rejoignent sur le boulon central par une patte à mi-épaisseur (à l'arrière pour la poignée droite, à l'avant pour la gauche : agencement supposé). Entre les deux têtes, un jour en trou de serrure, puis la butée où elles se touchent, pince fermée. Bras de Ø 28 mm à la sortie de la tête puis 22 mm, légèrement cintré vers l'extérieur : écartement des bras relevé sur la vue de face. Le bras est modélisé plein : l'épaisseur de la paroi du tube n'est pas publiée."
+     }
+    ],
+    [
+     "5",
+     "",
+     2,
+     "BOULON d'articulation mâchoire-poignée (M12 × 43 supposé)",
+     {
+      "pseudo": true,
+      "note": "À 30,3 mm du boulon central : c'est la petite bielle de la genouillère. Grandeur supposée."
+     }
+    ],
+    [
+     "6",
+     "",
+     1,
+     "BOULON central des poignées (M12 × 43 supposé)",
+     {
+      "pseudo": true,
+      "note": "Les deux poignées tournent l'une sur l'autre autour de ce boulon, qui se déplace le long de l'axe de la pince quand on ouvre. Une vignette de détaillant signale un « boulon réglable » à la tête des poignées, sans dire lequel des trois ni comment : le réglage n'est pas modélisé."
+     }
+    ],
+    [
+     "7",
+     "",
+     5,
+     "ÉCROU hexagonal M12 (supposé), derrière",
+     {
+      "pseudo": true,
+      "note": "Aucune photo ne montre le dos de la pince : écrous supposés, un par boulon."
+     }
+    ],
+    [
+     "8",
+     "",
+     2,
+     "MANCHON DE POIGNÉE en caoutchouc noir, 134 mm de long",
+     {
+      "pseudo": true,
+      "note": "Garde au départ, quatre bossages pour les doigts du côté intérieur, bout évasé. Le trou d'accrochage visible au bout des manchons sur une vignette n'est pas modélisé."
+     }
+    ]
+   ]
+  }
+ },
+ "documents": []
+}

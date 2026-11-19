@@ -502,6 +502,41 @@ pièces (numéro, quantité, page du manuel).
   Cadence ralentie pour la lecture (environ 7 courses par seconde). Le décor
   se limite au bois ; l'opérateur n'est pas montré.
 
+- **Pince à sertir de 30 po pour manchons de câble (wire line)** (`pince-a-sertir`) :
+  pince à sertir manuelle VEVOR à trois empreintes, reconstituée d'après les
+  vignettes d'une capture d'écran de recherche d'images (639 × 1 147 pixels ;
+  page P01 : les quatre vignettes de la pince à trois empreintes, agrandies),
+  sans plan ni cote. Données publiées, reprises telles quelles : longueur de
+  30 po, empreintes pour câble de 5/32, 1/4 et 5/16 po (4, 6 et 8 mm), acier
+  allié, mâchoires forgées et trempées, poignées en acier tubulaire. Les fiches
+  du fabricant et des détaillants n'étaient pas joignables depuis la session :
+  ces données viennent de la recherche web et de la vignette des dimensions,
+  dont le reste (largeur de la tête, ouverture maximale, poids net) est
+  illisible. Tout le reste est relevé sur la vue de face, à 4,3 mm par pixel
+  (page P02 : tableau du relevé), ou supposé : épaisseurs, dos de la pince,
+  visserie M12, diamètre des empreintes (8, 12 et 16 mm). Mécanisme lu sur les
+  photos, celui d'un coupe-boulons : deux mâchoires sur leur pivot, tenues par
+  deux éclisses ; têtes forgées des poignées articulées sur les queues des
+  mâchoires et, entre elles, sur un boulon central ; fermée, la pince a ses
+  trois boulons de poignée presque alignés (genouillère). `etat(phi)` dans
+  `src/models/pince-a-sertir/index.js` donne la place de chaque boulon pour une
+  ouverture `phi` des mâchoires ; l'ouverture maximale du modèle (mâchoires à
+  10°, poignées à 55°, 1,06 m d'un bout à l'autre) est celle où les oreilles
+  des deux poignées se rejoignent sur l'axe — valeur du modèle, pas du
+  fabricant. P01 : la pince fermée et sa vue éclatée en 18 pièces (mâchoires,
+  éclisses, boulons, écrous, poignées, manchons). P02 : la même, animée en
+  trois temps du montage par étapes (fermée, ouverte, refermée), vue tête en
+  haut ; les bulles de repère suivent les pièces. Mâchoires, éclisses et têtes
+  des poignées sont des contours extrudés (`plaque()`), bras et manchons des
+  corps balayés le long de leur axe (`balayage()` ; bras modélisés pleins,
+  l'épaisseur du tube n'étant pas publiée). Non modélisés, parce qu'illisibles
+  : le détail entre les mâchoires derrière l'éclisse, le « boulon réglable »
+  signalé par une vignette, l'inscription de l'éclisse, le trou d'accrochage
+  des manchons ; les boucles de câble serties de la photo ne font pas partie de
+  l'outil. La fiche et la page du relevé sont écrites par
+  `node tools/pince_a_sertir_fiche.mjs [--page <fichier.html>]`, qui contrôle
+  aussi que le mécanisme reste monté sur toute la course (41 positions).
+
 - **Panneau de grillage rigide à plis en V, maille 2 × 6 po** (`grillage-cage`) :
   type de grillage de la cage, identifié sur une photo (P01) et son relevé
   (P02 : fils verticaux tous les 2 po environ, fils horizontaux tous les 6 po,
