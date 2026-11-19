@@ -1,13 +1,14 @@
 // Contrôle chiffré de la pompe Bean 420 (American Manufacturing AL0918B) contre son
 // manuel : cotes de la figure 7, du tableau 8 et de la section 2.0 (« cote »), et
-// relevés sur le tracé des figures 2A, 2B et 3 (« relevé »), en pouces. Puis sa pose
-// sur le tube à l'eau 1524010812 : pose supposée, mais rien ne doit se traverser.
+// relevés sur le tracé des figures 2A, 2B et 3 (« relevé »), en pouces. Puis sa
+// fixation sur le tube à l'eau 1524010812 sans le modifier : l'embase proposée doit
+// remplir le logement du bac, tenir sous ses barres et porter le gabarit de la pompe.
 //
 // Usage : node scripts/check-pompe-bean-420.mjs
 import * as THREE from 'three';
 import { buildProcedural } from '../src/viewer/assembly.js';
 import builders, { COTE, RELEVE, DENTURE } from '../src/models/pompe-bean-420/index.js';
-import bac, { POSE_POMPE } from '../src/models/tube-eau/index.js';
+import bac, { POSE_POMPE, EMBASE, TROUS_POMPE, AJOUR, D } from '../src/models/tube-eau/index.js';
 
 const IN = 0.0254;
 const meca = buildProcedural(builders, 'P02');
@@ -108,35 +109,77 @@ for (const [nom, x, z] of [['avant gauche', f.avant.x, -f.avant.z], ['avant droi
   cote(`Trou ${nom} : patte à la base`, touche ? touche.point.y / IN : NaN, 0, 0.002);
 }
 
-console.log('— Pose sur le tube à l\'eau 1524010812 (supposée)');
+console.log('— Fixation sur le tube à l\'eau 1524010812, sans le modifier (embase proposée)');
 const tub = buildProcedural(bac, 'P01');
 tub.root.updateMatrixWorld(true);
 const T = (ref) => tub.refs.get(ref);
 const traverse = boite(T('4')), plaque1 = boite(T('1'));
+const barres = T('5').map((o) => boite(o)).sort((a, b) => a.z0 - b.z0);
 const pompe = T('11')[0];
 const bp = boite(pompe);
 const jeu = (nom, v, min = 0.25) => { n++; const ok = v >= min; if (!ok) failed = true; console.log(`${ok ? '✓' : '✕'} ${nom} : ${v.toFixed(3)} po (au moins ${min})`); };
-releve('Pattes de la pompe sur le fond de la traverse', bp.y0 - (traverse.y0 + 0.1875), 0);
+// Le logement qu'offre le bac : entre les flancs de la traverse, sous les barres.
+const fond = traverse.y0 + 0.1875;
+const flancs = { x0: traverse.x0 + 1 + 0.1875, x1: traverse.x1 - 1 - 0.1875 };
+releve('Logement du bac, largeur entre les flancs de la traverse', flancs.x1 - flancs.x0, 15.0625);
+releve('Logement du bac, hauteur sous les barres', barres[0].y0 - fond, 2);
+releve('Barres, d\'axe en axe', milieu(barres[1], 'z') - milieu(barres[0], 'z'), 20.125);
+// L'embase : cadre (deux traverses, deux longerons) puis plaque.
+const pieces = T('12')[0].children[0].children.map((o) => boite(o));
+const cadre = pieces.slice(0, 4), plaque = pieces[4];
+const e = boite(T('12'));
+releve('Embase, posée sur le fond de la traverse', e.y0 - fond, 0);
+releve('Embase, largeur', e.x1 - e.x0, EMBASE.large);
+releve('Embase, jeu à chaque flanc', e.x0 - flancs.x0, EMBASE.jeu);
+releve('Embase, jeu à l\'autre flanc', flancs.x1 - e.x1, EMBASE.jeu);
+releve('Embase, longueur hors tout', e.z1 - e.z0, 21.125);
+releve('Cadre, hauteur égale à celle du logement', cadre[0].y1 - cadre[0].y0, 2);
+releve('Barre arrière posée sur la traverse du cadre', barres[0].y0 - cadre[0].y1, 0);
+releve('Barre avant posée sur la traverse du cadre', barres[1].y0 - cadre[1].y1, 0);
+releve('Traverse arrière du cadre, à l\'aplomb de sa barre', milieu(cadre[0], 'z') - milieu(barres[0], 'z'), 0);
+releve('Traverse avant du cadre, à l\'aplomb de sa barre', milieu(cadre[1], 'z') - milieu(barres[1], 'z'), 0);
+releve('Plaque, épaisseur', plaque.y1 - plaque.y0, EMBASE.plaque);
+releve('Plaque, jeu à la barre arrière', plaque.z0 - barres[0].z1, EMBASE.jeu);
+releve('Plaque, jeu à la barre avant', barres[1].z0 - plaque.z1, EMBASE.jeu);
+releve('Pattes de la pompe sur la plaque', bp.y0 - plaque.y1, 0);
 const origine = pompe.getWorldPosition(new THREE.Vector3()); // axe des clapets, base et axe de la pompe
 releve('Axe de la pompe sur celui de la traverse', origine.x / IN - milieu(traverse, 'x'), 0);
-releve('Axe des clapets, derrière la barre avant', origine.z / IN - milieu(boite(T('5')[1]), 'z'), POSE_POMPE.barre);
-jeu('Jeu des goujons de culasse à la face avant du bac', plaque1.z1 - bp.z1);
-jeu('Jeu du robinet de niveau à la face arrière du bac', bp.z0 - plaque1.z0);
-// Chaque maillage de la pompe contre chaque barre : boîtes disjointes, à 0,1 po près.
-const barres = T('5').map((o) => new THREE.Box3().setFromObject(o).expandByScalar(0.1 * IN));
+releve('Axe des clapets, devant la barre avant', origine.z / IN - milieu(barres[1], 'z'), POSE_POMPE.avance);
+// Boulons de la pompe : à l'aplomb de ses trous taraudés (gabarit du manuel porté dans le repère du bac).
+const boulons = T('13').map((o) => boite(o));
+compte('Boulons 1/2-13 de la pompe', boulons.length, 5);
+let racine = null; // l'assemblage de la pompe, sous ses groupes de pose
+pompe.traverse((o) => { if (!racine && o.userData.isAssembly) racine = o; });
+const gabarit = [[f.avant.x, -f.avant.z], [f.avant.x, f.avant.z], [f.arriere.x, -f.arriere.z], [f.arriere.x, f.arriere.z], [f.arriere.x, 0]]
+  .map(([x, z]) => new THREE.Vector3(x * IN, 0, z * IN).applyMatrix4(racine.matrixWorld));
+const ecart = Math.max(...gabarit.map((g) => Math.min(...boulons.map((b) => Math.hypot(milieu(b, 'x') - g.x / IN, milieu(b, 'z') - g.z / IN)))));
+releve('Boulons de la pompe, écart au gabarit du manuel', ecart, 0, 0.001);
+// Trous de la plaque (repère du bac : X depuis le bout gauche, Z depuis la face arrière) : sur la plaque, hors des tubes du cadre.
+const ox = plaque1.x0 - 0.1875, oz = plaque1.z0; // la plaque 1 commence à une épaisseur de tôle du bout gauche
+const ecartTrous = Math.max(...gabarit.map((g) => Math.min(...TROUS_POMPE.map(([x, z]) => Math.hypot(x + ox - g.x / IN, z + oz - g.z / IN)))));
+releve('Trous de la plaque, écart au gabarit du manuel', ecartTrous, 0, 0.001);
+compte('Trous de la plaque hors des tubes du cadre', TROUS_POMPE.filter(([x, z]) => x + ox > plaque.x0 + 1.3 && x + ox < plaque.x1 - 1.3 && z + oz > plaque.z0 + 0.5 && z + oz < plaque.z1 - 0.5).length, 5);
+// Prise des boulons de 1 po : 1 po moins la rondelle et la plaque de 3/8 po ; les taraudages ont 5/8 po de profond.
+const prise = boulons[0].y1 - plaque.y1;
+jeu('Boulons de la pompe, prise dans les pattes', prise, 0.5);
+jeu('Boulons de la pompe, garde au fond du taraudage de 5/8 po', 0.625 - prise, 0.05);
+// Boulons des barres : un à chaque bout.
+const vis = T('9').map((o) => boite(o));
+compte('Boulons 1/4-20 des barres', vis.length, 4);
+releve('Boulons des barres, du bout de la barre', milieu(vis[0], 'x') - barres[0].x0, 0.375);
+// Rien ne se traverse : chaque maillage de la pompe contre chaque barre, à 0,1 po près.
+const zones = T('5').map((o) => new THREE.Box3().setFromObject(o).expandByScalar(0.1 * IN));
 let touches = 0;
 const mb = new THREE.Box3();
-pompe.traverse((o) => { if (o.isMesh && barres.some((b) => b.intersectsBox(mb.setFromObject(o)))) touches++; });
+pompe.traverse((o) => { if (o.isMesh && zones.some((b) => b.intersectsBox(mb.setFromObject(o)))) touches++; });
 compte('Maillages de la pompe qui touchent une barre', touches, 0);
-// Sous le niveau du dessus du bac, la pompe tient entre les flancs de la traverse.
-const flancs = { x0: traverse.x0 + 1 + 0.1875, x1: traverse.x1 - 1 - 0.1875 };
-let hors = 0;
-pompe.traverse((o) => {
-  if (!o.isMesh) return;
-  const b = boite(o);
-  if (b.y0 < traverse.y1 - 0.01 && (b.x0 < flancs.x0 || b.x1 > flancs.x1)) hors++;
-});
-compte('Maillages de la pompe hors des flancs de la traverse, sous le dessus du bac', hors, 0);
+jeu('Pompe au-dessus du rebord du bac', bp.y0 - plaque1.y1);
+jeu('Jeu des goujons de culasse à la face avant du bac', plaque1.z1 - bp.z1);
+jeu('Jeu du robinet de niveau à la face arrière du bac', bp.z0 - plaque1.z0);
+// Aspiration : les orifices (Ø 1,9 po pour un tuyau de 1 1/2 po) tombent devant l'embase, au-dessus de l'ajour avant.
+const ajour = plaque1.z0 + D / 2 + AJOUR.b; // base de l'ajour avant du fond de la traverse
+jeu('Axe des orifices d\'aspiration, en deçà du bord de l\'ajour avant', ajour - origine.z / IN, 0.5);
+jeu('Orifices d\'aspiration, devant la traverse avant du cadre', origine.z / IN - e.z1, 0.95);
 
 console.log(`${failed ? 'ÉCHEC' : 'Conforme'} — ${n} mesures`);
 process.exit(failed ? 1 : 0);

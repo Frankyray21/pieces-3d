@@ -70,7 +70,11 @@
   ],
   [
    "Pompe à eau",
-   "Bean 420 (American Manufacturing AL0918B, interchangeable avec la FMC L0918) : triplex à pistons de 2 1/4 po, 20,2 gal US/min à 625 tr/min, 700 lb/po², 200 lb. Posée dans la traverse à titre indicatif : aucun plan ne montre son support ni ses boulons de fixation"
+   "Bean 420 (American Manufacturing AL0918B, interchangeable avec la FMC L0918) : triplex à pistons de 2 1/4 po, 20,2 gal US/min à 625 tr/min, 700 lb/po², 200 lb. Fixée sans modifier le bac : elle est boulonnée sur une embase d'adaptation logée dans la traverse et serrée par les deux barres du bac"
+  ],
+  [
+   "Embase de la pompe (proposition)",
+   "Sur aucun plan : conçue ici pour remplir le logement que le bac offre. Cadre soudé en tube rectangulaire de 2 × 1 × 1/8 po, de 15 × 21 1/8 po hors tout (15 1/16 po entre les flancs de la traverse, 2 po sous les barres) ; plaque de 15 × 19 1/16 × 3/8 po entre les deux barres, percée de cinq trous de 9/16 po au gabarit de la pompe ; cinq boulons 1/2-13 × 1 po vissés par-dessous dans les pattes de la pompe. Base de la pompe à 3/8 po au-dessus du rebord du bac"
   ],
   [
    "Couleur de surface",
@@ -105,7 +109,7 @@
     "P01",
     "P02"
    ],
-   "note": "Bac à eau ouvert, soudé en tôle de 3/16 po. Modèle 3D construit d'après le plan 1524010812 (échelle 1:15, coupe A-A, détail B à 1:2). Les cotes inscrites au plan sont reprises : 45 3/8 × 35 1/4 po, 33 15/16 po de haut pieds compris, pieds à 3 po des bouts, traverse à 6 po du rebord du bout droit, raccords de 1 po qui dépassent de 3/4 po. Tout le reste est relevé sur le tracé vectoriel du plan : épaisseur et rayons de pli, rebord du haut (2 3/16 po, retombée de 1 3/16 po), hauteur des pieds (3 3/4 po), profil et ajours de la traverse, barres, position des raccords et des brides. Lecture du plan : la plaque 1 forme d'un seul pli le fond et les deux grandes faces ; les bouts (plaques 2 et 3) sont découpés à son profil intérieur et posés contre ses chants (joint d'angle ouvert, soudé des deux côtés) ; la traverse (plaque 4) est un oméga ouvert vers le haut dont les pattes entrent sous les rebords de la plaque 1, d'où la note « PLACER AVANT DE SOUDER LA PLAQUE №2 ». Le plan ne dit pas à quoi sert la traverse. Contrôle : le volume d'acier du modèle donne 444,2 lb, pour 443,9 lb au cartouche. La flotte 152042600 (plan séparé) est posée dans le bac ; aucun des deux plans ne donne sa position ni la pièce qui la porte : elle est montrée bras à l'horizontale, vis-à-vis du premier raccord de 1 po, à titre indicatif. La pompe à eau Bean 420 (American Manufacturing AL0918B, manuel de 48 pages ; voir l'équipement « Pompe à pistons Bean 420 ») est posée dans la traverse, pattes sur le fond ajouré, en travers du bac : culasses vers la face avant, arbre d'entrée vers le milieu du bac, axe des clapets à 30 9/16 po de la face arrière. Cette pose est supposée : ni le plan du bac ni le manuel de la pompe ne montrent la pièce qui la porte. Les quatre trous taraudés 1/2-13 de la pompe (entraxes de 8 1/2 × 12 11/16 po) ne tombent sur aucune pièce du bac — ni sur les barres, espacées de 20 1/8 po et percées à 5/16 po, ni sur les bandes du fond de la traverse : il manque donc une embase ou un support, qui n'est pas modélisé faute de plan. La pompe est placée pour ne rien traverser : la barre avant passe sous ses cylindres, entre les colonnes d'aspiration et les pattes avant, la barre arrière reste derrière son carter. Les titres en majuscules sont ceux des nomenclatures ; les descriptions entre parenthèses décrivent la pièce d'après sa forme. Peint en noir, à la demande du client : le cartouche ne précise pas de couleur de surface ; les demi-manchons en inox gardent leur fini.",
+   "note": "Bac à eau ouvert, soudé en tôle de 3/16 po. Modèle 3D construit d'après le plan 1524010812 (échelle 1:15, coupe A-A, détail B à 1:2). Les cotes inscrites au plan sont reprises : 45 3/8 × 35 1/4 po, 33 15/16 po de haut pieds compris, pieds à 3 po des bouts, traverse à 6 po du rebord du bout droit, raccords de 1 po qui dépassent de 3/4 po. Tout le reste est relevé sur le tracé vectoriel du plan : épaisseur et rayons de pli, rebord du haut (2 3/16 po, retombée de 1 3/16 po), hauteur des pieds (3 3/4 po), profil et ajours de la traverse, barres, position des raccords et des brides. Lecture du plan : la plaque 1 forme d'un seul pli le fond et les deux grandes faces ; les bouts (plaques 2 et 3) sont découpés à son profil intérieur et posés contre ses chants (joint d'angle ouvert, soudé des deux côtés) ; la traverse (plaque 4) est un oméga ouvert vers le haut dont les pattes entrent sous les rebords de la plaque 1, d'où la note « PLACER AVANT DE SOUDER LA PLAQUE №2 ». Le plan ne dit pas à quoi sert la traverse. Contrôle : le volume d'acier du modèle donne 444,2 lb, pour 443,9 lb au cartouche. La flotte 152042600 (plan séparé) est posée dans le bac ; aucun des deux plans ne donne sa position ni la pièce qui la porte : elle est montrée bras à l'horizontale, vis-à-vis du premier raccord de 1 po, à titre indicatif. La pompe à eau Bean 420 (American Manufacturing AL0918B, manuel de 48 pages ; voir l'équipement « Pompe à pistons Bean 420 ») est fixée au bac sans que celui-ci soit modifié. Ses cinq trous taraudés 1/2-13 (entraxes de 8 1/2 × 12 11/16 po) ne tombent sur aucune pièce du bac : c'est donc la pompe qui est adaptée, par une embase qui n'existe sur aucun plan et qui est proposée ici. Le bac offre un logement à l'échelle du plan : 15 1/16 po entre les flancs de la traverse et 2 po de haut, juste sous les deux barres, espacées de 20 1/8 po. Le plan dessine à chaque bout des barres deux cercles concentriques, lus comme le trou de passage de 5/16 po de la barre au-dessus d'un taraudage 1/4-20 de l'aile, pour le boulon 1/4-20 × 1/2 po de la nomenclature (repère 9) : les barres sont alors des brides démontables. L'embase remplit ce logement : un cadre en tube de 2 × 1 po, de 15 po de large, dont les deux traverses sont à l'aplomb des barres, qui les serrent sur le fond ; une plaque de 3/8 po, entre les barres, cale l'ensemble en long et reçoit la pompe, boulonnée par-dessous. Montage : boulonner la pompe sur l'embase, déposer les barres, descendre l'ensemble dans la traverse, reposer les barres et leurs quatre boulons. La pompe est en travers du bac, culasses vers la face avant, arbre d'entrée vers le milieu du bac, axe des clapets à 29 3/16 po de la face arrière : ses orifices d'aspiration tombent devant l'embase, au-dessus de l'ajour avant du fond de la traverse. Si les barres sont en réalité soudées et non boulonnées, cette embase ne peut pas être mise en place telle quelle. Les titres en majuscules sont ceux des nomenclatures ; les descriptions entre parenthèses décrivent la pièce d'après sa forme. Peint en noir, à la demande du client : le cartouche ne précise pas de couleur de surface ; les demi-manchons en inox gardent leur fini.",
    "parts": [
     [
      "1",
@@ -183,10 +187,10 @@
      "9",
      "HBOLT 0.2500-20x0.5x0.5-N",
      1,
-     "(boulon à tête hexagonale 1/4-20 × 1/2 po)",
+     "(boulon à tête hexagonale 1/4-20 × 1/2 po, des barres)",
      {
-      "no3d": true,
-      "note": "Inscrit à la nomenclature sans titre ni repère sur les vues : son emplacement n'est pas indiqué, il n'est pas montré en 3D. Les barres (repère 5) ont quatre trous de 5/16 po."
+      "qty3d": 4,
+      "note": "Inscrit à la nomenclature en un exemplaire, sans titre ni repère sur les vues. Le plan dessine deux cercles concentriques à chaque bout des deux barres (repère 5) : lus comme le trou de 5/16 po de la barre au-dessus d'un taraudage 1/4-20 de l'aile de la traverse. Le boulon est donc montré aux quatre bouts des barres (interprétation) ; 1/2 po de long traverse la barre et l'aile, de 3/16 po chacune. Les taraudages de l'aile ne sont pas percés dans le modèle."
      }
     ],
     [
@@ -205,7 +209,27 @@
      1,
      "POMPE BEAN 420 (pompe triplex à pistons American Manufacturing AL0918B, interchangeable avec la FMC L0918)",
      {
-      "note": "Hors nomenclature du plan 1524010812. Modèle de l'équipement « Pompe à pistons Bean 420 » (199 pièces, 59 repères ; ses listes et les pages de son manuel y sont). Encombrement : 23,219 × 15 × 11,375 po, 200 lb. Posée dans la traverse à titre indicatif : son support et ses boulons de fixation ne figurent sur aucun plan et ne sont pas modélisés."
+      "note": "Hors nomenclature du plan 1524010812. Modèle de l'équipement « Pompe à pistons Bean 420 » (199 pièces, 59 repères ; ses listes et les pages de son manuel y sont). Encombrement : 23,219 × 15 × 11,375 po, 200 lb. Boulonnée sur l'embase d'adaptation (repère 12) par ses cinq trous taraudés 1/2-13 ; le bac n'est pas modifié."
+     }
+    ],
+    [
+     "12",
+     "",
+     1,
+     "EMBASE D'ADAPTATION DE LA POMPE (proposition : cadre en tube de 2 × 1 po et plaque de 3/8 po)",
+     {
+      "pnText": "Proposition, sur aucun plan",
+      "note": "Pièce conçue ici pour fixer la pompe sans modifier le bac ; elle ne figure ni au plan du bac ni au manuel de la pompe. Cadre soudé en tube rectangulaire de 2 × 1 × 1/8 po : deux traverses de 15 po à l'aplomb des barres du bac (20 1/8 po d'axe en axe) et deux longerons de 19 1/8 po le long des flancs, soit 15 × 21 1/8 po hors tout ; 1/32 po de jeu de chaque côté dans la traverse du bac, hauteur de 2 po égale à celle du logement sous les barres. Plaque de 15 × 19 1/16 × 3/8 po soudée sur le cadre, entre les deux barres (1/32 po de jeu à chacune), percée de cinq trous de 9/16 po : quatre aux entraxes de 8 1/2 po (avant) et 8 9/16 po (arrière), à 12 11/16 po l'un de l'autre, et un au milieu de l'arrière. Les barres serrent les traverses du cadre sur le fond ; la plaque bute contre les barres. Épaisseurs à valider par un calcul avant fabrication. Gris pour la distinguer du bac."
+     }
+    ],
+    [
+     "13",
+     "",
+     5,
+     "BOULON 1/2-13 × 1 po ET RONDELLE (pompe sur l'embase, vissé par-dessous)",
+     {
+      "pnText": "Proposition, sur aucun plan",
+      "note": "Dans les cinq trous taraudés 1/2-13 des pattes de la pompe (5/8 po de profond aux quatre coins, 3/4 po au milieu de l'arrière, figure 7 du manuel) : 1 po sous tête, moins la rondelle et la plaque de 3/8 po, laisse environ 0,55 po en prise. Têtes sous la plaque, dans le cadre : à serrer avant de descendre l'embase dans la traverse."
      }
     ]
    ]

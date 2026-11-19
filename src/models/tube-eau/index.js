@@ -10,8 +10,9 @@
 // relevées sur cette image, à l'échelle 1:3 que donnent les têtes des boulons
 // de 3/8 po (le cartouche inscrit 1:8, échelle de la feuille).
 // Pompe à eau Bean 420 (American Manufacturing AL0918B) : modèle de l'équipement
-// pompe-bean-420, posé dans la traverse. Aucun plan ne montre son support : voir
-// POSE_POMPE.
+// pompe-bean-420, fixé au bac sans le modifier, par une embase d'adaptation logée
+// dans la traverse et serrée par les deux barres du bac. L'embase est une
+// proposition : aucun plan ne la montre. Voir EMBASE et POSE_POMPE.
 // Contrôle : scripts/check-tube-eau.mjs et scripts/check-pompe-bean-420.mjs.
 // Repère : X le long du bac (0 à la face extérieure du bout gauche, celui des
 // raccords de 1 po ; modèle centré), Y vers le haut (0 sous les pieds), Z en
@@ -66,14 +67,31 @@ export const FLOTTE = {
 // à 3 po du bout gauche.
 export const POSE_FLOTTE = { bout: 3, z: 26.5625 };
 
-// Pose de la pompe Bean 420 (aucun plan ne la donne, ni la pièce qui la porte) : dans la traverse, pattes sur le fond
-// ajouré, axe de la pompe sur celui de la traverse, pompe en travers du bac. Culasses vers la face avant, arbre d'entrée
-// vers le milieu du bac. La barre avant passe sous les cylindres, entre les colonnes d'aspiration et les pattes avant
-// de la pompe, à « barre » po derrière l'axe des clapets ; la barre arrière reste derrière le carter.
-export const POSE_POMPE = { barre: 2.85 };
+// Fixation de la pompe Bean 420 sans modifier le bac. Ce que le bac offre, à l'échelle du plan : un logement dans la
+// traverse (15 1/16 po entre les flancs, 2 po de haut sous les barres) et deux barres en travers, à 20 1/8 po d'axe en
+// axe. Le plan dessine à chaque bout des barres deux cercles concentriques : lus comme le trou de passage de 5/16 po de
+// la barre au-dessus d'un taraudage 1/4-20 de l'aile, pour le boulon 1/4-20 × 1/2 po de la nomenclature (repère 9). Les
+// barres sont donc des brides démontables. Les trous taraudés 1/2-13 de la pompe (8 1/2 × 12 11/16 po) ne tombant sur
+// aucune pièce du bac, c'est la pompe qu'on adapte : une embase (proposition, sur aucun plan) qui remplit le logement.
+// Cadre en tube rectangulaire de 2 × 1 po, de 15 po de large : ses deux traverses sont sous les barres, qui les serrent
+// sur le fond ; plaque de 3/8 po entre les barres, qui cale l'embase en long ; la pompe s'y boulonne par-dessous.
+export const EMBASE = { large: 15, tube: { w: 1, h: TRAV.creux - T, t: 1 / 8 }, plaque: 3 / 8, jeu: 1 / 32, boulon: { d: 0.5, len: 1, trou: 9 / 16 } };
+// Pompe en travers du bac, axe sur celui de la traverse, culasses vers la face avant, arbre d'entrée vers le milieu du
+// bac. Axe des clapets à « avance » po devant l'axe de la barre avant : les orifices d'aspiration tombent devant
+// l'embase, au-dessus de l'ajour avant du fond de la traverse.
+export const POSE_POMPE = { avance: 1.5 };
 POSE_POMPE.x = TRAV.xc;
-POSE_POMPE.y = PIED.h + HB - TRAV.creux + T; // dessus du fond de la traverse
-POSE_POMPE.z = BARRE.z[1] + POSE_POMPE.barre; // axe des clapets, depuis la face arrière du bac
+POSE_POMPE.fond = PIED.h + HB - TRAV.creux + T; // dessus du fond de la traverse
+POSE_POMPE.y = POSE_POMPE.fond + EMBASE.tube.h + EMBASE.plaque; // dessus de la plaque : base de la pompe
+POSE_POMPE.z = BARRE.z[1] + POSE_POMPE.avance; // axe des clapets, depuis la face arrière du bac
+/** Trous de fixation de la pompe dans le repère du bac, [x, z] : la pompe est tournée d'un quart de tour. */
+export const TROUS_POMPE = (() => {
+  const { avant, arriere } = COTE_POMPE.fixation;
+  return [[avant.x, -avant.z], [avant.x, avant.z], [arriere.x, -arriere.z], [arriere.x, arriere.z], [arriere.x, 0]]
+    .map(([xp, zp]) => [POSE_POMPE.x + zp, POSE_POMPE.z - xp]);
+})();
+/** Boulons 1/4-20 des barres (repère 9), [x, z] : un à chaque bout de chaque barre. */
+export const BOULONS_BARRES = BARRE.z.flatMap((z) => [-1, 1].map((s) => [TRAV.xc + s * (BARRE.len / 2 - BARRE.trou.bout), z]));
 
 const SOUDURE = 3 / 16; // symboles du plan (typique)
 const PEINT = 'black'; // peinture du bac et du corps de la flotte (demande du client)
@@ -334,6 +352,38 @@ function bride(S, material, peint) {
 }
 
 
+/**
+ * Embase d'adaptation de la pompe (proposition), dans le repère du bac : cadre soudé en tube rectangulaire dont les
+ * deux traverses sont à l'aplomb des barres, et plaque percée pour les cinq boulons de la pompe.
+ */
+function embase(S, material) {
+  const { tube, plaque, large, jeu } = EMBASE;
+  const y0 = POSE_POMPE.fond, y1 = y0 + tube.h;
+  const x0 = TRAV.xc - large / 2, x1 = TRAV.xc + large / 2;
+  const [za, zb] = BARRE.z;
+  const g = S.group();
+  // Section du tube : rectangle creux, [largeur, hauteur].
+  const section = (a0) => ({
+    ext: [[a0, y0], [a0 + tube.w, y0], [a0 + tube.w, y1], [a0, y1]],
+    int: [[a0 + tube.t, y0 + tube.t], [a0 + tube.w - tube.t, y0 + tube.t], [a0 + tube.w - tube.t, y1 - tube.t], [a0 + tube.t, y1 - tube.t]],
+  });
+  // Traverses sous les barres (même largeur qu'elles), d'un flanc à l'autre.
+  for (const z of [za, zb]) {
+    const t = section(z - tube.w / 2);
+    g.add(selonX(S, t.ext, x0, x1, material, { holes: [t.int] }));
+  }
+  // Longerons le long des flancs, entre les deux traverses.
+  for (const x of [x0, x1 - tube.w]) {
+    const t = section(x);
+    g.add(selonZ(S, t.ext, za + tube.w / 2, zb - tube.w / 2, material, { holes: [m(t.int)], bord: false })); // selonZ : trous en mètres
+  }
+  // Plaque entre les deux barres, percée à 9/16 po pour les boulons 1/2-13 de la pompe.
+  const zp0 = za + BARRE.w / 2 + jeu, zp1 = zb - BARRE.w / 2 - jeu;
+  g.add(aPlat(S, [[x0, zp0], [x1, zp0], [x1, zp1], [x0, zp1]], y1, y1 + plaque, material, { holes: TROUS_POMPE.map(([x, z]) => [x, z, EMBASE.boulon.trou / 2]) }));
+  g.children.forEach((c) => { c.userData.hasInterior = true; });
+  return g;
+}
+
 /** Contour d'une joue de la flotte : enveloppe du cercle du cylindre et de l'arrondi autour du bras. */
 function contourJoue() {
   const R = FLOTTE.joue.d / 2, r = FLOTTE.joue.r, { x, y } = FLOTTE.bras;
@@ -411,7 +461,7 @@ export function P02(api) {
   return { view: { dir: [0.8, 0.55, 1] } };
 }
 
-/** Tube à l'eau 1524010812 : bac, bouts, traverse, barres, pieds et raccords ; flotte 152042600 posée dedans, pompe Bean 420 dans la traverse. */
+/** Tube à l'eau 1524010812 : bac, bouts, traverse, barres, pieds et raccords ; flotte 152042600 posée dedans ; pompe Bean 420 sur son embase, serrée par les barres. */
 export function P01(api) {
   const S = api.S;
   // Peinture : tout le bac en noir, brides soudées comprises (demande du client ; le cartouche ne
@@ -436,7 +486,7 @@ export function P01(api) {
     cordonsBout(S, TOLE),
   )), [-0.32, 0, 0]);
   put('4', pose(traverse(S, TOLE)), [0, 0.3, 0]);
-  for (const z of BARRE.z) put('5', pose(barre(S, TOLE), TRAV.xc, PIED.h + HB, z), [0, 0.45, 0]);
+  for (const z of BARRE.z) put('5', pose(barre(S, TOLE), TRAV.xc, PIED.h + HB, z), [0, 0.7, 0]);
   for (const x of PIED.x) put('6', pose(pied(S, TOLE), x, 0), [0, -0.22, 0]);
   for (const z of MANCHON.z) put('7', pose(manchon(S, INOX, TOLE), 0, PIED.h + yManchon, z), [-0.5, 0, 0]);
   put('8', pose(bride(S, ACIER, TOLE), 0, PIED.h + BRIDE.y, BRIDE.z), [-0.5, 0, 0]);
@@ -447,10 +497,18 @@ export function P01(api) {
   const xf = T + POSE_FLOTTE.bout + bras.len - bras.avant; // face avant de la flotte
   const flotte = S.at(S.group(api.sub('P02')), [0, 0, 0], [Math.PI / 4, 0, 0]);
   put('10', pose(flotte, xf, PIED.h + yManchon - bras.x, POSE_FLOTTE.z - bras.y), [-0.25, 0.5, 0.4]);
+  // Vue éclatée, de bas en haut : traverse, boulons de la pompe, embase, barres, leurs boulons, pompe.
+  // Boulons 1/4-20 × 1/2 po des barres (repère 9) : à chaque bout, à travers la barre, dans l'aile de la traverse.
+  for (const [x, z] of BOULONS_BARRES) put('9', pose(S.bolt(0.25 * IN, 0.5 * IN, 'zinc', { axis: 'y' }), x, PIED.h + HB + T, z), [0, 0.82, 0]);
+  // Embase d'adaptation (proposition) : dans la traverse, sous les barres ; cinq boulons 1/2-13 × 1 po, têtes dessous.
+  put('12', pose(embase(S, 'grey'), 0, 0, 0), [0, 0.52, 0]);
+  for (const [x, z] of TROUS_POMPE) {
+    put('13', pose(S.bolt(EMBASE.boulon.d * IN, EMBASE.boulon.len * IN, 'zinc', { axis: '-y', washer: true }), x, POSE_POMPE.fond + EMBASE.tube.h, z), [0, 0.4, 0]);
+  }
   // Pompe Bean 420 : tournée d'un quart de tour (son axe X, des clapets vers le carter, pointe vers la face arrière
-  // du bac ; son arbre d'entrée, côté −Z, vers le bout gauche). Position supposée : voir POSE_POMPE.
+  // du bac ; son arbre d'entrée, côté −Z, vers le bout gauche), boulonnée sur la plaque de l'embase.
   const bean = S.at(S.group(api.sub('B01')), [0, 0, 0], [0, Math.PI / 2, 0]);
-  put('11', pose(bean, POSE_POMPE.x, POSE_POMPE.y, POSE_POMPE.z), [0, 0.55, 0]);
+  put('11', pose(bean, POSE_POMPE.x, POSE_POMPE.y, POSE_POMPE.z), [0, 1.05, 0]);
   return { view: { dir: [-0.75, 0.8, 1] } };
 }
 

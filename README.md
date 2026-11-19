@@ -210,15 +210,27 @@ pièces (numéro, quantité, page du manuel).
   compare 63 mesures aux plans ; masses du modèle : 444,2 lb pour le bac
   (443,9 lb au cartouche) et 8,8 lb pour la flotte (8,9 lb, avec un cylindre
   en tôle de calibre 16). La pompe à eau Bean 420 (modèle de l'équipement
-  `pompe-bean-420`, repère 11) est posée dans la traverse, pattes sur le fond
-  ajouré, en travers du bac : culasses vers la face avant, arbre d'entrée vers
-  le milieu du bac. Cette pose est supposée : aucun plan ne montre son
-  support, et les quatre trous 1/2-13 de la pompe (8 1/2 × 12 11/16 po) ne
-  tombent ni sur les barres (espacées de 20 1/8 po, percées à 5/16 po) ni sur
-  les bandes du fond de la traverse ; l'embase manquante n'est pas modélisée.
-  La pompe est placée pour ne rien traverser (la barre avant passe sous ses
-  cylindres, entre les colonnes d'aspiration et les pattes avant), ce que
-  vérifie `scripts/check-pompe-bean-420.mjs`.
+  `pompe-bean-420`, repère 11) est fixée au bac sans que celui-ci soit modifié
+  (demande du client : le bac est à l'échelle, c'est la pompe qu'on adapte).
+  Ses cinq trous taraudés 1/2-13 (8 1/2 × 12 11/16 po) ne tombent sur aucune
+  pièce du bac ; elle reçoit donc une embase d'adaptation (repère 12), qui
+  n'existe sur aucun plan et qui est une proposition. Le bac offre un logement :
+  15 1/16 po entre les flancs de la traverse et 2 po de haut, juste sous les
+  deux barres, espacées de 20 1/8 po. Le plan dessine à chaque bout des barres
+  deux cercles concentriques, lus comme le trou de 5/16 po de la barre
+  au-dessus d'un taraudage 1/4-20 de l'aile, pour le boulon 1/4-20 × 1/2 po de
+  la nomenclature (repère 9, désormais montré aux quatre bouts) : les barres
+  sont des brides démontables. L'embase remplit ce logement : cadre soudé en
+  tube rectangulaire de 2 × 1 × 1/8 po, de 15 × 21 1/8 po, dont les deux
+  traverses sont à l'aplomb des barres, qui les serrent sur le fond ; plaque
+  de 15 × 19 1/16 × 3/8 po entre les barres, qui cale l'ensemble en long et
+  porte la pompe, tenue par cinq boulons 1/2-13 × 1 po vissés par-dessous
+  (repère 13). La pompe est en travers du bac, culasses vers la face avant,
+  arbre d'entrée vers le milieu du bac ; ses orifices d'aspiration tombent
+  devant l'embase, au-dessus de l'ajour avant du fond de la traverse. Si les
+  barres sont en réalité soudées, l'embase ne se met pas en place telle
+  quelle. `scripts/check-pompe-bean-420.mjs` vérifie le logement, les jeux, le
+  gabarit des trous et l'absence de pièces qui se traversent.
 
 - **Rack à outils 15083000** (`rack-outil`, Machines Roger International, plan
   d'assemblage soudé du 2021-08-31, une page, échelle 1:4) : plaque en U de
@@ -647,8 +659,8 @@ pièces (numéro, quantité, page du manuel).
   le modèle le remet sur cet axe. Les pièces de fonderie sont simplifiées,
   les trous de fixation ne sont pas percés, les accessoires de la figure 6
   ne sont pas modélisés. Bleu roi des photos du manuel. Contrôle chiffré :
-  `node scripts/check-pompe-bean-420.mjs` compare 46 mesures au manuel et à
-  la pose sur le tube à l'eau ; la fiche est écrite par
+  `node scripts/check-pompe-bean-420.mjs` compare 72 mesures au manuel et à
+  la fixation sur le tube à l'eau ; la fiche est écrite par
   `tools/pompe_bean_420_fiche.mjs` à partir des cotes du modèle.
 
 La page d'accueil (adresse sans « # », ou le logo en haut à gauche) liste
@@ -764,7 +776,7 @@ scripts/export-anim.mjs                     foreuse STM-1500 animée en .glb (sq
 scripts/export-porte.mjs                    porte 1801020 en maillages statiques à pivot pour Unreal (voir docs/porte-unreal.md)
 scripts/export-cles-unreal.mjs              clés à tuyau et support à pipewrench en .glb pour Unreal (voir docs/cles-unreal.md)
 scripts/check-cles-mixtes.mjs               contrôle chiffré des clés mixtes (cotes publiées par grandeur)
-scripts/check-pompe-bean-420.mjs            contrôle chiffré de la pompe Bean 420 (cotes du manuel, pose sur le tube à l'eau)
+scripts/check-pompe-bean-420.mjs            contrôle chiffré de la pompe Bean 420 (cotes du manuel, fixation sur le tube à l'eau)
 tools/pompe_bean_420_fiche.mjs              fiche de la pompe Bean 420 (listes, notes) → public/equipment/pompe-bean-420/data.json
 tools/cle_mixte_polyhaven_mesh.mjs          clé mixte de Poly Haven (glTF) → src/models/cles-mixtes/mesh.js
 tools/blender_fbx.py                        conversion du .glb animé en FBX pour Unreal Engine
