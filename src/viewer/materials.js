@@ -56,6 +56,8 @@ const defs = {
   blue: { ...PAINT, color: 0x1b7096 },
   // Bleu Usinage Marcotte (STM-1500, photo de couverture du manuel).
   umBlue: { ...PAINT, color: 0x2a7cc4 },
+  // Bleu roi des pompes American Manufacturing (photos du manuel AL0918B).
+  bleuRoi: { ...PAINT, color: 0x1c4c9c },
   // Acier usiné / brossé (axes, tôles nues, visserie brute).
   steel: { color: 0xb9bdc2, metalness: 1, roughness: 0.3, fin: 'machined' },
   // Chrome dur des tiges de vérin : reflets nets.

@@ -9,10 +9,19 @@
 // plan n'a qu'une vue en perspective dimétrique, sans cote ; ses dimensions sont
 // relevées sur cette image, à l'échelle 1:3 que donnent les têtes des boulons
 // de 3/8 po (le cartouche inscrit 1:8, échelle de la feuille).
-// Contrôle : scripts/check-tube-eau.mjs.
+// Pompe à eau Bean 420 (American Manufacturing AL0918B) : modèle de l'équipement
+// pompe-bean-420, posé dans la traverse. Aucun plan ne montre son support : voir
+// POSE_POMPE.
+// Contrôle : scripts/check-tube-eau.mjs et scripts/check-pompe-bean-420.mjs.
 // Repère : X le long du bac (0 à la face extérieure du bout gauche, celui des
 // raccords de 1 po ; modèle centré), Y vers le haut (0 sous les pieds), Z en
 // travers (+Z vers l'avant de la vue de face du plan).
+
+import pompe, { COTE as COTE_POMPE } from '../pompe-bean-420/index.js';
+import { reuse } from '../reuse.js';
+
+// Pompe Bean 420 : ses trois assemblages, repris sous d'autres noms que ceux des pages du bac.
+const POMPE = reuse(pompe, { B01: 'P01', B02: 'P02', B03: 'P03' });
 
 const IN = 0.0254;
 
@@ -56,6 +65,15 @@ export const FLOTTE = {
 // la hauteur et vis-à-vis du premier raccord de 1 po, boulons à l'horizontale, bout du bras
 // à 3 po du bout gauche.
 export const POSE_FLOTTE = { bout: 3, z: 26.5625 };
+
+// Pose de la pompe Bean 420 (aucun plan ne la donne, ni la pièce qui la porte) : dans la traverse, pattes sur le fond
+// ajouré, axe de la pompe sur celui de la traverse, pompe en travers du bac. Culasses vers la face avant, arbre d'entrée
+// vers le milieu du bac. La barre avant passe sous les cylindres, entre les colonnes d'aspiration et les pattes avant
+// de la pompe, à « barre » po derrière l'axe des clapets ; la barre arrière reste derrière le carter.
+export const POSE_POMPE = { barre: 2.85 };
+POSE_POMPE.x = TRAV.xc;
+POSE_POMPE.y = PIED.h + HB - TRAV.creux + T; // dessus du fond de la traverse
+POSE_POMPE.z = BARRE.z[1] + POSE_POMPE.barre; // axe des clapets, depuis la face arrière du bac
 
 const SOUDURE = 3 / 16; // symboles du plan (typique)
 const PEINT = 'black'; // peinture du bac et du corps de la flotte (demande du client)
@@ -393,7 +411,7 @@ export function P02(api) {
   return { view: { dir: [0.8, 0.55, 1] } };
 }
 
-/** Tube à l'eau 1524010812 : bac, bouts, traverse, barres, pieds et raccords ; flotte 152042600 posée dedans. */
+/** Tube à l'eau 1524010812 : bac, bouts, traverse, barres, pieds et raccords ; flotte 152042600 posée dedans, pompe Bean 420 dans la traverse. */
 export function P01(api) {
   const S = api.S;
   // Peinture : tout le bac en noir, brides soudées comprises (demande du client ; le cartouche ne
@@ -429,7 +447,12 @@ export function P01(api) {
   const xf = T + POSE_FLOTTE.bout + bras.len - bras.avant; // face avant de la flotte
   const flotte = S.at(S.group(api.sub('P02')), [0, 0, 0], [Math.PI / 4, 0, 0]);
   put('10', pose(flotte, xf, PIED.h + yManchon - bras.x, POSE_FLOTTE.z - bras.y), [-0.25, 0.5, 0.4]);
+  // Pompe Bean 420 : tournée d'un quart de tour (son axe X, des clapets vers le carter, pointe vers la face arrière
+  // du bac ; son arbre d'entrée, côté −Z, vers le bout gauche). Position supposée : voir POSE_POMPE.
+  const bean = S.at(S.group(api.sub('B01')), [0, 0, 0], [0, Math.PI / 2, 0]);
+  put('11', pose(bean, POSE_POMPE.x, POSE_POMPE.y, POSE_POMPE.z), [0, 0.55, 0]);
   return { view: { dir: [-0.75, 0.8, 1] } };
 }
 
-export default { P01, P02 };
+export { COTE_POMPE };
+export default { P01, P02, ...POMPE };
