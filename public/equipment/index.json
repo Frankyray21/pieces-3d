@@ -130,7 +130,15 @@
       "manufacturer": "Garant",
       "category": "Barre-levier forgée",
       "thumbnail": "equipment/pince-monseigneur/thumbnail.webp",
-      "status": "3D d'après une photo du produit : barre forgée de 60 po (donnée publiée), poignée ronde de Ø 7/8 po, fût octogonal, pied carré de 1 1/8 po (lame publiée) à biseau nu de 2 3/4 po, peinture rouge orangé, étiquette ; tronçons relevés sur la photo à 2,8 mm près, masse calculée de 7,0 kg contre 18 lb publiées"
+      "status": "3D d'après une photo du produit : barre forgée de 60 po (donnée publiée), poignée ronde de Ø 7/8 po, fût octogonal, pied carré de 1 1/8 po (lame publiée) à biseau nu de 2 3/4 po, peinture rouge orangé usée aux arêtes et piquée de rouille, sans étiquette (demandes du client) ; tronçons relevés sur la photo à 2,8 mm près, masse calculée de 7,0 kg contre 18 lb publiées"
+    },
+    {
+      "id": "pompe-bean-420",
+      "name": "Pompe à pistons Bean 420 (FMC L0918 / American AL0918B)",
+      "manufacturer": "American Manufacturing (interchangeable FMC Bean)",
+      "category": "Pompe triplex à pistons",
+      "thumbnail": "equipment/pompe-bean-420/thumbnail.webp",
+      "status": "3D d'après le manuel AL0918B (48 pages : coupes repérées, liste de 62 repères, plan coté) et la vue éclatée FMC L09-420 de TIME Ltd ; cotes du plan reprises (23,219 × 15 × 11,375 po), le reste relevé sur le tracé des coupes ; clapets à billes ; denture du réducteur calculée ; se monte sur le tube à l'eau"
     },
     {
       "id": "plancher-dd",
@@ -207,11 +215,11 @@
     },
     {
       "id": "tube-eau",
-      "name": "Tube à l'eau 1524010812 et flotte 152042600",
+      "name": "Tube à l'eau 1524010812, flotte 152042600 et pompe Bean 420",
       "manufacturer": "Machines Roger International",
       "category": "Bac à eau (assemblage soudé)",
       "thumbnail": "equipment/tube-eau/thumbnail.webp",
-      "status": "3D d'après le plan 1524010812 (2024-01-02) : bac ouvert de 45 3/8 × 35 1/4 × 33 15/16 po en tôle de 3/16 po, rebords repliés, traverse en oméga ajourée, deux barres, pieds en U, raccords de 1 po et brides de 2 po ; flotte 152042600 (cylindre de Ø 6 × 12 po à bras carré) relevée sur la vue du plan ; peints en noir ; masses du modèle à moins de 2 % des cartouches ; pompe à eau à venir"
+      "status": "3D d'après le plan 1524010812 (2024-01-02) : bac ouvert de 45 3/8 × 35 1/4 × 33 15/16 po en tôle de 3/16 po, rebords repliés, traverse en oméga ajourée, deux barres, pieds en U, raccords de 1 po et brides de 2 po ; flotte 152042600 (cylindre de Ø 6 × 12 po à bras carré) relevée sur la vue du plan ; peints en noir ; masses du modèle à moins de 2 % des cartouches ; pompe Bean 420 (American AL0918B) fixée sans modifier le bac, sur une embase d'adaptation proposée (cadre de 2 po logé dans la traverse, serré par les deux barres)"
     }
   ]
 }

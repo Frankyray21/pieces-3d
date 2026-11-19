@@ -184,7 +184,7 @@ pièces (numéro, quantité, page du manuel).
   cartouches semblent donc ne compter ni la poignée (0,34 lb) ni le ressort
   (0,08 lb ; 0,01 lb à son cartouche), avec lesquels le modèle pèse 9,7 lb.
 
-- **Tube à l'eau 1524010812 et flotte 152042600** (`tube-eau`, Machines Roger
+- **Tube à l'eau 1524010812, flotte 152042600 et pompe Bean 420** (`tube-eau`, Machines Roger
   International) : bac à eau ouvert de 45 3/8 × 35 1/4 po et de 33 15/16 po de
   haut, soudé en tôle de 3/16 po, d'après le plan du 2024-01-02 (une page,
   échelle 1:15, coupe A-A, détail B à 1:2). La plaque 1 (1524010806) forme d'un
@@ -209,7 +209,28 @@ pièces (numéro, quantité, page du manuel).
   (demande du client). Contrôle chiffré : `node scripts/check-tube-eau.mjs`
   compare 63 mesures aux plans ; masses du modèle : 444,2 lb pour le bac
   (443,9 lb au cartouche) et 8,8 lb pour la flotte (8,9 lb, avec un cylindre
-  en tôle de calibre 16). La pompe à eau reste à modéliser (plan à venir).
+  en tôle de calibre 16). La pompe à eau Bean 420 (modèle de l'équipement
+  `pompe-bean-420`, repère 11) est fixée au bac sans que celui-ci soit modifié
+  (demande du client : le bac est à l'échelle, c'est la pompe qu'on adapte).
+  Ses cinq trous taraudés 1/2-13 (8 1/2 × 12 11/16 po) ne tombent sur aucune
+  pièce du bac ; elle reçoit donc une embase d'adaptation (repère 12), qui
+  n'existe sur aucun plan et qui est une proposition. Le bac offre un logement :
+  15 1/16 po entre les flancs de la traverse et 2 po de haut, juste sous les
+  deux barres, espacées de 20 1/8 po. Le plan dessine à chaque bout des barres
+  deux cercles concentriques, lus comme le trou de 5/16 po de la barre
+  au-dessus d'un taraudage 1/4-20 de l'aile, pour le boulon 1/4-20 × 1/2 po de
+  la nomenclature (repère 9, désormais montré aux quatre bouts) : les barres
+  sont des brides démontables. L'embase remplit ce logement : cadre soudé en
+  tube rectangulaire de 2 × 1 × 1/8 po, de 15 × 21 1/8 po, dont les deux
+  traverses sont à l'aplomb des barres, qui les serrent sur le fond ; plaque
+  de 15 × 19 1/16 × 3/8 po entre les barres, qui cale l'ensemble en long et
+  porte la pompe, tenue par cinq boulons 1/2-13 × 1 po vissés par-dessous
+  (repère 13). La pompe est en travers du bac, culasses vers la face avant,
+  arbre d'entrée vers le milieu du bac ; ses orifices d'aspiration tombent
+  devant l'embase, au-dessus de l'ajour avant du fond de la traverse. Si les
+  barres sont en réalité soudées, l'embase ne se met pas en place telle
+  quelle. `scripts/check-pompe-bean-420.mjs` vérifie le logement, les jeux, le
+  gabarit des trous et l'absence de pièces qui se traversent.
 
 - **Rack à outils 15083000** (`rack-outil`, Machines Roger International, plan
   d'assemblage soudé du 2021-08-31, une page, échelle 1:4) : plaque en U de
@@ -620,17 +641,62 @@ pièces (numéro, quantité, page du manuel).
   demi-pixel près, longueurs à un pixel près) et arrondi au 1/8 po : poignée
   ronde de Ø 7/8 po sur 22 3/4 po, fût octogonal de 1 1/8 po sur plats sur
   23 3/8 po, pied carré sur 13 7/8 po, biseau d'un seul côté de 2 3/4 po laissé
-  en acier nu, peinture rouge orangé, étiquette enroulée sur le pied (dessin
-  générique : texte illisible). Supposé : le nombre de pans du fût, le
-  tranchant émoussé de 2 mm, les faces cachées de l'étiquette. La barre est un
+  en acier nu, peinture rouge orangé. Supposé : le nombre de pans du fût et le
+  tranchant émoussé de 2 mm. Demandes du client : pas d'étiquette (la photo en
+  montre une sur le pied), et une barre qui a servi — peinture ternie, partie
+  jusqu'à l'acier le long des arêtes, au bout de la poignée et près de la
+  pointe, taches de rouille sur la peinture et sur le biseau ; c'est une mise
+  en apparence, aucune cote ne change. L'usure vient d'un réglage `wear` de
+  `withFinish()` (`src/viewer/materials.js`) et d'un attribut `aWear` par
+  sommet du maillage (1 sur les arêtes et les bouts). La barre est un
   volume passant par des sections de 64 points (rond, octogone, carré ;
   `volume()` dans `src/models/pince-monseigneur/index.js`) ; les repères 1 à 4
-  désignent ses zones, qui ne se séparent pas en vue éclatée. Contrôle de la
+  désignent ses zones, qui s'écartent en vue éclatée pour montrer les trois
+  sections (la barre réelle ne se démonte pas). Contrôle de la
   masse : 7,0 kg (15,4 lb) calculés à 7 850 kg/m³ contre 18 lb publiées, écart
   qui correspond à des sections plus larges d'environ 2 mm, moins d'un pixel de
   la photo ; les détaillants indiquent d'ailleurs 1 1/4 ou 1 1/2 po de large là
   où Garant publie 1 1/8 po. La fiche et la page du relevé (P02) sont écrites
   par `tools/pince_monseigneur_fiche.mjs` à partir des cotes du modèle.
+
+- **Pompe à pistons Bean 420 (FMC L0918 / American AL0918B)**
+  (`pompe-bean-420`) : pompe triplex à pistons de 2 1/4 × 2 1/4 po, 20,2 gal
+  US/min à 625 tr/min, 700 lb/po², 200 lb, à réducteur de 3,6:1 dans le carter.
+  Source : le manuel « Pump AL0918B, Operation And Maintenance Manual »
+  d'American Manufacturing (48 pages, publié par Ranger Mining), pompe
+  interchangeable avec la FMC Bean L0918 dont elle reprend les numéros de
+  pièces sous le préfixe PPFMC ; version à clapets à billes. Ce manuel n'a pas
+  de vue éclatée : il donne trois coupes repérées (figures 2A, 2B et 3), une
+  liste de 62 repères (tableau 4) et un plan coté (figure 7). La vue éclatée
+  de la page P01 vient du catalogue TIME Ltd (FMC L09-420) ; chaque ligne des
+  listes donne la correspondance entre les deux numérotations. Treize pages
+  sont publiées (les deux PDF ne sont pas dans le dépôt). Trois assemblages
+  en 3D, 199 pièces pour 59 repères : la pompe complète (P01), l'extrémité
+  mécanique (P02 : bâti, vilebrequin à trois manetons calés à 120° et roue
+  dentée, arbre d'entrée à pignon, bielles, crosses, garnitures de tige,
+  paliers, couvercle arrière) et l'extrémité hydraulique (P03 : boîte à
+  clapets, sièges et billes de 15/16 po, culasses et leurs brides en
+  diagonale, chemises en céramique, pistons à coupelle, huit goujons 1/2-13).
+  Cotes du manuel reprises telles quelles : 23,219 × 15 × 11,375 po hors tout,
+  refoulement à 8,375 po de la base, arbre d'entrée de Ø 1 1/8 po à 8,062 po
+  de la base et à 11,875 po de l'axe des clapets, gabarit de fixation,
+  diamètres du maneton, de la crosse et de l'axe de pied de bielle. Le reste
+  est relevé sur le tracé vectoriel des figures, à l'échelle que donnent ces
+  cotes : axe des cylindres à 5,25 po de la base, cylindres au pas de 3 po
+  (la cote de 4,250 po de la figure 7 est celle des trous de fixation avant,
+  pas celle des cylindres), goujons de culasse sur une grille de 3 × 3 po,
+  vilebrequin à 3,56 po derrière l'arbre d'entrée. Calculé ou supposé : la
+  denture du réducteur (aucune figure ne la montre ; rayons primitifs tirés
+  de l'entraxe relevé de 4,54 po et du rapport de 3,6:1), les flasques du
+  vilebrequin et la place de la roue, la répartition des cinq cales, les
+  coins des deux goujons sans bride, l'orifice d'aspiration laissé ouvert.
+  Sur la figure 2B le vilebrequin est dessiné hors de l'axe de ses paliers :
+  le modèle le remet sur cet axe. Les pièces de fonderie sont simplifiées,
+  les trous de fixation ne sont pas percés, les accessoires de la figure 6
+  ne sont pas modélisés. Bleu roi des photos du manuel. Contrôle chiffré :
+  `node scripts/check-pompe-bean-420.mjs` compare 72 mesures au manuel et à
+  la fixation sur le tube à l'eau ; la fiche est écrite par
+  `tools/pompe_bean_420_fiche.mjs` à partir des cotes du modèle.
 
 La page d'accueil (adresse sans « # », ou le logo en haut à gauche) liste
 les équipements et permet de passer de l'un à l'autre. Les adresses du premier équipement restent `#F05` ; celles des autres
@@ -745,6 +811,8 @@ scripts/export-anim.mjs                     foreuse STM-1500 animée en .glb (sq
 scripts/export-porte.mjs                    porte 1801020 en maillages statiques à pivot pour Unreal (voir docs/porte-unreal.md)
 scripts/export-cles-unreal.mjs              clés à tuyau et support à pipewrench en .glb pour Unreal (voir docs/cles-unreal.md)
 scripts/check-cles-mixtes.mjs               contrôle chiffré des clés mixtes (cotes publiées par grandeur)
+scripts/check-pompe-bean-420.mjs            contrôle chiffré de la pompe Bean 420 (cotes du manuel, fixation sur le tube à l'eau)
+tools/pompe_bean_420_fiche.mjs              fiche de la pompe Bean 420 (listes, notes) → public/equipment/pompe-bean-420/data.json
 tools/cle_mixte_polyhaven_mesh.mjs          clé mixte de Poly Haven (glTF) → src/models/cles-mixtes/mesh.js
 tools/blender_fbx.py                        conversion du .glb animé en FBX pour Unreal Engine
 tools/blender_porte_fbx.py                  conversion des maillages de la porte 1801020 en FBX

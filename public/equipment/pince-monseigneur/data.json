@@ -51,11 +51,15 @@
   ],
   [
    "Fini",
-   "Peinture rouge orangé brillante sur toute la barre, sauf le biseau"
+   "Peinture rouge orangé sur toute la barre, sauf le biseau, laissé en acier nu"
+  ],
+  [
+   "Usure et rouille",
+   "Barre qui a servi (demande du client ; la photo montre une barre neuve) : peinture ternie, partie jusqu'à l'acier le long des arêtes, au bout de la poignée et près de la pointe, taches de rouille sur la peinture et sur l'acier nu du biseau. Mise en apparence seulement : aucune cote ne change"
   ],
   [
    "Étiquette",
-   "Enroulée sur le pied carré, de 4 5/8 po à 10 po au-dessus du tranchant (137 mm de haut) : partie sombre et bande blanche en bas ; texte illisible sur la photo, dessin générique"
+   "Non modélisée (demande du client). La photo en montre une, enroulée sur le pied carré, de 117 à 254 mm au-dessus du tranchant"
   ],
   [
    "Masse",
@@ -81,7 +85,7 @@
     "P01",
     "P02"
    ],
-   "note": "Reconstitution 3D d'après une photo du produit, sans plan. La barre est forgée d'une seule pièce : les repères 1 à 4 désignent ses zones, qui ne se séparent pas ; seule l'étiquette (repère 5) se décolle en vue éclatée. Deux données de Garant sont reprises telles quelles : la longueur de 60 po et la lame de 1 1/8 po, prise pour le côté du pied carré. Le reste est relevé sur la photo (2,79 mm par pixel) et arrondi au 1/8 po : poignée ronde de Ø 7/8 po sur 22 3/4 po, fût à pans sur 23 3/8 po, pied carré sur 13 7/8 po, biseau nu de 2 3/4 po. Visible sur la photo : les deux épaulements, deux faces du pied carré, la face plate qui file jusqu'au tranchant, le bout non peint, l'étiquette sombre à bande blanche. Supposé : la forme octogonale du fût (la photo montre deux tons séparés par une arête, sans permettre de compter les pans), le tranchant émoussé de 2 mm, les deux faces cachées et le tour complet de l'étiquette. Masse calculée sur le modèle : 7,0 kg (15,4 lb) à 7 850 kg/m³, contre 18 lb (8,2 kg) publiées. L'écart de 15 % correspond à des sections plus larges d'environ 2 mm, moins d'un pixel de la photo. Les sources ne s'accordent pas sur la largeur : Garant publie une lame de 1 1/8 po ; des détaillants indiquent une pointe de 1 1/4 po (Staples, Vallen) ou une barre de 1 1/2 po de large (Vallen, Tenaquip, Cobalt Industrial). La photo donne un pied carré de 29 à 30 mm de côté : la valeur de Garant est retenue. La barre est couchée sur le sol, pointe à gauche, face plate vers le haut.",
+   "note": "Reconstitution 3D d'après une photo du produit, sans plan. La barre est forgée d'une seule pièce : les repères 1 à 4 désignent ses zones. En vue éclatée, elles s'écartent le long de l'axe pour montrer les trois sections (ronde, octogonale, carrée) ; la barre réelle ne se démonte pas. Deux données de Garant sont reprises telles quelles : la longueur de 60 po et la lame de 1 1/8 po, prise pour le côté du pied carré. Le reste est relevé sur la photo (2,79 mm par pixel) et arrondi au 1/8 po : poignée ronde de Ø 7/8 po sur 22 3/4 po, fût à pans sur 23 3/8 po, pied carré sur 13 7/8 po, biseau nu de 2 3/4 po. Visible sur la photo : les deux épaulements, deux faces du pied carré, la face plate qui file jusqu'au tranchant, le bout non peint. Supposé : la forme octogonale du fût (la photo montre deux tons séparés par une arête, sans permettre de compter les pans) et le tranchant émoussé de 2 mm. Barre qui a servi (demande du client ; la photo montre une barre neuve) : peinture ternie, partie jusqu'à l'acier le long des arêtes, au bout de la poignée et près de la pointe, taches de rouille sur la peinture et sur l'acier nu du biseau. Mise en apparence seulement : aucune cote ne change. L'étiquette que montre la photo n'est pas modélisée (demande du client). Masse calculée sur le modèle : 7,0 kg (15,4 lb) à 7 850 kg/m³, contre 18 lb (8,2 kg) publiées. L'écart de 15 % correspond à des sections plus larges d'environ 2 mm, moins d'un pixel de la photo. Les sources ne s'accordent pas sur la largeur : Garant publie une lame de 1 1/8 po ; des détaillants indiquent une pointe de 1 1/4 po (Staples, Vallen) ou une barre de 1 1/2 po de large (Vallen, Tenaquip, Cobalt Industrial). La photo donne un pied carré de 29 à 30 mm de côté : la valeur de Garant est retenue. La barre est couchée sur le sol, pointe à gauche, face plate vers le haut.",
    "parts": [
     [
      "1",
@@ -90,7 +94,7 @@
      "POIGNÉE ronde, Ø 7/8 po × 22 3/4 po",
      {
       "pseudo": true,
-      "note": "Zone de la barre, pas une pièce séparée. Diamètre relevé : 22,3 mm (8,0 pixels), constant à un demi-pixel près sur toute la longueur. Bout coupé droit, arête cassée de 1,5 mm (supposée)."
+      "note": "Zone de la barre, pas une pièce séparée. Diamètre relevé : 22,3 mm (8,0 pixels), constant à un demi-pixel près sur toute la longueur. Bout coupé droit, arête cassée de 1,5 mm (supposée). Usure : bout à nu, peinture frottée par endroits."
      }
     ],
     [
@@ -100,7 +104,7 @@
      "FÛT octogonal, 1 1/8 po sur plats × 23 3/8 po",
      {
       "pseudo": true,
-      "note": "Zone de la barre, pas une pièce séparée. Largeur vue de 29 à 33 mm sur la photo ; un octogone de 1 1/8 po sur plats en montre 30,3 mm sous le même angle. Le nombre de pans est supposé. Épaulement d'environ 8 mm vers la poignée."
+      "note": "Zone de la barre, pas une pièce séparée. Largeur vue de 29 à 33 mm sur la photo ; un octogone de 1 1/8 po sur plats en montre 30,3 mm sous le même angle. Le nombre de pans est supposé. Épaulement d'environ 8 mm vers la poignée. Usure : peinture partie le long des arêtes."
      }
     ],
     [
@@ -110,7 +114,7 @@
      "PIED carré de 1 1/8 po, peint, × 11 1/8 po",
      {
       "pseudo": true,
-      "note": "Zone de la barre, pas une pièce séparée. Côté : la lame de 1 1/8 po publiée par Garant ; la photo donne 30 mm (deux faces de 6 et 9 pixels). Longueur de 13 7/8 po avec le biseau. Les pans coupés du fût s'effacent sur environ 6 mm à l'entrée du pied."
+      "note": "Zone de la barre, pas une pièce séparée. Côté : la lame de 1 1/8 po publiée par Garant ; la photo donne 30 mm (deux faces de 6 et 9 pixels). Longueur de 13 7/8 po avec le biseau. Les pans coupés du fût s'effacent sur environ 6 mm à l'entrée du pied. Usure : arêtes à nu, peinture de plus en plus partie vers la pointe."
      }
     ],
     [
@@ -120,17 +124,7 @@
      "POINTE EN BISEAU, acier nu, 2 3/4 po de long",
      {
       "pseudo": true,
-      "note": "Zone de la barre, pas une pièce séparée. Biseau d'un seul côté, à environ 21° de l'axe ; la face opposée reste plate jusqu'au tranchant. Tranchant de 1 1/8 po de large, émoussé sur 2 mm (supposé). Non peinte sur la photo."
-     }
-    ],
-    [
-     "5",
-     "",
-     1,
-     "ÉTIQUETTE enroulée sur le pied carré, 137 mm de haut",
-     {
-      "pseudo": true,
-      "note": "De 4 5/8 po à 10 po au-dessus du tranchant. Sur la photo : une pastille jaune et un rond sur la face plate, un cartouche blanc sur la face voisine, une bande blanche en bas. Texte et logo illisibles : le dessin du modèle est générique. Le tour complet des quatre faces est supposé."
+      "note": "Zone de la barre, pas une pièce séparée. Biseau d'un seul côté, à environ 21° de l'axe ; la face opposée reste plate jusqu'au tranchant. Tranchant de 1 1/8 po de large, émoussé sur 2 mm (supposé). Non peinte sur la photo ; piquée de rouille dans le modèle."
      }
     ]
    ]
