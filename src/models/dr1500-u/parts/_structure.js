@@ -103,20 +103,20 @@ export function band(line, t) {
 // ---------------------------------------------------------------------------------------------------------
 // Tôles et profils extrudés (arêtes cassées par S.extrude).
 /** Profil du plan XY extrudé selon Z (épaisseur t centrée en z) ; trous : cercles [x, y, r] ou polygones. */
-export const profilZ = (api, outline, holes, t, z = 0, mat = 'red') => api.S.at(api.S.extrude(outline, t, mat, { holes }), [0, 0, z]);
+export const profilZ = (api, outline, holes, t, z = 0, mat = 'yellow') => api.S.at(api.S.extrude(outline, t, mat, { holes }), [0, 0, z]);
 /** Tôle de normale X (épaisseur t centrée en x) : contour et trous dans le plan (z, y). */
-export const profilX = (api, outline, holes, t, x = 0, mat = 'red') => api.S.at(api.S.extrude(outline.map(([z, y]) => [-z, y]), t, mat,
+export const profilX = (api, outline, holes, t, x = 0, mat = 'yellow') => api.S.at(api.S.extrude(outline.map(([z, y]) => [-z, y]), t, mat,
   { holes: holes.map((h) => (Array.isArray(h[0]) ? h.map(([z, y]) => [-z, y]) : [-h[0], h[1], h[2]])) }), [x, 0, 0], [0, Math.PI / 2, 0]);
 /** Tôle de normale Y (épaisseur t centrée en y) : contour et trous dans le plan (x, z). */
-export const profilY = (api, outline, holes, t, y = 0, mat = 'red') => api.S.at(api.S.extrude(outline.map(([x, z]) => [x, -z]), t, mat,
+export const profilY = (api, outline, holes, t, y = 0, mat = 'yellow') => api.S.at(api.S.extrude(outline.map(([x, z]) => [x, -z]), t, mat,
   { holes: holes.map((h) => (Array.isArray(h[0]) ? h.map(([x, z]) => [x, -z]) : [h[0], -h[1], h[2]])) }), [0, y, 0], [-Math.PI / 2, 0, 0]);
 /** Barre de section w × t (t selon Z) entre deux points du plan XY. */
-export const strut = (api, p, q, w, t, z, mat = 'red', e = 0) => {
+export const strut = (api, p, q, w, t, z, mat = 'yellow', e = 0) => {
   const L = Math.hypot(q[0] - p[0], q[1] - p[1]);
   return api.S.at(api.S.box(L + 2 * e, w, t, mat, { r: 0.003 }), [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2, z], [0, 0, Math.atan2(q[1] - p[1], q[0] - p[0])]);
 };
 /** Boîte entre deux coins [x0, y0, z0] et [x1, y1, z1]. */
-export const boxAt = (api, a, b, mat = 'red', r = 0.002) => api.S.box(Math.abs(b[0] - a[0]), Math.abs(b[1] - a[1]), Math.abs(b[2] - a[2]), mat,
+export const boxAt = (api, a, b, mat = 'yellow', r = 0.002) => api.S.box(Math.abs(b[0] - a[0]), Math.abs(b[1] - a[1]), Math.abs(b[2] - a[2]), mat,
   { r, pos: [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2, (a[2] + b[2]) / 2] });
 
 // ---------------------------------------------------------------------------------------------------------

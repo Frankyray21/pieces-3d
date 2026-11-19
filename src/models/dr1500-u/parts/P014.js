@@ -25,8 +25,9 @@
 //            largeur entre joues ≈ 18 1/2, pignon 206-033 ≈ 52 dents (dents comptées sur 250° environ),
 //            volant Ø ≈ 6 1/2, forme des plaques de côté (tête en demi-cercle, gradin, prolongement bas vers la
 //            vis), quatre entretoises 206-420 (trois en haut côté +X, une côté −X), carters.
-//   [estimé] épaisseurs (plaques 1/2, fond 1/2, gardes 14 ga), hauteur de l'axe (HOIST.drumY, voir le rapport :
-//            le dessin la donnerait plus basse), places des trous, du tendeur, des pattes de fixation des gardes.
+//   [estimé] épaisseurs (plaques 1/2, fond 1/2, gardes 14 ga), places des trous, du tendeur, des pattes de
+//            fixation des gardes ; hauteur de l'axe HOIST.drumY (0,20 m, d'après les paliers de la p. 14 : les joues
+//            descendent dans la fenêtre du fond).
 import { IN, HOIST } from '../layout.js';
 import { p3, kit, chainPath, tangente, resample, circle, arc, slot, perfs, hull, offsetConvex } from './_treuil.js';
 import { VIS } from './P016.js';

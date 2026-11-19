@@ -12,8 +12,7 @@
 // 55-0003 0,96–2,42 · mâchoires 1,9–6,15 dans le bol 55-0005 1,96–6,0 · carter 55-0006 2,42–8,55 (18 ressorts,
 // plancher 6,2–7,5 percé pour les 9 entretoises du bas et leurs joints radiaux) · piston et cylindre 55-0200 (P020,
 // u = d − 7,72) 8,17–12,1 · adaptateur de mandrin 55-0008 11,45–13,06 (bride Ø 14,6 [mesure p. 18], écrous des
-// boulons du cylindre noyés dessous). Longueur hors tout 12,9 po (0,328 m) ; CHUCK.len de layout.js (0,261 m, [STM])
-// ne compte que le tambour : signalé.
+// boulons du cylindre noyés dessous). Longueur hors tout 12,9 po (0,328 m = CHUCK.len de layout.js).
 // Mécanisme (coupe p. 18) : les ressorts poussent le bol vers la bague, son cône serre les mâchoires ; l'huile
 // (raccord de P020) tire le piston vers la tête, qui tire le bol par les 9 boulons de liaison et desserre ; le piston
 // pousse aussi le manchon d'actionnement par la butée, qui pousse les entretoises du bas.

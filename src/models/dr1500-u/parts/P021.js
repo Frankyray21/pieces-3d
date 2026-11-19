@@ -14,7 +14,7 @@
 // (alésage Ø 3,94, Ø ext. 5,2) jusqu'à 12,5 · piston et cylindre 55-0300 (P023, u = d − 7,85) 7,85–11,85 · chapeau
 // de cylindre 55-0044 11,85–12,5 · bague de serrage (clamp bushing B, 55-0052 NQ, hors liste) dans le bout du tube,
 // tenue par la retenue 55-0043 et 4 vis 5/16 · plaque support (P024) sur l'adaptateur de chapeau. Longueur hors tout
-// 13,6 po (0,345 m ; RC.len = 0,343 m [STM]).
+// 13,6 po (0,345 m : RC.bottom à RC.top dans layout.js).
 import { IN, RC } from '../layout.js';
 import * as B from './_boyles.js';
 import { SHCS4, SHCS2 } from './P023.js';
@@ -62,9 +62,12 @@ export default function P021(api) {
     pts.push([ear.y + ear.w * Math.cos(a), ear.z + ear.w * Math.sin(a)]);
   }
   pts.push([4.6 * eu[0] + ear.w * eu[1], 4.6 * eu[1] - ear.w * eu[0]]);
-  const oreille = C.plan(pts.map(([y, z]) => [C.sx * y * IN, z * IN]), ear.d0, ear.d1, 'yellow', [[C.sx * ear.y * IN, ear.z * IN, ear.rb * IN]]);
+  // Oreille en chape : deux branches de part et d'autre de l'oreille centrale de la base (P025, 2 po d'épaisseur au
+  // milieu de la base, sur laquelle l'oreille est centrée : RC.dx).
+  const em = (ear.d0 + ear.d1) / 2, eg = 1.0;
+  const oreille = S.group(...[[ear.d0, em - eg], [em + eg, ear.d1]].map(([d0, d1]) => C.plan(pts.map(([y, z]) => [C.sx * y * IN, z * IN]), d0, d1, 'yellow', [[C.sx * ear.y * IN, ear.z * IN, ear.rb * IN]])));
   // Patte : bloc sous le flanc −Z, deux lumières verticales (largeur 0,72 po, 1,4 po de profond) à d 4,2 et 6,7.
-  const lug = { y0: -5.4, y1: -3.6, z0: -7.4, z1: -2.6, zs: -6.0 };
+  const lug = { ...RC.lug, z0: -7.4, z1: -2.6, zs: -6.0 };
   const bloc = (d0, d1, zo) => C.plan([[lug.y0, lug.z1], [lug.y1, lug.z1], [lug.y1, zo], [lug.y0, zo]].map(([y, z]) => [C.sx * y * IN, z * IN]), d0, d1, 'yellow');
   const patte = S.group(bloc(3.2, 3.84, lug.z0), bloc(3.84, 4.56, lug.zs), bloc(4.56, 6.34, lug.z0), bloc(6.34, 7.06, lug.zs), bloc(7.06, 7.7, lug.z0));
   // Poignée en U (rond Ø 3/4) au-dessus de la patte.

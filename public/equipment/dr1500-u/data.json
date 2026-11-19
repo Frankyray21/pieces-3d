@@ -52,6 +52,10 @@
   [
    "Waterpack",
    "Pompe Pratissoli KF40, moteur hydraulique Rexroth HA-028, débitmètre MIK-L34360A"
+  ],
+  [
+   "Disposition (3D)",
+   "Foreuse à 0° : mât de 3,55 m, axe de forage à 1,30 m du sol, skid de 2,9 m — cotes estimées (le manuel n'a pas de plan d'encombrement)"
   ]
  ],
  "weights": [
@@ -271,7 +275,7 @@
      }
     ]
    ],
-   "note": "Liste de la page 2 : les repères 4 et 11 n'existent pas dans le manuel (numérotation sautée). Seuls la tête, la table, le mât, le kit de poulie, l'assise, le serre-tiges, le treuil et la base du serre-tiges ont leur page ; le bloc I/O, les pattes d'extension, la plaque d'ancrage, les vérins de tilt, le frame skud et les pins de vérin ne sont dessinés que sur cette vue éclatée et sur la couverture."
+   "note": "Liste de la page 2 : les repères 4 et 11 n'existent pas dans le manuel (numérotation sautée). Seuls la tête, la table, le mât, le kit de poulie, l'assise, le serre-tiges, le treuil et la base du serre-tiges ont leur page ; le bloc I/O, les pattes d'extension, la plaque d'ancrage, les vérins de tilt, le frame skud et les pins de vérin ne sont dessinés que sur cette vue éclatée et sur la couverture. En 3D : couleurs choisies pour le site (le manuel est en noir et blanc) : jaune du logo DR pour les mécano-soudés et carters peints, noir pour les vérins — à valider par le client."
   },
   "P003": {
    "title": "Assise 1500",
@@ -875,7 +879,10 @@
      "4",
      "18179943",
      1,
-     "COUPLING - 5015 X 40MM X 12MM"
+     "COUPLING - 5015 X 40MM X 12MM",
+     {
+      "note": "Coquille probable : les deux moyeux d'un accouplement à chaîne ont le même nombre de dents ; « 5015 » (15 dents, chaîne 50) face à « 5016 » (16 dents, repère 6). Modélisés tels que listés (15 et 16 dents)."
+     }
     ],
     [
      "5",
@@ -887,7 +894,10 @@
      "6",
      "18179941",
      1,
-     "COUPLING - 5016 X 1-1/4 X 5/16"
+     "COUPLING - 5016 X 1-1/4 X 5/16",
+     {
+      "note": "Voir le repère 4 : « 5016 » (16 dents) face à « 5015 » (15 dents), incompatibles dans un même accouplement."
+     }
     ],
     [
      "7",
@@ -1159,7 +1169,7 @@
      "PUSH RING",
      {
       "supplier": "A5300",
-      "note": "Ligne rayée en rouge dans le manuel. Note rouge de la page 12 : « #24 a été modifié sur les DR1500 — nouveau n° de pièce : MP6104 — raison : pour être capable de faire compter les tours (RPM) ». Sur la DR1500, la pièce montée est donc la MP6104."
+      "note": "Ligne rayée en rouge dans le manuel. Note rouge de la page 12 : « #24 a été modifié sur les DR1500 — nouveau n° de pièce : MP6104 — raison : pour être capable de faire compter les tours (RPM) ». Sur la DR1500, la pièce montée est donc la MP6104. En 3D : la MP6104 (disque à couronne de 12 encoches pour le capteur de tours ; forme des encoches estimée, le manuel ne la dessine pas)."
      }
     ],
     [
@@ -1663,7 +1673,7 @@
      "5/16-18 x 3/4\" Hex Drive Cup Point Black Oxide Finish Alloy Steel Socket Set Screw"
     ]
    ],
-   "note": "Dessin d'Usinage X-Spec 206-400 rév. B (C6712, 2020-01-28), échelle 1:10 (feuille 2) et 1:7 (feuille 1), poids 477,18 lb. Note de la page 14 : « CHAINE RS40-1-RP, longueur totale 43 po, 1 maille patente et 1 demi-maille RS40 » (pas de ligne dans la liste). Aucun moteur n'est listé (support de moteur 206-027 seulement)."
+   "note": "Dessin d'Usinage X-Spec 206-400 rév. B (C6712, 2020-01-28), échelle 1:10 (feuille 2) et 1:7 (feuille 1), poids 477,18 lb. Note de la page 14 : « CHAINE RS40-1-RP, longueur totale 43 po, 1 maille patente et 1 demi-maille RS40 » (pas de ligne dans la liste). Aucun moteur n'est listé (support de moteur 206-027 seulement). En 3D, la chaîne est dessinée sans repère (pas de ligne dans la liste) ; sa longueur de 43 po fixe l'entraxe tambour / vis d'enroulement (≈ 12,9 po)."
   },
   "P016": {
    "title": "Winding Screw Assy, 1700/2100m",
@@ -2266,7 +2276,7 @@
      }
     ]
    ],
-   "note": "Dessin d'Usinage X-Spec 055A (B0489, 2013-08-15). N° fournisseur affiché : colonne ATLAS COPCO INTERCHANGE (numéros Boyles, les mêmes que ceux du mandrin et du serre-tiges du STM-1500) ; colonne MIROW INTERCHANGE dans mirow. Notes du manuel : A — seal kit #55-0022 (repères marqués A) ; B — garnir de graisse avant le montage ; C — jeu de 9 mâchoires appariées, vendu seulement par 9. Les mâchoires (jaw set) et la bague du mandrin (chuck bushing) n'ont pas de ligne : leur numéro dépend du calibre des tiges (tableau « Mâchoires et bagues 12HH »)."
+   "note": "Dessin d'Usinage X-Spec 055A (B0489, 2013-08-15). N° fournisseur affiché : colonne ATLAS COPCO INTERCHANGE (numéros Boyles, les mêmes que ceux du mandrin et du serre-tiges du STM-1500) ; colonne MIROW INTERCHANGE dans mirow. Notes du manuel : A — seal kit #55-0022 (repères marqués A) ; B — garnir de graisse avant le montage ; C — jeu de 9 mâchoires appariées, vendu seulement par 9. Les mâchoires (jaw set) et la bague du mandrin (chuck bushing) n'ont pas de ligne : leur numéro dépend du calibre des tiges (tableau « Mâchoires et bagues 12HH »). Le dessin du mandrin (p. 18, 2013) et celui de son piston et cylindre (p. 20, 2019, rév. C) ne concordent pas tout à fait : en 3D, la p. 20 fait foi et le carter du mandrin s'y adapte. Mâchoires (jeu NQ 30-16-02) et bague de mandrin (55-0048) dessinées sans repère."
   },
   "P020": {
    "title": "Chuck piston/cylinder assy",
@@ -2783,7 +2793,7 @@
      }
     ]
    ],
-   "note": "Dessin d'Usinage X-Spec 055B (B1686, 2013-08-15). En-tête de la liste : « ATLAS CAOPCO » (coquille pour Atlas Copco). N° fournisseur affiché : colonne ATLAS COPCO INTERCHANGE ; colonne MIROW dans mirow. Notes : A — seal kit #55-0058 ; B — jeu de 9 mâchoires appariées (aucune ligne « jaw set » dans la liste : voir le tableau « Mâchoires et bagues 12HH »). Ligne « p. 24 » ajoutée pour le site : la plaque support de la bague de guidage (page 24, même dessin 055B) se pose sur ce serre-tiges."
+   "note": "Dessin d'Usinage X-Spec 055B (B1686, 2013-08-15). En-tête de la liste : « ATLAS CAOPCO » (coquille pour Atlas Copco). N° fournisseur affiché : colonne ATLAS COPCO INTERCHANGE ; colonne MIROW dans mirow. Notes : A — seal kit #55-0058 ; B — jeu de 9 mâchoires appariées (aucune ligne « jaw set » dans la liste : voir le tableau « Mâchoires et bagues 12HH »). Ligne « p. 24 » ajoutée pour le site : la plaque support de la bague de guidage (page 24, même dessin 055B) se pose sur ce serre-tiges. En 3D, la bague de serrage (clamp bushing NQ 55-0052) et les mâchoires sont dessinées sans repère."
   },
   "P023": {
    "title": "Clamp piston/cylinder assy. 12HH",

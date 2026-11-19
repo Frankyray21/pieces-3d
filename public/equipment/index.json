@@ -62,8 +62,8 @@
       "name": "DR Fabrication DR1500-U",
       "manufacturer": "DR Fabrication",
       "category": "Foreuse souterraine",
-      "thumbnail": "equipment/dr1500-u/pages/P001.webp",
-      "status": "3D en cours — manuel de pièces MRI (25 pages) : 20 assemblages (foreuse, tête XBH, mandrin et serre-tiges Boyles 12HH, treuil XW-2100, groupe hydraulique 125 HP, waterpack) affichés pour l'instant avec les dessins du manuel"
+      "thumbnail": "equipment/dr1500-u/thumbnail.webp",
+      "status": "Manuel de pièces MRI (25 pages) : 20 assemblages et 3 tableaux, tous en 3D ; foreuse assemblée comme sur la couverture (frame skud, assise et vérins de tilt, mât et vérin d'avance, table, tête XBH avec transmission et moteur, mandrin et serre-tiges Boyles 12HH, base, kit de poulie, treuil XW-2100 et sa vis d'enroulement), groupe hydraulique 125 HP et waterpack ; cotes du manuel et des normes, le reste estimé sur la couverture et les éclatés"
     },
     {
       "id": "du311",

@@ -6,9 +6,9 @@
 // REPÈRE (layout.js, HEAD) : origine sur la face de pose de la table, sous l'axe de la broche ; broche principale
 // le long de X à y = SY, z = 0 ; bout des manchons (bague NQ 91-119) vers +X ; mandrin vers −X (face avant du
 // mandrin à x = CHUCK.x0 = HEAD.rearX) ; arbre menant 12T (91-104A) à (DRV.y, DRV.z).
-// Côté de l'arbre menant : SD = signe de HEAD.drive.dz. La couverture (p. 1) et la page 11 le montrent du côté +Z
-// (au fond, à gauche de la face avant quand on regarde la tête depuis le serre-tiges) ; layout.js le met à −Z :
-// tout ce qui dépend du côté est écrit avec SD, la tête se retourne d'elle-même si la cote change.
+// Côté de l'arbre menant : SD = signe de HEAD.drive.dz, +Z comme sur la couverture (p. 1) et la page 11 (au fond,
+// à gauche de la face avant quand on regarde la tête depuis le serre-tiges). Tout ce qui dépend du côté est écrit
+// avec SD.
 import { IN, HEAD } from '../layout.js';
 
 export const SY = HEAD.spindleY;
@@ -16,26 +16,26 @@ export const SD = Math.sign(HEAD.drive.dz) || 1;
 export const DRV = { y: SY + HEAD.drive.dy, z: HEAD.drive.dz };
 export const ENTRAXE = Math.hypot(HEAD.drive.dy, HEAD.drive.dz);
 
-// Chaîne triple 91-116 et pignons 24T / 12T. Pas de 1 po (#80-3) [mesuré sur l'éclaté p. 12 : le pignon 12T de
-// l'arbre menant a le même diamètre que son roulement 6213 (Ø 120) ; au pas de 3/4 po il ferait Ø 82, au pas de
-// 1 po Ø 110]. layout.js donne 3/4 po (HEAD.chainPitch) : signalé, non repris. Rouleau Ø 15,88, plaques de
-// 24 mm de haut, pas transversal 29,29 mm, largeur des dents 13,7 mm [norme ANSI 80-3].
-export const PAS = 1 * IN;
+// Chaîne triple 91-116 et pignons 24T / 12T au pas HEAD.chainPitch de 1 po (#80-3) [mesuré sur l'éclaté p. 12 : le
+// pignon 12T de l'arbre menant a le même diamètre que son roulement 6213 (Ø 120) ; au pas de 3/4 po il ferait Ø 82,
+// au pas de 1 po Ø 110]. Rouleau Ø 15,88, plaques de 24 mm de haut, pas transversal 29,29 mm, largeur des dents
+// 13,7 mm [norme ANSI 80-3].
+export const PAS = HEAD.chainPitch;
 export const CH = { roller: 0.01588, plateH: 0.0241, plateT: 0.0032, pt: 0.02929, tooth: 0.0137, inner: 0.0159 };
 export const STRANDS = [-CH.pt, 0, CH.pt]; // brins de la chaîne et dentures des pignons, en x
 export const pd = (n) => PAS / Math.sin(Math.PI / n); // diamètre primitif
 
 // Carter mécano-soudé 91-101 [mesuré sur l'éclaté p. 12, échelle tirée du roulement 6213 Ø 120 : 0,19 m le long de
-// la broche, ≈ 0,42 m de haut, ≈ 0,68 m de long ; la longueur suit ici l'entraxe de layout.js].
+// la broche (HEAD.frontX), ≈ 0,42 m de haut, ≈ 0,68 m de long ; bouts en HEAD.ends, qui suit l'entraxe].
 // Parois avant et arrière de 25 mm (portées des roulements), bouts et fond de 19 et 25 mm [estimé].
 const R24 = pd(24) / 2, R12 = pd(12) / 2;
 export const TIP24 = R24 + 0.0067, TIP12 = R12 + 0.0063; // rayons de tête des dents [norme]
 export const CAR = {
-  x0: -0.095, x1: 0.095, wall: 0.025, side: 0.019, floor: 0.025,
+  x0: -HEAD.frontX, x1: HEAD.frontX, wall: 0.025, side: 0.019, floor: 0.025,
   y0: 0,
   y1: Math.max(0.42, DRV.y + TIP12 + 0.03), // dessus (appui du couvercle 18)
-  zM: -SD * 0.2, // bout côté broche (poignée, thermomètre, bouchons) [estimé]
-  zD: DRV.z + SD * 0.1, // bout côté arbre menant (supports de refroidisseur) [estimé]
+  zM: HEAD.ends[0], // bout côté broche (poignée, thermomètre, bouchons) [estimé]
+  zD: HEAD.ends[1], // bout côté arbre menant (supports de refroidisseur) [estimé]
 };
 CAR.zLo = Math.min(CAR.zM, CAR.zD);
 CAR.zHi = Math.max(CAR.zM, CAR.zD);

@@ -18,7 +18,7 @@ import { rect, arc, hull, circle, band, profilX, profilZ, boxAt, verin, headPin 
 
 // Frame skud : traverses (dessus = SKID.top, appui du treuil), parois de côté (« DR FAB » découpé, couverture),
 // consoles des split-blocs sous les tourillons de l'assise. [estimé]
-const XMEM = [1.15, 0.55, -0.1, -0.6, TILT.cylFrame[0]]; // traverses (la dernière porte les chapes des vérins de tilt)
+const XMEM = [1.15, 0.55, -0.1, -0.6, -1.0]; // traverses (tubes de 3 po, dessus à SKID.xmemTop : le treuil est posé sur celles de −0,6 et −0,1)
 const WALL = { z: 0.2475, t: 0.015, top: 0.58 }; // parois de côté (sous l'assise : dessous à 0,62 m)
 const BLOCK = { z: [0.312, 0.36], y0: 0.6, cap: 0.775, hw: [0.06, 0.035] }; // split-blocs (avant, arrière ; l'arrière, étroit,
 // laisse passer le vérin de tilt devant lui et le treuil P014 derrière son flanc avant)
@@ -70,8 +70,8 @@ export function frameSkud(api) {
       ...text('FAB', L2, -(3 * L2.w + 0.04) / 2, 0.27, xc),
       rect(0.5, 0.18, 0.95, 0.235).reverse(),
     ];
-    f.push(profilZ(api, [[0.3, SKID.top], [1.05, SKID.top], [1.05, 0.5], [0.7, WALL.top], [0.4, WALL.top], [0.3, 0.46]], holes, WALL.t, s * WALL.z));
-    f.push(profilZ(api, [[-1.02, SKID.top], [-0.78, SKID.top], [-0.78, WALL.top], [-1.02, WALL.top]], [[-0.9, 0.34, 0.05]], WALL.t, s * WALL.z)); // arrière : s'arrête devant le treuil
+    f.push(profilZ(api, [[0.3, SKID.xmemTop], [1.05, SKID.xmemTop], [1.05, 0.5], [0.7, WALL.top], [0.4, WALL.top], [0.3, 0.46]], holes, WALL.t, s * WALL.z));
+    f.push(profilZ(api, [[-1.02, SKID.xmemTop], [-0.78, SKID.xmemTop], [-0.78, WALL.top], [-1.02, WALL.top]], [[-0.9, 0.34, 0.05]], WALL.t, s * WALL.z)); // arrière : s'arrête devant le treuil
     // Consoles et split-blocs (moitié basse soudée, chapeau à quatre vis 1/2-13) sous les tourillons de l'assise.
     TILT.x.forEach((tx, k) => {
       const hw = BLOCK.hw[k], [z0, z1] = BLOCK.z, R = 1.25 * IN; // alésage : diamètre extérieur du bushing C4038
@@ -83,7 +83,7 @@ export function frameSkud(api) {
       f.push(profilZ(api, hi, [], z1 - z0, s * (z0 + z1) / 2, 'darkSteel'));
       f.push(S.boltSet([-1, 1].flatMap((u) => [z0 + 0.012, z1 - 0.012].map((z) => [tx + u * (hw - 0.016), BLOCK.cap, s * z])), 0.5 * IN, 0.1, 'zinc'));
     });
-    // Chape du fond du vérin de tilt sur la traverse arrière (deux tôles, pin GA608).
+    // Chape du fond du vérin de tilt sur le patin (deux tôles, pin GA608), à l'extérieur du treuil.
     const [cx, cy] = TILT.cylFrame;
     for (const d of [-1, 1]) {
       f.push(profilZ(api, hull([[cx - 0.06, SKID.top], [cx + 0.06, SKID.top], ...circle([cx, cy], 0.035, 18)]), [[cx, cy, 0.625 * IN + 0.0005]], EAR, s * (TILT.cylZ + d * 0.0255)));
@@ -91,7 +91,7 @@ export function frameSkud(api) {
   }
   // Traverses (tubes 4 × 4 po) entre les patins.
   const zi = SKID.railZ - SKID.railW / 2;
-  for (const x of XMEM) f.push(boxAt(api, [x - 0.05, 0.05, -zi], [x + 0.05, SKID.top, zi], 'red', 0.004));
+  for (const x of XMEM) f.push(boxAt(api, [x - 0.038, SKID.xmemTop - 0.076, -zi], [x + 0.038, SKID.xmemTop, zi], 'yellow', 0.004));
   return [S.group(...f)];
 }
 
@@ -101,8 +101,8 @@ export function blocIO(api) {
   const [x, y, z] = BLOC_IO.pos;
   const zs = -ASSISE.w / 2; // face de la tôle de côté de l'assise
   const g = [
-    boxAt(api, [x - 0.08, y - 0.08, zs - 0.006], [x + 0.08, y + 0.06, zs - 0.0005], 'red'),
-    boxAt(api, [x - 0.06, y - 0.045, z - 0.03], [x + 0.06, y - 0.035, zs - 0.006], 'red'),
+    boxAt(api, [x - 0.08, y - 0.08, zs - 0.006], [x + 0.08, y + 0.06, zs - 0.0005], 'yellow'),
+    boxAt(api, [x - 0.06, y - 0.045, z - 0.03], [x + 0.06, y - 0.035, zs - 0.006], 'yellow'),
     boxAt(api, [x - 0.055, y - 0.035, z - 0.03], [x + 0.055, y + 0.045, zs - 0.006], 'castAlu', 0.003),
   ];
   for (const dx of [-0.035, 0, 0.035]) for (const dy of [-0.012, 0.025]) {
@@ -125,10 +125,10 @@ export function pattesExtension(api) {
   return [-1, 1].map((sz) => {
     const z = sz * PATTE.z, g = [];
     const seg = (a, b, r, mat) => { const A = p(a), B = p(b); return S.rod([A[0], A[1], z], [B[0], B[1], z], r, mat, 20); };
-    g.push(seg(0.03, 0.5, 0.03, 'red'), seg(0.45, L - 0.03, 0.024, 'red'));
-    g.push(S.at(S.ring(0.034, 0.0165, 0.04, 'red', { axis: 'z', seg: 24 }), [T[0], T[1], z]));
-    g.push(S.at(S.ring(0.034, 0.0165, 0.04, 'red', { axis: 'z', seg: 24 }), [F[0], F[1], z]));
-    g.push(seg(0.49, 0.53, 0.036, 'red')); // collet du tube extérieur
+    g.push(seg(0.03, 0.5, 0.03, 'yellow'), seg(0.45, L - 0.03, 0.024, 'yellow'));
+    g.push(S.at(S.ring(0.034, 0.0165, 0.04, 'yellow', { axis: 'z', seg: 24 }), [T[0], T[1], z]));
+    g.push(S.at(S.ring(0.034, 0.0165, 0.04, 'yellow', { axis: 'z', seg: 24 }), [F[0], F[1], z]));
+    g.push(seg(0.49, 0.53, 0.036, 'yellow')); // collet du tube extérieur
     const [bx, by] = p(0.515);
     g.push(S.at(S.cyl(0.008, 0.1, 'zinc', { axis: 'z', seg: 12 }), [bx, by, z])); // broche de réglage
     for (const s of [0.6, 0.66, 0.72]) { const [hx, hy] = p(s); g.push(S.at(S.cyl(0.0085, 0.0485, 'black', { axis: 'z', seg: 10 }), [hx, hy, z])); }
@@ -140,7 +140,7 @@ export function pattesExtension(api) {
 export function plaqueAncrage(api) {
   const S = api.S;
   const [x, , ] = ANCRAGE.pos, t = ANCRAGE.t, F = PATTE_EYES.foot;
-  const g = [S.at(S.plate(ANCRAGE.w, ANCRAGE.len, t, 'red', { r: 0.01, holes: [-0.38, -0.1, 0.1, 0.38].map((z) => [0, z, 0.014]) }), [x, t / 2, 0])];
+  const g = [S.at(S.plate(ANCRAGE.w, ANCRAGE.len, t, 'yellow', { r: 0.01, holes: [-0.38, -0.1, 0.1, 0.38].map((z) => [0, z, 0.014]) }), [x, t / 2, 0])];
   for (const s of [-1, 1]) for (const d of [-1, 1]) {
     g.push(profilZ(api, hull([[F[0] - 0.06, t], [F[0] + 0.06, t], ...circle(F, 0.034, 18)]), [[F[0], F[1], 0.0165]], EAR, s * (PATTE.z + d * 0.0255)));
   }
@@ -170,16 +170,16 @@ export function ensemblePieces(api) {
   };
 }
 
-/** Éclatés proposés pour P002 (sens de la vue éclatée p. 2), par repère et rang de l'exemplaire (0 : −Z, 1 : +Z). */
+/** Éclatés de P002, dans le sens de la vue éclatée p. 2 (vue de l'avant gauche : à droite = vers −X et −Z), par
+ * repère et rang de l'exemplaire (0 : −Z, 1 : +Z). */
 export function eclate(ref, i = 0) {
-  const s = i ? 1 : -1;
   switch (ref) {
-    case '1': return [0.3, 0.6, -0.5];
-    case '8': return [0.7, 0.35, s * 0.25];
+    case '1': return [0.6, 1.3, 0.2];
+    case '8': return i ? [-2.3, 1.1, -2.4] : [-2.3, 1.1, -2.1];
     case '9': return [0.9, -0.05, 0];
-    case '12': return [0.1, -0.25, s * 0.55];
-    case '13': return [0, -0.7, 0];
-    case '15': return [0.1, -0.3, s * 0.85];
+    case '12': return i ? [-0.15, 0.05, -1.25] : [-0.15, 0.05, -0.8];
+    case '13': return [-0.3, -0.75, -0.4];
+    case '15': return i ? [-0.2, -0.35, -1.35] : [-0.2, -0.35, -1.05];
     default: return null;
   }
 }

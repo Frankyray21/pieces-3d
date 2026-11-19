@@ -41,7 +41,10 @@ export const SKID = {
   x0: -1.45, x1: 1.45, // bouts des patins (2,9 m) [mesure : 0,88 × la longueur du mât sur la couverture]
   railZ: 0.48, // axe des patins (±) [estimé : le skid déborde de l'assise sur la couverture]
   railW: 0.1, railH: 0.15, // section des patins [estimé]
-  top: 0.15, // dessus des patins et des traverses : appui du treuil [estimé]
+  top: 0.15, // dessus des patins [estimé]
+  // Traverses entre les patins, plus basses que les patins : le treuil y est posé et passe sous l'assise
+  // (intégration : 0,15 → 0,11 m, le treuil dessiné à la p. 14 étant plus haut que prévu) [estimé].
+  xmemTop: 0.11,
 };
 
 // ---------------------------------------------------------------------------------------------------------
@@ -58,10 +61,14 @@ export const TILT = {
   z: 0.34, // tourillons de chaque côté de l'assise (±) [estimé]
   // Vérins de tilt HBU3532 (P002 rep. 12, ×2) : pin GA608 côté frame (rep. 15), pin GA610 côté assise (P003 rep. 7,
   // Ø 1 1/4 po d'après les paliers 6391K295 rep. 5). Points d'attache à z = ±cylZ, dans le repère foreuse.
+  // Intégration : la p. 2 dessine des vérins longs (≈ 0,45 × la longueur du skid) et la désignation se lit 3 1/2 po
+  // × 32 po (≈ 44 po fermé) ; l'ancien entraxe (0,71 m) ne les contenait pas. Couverture : un long vérin part du bas du
+  // frame, à l'arrière, et monte vers l'avant sous l'assise. Ils passent à l'extérieur du treuil (|z| > 0,40) et des
+  // poteaux des split-blocs : entraxe ≈ 1,14 m (vérin fermé, assise à 0°) [estimé].
   cylPin: 1.25 * IN, // [manuel : « pour pin 1-1/4po »]
-  cylFrame: [-1.0, 0.25], // [x, y] de la pin GA608 sur le frame [estimé d'après la couverture]
-  cylAssise: [-0.55, 0.8], // [x, y] de la pin GA610 sur l'assise [estimé d'après la couverture]
-  cylZ: 0.37, // [estimé]
+  cylFrame: [-1.0, 0.25], // [x, y] de la pin GA608 sur la chape du frame, au-dessus du patin [estimé]
+  cylAssise: [0.06, 0.66], // [x, y] de la pin GA610 sous l'assise (était −0,55 ; 0,80) [estimé]
+  cylZ: 0.46, // (était 0,37 : coupait les poteaux des split-blocs et le treuil) [estimé]
 };
 export const ASSISE = {
   x0: -1.05, x1: 0.85, // bouts de l'assise [mesure, ±0,15 m]
@@ -82,7 +89,11 @@ export const ASSISE = {
 // (« 61" » dans la description), tige vers l'avant sur la pin MA611, corps sous la table (plaque MP6018, P005 rep. 5).
 export const MAST = {
   xFoot: 1.2, // face avant de la plaque de pied [mesure]
-  len: 3.3, // de la plaque de pied au bout arrière [mesure : le vérin d'avance fermé (≈ 73 po = course 60 + 13) fait 0,56 × le mât, p. 4]
+  // De la plaque de pied au bout arrière. Intégration : 3,30 → 3,55 m. La p. 4 donne un vérin fermé de 0,56 × le
+  // mât (3,3 m pour 73 po), mais avec la course de 60 po le fond du fût sortait alors derrière le mât ; 3,55 m est le
+  // plus court qui loge la course sans percer la plaque d'about (fût à 2,28 m derrière la pin à fond de course)
+  // [estimé ; rapport mât / skid 1,22 au lieu de 1,14 sur la couverture].
+  len: 3.55,
   get xRear() { return this.xFoot - this.len; },
   bottom: ASSISE.top, // dessous du mât sur l'assise
   h: 0.2, // hauteur des longerons sous les plaques d'usure [estimé]
@@ -108,13 +119,14 @@ export const AXIS_Y = 1.3; // [estimé : MAST.top + table + 0,23 m ; STM-1500 : 
 // 3/4-10 × 5 po (rep. 8) et écrous (rep. 13) : HEAD_BOLTS.
 export const TABLE = {
   len: 0.8, w: 0.6, t: 1.25 * IN, // [estimé ; épaisseur supposée 1 1/4 po]
+  // Plaque dissymétrique en z (intégration) : elle porte toute la tête, dont le bout de l'arbre menant déborde du mât
+  // du côté +Z (HEAD.ends) ; les côtés MA613 restent symétriques sur le mât (w) [estimé].
+  z0: -0.3, z1: 0.48,
   get top() { return MAST.top + this.t; }, // face de pose de la tête (repère foreuse)
   get x() { return MAST.xFoot - 0.95; }, // centre de la table, table en avant [mesure]
   get pos() { return [this.x, this.top, 0]; },
   travel: 60 * IN, // course de la table vers −X [estimé = course du vérin]
 };
-// Trous des 8 boulons 3/4-10 de la tête, dans le repère local de la table (= repère local de la tête) : [x, z].
-export const HEAD_BOLTS = [-0.27, -0.09, 0.09, 0.27].flatMap((x) => [-0.22, 0.22].map((z) => [x, z])); // [estimé]
 export const HEAD_BOLT = { d: 0.75 * IN, len: 5 * IN }; // [manuel : HFBOLT 0.75-10x5]
 
 // ---------------------------------------------------------------------------------------------------------
@@ -126,13 +138,28 @@ export const HEAD_BOLT = { d: 0.75 * IN, len: 5 * IN }; // [manuel : HFBOLT 0.75
 // P011, P018 : posés par P012 ; leur repère local est celui de P012 (posés à l'identité).
 export const HEAD = {
   get spindleY() { return AXIS_Y - TABLE.top; }, // ≈ 0,23 m
-  frontX: 0.17, // face avant du carter (côté +X) [estimé]
-  rearX: -0.17, // face arrière du carter : appui du mandrin (chuck spacer 91-121, chuck adapter cover 91-114) [estimé]
-  drive: { dy: 0.16, dz: -0.24 }, // arbre menant par rapport à la broche [mesure sur la couverture, côté à confirmer p. 11]
-  // Chaîne triple 91-116 : 46 mailles + maille d'accouplement [manuel, note rouge p. 12] sur pignons 24T et 12T [manuel] ;
-  // pas non donné : 3/4 po donne un entraxe ≈ 0,27 m, cohérent avec le décalage mesuré (0,29 m) [estimé].
-  chainPitch: 0.75 * IN,
+  frontX: 0.095, // face avant du carter (côté +X) [mesure p. 12, échelle du 6213 ; était 0,17]
+  rearX: -0.17, // face arrière du couvercle d'adaptation 91-114 : appui du mandrin (carter à −0,095) [estimé]
+  // Arbre menant par rapport à la broche : du côté +Z (couverture et p. 11 : arbre menant, transmission et pompe au
+  // fond, à gauche de la face avant ; était −0,24) ; entraxe 0,365 m = celui d'une chaîne de 47 pas de 1 po (46 mailles
+  // + maille d'accouplement) sur 24T et 12T [norme ANSI : longueur de chaîne] ; hauteur 0,20 [mesure couverture].
+  drive: { dy: 0.2, dz: 0.305 },
+  // Chaîne triple 91-116 : 46 mailles + maille d'accouplement [manuel, note rouge p. 12] sur pignons 24T et 12T
+  // [manuel] ; pas de 1 po : le pignon 12T est aussi grand que son 6213 Ø 120 sur l'éclaté p. 12 [mesure] (était 3/4).
+  chainPitch: 1 * IN,
+  // Bouts du carter le long de Z (bout côté broche, bout côté arbre menant) et semelles d'appui : deux blocs de
+  // 0,0745 m (8 boulons de 5 po : semelle + plaque de 1 1/4 po + écrou ; couverture : deux blocs à boulons sur
+  // le dessus, aux deux bouts de la tête), quatre fentes en U ouvertes vers l'extérieur sur chaque bloc [estimé].
+  get ends() { return [-0.2, this.drive.dz + 0.1]; },
+  foot: { out: 0.07, slotOut: 0.02, slotX: [-0.1, -0.035, 0.035, 0.1], slotW: 0.021 },
+  get footH() { return HEAD_BOLT.len - TABLE.t - 0.64 * IN - 0.004; }, // dessus des blocs = appui des têtes de boulons
 };
+// Trous des 8 boulons 3/4-10 × 5 po de la tête, dans le repère local de la table (= repère local de la tête) :
+// [x, z], au fond des fentes des deux semelles (les têtes sur les semelles, les écrous sous la table, hors du mât
+// et des téflons du côté −Z). Était une grille de 4 × 2 qui tombait hors des semelles.
+export const HEAD_BOLTS = [HEAD.ends[0] - HEAD.foot.slotOut, HEAD.ends[1] + HEAD.foot.slotOut]
+  .flatMap((z) => HEAD.foot.slotX.map((x) => [x, z]));
+
 // Roulements et pièces normalisées désignés dans les listes (diamètre intérieur, extérieur, largeur) [norme].
 export const BEARINGS = {
   '6224': [0.12, 0.215, 0.04], // tête rep. 3, roulement inférieur de broche
@@ -148,7 +175,9 @@ export const RODS = { NQ: 0.0699, HQ: 0.0889, BQ: 0.0556 }; // diamètres extér
 // 3506909…) : tambour Ø 308 × 261 mm, alésage Ø 98 mm [STM, src/models/stm-1500/head.js] ; piston à bagues
 // d'usure Ø 10 po et Ø 8 1/4 po [manuel p. 20] ; 18 ressorts verts, 9 mâchoires.
 export const CHUCK = {
-  d: 0.308, len: 0.261, bore: 0.098, // [STM]
+  d: 0.308, bore: 0.098, // tambour [STM]
+  len: 0.328, // hors tout, de la face d'appui sur la tête au bout de la bague (12,9 po) [mesure p. 18 ; le tambour seul fait 0,261]
+  flangeD: 0.371, // bride de l'adaptateur 55-0008 (Ø 14,6 po) [mesure p. 18]
   pistonOD: 10 * IN, pistonID: 8.25 * IN, // [manuel]
   get x0() { return HEAD.rearX; }, // face avant du mandrin contre la tête (repère de P012) ; il s'étend vers −X
 };
@@ -178,13 +207,24 @@ export const RCB = {
   pinZ: (7.625 - 1.3) * IN, // axe de la pin 55-0083 [mesure sur la vue de dessus p. 25, 47 px/po]
   pin: 1.0 * IN, bushingOD: 1.375 * IN, bushingLen: 0.875 * IN, // [manuel, rep. 5]
   eyeBolt: 0.625 * IN, // boulons à œil 5/8-11 × 2 3/4 po [manuel]
+  eyeX: 1.25 * IN, // boulons à œil à ±1,25 po du centre de la base, sous les lumières de la patte du serre-tiges (était ±1,65) [mesure p. 24-25]
+  // Axe de la pin 90-132 des boulons à œil : 7,05 po sous l'axe de forage, pour que les boulons (œil + 3,45 po de
+  // tige) traversent la patte du serre-tiges et portent l'écrou à embase sur son dessus (était 7,6 po) [mesure p. 25].
 };
 export const RC = {
-  d: 0.313, len: 0.343, hubD: 0.24, // corps Ø 313, longueur hors moyeux 343 mm, moyeux Ø 240 [STM]
+  d: 0.308, // corps (carter 55-0040, même pièce Boyles que le carter du mandrin) [mesure p. 21 ; STM : 0,313]
+  top: 0.19, bottom: -0.14, // bouts le long de X (dessus +X : bague, plaque P024 comprise ; dessous −X : chapeau de cylindre) [mesure p. 21-24]
   get axisAboveBase() { return AXIS_Y - MAST.top; }, // axe au-dessus du dessous de la base (≈ 0,26 m)
   get inBase() { return [0, this.axisAboveBase, 0]; },
-  get pos() { return [RCB.x, AXIS_Y, 0]; },
+  // Milieu du corps décalé de dx le long de X par rapport au centre de la base : l'oreille du carter (d 3,45 à 7,45 po
+  // dans P021) est alors centrée sur la base, de part et d'autre de son oreille centrale, et les deux lumières de la
+  // patte (x = +0,76 et +3,26 po du milieu du corps) tombent sur les boulons à œil (±1,25 po du centre de la base)
+  // (intégration) [mesure p. 21, 24, 25].
+  dx: -2.01 * IN,
+  get pos() { return [RCB.x + this.dx, AXIS_Y, 0]; },
   earZ: 0.16, earY: -0.105, // oreille d'articulation sur la pin de la base, par rapport à l'axe [STM : 160 mm de côté, 105 mm sous l'axe ; p. 25 : 6,3 po]
+  // Patte des boulons à œil (côté −Z, sous l'axe) : dessous et dessus, en po par rapport à l'axe [mesure p. 21 et 24].
+  lug: { y0: -5.4, y1: -3.6 },
 };
 
 // ---------------------------------------------------------------------------------------------------------
@@ -207,10 +247,12 @@ export const POULIE = {
 // Cotes sûres : chaîne RS40 (pas 1/2 po) de 43 po, 1 maille patente et une demi-maille [manuel p. 14] ; pignon
 // 40BS14 (14 dents, alésage 1 po) [manuel] ; poids 477,18 lb [manuel] ; roulements 6006-2RS de la vis [norme].
 export const HOIST = {
-  pos: [-0.35, SKID.top, 0], // [estimé d'après la couverture]
-  drumY: 0.3, // axe du tambour au-dessus du dessous du treuil [estimé]
+  pos: [-0.35, SKID.xmemTop, 0], // sur les traverses basses du skid [estimé d'après la couverture]
+  // Axe du tambour au-dessus du dessous du treuil (intégration : 0,30 → 0,20 m ; paliers à 4–5 1/2 po du bas des
+  // plaques de côté sur la p. 14, joues Ø 16,4 po qui descendent dans la fenêtre du fond) [mesure p. 14].
+  drumY: 0.2,
   maxZ: SKID.railZ - SKID.railW / 2 - 0.01,
-  get maxTop() { return TILT.y - 0.12 - SKID.top; }, // hauteur max du treuil (sous l'assise) [estimé]
+  get maxTop() { return 0.62 - 0.02 - SKID.xmemTop; }, // hauteur max du treuil : dessous des caissons de l'assise (0,62) − 2 cm
   chainPitch: 0.5 * IN, chainLen: 43 * IN, // [manuel]
 };
 
@@ -219,16 +261,19 @@ export const HOIST = {
 export const PATTE = { // pattes d'extension ×2 (rep. 8) : de la plaque de pied du mât au sol, de chaque côté
   z: 0.24, // [estimé]
   get top() { return [MAST.xFoot - 0.05, MAST.bottom]; }, // [x, y] de l'attache haute [estimé]
-  foot: [MAST.xFoot + 0.1, 0], // [x, y] du pied, sur la plaque d'ancrage [estimé]
+  foot: [MAST.xFoot + 0.1, 0], // [x, y] du pied : y = 0 est le sol ; l'œil bas est à ANCRAGE.t + 0,04 (chape) [estimé]
 };
-export const ANCRAGE = { pos: [MAST.xFoot + 0.1, 0, 0], len: 0.9, w: 0.2, t: 0.025 }; // plaque MA617 (rep. 9), au sol en travers [estimé]
-export const BLOC_IO = { pos: [ASSISE.x1 - 0.15, ASSISE.top - 0.12, -(ASSISE.w / 2 + 0.06)] }; // MA618 (rep. 1) [estimé]
+// Plaque MA617 (rep. 9), au sol en travers, entre les patins (longueur 0,9 → 0,8 : elle chevauchait les patins) [estimé].
+export const ANCRAGE = { pos: [MAST.xFoot + 0.1, 0, 0], len: 0.8, w: 0.2, t: 0.025 };
+// Bloc I/O MA618 (rep. 1) sur le flanc −Z de l'assise, à l'avant (x 0,70 → 0,40 d'après la couverture, devant le split-bloc avant) [mesure].
+export const BLOC_IO = { pos: [0.4, ASSISE.top - 0.12, -(ASSISE.w / 2 + 0.06)] };
 
 // ---------------------------------------------------------------------------------------------------------
 // Racine P001 : foreuse, groupe hydraulique et waterpack posés au sol (intégration).
 // Repère local du groupe hydraulique P007 (et P008, posé à l'identité par P007) et du waterpack P009 (et P010,
 // posé par P009 sur son support PA037) : origine au sol, sous le centre du cadre ; X le long du cadre ; Y vers
-// le haut. Groupe : moteur 444TC (axe à 11,0 po au-dessus de ses pattes [norme NEMA]) vers −X, pompes vers +X.
+// le haut. Groupe : moteur 444TC (axe à 11,0 po au-dessus de ses pattes [norme NEMA]) vers −X, pompes vers +X,
+// +Z vers la boîte électrique PA706. Waterpack : +Z vers sa face avant (couvercle à charnières, débitmètre).
 export const ROOT = {
   DRILL: { pos: [0, 0, 0], yaw: 0 },
   PACK: { pos: [0.2, 0, -2.6], yaw: 0 }, // [estimé, disposition libre]

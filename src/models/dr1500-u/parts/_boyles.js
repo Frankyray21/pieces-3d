@@ -16,7 +16,7 @@
 // COTES (pouces) — relevées sur les coupes vectorielles rendues à 300 ppp :
 //   p. 20 (piston et cylindre du mandrin, éch. 1:4 contrôlée sur la bague d'usure Ø 10 po : 75 px/po) et p. 23
 //   (piston et cylindre du serre-tiges, éch. 1:3,25 : 92,3 px/po, contrôlée sur le Ø 10 po) : cotes [mesure] sûres
-//   à ±0,03 po ; p. 21 (coupe du serre-tiges, 75 px/po : Ø 12,1 po du carter = 309 mm, cf. RC.d = 313 [STM]) pour le
+//   à ±0,03 po ; p. 21 (coupe du serre-tiges, 75 px/po : Ø 12,1 po du carter = 309 mm, RC.d = 308 dans layout.js) pour le
 //   haut commun ; p. 18 (coupe du mandrin, 85,5 px/po, échelle tirée du Ø 12,16 po du cylindre mesuré p. 20).
 //   Ce que les coupes ne montrent pas (perçages hors du plan, positions angulaires, longueurs des entretoises,
 //   plaquettes) est [estimé] et dit en commentaire. Le dessin du mandrin (2013) et celui de son piston (2019, rév. C)

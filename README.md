@@ -298,6 +298,41 @@ pièces (numéro, quantité, page du manuel).
   au montage par `view.video` ; tant que la vidéo est muette, le texte de la
   voix défile sous l'image, sans couvrir le bandeau ni les mesures).
 
+- **DR Fabrication DR1500-U** (`dr1500-u`, foreuse souterraine, manuel de
+  pièces MRI de 25 pages, machines DR-U-109-20 à DR-U-112-20) : 20
+  assemblages et 3 tableaux (transmission par machine, mâchoires et bagues
+  12HH, bagues de guidage), tous en 3D (`src/models/dr1500-u/`, un fichier
+  par assemblage dans `parts/`). La foreuse (P002) est assemblée comme sur
+  la couverture et éclatée comme la page 2 : frame skud à patins relevés et
+  parois « DR FAB », assise sur quatre tourillons dans leurs split-blocs,
+  vérins de tilt, mât 1500M rentré sur ses clamps avec le vérin d'avance
+  logé dedans, table et tête XBH (Usinage X-Spec : carter, broche sur 6224
+  et 3222, chaîne triple de 47 pas, pompe, filtre, bague MP6104 qui remplace
+  la pièce 24 rayée) avec son kit d'adaptateur (transmission 4 vitesses,
+  moteur AA6VM160), mandrin et serre-tiges Boyles 12HH (ressorts, mâchoires,
+  pistons et cylindres 55-0200 et 55-0300 des pages 20 et 23, plaque
+  support), base du serre-tiges du plan coté de la page 25, kit de poulie
+  bascule, treuil Hoist XW-2100 sous l'assise (tambour, vis d'enroulement à
+  suiveur, chaîne RS40 de 43 po qui fixe l'entraxe), pattes d'extension et
+  plaque d'ancrage. La racine (P001) pose au sol la foreuse, le groupe
+  hydraulique 125 HP (P007, avec ses panneaux P008) et le waterpack (P009,
+  avec la pompe Pratissoli P010), sans boyaux ni câbles (le manuel n'en
+  montre pas). Repère commun et cotes d'interface dans `layout.js`, chacune
+  avec sa source : cotes du manuel (plan de la page 25, désignations de
+  visserie, de roulements et de vérins, échelles des dessins X-Spec), normes
+  (roulements, chaînes ANSI, NEMA 444TC), pièces Boyles du STM-1500 (mêmes
+  numéros), mesures sur la couverture et les éclatés ; restent estimés la
+  longueur (3,55 m) et la section du mât, les hauteurs (axe de forage à
+  1,30 m), la largeur du skid, la place des pivots et des vérins de tilt, du
+  treuil, des pattes et de la poulie. Anomalies du manuel relevées en note
+  (repères sautés, n° HCL-2548 / DR-HCL2536, « FRAME SKUD », « PRESSURE
+  FILTE », n° terminé par « ? », lignes rayées 24 et 45 de la tête,
+  transmission « Fairfield » contre « Funk 4 vitesses », accouplement 5015
+  face à 5016, n° 15105 en double dans le treuil, en-tête 1-6 pour 8
+  repères, colonnes vides). Couleurs choisies pour le site, à valider : le
+  jaune du logo DR pour tout ce qui est peint, vérins noirs. Contrôle :
+  `node scripts/check-models.mjs --eq dr1500-u --qty --max-tris 150000`.
+
 - **Usinage Marcotte STM-1500** (`stm-1500`, foreuse souterraine
   s/n STM-1500-128, manuel de pièces de Machines Roger, 96 pages) : 42
   assemblages et 7 documents (transmission Funk, refroidisseur, accumulateur,

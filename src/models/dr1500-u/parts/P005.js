@@ -35,21 +35,21 @@ export default function P005(api) {
   const p = [];
   {
     const holes = [...HEAD_BOLTS.map(([x, z]) => [x, z, HEAD_BOLT.d / 2 + 0.001]), ...[-1, 1].flatMap((s) => SCREW_X.map((x) => [x, s * 0.2425, 0.0064]))];
-    p.push(profilY(api, rect(-hl, -hw, hl, hw), holes, T, -T / 2));
+    p.push(profilY(api, rect(-hl, TABLE.z0, hl, TABLE.z1), holes, T, -T / 2)); // dissymétrique : porte toute la tête (TABLE.z0, z1)
   }
   // Oreilles de la charnière du boîtier (bout arrière, axe le long de Z) avec leurs bagues (rep. 7) ; butées carrées.
   const LUGY = 0.042, lugX = -hl + 0.045;
   for (const z of [-0.07, 0.07]) {
     p.push(profilZ(api, hull([[lugX - 0.035, 0], [lugX + 0.035, 0], ...circle([lugX, LUGY], 0.032, 20)]), [[lugX, LUGY, 0.0175]], 0.03, z));
   }
-  for (const z of [-0.16, 0.16]) p.push(box(0.06, 0.06, 0.06, 'red', { r: 0.003, pos: [-hl + 0.11, 0.03, z] }));
+  for (const z of [-0.16, 0.16]) p.push(box(0.06, 0.06, 0.06, 'yellow', { r: 0.003, pos: [-hl + 0.11, 0.03, z] }));
   // Bloc fendu du côté −Z au bout avant (deux montants et leur entretoise).
-  for (const dx of [-0.03, 0.03]) p.push(box(0.03, 0.07, 0.07, 'red', { r: 0.003, pos: [hl - 0.06 + dx, 0.035, -0.2] }));
-  p.push(box(0.09, 0.02, 0.07, 'red', { r: 0.003, pos: [hl - 0.06, 0.01, -0.2] }));
+  for (const dx of [-0.03, 0.03]) p.push(box(0.03, 0.07, 0.07, 'yellow', { r: 0.003, pos: [hl - 0.06 + dx, 0.035, -0.2] }));
+  p.push(box(0.09, 0.02, 0.07, 'yellow', { r: 0.003, pos: [hl - 0.06, 0.01, -0.2] }));
   // Pattes de la plaque MP6018 (entre les longerons du mât, sous la plaque).
   for (const s of [-1, 1]) {
     p.push(profilZ(api, rect(-HANGER.x, y5 + t5, HANGER.x, -T), [], HANGER.t, s * HANGER.z));
-    p.push(S.weld([[-HANGER.x, -T - 0.002, s * (HANGER.z + HANGER.t / 2 + 0.002)], [HANGER.x, -T - 0.002, s * (HANGER.z + HANGER.t / 2 + 0.002)]], 0.005, 'red'));
+    p.push(S.weld([[-HANGER.x, -T - 0.002, s * (HANGER.z + HANGER.t / 2 + 0.002)], [HANGER.x, -T - 0.002, s * (HANGER.z + HANGER.t / 2 + 0.002)]], 0.005, 'yellow'));
   }
   api.part('1', group(...p), [0, 0.15, 0]);
 
@@ -63,7 +63,7 @@ export default function P005(api) {
       boxAt(api, [-hl + 0.02, Y_FLOOR, Z(Z_WALL[0])], [hl - 0.02, -T, Z(Z_WALL[1])]),
       boxAt(api, [-hl + 0.02, Y_FLOOR, Z(MS.zw + 0.004)], [hl - 0.02, Y_FLOOR + 0.01, Z(Z_WALL[1])]),
       ...[-1, 1].map((u) => boxAt(api, [u * (hl - 0.02) - u * 0.01, Y_FLOOR, Z(MS.zw + 0.004)], [u * (hl - 0.02), Y_FLOOR + 0.035, Z(Z_WALL[0])])),
-      S.weld([[-hl + 0.02, -T - 0.002, Z(Z_WALL[1] + 0.002)], [hl - 0.02, -T - 0.002, Z(Z_WALL[1] + 0.002)]], 0.006, 'red'),
+      S.weld([[-hl + 0.02, -T - 0.002, Z(Z_WALL[1] + 0.002)], [hl - 0.02, -T - 0.002, Z(Z_WALL[1] + 0.002)]], 0.006, 'yellow'),
     ];
     api.part('4', group(...c), [0, -0.05, s * 0.4]);
     // 2 — Téflon MP6021 en L (blanc) : aile basse sous la semelle haute, aile verticale contre le pousse-téflon.
@@ -85,7 +85,7 @@ export default function P005(api) {
 
   // 5 — Plaque MP6018 sous les pattes (sur la selle du vérin d'avance) ; 12 — vis 1/2-13 × 1 po par-dessous.
   const holes5 = [-1, 1].flatMap((u) => [-1, 1].map((s) => [u * 0.08, s * HANGER.z, 0.0068]));
-  api.part('5', at(S.plate(0.24, 0.16, t5, 'red', { holes: holes5, r: 0.006 }), [0, y5 + t5 / 2, 0]), [0, -0.4, 0]);
+  api.part('5', at(S.plate(0.24, 0.16, t5, 'yellow', { holes: holes5, r: 0.006 }), [0, y5 + t5 / 2, 0]), [0, -0.4, 0]);
   for (const [x, z] of holes5) api.part('12', bolt(0.5 * IN, 1 * IN, 'zinc', { axis: '-y', pos: [x, y5, z] }), [0, -0.6, 0], { noLabel: !(x > 0 && z > 0) });
 
   // 8 — Boulons de la tête 3/4-10 × 5 po (tête au-dessus : appui sur la semelle de la tête) ; 13 — écrous dessous.

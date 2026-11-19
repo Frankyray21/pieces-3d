@@ -199,10 +199,10 @@ export default function P007(api) {
   // posé sur son support, tels que dessinés sur la page 7 (un bout de flexible dessiné entre pompe et pistolet).
   const fp = [1.0, rt, -0.33];
   api.part('6', group(
-    at(box(0.2, 0.012, 0.14, 'red', { r: 0.004 }), [fp[0], rt + 0.006, fp[2]]),
-    at(cyl(0.055, 0.15, 'red', { axis: 'x', seg: 28 }), [fp[0] - 0.02, rt + 0.07, fp[2]]),
+    at(box(0.2, 0.012, 0.14, 'blackCast', { r: 0.004 }), [fp[0], rt + 0.006, fp[2]]),
+    at(cyl(0.055, 0.15, 'blackCast', { axis: 'x', seg: 28 }), [fp[0] - 0.02, rt + 0.07, fp[2]]),
     at(cyl(0.048, 0.004, 'black', { axis: 'x', seg: 28 }), [fp[0] - 0.097, rt + 0.07, fp[2]]),
-    at(box(0.07, 0.11, 0.11, 'red', { r: 0.012 }), [fp[0] + 0.09, rt + 0.065, fp[2]]),
+    at(box(0.07, 0.11, 0.11, 'blackCast', { r: 0.012 }), [fp[0] + 0.09, rt + 0.065, fp[2]]),
     at(box(0.025, 0.04, 0.02, 'black', { r: 0.004 }), [fp[0] - 0.02, rt + 0.135, fp[2]]),
     at(fitting(0.03, 0.05, 'steel', { elbow: true }), [fp[0] + 0.09, rt + 0.125, fp[2]]),
     tube([[fp[0] + 0.09, rt + 0.155, fp[2] - 0.03], [fp[0] + 0.12, rt + 0.19, fp[2] - 0.1], [fp[0] + 0.04, rt + 0.16, fp[2] - 0.17], [fp[0] - 0.06, rt + 0.1, fp[2] - 0.15]], 0.011, 'hose'),

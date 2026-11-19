@@ -32,10 +32,10 @@ export default function P011(api) {
   const A = { p0: X0, p1: X0 - 0.025, b1: -0.2, f1: -0.215 };
   const holes4 = corners(0.075).map(([u, v]) => [u, v, 0.0085]);
   api.part('4', group(
-    octo((A.p0 + A.p1) / 2, 0.025, 0.2, 'red', [[0, 0, 0.081], ...holes4]),
-    ...[-1, 1].map((s) => at(box(A.p1 - A.b1, 0.012, 0.16, 'red'), [(A.p1 + A.b1) / 2, DRV.y + s * 0.074, DRV.z])),
-    ...[-1, 1].map((s) => at(box(A.p1 - A.b1, 0.136, 0.012, 'red'), [(A.p1 + A.b1) / 2, DRV.y, DRV.z + s * 0.074])),
-    octo((A.b1 + A.f1) / 2, 0.015, 0.19, 'red', [[0, 0, 0.065], ...corners(0.07).map(([u, v]) => [u, v, 0.0085])]),
+    octo((A.p0 + A.p1) / 2, 0.025, 0.2, 'yellow', [[0, 0, 0.081], ...holes4]),
+    ...[-1, 1].map((s) => at(box(A.p1 - A.b1, 0.012, 0.16, 'yellow'), [(A.p1 + A.b1) / 2, DRV.y + s * 0.074, DRV.z])),
+    ...[-1, 1].map((s) => at(box(A.p1 - A.b1, 0.136, 0.012, 'yellow'), [(A.p1 + A.b1) / 2, DRV.y, DRV.z + s * 0.074])),
+    octo((A.b1 + A.f1) / 2, 0.015, 0.19, 'yellow', [[0, 0, 0.065], ...corners(0.07).map(([u, v]) => [u, v, 0.0085])]),
   ), [-0.18, 0, 0]);
 
   // 3 — Adaptateur cannelé 90-147 : bout mâle Ø 43 dans l'alésage de l'arbre menant, douille Ø 70 à cannelures
