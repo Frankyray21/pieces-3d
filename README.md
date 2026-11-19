@@ -576,6 +576,27 @@ pièces (numéro, quantité, page du manuel).
   les masses : 47,9 lb pour la poubelle et 6,85 lb pour le couvercle, pour
   47,9 lb et 6,9 lb aux cartouches.
 
+- **Pince-monseigneur Garant CB60PC, 60 po, pointe en biseau**
+  (`pince-monseigneur`) : barre-levier forgée d'une seule pièce, reconstituée
+  d'après une photo du produit (P01 : barre debout, pointe en bas), sans plan.
+  Données publiées par Garant, reprises telles quelles : la longueur de 60 po
+  et la lame de 1 1/8 po, prise pour le côté du pied carré. Le reste est relevé
+  sur la photo (546 pixels pour 60 po, soit 2,79 mm par pixel ; largeurs à un
+  demi-pixel près, longueurs à un pixel près) et arrondi au 1/8 po : poignée
+  ronde de Ø 7/8 po sur 22 3/4 po, fût octogonal de 1 1/8 po sur plats sur
+  23 3/8 po, pied carré sur 13 7/8 po, biseau d'un seul côté de 2 3/4 po laissé
+  en acier nu, peinture rouge orangé, étiquette enroulée sur le pied (dessin
+  générique : texte illisible). Supposé : le nombre de pans du fût, le
+  tranchant émoussé de 2 mm, les faces cachées de l'étiquette. La barre est un
+  volume passant par des sections de 64 points (rond, octogone, carré ;
+  `volume()` dans `src/models/pince-monseigneur/index.js`) ; les repères 1 à 4
+  désignent ses zones, qui ne se séparent pas en vue éclatée. Contrôle de la
+  masse : 7,0 kg (15,4 lb) calculés à 7 850 kg/m³ contre 18 lb publiées, écart
+  qui correspond à des sections plus larges d'environ 2 mm, moins d'un pixel de
+  la photo ; les détaillants indiquent d'ailleurs 1 1/4 ou 1 1/2 po de large là
+  où Garant publie 1 1/8 po. La fiche et la page du relevé (P02) sont écrites
+  par `tools/pince_monseigneur_fiche.mjs` à partir des cotes du modèle.
+
 La page d'accueil (adresse sans « # », ou le logo en haut à gauche) liste
 les équipements et permet de passer de l'un à l'autre. Les adresses du premier équipement restent `#F05` ; celles des autres
 sont préfixées : `#du311.P032`, `#du311-std.P050`, `#epiroc-ith.P019`.

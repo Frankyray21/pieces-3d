@@ -15,6 +15,7 @@ import etuiCleMoletteModels from './models/etui-cle-molette/index.js';
 import grillageModels from './models/grillage-cage/index.js';
 import makitaDjr183Models from './models/makita-djr183/index.js';
 import pinceSertirModels from './models/pince-a-sertir/index.js';
+import pinceMonseigneurModels from './models/pince-monseigneur/index.js';
 import plancherModels from './models/plancher-dd/index.js';
 import coffreModels from './models/coffre-dd/index.js';
 import coreKnockerModels from './models/core-knocker/index.js';
@@ -41,7 +42,7 @@ import { keyRows } from './ui/rows.js';
 const FEATURES = import.meta.glob(['./ui/features/*.js', '!./ui/features/_*.js'], { eager: true });
 
 // Modèles 3D disponibles par équipement (builders procéduraux).
-const MODELS = { 'cle-a-molette': cleMoletteModels, 'cles-a-tuyau': clesModels, 'cles-mixtes': clesMixtesModels, 'coffre-dd': coffreModels, 'core-knocker': coreKnockerModels, 'cubex-mri-5200': cubexModels, 'dead-man': deadManModels, du311: du311Models, 'du311-std': du311StdModels, 'epiroc-ith': epirocModels, 'etui-cle-molette': etuiCleMoletteModels, 'grillage-cage': grillageModels, 'makita-djr183': makitaDjr183Models, 'pince-a-sertir': pinceSertirModels, 'plancher-dd': plancherModels, 'porte-1801020': porteModels, 'poste-secours': posteSecoursModels, 'poubelle-dd': poubelleModels, 'rack-outil': rackOutilModels, 'rack-tiges-dd': rackModels, 'stm-1500': stmModels, 'support-pipewrench': supportPipewrenchModels, 'table-a-core': tableCoreModels, 'tube-eau': tubeEauModels };
+const MODELS = { 'cle-a-molette': cleMoletteModels, 'cles-a-tuyau': clesModels, 'cles-mixtes': clesMixtesModels, 'coffre-dd': coffreModels, 'core-knocker': coreKnockerModels, 'cubex-mri-5200': cubexModels, 'dead-man': deadManModels, du311: du311Models, 'du311-std': du311StdModels, 'epiroc-ith': epirocModels, 'etui-cle-molette': etuiCleMoletteModels, 'grillage-cage': grillageModels, 'makita-djr183': makitaDjr183Models, 'pince-a-sertir': pinceSertirModels, 'pince-monseigneur': pinceMonseigneurModels, 'plancher-dd': plancherModels, 'porte-1801020': porteModels, 'poste-secours': posteSecoursModels, 'poubelle-dd': poubelleModels, 'rack-outil': rackOutilModels, 'rack-tiges-dd': rackModels, 'stm-1500': stmModels, 'support-pipewrench': supportPipewrenchModels, 'table-a-core': tableCoreModels, 'tube-eau': tubeEauModels };
 // Vue d'ensemble légère : sous-assemblages simplifiés affichés d'abord, remplacés
 // un à un par leur version détaillée (facettes allégées) une fois la vue montrée.
 const OVERVIEW = { 'du311-std': du311StdOverview };

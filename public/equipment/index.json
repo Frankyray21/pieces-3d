@@ -117,6 +117,14 @@
       "status": "3D d'après les vignettes d'une capture d'écran (aucun plan) : pince de 30 po à trois empreintes pour câble de 5/32, 1/4 et 5/16 po (données publiées), mâchoires noires sur deux pivots, éclisses, têtes rouges des poignées à trois boulons, bras tubulaires, manchons en caoutchouc ; scène animée de l'ouverture et de la fermeture (mécanisme de coupe-boulons, genouillère) ; épaisseurs, visserie et diamètre des empreintes supposés"
     },
     {
+      "id": "pince-monseigneur",
+      "name": "Pince-monseigneur Garant CB60PC, 60 po, pointe en biseau",
+      "manufacturer": "Garant",
+      "category": "Barre-levier forgée",
+      "thumbnail": "equipment/pince-monseigneur/thumbnail.webp",
+      "status": "3D d'après une photo du produit : barre forgée de 60 po (donnée publiée), poignée ronde de Ø 7/8 po, fût octogonal, pied carré de 1 1/8 po (lame publiée) à biseau nu de 2 3/4 po, peinture rouge orangé, étiquette ; tronçons relevés sur la photo à 2,8 mm près, masse calculée de 7,0 kg contre 18 lb publiées"
+    },
+    {
       "id": "plancher-dd",
       "name": "Plancher pour foreuse aux diamants",
       "manufacturer": "Machines Roger International",
