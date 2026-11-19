@@ -22,6 +22,8 @@ const FIN = {
   // Peinture écaillée : taches de rouille où la peinture a sauté. rust = part de la surface
   // touchée (0 à 1, à peu près), rs = fréquence des taches (1/m).
   paintRust: { fine: 0.018, wave: 0.005, rough: 0.16, tint: 0.07, fs: 14, cs: 0.9, env: 1, rust: 0.28, rs: 13 },
+  // Usure (réglage wear de withFinish, 0 à 1) : peinture partie par frottement, acier à nu, par
+  // plaques et surtout là où l'attribut aWear du maillage (0 à 1 par sommet : arêtes, bouts) est élevé.
   paintSatin: { fine: 0.026, wave: 0.007, rough: 0.2, tint: 0.09, fs: 14, cs: 0.9, env: 1 },
   // Peinture noire : se lit surtout par ses reflets (réflecteurs renforcés).
   paintDark: { fine: 0.02, wave: 0.005, rough: 0.16, tint: 0.07, fs: 14, cs: 0.9, env: 1.8 },
@@ -250,6 +252,20 @@ diffuseColor.rgb *= 1.0 + uSurfAmp.w * ( sBlot * 1.2 + sGrain * 0.4 );
 #include <roughnessmap_fragment>
 roughnessFactor = clamp( roughnessFactor * ( 1.0 + uSurfAmp.z * ( sBlot * 1.6 + sGrain * 0.8 ) ), 0.02, 1.0 );`;
 
+// Usure (finition avec wear) : la peinture est partie où le champ (attribut aWear du maillage
+// + taches) dépasse le seuil ; il reste l'acier, gris sombre, sans vernis. Rien sur les faces de coupe.
+const WEAR_FRAG = /* glsl */`
+vec4 wX = texture2D( uSurfTex, sP.zy * 23.0 + 0.41 );
+vec4 wY = texture2D( uSurfTex, sP.xz * 23.0 + 0.09 );
+vec4 wZ = texture2D( uSurfTex, sP.xy * 23.0 + 0.77 );
+float wB = dot( sW, vec3( wX.b, wY.b, wZ.b ) );
+float wA = dot( sW, vec3( wX.a, wY.a, wZ.a ) );
+float wField = vWear + ( wB - 0.5 ) * 0.9 + ( wA - 0.5 ) * 0.3;
+float wSeuil = 1.05 - uSurfWear;
+float sWear = smoothstep( wSeuil, wSeuil + 0.05, wField ) * ( gl_FrontFacing ? 1.0 : 0.0 );
+diffuseColor.rgb = mix( diffuseColor.rgb, vec3( 0.2, 0.185, 0.17 ) * ( 0.8 + 0.5 * wA ), sWear );
+roughnessFactor = mix( roughnessFactor, 0.5, sWear );`;
+
 // Rouille (finition avec rust) : taches aux bords déchiquetés, brun mat et rugueux, auréole
 // ternie autour ; rien sur les faces de coupe (faces arrière), qui gardent la teinte de la pièce.
 const RUST_FRAG = /* glsl */`
@@ -305,13 +321,17 @@ function injectSurface(shader, fin) {
   shader.uniforms.uSurfEnv = { value: fin.env ?? 1 };
   const G = !!fin.grain;
   const R = !!fin.rust;
+  const W = !!fin.wear;
   if (R) shader.uniforms.uSurfRust = { value: new THREE.Vector2(fin.rust, fin.rs || 9) };
+  if (W) shader.uniforms.uSurfWear = { value: fin.wear };
   shader.vertexShader = shader.vertexShader
-    .replace('#include <common>', SURF_VERT_PARS + (G ? GRAIN_VERT : ''))
-    .replace('#include <begin_vertex>', SURF_VERT + (G ? '\nvGrain = aGrain;' : ''));
+    .replace('#include <common>', SURF_VERT_PARS + (G ? GRAIN_VERT : '') + (W ? '\nattribute float aWear;\nvarying float vWear;' : ''))
+    .replace('#include <begin_vertex>', SURF_VERT + (G ? '\nvGrain = aGrain;' : '') + (W ? '\nvWear = aWear;' : ''));
   shader.fragmentShader = shader.fragmentShader
-    .replace('#include <common>', SURF_FRAG_PARS + (G ? '\nvarying vec3 vGrain;\nuniform float uSurfGrain;' : '') + (R ? '\nuniform vec2 uSurfRust;' : ''))
-    .replace('#include <roughnessmap_fragment>', SURF_FRAG + (G ? GRAIN_FRAG : '') + (R ? RUST_FRAG : ''))
+    .replace('#include <common>', SURF_FRAG_PARS + (G ? '\nvarying vec3 vGrain;\nuniform float uSurfGrain;' : '') + (R ? '\nuniform vec2 uSurfRust;' : '') + (W ? '\nvarying float vWear;\nuniform float uSurfWear;' : ''))
+    .replace('#include <roughnessmap_fragment>', SURF_FRAG + (G ? GRAIN_FRAG : '') + (W ? WEAR_FRAG : '') + (R ? RUST_FRAG : ''))
+    // Acier à nu sous la peinture usée : métallique ; la rouille, elle, ne l'est jamais.
+    .replace('#include <metalnessmap_fragment>', `#include <metalnessmap_fragment>${W ? '\nmetalnessFactor = mix( metalnessFactor, 0.85, sWear );' : ''}${R ? '\nmetalnessFactor *= 1.0 - sRust;' : ''}`)
     .replace('#include <normal_fragment_maps>', `#include <normal_fragment_maps>
 normal = normalize( normal + faceDirection * sDelta );`)
     .replace('#include <clearcoat_normal_fragment_begin>', `#include <clearcoat_normal_fragment_begin>
@@ -324,7 +344,7 @@ normal = normalize( normal + faceDirection * sDelta );`)
 #endif`)
     .replace('#include <lights_physical_fragment>', `#include <lights_physical_fragment>
 #ifdef USE_CLEARCOAT
-  material.clearcoatRoughness = clamp( material.clearcoatRoughness * ( 1.0 + uSurfAmp.z * 2.5 * sBlot ), 0.02, 1.0 );${R ? '\n  material.clearcoat *= 1.0 - sRust;' : ''}
+  material.clearcoatRoughness = clamp( material.clearcoatRoughness * ( 1.0 + uSurfAmp.z * 2.5 * sBlot ), 0.02, 1.0 );${R ? '\n  material.clearcoat *= 1.0 - sRust;' : ''}${W ? '\n  material.clearcoat *= 1.0 - sWear;' : ''}
 #endif`);
 }
 
@@ -358,7 +378,7 @@ function setupProgram(m, cap, dir = 1) {
     if (fin) injectSurface(shader, fin);
     if (cap) shader.fragmentShader = shader.fragmentShader.replace('#include <dithering_fragment>', capShader(dir));
   };
-  const key = `${fin ? `surf${fin.grain ? '-grain' : ''}${fin.rust ? '-rust' : ''}` : ''}${cap ? `-section-cap-${dir}` : ''}`;
+  const key = `${fin ? `surf${fin.grain ? '-grain' : ''}${fin.rust ? '-rust' : ''}${fin.wear ? '-wear' : ''}` : ''}${cap ? `-section-cap-${dir}` : ''}`;
   m.customProgramCacheKey = () => key;
 }
 
@@ -390,11 +410,13 @@ export function mat(name) {
 /**
  * Donne une finition réaliste (relief, rugosité inégale) à un matériau créé
  * hors palette. preset : 'paint' | 'paintSatin' | 'machined' | 'chrome' |
- * 'cast' | 'rubber' | 'plastic'. Retourne le matériau.
+ * 'cast' | 'rubber' | 'plastic'. reglages : valeurs qui remplacent celles de
+ * la finition (ex. { rust: 0.2, rs: 16, wear: 0.5 } pour une peinture usée et
+ * rouillée). Retourne le matériau.
  */
-export function withFinish(material, preset = 'paint') {
+export function withFinish(material, preset = 'paint', reglages = null) {
   if (!FIN[preset]) throw new Error(`Finition inconnue : ${preset}`);
-  material.userData.fin = preset;
+  material.userData.fin = reglages ? { ...FIN[preset], ...reglages } : preset;
   setupProgram(material, false);
   material.needsUpdate = true;
   return material;
