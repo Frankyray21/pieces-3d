@@ -9,15 +9,15 @@ import { IN, MAST, ASSISE, TABLE, POULIE } from '../layout.js';
 // logé au milieu, les pattes de la table y descendent) :
 //   semelle basse |z| 0,11 à 0,23 (largeur hors tout MAST.w), débordant de 50 mm à l'extérieur de l'âme : c'est elle
 //   que les clamps de l'assise (P003 rep. 2) crochètent ;
-//   semelle haute |z| 0,11 à 0,205 (sous les plaques d'usure, débord extérieur de 25 mm : les téflons de la table
+//   semelle haute |z| 0,11 à 0,2025 (sous les plaques d'usure, débord extérieur de 22 mm : les téflons de la table
 //   crochètent dessous) ; âmes |z| 0,11–0,12 et 0,17–0,18. [estimé : la vue p. 4 montre deux caissons à fond ouvert]
-// La semelle haute s'arrête à 0,205 pour laisser passer sous la table les écrous des boulons de la tête
+// La semelle haute et les plaques d'usure s'arrêtent à 0,2025 pour laisser passer sous la table les écrous des boulons de la tête
 // (HEAD_BOLTS à |z| 0,22, layout.js).
 export const MS = {
   fl: 0.75 * IN, // épaisseur des semelles [estimé]
   web: 0.375 * IN, // épaisseur des âmes [estimé]
-  zi: 0.11, zw: 0.17, zt: 0.205, zb: MAST.w / 2, // âme intérieure, âme extérieure, bord des semelles haute et basse
-  wear: { t: 0.5 * IN, w: 0.07 }, // plaques d'usure MP6019 (vis fraisées 1/2-13 × 3/4 po) [estimé]
+  zi: 0.11, zw: 0.17, zt: 0.2025, zb: MAST.w / 2, // âme intérieure, âme extérieure, bord des semelles haute et basse
+  wear: { t: 0.5 * IN, w: 0.065 }, // plaques d'usure MP6019 (vis fraisées 1/2-13 × 3/4 po) [estimé]
   get yTop() { return MAST.top - this.wear.t; }, // dessus de la semelle haute
   get yTopB() { return this.yTop - this.fl; }, // dessous de la semelle haute
   get yBot() { return MAST.bottom + this.fl; }, // dessus de la semelle basse
