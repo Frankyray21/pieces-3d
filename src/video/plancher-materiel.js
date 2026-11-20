@@ -6,6 +6,9 @@
 // pingouin (gratte minière Garant E432SG, manche de 32 po), scie va-et-vient et
 // lames à bois). L'ÉPI n'est pas montré (déjà acquis). Silhouettes simples : ce
 // sont des repères pour la formation, pas des modèles de pièces.
+import * as THREE from 'three';
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
+import { mat } from '../viewer/materials.js';
 import { IN, FT, B66, P3, P8, S24, L, ground, WEDGE } from '../models/plancher-dd/plan.js';
 import { lumber, between, lagScrews, wedge } from '../models/plancher-dd/lumber.js';
 
@@ -64,6 +67,112 @@ MAT.b38.at[1] = bigBase('b38') + BIG.b38.ny * P3;
 function onGround(S, obj, x, z, dy = 0) {
   obj.position.set(x, g0(x, z) + dy, z);
   return obj;
+}
+
+// Pingouin : gratte minière Garant Pro E432SG (« muck scoop », SKU 78167), d'après la
+// photo et la fiche du fabricant. Tête d'acier peinte jaune (4,5 lb) : œil en caisson
+// traversé par le manche, avec une fenêtre ovale de chaque côté et une vis de blocage
+// du côté de la lame ; lame triangulaire de 14 po (6 po de large à la racine, effilée
+// jusqu'à la pointe), creusée en gouttière, qui part du haut de l'œil et se recourbe
+// vers le manche (corde à environ 60° du manche). Manche de bois franc verni de 32 po,
+// le bout peint en jaune (poignée antidérapante) et évasé du côté de la lame. Cotes
+// relevées sur la photo à l'échelle du manche ; profondeur du creux et de l'œil estimées.
+// Construit debout (œil en haut, origine sur l'axe du manche au haut de l'œil, lame
+// vers −X, largeur selon Z), puis couché sur le flanc, tête vers −Z.
+const PG = {
+  LH: 32 * IN, // manche, du haut de l'œil au bout
+  eye: { w: 0.063, h: 0.137, d: 0.055 },
+  blade: { w: 6 * IN, dish: 0.035, t: 0.004 },
+  grip: 5 * IN,
+  // Arête supérieure de la lame (dos), de la face de l'œil à la pointe, relevée sur la photo.
+  spine: [[-0.031, 0], [-0.061, -0.009], [-0.096, -0.026], [-0.139, -0.052], [-0.182, -0.08], [-0.226, -0.112], [-0.276, -0.161]],
+};
+
+/** Lame en gouttière : tôle d'épaisseur t le long du dos, creux tourné vers le manche. */
+function pingouinBlade() {
+  const { w, dish, t } = PG.blade;
+  const curve = new THREE.CatmullRomCurve3(PG.spine.map(([x, y]) => new THREE.Vector3(x, y, 0)));
+  const N = 28, M = 12;
+  const A = [], B = [];
+  for (let i = 0; i <= N; i++) {
+    const u = i / N, P = curve.getPointAt(u), T = curve.getTangentAt(u);
+    const n = new THREE.Vector3(-T.y, T.x, 0); // vers l'intérieur de la courbe (côté manche)
+    const hw = (w / 2) * (1 - u) + 0.002, d = dish * (1 - u);
+    const a = [], b = [];
+    for (let j = 0; j <= M; j++) {
+      const sj = -1 + (2 * j) / M;
+      const q = P.clone().addScaledVector(n, d * sj * sj).add(new THREE.Vector3(0, 0, hw * sj));
+      a.push(q);
+      b.push(q.clone().addScaledVector(n, t));
+    }
+    A.push(a); B.push(b);
+  }
+  const sheet = (G, flip) => {
+    const pos = [], idx = [];
+    G.forEach((row) => row.forEach((v) => pos.push(v.x, v.y, v.z)));
+    for (let i = 0; i < N; i++) for (let j = 0; j < M; j++) {
+      const k = i * (M + 1) + j, k2 = k + M + 1;
+      if (flip) idx.push(k, k2, k + 1, k + 1, k2, k2 + 1);
+      else idx.push(k, k + 1, k2, k + 1, k2 + 1, k2);
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+    geo.setIndex(idx);
+    geo.computeVertexNormals();
+    return geo.toNonIndexed();
+  };
+  // Chants : les deux rives et la racine (contre l'œil).
+  const edge = (pairs) => {
+    const pos = [];
+    for (let k = 0; k < pairs.length - 1; k++) {
+      const [a0, b0] = pairs[k], [a1, b1] = pairs[k + 1];
+      pos.push(...a0.toArray(), ...b0.toArray(), ...a1.toArray(), ...a1.toArray(), ...b0.toArray(), ...b1.toArray());
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+    geo.computeVertexNormals();
+    return geo;
+  };
+  const geo = mergeGeometries([
+    sheet(A, false), sheet(B, true),
+    edge(A.map((r, i) => [r[0], B[i][0]])), edge(A.map((r, i) => [r[M], B[i][M]])), edge(A[0].map((v, j) => [v, B[0][j]])),
+  ]);
+  const m = mat('yellow').clone();
+  m.side = THREE.DoubleSide;
+  return new THREE.Mesh(geo, m);
+}
+
+function pingouin(S) {
+  const { LH, eye, grip } = PG;
+  const yEye = -eye.h, yGrip = -(LH - grip), lw = yEye - yGrip;
+  // Fenêtres ovales de l'œil (le bois du manche paraît au travers).
+  const oval = S.group(S.cyl(0.0165, eye.d + 0.002, 'woodLight', { axis: 'z' }));
+  oval.position.set(-0.003, -0.067, 0);
+  oval.scale.set(1, 1.97, 1);
+  // Manche de section ovale, plus large vu de côté.
+  const wood = S.group(S.cyl(0.017, lw, 'woodLight', { r2: 0.021, pos: [0, yGrip + lw / 2, 0] }));
+  wood.scale.set(1.15, 1, 1);
+  const tool = S.group(
+    S.box(eye.w, eye.h, eye.d, 'yellow', { r: 0.004, pos: [0, -eye.h / 2, 0] }),
+    oval,
+    S.nut(0.012, 0.008, 'zinc', { axis: 'x', pos: [-eye.w / 2 - 0.006, -0.121, 0] }),
+    S.cyl(0.004, 0.006, 'zinc', { axis: 'x', pos: [-eye.w / 2 - 0.002, -0.121, 0] }),
+    wood,
+    // Bout du manche peint en jaune, évasé du côté de la lame.
+    S.cyl(0.021, grip, 'yellow', { r2: 0.0175, pos: [-0.002, -LH + grip / 2, 0] }),
+    S.cyl(0.023, 0.03, 'yellow', { r2: 0.021, pos: [-0.006, -LH + 0.015, 0] }),
+    pingouinBlade(),
+  );
+  // Couché sur le flanc : Y local (le manche) → −Z, Z local (la largeur) → vertical ;
+  // il repose sur le bout du manche et sur une rive de la lame, la tête un peu relevée.
+  tool.rotation.x = -Math.PI / 2;
+  const tilt = S.group(tool);
+  tilt.rotation.x = Math.atan2(PG.blade.w / 2 - 0.023, LH);
+  const p = S.group(tilt);
+  p.updateMatrixWorld(true);
+  const bb = new THREE.Box3().setFromObject(p);
+  tilt.position.set(0, -bb.min.y, -(bb.min.z + bb.max.z) / 2);
+  return p;
 }
 
 export function materielGroup(S) {
@@ -185,49 +294,7 @@ export function materielGroup(S) {
   });
   scie.rotation.y = -Math.PI / 2;
   g.add(onGround(S, scie, MAT.scie.at[0], MAT.scie.at[2]));
-  // Pingouin : gratte minière Garant Pro E432SG (« muck scoop », SKU 78167), d'après la
-  // fiche du fabricant : tête d'acier de 4,5 lb, lame de 14 po × 6 po, manche de bois
-  // franc verni de 32 po à poignée antidérapante. Elle se tire comme une houe pour ramener
-  // les petits déblais entre les jambes. Angle lame–manche (70°), creux de la lame (2 cm),
-  // couleur de la tête et longueur de la poignée sont estimés (pas de photo cotée).
-  // Posée au sol lame en bas : la pointe de la lame et le bout du manche touchent le sol,
-  // la douille est soulevée ; le tout dans le plan vertical selon Z, tête vers le fond de l'aire.
-  {
-    const LH = 32 * IN, LB = 14 * IN, WB = 6 * IN, ANG = (70 * Math.PI) / 180;
-    const rH = 0.018, tB = 0.004, sag = 0.02;
-    // a : pente du manche ; on cherche la pente pour laquelle la pointe est au sol (y = 0)
-    // et le bout du manche repose sur sa génératrice (centre à y = rH).
-    let a = 0.4;
-    for (let i = 0; i < 40; i++) a -= (LB * Math.sin(a + ANG) - LH * Math.sin(a) - rH) / (LB * Math.cos(a + ANG) - LH * Math.cos(a));
-    const ho = LB * Math.sin(a + ANG); // hauteur de la douille (axe du manche)
-    const beta = -(a + ANG); // direction de la lame depuis +Z, positive vers le haut
-    const H = [0, -Math.sin(a), Math.cos(a)], B = [0, Math.sin(beta), Math.cos(beta)];
-    const O = [0, ho, -0.36]; // douille ; le bout du manche arrive vers +Z
-    const at = (P, d, k) => [P[0] + d[0] * k, P[1] + d[1] * k, P[2] + d[2] * k];
-    const E = at(O, H, LH);
-    const p = S.group(
-      // Manche verni et poignée antidérapante au bout.
-      S.rod(at(O, H, -0.02), at(E, H, -0.17), rH, 'woodLight'),
-      S.rod(at(E, H, -0.17), E, rH + 0.0025, 'rubber'),
-      // Douille de la tête autour du manche.
-      S.rod(at(O, H, -0.035), at(O, H, 0.05), 0.027, 'darkSteel'),
-    );
-    // Lame : gouttière de 6 po de large, creux tourné vers le manche, extrudée selon sa longueur.
-    const N = 12, outer = [], inner = [];
-    for (let i = 0; i <= N; i++) {
-      const x = -WB / 2 + (WB * i) / N, w = sag * (2 * x / WB) ** 2;
-      outer.push([x, w]);
-      inner.push([x, w + tB]);
-    }
-    const s0 = 0.03, lenB = LB - s0;
-    const blade = S.group(S.extrude([...outer, ...inner.reverse()], lenB, 'darkSteel'));
-    blade.rotation.x = -beta; // Z local → direction de la lame, Y local → côté du manche
-    blade.position.set(...at(O, B, s0 + lenB / 2));
-    // Collet entre la douille et le haut de la lame.
-    const neck = S.rod(at(O, B, 0.02), at(O, B, s0 + 0.03), 0.016, 'darkSteel');
-    p.add(blade, neck);
-    g.add(onGround(S, p, MAT.pingouin.at[0], MAT.pingouin.at[2]));
-  }
+  g.add(onGround(S, pingouin(S), MAT.pingouin.at[0], MAT.pingouin.at[2]));
   g.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
   return g;
 }
@@ -252,7 +319,7 @@ export const TOUR = [
   { keys: ['biche', 'masse', 'marteau'], c: G(X0 + 1.4, 0.4), pos: [X0 + 0.45, ground(X0 + 1.4, 0.4) + 1.35, 1.25] },
   { keys: ['sciotte', 'pinces'], c: G(X0 + 1.4, 1.8), d: 1.15 },
   { keys: ['laser', 'niveau'], c: G(X0 + 0.6, 1.1, 0.2), d: 1.75 },
-  { keys: ['pingouin'], c: G(X0 + 2.15, 0.5, 0.17), pos: [X0 + 1.05, ground(X0 + 2.15, 0.5) + 0.95, 1.55] },
+  { keys: ['pingouin'], c: G(X0 + 2.1, 0.55), pos: [X0 + 1.25, ground(X0 + 2.1, 0.55) + 0.95, 1.35] },
   { keys: ['barres'], c: G(X0 + 1.1, BARS_Z), pos: [X0 - 0.3, ground(X0 + 1.1, BARS_Z) + 0.95, -1.75] },
   { keys: ['scie'], c: G(X0 + 1.8, 2.25), d: 0.7 },
 ];
