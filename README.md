@@ -658,6 +658,22 @@ pièces (numéro, quantité, page du manuel).
   les masses : 47,9 lb pour la poubelle et 6,85 lb pour le couvercle, pour
   47,9 lb et 6,9 lb aux cartouches.
 
+- **Niveau à bulle de 4 pi (48 po), profilé caisson** (`niveau-4-pi`) : niveau
+  du type Stabila 196-2 de 48 po (n° 37448), reconstitué sans plan ni photo
+  d'après les données publiées par le fabricant et ses détaillants : longueur
+  de 48 po, profilé caisson en aluminium, une fiole horizontale et deux fioles
+  d'aplomb, deux poignées, embouts amortisseurs, masse d'environ 1,2 kg ;
+  section d'environ 60 × 30 mm donnée par les fiches des détaillants (arrondie
+  au centimètre). Supposé : flancs de 2 mm peints en jaune, semelles fraisées
+  de 2,5 mm (faces de mesure en aluminium nu), âme centrale de 1,5 mm, place et
+  taille des fenêtres et des trous de main, fioles de Ø 13 mm tenues par une
+  plaque d'acrylique, embouts de caoutchouc noir creux. Niveau couché : la
+  bulle de la fiole horizontale est entre ses repères, celles des fioles
+  d'aplomb montent au bout du haut. Contrôle de la masse : 1,25 kg calculés
+  contre 1,2 kg publié. La fiche et la page des cotes (P01, vue de côté et
+  section) sont écrites par `tools/niveau_4_pi_fiche.mjs` à partir des cotes
+  du modèle (`src/models/niveau-4-pi/index.js`).
+
 - **Pince-monseigneur Garant CB60PC, 60 po, pointe en biseau**
   (`pince-monseigneur`) : barre-levier forgée d'une seule pièce, reconstituée
   d'après une photo du produit (P01 : barre debout, pointe en bas), sans plan.

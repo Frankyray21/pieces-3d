@@ -117,6 +117,14 @@
       "status": "3D d'après deux images du produit ; découpe libre d'un 3 × 8, scie à la verticale : le trait, droit ou courbe, se trace dans la vue 3D et la scie le suit (morceaux détachés qui tombent, entailles, sciure) ; scène animée du sciage d'un 2 × 4 ; longueur de 398 mm, course de 13 mm et cadence de 0 à 3 000 courses/min publiées, le reste estimé à environ 15 % près ; un 3 × 8 (76 mm) dépasse la capacité publiée de 50 mm dans le bois"
     },
     {
+      "id": "niveau-4-pi",
+      "name": "Niveau à bulle de 4 pi (48 po), profilé caisson",
+      "manufacturer": "Type Stabila 196-2 (cotes publiées)",
+      "category": "Outil de mesure",
+      "thumbnail": "equipment/niveau-4-pi/thumbnail.webp",
+      "status": "3D sans plan ni photo, d'après les données publiées du Stabila 196-2 de 48 po : profilé caisson en aluminium d'environ 60 × 30 mm (détaillants), faces de mesure fraisées, flancs jaunes, fiole horizontale au milieu et deux fioles d'aplomb, deux poignées, embouts amortisseurs ; épaisseurs, fenêtres et poignées supposées, masse calculée de 1,25 kg contre 1,2 kg publié"
+    },
+    {
       "id": "pince-a-sertir",
       "name": "Pince à sertir de 30 po pour manchons de câble (wire line)",
       "manufacturer": "VEVOR",

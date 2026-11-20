@@ -1,0 +1,129 @@
+{
+ "id": "niveau-4-pi",
+ "name": "Niveau à bulle de 4 pi (48 po), profilé caisson",
+ "manufacturer": "Type Stabila 196-2 (cotes publiées)",
+ "category": "Outil de mesure",
+ "serial": "",
+ "document": {
+  "title": "Cotes publiées (fabricant et détaillants, aucun plan) et cotes supposées",
+  "reference": "37448",
+  "preparedBy": "",
+  "date": "",
+  "sheets": 1,
+  "pagePattern": "pages/{sheet}.webp"
+ },
+ "specs": [
+  [
+   "Source",
+   "Aucun plan ni photo fournis. Niveau du type Stabila 196-2 de 48 po (n° 37448) : longueur, profilé caisson, nombre de fioles, poignées, embouts, précision et masse publiés par le fabricant et ses détaillants ; section d'environ 60 × 30 mm donnée par les fiches des détaillants (arrondie au centimètre) ; le reste supposé"
+  ],
+  [
+   "Données publiées",
+   "Longueur de 48 po (122 cm en Europe) ; profilé caisson en aluminium extra rigide ; 1 fiole horizontale et 2 fioles d'aplomb ; 2 poignées ; embouts amortisseurs ; précision de 0,029° (0,5 mm/m) en position normale ; masse d'environ 1,2 kg"
+  ],
+  [
+   "Longueur",
+   "48 po (1219,2 mm) hors tout, embouts compris — donnée publiée"
+  ],
+  [
+   "Section du profilé",
+   "60 mm de haut (entre les faces de mesure) × 30 mm de large (environ 2 3/8 po × 1 1/8 po) — fiches des détaillants, arrondies au centimètre"
+  ],
+  [
+   "Profilé",
+   "Caisson d'aluminium de 1169,2 mm entre les embouts : flancs de 2 mm, semelles du haut et du bas de 2,5 mm fraisées (faces de mesure, aluminium nu), âme centrale de 1,5 mm ; épaisseurs supposées. Flancs peints en jaune"
+  ],
+  [
+   "Fiole horizontale",
+   "Au milieu, dans une fenêtre traversante de 96 mm × 34 mm ; fiole de Ø 13 mm tenue par une plaque d'acrylique clair de 6 mm, deux bagues de lecture à ±8,5 mm du centre ; cotes supposées"
+  ],
+  [
+   "Fioles d'aplomb",
+   "Deux, en travers du niveau, centrées à 87 mm des bouts dans des fenêtres de 46 mm × 40 mm ; niveau couché, leur bulle monte au bout du haut ; cotes supposées"
+  ],
+  [
+   "Poignées",
+   "Deux trous de main de 120 mm × 32 mm à bouts ronds, centrés à 300 mm du milieu, doublés d'un manchon de plastique noir à rebords ; place et taille supposées"
+  ],
+  [
+   "Doublures",
+   "Manchons de plastique noir qui traversent le profilé (paroi de 2 mm), rebords de 2,5 mm en saillie de 0,8 mm sur les flancs ; les cadres des fioles sont faits de même"
+  ],
+  [
+   "Embouts",
+   "Caoutchouc noir, creux (paroi de 3 mm), emboîtés sur les bouts du profilé, 25 mm de long, en retrait de 0,5 mm sur les faces de mesure (le niveau porte sur l'aluminium) et en débord de 1 mm sur les flancs ; couleur et forme supposées"
+  ],
+  [
+   "Masse",
+   "Masse calculée sur le modèle : 1,25 kg (2,75 lb) — aluminium 403 cm³ à 2 700 kg/m³ (1,09 kg), embouts, doublures et plaques des fioles — contre environ 1,2 kg publiés (1,18 à 1,20 kg selon les détaillants européens ; 2,57 à 4,15 lb selon les détaillants américains, qui ne s'accordent pas). Les épaisseurs supposées des parois sont cohérentes avec la masse publiée"
+  ],
+  [
+   "Non modélisé",
+   "Marquages, logo et graduations éventuels : aucune source ne les montre"
+  ]
+ ],
+ "weights": [],
+ "sheetTitles": {
+  "P01": "Cotes du niveau : vue de côté et section du profilé (publiées et supposées)"
+ },
+ "root": "P01",
+ "assemblies": {
+  "P01": {
+   "title": "SPIRIT LEVEL, 48 IN, BOX BEAM",
+   "titleFr": "Niveau à bulle de 4 pi (48 po), profilé caisson",
+   "pn": "37448",
+   "sheets": [
+    "P01"
+   ],
+   "note": "Reconstitution 3D sans plan ni photo, d'après les données publiées pour le niveau Stabila 196-2 de 48 po : longueur de 48 po, profilé caisson en aluminium, une fiole horizontale et deux d'aplomb, deux poignées, embouts amortisseurs, masse d'environ 1,2 kg. Section de 60 mm × 30 mm d'après les fiches des détaillants (valeurs arrondies au centimètre). Supposé : les épaisseurs du caisson, l'âme centrale, la place et la taille des fenêtres et des poignées, la forme des fioles et la couleur des embouts. Les faces de mesure du haut et du bas sont fraisées (aluminium nu), les flancs peints en jaune. Masse calculée sur le modèle : 1,25 kg (2,75 lb) — aluminium 403 cm³ à 2 700 kg/m³ (1,09 kg), embouts, doublures et plaques des fioles — contre environ 1,2 kg publiés (1,18 à 1,20 kg selon les détaillants européens ; 2,57 à 4,15 lb selon les détaillants américains, qui ne s'accordent pas). Les épaisseurs supposées des parois sont cohérentes avec la masse publiée. Le niveau est couché sur le sol, face de mesure en bas ; en vue éclatée, les fioles montent, les poignées sortent en travers et les embouts s'écartent.",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "PROFILÉ CAISSON en aluminium, 1169,2 mm × 60 mm × 30 mm",
+     {
+      "note": "Deux flancs jaunes percés de cinq fenêtres, semelles fraisées de 2,5 mm (faces de mesure), âme centrale. Épaisseurs supposées."
+     }
+    ],
+    [
+     "2",
+     "",
+     1,
+     "FIOLE HORIZONTALE et son bloc, au milieu",
+     {
+      "note": "Fiole de Ø 13 mm, liquide vert-jaune, bulle entre deux bagues de lecture ; plaque d'acrylique clair de 6 mm et cadre de plastique noir. Lue par les deux flancs."
+     }
+    ],
+    [
+     "3",
+     "",
+     2,
+     "FIOLE D'APLOMB et son bloc, près des bouts",
+     {
+      "note": "Fioles en travers du niveau, à 87 mm des bouts ; pour vérifier un aplomb, le niveau se tient debout. Même construction que la fiole horizontale."
+     }
+    ],
+    [
+     "4",
+     "",
+     2,
+     "POIGNÉE (trou de main) 120 mm × 32 mm",
+     {
+      "note": "Manchon de plastique noir à rebords qui double le trou de main à travers tout le profilé. Place et taille supposées."
+     }
+    ],
+    [
+     "5",
+     "",
+     2,
+     "EMBOUT AMORTISSEUR en caoutchouc",
+     {
+      "note": "25 mm de long, en retrait sur les faces de mesure. Couleur et forme supposées."
+     }
+    ]
+   ]
+  }
+ },
+ "documents": []
+}
