@@ -6,9 +6,9 @@
 import * as THREE from 'three';
 import {
   IN, FT, B66, P3, P8, S24, R24, W, L, SEC, DECK, joistZ, GAL, JOINT_X, SUPPORTS_X, SLEEPERS_X,
-  stack, ground, groundUnder, over12, deckHeight, STAIR, DRILL, STM, WEDGE, plankX, TIGHT, d1, d2,
+  stack, ground, groundUnder, over12, deckHeight, STAIR, DRILL, STM, WEDGE, plankX, TIGHT, d1, d2, S2_RELAIS,
 } from './plan.js';
-import { lumber, between, wedge, lagScrews, placeStack, labeler } from './lumber.js';
+import { lumber, between, wedge, lagScrews, placeStack, labeler, grain } from './lumber.js';
 import { groundPatch } from './site.js';
 import { PIVOT, FOOT_X, AXIS_Y } from '../stm-1500/layout.js';
 
@@ -81,8 +81,9 @@ export function P07(api, opts = {}) {
  * joint tombe toujours sur un blocage, jamais dans le vide.
  *   joint 'commun' : un blocage centré sous le joint, les deux bouts dessus ;
  *   joint 'double' : un blocage sous chaque bout, côte à côte.
- * Pas de doubleur aux joints des 8 pi : à la jonction des sections, seulement le bout de
- * 3 × 6 de 24 po le long des madriers de rive, comme dans la vidéo (P10, repère 8).
+ * Aux joints des 8 pi : un bout de 3 × 6 de 24 po sur les madriers de rive et sur celui du
+ * milieu seulement (eclisses8) ; à la jonction des sections, le bout de 3 × 6 de 24 po le
+ * long des madriers de rive (P10, repère 8).
  * Retourne les madriers (deux par ligne) et la rangée d'appuis du joint.
  */
 export const JOINT8_X = 8 * FT;
@@ -153,16 +154,20 @@ export function variante8Sec2(S) {
 
 /**
  * Variante 8 pi : joints des 6 × 6 de 8 pi jointés comme au centre (jonction des
- * sections) : sur chaque ligne de madriers, un bout de 3 × 6 de 24 po à plat contre le
- * madrier, à cheval sur le joint, vissé avec un tire-fond de 6 po de chaque côté du joint.
- * Sans lui, les coins de serrage des planches (étape 7) écartent les deux 6 × 6 au joint.
- * Madriers de rive : côté intérieur ; les autres : côté Z positif.
+ * sections) : un bout de 3 × 6 de 24 po à plat contre le madrier, à cheval sur le joint,
+ * vissé avec un tire-fond de 6 po de chaque côté du joint. Seulement sur les deux madriers
+ * de rive et sur celui du milieu (demande du chantier, pour alléger) : au serrage des
+ * planches (étape 7), la planche temporaire est vissée seulement dans ces trois madriers,
+ * si bien que les coins ne tirent que sur des joints tenus.
+ * Madriers de rive : côté intérieur ; celui du milieu : côté Z positif.
  * Joints à 8 pi (section 1) et à 24 pi (section 2).
  */
-export function eclisses8(S, xs = [JOINT8_X, JOINT8_X2]) {
+export const LIGNES_ECLISSES8 = [0, (joistZ.length - 1) / 2, joistZ.length - 1];
+export function eclisses8(S, xs = [JOINT8_X, JOINT8_X2], lignes = LIGNES_ECLISSES8) {
   const g = S.group();
   const half = 12 * IN;
   joistZ.forEach((z, k) => {
+    if (!lignes.includes(k)) return;
     const s = k === joistZ.length - 1 ? -1 : 1; // côté du 3 × 6 (vers l'intérieur pour les rives)
     const zf = z + s * B66 / 2; // face du madrier
     for (const x of xs) {
@@ -231,9 +236,10 @@ export function P13(api, opts = {}) {
     p.userData.order = i;
     put('1', p, [0, 0.45, 0], 12);
   }
-  // Étapes 6 et 7 répétées : première planche de la section, planche devant les coins.
+  // Planche du bout vissée ; étape 7 refaite en replaçant les planches depuis la section 1
+  // (S2_RELAIS) : planche devant les coins (la 11e replacée) vissée.
   put('2', lagScrews(S, ends(d2(0))), [0, 1.05, 0], 12);
-  put('3', lagScrews(S, ends(d2(TIGHT))), [0, 1.05, 0], 12);
+  put('3', lagScrews(S, ends(S2_RELAIS + TIGHT)), [0, 1.05, 0], 12);
   return { view: { dir: [-0.75, 1.0, 1.1] } };
 }
 
@@ -471,14 +477,21 @@ export function P16(api, opts = {}) {
  * position ergonomique à l'arrière de la tête de forage : ajouter les tiges et sortir le tube carotier.
  * Sa hauteur suit l'angle de forage (SECONDAIRES) :
  *   - forage à l'horizontale : pas de plancher secondaire ;
- *   - forage montant (10°) : plancher secondaire de 9 po, sans marche ;
- *   - forage montant (15°) : plancher à 18 po, 2 marches (la 1re de 16 po × 9 po) et garde-corps
- *     aux bouts sans marche.
+ *   - forage montant (10°) : plancher secondaire standard de 9 po (une marche) ;
+ *   - forage montant (15°) : 18 po, 2 marches : un plancher plus grand dessous, le standard par-dessus.
  * Au-delà de 20° (forage ascendant) : plus de 2 marches (pas montré).
- * 32 × 72 po, le long côté parallèle à la tour, planches 3 × 8 dans le sens de la tour ; il épouse
- * la foreuse : la planche la plus près est à 1 po de la face extérieure du patin (moins de 3 po :
- * le pied ne passe pas), les poteaux des paliers à environ 3 po. Placé vis-à-vis de l'arrière de
- * la tête, sans dépasser le plancher principal. Les 2 planches les plus près de la foreuse sont vissées.
+ * Plancher standard : 32 × 72 po, 9 po de haut, le long côté parallèle à la tour : trois 6 × 6 en
+ * travers et quatre planches 3 × 8 dans le sens de la tour, chacune vissée à chaque bout. Les 6 × 6
+ * dépassent de 6 po du côté libre (demande du chantier) : une poignée pour le déplacer (il est lourd)
+ * et un appui pour la grosse pry-bar. Il épouse la foreuse : la planche la plus près est à 1 po de la
+ * face extérieure du patin (moins de 3 po : le pied ne passe pas).
+ * Deux marches (demande du chantier, façon simple de le bâtir) : dessous, un plancher de même
+ * construction, 16 po plus long (côté poulies) et 16 po plus large (côté libre : 2 planches) ; le
+ * standard posé par-dessus. Une seule marche : on enlève celui du dessous. Jamais de garde-corps du
+ * côté des poulies (il nuirait au travail) : c'est une marche. Garde-corps, avec son coup de pied, au
+ * bout sans marche (côté front de taille). À 18 po, la planche du dessus la plus près de la foreuse
+ * est taillée selon la tour (planche taillée, plancherSecondaire) : le pied ne glisse ni dessous ni
+ * entre la tour et le plancher.
  */
 const PATIN_Z = 0.533;     // demi-largeur hors tout du traîneau (face extérieure des patins)
 // Pour lever l'avance, le support bascule sur l'axe arrière (tubes de pivot dans les paliers des
@@ -513,50 +526,85 @@ export function secondaryPlan(H = 18 * IN, xc = SECONDAIRES[2].xc) {
 // z : le long de la foreuse, z = −X), puis tourné de −90° autour de Y dans la galerie.
 const VERS_GALERIE = new THREE.Matrix4().makeRotationY(-Math.PI / 2);
 
+// Les 6 × 6 en travers dépassent de 6 po du côté libre (poignée, appui de la pry-bar).
+const DEPASSE = 6 * IN;
+// Plancher du dessous des 2 marches : 16 po de plus en longueur (côté poulies) et en largeur (côté libre).
+const MARCHE2 = 16 * IN;
+
 /**
- * Pièces d'un plancher secondaire de hauteur H : [{ ref, obj, module }] (module : rang de pose).
- * Appuis : rien à 9 po (travers sur le plancher), 3 × 8 à plat et bout de 6 × 6 à 18 po, 6 × 6
- * debout au-delà ; marches de 16 po de profondeur, une tous les 9 po, sur le côté libre.
+ * Planche taillée selon la tour (plancher de 18 po, forage montant à 15°) : la planche du dessus la
+ * plus près de la foreuse avance au-dessus du patin jusqu'à environ 1 po des pièces de la foreuse à
+ * la hauteur où l'on marche, avec une encoche autour de chaque pièce qui dépasse : le pied ne glisse
+ * ni sous la tour ni entre la tour et le plancher (photos du chantier). Largeur ajoutée côté foreuse
+ * (po), par tronçon le long du plancher (m, depuis xc, X de la galerie croissant : du front de taille
+ * vers les poulies). Relevé par rayons dans la foreuse de l'app (stm1500.glb, posée comme à l'écran
+ * de l'étape 18 : 15°, glisse 0,05 m, avance de 0,15 m) : 6 à 9 cm jusqu'aux poteaux avant du traîneau,
+ * 12 cm jusqu'au poteau du palier de bascule, rien à moins de 30 cm ailleurs (sous la tour).
+ */
+const TAILLE_15 = [[-0.915, -0.747, 1.5], [-0.747, -0.397, 8], [-0.397, -0.147, 4], [-0.147, 0.863, 8], [0.863, 0.915, 4]];
+// Appui de la planche taillée : chaque 6 × 6 du dessus avance aussi vers la foreuse (po), sans la
+// toucher (bout côté front de taille, milieu, bout côté poulies).
+const APPUI_TAILLE_15 = { face: 1.5, milieu: 8, poulies: 4 };
+
+/**
+ * Pièces d'un plancher secondaire de hauteur H : [{ ref, obj, module, taillee }] (module : rang de pose).
+ * 9 po : le plancher standard seul ; 18 po : un plancher plus grand dessous (repères 1 et 2), le
+ * standard par-dessus (repères 4 et 5), la planche taillée (9) et le garde-corps du bout côté front
+ * de taille (6, 7, 8). Tire-fonds (3) : chaque planche vissée à chaque bout.
  */
 export function plancherSecondaire(S, H, xc) {
   const out = [];
-  const add = (ref, obj, module) => { obj.applyMatrix4(VERS_GALERIE); out.push({ ref, obj, module }); };
+  const add = (ref, obj, module, extra = {}) => { obj.applyMatrix4(VERS_GALERIE); out.push({ ref, obj, module, ...extra }); };
   const sp = secondaryPlan(H, xc);
-  const x0 = sp.z0, x1 = sp.z1, z0 = -sp.x1, z1 = -sp.x0;   // repère local
-  const zm = (z0 + z1) / 2, y0 = DECK, yt = y0 + H - P3; // dessous des planches
-  const zs = [z0 + B66 / 2, zm, z1 - B66 / 2];
-  const sous = H - P3 - B66;                    // hauteur des appuis sous les travers
-  for (const z of zs) for (const x of [x0 + P8 / 2, x1 - P8 / 2]) {   // appuis sans toucher au patin
-    if (sous < 0.01) continue;
-    if (Math.abs(sous - (P3 + B66)) < 0.01) {
-      add('4', lumber(S, [P8, P3, 24 * IN], [x, y0 + P3 / 2, z]), 1);
-      add('4', lumber(S, [B66, B66, 24 * IN], [x, y0 + P3 + B66 / 2, z]), 1.5);
-    } else add('4', lumber(S, [B66, sous, B66], [x, y0 + sous / 2, z], 'woodDark'), 1);
-  }
-  for (const z of zs) add('1', lumber(S, [x1 - x0, B66, B66], [(x0 + x1) / 2, yt - B66 / 2, z]), 2);
+  // Repère local du plancher standard (celui du dessus) : x de la foreuse (x0) vers le côté libre (x1),
+  // z le long de la foreuse, du côté des poulies (z0) au côté du front de taille (z1).
+  const x0 = sp.z0, x1 = sp.z1, z0 = -sp.x1, z1 = -sp.x0;
+  const deux = H > 9 * IN + 0.01;
   const vis = [];
-  for (let k = 0; k < 4; k++) {
-    const x = x0 + (k + 0.5) * P8;
-    add('2', lumber(S, [P8, P3, z1 - z0], [x, yt + P3 / 2, zm]), 3 + 0.1 * k);
-    if (k < 2) for (const z of [zs[0], zs[2]]) vis.push([x, yt + P3, z]);
-  }
-  add('3', lagScrews(S, vis), 3.6);
-  // Marches sur le côté libre : la j-ième (j = 1 contre le plancher) a son dessus à H − 9j po.
-  const nM = Math.round(H / (9 * IN)) - 1;
-  for (let j = 1; j <= nM; j++) {
-    const top = H - 9 * IN * j, xa = x1 + (j - 1) * 16 * IN, xm = xa + 8 * IN, h = top - P3;
-    for (const z of zs) add('5', lumber(S, [16 * IN, h, B66], [xm, y0 + h / 2, z], h > B66 + 0.01 ? 'woodDark' : 'wood'), 4 + 0.1 * j);
-    for (let k = 0; k < 2; k++) add('5', lumber(S, [P8, P3, z1 - z0], [xa + (k + 0.5) * P8, y0 + h + P3 / 2, zm]), 4.5 + 0.1 * j);
-  }
-  // Garde-corps aux deux bouts sans marche (plancher à plus de 9 po).
-  if (H > 9 * IN + 0.01) {
-    const top = y0 + H + RAIL_TOP;
-    for (const [z, s] of [[z0, -1], [z1, 1]]) {
-      for (const x of [x0 + S24.w / 2, x1 - S24.w / 2]) add('6', lumber(S, [S24.w, POST_LEN, S24.t], [x, top - POST_LEN / 2, z + s * S24.t / 2], 'woodPlaned'), 5);
-      add('7', lumber(S, [x1 - x0, S24.w, S24.t], [(x0 + x1) / 2, top - S24.w / 2, z - s * S24.t / 2], 'woodPlaned'), 5.5);
-      add('7', lumber(S, [x1 - x0, S24.w, S24.t], [(x0 + x1) / 2, y0 + H + RAIL_TOP / 2, z - s * S24.t / 2], 'woodPlaned'), 5.6);
-      add('8', lumber(S, [x1 - x0, R24.w, R24.t], [(x0 + x1) / 2, y0 + H + R24.w / 2, z - s * R24.t / 2], 'wood'), 5.7);
+  // Un plancher : trois 6 × 6 en travers (bouts et milieu), qui dépassent de 6 po côté libre, et des
+  // planches 3 × 8 dans le sens de la tour, vissées à chaque bout ; yb : dessous des 6 × 6.
+  // av : avance des 6 × 6 vers la foreuse (bout côté poulies, milieu, bout côté front), m.
+  function plancher(refT, refP, xb, za, yb, mT, mP, av = [0, 0, 0]) {
+    const zs = [za + B66 / 2, (za + z1) / 2, z1 - B66 / 2];
+    zs.forEach((z, i) => {
+      const xa = x0 - av[i], xe = xb + DEPASSE;
+      add(refT, lumber(S, [xe - xa, B66, B66], [(xa + xe) / 2, yb + B66 / 2, z]), mT);
+    });
+    const n = Math.round((xb - x0) / P8), yp = yb + B66;
+    for (let k = 0; k < n; k++) {
+      const x = x0 + (k + 0.5) * P8;
+      add(refP, lumber(S, [P8, P3, z1 - za], [x, yp + P3 / 2, (za + z1) / 2]), mP);
+      vis.push([x, yp + P3, zs[0]], [x, yp + P3, zs[2]]);
     }
+    return { zs, yp };
+  }
+  const y0 = DECK;
+  if (deux) plancher('1', '2', x1 + MARCHE2, z0 - MARCHE2, y0, 1, 2);
+  const yd = y0 + (deux ? 9 * IN : 0);   // dessous des 6 × 6 du plancher standard
+  const A = APPUI_TAILLE_15;
+  const { zs, yp } = plancher('4', '5', x1, z0, yd, 3, 4, deux ? [A.poulies, A.milieu, A.face].map((p) => p * IN) : [0, 0, 0]);
+  if (deux) {
+    // Planche taillée : contour du côté foreuse en marches (encoches), planche 3 × 8 posée à plat.
+    const w = (dz) => { const t = TAILLE_15.find(([a, b]) => dz >= a - 1e-6 && dz <= b + 1e-6); return (t ? t[2] : 8) * IN; };
+    const pts = [[x0, z0], [x0, z1]];
+    for (const [a, b, p] of TAILLE_15) {   // du front de taille (z1, X petit) vers les poulies (z0)
+      const za = Math.max(z0, -(xc + b)), zb = Math.min(z1, -(xc + a));
+      pts.push([x0 - p * IN, zb], [x0 - p * IN, za]);
+    }
+    const planche = grain(S.extrude(pts, P3, 'woodLight'), 1);
+    planche.rotation.x = Math.PI / 2;           // profil (x, z) à plat, épaisseur selon Y
+    planche.position.y = yp + P3 / 2;
+    add('9', S.group(planche), 4.6, { taillee: true });
+    for (const z of [zs[0], zs[1]]) vis.push([x0 - w(-z - xc) / 2, yp + P3, z]);
+  }
+  add('3', lagScrews(S, vis), 4.8);
+  // Garde-corps et coup de pied au bout sans marche (côté front de taille), plancher de 18 po.
+  if (deux) {
+    const top = y0 + H + RAIL_TOP, s = 1, z = z1;
+    for (const x of [x0 + S24.w / 2, x1 - S24.w / 2]) add('6', lumber(S, [S24.w, POST_LEN, S24.t], [x, top - POST_LEN / 2, z + s * S24.t / 2], 'woodPlaned'), 5);
+    add('7', lumber(S, [x1 - x0, S24.w, S24.t], [(x0 + x1) / 2, top - S24.w / 2, z - s * S24.t / 2], 'woodPlaned'), 5.5);
+    add('7', lumber(S, [x1 - x0, S24.w, S24.t], [(x0 + x1) / 2, y0 + H + RAIL_TOP / 2, z - s * S24.t / 2], 'woodPlaned'), 5.6);
+    add('8', lumber(S, [x1 - x0, R24.w, R24.t], [(x0 + x1) / 2, y0 + H + R24.w / 2, z - s * R24.t / 2], 'woodGrey'), 5.7);
   }
   return out;
 }
@@ -564,7 +612,7 @@ export function plancherSecondaire(S, H, xc) {
 /** Plancher secondaire (étape 18) : le montage à 2 marches (forage montant à 15°). */
 export function P17(api) {
   const put = labeler(api);
-  const ex = { 1: [0, 0.3, 0], 2: [0, 0.45, 0], 3: [0, 0.75, 0], 4: [0, 0.15, 0], 5: [0.3, 0.15, 0], 6: [0, 0.3, 0.3], 7: [0, 0.35, 0.3], 8: [0, 0.35, 0.3] };
+  const ex = { 1: [0.3, 0.1, 0], 2: [0.3, 0.3, 0], 3: [0, 0.95, 0], 4: [0, 0.45, 0], 5: [0, 0.6, 0], 6: [0, 0.3, 0.3], 7: [0, 0.35, 0.3], 8: [0, 0.35, 0.3], 9: [0, 0.75, -0.3] };
   const c = SECONDAIRES[2];
   for (const { ref, obj, module } of plancherSecondaire(api.S, c.H, c.xc)) put(ref, obj, ex[ref], 18, { seq: Math.round(module * 10) });
   return { view: { dir: [1.2, 1.0, 0.6] } };

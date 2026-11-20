@@ -512,7 +512,7 @@
    "sheets": [
     "P13"
    ],
-   "note": "Étapes 12 et 13 : mêmes règles que la section 1 ; à la fin, aucun 6 × 6 ni 3 × 8 ne dépasse, bouts coupés carrés au ras du plancher.",
+   "note": "Étapes 12 et 13 : couverte du bout vers le centre sans serrer (on marche dessus pour placer les planches) ; rendu au centre, chaque planche replacée en repartant de la section 1 vers le bout, l'étape 7 refaite en chemin ; à la fin, aucun 6 × 6 ni 3 × 8 ne dépasse, bouts coupés carrés au ras du plancher.",
    "parts": [
     [
      "1",
@@ -527,7 +527,7 @@
      "2",
      "",
      2,
-     "Tire-fond 6 po : première planche de la section, à chaque extrémité",
+     "Tire-fond 6 po : planche du bout, à chaque extrémité (vissée à la fin)",
      {
       "pnText": "Tire-fond 6 po",
       "qty3d": 1
@@ -537,7 +537,7 @@
      "3",
      "",
      2,
-     "Tire-fond 6 po : planche vissée devant les coins (étape 7 répétée)",
+     "Tire-fond 6 po : planche vissée devant les coins (étape 7 refaite, 11e planche replacée depuis la section 1)",
      {
       "pnText": "Tire-fond 6 po",
       "qty3d": 1
@@ -689,31 +689,31 @@
    "sheets": [
     "P17"
    ],
-   "note": "À côté de la tour de la STM-1500 : 32 × 72 po, planches dans le sens de la tour, la plus près de la foreuse à 3 po de la foreuse (poteaux des paliers du traîneau, au-dessus du patin), appuis le long des patins ; aucun morceau en porte-à-faux. Plancher à 18 po : 2 marches, la première de 16 po de profondeur (deux 3 × 8) et 9 po de haut ; les bouts sans marche ont un garde-corps fixé solidement. Les 2 planches les plus près de la foreuse vissées. À chaque changement d'azimut ou d'angle, les 2 dernières planches et les garde-corps sont ajustés. Bois plané non toléré sur les planchers.",
+   "note": "À côté de la tour de la STM-1500, collé à la foreuse (moins de 3 po : le pied ne passe pas). Plancher standard : 32 × 72 po, 9 po de haut, trois 6 × 6 en travers et quatre planches 3 × 8 dans le sens de la tour, chaque planche vissée à chaque bout ; les 6 × 6 dépassent de 6 po du côté libre : une poignée pour le déplacer et un appui pour la grosse pry-bar. Deux marches (18 po) : dessous, un plancher de même construction, 16 po plus long (côté poulies) et 16 po plus large (côté libre, 2 planches), le standard posé par-dessus ; une seule marche : on enlève celui du dessous. Jamais de garde-corps du côté des poulies : c'est une marche. Garde-corps fixé solidement, avec son coup de pied, au bout sans marche. À 18 po, la planche du dessus la plus près de la foreuse est taillée selon la tour (encoches autour des poteaux du traîneau et du palier de bascule) : le pied ne glisse ni sous la tour ni entre la tour et le plancher. À chaque changement d'azimut ou d'angle, les dernières planches et les garde-corps sont ajustés. Bois plané non toléré sur les planchers.",
    "parts": [
     [
      "1",
      "",
      3,
-     "Travers 6 × 6 (32 po)",
+     "Travers 6 × 6 du plancher du dessous (48 po, plus 6 po qui dépassent côté libre)",
      {
-      "pnText": "6 × 6 brut × 32 po"
+      "pnText": "6 × 6 brut × 54 po"
      }
     ],
     [
      "2",
      "",
-     4,
-     "Planche 3 × 8 × 72 po, dans le sens de la tour",
+     6,
+     "Planche 3 × 8 × 88 po du plancher du dessous, dans le sens de la tour",
      {
-      "pnText": "3 × 8 brut × 72 po"
+      "pnText": "3 × 8 brut × 88 po"
      }
     ],
     [
      "3",
      "",
-     4,
-     "Tire-fond 6 po (2 planches les plus près de la foreuse)",
+     22,
+     "Tire-fond 6 po : chaque planche vissée à chaque bout",
      {
       "qty3d": 1,
       "pnText": "Tire-fond 6 po"
@@ -722,25 +722,25 @@
     [
      "4",
      "",
-     12,
-     "Appuis sous les deux bouts de chaque travers : 3 × 8 à plat et bout de 6 × 6 de 24 po, en travers",
+     3,
+     "Travers 6 × 6 du plancher standard, par-dessus (32 po, plus 6 po qui dépassent côté libre ; avancé sous la planche taillée)",
      {
-      "pnText": "3 × 8 et 6 × 6 brut × 24 po"
+      "pnText": "6 × 6 brut × 40 à 46 po"
      }
     ],
     [
      "5",
      "",
-     5,
-     "Première marche : 3 bouts de 6 × 6 de 16 po et 2 planches 3 × 8 × 72 po (9 po de haut, 16 po de profondeur)",
+     4,
+     "Planche 3 × 8 × 72 po du plancher standard, dans le sens de la tour",
      {
-      "pnText": "6 × 6 et 3 × 8 brut"
+      "pnText": "3 × 8 brut × 72 po"
      }
     ],
     [
      "6",
      "",
-     4,
+     2,
      "Montant de garde-corps 2 × 4 de 48 po (un 2 × 4 de 8 pi coupé en deux)",
      {
       "pnText": "2 × 4 × 48 po"
@@ -749,8 +749,8 @@
     [
      "7",
      "",
-     4,
-     "Lisse du haut et lisse intermédiaire 2 × 4 (32 po), aux deux bouts sans marche",
+     2,
+     "Lisse du haut et lisse intermédiaire 2 × 4 (32 po), au bout sans marche",
      {
       "pnText": "2 × 4"
      }
@@ -758,10 +758,19 @@
     [
      "8",
      "",
-     2,
-     "Coup de pied 2 × 4 brut sur chant (32 po)",
+     1,
+     "Coup de pied 2 × 4 brut sur chant (32 po), au bout sans marche",
      {
       "pnText": "2 × 4 brut"
+     }
+    ],
+    [
+     "9",
+     "",
+     1,
+     "Planche taillée selon la tour : 3 × 8 × 72 po côté foreuse, encoches autour des poteaux",
+     {
+      "pnText": "3 × 8 brut × 72 po"
      }
     ]
    ]

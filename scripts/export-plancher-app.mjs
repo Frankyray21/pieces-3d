@@ -142,8 +142,9 @@ const casLabels = [];
 // scripts/export-stm-app.mjs ; l'app la recule et lève son avance selon le cas).
 {
   for (const c of SECONDAIRES) {
-    if (c.H > 0) for (const { obj, module } of plancherSecondaire(shapes, c.H, c.xc)) {
-      obj.userData = { grp: 'secondaire', cas: c.n, m: module };
+    if (c.H > 0) for (const { obj, module, taillee } of plancherSecondaire(shapes, c.H, c.xc)) {
+      // t : planche taillée selon la tour (écran qui la montre de près).
+      obj.userData = { grp: 'secondaire', cas: c.n, m: module, ...(taillee ? { t: 1 } : {}) };
       obj.traverse((k) => { if (k !== obj) k.userData = {}; });
       cas.add(obj);
     }

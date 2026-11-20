@@ -224,13 +224,13 @@ export const STEPS = [
   { n: 9, cam: { pos: [L + 1.7, 0.6, 4.1], tgt: [L - 1.6, -0.25, 1.0] }, page: 'P09', title: 'Section 2 : hauteur au laser', text: 'Le faisceau du laser donne la hauteur à soutenir sous les 6 × 6.' },
   { n: 10, cam: { pos: [SEC * 1.5 + 4.6, 2.2, 5.6], tgt: [SEC * 1.5, -0.25, 0] }, page: 'P10', title: 'Section 2 : madrier guide et soutiens', text: 'Madrier guide à 16 pi de la section 1 ; soutiens 6 × 6 de 16 pi dans le sens contraire quand la hauteur le permet.' },
   { n: 11, cam: { pos: [SEC * 1.5 + 4.6, 2.7, 5.6], tgt: [SEC * 1.5, -0.2, 0] }, page: 'P12', title: 'Section 2 : madriers et blocages', text: 'Madriers dans le prolongement de ceux de la section 1, à environ 32 po centre ; soutiens alignés sous les croisements, cages de bois dans les cas spéciaux.' },
-  { n: 12, cam: { pos: [L + 3.0, 3.4, 4.8], tgt: [SEC * 1.45, 0, 0] }, page: 'P13', title: 'Couvrir la section 2', text: 'Répéter les étapes 6 et 7.' },
+  { n: 12, cam: { pos: [L + 3.0, 3.4, 4.8], tgt: [SEC * 1.45, 0, 0] }, page: 'P13', title: 'Couvrir la section 2', text: 'Couvrir du bout vers le centre, sans serrer (on marche dessus). Rendu au centre : replacer chaque planche, de la section 1 vers le bout, et refaire l\'étape 7 pour resserrer.' },
   { n: 13, cam: { pos: [4.6, 0.8, 3.9], tgt: [6.4, 0.16, 2.44] }, page: 'P13', title: 'Couper au ras', text: "Aucun 6 × 6 ni 3 × 8 ne dépasse : bouts coupés carrés au ras du plancher." },
   { n: 14, cam: { pos: [L + 3.4, 1.45, 2.15], tgt: [L + 0.3, 0.02, 0.96] }, page: 'P14', title: 'Marches', text: 'Plancher plus haut que 12 po : marches de 16 po de profondeur, 36 à 60 po de large, 12 po de haut au plus.' },
   { n: 15, cam: { pos: [L + 4.6, 2.7, 5.2], tgt: [L - 2.2, 0.6, 0.4] }, page: 'P16', title: 'Garde-corps et lisse inférieure', text: 'RSST art. 12 : lisse supérieure entre 1 et 1,2 m, lisse intermédiaire à mi-hauteur, plinthe : 2 × 4 brut sur chant (4 po).' },
   { n: 16, cam: { pos: [L + 3.0, 1.7, 2.2], tgt: [L + 0.3, 0.3, 0.96] }, page: 'P16', title: 'Mains courantes', text: "Plus d'une marche : mains courantes." },
   { n: 17, cam: { pos: [6.3, 1.9, -1.2], tgt: [6.6, 0.0, -2.5] }, page: 'P16', title: 'Écart avec la paroi', text: 'Plancher près de la paroi : écart de 12 po ou moins, rien à ajouter. Plus de 12 po : garde-corps, comme au bout du plancher.' },
-  { n: 18, cam: { pos: [4.0, 2.0, 3.2], tgt: [2.2, 0.6, 0.9] }, page: 'P17', label: 'À la foreuse', title: 'Plancher secondaire', text: '32 × 72 po au moins, à côté de la tour de la STM-1500 : 2 marches (1re de 16 po × 9 po), garde-corps aux bouts sans marche, dernière planche à 3 po de la foreuse, le long des patins, deux planches vissées.' },
+  { n: 18, cam: { pos: [4.0, 2.0, 3.2], tgt: [2.2, 0.6, 0.9] }, page: 'P17', label: 'À la foreuse', title: 'Plancher secondaire', text: 'Standard : 32 × 72 po, 9 po de haut, collé à la tour de la STM-1500, les 6 × 6 dépassent de 6 po côté libre, chaque planche vissée à chaque bout. 2 marches : un plancher 16 po plus long et plus large dessous, le standard par-dessus ; marche côté poulies (jamais de garde-corps), garde-corps et coup de pied au bout sans marche ; dernière planche taillée selon la tour.' },
 ];
 
 // Point le plus haut du sol sous la section 1 (étape 2).
@@ -252,6 +252,10 @@ export const S1_FIRST = 21, S2_FIRST = 47;
 export const d1 = (k) => S1_FIRST - k;
 export const d2 = (k) => S2_FIRST - k;
 export const TIGHT = 10; // planche vissée devant les coins de serrage (étape 7)
+// Section 2 (étape 12, façon du chantier) : couverte du bout vers le centre sans serrer, puis
+// chaque planche replacée en repartant de la section 1 : les 2 planches de jonction (22, 23), puis
+// 24 à 47 ; l'étape 7 refaite en chemin (planche devant les coins : la 11e replacée).
+export const S2_RELAIS = 22;
 
 /** Annotations du montage par étapes : texte posé dans la 3D aux étapes données. */
 export const NOTES = [
