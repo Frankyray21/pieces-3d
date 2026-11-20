@@ -355,7 +355,14 @@ pièces (numéro, quantité, page du manuel).
   plaque d'ancrage. La racine (P001) pose au sol la foreuse, le groupe
   hydraulique 125 HP (P007, avec ses panneaux P008) et le waterpack (P009,
   avec la pompe Pratissoli P010), sans boyaux ni câbles (le manuel n'en
-  montre pas). Repère commun et cotes d'interface dans `layout.js`, chacune
+  montre pas), et la console de commande (P026), ajoutée hors manuel d'après
+  une photo du client (page P026 : pied en tôle, boîtier gris à fenêtre
+  vitrée, télécommande à huit leviers, arrêt d'urgence, appareil noir à
+  touches sur le flanc), sans cote ni numéro : échelle tirée de l'arrêt
+  d'urgence (Ø 40 mm), caméra du photographe retrouvée sur la photo, faces
+  cachées fermées au plus simple, marques et autocollants illisibles non
+  reproduits ; sa place près de la foreuse est un choix de disposition.
+  Repère commun et cotes d'interface dans `layout.js`, chacune
   avec sa source : cotes du manuel (plan de la page 25, désignations de
   visserie, de roulements et de vérins, échelles des dessins X-Spec), normes
   (roulements, chaînes ANSI, NEMA 444TC), pièces Boyles du STM-1500 (mêmes

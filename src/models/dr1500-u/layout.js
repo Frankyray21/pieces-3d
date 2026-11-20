@@ -278,6 +278,11 @@ export const ROOT = {
   DRILL: { pos: [0, 0, 0], yaw: 0 },
   PACK: { pos: [0.2, 0, -2.6], yaw: 0 }, // [estimé, disposition libre]
   WATER: { pos: [-2.4, 0, -2.6], yaw: 0 }, // [estimé, disposition libre]
+  // Console de commande P026 (hors manuel, d'après une photo du client ; repère local : origine au sol sous son
+  // montant, commandes vers +Z) : du côté +Z de la foreuse, à l'opposé du groupe et du waterpack, à hauteur de la
+  // table ; l'opérateur, du côté +Z de la console, regarde la foreuse par-dessus [choix de disposition : la photo ne
+  // montre pas où elle se place].
+  CONSOLE: { pos: [0.3, 0, 2.2], yaw: 0 },
 };
 
 /** Pose un objet : position [x, y, z] et rotation autour de Y (lacet) ; renvoie l'objet. */

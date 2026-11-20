@@ -105,7 +105,8 @@
   "P022": "Serre-tiges Boyles — liste",
   "P023": "Piston et cylindre du serre-tiges (55-0300)",
   "P024": "Plaque support et bague de guidage (055B)",
-  "P025": "Base du serre-tiges (55-4000)"
+  "P025": "Base du serre-tiges (55-4000)",
+  "P026": "Photo du client : console de commande (hors manuel)"
  },
  "root": "P001",
  "assemblies": {
@@ -146,9 +147,19 @@
       "link": "P009",
       "pseudo": true
      }
+    ],
+    [
+     "4",
+     "",
+     1,
+     "CONSOLE DE COMMANDE (photo du client, hors manuel)",
+     {
+      "link": "P026",
+      "pseudo": true
+     }
     ]
    ],
-   "note": "Regroupement ajouté pour le site (pas une liste du manuel) : le manuel présente la foreuse (page 2), le groupe hydraulique (pages 7 et 8) et le waterpack (pages 9 et 10) séparément, sans liste qui les réunisse. Les trois lignes sont des renvois, sans numéro de pièce."
+   "note": "Regroupement ajouté pour le site (pas une liste du manuel) : le manuel présente la foreuse (page 2), le groupe hydraulique (pages 7 et 8) et le waterpack (pages 9 et 10) séparément, sans liste qui les réunisse. Les trois lignes sont des renvois, sans numéro de pièce. Ligne 4 : console de commande (P026), ajoutée hors manuel d'après une photo du client ; sa place près de la foreuse est un choix de disposition."
   },
   "P002": {
    "title": "DR1500-U — exploded assembly",
@@ -3024,6 +3035,292 @@
     ]
    ],
    "note": "Dessin d'Usinage X-Spec C6322 (055B - ROD CLAMP BASE, version 2019-05-13), poids 79,212 lb. Plan coté : 7 trous Ø 0,688 po aux entraxes 7,625 + 7,625 po et 4,625 + 4,625 po. Colonne « Unit Weight » (lb) dans weightLb."
+  },
+  "P026": {
+   "title": "Control console (customer photo)",
+   "titleFr": "Console de commande",
+   "pn": "",
+   "sheets": [
+    "P026"
+   ],
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "PLAQUE DE BASE du pied, tôle à bords tombés",
+     {
+      "note": "Environ 620 × 420 mm, bords tombés de 30 mm (le bord avant clair de la photo). Un point sombre à gauche du montant : trou d'ancrage ou tête de boulon ; celui de droite est supposé. Acier clair (galvanisé ou inox : la photo ne permet pas de trancher).",
+      "pseudo": true
+     }
+    ],
+    [
+     "2",
+     "",
+     1,
+     "MONTANT du pied, tube carré en tôle pliée",
+     {
+      "note": "Environ 90 × 90 mm, du dessus de la plaque au dessous du boîtier (0,50 m du sol). La platine qui le relie au boîtier n'est pas visible : supposée.",
+      "pseudo": true
+     }
+    ],
+    [
+     "3",
+     "",
+     2,
+     "GOUSSET TRIANGULAIRE du pied",
+     {
+      "note": "Environ 130 × 170 mm, de part et d'autre du montant dans le plan de la largeur ; la photo, prise de biais, ne permet pas de dire s'il s'agit de deux goussets ou d'une tôle pliée.",
+      "pseudo": true
+     }
+    ],
+    [
+     "4",
+     "",
+     1,
+     "CAISSON du boîtier (partie basse), gris clair",
+     {
+      "note": "Environ 460 mm de large, 300 de profond, 200 de haut. Dos, flanc gauche et dessous non vus : fermés au plus simple.",
+      "pseudo": true
+     }
+    ],
+    [
+     "5",
+     "",
+     1,
+     "TÊTE du boîtier à face inclinée, gris clair (avec le fond de la fenêtre)",
+     {
+      "note": "Face inclinée d'environ 31° vers l'arrière, lèvre basse qui déborde sur le caisson (joint visible sur le flanc droit). Le dessus n'apparaît pas sur la photo : supposé fuyant vers l'arrière. L'écran, derrière les reflets de la vitre, n'est pas visible : fond sombre.",
+      "pseudo": true
+     }
+    ],
+    [
+     "6",
+     "",
+     1,
+     "CADRE DE LA FENÊTRE, gris clair",
+     {
+      "note": "Ouverture d'environ 355 × 235 mm (écran de 15 po environ), décalée vers le bas et la gauche comme sur la photo.",
+      "pseudo": true
+     }
+    ],
+    [
+     "7",
+     "",
+     4,
+     "VIS OU ÉCROU DORÉ du cadre (coins)",
+     {
+      "note": "Têtes dorées aux quatre coins ; vis ou écrous, la photo ne permet pas de trancher.",
+      "pseudo": true
+     }
+    ],
+    [
+     "8",
+     "",
+     1,
+     "VITRE de la fenêtre",
+     {
+      "pseudo": true
+     }
+    ],
+    [
+     "9",
+     "",
+     1,
+     "AUTOCOLLANT ROND ORANGE (en haut à gauche, illisible)",
+     {
+      "note": "Inscription illisible : non reproduite.",
+      "pseudo": true
+     }
+    ],
+    [
+     "10",
+     "",
+     1,
+     "AUTOCOLLANT BLEU (en haut à droite, illisible)",
+     {
+      "note": "Écusson bleu bordé de blanc ; inscription illisible : non reproduite.",
+      "pseudo": true
+     }
+    ],
+    [
+     "11",
+     "",
+     1,
+     "AUTOCOLLANT ROND ROUGE ET BLANC (en bas à droite, illisible)",
+     {
+      "note": "Inscription illisible : non reproduite.",
+      "pseudo": true
+     }
+    ],
+    [
+     "12",
+     "",
+     2,
+     "ÉTIQUETTE DE PAPIER (haut du cadre, illisible)",
+     {
+      "pseudo": true
+     }
+    ],
+    [
+     "13",
+     "",
+     1,
+     "PRESSE-ÉTOUPE du flanc droit et câble vers l'appareil de droite",
+     {
+      "note": "Presse-étoupe noir sur le flanc droit du caisson, câble (ou sangle) noir qui monte vers l'appareil de droite.",
+      "pseudo": true
+     }
+    ],
+    [
+     "14",
+     "",
+     1,
+     "GROS CÂBLE NOIR (arrivée en haut, par l'arrière)",
+     {
+      "note": "Seul le tronçon visible est modélisé : la photo le coupe en haut.",
+      "pseudo": true
+     }
+    ],
+    [
+     "15",
+     "",
+     1,
+     "TABLETTE de la télécommande (non vue, supposée)",
+     {
+      "note": "La télécommande cache tout ce qui la tient : tôle à bord relevé supposée, portée par deux bras en tube carré vissés sur la face avant du caisson, pour que le modèle ne flotte pas.",
+      "pseudo": true
+     }
+    ],
+    [
+     "16",
+     "",
+     1,
+     "TÉLÉCOMMANDE À LEVIERS : coque noire, pupitre à deux ponts et bandeau arqué",
+     {
+      "note": "Émetteur de type pupitre ventral d'environ 0,45 m hors pare-chocs. Marque et modèle illisibles : non indiqués. Dessous et dos non vus.",
+      "pseudo": true
+     }
+    ],
+    [
+     "17",
+     "",
+     2,
+     "PARE-CHOCS ROUGE (flancs de la télécommande)",
+     {
+      "pseudo": true
+     }
+    ],
+    [
+     "18",
+     "",
+     8,
+     "LEVIER À PALETTE noir, avec son module à voyants",
+     {
+      "note": "Huit leviers comptés sur la photo, au pas d'environ 39 mm.",
+      "pseudo": true
+     }
+    ],
+    [
+     "19",
+     "",
+     1,
+     "FENÊTRE DES VOYANTS ET LOGO (centre du bandeau, illisibles)",
+     {
+      "note": "Cinq barres de voyants, plages ovales et logo jaune et blanc : lettres illisibles, non reproduites.",
+      "pseudo": true
+     }
+    ],
+    [
+     "20",
+     "",
+     1,
+     "ARRÊT D'URGENCE coup-de-poing rouge sur embase jaune",
+     {
+      "note": "Ø 40 mm pris comme échelle de toute la console ; sur un bloc gris à liseré rouge.",
+      "pseudo": true
+     }
+    ],
+    [
+     "21",
+     "",
+     1,
+     "BOUTON-POUSSOIR VERT",
+     {
+      "pseudo": true
+     }
+    ],
+    [
+     "22",
+     "",
+     5,
+     "INTERRUPTEUR À MANETTE à bouton noir",
+     {
+      "note": "Deux à gauche du bouton vert, trois à droite du coup-de-poing ; leur fonction n'est pas lisible.",
+      "pseudo": true
+     }
+    ],
+    [
+     "23",
+     "",
+     1,
+     "BOUTON ROND NOIR (à droite de l'arrêt d'urgence)",
+     {
+      "note": "Fonction non lisible (bouton, sélecteur ou petit manipulateur sous soufflet).",
+      "pseudo": true
+     }
+    ],
+    [
+     "24",
+     "",
+     1,
+     "ARCEAU AVANT en tôle inox de la télécommande",
+     {
+      "note": "Plaque devant le pont du bas, du bout gauche jusqu'au milieu, deux montants relevés et percés aux bouts.",
+      "pseudo": true
+     }
+    ],
+    [
+     "25",
+     "",
+     3,
+     "AUTOCOLLANT de l'arceau avant (illisible)",
+     {
+      "pseudo": true
+     }
+    ],
+    [
+     "26",
+     "",
+     1,
+     "APPAREIL NOIR À AFFICHEUR et colonne de sept touches (vu en partie)",
+     {
+      "note": "La photo le coupe à droite : seule la partie gauche (colonne de touches, bord de l'afficheur) est vue ; largeur (170 mm), épaisseur et dos supposés. Nature et marque inconnues.",
+      "pseudo": true
+     }
+    ],
+    [
+     "27",
+     "",
+     1,
+     "PATTE SUPPORT de l'appareil de droite",
+     {
+      "note": "Fer plat sur le flanc droit du caisson ; la façon dont l'appareil y est tenu n'est pas visible.",
+      "pseudo": true
+     }
+    ],
+    [
+     "28",
+     "",
+     2,
+     "CÂBLE NOIR descendant de l'appareil de droite",
+     {
+      "note": "Tronçons visibles seulement : leur arrivée n'est pas sur la photo.",
+      "pseudo": true
+     }
+    ]
+   ],
+   "note": "AJOUT HORS MANUEL : le manuel de pièces n'a aucune page sur les commandes. Reconstitution d'après une seule photo du client (page P026 : vue de trois quarts avant droit, en plongée, 407 × 686 px), sans plan, sans cote et sans numéro de pièce (colonne vide). Échelle : l'arrêt d'urgence, pris à Ø 40 mm (taille courante), donne les huit leviers au pas de 39 mm et une télécommande d'environ 0,45 m hors pare-chocs (ordre de grandeur d'un émetteur ventral à 6-8 leviers) ; le boîtier est aussi large (0,46 m) et sa fenêtre de 355 × 235 mm est celle d'un écran de 15 po environ ; les hauteurs sont tirées des proportions de la photo et vérifiées en comparant le rendu à la photo sous le même angle (caméra du photographe retrouvée sur les coins de la fenêtre et du pied) : boîtier de 0,50 à 1,0 m du sol, télécommande à environ 0,56 m, 0,3 m devant le boîtier, penchée vers l'opérateur. Précision de l'ordre de 15 à 20 %. Vu sur la photo : pied (plaque, montant, gousset), boîtier gris clair défraîchi (caisson et tête à face inclinée), fenêtre vitrée, cadre à quatre vis dorées, autocollants et étiquettes, télécommande à leviers (coque noire, pare-chocs rouges, huit leviers à palette, voyants, arrêt d'urgence, bouton vert, interrupteurs, arceau avant), appareil noir à touches sur le flanc droit et ses câbles, gros câble noir en haut à l'arrière. Logo, autocollants et étiquettes sont illisibles à cette résolution : pastilles de couleur sans inscription, aucune marque ni aucun modèle indiqué. Non vu, fermé au plus simple : dos, flanc gauche, dessous et dessus du boîtier, fixation du boîtier sur le montant, tablette qui porte la télécommande (supposée), dessous de la télécommande, partie droite et dos de l'appareil de droite, bouts des câbles. Pas de la console (non modélisés) : le manche entouré de ruban rouge et la barre rouge derrière la télécommande, le siège ou pneu noir, le grillage, les madriers et le plancher. Dans la vue d'ensemble (P001), la console est posée à environ 2,2 m du flanc droit de la foreuse, commandes tournées vers l'opérateur qui regarde la foreuse : choix de disposition, la photo ne montre pas où elle se place par rapport à la machine."
   }
  },
  "documents": [
