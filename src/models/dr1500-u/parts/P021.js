@@ -35,7 +35,7 @@ export default function P021(api) {
   // --- Haut commun.
   api.add(W(S.group(B.bagueMandrin(C), ...B.machoires(C))));
   P('10', B.adaptateurChapeau(C), X(0.2));
-  P('9', B.porteChapeau(C, 'yellow'), X(0.1));
+  P('9', B.porteChapeau(C, 'red'), X(0.1));
   P('11', B.bol(C), X(0));
   B.entretoisesHaut(C).forEach((o) => P('12', o, X(0.17)));
   const v = B.visserieHaut(C);
@@ -65,24 +65,24 @@ export default function P021(api) {
   // Oreille en chape : deux branches de part et d'autre de l'oreille centrale de la base (P025, 2 po d'épaisseur au
   // milieu de la base, sur laquelle l'oreille est centrée : RC.dx).
   const em = (ear.d0 + ear.d1) / 2, eg = 1.0;
-  const oreille = S.group(...[[ear.d0, em - eg], [em + eg, ear.d1]].map(([d0, d1]) => C.plan(pts.map(([y, z]) => [C.sx * y * IN, z * IN]), d0, d1, 'yellow', [[C.sx * ear.y * IN, ear.z * IN, ear.rb * IN]])));
+  const oreille = S.group(...[[ear.d0, em - eg], [em + eg, ear.d1]].map(([d0, d1]) => C.plan(pts.map(([y, z]) => [C.sx * y * IN, z * IN]), d0, d1, 'red', [[C.sx * ear.y * IN, ear.z * IN, ear.rb * IN]])));
   // Patte : bloc sous le flanc −Z, deux lumières verticales (largeur 0,72 po, 1,4 po de profond) à d 4,2 et 6,7.
   const lug = { ...RC.lug, z0: -7.4, z1: -2.6, zs: -6.0 };
-  const bloc = (d0, d1, zo) => C.plan([[lug.y0, lug.z1], [lug.y1, lug.z1], [lug.y1, zo], [lug.y0, zo]].map(([y, z]) => [C.sx * y * IN, z * IN]), d0, d1, 'yellow');
+  const bloc = (d0, d1, zo) => C.plan([[lug.y0, lug.z1], [lug.y1, lug.z1], [lug.y1, zo], [lug.y0, zo]].map(([y, z]) => [C.sx * y * IN, z * IN]), d0, d1, 'red');
   const patte = S.group(bloc(3.2, 3.84, lug.z0), bloc(3.84, 4.56, lug.zs), bloc(4.56, 6.34, lug.z0), bloc(6.34, 7.06, lug.zs), bloc(7.06, 7.7, lug.z0));
   // Poignée en U (rond Ø 3/4) au-dessus de la patte.
   const pg = [[-1.6, -5.6], [-1.6, -7.6], [1.8, -7.6], [1.8, -5.5]].map(([y, z]) => loc(y, z, 5.45));
   const poignee = S.group(
-    ...pg.slice(1).map((p, i) => S.rod(pg[i], p, 0.375 * IN, 'yellow', 14)),
-    ...pg.slice(1, 3).map((p) => S.at(S.ball(0.375 * IN, 'yellow'), p)),
+    ...pg.slice(1).map((p, i) => S.rod(pg[i], p, 0.375 * IN, 'red', 14)),
+    ...pg.slice(1, 3).map((p) => S.at(S.ball(0.375 * IN, 'red'), p)),
   );
   P('22', S.group(
-    C.slab(g.ro, g.rb, g.d0, 3.6, B.trousCarterHaut(), 'yellow', 96),
-    C.slab(g.ro, g.rb, 3.6, g.dP, PHI.springs.map((f) => [g.rp, f, g.ph]), 'yellow', 96),
-    C.slab(g.rb + 0.005, 2.6, g.dB, 6.45, B.trousPlancher(true), 'yellow'),
-    C.slab(g.rb + 0.005, 2.6, 6.45, 7.85, B.trousPlancher(false), 'yellow'),
-    C.slab(g.ro, 4.2, g.dP, 8.47, SHCS4.map((f) => [5.6, f, 0.21]), 'yellow', 96),
-    C.L([[1.97, g.dB], [2.6, g.dB], [2.6, 12.5], [2.15, 12.5], [2.15, 12.35], [1.97, 12.35]], 'yellow'),
+    C.slab(g.ro, g.rb, g.d0, 3.6, B.trousCarterHaut(), 'red', 96),
+    C.slab(g.ro, g.rb, 3.6, g.dP, PHI.springs.map((f) => [g.rp, f, g.ph]), 'red', 96),
+    C.slab(g.rb + 0.005, 2.6, g.dB, 6.45, B.trousPlancher(true), 'red'),
+    C.slab(g.rb + 0.005, 2.6, 6.45, 7.85, B.trousPlancher(false), 'red'),
+    C.slab(g.ro, 4.2, g.dP, 8.47, SHCS4.map((f) => [5.6, f, 0.21]), 'red', 96),
+    C.L([[1.97, g.dB], [2.6, g.dB], [2.6, 12.5], [2.15, 12.5], [2.15, 12.35], [1.97, 12.35]], 'red'),
     oreille, patte, poignee,
   ), X(-0.4));
   // 27 — Bagues 55-0045 (2) aux bouts de l'alésage de l'oreille : Ø 1,25 × Ø 1,0 × 1,0.
@@ -103,7 +103,7 @@ export default function P021(api) {
   P('28', B.oRing(C, 2.65, 0.1, 12.17), X(-0.66));
 
   // --- 26 — Chapeau de cylindre 55-0044 : anneau percé des 9 vis 1/2-13 × 2 (7) et taraudé pour le reniflard.
-  P('26', C.slab(g.ro, 2.62, 11.85, 12.5, [...SHCS2.map((f) => [5.6, f, 0.28]), [4.0, 180 * deg, 0.15]], 'yellow', 96), X(-0.95));
+  P('26', C.slab(g.ro, 2.62, 11.85, 12.5, [...SHCS2.map((f) => [5.6, f, 0.28]), [4.0, 180 * deg, 0.15]], 'red', 96), X(-0.95));
   // 21 — Reniflard 1/8 NPT sous le chapeau.
   const ren = S.group(S.cyl(0.004, 0.006, 'brass', { pos: [0, -0.003, 0], seg: 12 }), S.at(S.nut(0.0111, 0.005, 'brass'), [0, 0.0025, 0]),
     S.cyl(0.0055, 0.008, 'brass', { pos: [0, 0.009, 0], seg: 16 }), S.at(S.ball(0.0055, 'brass'), [0, 0.013, 0]));

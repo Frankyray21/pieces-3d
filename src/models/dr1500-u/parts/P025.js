@@ -1,7 +1,7 @@
 // P025 — Base du serre-tiges Boyles 12HH 55-4000 (page 25, plan coté X-Spec C6322), repère local de layout.js :
 // origine au centre du gabarit des sept trous, sur la face de dessous de la plaque ; axes du repère foreuse ;
 // posée en RCB.pos par P002 (sur la portée du mât, P004).
-// Mécano-soudé B7157 (rep. 1, peint au jaune DR comme toute la structure ; le rendu X-Spec a des joues noires et une plaque grise) : plaque de 3/4 po percée des sept trous Ø 0,688 po du plan (RCB.holes), lumière
+// Mécano-soudé B7157 (rep. 1, peint au rouge Machines Roger comme toute la structure ; le rendu X-Spec a des joues noires et une plaque grise) : plaque de 3/4 po percée des sept trous Ø 0,688 po du plan (RCB.holes), lumière
 // rectangulaire entre la joue arrière et le milieu (vue de dessus) ; deux joues de 1 po en berceau (cercle de
 // l'axe de forage, rayon du corps du serre-tiges + 4 mm) avec l'oreille de la pin du côté +Z et, du côté −Z, un
 // bloc percé pour la pin des boulons à œil ; oreille centrale entre les joues. Pin 55-0083 Ø 1 po (rep. 3) dans
@@ -39,7 +39,7 @@ export default function P025(api) {
     const [xa, xb] = PL.x, cx = (xa + xb) / 2;
     const holes = RCB.holes.map(([x, z]) => [x - I(cx), z, RCB.hole / 2]);
     const cut = [[I((WIN.x[0] + WIN.x[1]) / 2 - cx), 0, I(WIN.x[1] - WIN.x[0]), I(2 * WIN.z)]];
-    w.push(at(S.plate(I(xb - xa), I(2 * PL.z), T, 'yellow', { holes, cutouts: cut, r: I(PL.r) }), [I(cx), T / 2, 0]));
+    w.push(at(S.plate(I(xb - xa), I(2 * PL.z), T, 'red', { holes, cutouts: cut, r: I(PL.r) }), [I(cx), T / 2, 0]));
   }
   // Joues en berceau : oreille de la pin (+Z), arc du corps du serre-tiges, bloc des boulons à œil (−Z).
   const cradle = (z0, z1) => {
@@ -49,16 +49,16 @@ export default function P025(api) {
   const cheek = [[7.45, 0.75], [7.45, PIN.y], ...arc([PIN.z, PIN.y], PIN.ear, 0, 2.2, 10).slice(1), ...cradle(5.25, -4.6), [-5.0, EYE.top], [-7.6, EYE.top], [-7.6, 0.75]]
     .map(([z, y]) => [I(z), I(y)]);
   for (const s of [-1, 1]) {
-    w.push(profilX(api, cheek, [[I(PIN.z), I(PIN.y), I(0.6875)], [I(EYE.z), I(EYE.y), I(0.27)]], I(CHEEK.t), I(s * CHEEK.x), 'yellow'));
+    w.push(profilX(api, cheek, [[I(PIN.z), I(PIN.y), I(0.6875)], [I(EYE.z), I(EYE.y), I(0.27)]], I(CHEEK.t), I(s * CHEEK.x), 'red'));
   }
   // Oreille centrale de la pin (entre les joues).
-  w.push(profilX(api, hull([[I(5.2), I(0.75)], [I(7.45), I(0.75)], ...circle([I(PIN.z), I(PIN.y)], I(PIN.ear), 20)]), [[I(PIN.z), I(PIN.y), I(0.6875)]], I(2.0), 0, 'yellow'));
+  w.push(profilX(api, hull([[I(5.2), I(0.75)], [I(7.45), I(0.75)], ...circle([I(PIN.z), I(PIN.y)], I(PIN.ear), 20)]), [[I(PIN.z), I(PIN.y), I(0.6875)]], I(2.0), 0, 'red'));
   // Entretoises basses entre les joues, de part et d'autre de la lumière (vue isométrique).
-  for (const z of [-4.2, 4.0]) w.push(at(box(I(2 * CHEEK.x - CHEEK.t), I(1.0), I(0.75), 'yellow', { r: 0.002 }), [0, I(0.75 + 0.5), I(z)]));
+  for (const z of [-4.2, 4.0]) w.push(at(box(I(2 * CHEEK.x - CHEEK.t), I(1.0), I(0.75), 'red', { r: 0.002 }), [0, I(0.75 + 0.5), I(z)]));
   // Cordons de soudure au pied des joues.
   for (const s of [-1, 1]) for (const d of [-1, 1]) {
     const x = I(s * CHEEK.x + d * (CHEEK.t / 2 + 0.06));
-    w.push(S.weld([[x, T + 0.002, I(-7.5)], [x, T + 0.002, I(7.35)]], 0.005, 'yellow'));
+    w.push(S.weld([[x, T + 0.002, I(-7.5)], [x, T + 0.002, I(7.35)]], 0.005, 'red'));
   }
   api.part('1', group(...w), [0, 0, 0]);
 

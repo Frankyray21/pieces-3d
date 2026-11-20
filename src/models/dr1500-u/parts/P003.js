@@ -46,14 +46,14 @@ export default function P003(api) {
       ...arc([-0.4, Y_BOT], 0.08, Math.PI / 2, Math.PI, 6), [x0 + 0.05, Y_BOT], [x0, 0.66]];
     a.push(profilZ(api, side, [[-0.68, 0.73, 0.03]], TS, s * (ZO - TS / 2)));
     a.push(profilZ(api, side, [[-0.68, 0.73, 0.03]], TS, s * (ZI + TS / 2)));
-    a.push(at(ring(0.045, 0.03, 0.008, 'yellow', { axis: 'z', seg: 24 }), [-0.68, 0.73, s * (ZO + 0.004)]));
+    a.push(at(ring(0.045, 0.03, 0.008, 'red', { axis: 'z', seg: 24 }), [-0.68, 0.73, s * (ZO + 0.004)]));
     // Fonds des caissons (de part et d'autre de la voûte).
     for (const [xa, xb] of [[x0 + 0.05, -0.48], [0.3, x1 - 0.05]]) a.push(boxAt(api, [xa, Y_BOT, s * (ZI + TS)], [xb, Y_BOT + 0.012, s * (ZO - TS)]));
     // Tourillons Ø 2 po (gorge de l'anneau élastique) et cordon de soudure.
     for (const tx of TILT.x) {
       a.push(at(cyl(TILT.pin / 2, STUB_END - ZO + TS, 'steel', { axis: 'z', seg: 28 }), [tx, TILT.y, s * (ZO - TS + (STUB_END - ZO + TS) / 2)]));
       a.push(at(ring(TILT.pin / 2 + 0.0002, TILT.pin / 2 - 0.0015, 0.0025, 'darkSteel', { axis: 'z', seg: 28 }), [tx, TILT.y, s * 0.3675]));
-      a.push(S.weldRing(TILT.pin / 2 + 0.003, 0.006, 'yellow', { axis: 'z', pos: [tx, TILT.y, s * (ZO + 0.003)] }));
+      a.push(S.weldRing(TILT.pin / 2 + 0.003, 0.006, 'red', { axis: 'z', pos: [tx, TILT.y, s * (ZO + 0.003)] }));
     }
     // Chapes des vérins de tilt : joue intérieure épaisse, joue extérieure de 1 po, pont du côté opposé au vérin.
     LUG_X.forEach((lx, k) => {

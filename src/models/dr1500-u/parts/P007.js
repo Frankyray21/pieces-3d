@@ -46,36 +46,36 @@ export default function P007(api) {
   for (const s of [-1, 1]) {
     // Patin : tube 0,06 × 0,10, bouts en biseau, trou d'élingage près de chaque bout [mesure p. 7].
     const pat = [[-1.1, 0], [1.1, 0], [1.25, base], [-1.25, base]];
-    Y.push(at(slab(api, pat, [[-1.17, 0.055, 0.018], [1.17, 0.055, 0.018]], 0.06, 'yellow'), [0, 0, s * 0.56]));
+    Y.push(at(slab(api, pat, [[-1.17, 0.055, 0.018], [1.17, 0.055, 0.018]], 0.06, 'red'), [0, 0, s * 0.56]));
     // Longeron du haut, longeron intermédiaire (milieu → bout +X).
-    Y.push(at(box(2 * XA, t, t, 'yellow', { r: 0.004 }), [0, H - t / 2, s * (z1 - t / 2)]));
-    Y.push(at(box(XA - GP.xMid, t, t, 'yellow', { r: 0.004 }), [(XA + GP.xMid) / 2, GP.mid, s * (z1 - t / 2)]));
+    Y.push(at(box(2 * XA, t, t, 'red', { r: 0.004 }), [0, H - t / 2, s * (z1 - t / 2)]));
+    Y.push(at(box(XA - GP.xMid, t, t, 'red', { r: 0.004 }), [(XA + GP.xMid) / 2, GP.mid, s * (z1 - t / 2)]));
     // Poteaux de joint des panneaux.
-    for (const x of s < 0 ? GP.postZm : GP.postZp) Y.push(at(box(t, H - t - base, t, 'yellow', { r: 0.004 }), [x, (H - t + base) / 2, s * (z1 - t / 2)]));
+    for (const x of s < 0 ? GP.postZm : GP.postZp) Y.push(at(box(t, H - t - base, t, 'red', { r: 0.004 }), [x, (H - t + base) / 2, s * (z1 - t / 2)]));
   }
   // Traverses de la base (entre patins) [mesure p. 7 : bouts, sous la plaque moteur, sous les pompes].
-  for (const x of [-1.15, -0.85, -0.42, -0.12, 0.3, 0.8, 1.15]) Y.push(at(box(0.05, 0.08, 1.06, 'yellow', { r: 0.003 }), [x, base - 0.04, 0]));
+  for (const x of [-1.15, -0.85, -0.42, -0.12, 0.3, 0.8, 1.15]) Y.push(at(box(0.05, 0.08, 1.06, 'red', { r: 0.003 }), [x, base - 0.04, 0]));
   // Traverses intermédiaires : sous la tablette du transformateur (x 0,02 et 0,43) et sous le réservoir.
-  for (const x of [0.02, 0.43, 0.6, 1.1]) Y.push(at(box(t, t, 2 * (z1 - t), 'yellow', { r: 0.003 }), [x, GP.mid, 0]));
+  for (const x of [0.02, 0.43, 0.6, 1.1]) Y.push(at(box(t, t, 2 * (z1 - t), 'red', { r: 0.003 }), [x, GP.mid, 0]));
   // Tablette du transformateur (tôle 8 mm) [mesure p. 8].
-  Y.push(at(S.plate(0.46, 0.5, 0.008, 'yellow', { holes: [[-0.1, -0.08, 0.006], [0.1, -0.08, 0.006], [-0.1, 0.08, 0.006], [0.1, 0.08, 0.006]] }), [0.225, GP.mid + t / 2 + 0.004, 0.2]));
+  Y.push(at(S.plate(0.46, 0.5, 0.008, 'red', { holes: [[-0.1, -0.08, 0.006], [0.1, -0.08, 0.006], [-0.1, 0.08, 0.006], [0.1, 0.08, 0.006]] }), [0.225, GP.mid + t / 2 + 0.004, 0.2]));
   // Plaque moteur 3/4 po percée : trous des pattes (2F × 2E) et trous d'allègement [mesure p. 7].
   const feet = [-0.82, -0.452].flatMap((x) => [-1, 1].map((s) => [x, s * 0.2285]));
-  Y.push(at(S.plate(0.72, 0.62, 0.02, 'yellow', { holes: [...feet.map(([x, z]) => [x + 0.63, z, 0.011]), [0, -0.12, 0.03], [0, 0.12, 0.03], [0.22, 0, 0.03], [-0.22, 0, 0.03]] }), [-0.63, base + 0.01, 0]));
+  Y.push(at(S.plate(0.72, 0.62, 0.02, 'red', { holes: [...feet.map(([x, z]) => [x + 0.63, z, 0.011]), [0, -0.12, 0.03], [0, 0.12, 0.03], [0.22, 0, 0.03], [-0.22, 0, 0.03]] }), [-0.63, base + 0.01, 0]));
   // Plaque de fond sous les pompes (tôle 3/8 po, quatre trous) [mesure p. 7].
-  Y.push(at(S.plate(0.95, 0.62, 0.0095, 'yellow', { holes: [[-0.3, -0.18, 0.012], [-0.3, 0.18, 0.012], [0.3, -0.18, 0.012], [0.3, 0.18, 0.012]] }), [0.3, base + 0.005, 0]));
+  Y.push(at(S.plate(0.95, 0.62, 0.0095, 'red', { holes: [[-0.3, -0.18, 0.012], [-0.3, 0.18, 0.012], [0.3, -0.18, 0.012], [0.3, 0.18, 0.012]] }), [0.3, base + 0.005, 0]));
   // Pied de cloche : plaque verticale de 3/4 po, échancrure en U au pied, dessus en arc sous la cloche [estimé].
-  Y.push(at(slab(api, [[-0.16, base + 0.01], ...arc(0, base + 0.01, 0.06, Math.PI, 0, 8), [0.16, base + 0.01], [0.16, AY - 0.17], ...arc(0, AY, 0.17, -0.35, -Math.PI + 0.35, 10), [-0.16, AY - 0.17]], [], 0.019, 'yellow'), [-0.12, 0, 0], [0, Math.PI / 2, 0]));
+  Y.push(at(slab(api, [[-0.16, base + 0.01], ...arc(0, base + 0.01, 0.06, Math.PI, 0, 8), [0.16, base + 0.01], [0.16, AY - 0.17], ...arc(0, AY, 0.17, -0.35, -Math.PI + 0.35, 10), [-0.16, AY - 0.17]], [], 0.019, 'red'), [-0.12, 0, 0], [0, Math.PI / 2, 0]));
   // Support de la boîte électrique : longeron bas du flanc +Z (de l'arceau du bout au poteau x −0,28).
-  Y.push(at(box(GP.postZp[0] - t / 2 + XA - tr, t, t, 'yellow', { r: 0.003 }), [(GP.postZp[0] - t / 2 - XA + tr) / 2, BOX.y0 - t / 2, z1 - t / 2 - 0.01]));
-  Y.push(at(box(0.04, BOX.y0 - base, 0.2, 'yellow'), [-0.7, (BOX.y0 + base) / 2 - t / 2, 0.5]));
+  Y.push(at(box(GP.postZp[0] - t / 2 + XA - tr, t, t, 'red', { r: 0.003 }), [(GP.postZp[0] - t / 2 - XA + tr) / 2, BOX.y0 - t / 2, z1 - t / 2 - 0.01]));
+  Y.push(at(box(0.04, BOX.y0 - base, 0.2, 'red'), [-0.7, (BOX.y0 + base) / 2 - t / 2, 0.5]));
   // Pattes du drain cooler (deux plats verticaux sur la traverse du bout).
-  for (const z of [-0.52, -0.32]) Y.push(at(box(0.05, 0.2, 0.008, 'yellow'), [-1.1, base + 0.1, z]));
+  for (const z of [-0.52, -0.32]) Y.push(at(box(0.05, 0.2, 0.008, 'red'), [-1.1, base + 0.1, z]));
   // Patte du filtre de pression : plat sous le longeron du haut −Z, en porte-à-faux vers l'intérieur.
-  Y.push(at(box(0.14, 0.008, 0.3, 'yellow'), [0.1, H - t - 0.004, -(z1 - t) + 0.15]));
-  Y.push(at(box(0.14, 0.05, 0.008, 'yellow'), [0.1, H - t - 0.025, -(z1 - t) + 0.004]));
+  Y.push(at(box(0.14, 0.008, 0.3, 'red'), [0.1, H - t - 0.004, -(z1 - t) + 0.15]));
+  Y.push(at(box(0.14, 0.05, 0.008, 'red'), [0.1, H - t - 0.025, -(z1 - t) + 0.004]));
   // Pattes du double cooler sur le poteau x −0,75 et sur l'arceau du milieu (plats à deux trous).
-  for (const x of [COOL.x0 - 0.012, COOL.x1 + 0.012]) for (const y of [0.35, 0.95]) Y.push(at(box(0.024, 0.06, 0.09, 'yellow'), [x, y, -(z1 - t) + 0.02]));
+  for (const x of [COOL.x0 - 0.012, COOL.x1 + 0.012]) for (const y of [0.35, 0.95]) Y.push(at(box(0.024, 0.06, 0.09, 'red'), [x, y, -(z1 - t) + 0.02]));
 
   // Arceaux noirs : jambes à ±ZA de la base au dessus, angles cintrés au rayon rb [mesure p. 7 et 8].
   const hoop = (x) => {
@@ -88,7 +88,7 @@ export default function P007(api) {
   for (const x of [-XA, GP.xMid, XA]) K.push(hoop(x));
   // Platines d'appui des jambes sur les patins.
   for (const x of [-XA, GP.xMid, XA]) for (const s of [-1, 1]) K.push(at(box(0.08, 0.008, 0.08, 'black'), [x, base + 0.004, s * 0.56]));
-  api.part('1', group(merged(Y, 'yellow'), ...K), [0, 0, 0]);
+  api.part('1', group(merged(Y, 'red'), ...K), [0, 0, 0]);
 
   // ------------------------------------------------------------------ 10 — Moteur électrique 125 HP 444TC
   // Fonte grise : carcasse à ailettes, pattes, bout D et bride C, capot de ventilateur à grille, boîte à bornes
@@ -163,18 +163,18 @@ export default function P007(api) {
   ), [-1.55, 0, 0.35]);
 
   // ------------------------------------------------------------------ 2 — Réservoir hydraulique PA708
-  // Caisson soudé jaune : trappe de visite ronde boulonnée (Ø 0,36) sur le dessus, bouchon de remplissage et
+  // Caisson soudé rouge : trappe de visite ronde boulonnée (Ø 0,36) sur le dessus, bouchon de remplissage et
   // reniflard, jauge de niveau et thermomètre sur la face +Z (côté du panneau PP7172), vanne de vidange sous le
   // fond [mesure p. 7 et 8 ; cotes estimées].
   const rt = RES.y1, rx = (RES.x0 + RES.x1) / 2;
   const hatch = [0.86, 0.15];
   api.part('2', group(
-    at(box(RES.x1 - RES.x0, rt - RES.y0, 2 * RES.z, 'yellow', { r: 0.012 }), [rx, (rt + RES.y0) / 2, 0]),
-    at(cyl(0.2, 0.012, 'yellow', { axis: 'y', seg: 48 }), [hatch[0], rt + 0.006, hatch[1]]),
-    at(lathe([[0, 0], [0.18, 0], [0.18, 0.008], [0.14, 0.018], [0, 0.022]], 'yellow', { seg: 48 }), [hatch[0], rt + 0.012, hatch[1]]),
+    at(box(RES.x1 - RES.x0, rt - RES.y0, 2 * RES.z, 'red', { r: 0.012 }), [rx, (rt + RES.y0) / 2, 0]),
+    at(cyl(0.2, 0.012, 'red', { axis: 'y', seg: 48 }), [hatch[0], rt + 0.006, hatch[1]]),
+    at(lathe([[0, 0], [0.18, 0], [0.18, 0.008], [0.14, 0.018], [0, 0.022]], 'red', { seg: 48 }), [hatch[0], rt + 0.012, hatch[1]]),
     S.boltCircle(10, 0.19, 0.008, 0.016, 'steel', { pos: [hatch[0], rt + 0.012, hatch[1]] }),
     // Bouchon de remplissage (Ø 0,09) et reniflard, sur le coin −X/+Z du dessus.
-    at(cyl(0.055, 0.02, 'yellow', { axis: 'y', seg: 28 }), [0.6, rt + 0.01, 0.4]),
+    at(cyl(0.055, 0.02, 'red', { axis: 'y', seg: 28 }), [0.6, rt + 0.01, 0.4]),
     at(lathe([[0, 0], [0.045, 0], [0.045, 0.03], [0.04, 0.04], [0, 0.042]], 'black', { seg: 28 }), [0.6, rt + 0.02, 0.4]),
     at(cyl(0.02, 0.03, 'steel', { axis: 'y', seg: 18 }), [0.6, rt + 0.015, 0.25]),
     at(lathe([[0, 0], [0.03, 0], [0.03, 0.04], [0.022, 0.055], [0, 0.058]], 'black', { seg: 24 }), [0.6, rt + 0.03, 0.25]),

@@ -30,14 +30,14 @@ export default function P010(api) {
   // Dessus percé (pattes de la pompe, trous d'allègement), ailes pliées à trous de fixation aux bouts et
   // dégagement au milieu, plaque verticale du moteur (alésage de centrage et 4 trous), gousset.
   const aile = slab(api, [[x0, 0], [-0.09, 0], ...arc(0, 0, 0.09, Math.PI, 0, 10).map(([u, v]) => [u, v * 0.45]), [x1, 0], [x1, h - t], [x0, h - t]],
-    [[x0 + 0.04, h / 2 - 0.006, 0.012], [x1 - 0.04, h / 2 - 0.006, 0.012]], t, 'yellow');
+    [[x0 + 0.04, h / 2 - 0.006, 0.012], [x1 - 0.04, h / 2 - 0.006, 0.012]], t, 'red');
   const pied = [-0.17, 0.03].flatMap((x) => [-1, 1].map((s) => [x, ZS + s * 0.09]));
-  const dessus = at(S.plate(x1 - x0, 2 * z, t, 'yellow', { r: 0.008, holes: [...pied.map(([x, zz]) => [x - (x0 + x1) / 2, zz, 0.008]), [0.12 - (x0 + x1) / 2, 0.12, 0.012], [-0.24 - (x0 + x1) / 2 + 0.05, 0.15, 0.012], [0.05, 0.15, 0.008]] }), [(x0 + x1) / 2, h - t / 2, 0]);
+  const dessus = at(S.plate(x1 - x0, 2 * z, t, 'red', { r: 0.008, holes: [...pied.map(([x, zz]) => [x - (x0 + x1) / 2, zz, 0.008]), [0.12 - (x0 + x1) / 2, 0.12, 0.012], [-0.24 - (x0 + x1) / 2 + 0.05, 0.15, 0.012], [0.05, 0.15, 0.008]] }), [(x0 + x1) / 2, h - t / 2, 0]);
   const pw = 0.17, ph = AY + 0.1;
   const plaque = at(slab(api, [[ZS - pw / 2, h], [ZS + pw / 2, h], [ZS + pw / 2, ph - 0.02], [ZS + pw / 2 - 0.02, ph], [ZS - pw / 2 + 0.02, ph], [ZS - pw / 2, ph - 0.02]].map(([u, v]) => [-u, v]),
-    [[-ZS, AY, 0.045], ...[-1, 1].flatMap((a) => [-1, 1].map((b) => [-(ZS + a * 0.045), AY + b * 0.045, 0.0065]))], t, 'yellow'), [XP + t / 2, 0, 0], [0, Math.PI / 2, 0]);
-  const gousset = at(slab(api, [[XP + t, h], [XP + t + 0.1, h], [XP + t, AY + 0.04]], [], t, 'yellow'), [0, 0, ZS - pw / 2 + t / 2]);
-  api.part('1', group(merged([dessus, at(aile, [0, 0, z - t / 2]), at(aile.clone(), [0, 0, -z + t / 2]), plaque, gousset], 'yellow')), [0, 0, 0]);
+    [[-ZS, AY, 0.045], ...[-1, 1].flatMap((a) => [-1, 1].map((b) => [-(ZS + a * 0.045), AY + b * 0.045, 0.0065]))], t, 'red'), [XP + t / 2, 0, 0], [0, Math.PI / 2, 0]);
+  const gousset = at(slab(api, [[XP + t, h], [XP + t + 0.1, h], [XP + t, AY + 0.04]], [], t, 'red'), [0, 0, ZS - pw / 2 + t / 2]);
+  api.part('1', group(merged([dessus, at(aile, [0, 0, z - t / 2]), at(aile.clone(), [0, 0, -z + t / 2]), plaque, gousset], 'red')), [0, 0, 0]);
 
   // ------------------------------------------------------------------ 2 — Pompe Pratissoli KF40
   // Carter en fonte gris foncé (bouchon de remplissage d'huile jaune, couvercles de paliers boulonnés, regard), arbre
@@ -99,11 +99,11 @@ export default function P010(api) {
   // Tôle pliée en U renversé au-dessus de l'accouplement (dessus, deux joues dont une ajourée en U), pattes du bas
   // vissées sur le dessus du support [mesure p. 10].
   const gx0 = 0.135, gx1 = XP - 0.003, gz = 0.075, gy = AY + 0.075, gw = gx1 - gx0;
-  const joue = (s, jour) => at(slab(api, [[gx0, h], [gx1, h], [gx1, gy], [gx0, gy]], jour ? [[[gx0 + 0.02, h + 0.04], [gx1 - 0.02, h + 0.04], [gx1 - 0.02, gy - 0.03], [gx0 + 0.055, gy - 0.03], [gx0 + 0.055, AY - 0.02], [gx0 + 0.02, AY - 0.02]]] : [], 0.003, 'yellow'), [0, 0, ZS + s * gz]);
+  const joue = (s, jour) => at(slab(api, [[gx0, h], [gx1, h], [gx1, gy], [gx0, gy]], jour ? [[[gx0 + 0.02, h + 0.04], [gx1 - 0.02, h + 0.04], [gx1 - 0.02, gy - 0.03], [gx0 + 0.055, gy - 0.03], [gx0 + 0.055, AY - 0.02], [gx0 + 0.02, AY - 0.02]]] : [], 0.003, 'red'), [0, 0, ZS + s * gz]);
   api.part('3', group(
-    at(box(gw, 0.003, 2 * gz + 0.003, 'yellow'), [(gx0 + gx1) / 2, gy + 0.0015, ZS]),
+    at(box(gw, 0.003, 2 * gz + 0.003, 'red'), [(gx0 + gx1) / 2, gy + 0.0015, ZS]),
     joue(1, true), joue(-1, false),
-    ...[-1, 1].map((s) => at(box(gw, 0.003, 0.03, 'yellow'), [(gx0 + gx1) / 2, h + 0.0015, ZS + s * (gz + 0.015)])),
+    ...[-1, 1].map((s) => at(box(gw, 0.003, 0.03, 'red'), [(gx0 + gx1) / 2, h + 0.0015, ZS + s * (gz + 0.015)])),
     ...[-1, 1].map((s) => at(bolt(0.008, 0.02, 'steel', { washer: true }), [(gx0 + gx1) / 2, h + 0.003, ZS + s * (gz + 0.017)])),
   ), [0.05, 0.45, 0]);
 

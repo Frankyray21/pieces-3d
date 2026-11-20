@@ -22,10 +22,13 @@ import parts from './parts/index.js';
 // « link » se pose avec api.sub('Pyyy') ; lignes « p. 8 », « p. 11 », « p. 18 », « p. 24 » (pseudo) : renvoi à un
 // assemblage sans ligne dans la liste, posé de même. Seul ce que le manuel montre est modélisé.
 //
-// COULEURS (choix du site, à valider par le client : le manuel est en noir et blanc, sa seule couleur est le jaune et
-// noir du logo DR) : un seul jaune (« yellow ») pour tous les mécano-soudés et carters peints — frame skud, assise,
-// mât, table, kit de poulie, base, carter de tête, mandrin, serre-tiges, groupe, waterpack ; noir pour les vérins ;
-// acier, bronze, laiton et téflon naturels pour le reste ; fonte noire des moteurs et pompes du commerce.
+// COULEURS (demande du client : rouge Machines Roger, le « red » de src/viewer/materials.js, comme le STM-1500 ; le
+// manuel est en noir et blanc) : rouge pour tous les mécano-soudés et carters peints — frame skud, assise, mât, table,
+// kit de poulie, base, carter de tête, mandrin, serre-tiges, groupe (cadre et panneaux), waterpack, support et garde
+// de la pompe à eau, et, comme sur le treuil du STM-1500, fond, plaques de côté, tambour, support de moteur et gardes
+// du treuil ; noir pour les vérins ; coffret électrique gris ; acier, bronze, laiton, téflon et zingage naturels ;
+// fonte noire des moteurs et pompes du commerce. Restent jaunes : la vis 3/8-16 Grade 8 zinguée jaune de la base
+// (P025 rep. 8), le bouchon d'huile de la KF40 et le corps du tendeur Rosta (« safety »).
 //
 // Contrôles : node scripts/check-models.mjs --eq dr1500-u --qty --max-tris 150000
 export default {

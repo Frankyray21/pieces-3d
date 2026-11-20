@@ -3,7 +3,9 @@
 //
 // REPÈRE LOCAL (HOIST de layout.js) : origine au sol du treuil (dessous du fond 206-414), sous l'axe du tambour ;
 // X vers l'avant de la foreuse, Y vers le haut, Z le long de l'axe du tambour, plaque droite 206-415 côté +Z.
-// Axe du tambour à y = HOIST.drumY. La vis d'enroulement est parallèle au tambour, en bas, du côté −X (vers
+// Axe du tambour à y = HOIST.drumY. Couleurs : fond, plaques de côté, tambour, support de moteur, gardes et
+// plaques 18-19 au rouge Machines Roger (mêmes familles que le treuil du STM-1500 ; le gris de la p. 14 est la teinte
+// par défaut du logiciel de CAO) ; volant, doublure, acier, laiton et zingage inchangés. La vis d'enroulement est parallèle au tambour, en bas, du côté −X (vers
 // l'arrière, côté poulie du mât) : sur l'éclaté (vue depuis −X, +Y, +Z) elle est devant, à gauche, et la plaque
 // droite à droite. Transmission côté +Z, sous le carter 206-422 : pignon 40BS14 (14 dents) sur le bout du
 // tambour, chaîne RS40 de 43 po, pignon 206-033 sur la vis, tendeur Rosta SE15 et son pignon N0.500-10S, volant
@@ -86,7 +88,7 @@ export default function P014(api, opts = {}) {
   // la vis (rep. 30) et trous de fixation sur la foreuse aux quatre coins.
   const zIn = ZP[0] - 0.05;
   const feet = [1, -1].flatMap((s) => VIS.feet.map(([x, dz]) => [XS + x, s * (VIS.zFoot + dz)]));
-  const fond = S.plate((10.5 - X_AR) * IN, 2 * zIn * IN, 0.5 * IN, 'grey', {
+  const fond = S.plate((10.5 - X_AR) * IN, 2 * zIn * IN, 0.5 * IN, 'red', {
     holes: [
       ...feet.map(([x, z]) => [(x - (10.5 + X_AR) / 2) * IN, z * IN, 0.21 * IN]),
       ...[[-15.6, 8.6], [-15.6, -8.6], [9.6, 8.6], [9.6, -8.6]].map(([x, z]) => [(x - (10.5 + X_AR) / 2) * IN, z * IN, 0.34 * IN]),
@@ -95,7 +97,7 @@ export default function P014(api, opts = {}) {
       [-0.5, -4.4, 13, 7.2], [-0.5, 4.4, 13, 7.2], [-11.3, 0, 5.6, 12.5],
     ].map(([x, z, w, d]) => [(x - (10.5 + X_AR) / 2) * IN, z * IN, w * IN, d * IN]),
   });
-  const taquets = [-15.2, 5.5].flatMap((x) => [1, -1].map((s) => at(box(2.0 * IN, 2.0 * IN, 1.0 * IN, 'grey', { r: 0.002 }), p3(x, 1.5, s * (zIn - 0.5)))));
+  const taquets = [-15.2, 5.5].flatMap((x) => [1, -1].map((s) => at(box(2.0 * IN, 2.0 * IN, 1.0 * IN, 'red', { r: 0.002 }), p3(x, 1.5, s * (zIn - 0.5)))));
   P('1', group(at(fond, p3((10.5 + X_AR) / 2, 0.25, 0)), ...taquets), [0, -9, 0]);
 
   // ---------------------------------------------------------------- 2, 3 — plaques de côté 206-415 (droite, +Z) et 206-416 (gauche, −Z)
@@ -122,8 +124,8 @@ export default function P014(api, opts = {}) {
   const MM_BOLTS = [0, 60, 120, 180, 240, 300].map((a) => [4.6 * Math.cos(((a + 30) * Math.PI) / 180), HA + 4.6 * Math.sin(((a + 30) * Math.PI) / 180)]);
   const G17_BOLTS = [[-15.8, 1.2], [-15.8, 10.7], [-7.6, 1.2]], G17_TOP = [-5.0, 15.6];
   const G18_BOLTS = [[-12.0, 10.6], [-9.6, 10.6]];
-  const droite = tole(plOutline, [...commun, [B[0], B[1], 0.8], [ROSTA[0], ROSTA[1], 0.17], ...G13_TABS.map(([x, y]) => [x, y, 0.2]), ...G18_BOLTS.map(([x, y]) => [x, y, 0.2])], ZP[1] - ZP[0], 'grey', (ZP[0] + ZP[1]) / 2, 24);
-  const gauche = tole(plOutline, [...commun, [B[0], B[1], 0.5], ...MM_BOLTS.map(([x, y]) => [x, y, 0.2]), ...G17_BOLTS.map(([x, y]) => [x, y, 0.2]), [...G17_TOP, 0.2]], ZP[1] - ZP[0], 'grey', -(ZP[0] + ZP[1]) / 2, 24);
+  const droite = tole(plOutline, [...commun, [B[0], B[1], 0.8], [ROSTA[0], ROSTA[1], 0.17], ...G13_TABS.map(([x, y]) => [x, y, 0.2]), ...G18_BOLTS.map(([x, y]) => [x, y, 0.2])], ZP[1] - ZP[0], 'red', (ZP[0] + ZP[1]) / 2, 24);
+  const gauche = tole(plOutline, [...commun, [B[0], B[1], 0.5], ...MM_BOLTS.map(([x, y]) => [x, y, 0.2]), ...G17_BOLTS.map(([x, y]) => [x, y, 0.2]), [...G17_TOP, 0.2]], ZP[1] - ZP[0], 'red', -(ZP[0] + ZP[1]) / 2, 24);
   P('2', droite, [0, 0, 12]);
   P('3', gauche, [0, 3, -16]);
 
@@ -132,12 +134,12 @@ export default function P014(api, opts = {}) {
   // bout gauche Ø 1 1/2 (bague d'encodeur), bout droit Ø 1 po claveté (pignon 40BS14).
   const RF = 8.2, ZF = [9.25, 9.75];
   const tambour = group(
-    lathe([[3.5, -ZF[0]], [4.0, -ZF[0]], [4.0, ZF[0]], [3.5, ZF[0]]].map(([r, z]) => [r * IN, z * IN]), 'grey', { axis: 'z', seg: 64 }),
-    lathe([[1.0, ZF[0]], [RF - 0.08, ZF[0]], [RF, ZF[0] + 0.08], [RF, ZF[1] - 0.08], [RF - 0.08, ZF[1]], [1.0, ZF[1]]].map(([r, z]) => [r * IN, z * IN]), 'grey', { axis: 'z', seg: 72 }),
-    lathe([[1.0, -ZF[1]], [RF - 0.08, -ZF[1]], [RF, -ZF[1] + 0.08], [RF, -ZF[0] - 0.08], [RF - 0.08, -ZF[0]], [1.0, -ZF[0]]].map(([r, z]) => [r * IN, z * IN]), 'grey', { axis: 'z', seg: 72 }),
+    lathe([[3.5, -ZF[0]], [4.0, -ZF[0]], [4.0, ZF[0]], [3.5, ZF[0]]].map(([r, z]) => [r * IN, z * IN]), 'red', { axis: 'z', seg: 64 }),
+    lathe([[1.0, ZF[0]], [RF - 0.08, ZF[0]], [RF, ZF[0] + 0.08], [RF, ZF[1] - 0.08], [RF - 0.08, ZF[1]], [1.0, ZF[1]]].map(([r, z]) => [r * IN, z * IN]), 'red', { axis: 'z', seg: 72 }),
+    lathe([[1.0, -ZF[1]], [RF - 0.08, -ZF[1]], [RF, -ZF[1] + 0.08], [RF, -ZF[0] - 0.08], [RF - 0.08, -ZF[0]], [1.0, -ZF[0]]].map(([r, z]) => [r * IN, z * IN]), 'red', { axis: 'z', seg: 72 }),
     // Moyeux soudés sur les joues (côté extérieur) et voiles intérieurs.
-    ...[1, -1].map((s) => at(ring(1.9 * IN, 1.0 * IN, 0.5 * IN, 'grey', { axis: 'z', seg: 32 }), p3(0, 0, s * (ZF[1] + 0.25)))),
-    ...[1, -1].map((s) => at(ring(3.5 * IN, 1.0 * IN, 0.375 * IN, 'grey', { axis: 'z', seg: 32 }), p3(0, 0, s * (ZF[0] - 0.19)))),
+    ...[1, -1].map((s) => at(ring(1.9 * IN, 1.0 * IN, 0.5 * IN, 'red', { axis: 'z', seg: 32 }), p3(0, 0, s * (ZF[1] + 0.25)))),
+    ...[1, -1].map((s) => at(ring(3.5 * IN, 1.0 * IN, 0.375 * IN, 'red', { axis: 'z', seg: 32 }), p3(0, 0, s * (ZF[0] - 0.19)))),
     // Arbre.
     lathe([[0, -13.35], [0.7, -13.35], [0.75, -13.3], [0.75, -12.45], [1.0, -12.4], [1.0, 12.4], [0.5, 12.45], [0.5, 13.4], [0.46, 13.45], [0, 13.45]].map(([r, z]) => [r * IN, z * IN]), 'steel', { axis: 'z', seg: 32 }),
     at(box(0.25 * IN, 0.2 * IN, 0.9 * IN, 'steel'), p3(0, 0.5, 12.95)), // clavette 1/4 du pignon 40BS14
@@ -193,9 +195,9 @@ export default function P014(api, opts = {}) {
   const z20 = [-ZP[1], -14.75];
   const mmHoles = MM_BOLTS.map(([x, y]) => [x, y - HA, 0.2]);
   const support = group(
-    tole(circle([0, 0], 5.0, 64), [[0, 0, 3.25], ...mmHoles], 0.5, 'grey', z20[0] - 0.25),
-    S.slotted(4.25 * IN, 3.25 * IN, 0, 2.75 * IN, [{ a: Math.PI / 2, w: 1.1, y0: 0.6 * IN, y1: 2.15 * IN }, { a: -Math.PI / 2, w: 1.1, y0: 0.6 * IN, y1: 2.15 * IN }], 'grey', { axis: '-z', pos: p3(0, 0, z20[0] - 0.5) }),
-    tole(circle([0, 0], 4.25, 64), [[0, 0, 2.5], ...[45, 135, 225, 315].map((a) => [3.4 * Math.cos((a * Math.PI) / 180), 3.4 * Math.sin((a * Math.PI) / 180), 0.25])], 0.5, 'grey', z20[1] + 0.25),
+    tole(circle([0, 0], 5.0, 64), [[0, 0, 3.25], ...mmHoles], 0.5, 'red', z20[0] - 0.25),
+    S.slotted(4.25 * IN, 3.25 * IN, 0, 2.75 * IN, [{ a: Math.PI / 2, w: 1.1, y0: 0.6 * IN, y1: 2.15 * IN }, { a: -Math.PI / 2, w: 1.1, y0: 0.6 * IN, y1: 2.15 * IN }], 'red', { axis: '-z', pos: p3(0, 0, z20[0] - 0.5) }),
+    tole(circle([0, 0], 4.25, 64), [[0, 0, 2.5], ...[45, 135, 225, 315].map((a) => [3.4 * Math.cos((a * Math.PI) / 180), 3.4 * Math.sin((a * Math.PI) / 180), 0.25])], 0.5, 'red', z20[1] + 0.25),
   );
   P('20', at(support, p3(0, HA, 0)), [0, 8, -38]);
   each('29', MM_BOLTS.map(([x, y]) => at(bolt(0.375 * IN, 1.0 * IN, 'brass', { axis: '-z' }), p3(x, y, -ZP[1] - 0.5))), [0, 8, -44]);
@@ -312,9 +314,9 @@ export default function P014(api, opts = {}) {
   const t14 = 0.075;
   const zg13 = [ZP[1], 14.0];
   P('13', group(
-    tole(g13, [[B[0], B[1], 0.95]], t14, 'lightGrey', zg13[1] - t14 / 2, 24),
-    tole(g13, [offsetConvex(g13, t14)], zg13[1] - zg13[0] - t14, 'lightGrey', (zg13[0] + zg13[1] - t14) / 2, 24),
-    ...G13_TABS.map(([x, y]) => at(box(1.1 * IN, 1.1 * IN, t14 * IN, 'lightGrey', { r: 0.003 }), p3(x, y, zg13[0] + t14 / 2))),
+    tole(g13, [[B[0], B[1], 0.95]], t14, 'red', zg13[1] - t14 / 2, 24),
+    tole(g13, [offsetConvex(g13, t14)], zg13[1] - zg13[0] - t14, 'red', (zg13[0] + zg13[1] - t14) / 2, 24),
+    ...G13_TABS.map(([x, y]) => at(box(1.1 * IN, 1.1 * IN, t14 * IN, 'red', { r: 0.003 }), p3(x, y, zg13[0] + t14 / 2))),
   ), [0, 6, 32]);
   each('27', G13_TABS.map(([x, y]) => at(washer(0.406 * IN, 0.2 * IN, 0.065 * IN, 'zinc', { axis: 'z' }), p3(x, y, zg13[0] + t14 + 0.0325))), [0, 6, 36]);
   each('29', G13_TABS.map(([x, y]) => at(bolt(0.375 * IN, 1.0 * IN, 'brass', { axis: 'z' }), p3(x, y, zg13[0] + t14 + 0.065))), [0, 6, 40]);
@@ -326,9 +328,9 @@ export default function P014(api, opts = {}) {
   for (let i = 0; i < G15.length - 1; i++) {
     const a = G15[i], b = G15[i + 1], L = Math.hypot(b[0] - a[0], b[1] - a[1]);
     const holes = i < 4 ? perfs(0.6, L - 0.6, -zIn + 0.9, zIn - 0.9, 0.17, 0.6).map(m) : [];
-    pans15.push(K.panel(m([a])[0], m([b])[0], -zIn * IN, zIn * IN, t14 * IN, 'lightGrey', holes, 1));
+    pans15.push(K.panel(m([a])[0], m([b])[0], -zIn * IN, zIn * IN, t14 * IN, 'red', holes, 1));
   }
-  const tabs15 = [1, -1].flatMap((s) => G15_TABS.map(([x, y]) => at(box(1.2 * IN, 1.2 * IN, t14 * IN, 'lightGrey', { r: 0.003 }), p3(x, y, s * (zIn - t14 / 2)))));
+  const tabs15 = [1, -1].flatMap((s) => G15_TABS.map(([x, y]) => at(box(1.2 * IN, 1.2 * IN, t14 * IN, 'red', { r: 0.003 }), p3(x, y, s * (zIn - t14 / 2)))));
   P('15', group(...pans15, ...tabs15), [4, 18, 0]);
   each('26', [1, -1].flatMap((s) => G15_TABS.map(([x, y]) => at(bolt(0.375 * IN, 0.75 * IN, 'brass', { axis: s > 0 ? 'z' : '-z' }), p3(x, y, s * ZP[1])))), (i) => [4, 18, i < 2 ? 8 : -8]);
 
@@ -342,13 +344,13 @@ export default function P014(api, opts = {}) {
   const faceHoles = [slotPoly.map(([u, v]) => [u, v])]
     .concat(perfs(-zIn + 0.9, zIn - 0.9, 1.6, yC - 1.4, 0.17, 0.6).map((h) => h));
   // Face −X : tôle dans le plan YZ (u = z, v = y), extrudée selon X.
-  const faceG = group(K.sheet(m([[-zIn, 0.55], [zIn, 0.55], [zIn, yTop], [-zIn, yTop]]), faceHoles.map(m), t14 * IN, 'lightGrey', 0, 12));
+  const faceG = group(K.sheet(m([[-zIn, 0.55], [zIn, 0.55], [zIn, yTop], [-zIn, yTop]]), faceHoles.map(m), t14 * IN, 'red', 0, 12));
   faceG.rotation.y = -Math.PI / 2; // u (x local) → +Z, épaisseur (z local) → +X
   faceG.position.set((xF + t14 / 2) * IN, 0, 0);
-  const top14 = K.panel(m([[xF, yTop]])[0], m([[xTopEnd, yTop]])[0], -zIn * IN, zIn * IN, t14 * IN, 'lightGrey',
+  const top14 = K.panel(m([[xF, yTop]])[0], m([[xTopEnd, yTop]])[0], -zIn * IN, zIn * IN, t14 * IN, 'red',
     perfs(0.7, xTopEnd - xF - 0.6, -zIn + 0.9, zIn - 0.9, 0.17, 0.6).map(m), -1);
-  const foot14 = K.panel(m([[xF, 0.55]])[0], m([[xF + 1.0, 0.55]])[0], -zIn * IN, zIn * IN, t14 * IN, 'lightGrey', [], -1);
-  const tabs14 = [1, -1].flatMap((s) => G14_TABS.map(([x, y]) => at(box(1.2 * IN, 1.2 * IN, t14 * IN, 'lightGrey', { r: 0.003 }), p3(x, y, s * (zIn - t14 / 2)))));
+  const foot14 = K.panel(m([[xF, 0.55]])[0], m([[xF + 1.0, 0.55]])[0], -zIn * IN, zIn * IN, t14 * IN, 'red', [], -1);
+  const tabs14 = [1, -1].flatMap((s) => G14_TABS.map(([x, y]) => at(box(1.2 * IN, 1.2 * IN, t14 * IN, 'red', { r: 0.003 }), p3(x, y, s * (zIn - t14 / 2)))));
   P('14', group(faceG, top14, foot14, ...tabs14), [-16, 0, 0]);
   each('29', [1, -1].flatMap((s) => G14_TABS.map(([x, y]) => at(bolt(0.375 * IN, 1.0 * IN, 'brass', { axis: s > 0 ? 'z' : '-z' }), p3(x, y, s * ZP[1])))), (i) => [-16, 0, i < 2 ? 8 : -8]);
   const liner = group(K.sheet(m(slot([0, yC], 20.0, 2.4, 0)), [m(slotPoly)], 0.25 * IN, 'plastic', 0, 12));
@@ -358,12 +360,12 @@ export default function P014(api, opts = {}) {
 
   // ---------------------------------------------------------------- 19 — plaque C5214-PL : cornière sous la fente (dehors) ; 18 — plaque C5213-PL : fermeture du bout +Z de la garde, contre la plaque droite
   const ang19 = group(
-    at(box(0.125 * IN, 1.5 * IN, 16.0 * IN, 'lightGrey', { r: 0.001 }), p3(xF - 0.0625, yC - 1.4, 0)),
-    at(box(1.5 * IN, 0.125 * IN, 16.0 * IN, 'lightGrey', { r: 0.001 }), p3(xF - 0.75, yC - 2.1, 0)),
+    at(box(0.125 * IN, 1.5 * IN, 16.0 * IN, 'red', { r: 0.001 }), p3(xF - 0.0625, yC - 1.4, 0)),
+    at(box(1.5 * IN, 0.125 * IN, 16.0 * IN, 'red', { r: 0.001 }), p3(xF - 0.75, yC - 2.1, 0)),
   );
   P('19', ang19, [-24, -3, 0]);
   each('26', [-5, 5].map((z) => at(bolt(0.375 * IN, 0.75 * IN, 'brass', { axis: 'x' }), p3(xF - 0.125, yC - 1.0, z))), [-26, -3, 0]);
-  P('18', tole([[-15.9, 9.2], [-8.8, 9.2], [-8.8, 10.95], [-15.9, 10.95]], [...G18_BOLTS.map(([x, y]) => [x, y, 0.2])], 0.125, 'lightGrey', zIn - 0.0625), [-6, 4, 6]);
+  P('18', tole([[-15.9, 9.2], [-8.8, 9.2], [-8.8, 10.95], [-15.9, 10.95]], [...G18_BOLTS.map(([x, y]) => [x, y, 0.2])], 0.125, 'red', zIn - 0.0625), [-6, 4, 6]);
   each('26', G18_BOLTS.map(([x, y]) => at(bolt(0.375 * IN, 0.75 * IN, 'brass', { axis: 'z' }), p3(x, y, ZP[1]))), [-6, 4, 12]);
 
   // ---------------------------------------------------------------- 17 — garde latérale 206-431 (gauche, sur la plaque 206-416)
@@ -371,7 +373,7 @@ export default function P014(api, opts = {}) {
   const g17 = [[X_AR, 0.6], [-7.0, 0.6], [-7.0, 6.2], [-1.2, 6.2], ...arc(A, 5.6, -102.2, -235, 24), [-7.6, 16.4], [-9.0, 11.3], [X_AR, 11.3]];
   const g17Holes = [[[-14.6, 1.8], [-8.2, 1.8], [-8.2, 5.4], [-14.6, 5.4]], ...G17_BOLTS.map(([x, y]) => [x, y, 0.2]), [...G17_TOP, 0.2],
     ...perfs(-15.4, -9.6, 6.2, 10.6, 0.17, 0.6)];
-  P('17', tole(g17, g17Holes, t14, 'lightGrey', -ZP[1] - t14 / 2), [-4, 6, -26]);
+  P('17', tole(g17, g17Holes, t14, 'red', -ZP[1] - t14 / 2), [-4, 6, -26]);
   each('26', G17_BOLTS.map(([x, y]) => at(bolt(0.375 * IN, 0.75 * IN, 'brass', { axis: '-z' }), p3(x, y, -ZP[1] - t14))), [-4, 6, -30]);
   P('24', at(bolt(0.375 * IN, 1.0 * IN, 'brass', { axis: '-z' }), p3(G17_TOP[0], G17_TOP[1], -ZP[1] - t14)), [-4, 6, -30]);
 

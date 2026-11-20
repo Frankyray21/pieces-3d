@@ -1,6 +1,6 @@
 // P008 — Panneaux du groupe hydraulique (page 8, 12 repères). Posé à l'identité par P007 (ligne « p. 8 ») :
 // même repère local (GP dans _groupes.js : X vers le bout des pompes et du réservoir, Z vers le flanc de la boîte
-// électrique). Tôle de 3 mm [estimé], jaune comme le cadre [estimé : le manuel est en noir et blanc].
+// électrique). Tôle de 3 mm [estimé], rouges comme le cadre (rouge Machines Roger, demande du client ; le manuel est en noir et blanc).
 // Disposition relevée sur la vue éclatée de la page 8 (chaque panneau s'écarte de la face qu'il ferme) :
 //   bout −X (moteur)      : 1 cache moteur (bas, rebord plié en haut), 2 côté plug (fenêtre de la prise, éclair) ;
 //   flanc −Z (coolers)    : 5 porte gauche (bout moteur), 4 hood cooler #1 (en Γ : jambe à ouïes devant le double
@@ -21,7 +21,7 @@ const YB = 0.1; // bas des panneaux (dessus des patins)
 
 export default function P008(api) {
   const S = api.S, { at, group, box, cyl, merged } = S;
-  const mat = 'yellow';
+  const mat = 'red';
 
   // Têtes de vis de fixation (dômes) le long d'un contour, dans le plan local de la tôle (face +z).
   const vis = (pts) => merged(pts.map(([u, v]) => at(cyl(0.007, 0.004, 'steel', { axis: 'z', seg: 10 }), [u, v, e / 2 + 0.002])), 'steel');

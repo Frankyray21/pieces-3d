@@ -91,7 +91,7 @@ export function frameSkud(api) {
   }
   // Traverses (tubes 4 × 4 po) entre les patins.
   const zi = SKID.railZ - SKID.railW / 2;
-  for (const x of XMEM) f.push(boxAt(api, [x - 0.038, SKID.xmemTop - 0.076, -zi], [x + 0.038, SKID.xmemTop, zi], 'yellow', 0.004));
+  for (const x of XMEM) f.push(boxAt(api, [x - 0.038, SKID.xmemTop - 0.076, -zi], [x + 0.038, SKID.xmemTop, zi], 'red', 0.004));
   return [S.group(...f)];
 }
 
@@ -101,8 +101,8 @@ export function blocIO(api) {
   const [x, y, z] = BLOC_IO.pos;
   const zs = -ASSISE.w / 2; // face de la tôle de côté de l'assise
   const g = [
-    boxAt(api, [x - 0.08, y - 0.08, zs - 0.006], [x + 0.08, y + 0.06, zs - 0.0005], 'yellow'),
-    boxAt(api, [x - 0.06, y - 0.045, z - 0.03], [x + 0.06, y - 0.035, zs - 0.006], 'yellow'),
+    boxAt(api, [x - 0.08, y - 0.08, zs - 0.006], [x + 0.08, y + 0.06, zs - 0.0005], 'red'),
+    boxAt(api, [x - 0.06, y - 0.045, z - 0.03], [x + 0.06, y - 0.035, zs - 0.006], 'red'),
     boxAt(api, [x - 0.055, y - 0.035, z - 0.03], [x + 0.055, y + 0.045, zs - 0.006], 'castAlu', 0.003),
   ];
   for (const dx of [-0.035, 0, 0.035]) for (const dy of [-0.012, 0.025]) {
@@ -125,10 +125,10 @@ export function pattesExtension(api) {
   return [-1, 1].map((sz) => {
     const z = sz * PATTE.z, g = [];
     const seg = (a, b, r, mat) => { const A = p(a), B = p(b); return S.rod([A[0], A[1], z], [B[0], B[1], z], r, mat, 20); };
-    g.push(seg(0.03, 0.5, 0.03, 'yellow'), seg(0.45, L - 0.03, 0.024, 'yellow'));
-    g.push(S.at(S.ring(0.034, 0.0165, 0.04, 'yellow', { axis: 'z', seg: 24 }), [T[0], T[1], z]));
-    g.push(S.at(S.ring(0.034, 0.0165, 0.04, 'yellow', { axis: 'z', seg: 24 }), [F[0], F[1], z]));
-    g.push(seg(0.49, 0.53, 0.036, 'yellow')); // collet du tube extérieur
+    g.push(seg(0.03, 0.5, 0.03, 'red'), seg(0.45, L - 0.03, 0.024, 'red'));
+    g.push(S.at(S.ring(0.034, 0.0165, 0.04, 'red', { axis: 'z', seg: 24 }), [T[0], T[1], z]));
+    g.push(S.at(S.ring(0.034, 0.0165, 0.04, 'red', { axis: 'z', seg: 24 }), [F[0], F[1], z]));
+    g.push(seg(0.49, 0.53, 0.036, 'red')); // collet du tube extérieur
     const [bx, by] = p(0.515);
     g.push(S.at(S.cyl(0.008, 0.1, 'zinc', { axis: 'z', seg: 12 }), [bx, by, z])); // broche de réglage
     for (const s of [0.6, 0.66, 0.72]) { const [hx, hy] = p(s); g.push(S.at(S.cyl(0.0085, 0.0485, 'black', { axis: 'z', seg: 10 }), [hx, hy, z])); }
@@ -140,7 +140,7 @@ export function pattesExtension(api) {
 export function plaqueAncrage(api) {
   const S = api.S;
   const [x, , ] = ANCRAGE.pos, t = ANCRAGE.t, F = PATTE_EYES.foot;
-  const g = [S.at(S.plate(ANCRAGE.w, ANCRAGE.len, t, 'yellow', { r: 0.01, holes: [-0.38, -0.1, 0.1, 0.38].map((z) => [0, z, 0.014]) }), [x, t / 2, 0])];
+  const g = [S.at(S.plate(ANCRAGE.w, ANCRAGE.len, t, 'red', { r: 0.01, holes: [-0.38, -0.1, 0.1, 0.38].map((z) => [0, z, 0.014]) }), [x, t / 2, 0])];
   for (const s of [-1, 1]) for (const d of [-1, 1]) {
     g.push(profilZ(api, hull([[F[0] - 0.06, t], [F[0] + 0.06, t], ...circle(F, 0.034, 18)]), [[F[0], F[1], 0.0165]], EAR, s * (PATTE.z + d * 0.0255)));
   }

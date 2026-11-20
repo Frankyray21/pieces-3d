@@ -32,10 +32,10 @@ export default function P024(api) {
     const pts = [[2.9, -0.8], [4.45, -0.8], [4.45, -0.28], [3.75, -0.28]];
     for (let k = 1; k < 12; k++) { const a = -Math.PI / 2 - (k * Math.PI) / 12; pts.push([3.75 + 0.28 * Math.cos(a), 0.28 * Math.sin(a)]); }
     pts.push([3.75, 0.28], [4.45, 0.28], [4.45, 0.8], [2.9, 0.8]);
-    return C.plan(pts.map(([p, t]) => [C.sx * (p * Math.cos(f) - t * Math.sin(f)) * IN, (p * Math.sin(f) + t * Math.cos(f)) * IN]), -0.5, 0, 'yellow');
+    return C.plan(pts.map(([p, t]) => [C.sx * (p * Math.cos(f) - t * Math.sin(f)) * IN, (p * Math.sin(f) + t * Math.cos(f)) * IN]), -0.5, 0, 'red');
   };
   P('1', S.group(
-    C.L([[1.85, dT], [3.15, dT], [3.15, 0], [2.78, 0], [2.78, dB - BW - 0.02], [1.85, dB - BW - 0.02]], 'yellow'),
+    C.L([[1.85, dT], [3.15, dT], [3.15, 0], [2.78, 0], [2.78, dB - BW - 0.02], [1.85, dB - BW - 0.02]], 'red'),
     oreille(90 * deg), oreille(270 * deg),
   ), X(-0.08));
 

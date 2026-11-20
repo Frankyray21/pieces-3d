@@ -38,7 +38,7 @@ export default function P018(api) {
   // --- Haut commun : bague, adaptateur de chapeau, porte-chapeau, bol, mâchoires.
   api.add(W(S.group(B.bagueMandrin(C), ...B.machoires(C))));
   P('10', B.adaptateurChapeau(C), X(-0.2));
-  P('9', B.porteChapeau(C, 'yellow'), X(-0.1));
+  P('9', B.porteChapeau(C, 'red'), X(-0.1));
   P('11', B.bol(C), X(0));
   B.entretoisesHaut(C).forEach((o) => P('17', o, X(-0.17)));
   const v = B.visserieHaut(C);
@@ -57,12 +57,12 @@ export default function P018(api) {
   const g = H.hsg;
   const cyl10 = Array.from({ length: 10 }, (_, k) => 36 * k * deg);
   P('12', S.group(
-    C.slab(g.ro, g.rb, g.d0, 3.6, B.trousCarterHaut(), 'yellow', 96),
-    C.slab(g.ro, g.rb, 3.6, g.dP, PHI.springs.map((f) => [g.rp, f, g.ph]), 'yellow', 96),
-    C.slab(g.rb + 0.005, 2.95, g.dB, 6.45, B.trousPlancher(true), 'yellow'),
-    C.slab(g.rb + 0.005, 2.95, 6.45, 7.5, B.trousPlancher(false), 'yellow'),
-    C.slab(g.ro, 4.18, g.dP, 8.12, [], 'yellow', 96),
-    C.slab(g.ro, 5.36, 8.12, 8.55, cyl10.map((f) => [5.68, f, 0.34]), 'yellow', 96),
+    C.slab(g.ro, g.rb, g.d0, 3.6, B.trousCarterHaut(), 'red', 96),
+    C.slab(g.ro, g.rb, 3.6, g.dP, PHI.springs.map((f) => [g.rp, f, g.ph]), 'red', 96),
+    C.slab(g.rb + 0.005, 2.95, g.dB, 6.45, B.trousPlancher(true), 'red'),
+    C.slab(g.rb + 0.005, 2.95, 6.45, 7.5, B.trousPlancher(false), 'red'),
+    C.slab(g.ro, 4.18, g.dP, 8.12, [], 'red', 96),
+    C.slab(g.ro, 5.36, 8.12, 8.55, cyl10.map((f) => [5.68, f, 0.34]), 'red', 96),
   ), X(0.4));
   // 30 — Graisseur droit 1/4-28 sur le flanc du carter (éclaté p. 18), à hauteur du bol.
   P('30', C.radial(B.zerk(S), g.ro, 90 * deg, 4.6), X(0.4, 90 * deg, 0.06));
@@ -81,9 +81,9 @@ export default function P018(api) {
   // des boulons du cylindre et lamages des écrous, logements des 4 goupilles du piston, moyeu Ø 7,4.
   P('14', S.group(
     C.slab(7.3, 3.7, 11.45, 12.6, [...cyl10.map((f) => [5.6, f, 0.28]), ...[30, 90, 150, 210, 270, 330].map((a) => [6.75, a * deg, 0.28]),
-      ...[45, 135, 225, 315].map((a) => [4.0, a * deg, 0.2])], 'yellow', 120),
-    C.slab(7.3, 3.7, 12.6, DF, [...cyl10.map((f) => [5.6, f, 0.5]), ...[30, 90, 150, 210, 270, 330].map((a) => [6.75, a * deg, 0.28])], 'yellow', 120),
-    C.L([[3.1, 11.8], [3.7, 11.8], [3.7, DF], [3.18, DF], [3.1, DF - 0.08]], 'yellow'),
+      ...[45, 135, 225, 315].map((a) => [4.0, a * deg, 0.2])], 'red', 120),
+    C.slab(7.3, 3.7, 12.6, DF, [...cyl10.map((f) => [5.6, f, 0.5]), ...[30, 90, 150, 210, 270, 330].map((a) => [6.75, a * deg, 0.28])], 'red', 120),
+    C.L([[3.1, 11.8], [3.7, 11.8], [3.7, DF], [3.18, DF], [3.1, DF - 0.08]], 'red'),
   ), X(0.92));
 
   // 21 — Clavettes 55-0015 (3) dans l'alésage du manchon, à φ = 0°, 120°, 240° ; 19 — ressort de verrouillage

@@ -38,10 +38,10 @@ export default function P004(api) {
     const win = [[-1.95, -1.62], [-1.52, -1.19]].map(([a, b]) => rect(a, 0.885, b, 0.985).reverse());
     m.push(profilZ(api, rect(xRi, MS.yBot, xFi, MS.yTopB), [...win, [pinX, FEED.y, 0.0366]], MS.web, zz(MS.zw + MS.web / 2)));
     // Bossage du palier (Ø 4 1/4 po) sur l'âme extérieure.
-    m.push(at(ring(0.054, 0.0366, 0.016, 'yellow', { axis: 'z', seg: 28 }), [pinX, FEED.y, zz(MS.zw + MS.web + 0.008)]));
+    m.push(at(ring(0.054, 0.0366, 0.016, 'red', { axis: 'z', seg: 28 }), [pinX, FEED.y, zz(MS.zw + MS.web + 0.008)]));
     // Plaquettes oblongues des flancs (trois, p. 4) et deux bossages ronds près des fenêtres.
-    for (const x of [0.5, -0.3, -1.05]) m.push(at(box(0.1, 0.045, 0.008, 'yellow', { r: 0.012 }), [x, 0.935, zz(MS.zw + MS.web + 0.004)]));
-    for (const x of [-1.07, -1.58]) m.push(at(ring(0.022, 0.011, 0.01, 'yellow', { axis: 'z', seg: 18 }), [x, 0.975, zz(MS.zw + MS.web + 0.005)]));
+    for (const x of [0.5, -0.3, -1.05]) m.push(at(box(0.1, 0.045, 0.008, 'red', { r: 0.012 }), [x, 0.935, zz(MS.zw + MS.web + 0.004)]));
+    for (const x of [-1.07, -1.58]) m.push(at(ring(0.022, 0.011, 0.01, 'red', { axis: 'z', seg: 18 }), [x, 0.975, zz(MS.zw + MS.web + 0.005)]));
     // Goussets du pied : sous le mât (de la plaque de pied au dessous du longeron) et au-dessus (jusqu'aux oreilles
     // hautes de la plaque de pied), dans le plan de l'âme extérieure.
     m.push(profilZ(api, [[xFi, 0.66], [xFi, yb], [xF - 0.32, yb]], [], 0.019, zz(0.175)));
@@ -66,7 +66,7 @@ export default function P004(api) {
     const x0 = MS.xWear[1] + 0.012, len = xFi - x0, cx = (x0 + xFi) / 2;
     const holes = RCB.holes.map(([x, z]) => [RCB.x + x - cx, z, 0.0069]);
     const lum = [[RCB.x - 0.06 - cx, -0.09, 0.07, 0.022]];
-    m.push(at(S.plate(len, MAST.w, MS.wear.t, 'yellow', { holes, cutouts: lum, r: 0.004 }), [cx, MS.yTop + MS.wear.t / 2, 0]));
+    m.push(at(S.plate(len, MAST.w, MS.wear.t, 'red', { holes, cutouts: lum, r: 0.004 }), [cx, MS.yTop + MS.wear.t / 2, 0]));
   }
   // Plaque de pied hexagonale : encoche en U du passage des tiges, deux trous oblongs en bas, trous de fixation.
   {
@@ -85,10 +85,10 @@ export default function P004(api) {
     for (const [z0, z1] of PF.ears) {
       m.push(profilZ(api, hull([[xR + 0.001, py - 0.05], [xR + 0.001, py + 0.05], ...circle([px, py], 0.03, 16)]), [[px, py, 0.0068]], z1 - z0, (z0 + z1) / 2));
     }
-    m.push(at(cyl(0.024, 0.008, 'yellow', { axis: 'x', seg: 20 }), [xR - 0.004, POULIE.pos[1] + PF.springY, PF.z[1] + 0.022]));
+    m.push(at(cyl(0.024, 0.008, 'red', { axis: 'x', seg: 20 }), [xR - 0.004, POULIE.pos[1] + PF.springY, PF.z[1] + 0.022]));
   }
   // Cordons de soudure des goussets et de la plaque de pied.
-  for (const s of [-1, 1]) m.push(S.weld([[xFi - 0.002, yb, s * 0.175], [xFi - 0.002, 0.66, s * 0.175]], 0.005, 'yellow'));
+  for (const s of [-1, 1]) m.push(S.weld([[xFi - 0.002, yb, s * 0.175], [xFi - 0.002, 0.66, s * 0.175]], 0.005, 'red'));
   api.part('1', group(...m), [0, 0, 0]);
 
   // 2 — Plaques d'usure MP6019 (×2), 19 trous fraisés chacune ; 6 — vis fraisées 1/2-13 × 3/4 po (×38).
@@ -109,7 +109,7 @@ export default function P004(api) {
   for (const s of [-1, 1]) {
     api.part('7', at(sleeve(api, 0.0366, pinR, 2 * IN, 'brass'), [pinX, FEED.y, s * (zOut - 0.0254)], [Math.PI / 2, 0, 0]), [0, 0, s * 0.3]);
   }
-  api.part('4', at(group(cyl(0.045, 0.5 * IN, 'yellow', { axis: 'z', seg: 28 }), cyl(0.011, 0.0135, 'black', { axis: 'z', seg: 12 })), [pinX, FEED.y, zOut + 0.25 * IN]), [0, 0, 0.4]);
+  api.part('4', at(group(cyl(0.045, 0.5 * IN, 'red', { axis: 'z', seg: 28 }), cyl(0.011, 0.0135, 'black', { axis: 'z', seg: 12 })), [pinX, FEED.y, zOut + 0.25 * IN]), [0, 0, 0.4]);
   api.part('5', bolt(0.75 * IN, 1.5 * IN, 'zinc', { axis: 'z', pos: [pinX, FEED.y, zOut + 0.5 * IN] }), [0, 0, 0.55]);
 
   // 8 — Vérin d'avance DR-FE3560H (fermé) : œil transversal (alésage de la pin), tige chromée, presse-étoupe à bride

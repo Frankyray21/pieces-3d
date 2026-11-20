@@ -5,7 +5,7 @@
 // Aucune cote au manuel : proportions mesurées sur la page 9 (cadre ≈ 1,3 : 0,8 : 1,05 en longueur, profondeur,
 // hauteur), échelle tirée de la pompe Pratissoli KF40 (≈ 0,42 m de culasse à carter, catalogue) posée dans le
 // compartiment du haut [mesure, ±10 %] ; même famille que le waterpack du STM-1500 [STM, ordre de grandeur].
-// Couleur jaune du cadre [estimé : le manuel est en noir et blanc] ; réservoir d'eau en acier gris.
+// Cadre peint au rouge Machines Roger (demande du client ; le manuel est en noir et blanc) ; réservoir d'eau en acier gris.
 import { slab, bent, arc, rect, poignee } from './_groupes.js';
 
 // Cadre PA701 [mesure p. 9].
@@ -29,48 +29,48 @@ export default function P009(api) {
   const fork = (x) => rect(x, 0.055, 0.24, 0.075);
   for (const s of [-1, 1]) {
     // Jupe avant/arrière (fenêtres des fourreaux) et flancs.
-    Y.push(at(slab(api, [[-x1, 0], [x1, 0], [x1, base], [-x1, base]], [fork(-0.38), fork(0.38)], t, 'yellow'), [0, 0, s * (z1 - t / 2)]));
-    Y.push(at(box(t, base, 2 * z1, 'yellow'), [s * (x1 - t / 2), base / 2, 0]));
+    Y.push(at(slab(api, [[-x1, 0], [x1, 0], [x1, base], [-x1, base]], [fork(-0.38), fork(0.38)], t, 'red'), [0, 0, s * (z1 - t / 2)]));
+    Y.push(at(box(t, base, 2 * z1, 'red'), [s * (x1 - t / 2), base / 2, 0]));
     // Fourreaux de fourche (tube 0,25 × 0,085, traversants).
     for (const x of [-0.38, 0.38]) {
-      Y.push(at(box(0.25, 0.006, 2 * z1, 'yellow'), [x, 0.055 + 0.0405 + 0.003, 0]));
-      Y.push(at(box(0.25, 0.006, 2 * z1, 'yellow'), [x, 0.055 - 0.0405 - 0.003, 0]));
-      Y.push(at(box(0.006, 0.087, 2 * z1, 'yellow'), [x + s * 0.122, 0.055, 0]));
+      Y.push(at(box(0.25, 0.006, 2 * z1, 'red'), [x, 0.055 + 0.0405 + 0.003, 0]));
+      Y.push(at(box(0.25, 0.006, 2 * z1, 'red'), [x, 0.055 - 0.0405 - 0.003, 0]));
+      Y.push(at(box(0.006, 0.087, 2 * z1, 'red'), [x + s * 0.122, 0.055, 0]));
     }
     // Oreilles d'arrimage aux coins (au ras du sol, vers ±X).
     for (const u of [-1, 1]) {
       Y.push(at(slab(api, [[x1, 0], [x1 + 0.05, 0], ...arc(x1 + 0.05, 0.045, 0.045, -Math.PI / 2, Math.PI / 2, 8), [x1, 0.09]].map(([x, y]) => [s * x, y]),
-        [[s * (x1 + 0.05), 0.045, 0.016]], 0.016, 'yellow'), [0, 0, u * (z1 - 0.04)]));
+        [[s * (x1 + 0.05), 0.045, 0.016]], 0.016, 'red'), [0, 0, u * (z1 - 0.04)]));
       // Cornières d'angle et pattes de levage (plaque YZ au-dessus du coin, trou en haut).
-      Y.push(at(box(0.05, H - base, 0.005, 'yellow'), [s * (x1 - 0.025), (H + base) / 2, u * (z1 - 0.0025)]));
-      Y.push(at(box(0.005, H - base, 0.05, 'yellow'), [s * (x1 - 0.0025), (H + base) / 2, u * (z1 - 0.025)]));
+      Y.push(at(box(0.05, H - base, 0.005, 'red'), [s * (x1 - 0.025), (H + base) / 2, u * (z1 - 0.0025)]));
+      Y.push(at(box(0.005, H - base, 0.05, 'red'), [s * (x1 - 0.0025), (H + base) / 2, u * (z1 - 0.025)]));
       Y.push(at(slab(api, [[-0.025, H - 0.25], [0.025, H - 0.25], [0.025, H + 0.07], ...arc(0, H + 0.07, 0.025, 0, Math.PI, 6), [-0.025, H + 0.07]],
-        [[0, H + 0.07, 0.011]], 0.012, 'yellow'), [s * (x1 + 0.006), 0, u * (z1 - 0.06)], [0, Math.PI / 2, 0]));
+        [[0, H + 0.07, 0.011]], 0.012, 'red'), [s * (x1 + 0.006), 0, u * (z1 - 0.06)], [0, Math.PI / 2, 0]));
     }
     // Flancs pleins à deux poignées en goutte, de la base au cadre du dessus.
     const goutte = (zc) => [...arc(0, 0.86, 0.022, Math.PI, 0, 6), [0.022, 0.77], ...arc(0, 0.77, 0.022, 0, -Math.PI, 6)].map(([u, v]) => [u + zc, v]);
-    Y.push(at(slab(api, [[-z1, base], [z1, base], [z1, H - 0.04], [-z1, H - 0.04]], [goutte(-0.15), goutte(0.15)], t, 'yellow'), [s * (x1 - t / 2), 0, 0], [0, Math.PI / 2, 0]));
+    Y.push(at(slab(api, [[-z1, base], [z1, base], [z1, H - 0.04], [-z1, H - 0.04]], [goutte(-0.15), goutte(0.15)], t, 'red'), [s * (x1 - t / 2), 0, 0], [0, Math.PI / 2, 0]));
     // Cadre du dessus (tube 0,04) avant/arrière et flancs.
-    Y.push(at(box(2 * x1, 0.04, 0.04, 'yellow', { r: 0.003 }), [0, H - 0.02, s * (z1 - 0.02)]));
-    Y.push(at(box(0.04, 0.04, 2 * z1, 'yellow', { r: 0.003 }), [s * (x1 - 0.02), H - 0.02, 0]));
+    Y.push(at(box(2 * x1, 0.04, 0.04, 'red', { r: 0.003 }), [0, H - 0.02, s * (z1 - 0.02)]));
+    Y.push(at(box(0.04, 0.04, 2 * z1, 'red', { r: 0.003 }), [s * (x1 - 0.02), H - 0.02, 0]));
     // Longerons intérieurs de la pompe (appui des ailes du support PA037).
-    Y.push(at(box(2 * x1 - 0.01, 0.04, 0.04, 'yellow', { r: 0.003 }), [0, WP.rail, s * 0.22]));
+    Y.push(at(box(2 * x1 - 0.01, 0.04, 0.04, 'red', { r: 0.003 }), [0, WP.rail, s * 0.22]));
   }
   // Plancher, dos plein, faces avant basse (trou rond) et médiane avec rebord, barre avant ronde.
-  Y.push(at(box(2 * x1 - 2 * t, 0.006, 2 * z1 - 2 * t, 'yellow'), [0, base + 0.003 - 0.006, 0]));
-  Y.push(at(box(2 * x1, H - 0.04 - base, t, 'yellow'), [0, (H - 0.04 + base) / 2, -(z1 - t / 2)]));
-  Y.push(at(slab(api, [[-x1, base], [x1, base], [x1, 0.36], [-x1, 0.36]], [[-0.38, 0.24, 0.065]], t, 'yellow'), [0, 0, z1 - t / 2]));
-  Y.push(at(box(2 * x1, 0.62 - 0.36, t, 'yellow'), [0, 0.49, z1 - t / 2]));
-  Y.push(at(box(2 * x1 - 0.1, 0.006, 0.03, 'yellow'), [0, 0.62, z1 - 0.015]));
-  Y.push(at(cyl(0.018, 2 * x1 - 0.02, 'yellow', { axis: 'x', seg: 18 }), [0, 0.86, z1 - 0.02]));
+  Y.push(at(box(2 * x1 - 2 * t, 0.006, 2 * z1 - 2 * t, 'red'), [0, base + 0.003 - 0.006, 0]));
+  Y.push(at(box(2 * x1, H - 0.04 - base, t, 'red'), [0, (H - 0.04 + base) / 2, -(z1 - t / 2)]));
+  Y.push(at(slab(api, [[-x1, base], [x1, base], [x1, 0.36], [-x1, 0.36]], [[-0.38, 0.24, 0.065]], t, 'red'), [0, 0, z1 - t / 2]));
+  Y.push(at(box(2 * x1, 0.62 - 0.36, t, 'red'), [0, 0.49, z1 - t / 2]));
+  Y.push(at(box(2 * x1 - 0.1, 0.006, 0.03, 'red'), [0, 0.62, z1 - 0.015]));
+  Y.push(at(cyl(0.018, 2 * x1 - 0.02, 'red', { axis: 'x', seg: 18 }), [0, 0.86, z1 - 0.02]));
   // Pattes de retenue du réservoir sur le rebord avant (trois, percées) [mesure p. 9].
-  for (const x of [-0.4, 0, 0.4]) Y.push(at(slab(api, [[-0.025, 0], [0.025, 0], ...arc(0, 0.03, 0.025, 0, Math.PI, 6)], [[0, 0.03, 0.008]], 0.006, 'yellow'), [x, 0.62, z1 - 0.032], [-Math.PI / 2, 0, 0]));
+  for (const x of [-0.4, 0, 0.4]) Y.push(at(slab(api, [[-0.025, 0], [0.025, 0], ...arc(0, 0.03, 0.025, 0, Math.PI, 6)], [[0, 0.03, 0.008]], 0.006, 'red'), [x, 0.62, z1 - 0.032], [-Math.PI / 2, 0, 0]));
   // Couvercle : tôle avec bord avant roulé, poignée ; charnières sur le cadre arrière ; ouvert à 100°.
   const lidA = -100 * (Math.PI / 180);
   const lidL = 2 * z1 - 0.01;
   const lid = group(
     // Section (z, y) du couvercle : tôle plane, bord avant roulé vers le bas ; extrudée le long de X.
-    at(bent(api, [[0, 0.002], [lidL - 0.02, 0.002], ...arc(lidL - 0.02, -0.018, 0.02, Math.PI / 2, -Math.PI / 2, 8)].map(([zz, y]) => [-zz, y]), 0.004, 2 * x1, 'yellow'), [0, 0, 0], [0, Math.PI / 2, 0]),
+    at(bent(api, [[0, 0.002], [lidL - 0.02, 0.002], ...arc(lidL - 0.02, -0.018, 0.02, Math.PI / 2, -Math.PI / 2, 8)].map(([zz, y]) => [-zz, y]), 0.004, 2 * x1, 'red'), [0, 0, 0], [0, Math.PI / 2, 0]),
     at(poignee(api, 0.12, 0.03, 0.006, 'black'), [0, 0.004, lidL - 0.06], [-Math.PI / 2, 0, 0]),
   );
   const lidPose = at(group(lid), [0, H, -z1 + 0.005], [lidA, 0, 0]);
@@ -82,7 +82,7 @@ export default function P009(api) {
     const M = A.map((c, i) => c + (B[i] - c) * 0.55);
     return [rod(A, M, 0.011, 'black', 14), rod(M, B, 0.005, 'chrome', 10), at(box(0.02, 0.04, 0.03, 'steel'), A)];
   });
-  api.part('1', group(merged(Y, 'yellow'), lidPose, merged(hinges, 'steel'), ...struts), [0, 0, 0]);
+  api.part('1', group(merged(Y, 'red'), lidPose, merged(hinges, 'steel'), ...struts), [0, 0, 0]);
 
   // ------------------------------------------------------------------ 2 — Réservoir eau PA715
   // Caisson soudé : cadre du dessus (rebord et deux traverses qui séparent les trois trappes), fentes d'aération

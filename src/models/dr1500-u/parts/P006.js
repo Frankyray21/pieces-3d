@@ -62,13 +62,13 @@ export default function P006(api) {
       const [p0, p1] = [back[k - 1], back[k]], L = Math.hypot(p1[0] - p0[0], p1[1] - p0[1]);
       const n = [(p1[1] - p0[1]) / L, -(p1[0] - p0[0]) / L]; // normale vers l'intérieur du flasque
       const o = (q) => [q[0] - n[0] * 0.0064, q[1] - n[1] * 0.0064];
-      f.push(strut(api, o(p0), o(p1), 0.5 * IN, 0.04, ZP0 - 0.02, 'yellow', 0.003));
+      f.push(strut(api, o(p0), o(p1), 0.5 * IN, 0.04, ZP0 - 0.02, 'red', 0.003));
     }
     // Bossage du pivot (bague soudée, face −Z) et fourreau du ressort sur la face +Z (le long de X, ouvert vers le mât).
-    f.push(at(ring(0.022, 0.0068, ZP0 - PF.ears[0][1] - 0.001, 'yellow', { axis: 'z', seg: 20 }), [px, py, (ZP0 + PF.ears[0][1] + 0.001) / 2]));
+    f.push(at(ring(0.022, 0.0068, ZP0 - PF.ears[0][1] - 0.001, 'red', { axis: 'z', seg: 20 }), [px, py, (ZP0 + PF.ears[0][1] + 0.001) / 2]));
     const zs = ZP1 + 0.022;
-    f.push(at(S.shell(0.022, 0.017, 0.07, 'yellow', { axis: 'x', seg: 24 }), [-0.035, PF.springY, zs]));
-    f.push(at(cyl(0.022, 0.008, 'yellow', { axis: 'x', seg: 24 }), [-0.074, PF.springY, zs]));
+    f.push(at(S.shell(0.022, 0.017, 0.07, 'red', { axis: 'x', seg: 24 }), [-0.035, PF.springY, zs]));
+    f.push(at(cyl(0.022, 0.008, 'red', { axis: 'x', seg: 24 }), [-0.074, PF.springY, zs]));
     f.push(boxAt(api, [-0.07, PF.springY - 0.012, ZP1], [0, PF.springY + 0.012, zs - 0.016]));
     // Carter ajouré autour de la poulie arrière (côté arrière et dessous) : deux joues en arc et quatre barrettes
     // entre trois lumières, du flasque vers −Z.
@@ -76,7 +76,7 @@ export default function P006(api) {
     const sector = [...arc([lx, ly], rc + 0.006, a0, a1, 16), ...arc([lx, ly], rc - 0.006, a1, a0, 16)];
     for (const z of [zc0 + 0.003, ZP0 - 0.003]) f.push(profilZ(api, sector, [], 0.006, z));
     for (const a of [a0 + 0.04, a0 + (a1 - a0) / 3, a0 + (2 * (a1 - a0)) / 3, a1 - 0.04]) {
-      f.push(at(S.box(0.03, 0.004, ZP0 - zc0, 'yellow', { r: 0.001 }), [lx + rc * Math.cos(a), ly + rc * Math.sin(a), (ZP0 + zc0) / 2], [0, 0, a + Math.PI / 2]));
+      f.push(at(S.box(0.03, 0.004, ZP0 - zc0, 'red', { r: 0.001 }), [lx + rc * Math.cos(a), ly + rc * Math.sin(a), (ZP0 + zc0) / 2], [0, 0, a + Math.PI / 2]));
     }
   }
   api.part('1', group(...f), [0, 0, 0]);

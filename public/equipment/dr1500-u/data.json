@@ -275,7 +275,7 @@
      }
     ]
    ],
-   "note": "Liste de la page 2 : les repères 4 et 11 n'existent pas dans le manuel (numérotation sautée). Seuls la tête, la table, le mât, le kit de poulie, l'assise, le serre-tiges, le treuil et la base du serre-tiges ont leur page ; le bloc I/O, les pattes d'extension, la plaque d'ancrage, les vérins de tilt, le frame skud et les pins de vérin ne sont dessinés que sur cette vue éclatée et sur la couverture. En 3D : couleurs choisies pour le site (le manuel est en noir et blanc) : jaune du logo DR pour les mécano-soudés et carters peints, noir pour les vérins — à valider par le client."
+   "note": "Liste de la page 2 : les repères 4 et 11 n'existent pas dans le manuel (numérotation sautée). Seuls la tête, la table, le mât, le kit de poulie, l'assise, le serre-tiges, le treuil et la base du serre-tiges ont leur page ; le bloc I/O, les pattes d'extension, la plaque d'ancrage, les vérins de tilt, le frame skud et les pins de vérin ne sont dessinés que sur cette vue éclatée et sur la couverture. En 3D : rouge Machines Roger pour les mécano-soudés et carters peints (demande du client, comme le STM-1500 ; le manuel est en noir et blanc), vérins noirs."
   },
   "P003": {
    "title": "Assise 1500",

@@ -367,8 +367,10 @@ pièces (numéro, quantité, page du manuel).
   FILTE », n° terminé par « ? », lignes rayées 24 et 45 de la tête,
   transmission « Fairfield » contre « Funk 4 vitesses », accouplement 5015
   face à 5016, n° 15105 en double dans le treuil, en-tête 1-6 pour 8
-  repères, colonnes vides). Couleurs choisies pour le site, à valider : le
-  jaune du logo DR pour tout ce qui est peint, vérins noirs. Contrôle :
+  repères, colonnes vides). Couleurs, à la demande du client : rouge
+  Machines Roger (celui du STM-1500) pour tout ce qui est peint, y compris
+  le bâti, les plaques, le tambour et les gardes du treuil comme sur le
+  STM-1500, vérins noirs, coffret électrique gris. Contrôle :
   `node scripts/check-models.mjs --eq dr1500-u --qty --max-tris 150000`.
 
 - **Usinage Marcotte STM-1500** (`stm-1500`, foreuse souterraine
