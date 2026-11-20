@@ -15,7 +15,10 @@ import parts from './parts/index.js';
 //   tête et serrage : P011 kit d'adaptateur transmission, P012 tête XBH, P018 mandrin Boyles 12HH, P020 son piston
 //   et cylindre, P021 serre-tiges Boyles 12HH, P023 son piston et cylindre, P024 plaque support et bague de guidage ;
 //   treuil : P014 Hoist XW-2100, P016 vis d'enroulement ;
-//   groupes : P007 groupe hydraulique, P008 panneaux, P009 waterpack, P010 pompe à eau.
+//   groupes : P007 groupe hydraulique, P008 panneaux, P009 waterpack, P010 pompe à eau ;
+//   HORS MANUEL : P026 console de commande, d'après une photo du client (pages/P026.webp), sans cote ni numéro :
+//   échelle, caméra du photographe et parties non vues décrites en tête de parts/P026.js ; posée dans P001
+//   (ROOT.CONSOLE, choix de disposition). Ses couleurs sont celles de la photo.
 // Assistants communs à plusieurs fichiers : parts/_structure.js, _tete.js, _boyles.js, _treuil.js, _groupes.js.
 // Règles : chaque ligne de la liste a son objet 3D (api.part(repère, objet, éclaté)), autant d'objets que la
 // quantité ; une ligne « same » désigne l'objet d'une autre ligne ; une ligne « no3d » n'en a pas ; une ligne

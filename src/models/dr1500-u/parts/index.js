@@ -20,6 +20,7 @@ import P021 from './P021.js';
 import P023 from './P023.js';
 import P024 from './P024.js';
 import P025 from './P025.js';
+import P026 from './P026.js';
 
 export default {
   'P001': P001,
@@ -42,4 +43,5 @@ export default {
   'P023': P023,
   'P024': P024,
   'P025': P025,
+  'P026': P026,
 };

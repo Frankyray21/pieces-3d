@@ -12,5 +12,7 @@ export default function P001(api) {
   api.part('1', pose('P002', ROOT.DRILL), [0, 0, 1.2]);
   api.part('2', pose('P007', ROOT.PACK), [0.6, 0, -1.2]);
   api.part('3', pose('P009', ROOT.WATER), [-1.0, 0, -1.2]);
+  // Console de commande (P026, hors manuel : photo du client), place ROOT.CONSOLE (choix de disposition).
+  api.part('4', pose('P026', ROOT.CONSOLE), [0, 0, 1.2]);
   return { view: { dir: [0.75, 0.6, 1.0] } };
 }
