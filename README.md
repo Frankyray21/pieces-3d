@@ -222,15 +222,32 @@ pièces (numéro, quantité, page du manuel).
   la nomenclature (repère 9, désormais montré aux quatre bouts) : les barres
   sont des brides démontables. L'embase remplit ce logement : cadre soudé en
   tube rectangulaire de 2 × 1 × 1/8 po, de 15 × 21 1/8 po, dont les deux
-  traverses sont à l'aplomb des barres, qui les serrent sur le fond ; plaque
+  traverses sont à l'aplomb des barres, qui les serrent sur le fond, et dont
+  les deux longerons passent entre les lignes de trous de la pompe ; plaque
   de 15 × 19 1/16 × 3/8 po entre les barres, qui cale l'ensemble en long et
   porte la pompe, tenue par cinq boulons 1/2-13 × 1 po vissés par-dessous
-  (repère 13). La pompe est en travers du bac, culasses vers la face avant,
-  arbre d'entrée vers le milieu du bac ; ses orifices d'aspiration tombent
-  devant l'embase, au-dessus de l'ajour avant du fond de la traverse. Si les
-  barres sont en réalité soudées, l'embase ne se met pas en place telle
-  quelle. `scripts/check-pompe-bean-420.mjs` vérifie le logement, les jeux, le
-  gabarit des trous et l'absence de pièces qui se traversent.
+  (repère 13). La pompe est posée en long : culasses vers le bout gauche,
+  au-dessus du compartiment ouvert, arbre d'entrée vers la face arrière. En
+  travers, le tuyau d'aspiration de 1 1/2 po (Ø 1,9 po) ne passerait pas entre
+  la barre avant et le bord de l'ajour avant du fond, distants de 1 7/8 po.
+  Si les barres sont en réalité soudées, l'embase ne se met pas en place telle
+  quelle. Page P03 (repère 14), indicative : l'entraînement et le circuit
+  d'eau (`src/models/tube-eau/circuit.js`), d'après la photo de la L09-420 à
+  moteur hydraulique du catalogue TIME Ltd (page P03), la pompe à eau de la
+  STM-1500 (page 1.6 de son manuel), le waterpack de la DR1500-U (pages 9 et
+  10) et les règles d'installation du manuel de la pompe (page P04) :
+  moteur hydraulique orbital sur une cloche d'accouplement boulonnée à la
+  place des trois vis du boîtier d'entraînement (option `entrainement` des
+  builders de la pompe), accouplement à mâchoires ; soupape de sûreté PPFMC
+  3546492 sur un coude au bout arrière du collecteur, retour dans le bac ;
+  té, manomètre PPAM A000380000 et boyau de refoulement de 1 po à l'avant ;
+  aspiration en tuyau de 1 1/2 po, raccord union et clapet de pied à crépine,
+  droit dans le compartiment ouvert ; arrivée d'eau de 1 po au premier
+  demi-manchon ; boyaux hydrauliques (pression, retour, drain) jusqu'au sol
+  avec raccords rapides. Le robinet à flotte n'est pas montré (aucun
+  document). `scripts/check-pompe-bean-420.mjs` vérifie le logement, les jeux,
+  le gabarit des trous et, par un test de parité sur les sommets, qu'aucune
+  pièce ni aucun boyau ne traverse le bac, la pompe ou une autre pièce.
 
 - **Rack à outils 15083000** (`rack-outil`, Machines Roger International, plan
   d'assemblage soudé du 2021-08-31, une page, échelle 1:4) : plaque en U de
@@ -694,7 +711,7 @@ pièces (numéro, quantité, page du manuel).
   le modèle le remet sur cet axe. Les pièces de fonderie sont simplifiées,
   les trous de fixation ne sont pas percés, les accessoires de la figure 6
   ne sont pas modélisés. Bleu roi des photos du manuel. Contrôle chiffré :
-  `node scripts/check-pompe-bean-420.mjs` compare 72 mesures au manuel et à
+  `node scripts/check-pompe-bean-420.mjs` compare 104 mesures au manuel et à
   la fixation sur le tube à l'eau ; la fiche est écrite par
   `tools/pompe_bean_420_fiche.mjs` à partir des cotes du modèle.
 

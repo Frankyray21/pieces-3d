@@ -20,6 +20,7 @@
 
 import pompe, { COTE as COTE_POMPE } from '../pompe-bean-420/index.js';
 import { reuse } from '../reuse.js';
+import { circuit, geometrie } from './circuit.js';
 
 // Pompe Bean 420 : ses trois assemblages, repris sous d'autres noms que ceux des pages du bac.
 const POMPE = reuse(pompe, { B01: 'P01', B02: 'P02', B03: 'P03' });
@@ -74,21 +75,25 @@ export const POSE_FLOTTE = { bout: 3, z: 26.5625 };
 // barres sont donc des brides démontables. Les trous taraudés 1/2-13 de la pompe (8 1/2 × 12 11/16 po) ne tombant sur
 // aucune pièce du bac, c'est la pompe qu'on adapte : une embase (proposition, sur aucun plan) qui remplit le logement.
 // Cadre en tube rectangulaire de 2 × 1 po, de 15 po de large : ses deux traverses sont sous les barres, qui les serrent
-// sur le fond ; plaque de 3/8 po entre les barres, qui cale l'embase en long ; la pompe s'y boulonne par-dessous.
-export const EMBASE = { large: 15, tube: { w: 1, h: TRAV.creux - T, t: 1 / 8 }, plaque: 3 / 8, jeu: 1 / 32, boulon: { d: 0.5, len: 1, trou: 9 / 16 } };
-// Pompe en travers du bac, axe sur celui de la traverse, culasses vers la face avant, arbre d'entrée vers le milieu du
-// bac. Axe des clapets à « avance » po devant l'axe de la barre avant : les orifices d'aspiration tombent devant
-// l'embase, au-dessus de l'ajour avant du fond de la traverse.
-export const POSE_POMPE = { avance: 1.5 };
-POSE_POMPE.x = TRAV.xc;
+// sur le fond ; deux longerons à « longeron » po de part et d'autre de l'axe de la traverse, entre les lignes de trous de
+// la pompe ; plaque de 3/8 po entre les barres, qui cale l'embase en long ; la pompe s'y boulonne par-dessous.
+export const EMBASE = { large: 15, longeron: 5, tube: { w: 1, h: TRAV.creux - T, t: 1 / 8 }, plaque: 3 / 8, jeu: 1 / 32, boulon: { d: 0.5, len: 1, trou: 9 / 16 } };
+// Pompe en long, axe sur celui de la traverse (en travers du bac, le tuyau d'aspiration de 1 1/2 po, Ø 1,9 po, ne passe
+// pas entre la barre avant et le bord de l'ajour avant du fond, distants de 1 7/8 po). Culasses vers le bout gauche, au-
+// dessus du compartiment ouvert, où l'aspiration descend droit dans l'eau ; arbre d'entrée vers la face arrière. Les
+// trous de fixation sont centrés sur l'axe de la traverse : l'axe des clapets tombe à 17 1/8 po du bout gauche.
+export const POSE_POMPE = {};
+POSE_POMPE.x = TRAV.xc - (COTE_POMPE.fixation.avant.x + COTE_POMPE.fixation.arriere.x) / 2; // axe des clapets, depuis le bout gauche
 POSE_POMPE.fond = PIED.h + HB - TRAV.creux + T; // dessus du fond de la traverse
 POSE_POMPE.y = POSE_POMPE.fond + EMBASE.tube.h + EMBASE.plaque; // dessus de la plaque : base de la pompe
-POSE_POMPE.z = BARRE.z[1] + POSE_POMPE.avance; // axe des clapets, depuis la face arrière du bac
-/** Trous de fixation de la pompe dans le repère du bac, [x, z] : la pompe est tournée d'un quart de tour. */
+POSE_POMPE.z = D / 2; // axe de la pompe, depuis la face arrière du bac
+/** Point de la pompe (pouces, son repère : X des clapets vers le carter, Z de l'arbre d'entrée vers le côté borgne) dans le repère du bac. */
+export const VERS_BAC = ([x, y, z]) => [POSE_POMPE.x + x, POSE_POMPE.y + y, POSE_POMPE.z + z];
+/** Trous de fixation de la pompe dans le repère du bac, [x, z]. */
 export const TROUS_POMPE = (() => {
   const { avant, arriere } = COTE_POMPE.fixation;
   return [[avant.x, -avant.z], [avant.x, avant.z], [arriere.x, -arriere.z], [arriere.x, arriere.z], [arriere.x, 0]]
-    .map(([xp, zp]) => [POSE_POMPE.x + zp, POSE_POMPE.z - xp]);
+    .map(([xp, zp]) => [POSE_POMPE.x + xp, POSE_POMPE.z + zp]);
 })();
 /** Boulons 1/4-20 des barres (repère 9), [x, z] : un à chaque bout de chaque barre. */
 export const BOULONS_BARRES = BARRE.z.flatMap((z) => [-1, 1].map((s) => [TRAV.xc + s * (BARRE.len / 2 - BARRE.trou.bout), z]));
@@ -372,8 +377,8 @@ function embase(S, material) {
     const t = section(z - tube.w / 2);
     g.add(selonX(S, t.ext, x0, x1, material, { holes: [t.int] }));
   }
-  // Longerons le long des flancs, entre les deux traverses.
-  for (const x of [x0, x1 - tube.w]) {
+  // Longerons entre les deux traverses, entre les lignes de trous de la pompe (têtes des boulons de part et d'autre).
+  for (const x of [TRAV.xc - EMBASE.longeron - tube.w / 2, TRAV.xc + EMBASE.longeron - tube.w / 2]) {
     const t = section(x);
     g.add(selonZ(S, t.ext, za + tube.w / 2, zb - tube.w / 2, material, { holes: [m(t.int)], bord: false })); // selonZ : trous en mètres
   }
@@ -505,12 +510,24 @@ export function P01(api) {
   for (const [x, z] of TROUS_POMPE) {
     put('13', pose(S.bolt(EMBASE.boulon.d * IN, EMBASE.boulon.len * IN, 'zinc', { axis: '-y', washer: true }), x, POSE_POMPE.fond + EMBASE.tube.h, z), [0, 0.4, 0]);
   }
-  // Pompe Bean 420 : tournée d'un quart de tour (son axe X, des clapets vers le carter, pointe vers la face arrière
-  // du bac ; son arbre d'entrée, côté −Z, vers le bout gauche), boulonnée sur la plaque de l'embase.
-  const bean = S.at(S.group(api.sub('B01')), [0, 0, 0], [0, Math.PI / 2, 0]);
-  put('11', pose(bean, POSE_POMPE.x, POSE_POMPE.y, POSE_POMPE.z), [0, 1.05, 0]);
+  // Pompe Bean 420 en long (son X le long du bac, culasses vers le bout gauche ; son arbre d'entrée vers la face
+  // arrière), boulonnée sur la plaque de l'embase ; les trois vis du boîtier d'entraînement sont remplacées par celles
+  // de la cloche d'accouplement (repère 14).
+  put('11', pose(S.group(api.sub('B01', { entrainement: true })), POSE_POMPE.x, POSE_POMPE.y, POSE_POMPE.z), [0, 1.05, 0]);
+  // Entraînement et circuit d'eau (indicatifs) : moteur hydraulique, soupape, manomètre, aspiration et boyaux.
+  put('14', api.sub('P03'), [0, 0, 0]);
   return { view: { dir: [-0.75, 0.8, 1] } };
 }
 
 export { COTE_POMPE };
-export default { P01, P02, ...POMPE };
+/** Pose de la pompe et cotes du bac dont le circuit a besoin (circuit.js). */
+const CTX = { L, D, POSE_POMPE, VERS_BAC, MANCHON, yManchon: PIED.h + HB - MANCHON.sousHaut };
+/** Cotes du circuit d'eau et de l'entraînement (pouces, repère du bac), pour le contrôle chiffré. */
+export const geometrieCircuit = () => geometrie(CTX);
+
+/** Entraînement et circuit d'eau de la pompe (indicatifs) : voir circuit.js. */
+export function P03(api) {
+  return circuit(api, CTX);
+}
+
+export default { P01, P02, P03, ...POMPE };

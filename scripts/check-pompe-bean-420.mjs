@@ -3,12 +3,16 @@
 // relevés sur le tracé des figures 2A, 2B et 3 (« relevé »), en pouces. Puis sa
 // fixation sur le tube à l'eau 1524010812 sans le modifier : l'embase proposée doit
 // remplir le logement du bac, tenir sous ses barres et porter le gabarit de la pompe.
+// Enfin l'entraînement et le circuit d'eau (indicatifs) : jeux de l'aspiration, du
+// moteur et de la cloche, et aucune pièce ni aucun boyau qui traverse le bac, la pompe
+// ou une autre pièce (test de parité d'un rayon sur les sommets).
 //
 // Usage : node scripts/check-pompe-bean-420.mjs
 import * as THREE from 'three';
 import { buildProcedural } from '../src/viewer/assembly.js';
 import builders, { COTE, RELEVE, DENTURE } from '../src/models/pompe-bean-420/index.js';
-import bac, { POSE_POMPE, EMBASE, TROUS_POMPE, AJOUR, D } from '../src/models/tube-eau/index.js';
+import bac, { POSE_POMPE, EMBASE, TROUS_POMPE, D, L, PIED, T as TOLE, TRAV, geometrieCircuit } from '../src/models/tube-eau/index.js';
+import { PALIER } from '../src/models/pompe-bean-420/index.js';
 
 const IN = 0.0254;
 const meca = buildProcedural(builders, 'P02');
@@ -138,13 +142,14 @@ releve('Barre arrière posée sur la traverse du cadre', barres[0].y0 - cadre[0]
 releve('Barre avant posée sur la traverse du cadre', barres[1].y0 - cadre[1].y1, 0);
 releve('Traverse arrière du cadre, à l\'aplomb de sa barre', milieu(cadre[0], 'z') - milieu(barres[0], 'z'), 0);
 releve('Traverse avant du cadre, à l\'aplomb de sa barre', milieu(cadre[1], 'z') - milieu(barres[1], 'z'), 0);
+releve('Longerons de l\'embase, à 5 po de part et d\'autre de l\'axe', (milieu(cadre[3], 'x') - milieu(cadre[2], 'x')) / 2, EMBASE.longeron);
 releve('Plaque, épaisseur', plaque.y1 - plaque.y0, EMBASE.plaque);
 releve('Plaque, jeu à la barre arrière', plaque.z0 - barres[0].z1, EMBASE.jeu);
 releve('Plaque, jeu à la barre avant', barres[1].z0 - plaque.z1, EMBASE.jeu);
 releve('Pattes de la pompe sur la plaque', bp.y0 - plaque.y1, 0);
 const origine = pompe.getWorldPosition(new THREE.Vector3()); // axe des clapets, base et axe de la pompe
-releve('Axe de la pompe sur celui de la traverse', origine.x / IN - milieu(traverse, 'x'), 0);
-releve('Axe des clapets, devant la barre avant', origine.z / IN - milieu(barres[1], 'z'), POSE_POMPE.avance);
+releve('Axe de la pompe sur celui de la traverse, en travers', origine.z / IN - milieu(traverse, 'z'), 0);
+releve('Pompe en long : trous centrés sur l\'axe de la traverse', (TROUS_POMPE[0][0] + TROUS_POMPE[2][0]) / 2 - TRAV.xc, 0);
 // Boulons de la pompe : à l'aplomb de ses trous taraudés (gabarit du manuel porté dans le repère du bac).
 const boulons = T('13').map((o) => boite(o));
 compte('Boulons 1/2-13 de la pompe', boulons.length, 5);
@@ -158,7 +163,11 @@ releve('Boulons de la pompe, écart au gabarit du manuel', ecart, 0, 0.001);
 const ox = plaque1.x0 - 0.1875, oz = plaque1.z0; // la plaque 1 commence à une épaisseur de tôle du bout gauche
 const ecartTrous = Math.max(...gabarit.map((g) => Math.min(...TROUS_POMPE.map(([x, z]) => Math.hypot(x + ox - g.x / IN, z + oz - g.z / IN)))));
 releve('Trous de la plaque, écart au gabarit du manuel', ecartTrous, 0, 0.001);
-compte('Trous de la plaque hors des tubes du cadre', TROUS_POMPE.filter(([x, z]) => x + ox > plaque.x0 + 1.3 && x + ox < plaque.x1 - 1.3 && z + oz > plaque.z0 + 0.5 && z + oz < plaque.z1 - 0.5).length, 5);
+compte('Trous de la plaque sur la plaque', TROUS_POMPE.filter(([x, z]) => x + ox > plaque.x0 + 0.5 && x + ox < plaque.x1 - 0.5 && z + oz > plaque.z0 + 0.5 && z + oz < plaque.z1 - 0.5).length, 5);
+// Têtes des boulons (Ø 1 1/16 po avec rondelle) entre les longerons et les flancs de la traverse.
+const tetes = boulons.map((b) => Math.min(...cadre.slice(2).map((c) => Math.max(c.x0 - b.x1, b.x0 - c.x1))));
+jeu('Têtes des boulons de la pompe, jeu aux longerons de l\'embase', Math.min(...tetes), 0.2);
+jeu('Têtes des boulons de la pompe, jeu aux flancs de la traverse', Math.min(...boulons.map((b) => Math.min(b.x0 - flancs.x0, flancs.x1 - b.x1))), 0.2);
 // Prise des boulons de 1 po : 1 po moins la rondelle et la plaque de 3/8 po ; les taraudages ont 5/8 po de profond.
 const prise = boulons[0].y1 - plaque.y1;
 jeu('Boulons de la pompe, prise dans les pattes', prise, 0.5);
@@ -174,12 +183,83 @@ const mb = new THREE.Box3();
 pompe.traverse((o) => { if (o.isMesh && zones.some((b) => b.intersectsBox(mb.setFromObject(o)))) touches++; });
 compte('Maillages de la pompe qui touchent une barre', touches, 0);
 jeu('Pompe au-dessus du rebord du bac', bp.y0 - plaque1.y1);
-jeu('Jeu des goujons de culasse à la face avant du bac', plaque1.z1 - bp.z1);
-jeu('Jeu du robinet de niveau à la face arrière du bac', bp.z0 - plaque1.z0);
-// Aspiration : les orifices (Ø 1,9 po pour un tuyau de 1 1/2 po) tombent devant l'embase, au-dessus de l'ajour avant.
-const ajour = plaque1.z0 + D / 2 + AJOUR.b; // base de l'ajour avant du fond de la traverse
-jeu('Axe des orifices d\'aspiration, en deçà du bord de l\'ajour avant', ajour - origine.z / IN, 0.5);
-jeu('Orifices d\'aspiration, devant la traverse avant du cadre', origine.z / IN - e.z1, 0.95);
+jeu('Jeu des goujons de culasse au bout gauche du bac', bp.x0 - plaque1.x0, 10);
+
+console.log('— Entraînement et circuit d\'eau (indicatifs)');
+const G = geometrieCircuit();
+const C = (ref) => T('14')[0].userData.parts.filter((p) => p.userData.partRef === ref);
+const tc = (pt) => [pt[0] - L / 2, pt[1], pt[2] - D / 2]; // repère du bac → repère du modèle (pouces)
+// Aspiration : droite dans le compartiment ouvert, entre la traverse et la flotte, au-dessus du fond.
+const flotte = boite(T('10'));
+const A = G.ASP;
+releve('Aspiration, tuyau de 1 1/2 po (Ø ext. 1,9 po)', 2 * A.r, 1.9);
+jeu('Aspiration, jeu du raccord union au flanc de la traverse', (traverse.x0 + L / 2) - (A.x + 1.3), 1);
+jeu('Aspiration, jeu de la crépine à la flotte', (flotte.z0 + D / 2) - (A.z + A.rCrepine), 0.5);
+jeu('Aspiration, crépine au-dessus du fond du bac', A.crepine - (PIED.h + TOLE), 1.5);
+// Moteur et cloche : dans l'axe de l'arbre, au-dessus du rebord arrière ; cloche loin des vis du palier du vilebrequin (12).
+const moteur = boite(C('1')), cloche = boite(C('2'));
+releve('Moteur, dans l\'axe de l\'arbre d\'entrée (hauteur)', milieu(moteur, 'y'), G.ya, 0.01);
+releve('Cloche, appuyée sur la bride du boîtier d\'entraînement', cloche.z1 + D / 2, G.zFace);
+jeu('Moteur, au-dessus du rebord arrière du bac', moteur.y0 - plaque1.y1, 1);
+const [xv, yv] = [RELEVE.vilebrequin - COTE.arbre.x, RELEVE.axeCyl - COTE.arbre.y];
+const visPalier = Math.min(...PALIER.angles.map((a) => Math.hypot(xv + PALIER.r * Math.cos((a * Math.PI) / 180), yv + PALIER.r * Math.sin((a * Math.PI) / 180)))) - 0.33;
+jeu('Cloche (Ø 4 1/2 po), jeu aux têtes des vis du palier du vilebrequin', visPalier - G.LANT.r, 0.25);
+let vis27 = 0;
+pompe.traverse((o) => { if (o.userData.partRef === '27' && !o.userData.isAssembly) vis27++; });
+compte('Vis 27 de la pompe et vis de la cloche (les trois du boîtier d\'entraînement remplacées)', `${vis27} + ${C('4').length}`, '9 + 3');
+jeu('Accouplement, jeu à la cloche (rayon)', G.LANT.rInt - 1.5, 0.25);
+// Rien ne se traverse : sommets des boyaux et des pièces du circuit testés contre les solides du bac, de la pompe et du
+// circuit (parité des traversées d'un rayon vers +X), hors des contacts voulus (pièces vissées, appuis).
+const solides = [];
+const ajoute = (racineObj, ref) => racineObj.traverse((o) => {
+  if (!o.isMesh || o.userData.soudure || o.userData.isTubeEnds) return;
+  const dbl = new THREE.Mesh(o.geometry, new THREE.MeshBasicMaterial({ side: THREE.DoubleSide }));
+  dbl.matrixWorld.copy(o.matrixWorld);
+  dbl.matrixAutoUpdate = false;
+  solides.push({ ref, mesh: dbl, box: new THREE.Box3().setFromObject(o) });
+});
+for (const [ref, objs] of tub.refs) if (!['11', '14'].includes(ref)) objs.forEach((o) => ajoute(o, `bac ${ref}`));
+// Pièces de la pompe : enfants directs de ses assemblages (le groupe de pose, repère 11 du bac, n'en est pas une).
+pompe.traverse((o) => { if (o !== pompe && o.userData.partRef && o.parent?.userData.isAssembly && !o.userData.isAssembly) ajoute(o, `pompe ${o.userData.partRef}`); });
+for (const ref of ['1', '2', '10', '11', '14', '15', '19', '20', '21']) C(ref).forEach((o) => ajoute(o, `circuit ${ref}`));
+const rayonParite = new THREE.Raycaster();
+const dedans = (p, s) => {
+  if (!s.box.containsPoint(p)) return false;
+  rayonParite.set(p, new THREE.Vector3(1, 0.0137, 0.0071).normalize());
+  const d = rayonParite.intersectObject(s.mesh, false).map((h) => h.distance).sort((a, b) => a - b);
+  let k = 0, last = -1;
+  for (const v of d) if (v - last > 1e-6) { k++; last = v; }
+  return k % 2 === 1;
+};
+// Contacts voulus : la pièce est vissée dans l'autre ou appuyée sur elle.
+const permis = {
+  2: ['pompe 17', 'pompe 3'], 3: ['pompe 3', 'pompe 26', 'circuit 1'], 4: ['pompe 17', 'pompe 1', 'pompe 20', 'circuit 2'],
+  5: ['circuit 2'], 10: ['pompe 38'], 13: ['pompe 38', 'bac 7', 'bac 3', 'circuit 14'], 18: ['pompe 38', 'circuit 19'],
+  1: ['circuit 2'], 6: ['circuit 1'], 11: ['circuit 10'], 12: ['circuit 11'], 14: ['circuit 15'], 15: ['circuit 14'],
+  16: ['circuit 14'], 19: ['circuit 20'], 20: ['circuit 19', 'circuit 21'], 21: ['circuit 20'],
+};
+const v = new THREE.Vector3();
+for (const [ref, objs] of [...T('14')[0].userData.parts.reduce((m, p) => m.set(p.userData.partRef, [...(m.get(p.userData.partRef) || []), p]), new Map())]) {
+  let pts = 0;
+  const heurts = new Map();
+  for (const o of objs) o.traverse((mesh) => {
+    if (!mesh.isMesh) return;
+    const pos = mesh.geometry.attributes.position;
+    const pas = Math.max(1, Math.floor(pos.count / 1500));
+    for (let i = 0; i < pos.count; i += pas) {
+      v.fromBufferAttribute(pos, i).applyMatrix4(mesh.matrixWorld);
+      pts++;
+      for (const s of solides) {
+        if (s.ref === `circuit ${ref}` || (permis[ref] || []).includes(s.ref)) continue;
+        if (dedans(v, s)) heurts.set(s.ref, (heurts.get(s.ref) || 0) + 1);
+      }
+    }
+  });
+  const ok = heurts.size === 0;
+  n++;
+  if (!ok) failed = true;
+  console.log(`${ok ? '✓' : '✕'} Circuit, repère ${ref} : ${pts} sommets, ${ok ? 'aucun dans une autre pièce' : `dans ${[...heurts].map(([k, c]) => `${k} (${c})`).join(', ')}`}`);
+}
 
 console.log(`${failed ? 'ÉCHEC' : 'Conforme'} — ${n} mesures`);
 process.exit(failed ? 1 : 0);

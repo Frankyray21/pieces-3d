@@ -4,11 +4,11 @@
  "manufacturer": "Machines Roger International",
  "category": "Bac à eau (assemblage soudé)",
  "document": {
-  "title": "Plans 1524010812 « TUBE A L`EAU » et 152042600 « FLOTTE STM-1500 TOBE A L'EAU »",
+  "title": "Plans 1524010812 « TUBE A L`EAU » et 152042600 « FLOTTE STM-1500 TOBE A L'EAU » ; références du montage de la pompe",
   "reference": "1524010812",
   "preparedBy": "Machines Roger International, dessinés par V. Chyhrynau, approuvés par G. Arcand (bac) et G. Gélineau (flotte)",
   "date": "2024-01-02",
-  "sheets": 2,
+  "sheets": 4,
   "pagePattern": "pages/{sheet}.webp"
  },
  "specs": [
@@ -70,11 +70,15 @@
   ],
   [
    "Pompe à eau",
-   "Bean 420 (American Manufacturing AL0918B, interchangeable avec la FMC L0918) : triplex à pistons de 2 1/4 po, 20,2 gal US/min à 625 tr/min, 700 lb/po², 200 lb. Fixée sans modifier le bac : elle est boulonnée sur une embase d'adaptation logée dans la traverse et serrée par les deux barres du bac"
+   "Bean 420 (American Manufacturing AL0918B, interchangeable avec la FMC L0918) : triplex à pistons de 2 1/4 po, 20,2 gal US/min à 625 tr/min, 700 lb/po², 200 lb. Fixée sans modifier le bac : boulonnée sur une embase d'adaptation logée dans la traverse et serrée par les deux barres du bac ; posée en long, culasses vers le bout gauche, au-dessus du compartiment ouvert"
   ],
   [
    "Embase de la pompe (proposition)",
-   "Sur aucun plan : conçue ici pour remplir le logement que le bac offre. Cadre soudé en tube rectangulaire de 2 × 1 × 1/8 po, de 15 × 21 1/8 po hors tout (15 1/16 po entre les flancs de la traverse, 2 po sous les barres) ; plaque de 15 × 19 1/16 × 3/8 po entre les deux barres, percée de cinq trous de 9/16 po au gabarit de la pompe ; cinq boulons 1/2-13 × 1 po vissés par-dessous dans les pattes de la pompe. Base de la pompe à 3/8 po au-dessus du rebord du bac"
+   "Sur aucun plan : conçue ici pour remplir le logement que le bac offre. Cadre soudé en tube rectangulaire de 2 × 1 × 1/8 po, de 15 × 21 1/8 po hors tout (15 1/16 po entre les flancs de la traverse, 2 po sous les barres), longerons à 5 po de part et d'autre de l'axe, entre les lignes de trous de la pompe ; plaque de 15 × 19 1/16 × 3/8 po entre les deux barres, percée de cinq trous de 9/16 po au gabarit de la pompe ; cinq boulons 1/2-13 × 1 po vissés par-dessous dans les pattes de la pompe. Base de la pompe à 3/8 po au-dessus du rebord du bac"
+  ],
+  [
+   "Entraînement et circuit d'eau (indicatifs)",
+   "Page P03 : moteur hydraulique orbital sur une cloche d'accouplement boulonnée à la pompe ; soupape de sûreté sur un coude au bout arrière du collecteur, retour dans le bac ; manomètre et boyau de refoulement de 1 po à l'avant, vers la foreuse ; aspiration en tuyau de 1 1/2 po jusqu'à un clapet de pied à crépine, à 2 po du fond ; arrivée d'eau de 1 po au premier demi-manchon ; boyaux hydrauliques vers le groupe hydraulique. Aucun plan ne montre ce montage"
   ],
   [
    "Couleur de surface",
@@ -97,7 +101,9 @@
  ],
  "sheetTitles": {
   "P01": "Plan 1524010812 : tube à l'eau — vues de dessus et de face, coupe A-A, détail B, nomenclature",
-  "P02": "Plan 152042600 : flotte STM-1500 du tube à l'eau — vue en perspective, nomenclature"
+  "P02": "Plan 152042600 : flotte STM-1500 du tube à l'eau — vue en perspective, nomenclature",
+  "P03": "Photo : FMC L09-420 (Bean 420) à moteur hydraulique, cloche d'accouplement et soupape de sûreté (catalogue TIME Ltd, page PU26)",
+  "P04": "Figure 6 et tableau 9 du manuel AL0918B : manomètre, soupape de sûreté, amortisseurs de pulsations (page 43)"
  },
  "root": "P01",
  "assemblies": {
@@ -109,7 +115,7 @@
     "P01",
     "P02"
    ],
-   "note": "Bac à eau ouvert, soudé en tôle de 3/16 po. Modèle 3D construit d'après le plan 1524010812 (échelle 1:15, coupe A-A, détail B à 1:2). Les cotes inscrites au plan sont reprises : 45 3/8 × 35 1/4 po, 33 15/16 po de haut pieds compris, pieds à 3 po des bouts, traverse à 6 po du rebord du bout droit, raccords de 1 po qui dépassent de 3/4 po. Tout le reste est relevé sur le tracé vectoriel du plan : épaisseur et rayons de pli, rebord du haut (2 3/16 po, retombée de 1 3/16 po), hauteur des pieds (3 3/4 po), profil et ajours de la traverse, barres, position des raccords et des brides. Lecture du plan : la plaque 1 forme d'un seul pli le fond et les deux grandes faces ; les bouts (plaques 2 et 3) sont découpés à son profil intérieur et posés contre ses chants (joint d'angle ouvert, soudé des deux côtés) ; la traverse (plaque 4) est un oméga ouvert vers le haut dont les pattes entrent sous les rebords de la plaque 1, d'où la note « PLACER AVANT DE SOUDER LA PLAQUE №2 ». Le plan ne dit pas à quoi sert la traverse. Contrôle : le volume d'acier du modèle donne 444,2 lb, pour 443,9 lb au cartouche. La flotte 152042600 (plan séparé) est posée dans le bac ; aucun des deux plans ne donne sa position ni la pièce qui la porte : elle est montrée bras à l'horizontale, vis-à-vis du premier raccord de 1 po, à titre indicatif. La pompe à eau Bean 420 (American Manufacturing AL0918B, manuel de 48 pages ; voir l'équipement « Pompe à pistons Bean 420 ») est fixée au bac sans que celui-ci soit modifié. Ses cinq trous taraudés 1/2-13 (entraxes de 8 1/2 × 12 11/16 po) ne tombent sur aucune pièce du bac : c'est donc la pompe qui est adaptée, par une embase qui n'existe sur aucun plan et qui est proposée ici. Le bac offre un logement à l'échelle du plan : 15 1/16 po entre les flancs de la traverse et 2 po de haut, juste sous les deux barres, espacées de 20 1/8 po. Le plan dessine à chaque bout des barres deux cercles concentriques, lus comme le trou de passage de 5/16 po de la barre au-dessus d'un taraudage 1/4-20 de l'aile, pour le boulon 1/4-20 × 1/2 po de la nomenclature (repère 9) : les barres sont alors des brides démontables. L'embase remplit ce logement : un cadre en tube de 2 × 1 po, de 15 po de large, dont les deux traverses sont à l'aplomb des barres, qui les serrent sur le fond ; une plaque de 3/8 po, entre les barres, cale l'ensemble en long et reçoit la pompe, boulonnée par-dessous. Montage : boulonner la pompe sur l'embase, déposer les barres, descendre l'ensemble dans la traverse, reposer les barres et leurs quatre boulons. La pompe est en travers du bac, culasses vers la face avant, arbre d'entrée vers le milieu du bac, axe des clapets à 29 3/16 po de la face arrière : ses orifices d'aspiration tombent devant l'embase, au-dessus de l'ajour avant du fond de la traverse. Si les barres sont en réalité soudées et non boulonnées, cette embase ne peut pas être mise en place telle quelle. Les titres en majuscules sont ceux des nomenclatures ; les descriptions entre parenthèses décrivent la pièce d'après sa forme. Peint en noir, à la demande du client : le cartouche ne précise pas de couleur de surface ; les demi-manchons en inox gardent leur fini.",
+   "note": "Bac à eau ouvert, soudé en tôle de 3/16 po. Modèle 3D construit d'après le plan 1524010812 (échelle 1:15, coupe A-A, détail B à 1:2). Les cotes inscrites au plan sont reprises : 45 3/8 × 35 1/4 po, 33 15/16 po de haut pieds compris, pieds à 3 po des bouts, traverse à 6 po du rebord du bout droit, raccords de 1 po qui dépassent de 3/4 po. Tout le reste est relevé sur le tracé vectoriel du plan : épaisseur et rayons de pli, rebord du haut (2 3/16 po, retombée de 1 3/16 po), hauteur des pieds (3 3/4 po), profil et ajours de la traverse, barres, position des raccords et des brides. Lecture du plan : la plaque 1 forme d'un seul pli le fond et les deux grandes faces ; les bouts (plaques 2 et 3) sont découpés à son profil intérieur et posés contre ses chants (joint d'angle ouvert, soudé des deux côtés) ; la traverse (plaque 4) est un oméga ouvert vers le haut dont les pattes entrent sous les rebords de la plaque 1, d'où la note « PLACER AVANT DE SOUDER LA PLAQUE №2 ». Le plan ne dit pas à quoi sert la traverse. Contrôle : le volume d'acier du modèle donne 444,2 lb, pour 443,9 lb au cartouche. La flotte 152042600 (plan séparé) est posée dans le bac ; aucun des deux plans ne donne sa position ni la pièce qui la porte : elle est montrée bras à l'horizontale, vis-à-vis du premier raccord de 1 po, à titre indicatif. La pompe à eau Bean 420 (American Manufacturing AL0918B, manuel de 48 pages ; voir l'équipement « Pompe à pistons Bean 420 ») est fixée au bac sans que celui-ci soit modifié. Ses cinq trous taraudés 1/2-13 (entraxes de 8 1/2 × 12 11/16 po) ne tombent sur aucune pièce du bac : c'est donc la pompe qui est adaptée, par une embase qui n'existe sur aucun plan et qui est proposée ici. Le bac offre un logement à l'échelle du plan : 15 1/16 po entre les flancs de la traverse et 2 po de haut, juste sous les deux barres, espacées de 20 1/8 po. Le plan dessine à chaque bout des barres deux cercles concentriques, lus comme le trou de passage de 5/16 po de la barre au-dessus d'un taraudage 1/4-20 de l'aile, pour le boulon 1/4-20 × 1/2 po de la nomenclature (repère 9) : les barres sont alors des brides démontables. L'embase remplit ce logement : un cadre en tube de 2 × 1 po, de 15 po de large, dont les deux traverses sont à l'aplomb des barres, qui les serrent sur le fond, et dont les deux longerons passent entre les lignes de trous de la pompe ; une plaque de 3/8 po, entre les barres, cale l'ensemble en long et reçoit la pompe, boulonnée par-dessous. Montage : boulonner la pompe sur l'embase, déposer les barres, descendre l'ensemble dans la traverse, reposer les barres et leurs quatre boulons. La pompe est posée en long, axe sur celui de la traverse : culasses vers le bout gauche, au-dessus du compartiment ouvert, où le tuyau d'aspiration descend droit dans l'eau ; arbre d'entrée vers la face arrière ; axe des clapets à 17 1/8 po du bout gauche. En travers du bac, le tuyau d'aspiration de 1 1/2 po (Ø 1,9 po) ne passerait pas entre la barre avant et le bord de l'ajour avant du fond, distants de 1 7/8 po. Le moteur hydraulique, la soupape de sûreté, le manomètre, l'aspiration et les boyaux sont sur la page P03 (repère 14) : ils sont indicatifs. Si les barres sont en réalité soudées et non boulonnées, cette embase ne peut pas être mise en place telle quelle. Les titres en majuscules sont ceux des nomenclatures ; les descriptions entre parenthèses décrivent la pièce d'après sa forme. Peint en noir, à la demande du client : le cartouche ne précise pas de couleur de surface ; les demi-manchons en inox gardent leur fini.",
    "parts": [
     [
      "1",
@@ -209,7 +215,7 @@
      1,
      "POMPE BEAN 420 (pompe triplex à pistons American Manufacturing AL0918B, interchangeable avec la FMC L0918)",
      {
-      "note": "Hors nomenclature du plan 1524010812. Modèle de l'équipement « Pompe à pistons Bean 420 » (199 pièces, 59 repères ; ses listes et les pages de son manuel y sont). Encombrement : 23,219 × 15 × 11,375 po, 200 lb. Boulonnée sur l'embase d'adaptation (repère 12) par ses cinq trous taraudés 1/2-13 ; le bac n'est pas modifié."
+      "note": "Hors nomenclature du plan 1524010812. Modèle de l'équipement « Pompe à pistons Bean 420 » (199 pièces, 59 repères ; ses listes et les pages de son manuel y sont). Encombrement : 23,219 × 15 × 11,375 po, 200 lb. Boulonnée sur l'embase d'adaptation (repère 12) par ses cinq trous taraudés 1/2-13 ; le bac n'est pas modifié. Posée en long, culasses vers le bout gauche, arbre d'entrée vers la face arrière. Les trois vis 27 du boîtier d'entraînement (17) sont remplacées par celles de la cloche d'accouplement (page P03, repère 4)."
      }
     ],
     [
@@ -219,7 +225,7 @@
      "EMBASE D'ADAPTATION DE LA POMPE (proposition : cadre en tube de 2 × 1 po et plaque de 3/8 po)",
      {
       "pnText": "Proposition, sur aucun plan",
-      "note": "Pièce conçue ici pour fixer la pompe sans modifier le bac ; elle ne figure ni au plan du bac ni au manuel de la pompe. Cadre soudé en tube rectangulaire de 2 × 1 × 1/8 po : deux traverses de 15 po à l'aplomb des barres du bac (20 1/8 po d'axe en axe) et deux longerons de 19 1/8 po le long des flancs, soit 15 × 21 1/8 po hors tout ; 1/32 po de jeu de chaque côté dans la traverse du bac, hauteur de 2 po égale à celle du logement sous les barres. Plaque de 15 × 19 1/16 × 3/8 po soudée sur le cadre, entre les deux barres (1/32 po de jeu à chacune), percée de cinq trous de 9/16 po : quatre aux entraxes de 8 1/2 po (avant) et 8 9/16 po (arrière), à 12 11/16 po l'un de l'autre, et un au milieu de l'arrière. Les barres serrent les traverses du cadre sur le fond ; la plaque bute contre les barres. Épaisseurs à valider par un calcul avant fabrication. Gris pour la distinguer du bac."
+      "note": "Pièce conçue ici pour fixer la pompe sans modifier le bac ; elle ne figure ni au plan du bac ni au manuel de la pompe. Cadre soudé en tube rectangulaire de 2 × 1 × 1/8 po : deux traverses de 15 po à l'aplomb des barres du bac (20 1/8 po d'axe en axe) et deux longerons de 19 1/8 po à 5 po de part et d'autre de l'axe de la traverse, entre les lignes de trous de la pompe (les têtes des boulons passent de part et d'autre), soit 15 × 21 1/8 po hors tout ; 1/32 po de jeu de chaque côté dans la traverse du bac, hauteur de 2 po égale à celle du logement sous les barres. Plaque de 15 × 19 1/16 × 3/8 po soudée sur le cadre, entre les deux barres (1/32 po de jeu à chacune), percée de cinq trous de 9/16 po : quatre aux entraxes de 8 1/2 po (avant) et 8 9/16 po (arrière), à 12 11/16 po l'un de l'autre, et un au milieu de l'arrière. Les barres serrent les traverses du cadre sur le fond ; la plaque bute contre les barres. Épaisseurs à valider par un calcul avant fabrication. Gris pour la distinguer du bac."
      }
     ],
     [
@@ -230,6 +236,17 @@
      {
       "pnText": "Proposition, sur aucun plan",
       "note": "Dans les cinq trous taraudés 1/2-13 des pattes de la pompe (5/8 po de profond aux quatre coins, 3/4 po au milieu de l'arrière, figure 7 du manuel) : 1 po sous tête, moins la rondelle et la plaque de 3/8 po, laisse environ 0,55 po en prise. Têtes sous la plaque, dans le cadre : à serrer avant de descendre l'embase dans la traverse."
+     }
+    ],
+    [
+     "14",
+     "",
+     1,
+     "ENTRAÎNEMENT ET CIRCUIT D'EAU DE LA POMPE (moteur hydraulique, soupape de sûreté, manomètre, aspiration et boyaux)",
+     {
+      "link": "P03",
+      "pnText": "Indicatif, sur aucun plan",
+      "note": "Page P03. Montage indicatif : aucun plan ne le montre. Indicatif : d'après la photo TIME (page P03) et les manuels de la STM-1500 et de la DR1500-U."
      }
     ]
    ]
@@ -268,6 +285,236 @@
      "CAP (capuchon six pans à bout bombé, au centre de la joue avant)",
      {
       "note": "Le numéro correspond à un capuchon de raccord évasé à 37° de grandeur -4 (1/4 po), en acier ; il ferme le raccord de la joue avant."
+     }
+    ]
+   ]
+  },
+  "P03": {
+   "title": "ENTRAÎNEMENT ET CIRCUIT D'EAU (indicatif)",
+   "titleFr": "Entraînement et circuit d'eau de la pompe",
+   "pn": "",
+   "sheets": [
+    "P03",
+    "P04"
+   ],
+   "note": "Montage indicatif de la pompe Bean 420 sur le tube à l'eau : aucun plan ne le montre, et le manuel de la pompe ne donne que les règles d'installation. Références : la photo de la FMC L09-420 à moteur hydraulique du catalogue TIME Ltd (page P03 : moteur orbital White, cloche d'accouplement, soupape de sûreté sur un coude au bout du collecteur, côté moteur) ; le manuel de la STM-1500, foreuse dont la flotte de ce bac porte le nom (page 1.6 : pompe FMC 435 entraînée par un moteur White par un adaptateur boulonné au chapeau de la pompe et un accouplement) ; le waterpack de la DR1500-U (pages 9 et 10 de son manuel : réservoir à flotte, pompe entraînée par un moteur hydraulique par un accouplement sous un garde, boyau de refoulement vers la foreuse) ; et les règles de la section 4 du manuel de la pompe (page P04 : aspiration au moins aussi grosse que l'orifice de 1 1/2 po, manomètre au refoulement avant toute vanne, soupape de sûreté juste en aval de la pompe et retour au réservoir, jamais à l'aspiration). Tracé : le moteur, dans l'axe de l'arbre d'entrée, dépasse de 1 3/4 po la face arrière du bac, au-dessus du rebord ; la soupape est sur l'orifice de refoulement arrière, son retour descend dans le compartiment ouvert ; le refoulement sort à l'avant par un té qui porte le manomètre, son boyau passe par-dessus la face avant ; l'aspiration descend de l'orifice du milieu, droit dans l'eau, jusqu'à un clapet de pied à crépine à 2 po du fond ; l'arrivée d'eau entre par le premier demi-manchon de 1 po, celui vis-à-vis du bras de la flotte. Les boyaux sont dessinés jusqu'au sol et arrêtés par un raccord rapide : leur longueur réelle dépend de l'installation. Les dimensions des pièces du commerce (moteur, accouplement, raccords, clapet de pied) sont des ordres de grandeur. La pompe aspire d'environ 7 po au-dessus de l'eau quand le bac est plein (orifice à 35 9/16 po du sol, flotte vers 28 po) : le manuel déconseille l'aspiration en élévation sans l'accord du fabricant ; le clapet de pied garde la pompe amorcée. Le robinet à flotte, dans le premier demi-manchon, n'est pas montré : aucun document ne le donne.",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "MOTEUR HYDRAULIQUE ORBITAL (bride carrée à 4 vis, orifices sur les côtés, drain sur le palier)",
+     {
+      "pnText": "Indicatif",
+      "note": "Moteur orbital comme le White Drive série HB 300 de la photo TIME (cylindrée de 52 à 409 cm³, 800 tr/min et 3 000 lb/po² au plus) et le moteur White de la STM-1500. Dans l'axe de l'arbre d'entrée, à l'arrière ; dimensions approximatives (bride de 4,6 po, longueur de 7,5 po). La pompe demande 11,6 HP en continu à 625 à 750 tr/min ; la cylindrée et le débit d'huile sont à choisir selon le groupe hydraulique. Indicatif : d'après la photo TIME (page P03) et les manuels de la STM-1500 et de la DR1500-U."
+     }
+    ],
+    [
+     "2",
+     "",
+     1,
+     "CLOCHE D'ACCOUPLEMENT (adaptateur entre la pompe et le moteur, garde de l'accouplement)",
+     {
+      "pnText": "Indicatif",
+      "note": "Comme le boîtier orange de la photo TIME et l'adaptateur UMV-05 de la STM-1500. Bride ronde de Ø 4 1/2 po sur la bride du boîtier d'entraînement (17) de la pompe, corps de Ø 4 1/2 po, bride carrée de 4,6 po pour le moteur ; 6 1/16 po de long. Elle ferme l'accouplement : le manuel interdit de faire tourner la pompe sans garde d'arbre (section 4.2). Orange comme sur la photo. Indicatif : d'après la photo TIME (page P03) et les manuels de la STM-1500 et de la DR1500-U."
+     }
+    ],
+    [
+     "3",
+     "",
+     1,
+     "ACCOUPLEMENT ÉLASTIQUE À MÂCHOIRES (deux moyeux de Ø 3 po et une étoile)",
+     {
+      "pnText": "Indicatif",
+      "note": "Moyeu de 1 1/8 po sur l'arbre de la pompe (clavette 26 de la pompe), moyeu de 1 1/4 po sur l'arbre du moteur. Le manuel demande des arbres centrés et parallèles (section 4.2). Indicatif : d'après la photo TIME (page P03) et les manuels de la STM-1500 et de la DR1500-U."
+     }
+    ],
+    [
+     "4",
+     "",
+     3,
+     "VIS 3/8-16 × 1 1/4 po (cloche sur le boîtier d'entraînement de la pompe)",
+     {
+      "pnText": "Indicatif",
+      "note": "À la place des trois vis 27 (3/8-16 × 3/4 po) de ce boîtier : plus longues de l'épaisseur de la bride de la cloche. Serrage : 25 lb·pi comme les vis de boîtier (tableau 7 du manuel de la pompe). Indicatif : d'après la photo TIME (page P03) et les manuels de la STM-1500 et de la DR1500-U."
+     }
+    ],
+    [
+     "5",
+     "",
+     4,
+     "VIS 1/2-13 × 1 1/4 po (moteur sur la cloche)",
+     {
+      "pnText": "Indicatif",
+      "note": "Dans les taraudages de la bride carrée de la cloche. Indicatif : d'après la photo TIME (page P03) et les manuels de la STM-1500 et de la DR1500-U."
+     }
+    ],
+    [
+     "6",
+     "",
+     3,
+     "ADAPTATEUR DROIT ORB × JIC (orifices du moteur : pression, retour et drain)",
+     {
+      "pnText": "Indicatif",
+      "note": "Indicatif : d'après la photo TIME (page P03) et les manuels de la STM-1500 et de la DR1500-U."
+     }
+    ],
+    [
+     "7",
+     "",
+     2,
+     "BOYAU HYDRAULIQUE 3/4 po (pression et retour du moteur)",
+     {
+      "pnText": "Indicatif",
+      "note": "Des côtés du moteur, par-dessus la face arrière du bac, jusqu'au sol : vers le groupe hydraulique de la foreuse (bloc « pompe à eau » de la console sur la STM-1500). Longueur selon l'installation. Indicatif : d'après la photo TIME (page P03) et les manuels de la STM-1500 et de la DR1500-U."
+     }
+    ],
+    [
+     "8",
+     "",
+     1,
+     "BOYAU DE DRAIN 3/8 po (drain du carter du moteur)",
+     {
+      "pnText": "Indicatif",
+      "note": "Retour libre au réservoir hydraulique, sans pression. Longueur selon l'installation. Indicatif : d'après la photo TIME (page P03) et les manuels de la STM-1500 et de la DR1500-U."
+     }
+    ],
+    [
+     "9",
+     "",
+     3,
+     "RACCORD RAPIDE HYDRAULIQUE (deux de 3/4 po, un de 3/8 po)",
+     {
+      "pnText": "Indicatif",
+      "note": "Au bout des boyaux hydrauliques, pour débrancher le bac du groupe hydraulique. Indicatif : d'après la photo TIME (page P03) et les manuels de la STM-1500 et de la DR1500-U."
+     }
+    ],
+    [
+     "10",
+     "",
+     1,
+     "COUDE MÂLE-FEMELLE 1 po NPT (orifice de refoulement arrière)",
+     {
+      "pnText": "Indicatif",
+      "note": "Comme sur la photo TIME : la soupape est montée sur un coude au bout du collecteur, du côté du moteur. Indicatif : d'après la photo TIME (page P03) et les manuels de la STM-1500 et de la DR1500-U."
+     }
+    ],
+    [
+     "11",
+     "PPFMC 3546492",
+     1,
+     "PRESSURE RELIEF VALVE (soupape de sûreté, laiton)",
+     {
+      "note": "Numéro de la figure 6 du manuel de la pompe (page P04). Obligatoire juste en aval de la pompe, sans vanne entre la pompe et la soupape (section 4.4). Réglée au-dessus de la pression de service et sous les 700 lb/po² de la pompe. Sortie latérale vers les culasses, comme sur la photo."
+     }
+    ],
+    [
+     "12",
+     "",
+     1,
+     "BOYAU DE RETOUR DE LA SOUPAPE 3/4 po (vers le bac)",
+     {
+      "pnText": "Indicatif",
+      "note": "Retour au réservoir, jamais à l'aspiration de la pompe (section 4.4) ; aucune vanne sur cette conduite. Descend dans le compartiment ouvert, sous le niveau de l'eau. Indicatif : d'après la photo TIME (page P03) et les manuels de la STM-1500 et de la DR1500-U."
+     }
+    ],
+    [
+     "13",
+     "",
+     2,
+     "MAMELON HEXAGONAL 1 po NPT (orifice de refoulement avant ; arrivée d'eau au premier demi-manchon)",
+     {
+      "pnText": "Indicatif",
+      "note": "Indicatif : d'après la photo TIME (page P03) et les manuels de la STM-1500 et de la DR1500-U."
+     }
+    ],
+    [
+     "14",
+     "",
+     1,
+     "TÉ 1 po NPT (refoulement et manomètre)",
+     {
+      "pnText": "Indicatif",
+      "note": "Le manomètre doit être sur le refoulement, près de la pompe et avant toute vanne (section 4.4). Indicatif : d'après la photo TIME (page P03) et les manuels de la STM-1500 et de la DR1500-U."
+     }
+    ],
+    [
+     "15",
+     "PPAM A000380000",
+     1,
+     "PRESSURE GAUGE (manomètre de Ø 2 1/2 po, sur une réduction 1/4 po)",
+     {
+      "note": "Numéro de la figure 6 du manuel de la pompe (page P04) ; cadran de Ø 2 1/2 po supposé."
+     }
+    ],
+    [
+     "16",
+     "",
+     1,
+     "BOYAU DE REFOULEMENT 1 po HAUTE PRESSION (vers la foreuse)",
+     {
+      "pnText": "Indicatif",
+      "note": "Au moins 700 lb/po² de service (pression maximale de la pompe) ; même grosseur que la sortie (section 4.4). Passe par-dessus la face avant du bac jusqu'au sol, vers l'émerillon d'eau de la foreuse. Longueur selon l'installation. Indicatif : d'après la photo TIME (page P03) et les manuels de la STM-1500 et de la DR1500-U."
+     }
+    ],
+    [
+     "17",
+     "",
+     2,
+     "RACCORD RAPIDE D'EAU 1 po (refoulement et arrivée d'eau)",
+     {
+      "pnText": "Indicatif",
+      "note": "Indicatif : d'après la photo TIME (page P03) et les manuels de la STM-1500 et de la DR1500-U."
+     }
+    ],
+    [
+     "18",
+     "",
+     1,
+     "MAMELON 1 1/2 po NPT (orifice d'aspiration du milieu)",
+     {
+      "pnText": "Indicatif",
+      "note": "Les deux autres orifices d'aspiration restent bouchés (repère 48 de la pompe). Tuyau rigide : un boyau d'aspiration de 1 1/2 po fait environ 2 po de diamètre. Indicatif : d'après la photo TIME (page P03) et les manuels de la STM-1500 et de la DR1500-U."
+     }
+    ],
+    [
+     "19",
+     "",
+     1,
+     "RACCORD UNION 1 1/2 po (démontage de la pompe)",
+     {
+      "pnText": "Indicatif",
+      "note": "Juste sous la pompe, au-dessus de l'eau : il permet de sortir la pompe et son embase sans dévisser le tuyau du clapet. Indicatif : d'après la photo TIME (page P03) et les manuels de la STM-1500 et de la DR1500-U."
+     }
+    ],
+    [
+     "20",
+     "",
+     1,
+     "TUYAU 1 1/2 po (aspiration, 20 1/4 po)",
+     {
+      "pnText": "Indicatif",
+      "note": "Au moins aussi gros que l'orifice d'aspiration (section 4.3), droit et sans point haut. Descend dans le compartiment ouvert, à 1 3/8 po du flanc de la traverse et à 1 3/4 po de la flotte. Indicatif : d'après la photo TIME (page P03) et les manuels de la STM-1500 et de la DR1500-U."
+     }
+    ],
+    [
+     "21",
+     "",
+     1,
+     "CLAPET DE PIED À CRÉPINE 1 1/2 po",
+     {
+      "pnText": "Indicatif",
+      "note": "Garde la pompe amorcée : elle aspire au-dessus de l'eau. Bas de la crépine à 1 7/8 po du fond du bac, pour ne pas aspirer les dépôts. Indicatif : d'après la photo TIME (page P03) et les manuels de la STM-1500 et de la DR1500-U."
+     }
+    ],
+    [
+     "22",
+     "",
+     1,
+     "BOYAU D'ARRIVÉE D'EAU 1 po (au premier demi-manchon, vers le robinet à flotte)",
+     {
+      "pnText": "Indicatif",
+      "note": "Le robinet à flotte, à l'intérieur, n'est pas montré : aucun document ne le donne. Le waterpack de la DR1500-U met un réducteur de pression sur cette arrivée. Indicatif : d'après la photo TIME (page P03) et les manuels de la STM-1500 et de la DR1500-U."
      }
     ]
    ]

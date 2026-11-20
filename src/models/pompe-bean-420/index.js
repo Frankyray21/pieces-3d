@@ -390,8 +390,10 @@ export function P03(api) {
 
 const B = RELEVE.bati;
 // Boîtiers de palier : vis sur un cercle, bride en triangle (vue de côté de la figure 7).
-const PALIER = { r: 2.35, angles: [180, 60, -60], trou: 1.9, jeu: 0.06, bride: 0.32 }; // jeu : joint et cales
-const BOITIER = { r: 1.55, angles: [150, 30, 270], trou: 1.12 };
+export const PALIER = { r: 2.35, angles: [180, 60, -60], trou: 1.9, jeu: 0.06, bride: 0.32 }; // jeu : joint et cales
+export const BOITIER = { r: 1.55, angles: [150, 30, 270], trou: 1.12 };
+/** Face extérieure de la bride du boîtier d'entraînement (17), depuis l'axe de la pompe (pouces). */
+export const FACE_ENTRAINEMENT = B.z + 0.38;
 const X_FOND = 6.05; // cloison entre le berceau des garnitures et les glissières de crosse
 const R_GLISSIERE = COTE.crosse / 2 + 0.012;
 
@@ -538,7 +540,7 @@ const palier = {
 
 /** Boîtier de l'arbre d'entrée : côté entraînement (17, traversé par l'arbre) ou borgne (18). */
 function boitierArbre(S, material, s, borgne) {
-  const z0 = B.z + 0.04, z1 = z0 + 0.34;
+  const z0 = B.z + 0.04, z1 = FACE_ENTRAINEMENT;
   const g = S.group();
   const centre = borgne ? [] : [[AR.x, AR.y, AR.d / 2 + 0.03]];
   g.add(selonZ(S, triangle(BOITIER.r, BOITIER.angles, 0.5).map(([x, y]) => [AR.x + x, AR.y + y]), s > 0 ? z0 : -z1, s > 0 ? z1 : -z0, material,
@@ -598,7 +600,7 @@ function robinet(S, x) {
  * Extrémité mécanique (figures 2A et 2B) : bâti, vilebrequin à excentriques, arbre d'entrée à pignon, bielles,
  * crosses, garnitures de tige, paliers et couvercles.
  */
-export function P02(api) {
+export function P02(api, opts = {}) {
   const S = api.S;
   const seen = new Set();
   const put = (ref, obj, explode) => { api.part(ref, obj, explode, { noLabel: seen.has(ref) }); seen.add(ref); };
@@ -647,7 +649,8 @@ export function P02(api) {
     put(s < 0 ? '17' : '18', boitierArbre(S, PEINT, s, s > 0), [0, 0, s * 0.3]);
     put('20', selonZ(S, triangle(BOITIER.r, BOITIER.angles, 0.5).map(([x, y]) => [AR.x + x, AR.y + y]), s > 0 ? B.z : -B.z - 0.04, s > 0 ? B.z + 0.04 : -B.z, 'cream', [[AR.x, AR.y, BOITIER.trou]]), [0, 0, s * 0.22]);
     put('25', S.bearing(1.1 * IN, 0.689 * IN, 0.55 * IN, ACIER, { axis: 'z', pos: pos(AR.x, AR.y, s * (B.z - 0.2)) }), [0, 0, s * 0.42]);
-    for (const a of BOITIER.angles) put('27', visBoitier(S, [AR.x, AR.y], BOITIER, a, s, B.z + 0.38), [0, 0, s * 0.36]);
+    // Option entrainement : une cloche d'accouplement remplace les trois vis du côté entraînement (installation sur le tube à l'eau).
+    if (!(opts.entrainement && s < 0)) for (const a of BOITIER.angles) put('27', visBoitier(S, [AR.x, AR.y], BOITIER, a, s, B.z + 0.38), [0, 0, s * 0.36]);
     // Bouchon de vidange, au bas de chaque joue.
     put('32', sixPans(S, 0.875, 0, 0.32, VIS, s > 0 ? 'z' : '-z', XV + 1.5, 1.45, s * B.z), [0, -0.05, s * 0.15]);
   }
@@ -674,8 +677,8 @@ export function P02(api) {
 /**
  * Pompe complète : extrémité mécanique et extrémité hydraulique, sur leurs goujons communs.
  */
-export function P01(api) {
-  api.part('A', api.sub('P02'), [0.12, 0, 0]);
+export function P01(api, opts = {}) {
+  api.part('A', api.sub('P02', opts.entrainement ? { entrainement: true } : {}), [0.12, 0, 0]);
   api.part('B', api.sub('P03'), [-0.22, 0, 0]);
   return { view: { dir: [-1, 0.6, -0.95] } };
 }
