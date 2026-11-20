@@ -3,7 +3,7 @@
 // (6 × 6 brut, 3 × 8 brut, 2 × 4 planés ou bruts), coins de bois, tire-fonds
 // de 6 po, outils (pied de biche, masse, marteau, sciotte, pinces à billots,
 // niveau au laser Bosch, niveau de 48 po,
-// pingouin (gratte minière de 32 po, sert de pelle), scie va-et-vient et
+// pingouin (gratte minière Garant E432SG, manche de 32 po), scie va-et-vient et
 // lames à bois). L'ÉPI n'est pas montré (déjà acquis). Silhouettes simples : ce
 // sont des repères pour la formation, pas des modèles de pièces.
 import { IN, FT, B66, P3, P8, S24, L, ground, WEDGE } from '../models/plancher-dd/plan.js';
@@ -185,37 +185,47 @@ export function materielGroup(S) {
   });
   scie.rotation.y = -Math.PI / 2;
   g.add(onGround(S, scie, MAT.scie.at[0], MAT.scie.at[2]));
-  // Pingouin (gratte à déblais de mine, « pelican pick ») : manche de bois légèrement
-  // cintré, tête d'acier jaune avec une longue lame recourbée en bec, pointe vers le
-  // manche, embout au bout du manche. Couché à plat selon Z, tête vers le fond de l'aire.
+  // Pingouin : gratte minière Garant Pro E432SG (« muck scoop », SKU 78167), d'après la
+  // fiche du fabricant : tête d'acier de 4,5 lb, lame de 14 po × 6 po, manche de bois
+  // franc verni de 32 po à poignée antidérapante. Elle se tire comme une houe pour ramener
+  // les petits déblais entre les jambes. Angle lame–manche (70°), creux de la lame (2 cm),
+  // couleur de la tête et longueur de la poignée sont estimés (pas de photo cotée).
+  // Posée au sol lame en bas : la pointe de la lame et le bout du manche touchent le sol,
+  // la douille est soulevée ; le tout dans le plan vertical selon Z, tête vers le fond de l'aire.
   {
-    const len = 32 * IN, y = 0.022, zh = -len / 2;
+    const LH = 32 * IN, LB = 14 * IN, WB = 6 * IN, ANG = (70 * Math.PI) / 180;
+    const rH = 0.018, tB = 0.004, sag = 0.02;
+    // a : pente du manche ; on cherche la pente pour laquelle la pointe est au sol (y = 0)
+    // et le bout du manche repose sur sa génératrice (centre à y = rH).
+    let a = 0.4;
+    for (let i = 0; i < 40; i++) a -= (LB * Math.sin(a + ANG) - LH * Math.sin(a) - rH) / (LB * Math.cos(a + ANG) - LH * Math.cos(a));
+    const ho = LB * Math.sin(a + ANG); // hauteur de la douille (axe du manche)
+    const beta = -(a + ANG); // direction de la lame depuis +Z, positive vers le haut
+    const H = [0, -Math.sin(a), Math.cos(a)], B = [0, Math.sin(beta), Math.cos(beta)];
+    const O = [0, ho, -0.36]; // douille ; le bout du manche arrive vers +Z
+    const at = (P, d, k) => [P[0] + d[0] * k, P[1] + d[1] * k, P[2] + d[2] * k];
+    const E = at(O, H, LH);
     const p = S.group(
-      S.tube([[0, y, zh + 0.02], [-0.012, y, 0], [0, y, len / 2 - 0.02]], 0.019, 'woodLight', { ends: 'none' }),
-      S.box(0.06, 0.046, 0.09, 'yellow', { r: 0.01, pos: [-0.008, y + 0.003, zh + 0.045] }),
-      S.cyl(0.021, 0.07, 'yellow', { axis: 'z', pos: [0, y, len / 2 - 0.035] }),
-      S.cyl(0.007, 0.06, 'darkSteel', { axis: 'y', pos: [-0.008, y + 0.01, zh + 0.045] }),
+      // Manche verni et poignée antidérapante au bout.
+      S.rod(at(O, H, -0.02), at(E, H, -0.17), rH, 'woodLight'),
+      S.rod(at(E, H, -0.17), E, rH + 0.0025, 'rubber'),
+      // Douille de la tête autour du manche.
+      S.rod(at(O, H, -0.035), at(O, H, 0.05), 0.027, 'darkSteel'),
     );
-    // Lame : contour d'une bande effilée le long d'une courbe (u : vers le bout du manche, v : vers l'extérieur).
-    const bez = (t) => {
-      const P = [[0.0, 0.04], [-0.02, 0.36], [0.31, 0.43]], m = 1 - t;
-      return [m * m * P[0][0] + 2 * m * t * P[1][0] + t * t * P[2][0], m * m * P[0][1] + 2 * m * t * P[1][1] + t * t * P[2][1]];
-    };
-    const L = [], R = [];
-    const N = 18;
+    // Lame : gouttière de 6 po de large, creux tourné vers le manche, extrudée selon sa longueur.
+    const N = 12, outer = [], inner = [];
     for (let i = 0; i <= N; i++) {
-      const t = i / N, c = bez(t), d = bez(Math.min(1, t + 0.01)), e = bez(Math.max(0, t - 0.01));
-      let tu = d[0] - e[0], tv = d[1] - e[1];
-      const k = Math.hypot(tu, tv) || 1; tu /= k; tv /= k;
-      const w = 0.03 * Math.pow(1 - t, 0.85) + 0.002;
-      // Lame du côté −X (vers l'allée, loin des piles de bois).
-      L.push([-(c[1] - tu * w), c[0] + tv * w]);
-      R.push([-(c[1] + tu * w), c[0] - tv * w]);
+      const x = -WB / 2 + (WB * i) / N, w = sag * (2 * x / WB) ** 2;
+      outer.push([x, w]);
+      inner.push([x, w + tB]);
     }
-    const blade = S.extrude([[-0.01, -0.05], ...R.reverse(), ...L.reverse(), [-0.01, 0.05]], 0.012, 'yellow');
-    blade.rotation.x = Math.PI / 2;
-    blade.position.set(-0.02, y + 0.012, zh + 0.045);
-    p.add(blade);
+    const s0 = 0.03, lenB = LB - s0;
+    const blade = S.group(S.extrude([...outer, ...inner.reverse()], lenB, 'darkSteel'));
+    blade.rotation.x = -beta; // Z local → direction de la lame, Y local → côté du manche
+    blade.position.set(...at(O, B, s0 + lenB / 2));
+    // Collet entre la douille et le haut de la lame.
+    const neck = S.rod(at(O, B, 0.02), at(O, B, s0 + 0.03), 0.016, 'darkSteel');
+    p.add(blade, neck);
     g.add(onGround(S, p, MAT.pingouin.at[0], MAT.pingouin.at[2]));
   }
   g.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
@@ -242,7 +252,7 @@ export const TOUR = [
   { keys: ['biche', 'masse', 'marteau'], c: G(X0 + 1.4, 0.4), pos: [X0 + 0.45, ground(X0 + 1.4, 0.4) + 1.35, 1.25] },
   { keys: ['sciotte', 'pinces'], c: G(X0 + 1.4, 1.8), d: 1.15 },
   { keys: ['laser', 'niveau'], c: G(X0 + 0.6, 1.1, 0.2), d: 1.75 },
-  { keys: ['pingouin'], c: G(X0 + 2.0, 0.55), pos: [X0 + 1.25, ground(X0 + 2.0, 0.55) + 0.95, 1.3] },
+  { keys: ['pingouin'], c: G(X0 + 2.15, 0.5, 0.17), pos: [X0 + 1.05, ground(X0 + 2.15, 0.5) + 0.95, 1.55] },
   { keys: ['barres'], c: G(X0 + 1.1, BARS_Z), pos: [X0 - 0.3, ground(X0 + 1.1, BARS_Z) + 0.95, -1.75] },
   { keys: ['scie'], c: G(X0 + 1.8, 2.25), d: 0.7 },
 ];
