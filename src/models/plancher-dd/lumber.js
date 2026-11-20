@@ -81,9 +81,13 @@ export function wedge(S, w) {
   return g;
 }
 
-/** Tire-fonds de 6 po (tête hexagonale et rondelle) aux points donnés, têtes sur le plan des points. */
+/**
+ * Tire-fonds de 6 po aux points donnés, têtes sur le plan des points : tête
+ * hexagonale et rondelle, tige lisse puis filet à bois et pointe. Le manuel ne
+ * donne que la longueur ; 3/8 po de diamètre est supposé.
+ */
 export function lagScrews(S, points) {
-  return S.boltSet(points, 0.375 * IN, 6 * IN, 'zinc', { washer: true });
+  return S.boltSet(points, 0.375 * IN, 6 * IN, 'zinc', { washer: true, head: 'lag' });
 }
 
 const KIND = { b38: 'wood', b66: 'wood', crib: 'woodDark' };
