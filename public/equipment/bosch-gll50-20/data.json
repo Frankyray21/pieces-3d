@@ -1,0 +1,230 @@
+{
+ "id": "bosch-gll50-20",
+ "name": "Niveau laser à lignes croisées Bosch GLL50-20",
+ "manufacturer": "Bosch",
+ "category": "Niveau laser autonivelant à lignes croisées (faisceau rouge)",
+ "serial": "",
+ "document": {
+  "title": "Données publiées par les détaillants (aucun manuel ni photo consulté)",
+  "reference": "GLL50-20",
+  "preparedBy": "",
+  "date": "",
+  "sheets": 1,
+  "pagePattern": "pages/{sheet}.webp"
+ },
+ "specs": [
+  [
+   "Source",
+   "Données publiées par les détaillants (Home Depot Canada, Sutherlands) ; le manuel n'a pas pu être consulté. Formes et emplacement des organes supposés"
+  ],
+  [
+   "Dimensions (publiées)",
+   "Environ 4,2 po de long, 2,5 po de large et 3,9 po de haut (107 × 63 × 98 mm), reprises telles quelles par le modèle"
+  ],
+  [
+   "Poids (publié)",
+   "0,77 lb (environ 350 g)"
+  ],
+  [
+   "Faisceaux",
+   "Deux lignes : horizontale et verticale (croix) ; laser rouge de classe 2, moins de 5 mW, 630 à 650 nm"
+  ],
+  [
+   "Portée et précision",
+   "50 pi (15 m) ; ±5/16 po à 30 pi"
+  ],
+  [
+   "Autonivellement",
+   "Jusqu'à 3,5° ; hors de cette plage, un voyant clignote"
+  ],
+  [
+   "Alimentation",
+   "Deux piles AA (fournies) ; batterie Bosch 3,7 V 1,0 Ah au lithium-ion vendue à part (non modélisée)"
+  ],
+  [
+   "Fixation",
+   "Filetage 1/4-20 pour trépied et support aimanté intégré"
+  ],
+  [
+   "Protection et température",
+   "IP 55 ; de -10 à 40 °C"
+  ],
+  [
+   "Ouverture des faisceaux",
+   "Non publiée dans les données consultées : 120° supposés pour l'illustration, faisceaux montrés sur 0,15 m"
+  ],
+  [
+   "Vue",
+   "Sans éclatement (demande du client) : les pièces restent en place ; la coupe dans le plan médian montre les piles"
+  ]
+ ],
+ "weights": [],
+ "sheetTitles": {
+  "P01": "Données publiées du Bosch GLL50-20 reprises par le modèle"
+ },
+ "root": "P01",
+ "assemblies": {
+  "P01": {
+   "title": "SELF-LEVELING CROSS-LINE LASER GLL50-20",
+   "titleFr": "Niveau laser à lignes croisées GLL50-20",
+   "pn": "GLL50-20",
+   "sheets": [
+    "P01"
+   ],
+   "note": "Modèle fait sans le manuel ni photo, à la demande du client : seules les données publiées par les détaillants sont reprises telles quelles — encombrement d'environ 107 × 63 × 98 mm (4,2 × 2,5 × 3,9 po), deux lignes rouges (horizontale et verticale), classe 2, filetage 1/4-20, support aimanté intégré, deux piles AA, voyant hors niveau qui clignote au-delà de 3,5°. Tout le reste est SUPPOSÉ d'après la disposition courante des lasers à lignes croisées compacts : la forme du boîtier, le bleu, la tête optique noire et sa fenêtre unique, l'interrupteur à curseur sur le flanc droit, la touche et les deux voyants du dessus, le logement des piles sous l'arrière, les aimants dans la face arrière, l'emplacement du filetage. À corriger d'après une photo ou le manuel dès qu'ils seront disponibles. Pas de vue éclatée (demande du client). Les faisceaux sont montrés sur 0,15 m avec une ouverture de 120° supposée (la ligne verticale s’arrête au sol) ; aucun texte ni logo du fabricant n'est dessiné.",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "CORPS du boîtier, bleu",
+     {
+      "note": "Environ 107 × 63 mm, 70 mm de haut sous la tête ; arêtes arrondies. Couleur et forme supposées.",
+      "pseudo": true
+     }
+    ],
+    [
+     "2",
+     "",
+     2,
+     "SURMOULAGE en caoutchouc noir, flancs",
+     {
+      "note": "Prise en main sur chaque flanc. Position supposée (aucun manuel ni photo consulté).",
+      "pseudo": true
+     }
+    ],
+    [
+     "3",
+     "",
+     1,
+     "TÊTE OPTIQUE noire (logement du pendule et des diodes)",
+     {
+      "note": "À l'avant du dessus ; porte le boîtier à 98 mm de haut (hauteur publiée). Position supposée (aucun manuel ni photo consulté).",
+      "pseudo": true
+     }
+    ],
+    [
+     "4",
+     "",
+     1,
+     "FENÊTRE DE SORTIE des faisceaux (verre)",
+     {
+      "note": "Une seule fenêtre pour les deux lignes, dans un cadre en caoutchouc. Position supposée (aucun manuel ni photo consulté).",
+      "pseudo": true
+     }
+    ],
+    [
+     "5",
+     "",
+     2,
+     "MODULE LASER (diode et lentille) : ligne horizontale, ligne verticale",
+     {
+      "note": "Derrière le verre ; pendule autonivelant non modélisé (caché). Position supposée (aucun manuel ni photo consulté).",
+      "pseudo": true
+     }
+    ],
+    [
+     "6",
+     "",
+     1,
+     "INTERRUPTEUR de marche et de blocage du pendule (curseur)",
+     {
+      "note": "Montré à l'avant : en marche, pendule libre. Un laser autonivelant se transporte pendule bloqué. Position supposée (aucun manuel ni photo consulté).",
+      "pseudo": true
+     }
+    ],
+    [
+     "7",
+     "",
+     1,
+     "CLAVIER et TOUCHE de choix des lignes (horizontale, verticale, croix)",
+     {
+      "note": "Sur le dessus, derrière la tête. Position supposée (aucun manuel ni photo consulté).",
+      "pseudo": true
+     }
+    ],
+    [
+     "8",
+     "",
+     2,
+     "VOYANT : marche (vert) et hors niveau (rouge, clignote)",
+     {
+      "note": "Le voyant hors niveau est publié ; sa couleur et sa place sont supposées.",
+      "pseudo": true
+     }
+    ],
+    [
+     "9",
+     "",
+     1,
+     "COUVERCLE du logement des piles, avec loquet",
+     {
+      "note": "Sous l'arrière du boîtier. Position supposée (aucun manuel ni photo consulté).",
+      "pseudo": true
+     }
+    ],
+    [
+     "10",
+     "",
+     2,
+     "PILE AA (fournie)",
+     {
+      "note": "Ø 14,5 × 50,5 mm (format normalisé), couchées dans le logement ; visibles en coupe.",
+      "pseudo": true
+     }
+    ],
+    [
+     "11",
+     "",
+     1,
+     "ÉCROU FILETÉ 1/4-20 pour trépied",
+     {
+      "note": "Filetage publié ; placé sous la tête optique (supposé).",
+      "pseudo": true
+     }
+    ],
+    [
+     "12",
+     "",
+     2,
+     "AIMANT du support intégré",
+     {
+      "note": "Support aimanté publié ; deux pastilles dans la face arrière (nombre et place supposés).",
+      "pseudo": true
+     }
+    ],
+    [
+     "13",
+     "",
+     4,
+     "PATIN en caoutchouc",
+     {
+      "note": "Sous le boîtier. Position supposée (aucun manuel ni photo consulté).",
+      "pseudo": true
+     }
+    ],
+    [
+     "14",
+     "",
+     1,
+     "ÉTIQUETTE d'avertissement laser (classe 2, < 5 mW, 630-650 nm)",
+     {
+      "note": "Sur le flanc gauche ; dessin générique (données publiées), sans texte du fabricant.",
+      "pseudo": true
+     }
+    ],
+    [
+     "15",
+     "",
+     1,
+     "FAISCEAUX : ligne horizontale et ligne verticale (illustration)",
+     {
+      "note": "Portée publiée de 50 pi (15 m) ; montrés sur 0,15 m, ouverture de 120° supposée.",
+      "pseudo": true
+     }
+    ]
+   ]
+  }
+ },
+ "documents": []
+}

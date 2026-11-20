@@ -1,6 +1,14 @@
 {
   "equipment": [
     {
+      "id": "bosch-gll50-20",
+      "name": "Niveau laser à lignes croisées Bosch GLL50-20",
+      "manufacturer": "Bosch",
+      "category": "Niveau laser autonivelant",
+      "thumbnail": "equipment/bosch-gll50-20/thumbnail.webp",
+      "status": "3D d'après les données publiées seulement (aucun manuel ni photo) : boîtier de 107 × 63 × 98 mm, tête optique et fenêtre, deux lignes rouges croisées, interrupteur de blocage du pendule, touche et voyants, deux piles AA, filetage 1/4-20, aimants ; formes et emplacements supposés, sans vue éclatée"
+    },
+    {
       "id": "cle-a-molette",
       "name": "Clé à molette (Westcott) de 12 po",
       "manufacturer": "Modèle libre (OpenGameArt, CC0)",

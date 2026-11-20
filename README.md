@@ -584,6 +584,23 @@ pièces (numéro, quantité, page du manuel).
   Cadence ralentie pour la lecture (environ 7 courses par seconde). Le décor
   se limite au bois ; l'opérateur n'est pas montré.
 
+- **Niveau laser à lignes croisées Bosch GLL50-20** (`bosch-gll50-20`) :
+  niveau laser autonivelant à deux lignes rouges (horizontale et verticale),
+  fait à la demande du client sans le manuel ni photo (sites du manuel
+  inaccessibles depuis l'atelier) : seules les données publiées par les
+  détaillants sont reprises telles quelles — environ 107 × 63 × 98 mm
+  (4,2 × 2,5 × 3,9 po), 0,77 lb, classe 2 (< 5 mW, 630 à 650 nm), portée de
+  50 pi, ±5/16 po à 30 pi, autonivellement de 3,5° avec voyant hors niveau,
+  deux piles AA, filetage 1/4-20, support aimanté intégré, IP 55. Formes,
+  couleurs et emplacements (corps bleu, surmoulages des flancs, tête optique
+  noire et sa fenêtre, interrupteur à curseur de blocage du pendule, touche et
+  voyants du dessus, logement des piles, aimants arrière, filetage) sont
+  supposés et signalés dans la fiche ; à corriger d'après une photo ou le
+  manuel. Faisceaux montrés sur 0,15 m (ouverture de 120° supposée, la ligne
+  verticale s'arrête au sol). Pas de vue éclatée (demande du client) : toutes
+  les pièces restent en place (`src/models/bosch-gll50-20/index.js`) ; page
+  P01 : les données publiées.
+
 - **Pince à sertir de 30 po pour manchons de câble (wire line)** (`pince-a-sertir`) :
   pince à sertir manuelle VEVOR à trois empreintes, reconstituée d'après les
   vignettes d'une capture d'écran de recherche d'images (639 × 1 147 pixels ;
