@@ -117,6 +117,14 @@
       "status": "3D d'après deux images du produit ; découpe libre d'un 3 × 8, scie à la verticale : le trait, droit ou courbe, se trace dans la vue 3D et la scie le suit (morceaux détachés qui tombent, entailles, sciure) ; scène animée du sciage d'un 2 × 4 ; longueur de 398 mm, course de 13 mm et cadence de 0 à 3 000 courses/min publiées, le reste estimé à environ 15 % près ; un 3 × 8 (76 mm) dépasse la capacité publiée de 50 mm dans le bois"
     },
     {
+      "id": "milwaukee-2656",
+      "name": "Visseuse à chocs sans fil Milwaukee M18 2656-20",
+      "manufacturer": "Milwaukee Tool",
+      "category": "Visseuse à chocs sans fil 18 V, 1/4 po hexagonal (outil seul)",
+      "thumbnail": "equipment/milwaukee-2656/thumbnail.webp",
+      "status": "Vue éclatée de la liste de pièces de service 54-26-2503 (no de série F26D et plus) : 41 lignes avec leurs numéros Milwaukee, toutes en 3D sauf le coffret et l'étiquette ; boîtier relevé sur la vue de côté cotée du fabricant (5,5 po de long, 7,6 po de haut), largeurs et pièces internes estimées"
+    },
+    {
       "id": "pince-a-sertir",
       "name": "Pince à sertir de 30 po pour manchons de câble (wire line)",
       "manufacturer": "VEVOR",

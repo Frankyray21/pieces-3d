@@ -619,6 +619,26 @@ pièces (numéro, quantité, page du manuel).
   `node tools/pince_a_sertir_fiche.mjs [--page <fichier.html>]`, qui contrôle
   aussi que le mécanisme reste monté sur toute la course (41 positions).
 
+- **Visseuse à chocs sans fil Milwaukee M18 2656-20** (`milwaukee-2656`) :
+  visseuse à chocs 18 V à mandrin hexagonal de 1/4 po, une vitesse (outil
+  seul), d'après la liste de pièces de service 54-26-2503 de Milwaukee (vue
+  éclatée et liste, à partir du numéro de série F26D ; P01 et P02), le manuel
+  de l'utilisateur 58-14-2613d5 (P05) et deux images du produit (P03 : vue de
+  côté cotée, 5,5 po de long ; P04 : trois quarts). Les 41 lignes de la liste
+  portent leurs numéros Milwaukee ; toutes ont leur 3D sauf le coffret de
+  transport (47) et l'étiquette d'avertissement non montrée (77). Le boîtier
+  est relevé sur la vue de côté, mise à l'échelle des 5,5 po publiés (la
+  hauteur obtenue, 190 mm, concorde avec les 7,6 po publiés) ; largeurs
+  estimées d'après la photo et la largeur publiée de 2,4 po. Les deux
+  demi-coques (35, 49) sont des coques à sections en super-ellipse coupées
+  dans le plan de joint (`demiVolume()` dans
+  `src/models/milwaukee-2656/visseuse.js`, qui reprend `corps()`, `bande()`
+  et `relief()` de la scie Makita) ; en vue éclatée, elles s'écartent et
+  découvrent le nez, le mécanisme de frappe, le moteur et l'électronique,
+  dessinés d'après la vue éclatée (cotes estimées). Places supposées : vis du
+  boîtier, patins en caoutchouc, plaque de service, ressort du bornier,
+  trajet des fils. Le nom de la marque n'est pas écrit sur le modèle.
+
 - **Panneau de grillage rigide à plis en V, maille 2 × 6 po** (`grillage-cage`) :
   type de grillage de la cage, identifié sur une photo (P01) et son relevé
   (P02 : fils verticaux tous les 2 po environ, fils horizontaux tous les 6 po,

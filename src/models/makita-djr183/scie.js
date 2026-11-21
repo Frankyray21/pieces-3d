@@ -141,7 +141,7 @@ export function geometrie(t, angle = 32) {
 }
 
 /** Point de la section sec à l'angle th (0 = haut, 90° = flanc +Z), décalé de off vers l'extérieur. */
-function pointSection(sec, th, off = 0) {
+export function pointSection(sec, th, off = 0) {
   const [xh, yh, xb, yb, w, e] = sec;
   let dx = xh - xb, dy = yh - yb;
   const L = Math.hypot(dx, dy);
@@ -156,7 +156,7 @@ function pointSection(sec, th, off = 0) {
  * Coque profilée : sections de contrôle interpolées en douceur (Catmull-Rom),
  * k sections par intervalle, n points par section.
  */
-function corps(ctrl, { k = 4, n = 56 } = {}) {
+export function corps(ctrl, { k = 4, n = 56 } = {}) {
   const cr = (a, b, c, d, t) => 0.5 * (2 * b + (c - a) * t + (2 * a - 5 * b + 4 * c - d) * t * t + (3 * b - a - 3 * c + d) * t * t * t);
   const secs = [];
   for (let i = 0; i < ctrl.length - 1; i++) {
@@ -243,7 +243,7 @@ function volume(c, { creux = null } = {}) {
  * Bande en relief sur une coque : de l'indice s0 à s1, de l'angle a0 à a1
  * (degrés), en saillie de ep ; volume fermé, légèrement engagé dans la coque.
  */
-function bande(c, s0, s1, a0, a1, ep, { na = 20, engage = 0.6 } = {}) {
+export function bande(c, s0, s1, a0, a1, ep, { na = 20, engage = 0.6 } = {}) {
   const ns = Math.max(2, Math.ceil((s1 - s0) * 1.5));
   const grille = (off) => Array.from({ length: ns + 1 }, (_, i) => Array.from({ length: na + 1 }, (_, j) =>
     pointSection(c.en(s0 + ((s1 - s0) * i) / ns), (a0 + ((a1 - a0) * j) / na) * RAD, off)));
@@ -269,7 +269,7 @@ function bande(c, s0, s1, a0, a1, ep, { na = 20, engage = 0.6 } = {}) {
  * Triangles (mm) d'un relief posé sur un flanc de coque : contour [[x, y], ...]
  * de la vue de côté, en saillie de ep ; cote = +1 (flanc +Z) ou −1.
  */
-function relief(c, contour, ep, cote = 1, engage = 0.6) {
+export function relief(c, contour, ep, cote = 1, engage = 0.6) {
   const pts = contour.map(([x, y]) => new THREE.Vector2(x, y));
   if (THREE.ShapeUtils.isClockWise(pts)) pts.reverse();
   const haut = pts.map((p) => [p.x, p.y, cote * (c.z(p.x, p.y) + ep)]);

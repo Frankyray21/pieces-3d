@@ -1,0 +1,486 @@
+{
+ "id": "milwaukee-2656",
+ "name": "Visseuse à chocs sans fil Milwaukee M18 2656-20",
+ "manufacturer": "Milwaukee Tool",
+ "category": "Visseuse à chocs sans fil 18 V, 1/4 po hexagonal (outil seul)",
+ "serial": "",
+ "document": {
+  "title": "Service Parts List 54-26-2503, M18™ 1/4\" Hex Impact Driver - Single Speed (cat. 2656-20, à partir du no de série F26D) ; manuel de l'utilisateur 58-14-2613d5 ; images du produit",
+  "reference": "54-26-2503",
+  "preparedBy": "Milwaukee Tool, Brookfield (Wisconsin)",
+  "date": "2019-07",
+  "sheets": 5,
+  "pagePattern": "pages/{sheet}.webp"
+ },
+ "specs": [
+  [
+   "Source",
+   "Liste de pièces de service 54-26-2503 de Milwaukee (vue éclatée et liste, juillet 2019), manuel de l'utilisateur 58-14-2613d5 et images du produit, publiés sur milwaukeetool.com"
+  ],
+  [
+   "Numéro de série",
+   "La liste 54-26-2503 vaut à partir du no de série F26D ; les numéros de série F26A, F26B et F26C ont leurs propres listes (54-26-2500 à 54-26-2502). Indiquer le no de catalogue et le no de série à la commande"
+  ],
+  [
+   "Données publiées par Milwaukee",
+   "Longueur de 5,5 po (140 mm), hauteur de 7,6 po (193 mm), largeur de 2,4 po (61 mm), 2,3 lb (1,0 kg) sans batterie et 3,1 lb (1,4 kg) avec une batterie compacte, couple maximal de 1 500 lb-po (169 N·m), 0 à 2 750 tr/min, 0 à 3 450 coups/min, 18 V c.c., batterie M18™, moteur à balais à 4 pôles"
+  ],
+  [
+   "Mandrin",
+   "Hexagonal de 1/4 po à changement rapide : l'embout s'enfonce ; pour le retirer, tirer le manchon"
+  ],
+  [
+   "Commandes",
+   "Gâchette à vitesse variable (DEL allumée gâchette pressée, frein électrique au relâchement) ; inverseur à trois positions : avant, arrière, verrouillé au centre"
+  ],
+  [
+   "Lubrification",
+   "Graisse de type « J » (no 49-08-4220) : face avant et trous des billes de l'enclume, intérieur de la couronne et centre des satellites, bague du carter d'engrenages, pignon de l'induit"
+  ],
+  [
+   "Modèle 3D",
+   "Profil du boîtier relevé sur la vue de côté cotée du fabricant (page P03), largeurs estimées à environ 10 % près ; pièces internes dessinées d'après la vue éclatée, cotes estimées. Le nom de la marque n'est pas écrit sur le modèle"
+  ]
+ ],
+ "weights": [
+  [
+   "Outil sans batterie",
+   "2,3 lb (1,0 kg)"
+  ],
+  [
+   "Outil avec batterie compacte",
+   "3,1 lb (1,4 kg)"
+  ]
+ ],
+ "sheetTitles": {
+  "P01": "Liste de pièces de service 54-26-2503, page 1 : vue éclatée et liste des pièces",
+  "P02": "Liste de pièces de service 54-26-2503, page 2 : câblage",
+  "P03": "Vue de côté du fabricant, cotée (5,5 po de long)",
+  "P04": "Photo du produit, de trois quarts avant",
+  "P05": "Manuel de l'utilisateur 58-14-2613d5, page 3 : caractéristiques et description fonctionnelle"
+ },
+ "root": "P01",
+ "assemblies": {
+  "P01": {
+   "title": "M18™ 1/4\" HEX IMPACT DRIVER - SINGLE SPEED",
+   "titleFr": "Visseuse à chocs M18 1/4 po hexagonal, une vitesse",
+   "pn": "2656-20",
+   "sheets": [
+    "P02",
+    "P03",
+    "P04",
+    "P05"
+   ],
+   "note": "Vue éclatée de la liste de pièces de service 54-26-2503 (page P01), à partir du no de série F26D. Le boîtier est relevé sur la vue de côté cotée du fabricant (page P03), mise à l'échelle de la longueur publiée de 5,5 po : la hauteur obtenue, 190 mm, concorde avec les 7,6 po publiés. Les largeurs viennent de la photo de trois quarts (page P04) et de la largeur publiée de 2,4 po ; le flanc droit, caché sur les photos, est supposé symétrique. Les pièces internes (enclume, mécanisme de frappe, couronne, couvercle, induit, inducteur, porte-balais, électronique) sont dessinées d'après la vue éclatée : leurs cotes sont estimées, et leur place dans le boîtier suit l'ordre du dessin. Places supposées : vis du boîtier, patins en caoutchouc, plaque de service, ressort du bornier, trajet des fils. Le coffret de transport (47) et l'étiquette d'avertissement (77, non montrée) ne sont pas modélisés. En vue éclatée, les demi-coques s'écartent de part et d'autre du plan de joint et le nez s'étire vers l'avant, comme sur le dessin. Les repères sans numéro dans la liste (demi-coques, enclume, fils, ressorts de balai, agrafe) ne se vendent qu'avec leur ensemble.",
+   "parts": [
+    [
+     "70",
+     "31-44-2661",
+     1,
+     "HANDLE ASSEMBLY - SINGLE SPEED (boîtier complet)",
+     {
+      "group": [
+       "25",
+       "35",
+       "48",
+       "49",
+       "50",
+       "62"
+      ],
+      "note": "Comprend les repères 25, 35, 48, 49, 50 et 62 : les deux demi-coques ne se vendent pas seules."
+     }
+    ],
+    [
+     "35",
+     "",
+     1,
+     "HANDLE HALVE - LEFT (demi-coque gauche)",
+     {
+      "nss": true,
+      "note": "Commander l'ensemble 70. Côté de la vue de côté (page P03) : carter du moteur rouge à panneau noir, plaque et grille d'aération rouges, poignée surmoulée de caoutchouc noir, pied noir à jupe rouge. Profil relevé sur la vue cotée du fabricant ; largeurs estimées (largeur hors tout publiée de 2,4 po). La plaque porte le nom de la marque sur l'outil ; il n'est pas écrit sur le modèle."
+     }
+    ],
+    [
+     "49",
+     "",
+     1,
+     "HANDLE HALVE - RIGHT (demi-coque droite)",
+     {
+      "nss": true,
+      "note": "Commander l'ensemble 70. Flanc caché sur les photos : supposé symétrique de la demi-coque gauche. Elle reçoit les têtes des vis 50 et 62."
+     }
+    ],
+    [
+     "25",
+     "45-30-2653",
+     8,
+     "RUBBER SLUG (patin en caoutchouc)",
+     {
+      "note": "Quatre par demi-coque (encadré de la page P01) : ils calent le carter d'engrenages et le moteur dans le boîtier. Places supposées."
+     }
+    ],
+    [
+     "48",
+     "12-20-2618",
+     1,
+     "SERVICE NAMEPLATE (plaque signalétique de service)",
+     {
+      "note": "Place sur le flanc droit du carter supposée (la vue éclatée la dessine au-dessus de la demi-coque 49). Inscriptions non reproduites."
+     }
+    ],
+    [
+     "50",
+     "06-82-6350",
+     8,
+     "M3 X 16MM PAN HD. ST T-10 SCREW (vis autotaraudeuse des demi-coques)",
+     {
+      "note": "Huit vis qui ferment le boîtier, têtes du côté droit ; places supposées le long du plan de joint."
+     }
+    ],
+    [
+     "62",
+     "06-82-7336",
+     1,
+     "4-20 X 3/4\" PAN HD. PLASTITE T-10 SCREW (vis Plastite du boîtier)",
+     {
+      "note": "Place supposée, au-dessus de l'interrupteur."
+     }
+    ],
+    [
+     "55",
+     "14-30-2669",
+     1,
+     "GEARCASE ASSEMBLY (carter d'engrenages complet)",
+     {
+      "group": [
+       "1",
+       "2",
+       "3",
+       "4",
+       "8",
+       "9",
+       "10",
+       "24",
+       "54"
+      ],
+      "note": "Comprend les repères 1, 2, 3, 4, 8, 9, 10, 24 et 54. Liste de pièces : sur les numéros de série « A » et « B », commander aussi l'ensemble enclume et mécanisme de frappe avec un carter neuf (ne pas réutiliser les anciens)."
+     }
+    ],
+    [
+     "54",
+     "28-50-2658",
+     1,
+     "GEARCASE WITH BUSHING (carter d'engrenages avec bague)",
+     {
+      "note": "Nez gris de l'outil, environ 55 mm de diamètre à l'arrière (relevé sur la vue de côté). Écusson « M18 » sur le dessus, inscription non reproduite. Graisser l'intérieur de la bague (graisse de type « J », no 49-08-4220). Il s'emboîte sur le couvercle 24 muni de son joint torique 80, en appuyant également et bien d'équerre à la main (liste de pièces) ; les pièces du mécanisme 58 peuvent tomber du carter : les tenir en place au montage."
+     }
+    ],
+    [
+     "75",
+     "42-06-2659",
+     1,
+     "1/4\" HEX ANVIL ASSEMBLY (enclume complète)",
+     {
+      "group": [
+       "1",
+       "2",
+       "3",
+       "4",
+       "9",
+       "10"
+      ],
+      "note": "Comprend les repères 1, 2, 3, 4, 9 et 10."
+     }
+    ],
+    [
+     "1",
+     "34-60-0725",
+     1,
+     "RETAINING RING (jonc d'arrêt)",
+     {
+      "note": "Retient la rondelle, le ressort et le manchon au bout de l'enclume."
+     }
+    ],
+    [
+     "2",
+     "45-88-2026",
+     1,
+     "WASHER (rondelle)",
+     {}
+    ],
+    [
+     "3",
+     "40-50-1470",
+     1,
+     "SPRING (ressort du manchon)",
+     {}
+    ],
+    [
+     "4",
+     "45-22-2657",
+     1,
+     "SLEEVE (manchon du mandrin hexagonal)",
+     {
+      "note": "Mandrin d'entraînement hexagonal de 1/4 po (manuel) : on enfonce la queue de l'embout dans le mandrin ; pour le retirer, on tire le manchon vers l'avant, on retire l'embout et on relâche le manchon. Environ 21 mm de diamètre (relevé sur la vue de côté)."
+     }
+    ],
+    [
+     "8",
+     "45-88-2653",
+     1,
+     "NYLON WASHER (rondelle en nylon)",
+     {
+      "note": "Entre la bague du carter et le plateau de l'enclume."
+     }
+    ],
+    [
+     "9",
+     "02-02-0170",
+     2,
+     "4.0MM STEEL BALL (bille d'acier de 4 mm)",
+     {
+      "note": "Billes du mandrin, dans la tige de l'enclume : elles retiennent l'embout."
+     }
+    ],
+    [
+     "10",
+     "",
+     1,
+     "1/4\" HEX ANVIL (enclume hexagonale de 1/4 po)",
+     {
+      "nss": true,
+      "note": "Commander l'ensemble 75. Douille à six pans de 1/4 po à l'avant, plateau à deux becs à l'arrière (frappé par le marteau du mécanisme 58). Graisser légèrement la face avant du plateau et mettre un peu de graisse dans les trous des billes (liste de pièces)."
+     }
+    ],
+    [
+     "11",
+     "02-02-1300",
+     1,
+     "5.0MM STEEL BALL (bille d'acier de 5 mm)",
+     {
+      "note": "Entre l'arrière de l'enclume et l'arbre du mécanisme (place supposée)."
+     }
+    ],
+    [
+     "58",
+     "14-46-2759",
+     1,
+     "IMPACTING ASSEMBLY (mécanisme de frappe)",
+     {
+      "note": "Comprend les billes 16 et la couronne 22. Marteau à deux becs, ressort, arbre à rainures et porte-satellites à deux satellites (dessinés d'après la vue éclatée, cotes estimées). Graisser l'intérieur de la couronne et le centre des satellites (liste de pièces)."
+     }
+    ],
+    [
+     "16",
+     "02-02-0180",
+     2,
+     "4.7MM STEEL BALL (bille de came de 4,7 mm)",
+     {
+      "note": "Billes de came entre l'arbre et le marteau."
+     }
+    ],
+    [
+     "22",
+     "32-65-2656",
+     1,
+     "RING GEAR (couronne dentée)",
+     {
+      "note": "Numéro changé par rapport à la liste précédente."
+     }
+    ],
+    [
+     "80",
+     "34-40-0246",
+     1,
+     "O-RING (joint torique)",
+     {
+      "note": "Sur le couvercle 24 ; le carter d'engrenages s'emboîte par-dessus. Numéro changé par rapport à la liste précédente."
+     }
+    ],
+    [
+     "24",
+     "44-66-0418",
+     1,
+     "GEARCASE END CAP WITH BALL BEARING (couvercle arrière du carter, avec roulement à billes)",
+     {
+      "note": "Numéro changé par rapport à la liste précédente."
+     }
+    ],
+    [
+     "59",
+     "16-07-2657",
+     1,
+     "ARMATURE ASSEMBLY (induit)",
+     {
+      "note": "Moteur à balais : pignon à l'avant (il entraîne les satellites), ventilateur, paquet de tôles bobiné, collecteur. Graisser le pignon (liste de pièces). Cotes estimées."
+     }
+    ],
+    [
+     "26",
+     "18-01-2657",
+     1,
+     "FIELD ASSEMBLY (inducteur)",
+     {
+      "note": "Carcasse et aimants permanents autour de l'induit (« moteur 4 pôles » du fabricant : quatre aimants montrés). Cotes estimées."
+     }
+    ],
+    [
+     "31",
+     "22-22-2657",
+     1,
+     "BRUSH CARD ASSEMBLY (porte-balais)",
+     {
+      "note": "Comprend les repères 32, 33, 71, 72, 73 et 74. Quatre cages de balais ; fil rouge à gauche (L), fil noir à droite (R), d'après le détail de la page P01."
+     }
+    ],
+    [
+     "32",
+     "45-88-1980",
+     2,
+     "SPRING WASHER (rondelle élastique)",
+     {}
+    ],
+    [
+     "33",
+     "05-88-0926",
+     2,
+     "M3 X 5MM PAN HD. T-10 SCREW (vis des bornes du porte-balais)",
+     {}
+    ],
+    [
+     "71",
+     "",
+     1,
+     "LEADWIRE ASSEMBLY - BLACK - RIGHT SIDE (fil noir, côté droit)",
+     {
+      "nss": true,
+      "note": "Commander le porte-balais 31 ou la trousse 76. Trajet jusqu'à l'interrupteur supposé (voir le câblage, page P02)."
+     }
+    ],
+    [
+     "72",
+     "",
+     1,
+     "LEADWIRE ASSEMBLY - RED - LEFT SIDE (fil rouge, côté gauche)",
+     {
+      "nss": true,
+      "note": "Commander le porte-balais 31 ou la trousse 76. Trajet jusqu'à l'interrupteur supposé (voir le câblage, page P02)."
+     }
+    ],
+    [
+     "73",
+     "",
+     2,
+     "BRUSH SPRING - RIGHT (ressort de balai, droit)",
+     {
+      "nss": true,
+      "note": "Commander le porte-balais 31."
+     }
+    ],
+    [
+     "74",
+     "",
+     2,
+     "BRUSH SPRING - LEFT (ressort de balai, gauche)",
+     {
+      "nss": true,
+      "note": "Commander le porte-balais 31."
+     }
+    ],
+    [
+     "76",
+     "14-46-2394",
+     1,
+     "LEADWIRE/SCREW/WASHER KIT (trousse fils, vis et rondelles)",
+     {
+      "group": [
+       "32",
+       "33",
+       "71",
+       "72"
+      ],
+      "note": "Comprend les repères 32, 33, 71 et 72."
+     }
+    ],
+    [
+     "40",
+     "45-24-2657",
+     1,
+     "FORWARD/REVERSE SHUTTLE (inverseur)",
+     {
+      "note": "Commutateur à trois positions (manuel) : poussé d'un côté, marche avant ; de l'autre, marche arrière ; au centre, la gâchette est verrouillée. Il ne se déplace que gâchette relâchée ; attendre l'arrêt complet du moteur avant de le changer de position."
+     }
+    ],
+    [
+     "57",
+     "23-66-2659",
+     1,
+     "ELECTRONICS ASSEMBLY - SINGLE SPEED (ensemble électronique)",
+     {
+      "note": "Comprend l'interrupteur marche-arrêt avec sa gâchette, la carte électronique, la DEL et le bornier de la batterie (liste de pièces). Gâchette à vitesse variable : plus on la presse, plus l'outil tourne vite ; relâchée, le frein électrique arrête l'outil aussitôt. La DEL s'allume quand on presse la gâchette (manuel). Profil de la gâchette relevé sur la vue de côté ; le reste est placé par hypothèse (câblage : page P02)."
+     }
+    ],
+    [
+     "34",
+     "40-50-1090",
+     1,
+     "TERMINAL BLOCK SPRING (ressort du bornier)",
+     {
+      "note": "Place au-dessus du bornier supposée."
+     }
+    ],
+    [
+     "60",
+     "42-70-2653",
+     1,
+     "BELT CLIP ASSEMBLY (agrafe de ceinture complète)",
+     {
+      "group": [
+       "37",
+       "38"
+      ],
+      "note": "Comprend l'agrafe 37 et sa vis 38. Agrafe tout métal, réversible (fabricant) : montrée du côté gauche, comme sur les photos."
+     }
+    ],
+    [
+     "37",
+     "",
+     1,
+     "BELT CLIP (agrafe de ceinture)",
+     {
+      "nss": true,
+      "note": "Commander l'ensemble 60. Contour et ajours relevés sur la vue de côté."
+     }
+    ],
+    [
+     "38",
+     "06-82-0130",
+     1,
+     "6-32 X 5/16\" PAN HD. T-15 MACH. SCREW (vis de l'agrafe)",
+     {}
+    ],
+    [
+     "47",
+     "42-55-2657",
+     1,
+     "CARRYING CASE (coffret de transport)",
+     {
+      "no3d": true,
+      "note": "Dessiné en pictogramme dans la vue éclatée ; ce n'est pas une pièce de l'outil, il n'est pas modélisé."
+     }
+    ],
+    [
+     "77",
+     "10-20-1126",
+     1,
+     "WARNING LABEL (étiquette d'avertissement, non montrée)",
+     {
+      "no3d": true,
+      "note": "Non montrée dans la vue éclatée (liste de pièces) : ni sa place ni sa forme ne sont connues."
+     }
+    ]
+   ]
+  }
+ },
+ "documents": []
+}
