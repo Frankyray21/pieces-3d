@@ -7,6 +7,7 @@ import cleMoletteModels from './models/cle-a-molette/index.js';
 import clesModels from './models/cles-a-tuyau/index.js';
 import clesMixtesModels from './models/cles-mixtes/index.js';
 import cubexModels from './models/cubex-mri-5200/index.js';
+import boschGll5020Models from './models/bosch-gll50-20/index.js';
 import deadManModels from './models/dead-man/index.js';
 import dr1500uModels from './models/dr1500-u/index.js';
 import du311Models from './models/du311/index.js';
@@ -17,6 +18,7 @@ import grillageModels from './models/grillage-cage/index.js';
 import makitaDjr183Models from './models/makita-djr183/index.js';
 import milwaukee2656Models from './models/milwaukee-2656/index.js';
 import pinceSertirModels from './models/pince-a-sertir/index.js';
+import niveau4PiModels from './models/niveau-4-pi/index.js';
 import pinceMonseigneurModels from './models/pince-monseigneur/index.js';
 import plancherModels from './models/plancher-dd/index.js';
 import coffreModels from './models/coffre-dd/index.js';
@@ -45,7 +47,7 @@ import { keyRows } from './ui/rows.js';
 const FEATURES = import.meta.glob(['./ui/features/*.js', '!./ui/features/_*.js'], { eager: true });
 
 // Modèles 3D disponibles par équipement (builders procéduraux).
-const MODELS = { 'cle-a-molette': cleMoletteModels, 'cles-a-tuyau': clesModels, 'cles-mixtes': clesMixtesModels, 'coffre-dd': coffreModels, 'core-knocker': coreKnockerModels, 'cubex-mri-5200': cubexModels, 'dead-man': deadManModels, 'dr1500-u': dr1500uModels, du311: du311Models, 'du311-std': du311StdModels, 'epiroc-ith': epirocModels, 'etui-cle-molette': etuiCleMoletteModels, 'grillage-cage': grillageModels, 'makita-djr183': makitaDjr183Models, 'milwaukee-2656': milwaukee2656Models, 'pince-a-sertir': pinceSertirModels, 'pince-monseigneur': pinceMonseigneurModels, 'pompe-bean-420': pompeBeanModels, 'plancher-dd': plancherModels, 'porte-1801020': porteModels, 'poste-secours': posteSecoursModels, 'poubelle-dd': poubelleModels, 'rack-outil': rackOutilModels, 'rack-tiges-dd': rackModels, 'stm-1500': stmModels, 'support-pipewrench': supportPipewrenchModels, 'table-a-core': tableCoreModels, 'tube-eau': tubeEauModels };
+const MODELS = { 'bosch-gll50-20': boschGll5020Models, 'cle-a-molette': cleMoletteModels, 'cles-a-tuyau': clesModels, 'cles-mixtes': clesMixtesModels, 'coffre-dd': coffreModels, 'core-knocker': coreKnockerModels, 'cubex-mri-5200': cubexModels, 'dead-man': deadManModels, 'dr1500-u': dr1500uModels, du311: du311Models, 'du311-std': du311StdModels, 'epiroc-ith': epirocModels, 'etui-cle-molette': etuiCleMoletteModels, 'grillage-cage': grillageModels, 'makita-djr183': makitaDjr183Models, 'milwaukee-2656': milwaukee2656Models, 'niveau-4-pi': niveau4PiModels, 'pince-a-sertir': pinceSertirModels, 'pince-monseigneur': pinceMonseigneurModels, 'pompe-bean-420': pompeBeanModels, 'plancher-dd': plancherModels, 'porte-1801020': porteModels, 'poste-secours': posteSecoursModels, 'poubelle-dd': poubelleModels, 'rack-outil': rackOutilModels, 'rack-tiges-dd': rackModels, 'stm-1500': stmModels, 'support-pipewrench': supportPipewrenchModels, 'table-a-core': tableCoreModels, 'tube-eau': tubeEauModels };
 // Vue d'ensemble légère : sous-assemblages simplifiés affichés d'abord, remplacés
 // un à un par leur version détaillée (facettes allégées) une fois la vue montrée.
 const OVERVIEW = { 'du311-std': du311StdOverview };

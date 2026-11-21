@@ -584,6 +584,23 @@ pièces (numéro, quantité, page du manuel).
   Cadence ralentie pour la lecture (environ 7 courses par seconde). Le décor
   se limite au bois ; l'opérateur n'est pas montré.
 
+- **Niveau laser à lignes croisées Bosch GLL50-20** (`bosch-gll50-20`) :
+  niveau laser autonivelant à deux lignes rouges (horizontale et verticale),
+  fait à la demande du client sans le manuel ni photo (sites du manuel
+  inaccessibles depuis l'atelier) : seules les données publiées par les
+  détaillants sont reprises telles quelles — environ 107 × 63 × 98 mm
+  (4,2 × 2,5 × 3,9 po), 0,77 lb, classe 2 (< 5 mW, 630 à 650 nm), portée de
+  50 pi, ±5/16 po à 30 pi, autonivellement de 3,5° avec voyant hors niveau,
+  deux piles AA, filetage 1/4-20, support aimanté intégré, IP 55. Formes,
+  couleurs et emplacements (corps bleu, surmoulages des flancs, tête optique
+  noire et sa fenêtre, interrupteur à curseur de blocage du pendule, touche et
+  voyants du dessus, logement des piles, aimants arrière, filetage) sont
+  supposés et signalés dans la fiche ; à corriger d'après une photo ou le
+  manuel. Faisceaux montrés sur 0,15 m (ouverture de 120° supposée, la ligne
+  verticale s'arrête au sol). Pas de vue éclatée (demande du client) : toutes
+  les pièces restent en place (`src/models/bosch-gll50-20/index.js`) ; page
+  P01 : les données publiées.
+
 - **Pince à sertir de 30 po pour manchons de câble (wire line)** (`pince-a-sertir`) :
   pince à sertir manuelle VEVOR à trois empreintes, reconstituée d'après les
   vignettes d'une capture d'écran de recherche d'images (639 × 1 147 pixels ;
@@ -677,6 +694,22 @@ pièces (numéro, quantité, page du manuel).
   mesures du modèle aux plans, vérifie que les maillages sont fermés et calcule
   les masses : 47,9 lb pour la poubelle et 6,85 lb pour le couvercle, pour
   47,9 lb et 6,9 lb aux cartouches.
+
+- **Niveau à bulle de 4 pi (48 po), profilé caisson** (`niveau-4-pi`) : niveau
+  du type Stabila 196-2 de 48 po (n° 37448), reconstitué sans plan ni photo
+  d'après les données publiées par le fabricant et ses détaillants : longueur
+  de 48 po, profilé caisson en aluminium, une fiole horizontale et deux fioles
+  d'aplomb, deux poignées, embouts amortisseurs, masse d'environ 1,2 kg ;
+  section d'environ 60 × 30 mm donnée par les fiches des détaillants (arrondie
+  au centimètre). Supposé : flancs de 2 mm peints en jaune, semelles fraisées
+  de 2,5 mm (faces de mesure en aluminium nu), âme centrale de 1,5 mm, place et
+  taille des fenêtres et des trous de main, fioles de Ø 13 mm tenues par une
+  plaque d'acrylique, embouts de caoutchouc noir creux. Niveau couché : la
+  bulle de la fiole horizontale est entre ses repères, celles des fioles
+  d'aplomb montent au bout du haut. Contrôle de la masse : 1,25 kg calculés
+  contre 1,2 kg publié. La fiche et la page des cotes (P01, vue de côté et
+  section) sont écrites par `tools/niveau_4_pi_fiche.mjs` à partir des cotes
+  du modèle (`src/models/niveau-4-pi/index.js`).
 
 - **Pince-monseigneur Garant CB60PC, 60 po, pointe en biseau**
   (`pince-monseigneur`) : barre-levier forgée d'une seule pièce, reconstituée

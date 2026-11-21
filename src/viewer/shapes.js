@@ -781,12 +781,37 @@ function boltCore(d, len, head) {
     ]);
   }
   const r = d / 2;
-  // Tige : lisse sous la tête, filetée vers le bout (filet suggéré si la vis est visible).
+  // Tire-fond (head 'lag') : tête hexagonale, tige lisse sous la tête puis filet à
+  // bois grossier (≈ 7 filets au pouce en 3/8 po) qui finit en pointe conique.
+  if (head === 'lag' && len > d * 3) return mergeGeo([headGeo, revolveGeo(lagProfile(r, len), 10)]);
   const threadLen = Math.min(len * 0.6, Math.max(d * 2.5, len * 0.4));
   const prof = d >= 0.012 && len > d * 1.5
     ? [[0, -len], ...threadProfile(r, -len, -len + threadLen, { pitch: d * 0.2, maxTurns: 7 }), [r, 0], [0, 0]]
     : cylProfile(r, r, len).map(([x, y]) => [x, y - len / 2]);
   return len > 0 ? mergeGeo([headGeo, revolveGeo(prof, 10)]) : mergeGeo([headGeo]);
+}
+
+/** Profil de la tige d'un tire-fond (tête à y = 0, pointe à y = -len). */
+function lagProfile(r, len) {
+  const tip = r * 3.2; // pointe (gimlet)
+  const threadLen = Math.min(len * 0.62, len - r * 2);
+  const y0 = -len + tip, y1 = -len + threadLen;
+  const root = r * 0.7;
+  const n = Math.max(3, Math.min(24, Math.round((y1 - y0) / (r * 0.75))));
+  const p = (y1 - y0) / n;
+  const out = [[0, -len], [root * 0.25, -len + tip * 0.15]];
+  // Pointe : le filet commence petit et grandit jusqu'au diamètre plein.
+  const tn = 3, tp = (tip * 0.85) / tn;
+  for (let i = 0; i < tn; i++) {
+    const ya = -len + tip * 0.15 + tp * i, k = (i + 1) / tn;
+    out.push([root * (0.35 + 0.65 * k), ya + tp * 0.2], [root + (r - root) * k, ya + tp * 0.55]);
+  }
+  for (let i = 0; i < n; i++) {
+    const ya = y0 + p * i;
+    out.push([root, ya + p * 0.15], [r, ya + p * 0.55], [r, ya + p * 0.62]);
+  }
+  out.push([root, y1], [r, y1 + r * 0.4], [r, 0], [0, 0]);
+  return out;
 }
 
 /** Ressort hélicoïdal le long de l'axe. */

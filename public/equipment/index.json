@@ -1,6 +1,14 @@
 {
   "equipment": [
     {
+      "id": "bosch-gll50-20",
+      "name": "Niveau laser à lignes croisées Bosch GLL50-20",
+      "manufacturer": "Bosch",
+      "category": "Niveau laser autonivelant",
+      "thumbnail": "equipment/bosch-gll50-20/thumbnail.webp",
+      "status": "3D d'après les données publiées seulement (aucun manuel ni photo) : boîtier de 107 × 63 × 98 mm, tête optique et fenêtre, deux lignes rouges croisées, interrupteur de blocage du pendule, touche et voyants, deux piles AA, filetage 1/4-20, aimants ; formes et emplacements supposés, sans vue éclatée"
+    },
+    {
       "id": "cle-a-molette",
       "name": "Clé à molette (Westcott) de 12 po",
       "manufacturer": "Modèle libre (OpenGameArt, CC0)",
@@ -123,6 +131,14 @@
       "category": "Visseuse à chocs sans fil 18 V, 1/4 po hexagonal (outil seul)",
       "thumbnail": "equipment/milwaukee-2656/thumbnail.webp",
       "status": "Vue éclatée de la liste de pièces de service 54-26-2503 (no de série F26D et plus) : 41 lignes avec leurs numéros Milwaukee, toutes en 3D sauf le coffret et l'étiquette ; boîtier relevé sur la vue de côté cotée du fabricant (5,5 po de long, 7,6 po de haut), largeurs et pièces internes estimées"
+    },
+    {
+      "id": "niveau-4-pi",
+      "name": "Niveau à bulle de 4 pi (48 po), profilé caisson",
+      "manufacturer": "Type Stabila 196-2 (cotes publiées)",
+      "category": "Outil de mesure",
+      "thumbnail": "equipment/niveau-4-pi/thumbnail.webp",
+      "status": "3D sans plan ni photo, d'après les données publiées du Stabila 196-2 de 48 po : profilé caisson en aluminium d'environ 60 × 30 mm (détaillants), faces de mesure fraisées, flancs jaunes, fiole horizontale au milieu et deux fioles d'aplomb, deux poignées, embouts amortisseurs ; épaisseurs, fenêtres et poignées supposées, masse calculée de 1,25 kg contre 1,2 kg publié"
     },
     {
       "id": "pince-a-sertir",
