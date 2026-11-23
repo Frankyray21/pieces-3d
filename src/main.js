@@ -1244,10 +1244,17 @@ function bindChrome() {
   }));
 
   const slider = $('#explode');
-  slider.addEventListener('input', () => { S.explode = slider.value / 100; viewer?.setExplode(S.explode, { animate: false }); });
+  slider.addEventListener('input', () => {
+    const avant = S.explode;
+    S.explode = slider.value / 100;
+    viewer?.setExplode(S.explode, { animate: false });
+    // Les fonctions sont prévenues dès que la vue passe d'assemblée à éclatée (ou l'inverse), puis au relâcher.
+    if ((avant < 0.02) !== (S.explode < 0.02)) emitViewState();
+  });
   slider.addEventListener('change', () => {
     if (S.explode < 0.02 && S.expanded.size) { explodeEverything(false); return; }
     viewer?.frame();
+    emitViewState();
   });
   $('#btn-assemble').addEventListener('click', () => explodeEverything(false));
   $('#btn-explode').addEventListener('click', () => setMainExplode(1));

@@ -146,7 +146,7 @@
       "manufacturer": "Tajima — type SLANT 100 (logo lu en partie)",
       "category": "Outil de mesure",
       "thumbnail": "equipment/niveau-a-degres/thumbnail.webp",
-      "status": "3D d'après une photo du client (les 150 premiers millimètres, côté cadran) : boîtier noir, deux règles d'aluminium d'équerre, cadran fixe gradué en degrés (0 à 90, « PLUMB ») et en pente, fiole verte sur tambour pivotant à aiguille rouge, molette bleue, trou de main ; 10 po × 4 3/4 po publiés, bout droit, épaisseur et dos supposés ; base aimantée (indiqué par le client, bande supposée). Sert à vérifier l'angle du rack à tiges, entre 75° et 80° : l'outil fonctionne, on le pose sur le rack, on tourne la molette jusqu'à centrer la bulle et on lit l'angle, conforme ou non"
+      "status": "3D d'après une photo du client (les 150 premiers millimètres, côté cadran) : boîtier noir, deux règles d'aluminium d'équerre, cadran fixe gradué en degrés (0 à 90, « PLUMB ») et en pente, fiole verte sur tambour pivotant à aiguille rouge, molette bleue, trou de main ; 10 po × 4 3/4 po publiés, bout droit, épaisseur et dos supposés ; base aimantée (indiqué par le client, bande supposée). Sert à vérifier l'angle du rack à tiges, entre 75° et 80°, limites à ne pas dépasser en rouge sur le cadran : l'outil fonctionne, on le pose sur le rack, on tourne la molette jusqu'à centrer la bulle et on lit l'angle, conforme ou non"
     },
     {
       "id": "pince-a-sertir",

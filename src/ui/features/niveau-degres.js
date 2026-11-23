@@ -11,14 +11,18 @@
 // - Sur un téléphone, « Suivre le téléphone » lit ses capteurs d'inclinaison : le téléphone
 //   tenu debout remplace l'outil, sa tranche du bas tient lieu de règle de base.
 // - Usage indiqué par le client : vérifier l'angle du rack à tiges, entre 75° et 80°
-//   (procédure PRO-DD-ST-008 du support de tiges de forage, étape 5). Panneau ouvert, la
-//   plage est en vert sur le cadran (repère visuel, absent de l'outil) et le panneau dit si
-//   l'angle lu convient ; « Poser sur le rack » penche la surface comme le support de la
-//   scène d'installation. L'outil est aimanté : il tient seul contre l'acier du rack.
+//   (procédure PRO-DD-ST-008 du support de tiges de forage, étape 5). Les degrés à ne pas
+//   dépasser sont clairement en rouge sur le cadran, en permanence (demande du client) :
+//   traits rouges épais à 75° et à 80°, zones interdites en rouge, zone permise en vert,
+//   étiquette rouge « MIN 75° · MAX 80° » du côté de l'aiguille — repères du site, absents de
+//   l'outil. Le panneau rappelle les deux limites en rouge et dit si l'angle lu convient ;
+//   « Poser sur le rack » penche la surface comme le support de la scène d'installation.
+//   L'outil est aimanté : il tient seul contre l'acier du rack.
 //
 // Les cotes, la place de la bulle et l'angle lu viennent du modèle
 // (src/models/niveau-a-degres/index.js) ; ce module ne fait que l'interface.
 import * as THREE from 'three';
+import { CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer.js';
 import './niveau-degres.css';
 import { L, T, CADRAN, MOLETTE, FIOLE, RAPPORT, RACK, lecture, bulle, placerBulle, regler, mobiles, verdictRack } from '../../models/niveau-a-degres/index.js';
 
@@ -58,7 +62,9 @@ export default {
     let racine = null; // modèle affiché (racine), ou null hors de la page du niveau
     let pieces = null; // pièces mobiles : { tambour, fiole, molette, bulle }
     let surface = null; // bande de la surface mesurée
-    let zone = null; // plage du rack à tiges, en vert sur le cadran
+    let zone = null; // plage du rack à tiges sur le cadran : permis en vert, limites et interdit en rouge
+    let coupe = false; // vue en coupe : la plage, posée sur le couvercle, est masquée
+    let retour = 0; // délai avant de remontrer la plage, le temps que le couvercle revienne de la vue éclatée
     let eclate = 0;
     let bx = 0; // place affichée de la bulle le long de la fiole (mm)
     let image = 0; // requestAnimationFrame en cours
@@ -81,7 +87,10 @@ export default {
         <b class="nvd-deg mono" data-nvd="deg">0,0°</b>
         <span class="nvd-pente" data-nvd="pente"></span>
         <span class="nvd-bulle" data-nvd="bulle" role="status"></span>
-        <span class="nvd-rack" data-nvd="rack"></span>
+        <span class="nvd-rack" data-nvd="rack">
+          <span class="nvd-limites" title="Rack à tiges : limites à ne pas dépasser"><b class="nvd-min">MIN ${RACK.min}°</b><b class="nvd-max">MAX ${RACK.max}°</b></span>
+          <span data-nvd="rack-txt" role="status"></span>
+        </span>
       </div>
       <div class="nvd-champ" data-nvd="champ-pente">
         <label for="nvd-pente">Pente de la surface mesurée</label>
@@ -111,7 +120,7 @@ export default {
         <li>Posez la règle de base sur le poteau du rack à tiges : elle est aimantée, l'outil tient seul contre l'acier et les deux mains restent libres. Ici, penchez la surface ou choisissez « Poser sur le rack à tiges ».</li>
         <li>Tournez la molette bleue jusqu'à ce que la bulle soit entre les deux paires de traits. Dans la vue 3D, tirez la molette ou la fiole.</li>
         <li>Lisez l'angle sous l'aiguille rouge : degrés au-dedans (ANGLE), pouces par pied au-dehors (PITCH). 0 : de niveau ; 90, « PLUMB » : d'aplomb.</li>
-        <li>Rack à tiges : l'aiguille doit être dans la zone verte, entre ${RACK.min}° et ${RACK.max}° (graduations aux 2° : ${RACK.min} se lit entre 74 et 76).</li>
+        <li>Rack à tiges : l'aiguille doit être dans la zone verte, entre les deux traits rouges. <b class="nvd-rouge">Ne pas dépasser ${RACK.max}° ; pas moins de ${RACK.min}°.</b> Graduations aux 2° : ${RACK.min} se lit entre 74 et 76.</li>
       </ol>
       <p class="nvd-source" data-nvd="source">Plage de ${PLAGE} : procédure du support de tiges de forage, étape 5. <button type="button" class="nvd-lien" data-nvd="procedure">Voir la procédure du rack à tiges ›</button></p>`;
     const $ = (nom) => el.querySelector(`[data-nvd="${nom}"]`);
@@ -138,12 +147,12 @@ export default {
       // Loin de la plage (outil à l'horizontale, autre mesure) : pas d'alerte, l'outil n'est pas sur le rack.
       const v = !centree || plat ? 'attente' : l.deg < LOIN ? 'loin' : verdictRack(l.deg);
       rack.dataset.etat = v;
-      rack.textContent = `Rack à tiges, ${PLAGE} : ${{
+      $('rack-txt').textContent = `Rack à tiges : ${{
         attente: 'centrez la bulle pour vérifier',
         loin: 'posez l\'outil sur le poteau du rack',
         conforme: `conforme (${fr(l.deg)}°)`,
-        couche: `trop couché (${fr(l.deg)}°, moins de ${RACK.min}°)`,
-        debout: `trop debout (${fr(l.deg)}°, plus de ${RACK.max}°)`,
+        couche: `trop couché (${fr(l.deg)}°), sous le minimum de ${RACK.min}°`,
+        debout: `trop debout (${fr(l.deg)}°), au-delà du maximum de ${RACK.max}°`,
       }[v]}.`;
       if (document.activeElement !== cPente) cPente.value = String(etat.pente);
       if (document.activeElement !== nPente) nPente.value = String(Math.round(etat.pente * 10) / 10);
@@ -167,38 +176,77 @@ export default {
     }
 
     /**
-     * Plage du rack à tiges sur le cadran : secteurs verts translucides aux quatre endroits où
-     * l'aiguille lit de 75° à 80° (de part et d'autre de chaque « PLUMB »), bordés de rouge pâle
-     * (trop couché, trop debout). Repère visuel posé sur le couvercle, absent de l'outil ;
-     * montré tant que le panneau de mesure est ouvert.
+     * Plage du rack à tiges sur le cadran, montrée en permanence (demande du client : les degrés à
+     * ne pas dépasser clairement en rouge). Aux quatre endroits où l'aiguille lit de 75° à 80°, de
+     * part et d'autre de chaque « PLUMB » : zone permise en vert, zones interdites en rouge (trop
+     * couché, trop debout), trait rouge épais à chaque limite ; et une étiquette rouge
+     * « MIN 75° · MAX 80° » du côté où se trouve l'aiguille. Repères du site posés sur le
+     * couvercle, absents de l'outil ; masqués en vue éclatée et en coupe.
      */
     function creerZone() {
       const g = new THREE.Group();
       const teinte = (color, opacity) => new THREE.MeshBasicMaterial({ color, transparent: true, opacity, depthWrite: false, toneMapped: false, side: THREE.DoubleSide });
-      const vert = teinte(0x1fb85a, 0.5), rouge = teinte(0xe03a2e, 0.2);
+      const vert = teinte(0x1fb85a, 0.5), rouge = teinte(0xe0221c, 0.5);
+      const trait = new THREE.MeshBasicMaterial({ color: 0xd8141c, toneMapped: false, side: THREE.DoubleSide });
       const r0 = (CADRAN.rTrou + 0.4) * MM, r1 = (CADRAN.rArc + 4.6) * MM;
-      /** Secteurs où l'aiguille lit de v0 à v1 : la lecture v est à l'angle polaire 90 − v et à ses trois symétriques. */
+      const muet = (m) => { m.raycast = () => {}; return m; }; // ni survol ni clic
+      /** Angles polaires (degrés) où l'aiguille lit v : 90 − v et ses trois symétriques. */
+      const ou = (v) => [90 - v, 90 + v, 270 - v, 270 + v];
+      /** Secteurs où l'aiguille lit de v0 à v1. */
       const secteurs = (v0, v1, mat) => {
-        for (const debut of [90 - v1, 90 + v0, 270 - v1, 270 + v0]) {
-          const m = new THREE.Mesh(new THREE.RingGeometry(r0, r1, 12, 1, debut * RAD, (v1 - v0) * RAD), mat);
-          m.raycast = () => {}; // ni survol ni clic
-          g.add(m);
-        }
+        for (const debut of [90 - v1, 90 + v0, 270 - v1, 270 + v0]) g.add(muet(new THREE.Mesh(new THREE.RingGeometry(r0, r1, 12, 1, debut * RAD, (v1 - v0) * RAD), mat)));
       };
-      // Comme dans la scène d'installation du rack : permis en vert, trop couché et trop debout en rouge pâle.
       secteurs(RACK.min, RACK.max, vert);
       secteurs(RACK.min - 10, RACK.min, rouge);
       secteurs(RACK.max, 90, rouge);
+      // Limites : trait rouge plein, des chiffres du cadran jusqu'au bord du couvercle.
+      const t0 = CADRAN.rChiffres + 1.9, t1 = CADRAN.rCouvercle - 2.2;
+      for (const v of [RACK.min, RACK.max]) for (const a of ou(v)) {
+        const m = muet(new THREE.Mesh(new THREE.PlaneGeometry((t1 - t0) * MM, 0.75 * MM), trait));
+        m.position.set(((t0 + t1) / 2) * MM * Math.cos(a * RAD), ((t0 + t1) / 2) * MM * Math.sin(a * RAD), 0.05 * MM);
+        m.rotation.z = a * RAD;
+        g.add(m);
+      }
+      // Étiquette des limites : toujours lisible, quel que soit le zoom ; cachée quand le cadran est vu de dos.
+      const el = document.createElement('div');
+      el.className = 'nvd-etiquette';
+      el.innerHTML = `<b>MIN ${RACK.min}°</b><b>MAX ${RACK.max}°</b>`;
+      el.title = `Rack à tiges : ne pas dépasser ${RACK.max}°, pas moins de ${RACK.min}°`;
+      const etiquette = new CSS2DObject(el);
+      const n = new THREE.Vector3(), o = new THREE.Vector3();
+      etiquette.onBeforeRender = (_r, _s, camera) => {
+        n.set(0, 0, 1).transformDirection(etiquette.matrixWorld);
+        o.setFromMatrixPosition(etiquette.matrixWorld);
+        el.style.visibility = n.dot(o.sub(camera.position)) < 0 ? '' : 'hidden';
+      };
+      g.add(etiquette);
+      g.userData.etiquette = etiquette;
       const c = CADRAN.couvercle;
       g.position.set(CADRAN.x * MM, CADRAN.y * MM, (T / 2 + c.jour + c.ep + 0.15) * MM);
       g.userData.stepOnly = true; // hors du cadrage du modèle
-      g.visible = false;
       return g;
+    }
+    /** L'étiquette des limites se tient près de la plage la plus proche de l'aiguille (à égalité : en haut à droite). */
+    function placerEtiquette() {
+      if (!zone) return;
+      const milieu = 90 - (RACK.min + RACK.max) / 2;
+      const aiguille = 90 + etat.cadran;
+      let mieux = milieu, ecart = Infinity;
+      for (const a of [milieu, 180 - milieu, 180 + milieu, 360 - milieu]) {
+        const d = Math.abs(tour(a - aiguille));
+        if (d < ecart - 1e-6) { ecart = d; mieux = a; }
+      }
+      const r = (CADRAN.rCouvercle + 10) * MM;
+      zone.userData.etiquette.position.set(r * Math.cos(mieux * RAD), r * Math.sin(mieux * RAD), 0);
     }
     const montrerZone = () => {
       if (!zone) return;
-      const v = ctx.ui.sidePanel.has(ID);
-      if (zone.visible !== v) { zone.visible = v; ctx.viewer.invalidate(); }
+      clearTimeout(retour);
+      const v = eclate <= 0.02 && !coupe;
+      if (zone.visible === v) return;
+      // Retour de la vue éclatée : la plage attend que le couvercle soit revenu à sa place.
+      if (v) retour = setTimeout(() => { if (zone && eclate <= 0.02 && !coupe) { zone.visible = true; ctx.viewer.invalidate(); } }, reduit.matches ? 0 : 700);
+      else { zone.visible = false; ctx.viewer.invalidate(); }
     };
 
     /** Pose le modèle selon l'état ; la bulle suit en glissant (boucle). */
@@ -209,6 +257,7 @@ export default {
       const b = bulle(haut(), etat.cadran);
       if (sec || reduit.matches) bx = b.x;
       placerBulle(pieces.bulle, { ...b, x: bx });
+      placerEtiquette();
       afficher();
       ctx.viewer.invalidate();
       if (Math.abs(b.x - bx) > 0.01 || anim) lancer();
@@ -235,6 +284,7 @@ export default {
       bx += (b.x - bx) * (1 - Math.exp(-dt / TAU));
       if (Math.abs(b.x - bx) < 0.01) bx = b.x;
       placerBulle(pieces.bulle, { ...b, x: bx });
+      placerEtiquette();
       afficher();
       ctx.viewer.invalidate();
       if (anim || bx !== b.x) image = requestAnimationFrame(pas);
@@ -257,7 +307,8 @@ export default {
       const c = racine.localToWorld(new THREE.Vector3(CADRAN.x * MM, CADRAN.y * MM, (T / 2) * MM));
       // De face, puis cadré dans la partie de la scène que le panneau laisse libre.
       ctx.viewer.lookAt([c.x, c.y, c.z + 0.4], [c.x, c.y, c.z], { instant: true });
-      const r = (CADRAN.rCouvercle + 6) * MM;
+      // Marge autour du couvercle : l'étiquette des limites du rack, posée juste dehors, reste dans le cadre.
+      const r = (CADRAN.rCouvercle + 23) * MM;
       ctx.viewer.frame(new THREE.Box3(new THREE.Vector3(c.x - r, c.y - r, c.z - T * MM), new THREE.Vector3(c.x + r, c.y + r, c.z)));
     }
 
@@ -267,8 +318,8 @@ export default {
       if (!pieces.tambour || !pieces.fiole || !pieces.bulle) { racine = null; return; }
       surface = creerSurface();
       zone = creerZone();
+      zone.visible = eclate <= 0.02 && !coupe;
       racine.add(surface, zone);
-      montrerZone();
       poser({ sec: true });
     }
 
@@ -276,6 +327,7 @@ export default {
       if (image) cancelAnimationFrame(image);
       image = 0;
       anim = null;
+      clearTimeout(retour);
       racine = pieces = surface = zone = null;
       capteur(false);
     }
@@ -451,12 +503,12 @@ export default {
       onClick: () => (ctx.ui.sidePanel.owner === ID ? ctx.ui.sidePanel.close() : ouvrir()),
     });
     bouton.hidden = true;
-    ctx.on('sidepanel', ({ open, owner }) => {
-      if (owner === ID) bouton.setAttribute('aria-pressed', String(open));
-      // Panneau ouvert, replié, recouvert par la fiche ou repris par un autre mode : la zone verte suit.
+    ctx.on('sidepanel', ({ open, owner }) => { if (owner === ID) bouton.setAttribute('aria-pressed', String(open)); });
+    ctx.on('view-state', ({ explode, section }) => {
+      eclate = explode || 0;
+      coupe = !!section?.on;
       montrerZone();
     });
-    ctx.on('view-state', ({ explode }) => { eclate = explode || 0; });
     ctx.on('equipment', ({ id }) => {
       // Le lien vers la procédure n'est offert que si le rack à tiges est au catalogue.
       $('source').hidden = !ctx.index.some((e) => e.id === RACK_EQ);

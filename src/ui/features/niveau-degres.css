@@ -8,7 +8,16 @@
 .nvd-pente { font-size: 15px; font-variant-numeric: tabular-nums; }
 .nvd-bulle { margin-top: 6px; padding: 6px 9px; border-radius: 7px; font-size: 13px; background: var(--warn-soft); color: var(--warn); }
 .nvd-bulle[data-etat='ok'] { background: color-mix(in srgb, #1f9d55 16%, var(--surface)); color: color-mix(in srgb, #1f9d55 72%, var(--ink)); }
-.nvd-rack { margin-top: 4px; padding: 6px 9px; border-radius: 7px; font-size: 13px; background: var(--surface); color: var(--muted); border: 1px solid var(--line); }
+.nvd-rack { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin-top: 4px; padding: 6px 9px; border-radius: 7px; font-size: 13px; background: var(--surface); color: var(--muted); border: 1px solid var(--line); }
+/* Limites du rack à tiges : toujours en rouge, blanc sur rouge (lisible en clair comme en sombre). */
+.nvd-limites { display: inline-flex; gap: 4px; flex: none; }
+.nvd-limites b, .nvd-etiquette b {
+  padding: 2px 7px; border-radius: 5px; background: #c8141c; color: #fff; font-family: var(--f-mono); font-size: 12px; font-weight: 600; letter-spacing: 0.02em; white-space: nowrap;
+}
+.nvd-rack[data-etat='couche'] .nvd-min, .nvd-rack[data-etat='debout'] .nvd-max { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px #c8141c; }
+.nvd-rouge { color: var(--error); }
+/* Étiquette des limites posée sur la vue 3D, près de la plage du cadran. */
+.nvd-etiquette { display: flex; gap: 3px; padding: 3px; border-radius: 7px; background: #fff; box-shadow: 0 1px 5px rgba(0, 0, 0, 0.45); pointer-events: none; }
 .nvd-rack[data-etat='conforme'] { border-color: transparent; background: color-mix(in srgb, #1f9d55 16%, var(--surface)); color: color-mix(in srgb, #1f9d55 72%, var(--ink)); font-weight: 600; }
 .nvd-rack[data-etat='couche'], .nvd-rack[data-etat='debout'] { border-color: transparent; background: var(--error-soft); color: var(--error); font-weight: 600; }
 .nvd-champ { display: grid; gap: 4px; }

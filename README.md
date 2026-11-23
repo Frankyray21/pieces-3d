@@ -741,10 +741,13 @@ pièces (numéro, quantité, page du manuel).
   la molette, « Cadran de face » cadre le cadran ; sur un téléphone, « Suivre
   le téléphone » lit ses capteurs d'inclinaison (le téléphone tenu debout
   remplace l'outil). Rack à tiges : « Poser sur le rack à tiges » penche la
-  surface à 78°, comme le support de la scène d'installation ; panneau ouvert,
-  la plage de 75° à 80° est en vert sur le cadran, bordée de rouge pâle (repère
-  visuel, absent de l'outil), et le panneau dit, bulle centrée, si l'angle lu
-  est conforme, trop couché ou trop debout, avec un lien vers la procédure du
+  surface à 78°, comme le support de la scène d'installation. Les degrés à ne
+  pas dépasser sont en rouge sur le cadran, en permanence (demande du client) :
+  trait rouge épais à 75° et à 80°, zones interdites en rouge, zone permise en
+  vert, étiquette rouge « MIN 75° · MAX 80° » du côté de l'aiguille — repères
+  du site, absents de l'outil, masqués en vue éclatée et en coupe. Le panneau
+  rappelle les deux limites en rouge et dit, bulle centrée, si l'angle lu est
+  conforme, trop couché ou trop debout, avec un lien vers la procédure du
   rack. La place de la bulle, la pose sur la pente, la lecture et le verdict
   sont dans le modèle (`bulle()`, `regler()`, `lecture()`, `verdictRack()` de
   `src/models/niveau-a-degres/index.js`), contrôlées par
