@@ -828,6 +828,28 @@ pièces (numéro, quantité, page du manuel).
   où Garant publie 1 1/8 po. La fiche et la page du relevé (P02) sont écrites
   par `tools/pince_monseigneur_fiche.mjs` à partir des cotes du modèle.
 
+- **Ruban de cerclage à filaments Uline S-5736, 1 po × 60 verges**
+  (`ruban-cerclage-s5736`) : un rouleau de ruban adhésif renforcé de filaments
+  de verre, reconstitué d'après la photo de la fiche du produit fournie par le
+  client (P01) et les données publiées par Uline, sans plan. Publié : largeur
+  de 1 po, longueur de 60 verges, épaisseur de 4,0 mil, résistance à la
+  traction de 100 lb, filaments de verre (la fiche complète n'a pas pu être
+  consultée : ces données viennent des résultats de recherche qui la citent).
+  Calculé : le Ø extérieur de 116,8 mm, soit environ 176 spires — 54,86 m de
+  ruban de 0,1016 mm occupent une couronne de 55,7 cm² autour du mandrin.
+  Relevé sur la photo : le mandrin de carton kraft (Ø intérieur pris à 3 po,
+  paroi d'environ 2,4 mm), son intérieur blanc imprimé de logos bleus (deux
+  visibles à 90°, donc quatre par tour), 15 mèches de filaments en travers du
+  ruban, l'amorce déroulée d'environ 115 mm qui descend du rouleau et se couche
+  sur le sol, dos vers le haut. Le rapport Ø du mandrin / Ø du rouleau mesuré
+  sur la photo (0,70) s'accorde avec celui du calcul (0,69), ce qui confirme le
+  mandrin de 3 po, non publié. Non trouvé : matière du film et de la colle,
+  masse. Le rouleau est debout sur sa tranche, comme sur la photo ; en vue
+  éclatée, le mandrin sort par la face avant ; la coupe proposée passe par
+  l'axe. La fiche et la page des cotes (P02, vue de face et coupe par l'axe)
+  sont écrites par `tools/ruban_cerclage_fiche.mjs` à partir des cotes du
+  modèle (`src/models/ruban-cerclage-s5736/index.js`).
+
 - **Pompe à pistons Bean 420 (FMC L0918 / American AL0918B)**
   (`pompe-bean-420`) : pompe triplex à pistons de 2 1/4 × 2 1/4 po, 20,2 gal
   US/min à 625 tr/min, 700 lb/po², 200 lb, à réducteur de 3,6:1 dans le carter.

@@ -229,6 +229,14 @@
       "status": "3D de la procédure d'installation (août 2024) et du rapport de certification Forcetech : support incliné à 78°, ancré au boulon à œil, 184 tiges NQ en quinconce, chaîne de retenue ; montage en 15 étapes"
     },
     {
+      "id": "ruban-cerclage-s5736",
+      "name": "Ruban de cerclage à filaments Uline S-5736, 1 po × 60 verges",
+      "manufacturer": "Uline",
+      "category": "Ruban adhésif renforcé de filaments de verre",
+      "thumbnail": "equipment/ruban-cerclage-s5736/thumbnail.webp",
+      "status": "3D d'après la photo de la fiche du produit et les données publiées : 1 po × 60 verges, 4,0 mil, 100 lb, filaments de verre ; Ø extérieur calculé de 116,8 mm (environ 176 spires sur un mandrin de carton de 3 po, confirmé par les proportions de la photo) ; 15 mèches de filaments, logos de l'intérieur du mandrin et amorce déroulée relevés sur la photo"
+    },
+    {
       "id": "stm-1500",
       "name": "Usinage Marcotte STM-1500",
       "manufacturer": "Usinage Marcotte",

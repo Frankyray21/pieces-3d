@@ -1,0 +1,108 @@
+{
+ "id": "ruban-cerclage-s5736",
+ "name": "Ruban de cerclage à filaments Uline S-5736, 1 po × 60 verges",
+ "manufacturer": "Uline",
+ "category": "Ruban adhésif renforcé de filaments de verre",
+ "serial": "",
+ "document": {
+  "title": "Photo de la fiche du produit, données publiées (aucun plan) et cotes relevées ou calculées",
+  "reference": "S-5736",
+  "preparedBy": "",
+  "date": "",
+  "sheets": 2,
+  "pagePattern": "pages/{sheet}.webp"
+ },
+ "specs": [
+  [
+   "Source",
+   "Photo de la fiche du produit Uline S-5736, fournie par le client (P01), et données publiées par Uline. Aucun plan. La fiche complète n'a pas pu être consultée (site inaccessible d'ici) : les données publiées viennent des résultats de recherche qui la citent"
+  ],
+  [
+   "Données publiées",
+   "Ruban de cerclage économique (« Economy Strapping Tape »), modèle S-5736 : 1 po × 60 verges ; épaisseur de 4,0 mil ; résistance à la traction de 100 lb ; renforcé de filaments de verre ; pour les travaux légers ; 36 rouleaux par caisse"
+  ],
+  [
+   "Largeur",
+   "1 po (25,4 mm) — donnée publiée"
+  ],
+  [
+   "Longueur",
+   "60 verges (54,86 m) — donnée publiée ; 54,75 m encore enroulés sur le modèle, 114,6 mm d'amorce déroulée"
+  ],
+  [
+   "Épaisseur",
+   "4,0 mil (0,102 mm) — donnée publiée"
+  ],
+  [
+   "Résistance à la traction",
+   "100 lb — donnée publiée, reprise telle quelle"
+  ],
+  [
+   "Diamètre extérieur",
+   "Ø extérieur calculé : 116,8 mm (environ 4 5/8 po). 54,86 m de ruban de 0,1016 mm occupent une couronne de 55,7 cm² autour du mandrin de Ø 81,0 mm : D = √(d² + 4·L·e/π), soit environ 176 spires. Un rouleau réel est un peu plus gros (air entre les spires) ou plus petit (colle écrasée) : le diamètre n'est pas publié"
+  ],
+  [
+   "Mandrin",
+   "Carton kraft, Ø intérieur de 3 po (76,2 mm), paroi de 2,4 mm (2,1 à 2,4 mm relevés sur la photo), Ø extérieur de 81,0 mm, de la largeur du ruban. Intérieur de papier blanc imprimé de logos Uline (rectangle bleu, lettres blanches) : deux sont visibles sur la photo, à 90° l'un de l'autre, soit 4 par tour (un tous les 59,8 mm) ; rectangle d'environ 28 mm × 11 mm, longueur supposée"
+  ],
+  [
+   "Accord photo et calcul",
+   "Sur la photo, le bord de carton du mandrin mesure 116 pixels de large et la face du rouleau 166 : rapport de 0,70, contre 0,69 au calcul avec un mandrin de 3 po. Un mandrin de 1 1/2 po donnerait 0,45 : le mandrin de 3 po, qui n'est pas publié, est confirmé par la photo"
+  ],
+  [
+   "Filaments",
+   "15 mèches de filaments de verre dans le sens de la longueur, comptées sur la photo (à une près) : une tous les 1,7 mm environ. Largeur et place des mèches légèrement inégales, comme sur la photo"
+  ],
+  [
+   "Amorce déroulée",
+   "Environ 114,6 mm (4 1/2 po), relevés sur la photo à 15 % près : le ruban quitte le rouleau à 15° au-dessus de l'horizontale, descend droit sur 56,9 mm, se couche par un arc de 25 mm de rayon et reste à plat sur 25 mm, dos vers le haut, colle contre le sol. Sur la photo, l'amorce dévie d'une dizaine de degrés vers l'avant : elle est faite droite"
+  ],
+  [
+   "Encombrement",
+   "178,6 mm de long (rouleau et amorce) × 116,8 mm de haut × 25,4 mm de large ; rouleau debout sur sa tranche, comme sur la photo"
+  ],
+  [
+   "Non publié, non modélisé",
+   "Matière du film et de la colle, masse du rouleau : non trouvées dans les données consultées. La spirale des spires (0,1 mm par tour) n'est pas dessinée : le rouleau est une couronne pleine"
+  ]
+ ],
+ "weights": [],
+ "sheetTitles": {
+  "P01": "Photo de la fiche du produit (Uline S-5736), fournie par le client",
+  "P02": "Cotes du rouleau : vue de face et coupe par l'axe (publiées, calculées, relevées)"
+ },
+ "root": "P01",
+ "assemblies": {
+  "P01": {
+   "title": "ECONOMY STRAPPING TAPE, 1 IN X 60 YDS",
+   "titleFr": "Ruban de cerclage à filaments, 1 po × 60 verges",
+   "pn": "S-5736",
+   "sheets": [
+    "P01",
+    "P02"
+   ],
+   "note": "Reconstitution 3D d'après la photo de la fiche du produit (P01) et les données publiées par Uline : 1 po × 60 verges, 4,0 mil, 100 lb, filaments de verre. Ø extérieur calculé : 116,8 mm (environ 4 5/8 po). 54,86 m de ruban de 0,1016 mm occupent une couronne de 55,7 cm² autour du mandrin de Ø 81,0 mm : D = √(d² + 4·L·e/π), soit environ 176 spires. Un rouleau réel est un peu plus gros (air entre les spires) ou plus petit (colle écrasée) : le diamètre n'est pas publié. Sur la photo, le bord de carton du mandrin mesure 116 pixels de large et la face du rouleau 166 : rapport de 0,70, contre 0,69 au calcul avec un mandrin de 3 po. Un mandrin de 1 1/2 po donnerait 0,45 : le mandrin de 3 po, qui n'est pas publié, est confirmé par la photo. Relevé sur la photo : la paroi du mandrin, ses logos, les 15 mèches de filaments et le trajet de l'amorce. Le rouleau est debout sur sa tranche, l'amorce déroulée vers la droite ; en vue éclatée, le mandrin sort par la face avant.",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "MANDRIN de carton, Ø int. 3 po × 1 po",
+     {
+      "note": "Carton kraft, paroi de 2,4 mm (Ø extérieur de 81,0 mm), intérieur blanc imprimé de 4 logos Uline par tour. Ø intérieur non publié : 3 po, confirmé par les proportions de la photo."
+     }
+    ],
+    [
+     "2",
+     "S-5736",
+     1,
+     "RUBAN DE CERCLAGE à filaments de verre, 1 po × 60 verges, 4,0 mil",
+     {
+      "note": "Environ 176 spires, Ø extérieur calculé de 116,8 mm ; 15 mèches de filaments dans le sens de la longueur ; amorce déroulée d'environ 114,6 mm, dos vers le haut. Résistance à la traction publiée : 100 lb."
+     }
+    ]
+   ]
+  }
+ },
+ "documents": []
+}
