@@ -711,14 +711,16 @@ pièces (numéro, quantité, page du manuel).
   section) sont écrites par `tools/niveau_4_pi_fiche.mjs` à partir des cotes
   du modèle (`src/models/niveau-4-pi/index.js`).
 
-- **Clé à tube pleine prise, grosseur N (tube intérieur de carottier)**
+- **Clé à tube pleine prise au carbure, grosseur N (tube intérieur de carottier)**
   (`cle-a-tube`) : clé à tube « pleine prise » (full grip tube wrench)
   reconstituée d'après une photo du client — deux clés pendues à un mur, vues
-  presque par la tranche, manches coupés par le bas de la photo — et la photo
-  du même type de clé publiée par TIME Limited (« Tube wrenches », vue à plat),
-  que le client a reconnue. Aucun plan, aucune cote publiée, aucune marque
-  lisible : le fabricant n'est pas identifié (clés du même type aux
-  catalogues : TIME Limited 92-21-460, Fordia / Epiroc 3760006031). Seule cote
+  presque par la tranche, manches coupés par le bas de la photo —, la photo du
+  même type de clé publiée par TIME Limited (« Tube wrenches », vue à plat),
+  que le client a reconnue, et ses indications sur la première version du
+  modèle : la coche qui permet de serrer, les dents de carbure à l'intérieur
+  des mâchoires. Aucun plan, aucune cote publiée, aucune marque lisible : le
+  fabricant n'est pas identifié (clés du même type aux catalogues : TIME
+  Limited 92-21-460 et 92-21-460CBD, Fordia / Epiroc 3760006031). Seule cote
   sûre : le tube intérieur N, Ø 55,6 mm (2 3/16 po), rayon des deux mâchoires ;
   si les clés du client sont celles du tube extérieur N (Ø 73 mm), `TUBE.d`
   est à changer dans `src/models/cle-a-tube/index.js`. Photo du client, à
@@ -726,29 +728,34 @@ pièces (numéro, quantité, page du manuel).
   fourche de 23 mm, manche d'environ 35 × 19 mm), fourche de la mâchoire de
   liaison à cheval sur la tête du manche et sur l'œil du crochet, boulon de
   1/2 po avec rondelle et écrou à l'articulation des mâchoires, axe à tête
-  ronde du manche, fente où paraît le nez du manche, creux du manche. Photo de
-  référence, redressée et mise à l'échelle du tube : place des deux
-  articulations, étendue des arcs, ergot du crochet, nez denté, trou
-  d'accrochage — le tracé du modèle s'y superpose. Supposé et signalé : la
-  longueur du manche (450 mm de l'axe au bout, 569 mm hors tout), le dos de la
-  clé, le bout riveté de l'axe, le profil des dents ; masse calculée de 2,6 kg.
-  **Mécanisme**, lu sur les photos et vérifié par le tracé (pas de notice du
-  fabricant) : les deux mâchoires enveloppent le tube sur 262° ; le manche
-  tourne sur son axe entre les joues et son nez touche le tube en avant de la
-  ligne axe–centre du tube (angle de pression de 13°), où il se coince quand
-  on appuie ; du côté de son bout, le frottement du tube tend à refermer la
-  mâchoire crochet ; dans l'autre sens le nez lâche et la clé reprend sa
-  course. Le rôle de l'ergot du crochet n'est pas établi. P01 : la clé à plat,
-  mâchoire crochet ouverte de 100° comme sur la photo de référence, et sa vue
-  éclatée en 7 pièces (manche, mâchoire de liaison, mâchoire crochet, axe,
-  boulon, rondelle, écrou). P02 : la même sur un tronçon de tube, animée en
-  cinq temps (coiffer le tube, refermer la mâchoire, tirer — le tube tourne
-  avec la clé —, ramener le manche — la clé glisse —, reprendre) ; la course
-  de 35° est un choix de mise en scène. `etat(k)`, `jeuNez()`, `jeuCrochet()`,
-  `passage()` et `momentFrottement()` du modèle sont contrôlées par
-  `scripts/check-cle-a-tube.mjs` (`npm run check:cle-tube`). La fiche et la
-  page des cotes (P02) sont écrites par `tools/cle_a_tube_fiche.mjs` ; P01 est
-  la photo du client, agrandie trois fois.
+  ronde du manche, creux du manche, et ce qui semble être une plaquette de
+  carbure dans sa cuvette au bas de l'anneau. Photo de référence, redressée et
+  mise à l'échelle du tube : place des deux articulations, étendue et
+  épaisseur des arcs, ergot au bout du crochet, trou d'accrochage — le tracé
+  du modèle s'y superpose. Supposé et signalé : la longueur du manche (450 mm
+  de l'axe au bout, 569 mm hors tout), le dos de la clé, le bout riveté de
+  l'axe, la forme de la coche et du talon qui la porte (aucune photo ne la
+  montre de face), le nombre et la place des dents de carbure (3 sur la
+  mâchoire de liaison, 4 sur la mâchoire crochet) ; masse calculée de 2,7 kg.
+  **Mécanisme** (indication du client, mise en forme par le tracé) : les deux
+  mâchoires enveloppent le tube sur 281° ; le bout de la mâchoire crochet
+  porte un ergot sur son dos ; quand on appuie sur le manche, la coche de sa
+  tête coiffe l'ergot et le presse sur le tube, à 33 mm de l'axe pour un
+  manche de 450 mm (effort multiplié par 13 environ) : les mâchoires serrent
+  le tube sur tout son tour et les dents de carbure mordent ; dans l'autre
+  sens, la coche quitte l'ergot et la clé reprend sa course. P01 : la clé à
+  plat, mâchoire crochet ouverte de 100° comme sur la photo de référence, et
+  sa vue éclatée (manche, mâchoire de liaison, mâchoire crochet, axe, boulon,
+  rondelle, écrou, 7 dents de carbure). P02 : la même sur un tronçon de tube,
+  animée en cinq temps (coiffer le tube, refermer la mâchoire, appuyer — la
+  coche prend l'ergot, le tube tourne avec la clé —, ramener le manche — la
+  clé glisse —, reprendre) ; la course de 35° est un choix de mise en scène.
+  `etat(k)`, `heurt()`, `jeuCoche()`, `jeuNez()`, `jeuCrochet()` et
+  `passage()` du modèle sont contrôlées par `scripts/check-cle-a-tube.mjs`
+  (`npm run check:cle-tube`) : le manche et la mâchoire crochet ne se
+  pénètrent à aucun moment de l'animation. La fiche et la page des cotes (P02)
+  sont écrites par `tools/cle_a_tube_fiche.mjs` ; P01 est la photo du client,
+  agrandie trois fois.
 
 - **Niveau à degrés à fiole pivotante (rapporteur d'angle)** (`niveau-a-degres`) :
   outil de mesure d'angle reconstitué d'après une photo du client, sans manuel

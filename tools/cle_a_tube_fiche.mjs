@@ -7,9 +7,9 @@
 // Usage : node tools/cle_a_tube_fiche.mjs [--page <fichier.html>]
 import { writeFileSync } from 'node:fs';
 import {
-  TUBE, R, EP, LARGEUR, AXE_A, AXE_B, LIAISON, CROCHET, MANCHE, NEZ, BOULON, AXE, DENTS, OUVERT, RELACHE, COURSE, ENVELOPPE,
-  PRESSION, HORS_TOUT, BOUT, STEPS, contourCrochet, contourJoue, contourSabot, contourManche, contourCreux, contourTrou,
-  jeuNez, jeuCrochet, passage, dent,
+  TUBE, R, EP, LARGEUR, AXE_A, AXE_B, LIAISON, CROCHET, MANCHE, COCHE, CARBURE, BOULON, AXE, OUVERT, RELACHE, LEVE, COURSE, ENVELOPPE,
+  R_ERGOT, APPUI, BRAS, LEVIER, POUSSEE, MOMENT_COCHE, HORS_TOUT, BOUT, STEPS, contourCrochet, contourJoue, contourSabot, contourManche,
+  contourCreux, contourTrou, jeuNez, jeuCrochet, jeuCoche, heurt, passage, etat,
 } from '../src/models/cle-a-tube/index.js';
 
 const fr = (v, n = 0) => v.toFixed(n).replace('.', ',');
@@ -22,17 +22,23 @@ const po = (v) => { const q = Math.round((v / 25.4) * 8), e = Math.floor(q / 8);
 
 let ok = true;
 const echec = (msg) => { ok = false; console.log(`✕ ${msg}`); };
-if (Math.abs(jeuNez(0)) > 1e-6) echec(`la dent du nez ne touche pas le tube (jeu de ${fr(jeuNez(0), 3)} mm)`);
-if (jeuNez(RELACHE) < 1) echec(`manche relevé, le nez reste à ${fr(jeuNez(RELACHE), 2)} mm du tube`);
+if (Math.abs(jeuCoche(0)) > 1e-6) echec(`le fond de la coche ne porte pas sur l'ergot (jeu de ${fr(jeuCoche(0), 3)} mm)`);
+if (jeuCoche(RELACHE) < 3) echec(`manche relevé, la coche reste à ${fr(jeuCoche(RELACHE), 2)} mm de l'ergot`);
 if (Math.abs(jeuCrochet(0)) > 1e-6) echec(`la mâchoire crochet fermée ne porte pas sur le tube (${fr(jeuCrochet(0), 3)} mm)`);
 for (let phi = 1; phi <= OUVERT; phi++) if (jeuCrochet(phi) <= 0) echec(`la mâchoire crochet entre dans le tube à ${phi}° d'ouverture`);
+for (let psi = 0; psi <= LEVE; psi++) if (jeuNez(psi) < 1) echec(`le manche passe à ${fr(jeuNez(psi), 2)} mm du tube, relevé de ${psi}°`);
 if (passage() < 0.5) echec(`mâchoire ouverte, le tube ne passe pas (${fr(passage(), 2)} mm)`);
+// Le manche et la mâchoire crochet ne se pénètrent à aucun moment de l'animation.
+for (let e = 0; e < 5; e++) for (let t = 0; t <= 1.0001; t += 0.01) {
+  const s = etat([0, 0, 0, 0, 0].map((_, i) => (i < e ? 1 : i === e ? t : 0)));
+  if (heurt(s.phi, s.psi)) { echec(`manche et mâchoire crochet se pénètrent à l'étape ${e + 1} (${fr(t * 100)} %)`); break; }
+}
 // La mâchoire ouverte ne doit pas heurter le sabot de la mâchoire de liaison.
 const dansSabot = (p) => { const r = Math.hypot(p[0], p[1]), a = Math.atan2(p[1], p[0]) * 180 / Math.PI; return r > R && r < R + LIAISON.ep && a > LIAISON.a && a < LIAISON.de; };
 for (let phi = 0; phi <= OUVERT; phi += 2) {
   const c = Math.cos(phi * Math.PI / 180), s = Math.sin(phi * Math.PI / 180);
-  const heurt = contourCrochet().some(([x, y]) => dansSabot([AXE_B.x + (x - AXE_B.x) * c - (y - AXE_B.y) * s, AXE_B.y + (x - AXE_B.x) * s + (y - AXE_B.y) * c]));
-  if (heurt) echec(`la mâchoire crochet heurte le sabot à ${phi}° d'ouverture`);
+  const touche = contourCrochet().some(([x, y]) => dansSabot([AXE_B.x + (x - AXE_B.x) * c - (y - AXE_B.y) * s, AXE_B.y + (x - AXE_B.x) * s + (y - AXE_B.y) * c]));
+  if (touche) echec(`la mâchoire crochet heurte le sabot à ${phi}° d'ouverture`);
 }
 
 // ------------------------------------------------------------------ masse calculée (acier, 7,85 kg/dm³)
@@ -50,28 +56,30 @@ const masse = kg(volume.manche + volume.liaison + volume.crochet) + 0.15; // axe
 // ------------------------------------------------------------------ textes
 
 const OA = Math.hypot(AXE_A.x, AXE_A.y), OB = Math.hypot(AXE_B.x, AXE_B.y);
-const SOURCE = 'Une photo du client : deux clés identiques pendues à un mur, vues presque par la tranche, les manches coupés par le bas de la photo. Et la photo du même type de clé publiée par TIME Limited (« Tube wrenches », vue à plat, mâchoire crochet ouverte), que le client a reconnue comme étant ce modèle. Aucun plan, aucune cote publiée';
+const NB_DENTS = CARBURE.liaison.length + CARBURE.crochet.length;
+const SOURCE = 'Une photo du client : deux clés identiques pendues à un mur, vues presque par la tranche, les manches coupés par le bas de la photo. La photo du même type de clé publiée par TIME Limited (« Tube wrenches », vue à plat, mâchoire crochet ouverte), que le client a reconnue comme étant ce modèle. Et les indications du client sur la première version du modèle : la coche qui permet de serrer, les dents de carbure à l\'intérieur des mâchoires. Aucun plan, aucune cote publiée';
 const IDENT = 'Clé à tube « pleine prise » (full grip tube wrench) pour les tubes de carottier : un manche, deux mâchoires articulées qui font presque le tour du tube. Aucune marque n\'est lisible sur la photo du client ; une joue garde une trace de peinture bleue. Le fabricant n\'est pas identifié';
-const REFS = 'Clés du même type aux catalogues, sans qu\'on sache si ce sont celles du client : TIME Limited 92-21-460 (« WRENCH, N INNER TUBE ») ; Fordia / Epiroc 3760006031 (« Inner tube wrenches », carottier N, catalogue des outils de carottage ITH)';
+const REFS = 'Clés du même type aux catalogues, sans qu\'on sache si ce sont celles du client : TIME Limited 92-21-460 (« WRENCH, N INNER TUBE ») et 92-21-460CBD (la même, au carbure) ; Fordia / Epiroc 3760006031 (« Inner tube wrenches », carottier N, catalogue des outils de carottage ITH)';
 const GROSSEUR = `Grosseur N, prise pour celle du tube intérieur N : Ø ${fr(TUBE.d, 1)} mm (2 3/16 po), le rayon des deux mâchoires. Si les clés du client sont celles du tube extérieur N (Ø 73 mm), les arcs sont à reprendre à ce diamètre`;
-const ECHELLE = `Photo du client : l'ouverture de l'anneau (environ 105 pixels) prise au diamètre du tube, soit 0,53 mm par pixel ; l'épaisseur du manche (environ ${mm(EP.manche)}) et sa largeur (environ ${mm(MANCHE.large)}) s'accordent avec cette échelle, pas avec celle d'un tube de 73 mm. Photo de référence : redressée et mise à l'échelle sur l'arc de la mâchoire de liaison ; les deux articulations, le dos de la mâchoire et le manche du modèle s'y superposent`;
-const MECANISME = `Les deux mâchoires enveloppent le tube sur ${fr(ENVELOPPE)}°. Le manche tourne sur son axe entre les joues de la mâchoire de liaison ; son nez, à ${mm(DENTS[1].r, 1)} de l'axe, touche le tube en avant de la ligne qui joint l'axe au centre du tube (angle de pression de ${fr(PRESSION)}°) : en appuyant sur le manche, la dent se coince contre le tube et le plaque dans les mâchoires — plus on tire, plus elle serre. Du côté de son bout, le frottement du tube tend alors à refermer la mâchoire crochet. Dans l'autre sens, le manche pivote de ${RELACHE}° et son nez s'écarte de ${mm(jeuNez(RELACHE), 1)} : les mâchoires glissent et la clé reprend sa course sans quitter le tube. Elle ne serre que dans un sens : pour tourner dans l'autre, on la retourne. Mécanisme lu sur les photos et vérifié par le tracé, sans notice du fabricant ; le rôle de l'ergot du crochet n'est pas établi`;
-const MODELE = `Sur le site, la page P02 anime la clé sur un tronçon de tube en ${STEPS.length - 1} temps : coiffer le tube (mâchoire crochet ouverte de ${OUVERT}°, il reste ${mm(passage(), 1)} de jeu au passage), refermer la mâchoire, tirer (course de ${COURSE}°, le tube tourne avec la clé), ramener le manche (la clé glisse), reprendre. La course de ${COURSE}° est un choix de mise en scène`;
+const ECHELLE = `Photo du client : l'ouverture de l'anneau (environ 105 pixels) prise au diamètre du tube, soit 0,53 mm par pixel ; l'épaisseur du manche (environ ${mm(EP.manche)}) et sa largeur (environ ${mm(MANCHE.large)}) s'accordent avec cette échelle, pas avec celle d'un tube de 73 mm. Photo de référence : redressée et mise à l'échelle sur l'arc de la mâchoire de liaison ; les deux articulations, le dos de la mâchoire, le manche, l'arc et l'ergot de la mâchoire crochet du modèle s'y superposent`;
+const MECANISME = `Les deux mâchoires enveloppent le tube sur ${fr(ENVELOPPE)}° ; le bout de la mâchoire crochet porte un ergot sur son dos. Le manche tourne sur son axe entre les joues de la mâchoire de liaison. Quand on appuie sur le manche, la coche de sa tête vient coiffer l'ergot et son fond le presse sur le tube, presque droit vers son centre (à ${fr(POUSSEE)}° près), à ${fr(BRAS)} mm de l'axe pour un manche de ${mm(MANCHE.long)} : l'effort de la main est multiplié par ${fr(LEVIER)} environ. Les mâchoires serrent le tube sur tout son tour et leurs dents de carbure mordent. Dans l'autre sens, le manche pivote de ${RELACHE}° et la coche s'écarte de l'ergot de ${mm(jeuCoche(RELACHE), 1)} : les mâchoires prennent du jeu et la clé reprend sa course sans quitter le tube. Elle ne serre que dans un sens : pour tourner dans l'autre, on la retourne. La coche est une indication du client ; sa forme, que les photos ne montrent pas de face, est celle qui fait fonctionner le tracé (le manche et la mâchoire crochet ne se heurtent à aucun moment)`;
+const MODELE = `Sur le site, la page P02 anime la clé sur un tronçon de tube en ${STEPS.length - 1} temps : coiffer le tube (mâchoire crochet ouverte de ${OUVERT}°, manche relevé de ${LEVE}°), refermer la mâchoire, appuyer (la coche prend l'ergot, course de ${COURSE}°, le tube tourne avec la clé), ramener le manche (la clé glisse), reprendre. La course de ${COURSE}° est un choix de mise en scène`;
 
 const pieces = [
-  ['1', '', 1, `MANCHE forgé à nez denté, ${mm(MANCHE.long)} de l'axe au bout`, { pseudo: true, note: `Section d'environ ${mm(MANCHE.large)} × ${mm(EP.manche)} à la tête (photo du client), ${mm(MANCHE.bout)} de large au bout ; âme de ${mm(EP.ame)} au fond d'un creux sur chaque face, trou d'accrochage oblong de ${mm(MANCHE.trou.long)} × ${mm(MANCHE.trou.large)} (photo de référence). Nez à trois dents : celle du milieu touche le tube, celle du bas prend le relais ${NEZ.relais}° plus loin. Longueur supposée : le manche est coupé par le bas de la photo du client ; elle suit les proportions de la photo de référence. Profil des dents supposé.` }],
-  ['2', '', 1, `MÂCHOIRE DE LIAISON en fourche, ${mm(LARGEUR)} de large`, { pseudo: true, note: `Deux joues de ${mm(EP.joue)}, de l'axe du manche au boulon, à cheval sur la tête du manche et sur l'œil de la mâchoire crochet (jour de ${mm(EP.fourche)}) ; entre elles, un sabot qui porte sur le tube sur ${LIAISON.de - LIAISON.a}°, épais de ${mm(LIAISON.ep)}. Entraxe de ${mm(Math.hypot(AXE_B.x - AXE_A.x, AXE_B.y - AXE_A.y), 1)}. D'une pièce ou assemblée : la photo ne le montre pas. La fente où paraît le nez du manche est le jour de la fourche.` }],
-  ['3', '', 1, `MÂCHOIRE CROCHET à ergot, ${mm(EP.crochet)} de large`, { pseudo: true, note: `Arc de prise de ${CROCHET.de - CROCHET.a}°, épais de ${mm(CROCHET.ep)}, qui commence sous le boulon : la mâchoire s'écarte du tube dès qu'elle s'ouvre. Ergot de ${mm(CROCHET.ergot.large)} × ${mm(CROCHET.ergot.haut)} au bout, sur le dos (photo de référence) : sans doute pour la saisir, son rôle n'est pas établi. Épaisseur radiale estimée sur la photo de référence.` }],
+  ['1', '', 1, `MANCHE forgé à coche, ${mm(MANCHE.long)} de l'axe au bout`, { pseudo: true, note: `Section d'environ ${mm(MANCHE.large)} × ${mm(EP.manche)} à la tête (photo du client), ${mm(MANCHE.bout)} de large au bout ; âme de ${mm(EP.ame)} au fond d'un creux sur chaque face, trou d'accrochage oblong de ${mm(MANCHE.trou.long)} × ${mm(MANCHE.trou.large)} (photo de référence). Tête : un nez qui longe le tube à ${mm(COCHE.nez, 1)} sans le toucher, et sous lui la coche qui coiffe l'ergot de la mâchoire crochet, fermée par une dent ; son fond appuie sur l'ergot à ${mm(BRAS, 1)} de l'axe. Longueur supposée : le manche est coupé par le bas de la photo du client ; elle suit les proportions de la photo de référence. Coche indiquée par le client ; sa forme et le talon qui la porte sont supposés.` }],
+  ['2', '', 1, `MÂCHOIRE DE LIAISON en fourche, ${mm(LARGEUR)} de large`, { pseudo: true, note: `Deux joues de ${mm(EP.joue)}, de l'axe du manche au boulon, à cheval sur la tête du manche et sur l'œil de la mâchoire crochet (jour de ${mm(EP.fourche)}) ; entre elles, un sabot qui porte sur le tube sur ${LIAISON.de - LIAISON.a}°, épais de ${mm(LIAISON.ep)}, garni de ${CARBURE.liaison.length} dents de carbure. Entraxe de ${mm(Math.hypot(AXE_B.x - AXE_A.x, AXE_B.y - AXE_A.y), 1)}. D'une pièce ou assemblée : la photo ne le montre pas.` }],
+  ['3', '', 1, `MÂCHOIRE CROCHET à ergot, ${mm(EP.crochet)} de large`, { pseudo: true, note: `Arc de prise de ${CROCHET.de - CROCHET.a}°, épais de ${mm(CROCHET.ep)} (photo de référence), garni de ${CARBURE.crochet.length} dents de carbure ; il commence sous le boulon : la mâchoire s'écarte du tube dès qu'elle s'ouvre. Ergot de ${mm(CROCHET.ergot.large)} × ${mm(CROCHET.ergot.haut)} au bout, sur le dos : c'est lui que prend la coche du manche.` }],
   ['4', '', 1, `AXE du manche, Ø ${po(AXE_A.d)}, à tête ronde`, { pseudo: true, note: `Tête ronde de Ø ${mm(AXE.tete.d)} visible sur la photo du client ; l'autre bout est caché : supposé riveté.` }],
   ['5', '', 1, `BOULON à tête hexagonale, ${po(BOULON.d)} × ${po(BOULON.long)}`, { pseudo: true, note: `Articulation des deux mâchoires (photo du client : tête hexagonale, rondelle, écrou, filet qui dépasse). Sur la photo de référence, cette articulation est un axe riveté : le boulon est peut-être une réparation. Diamètre estimé d'après la tête (environ ${mm(BOULON.plats)} sur plats) ; longueur calculée sur l'épaisseur serrée.` }],
   ['6', '', 1, `RONDELLE plate ${po(BOULON.d)}, sous la tête du boulon`, { pseudo: true, note: `Ø ${mm(BOULON.rondelle.d)} × ${mm(BOULON.rondelle.ep, 1)} (supposé).` }],
   ['7', '', 1, `ÉCROU hexagonal ${po(BOULON.d)}`, { pseudo: true, note: 'Du côté opposé à la tête ; type (ordinaire ou à frein) non lisible sur la photo.' }],
+  ['8', '', NB_DENTS, `DENT DE CARBURE brasée dans une face de prise, ${mm(CARBURE.large)} × ${mm(CARBURE.long, 1)}`, { pseudo: true, note: `Plaquette de carbure couchée le long du tube, dans une cuvette, qui dépasse de la face d'environ ${mm(CARBURE.saillie, 1)} et mord le tube. La photo du client semble en montrer une, claire dans une cuvette sombre, au bas de l'anneau ; le client indique des dents de carbure à l'intérieur des mâchoires. Nombre (${CARBURE.liaison.length} sur la mâchoire de liaison, ${CARBURE.crochet.length} sur la mâchoire crochet), place, taille et saillie supposés.` }],
 ];
 
 const data = {
   id: 'cle-a-tube',
-  name: 'Clé à tube pleine prise, grosseur N (tube intérieur de carottier)',
-  manufacturer: 'Fabricant non identifié — type TIME Limited 92-21-460 / Fordia 3760006031',
+  name: 'Clé à tube pleine prise au carbure, grosseur N (tube intérieur de carottier)',
+  manufacturer: 'Fabricant non identifié — type TIME Limited 92-21-460CBD / Fordia 3760006031',
   category: 'Outils à main',
   serial: '',
   document: {
@@ -90,11 +98,12 @@ const data = {
     ['Échelle des photos', ECHELLE],
     ['Hors tout', `Environ ${mm(Math.round(HORS_TOUT))} (${po(HORS_TOUT)}) de long, clé fermée sur son tube ; ${mm(LARGEUR)} d'épaisseur aux mâchoires, ${mm(Math.round(LARGEUR + BOULON.rondelle.ep + BOULON.d * 0.65 + (BOULON.long - LARGEUR - BOULON.rondelle.ep)))} au boulon. Longueur supposée (manche hors de la photo du client)`],
     ['Articulations', `Axe du manche à ${mm(OA, 1)} du centre du tube, boulon des mâchoires à ${mm(OB, 1)}, presque à l'opposé (photo de référence). Axe et boulon de Ø ${po(AXE_A.d)}`],
+    ['Dents de carbure', `${NB_DENTS} plaquettes de carbure de ${mm(CARBURE.large)} × ${mm(CARBURE.long, 1)} brasées dans les faces de prise (${CARBURE.liaison.length} sur la mâchoire de liaison, ${CARBURE.crochet.length} sur la mâchoire crochet), en saillie d'environ ${mm(CARBURE.saillie, 1)}. Indiquées par le client ; sa photo semble en montrer une (une plaquette claire dans une cuvette sombre, au bas de l'anneau). Nombre, place et taille supposés`],
     ['Mécanisme', MECANISME],
     ['Fonctionnement en 3D', MODELE],
     ['Masse', `Environ ${fr(masse, 1)} kg, calculée sur le modèle (acier, 7,85 kg/dm³) : manche ${fr(kg(volume.manche), 2)} kg, mâchoire de liaison ${fr(kg(volume.liaison), 2)} kg, mâchoire crochet ${fr(kg(volume.crochet), 2)} kg, visserie environ 0,15 kg. Aucune masse publiée`],
-    ['Non modélisé', 'Marque et numéro du fabricant (illisibles), trace de peinture bleue d\'une joue, grains de carbure ou mordaches des faces de prise (certaines clés de ce type en ont ; la photo ne les montre pas), usure, et le boulon qui sert de crochet au mur'],
-    ['Pour faire mieux', 'Une clé posée à plat avec un ruban à mesurer, de face et de côté, et la longueur hors tout : les cotes supposées deviendraient des mesures. Une marque frappée sur le manche identifierait le fabricant'],
+    ['Non modélisé', 'Marque et numéro du fabricant (illisibles), trace de peinture bleue d\'une joue, usure, et ce qui tient les clés au mur'],
+    ['Pour faire mieux', 'Une clé posée à plat avec un ruban à mesurer, de face et de côté, la longueur hors tout, et un gros plan de la tête du manche (la coche) et de l\'intérieur des mâchoires (les dents de carbure) : les formes et les cotes supposées deviendraient des relevés. Une marque frappée sur le manche identifierait le fabricant'],
   ],
   weights: [['Clé complète (calculée)', `≈ ${fr(masse, 1)} kg`]],
   sheetTitles: {
@@ -108,7 +117,7 @@ const data = {
       titleFr: 'Clé à tube pleine prise, tube intérieur N',
       pn: '',
       sheets: ['P01', 'P02'],
-      note: `Reconstitution 3D d'après une photo du client et la photo du même type de clé publiée par TIME Limited, sans plan ni cote. Sûr : le diamètre du tube intérieur N, ${fr(TUBE.d, 1)} mm. Photo du client : les épaisseurs, la fourche de la mâchoire de liaison, le boulon, sa rondelle et son écrou, l'axe à tête ronde, le creux du manche. Photo de référence : la place des deux articulations, l'étendue des arcs, l'ergot, le nez denté, le trou d'accrochage. Supposé : la longueur du manche, le dos de la clé, le bout de l'axe, le profil des dents. ${MECANISME}. Clé couchée à plat, mâchoire crochet ouverte de ${OUVERT}° comme sur la photo de référence ; en vue éclatée, le manche et la mâchoire crochet s'écartent, l'axe et le boulon sortent vers le haut, l'écrou vers le bas.`,
+      note: `Reconstitution 3D d'après une photo du client et la photo du même type de clé publiée par TIME Limited, sans plan ni cote. Sûr : le diamètre du tube intérieur N, ${fr(TUBE.d, 1)} mm. Photo du client : les épaisseurs, la fourche de la mâchoire de liaison, le boulon, sa rondelle et son écrou, l'axe à tête ronde, le creux du manche, une dent de carbure. Photo de référence : la place des deux articulations, l'étendue et l'épaisseur des arcs, l'ergot, le trou d'accrochage. Indications du client : la coche qui permet de serrer, les dents de carbure. Supposé : la longueur du manche, le dos de la clé, le bout de l'axe, la forme de la coche, le nombre et la place des dents. ${MECANISME}. Clé couchée à plat, mâchoire crochet ouverte de ${OUVERT}° comme sur la photo de référence ; en vue éclatée, le manche et la mâchoire crochet s'écartent, l'axe et le boulon sortent vers le haut, l'écrou vers le bas, les dents de carbure quittent leurs cuvettes.`,
       parts: [...pieces, ['9', '', null, 'Fonctionnement : la clé coiffe le tube, serre et reprend sa course (scène animée)', { link: 'P02', no3d: true, pseudo: true }]],
     },
     P02: {
@@ -117,7 +126,7 @@ const data = {
       pn: '',
       sheets: ['P02', 'P01'],
       note: `La même clé sur un tronçon de tube intérieur N debout, animée en ${STEPS.length - 1} temps (boutons Lecture et étape suivante). ${STEPS.map((s) => s.text).join(' ')} ${MODELE}.`,
-      parts: [...pieces, ['8', '', 1, `TUBE INTÉRIEUR N, Ø ${fr(TUBE.d, 1)} mm : tronçon de 260 mm`, { pseudo: true, note: 'Représenté pour montrer la prise ; il ne fait pas partie de la clé. Le trait jaune est un repère pour voir le tube tourner.' }]],
+      parts: [...pieces, ['9', '', 1, `TUBE INTÉRIEUR N, Ø ${fr(TUBE.d, 1)} mm : tronçon de 260 mm`, { pseudo: true, note: 'Représenté pour montrer la prise ; il ne fait pas partie de la clé. Le trait jaune est un repère pour voir le tube tourner.' }]],
     },
   },
   documents: [],
@@ -142,7 +151,8 @@ if (at >= 0) {
     <polygon points="${pts(contourJoue(), X, Y)}" class="joue"/>
     <circle cx="${X(AXE_A.x)}" cy="${Y(AXE_A.y)}" r="${(AXE_A.d / 2) * k}" class="axe"/>
     <circle cx="${X(AXE_B.x)}" cy="${Y(AXE_B.y)}" r="${(AXE_B.d / 2) * k}" class="axe"/>
-    ${tete ? `<circle cx="${X(dent(1)[0])}" cy="${Y(dent(1)[1])}" r="7" class="dent"/>` : ''}`;
+    ${[...CARBURE.liaison, ...CARBURE.crochet].map((a) => { const c = Math.cos(a * Math.PI / 180), s = Math.sin(a * Math.PI / 180); return `<rect x="${-(CARBURE.long / 2) * k}" y="${-CARBURE.saillie * k}" width="${CARBURE.long * k}" height="${(CARBURE.saillie + 1.6) * k}" class="carb" transform="translate(${X(R * c)} ${Y(R * s)}) rotate(${90 - a})"/>`; }).join('')}
+    ${tete ? `<circle cx="${X(APPUI[0])}" cy="${Y(APPUI[1])}" r="7" class="dent"/>` : ''}`;
   // Vue d'ensemble : 3,3 px par mm.
   const k1 = 3.3, ox = 1880, oy = 300;
   const X1 = (x) => ox + x * k1, Y1 = (y) => oy - y * k1;
@@ -157,8 +167,8 @@ if (at >= 0) {
     ${coteV(Y1, yM - MANCHE.bout / 2, yM + MANCHE.bout / 2, X1(BOUT) - 22, `${mm(MANCHE.bout)} *`, true)}
     <text x="${X1(-330)}" y="${Y1(yM) - 78}" text-anchor="middle" class="s">creux sur les deux faces, âme de ${mm(EP.ame)} · épaisseur du manche ${mm(EP.manche)}</text>
     <text x="${X1(BOUT + MANCHE.trou.duBout)}" y="${Y1(yM) - 78}" text-anchor="middle" class="s">trou d'accrochage</text>`;
-  // Tête : 7,2 px par mm.
-  const k2 = 7.2, px = 900, py = 1050;
+  // Tête : 6,6 px par mm.
+  const k2 = 6.6, px = 900, py = 1000;
   const X2 = (x) => px + x * k2, Y2 = (y) => py - y * k2;
   const pt = (r, a) => [X2(r * Math.cos(a * Math.PI / 180)), Y2(r * Math.sin(a * Math.PI / 180))];
   /** Légende (une ou deux lignes) reliée par un trait au point visé. */
@@ -168,7 +178,6 @@ if (at >= 0) {
     const dx = anc === 'start' ? -8 : anc === 'end' ? 8 : 0;
     return `${t}<line x1="${x + dx}" y1="${y - 7 + (vy > y ? (l.length - 1) * 27 + 14 : -14)}" x2="${vx}" y2="${vy}" class="l"/>`;
   };
-  const d1 = dent(1);
   const tete = `
     ${dessin(X2, Y2, k2, { tete: true })}
     <line x1="${X2(AXE_A.x)}" y1="${Y2(AXE_A.y)}" x2="${X2(0)}" y2="${Y2(0)}" class="a"/>
@@ -179,10 +188,10 @@ if (at >= 0) {
     <text x="${X2(0)}" y="${Y2(0) - 36}" text-anchor="middle" class="t">Ø ${fr(TUBE.d, 1)} mm</text>
     ${legende(X2(-8), Y2(R + LIAISON.ep) - 34, `mâchoire de liaison : sabot de ${LIAISON.de - LIAISON.a}°, épais de ${mm(LIAISON.ep)}, entre deux joues`, pt(R + LIAISON.ep - 5, 96), 'middle')}
     ${legende(X2(AXE_B.x) + 122, Y2(AXE_B.y) - 8, [`boulon ${po(BOULON.d)},`, 'rondelle, écrou'], [X2(AXE_B.x) + 44, Y2(AXE_B.y)])}
-    ${legende(X2(36), Y2(-49), [`mâchoire crochet : arc de ${CROCHET.de - CROCHET.a}°,`, `épaisse de ${mm(CROCHET.ep)}`], pt(R + CROCHET.ep - 4, -50))}
-    ${legende(X2(-30), Y2(-57), 'ergot (rôle non établi)', pt(R + CROCHET.ep + CROCHET.ergot.haut - 3, CROCHET.a + 7), 'end')}
-    ${legende(X2(AXE_A.x) - 40, Y2(-52), `axe du manche, Ø ${po(AXE_A.d)}, à tête ronde`, [X2(AXE_A.x), Y2(AXE_A.y) + 40], 'middle')}
-    ${legende(X2(AXE_A.x) - 40, Y2(-52) + 44, `dent en prise, à ${mm(DENTS[1].r, 1)} de l'axe`, [X2(d1[0]) - 6, Y2(d1[1]) + 6], 'middle')}`;
+    ${legende(X2(40), Y2(-44), [`mâchoire crochet : arc de ${CROCHET.de - CROCHET.a}°,`, `épaisse de ${mm(CROCHET.ep)}`], pt(R + CROCHET.ep - 4, -50))}
+    ${legende(X2(-2), Y2(-68), [`ergot du crochet, pris dans la coche du manche :`, `le fond de la coche le presse sur le tube, à ${mm(BRAS, 1)} de l'axe`], [X2(APPUI[0]) + 4, Y2(APPUI[1]) + 8])}
+    ${legende(X2(AXE_A.x) - 60, Y2(-64), `axe du manche, Ø ${po(AXE_A.d)}, à tête ronde`, [X2(AXE_A.x), Y2(AXE_A.y) + 40], 'middle')}
+    ${legende(X2(52), Y2(-22), ['dents de carbure', `(${NB_DENTS}, place supposée)`], pt(R + 1, CARBURE.crochet[0] - 2))}`;
   const garde = new Set(['Source', 'Grosseur', 'Échelle des photos', 'Masse', 'Non modélisé']);
   const lignes = data.specs.filter(([a]) => garde.has(a)).map(([a, b]) => `<tr><th>${a}</th><td>${b}</td></tr>`).join('');
   const epaisseurs = [
@@ -196,7 +205,7 @@ if (at >= 0) {
     .manche{fill:#b9b3a8;stroke:#3a3631;stroke-width:2}.creux{fill:#9d978c;stroke:#5a554e;stroke-width:1.5}.vide{fill:#fff;stroke:#3a3631;stroke-width:1.5}
     .tube{fill:#dfe6ec;stroke:#c0392b;stroke-width:3}.crochet{fill:#8fa9c9;stroke:#1f3f66;stroke-width:2;fill-opacity:.92}
     .sabot{fill:#9cc7a4;stroke:#1f5a2c;stroke-width:1.5}.joue{fill:#6fae7b;stroke:#1f5a2c;stroke-width:2;fill-opacity:.72}
-    .axe{fill:#2b2d30;stroke:#000}.dent{fill:none;stroke:#c0392b;stroke-width:3}
+    .axe{fill:#2b2d30;stroke:#000}.dent{fill:none;stroke:#c0392b;stroke-width:3}.carb{fill:#f4f6f8;stroke:#1d2125;stroke-width:1.2}
     .c{stroke:#c0392b;stroke-width:2}.a{stroke:#c0392b;stroke-width:1.5;stroke-dasharray:9 6}.l{stroke:#555;stroke-width:1.5}
     text{font-size:21px;fill:#1d2125}text.s{font-size:18px;fill:#566}text.t{font-size:19px;fill:#7a1f16}
     h2{position:absolute;margin:0;font-size:24px}
@@ -204,9 +213,9 @@ if (at >= 0) {
     table.ep{position:absolute;left:1560px;top:690px;width:570px;font-size:19px}table.ep td{padding:5px 0;border-top:1px solid #ddd}td.n{text-align:right;white-space:nowrap}
     table.sp{position:absolute;left:1560px;top:900px;width:570px;font-size:15.5px;line-height:1.3}
     table.sp th{display:block;text-align:left;color:#444;padding-top:7px}table.sp td{display:block;padding:1px 0 6px;border-bottom:1px solid #ddd}
-    div.mec{position:absolute;left:70px;top:1545px;width:1410px;font-size:16.5px;line-height:1.36}div.mec b{font-size:19px}
-    </style><h1>Clé à tube pleine prise, grosseur N — cotes</h1>
-    <p class="s">Clé en prise sur le tube intérieur N. Cotes relevées sur la photo du client et sur la photo de référence, à l'échelle du tube ; * = cote supposée (manche hors de la photo).</p>
+    div.mec{position:absolute;left:70px;top:1560px;width:1410px;font-size:16.5px;line-height:1.36}div.mec b{font-size:19px}
+    </style><h1>Clé à tube pleine prise au carbure, grosseur N — cotes</h1>
+    <p class="s">Clé en prise sur le tube intérieur N. Cotes relevées sur la photo du client et sur la photo de référence, à l'échelle du tube ; * = cote supposée (manche hors de la photo). Coche du manche et dents de carbure : indications du client, forme et place supposées.</p>
     <svg width="2200" height="1700"><defs><marker id="f" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#c0392b"/></marker></defs>
     ${ensemble}
     ${tete}</svg>
@@ -214,7 +223,7 @@ if (at >= 0) {
     <h2 style="left:1560px;top:640px">Épaisseurs le long du tube (photo du client)</h2>
     <table class="ep">${epaisseurs}</table>
     <table class="sp">${lignes}</table>
-    <div class="mec"><b>Mécanisme.</b> ${MECANISME}.</div></html>`;
+    <div class="mec"><b>Mécanisme.</b> Quand on appuie sur le manche, la coche de sa tête vient coiffer l'ergot de la mâchoire crochet et le presse sur le tube, à ${fr(BRAS)} mm de l'axe pour un manche de ${mm(MANCHE.long)} : l'effort de la main est multiplié par ${fr(LEVIER)} environ. Les mâchoires serrent le tube sur ${fr(ENVELOPPE)}° et leurs dents de carbure mordent. Dans l'autre sens, le manche pivote de ${RELACHE}°, la coche quitte l'ergot et la clé reprend sa course sans quitter le tube ; pour tourner dans l'autre sens, on la retourne. La coche et les dents de carbure sont des indications du client : la forme de la coche, que les photos ne montrent pas de face, est celle qui fait fonctionner le tracé.</div></html>`;
   writeFileSync(out, html);
   console.log(`page écrite : ${out}`);
 }

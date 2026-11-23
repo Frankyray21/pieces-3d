@@ -1,7 +1,7 @@
 {
  "id": "cle-a-tube",
- "name": "Clé à tube pleine prise, grosseur N (tube intérieur de carottier)",
- "manufacturer": "Fabricant non identifié — type TIME Limited 92-21-460 / Fordia 3760006031",
+ "name": "Clé à tube pleine prise au carbure, grosseur N (tube intérieur de carottier)",
+ "manufacturer": "Fabricant non identifié — type TIME Limited 92-21-460CBD / Fordia 3760006031",
  "category": "Outils à main",
  "serial": "",
  "document": {
@@ -15,7 +15,7 @@
  "specs": [
   [
    "Source",
-   "Une photo du client : deux clés identiques pendues à un mur, vues presque par la tranche, les manches coupés par le bas de la photo. Et la photo du même type de clé publiée par TIME Limited (« Tube wrenches », vue à plat, mâchoire crochet ouverte), que le client a reconnue comme étant ce modèle. Aucun plan, aucune cote publiée"
+   "Une photo du client : deux clés identiques pendues à un mur, vues presque par la tranche, les manches coupés par le bas de la photo. La photo du même type de clé publiée par TIME Limited (« Tube wrenches », vue à plat, mâchoire crochet ouverte), que le client a reconnue comme étant ce modèle. Et les indications du client sur la première version du modèle : la coche qui permet de serrer, les dents de carbure à l'intérieur des mâchoires. Aucun plan, aucune cote publiée"
   ],
   [
    "Identification",
@@ -23,7 +23,7 @@
   ],
   [
    "Références du même type",
-   "Clés du même type aux catalogues, sans qu'on sache si ce sont celles du client : TIME Limited 92-21-460 (« WRENCH, N INNER TUBE ») ; Fordia / Epiroc 3760006031 (« Inner tube wrenches », carottier N, catalogue des outils de carottage ITH)"
+   "Clés du même type aux catalogues, sans qu'on sache si ce sont celles du client : TIME Limited 92-21-460 (« WRENCH, N INNER TUBE ») et 92-21-460CBD (la même, au carbure) ; Fordia / Epiroc 3760006031 (« Inner tube wrenches », carottier N, catalogue des outils de carottage ITH)"
   ],
   [
    "Grosseur",
@@ -31,7 +31,7 @@
   ],
   [
    "Échelle des photos",
-   "Photo du client : l'ouverture de l'anneau (environ 105 pixels) prise au diamètre du tube, soit 0,53 mm par pixel ; l'épaisseur du manche (environ 19 mm) et sa largeur (environ 35 mm) s'accordent avec cette échelle, pas avec celle d'un tube de 73 mm. Photo de référence : redressée et mise à l'échelle sur l'arc de la mâchoire de liaison ; les deux articulations, le dos de la mâchoire et le manche du modèle s'y superposent"
+   "Photo du client : l'ouverture de l'anneau (environ 105 pixels) prise au diamètre du tube, soit 0,53 mm par pixel ; l'épaisseur du manche (environ 19 mm) et sa largeur (environ 35 mm) s'accordent avec cette échelle, pas avec celle d'un tube de 73 mm. Photo de référence : redressée et mise à l'échelle sur l'arc de la mâchoire de liaison ; les deux articulations, le dos de la mâchoire, le manche, l'arc et l'ergot de la mâchoire crochet du modèle s'y superposent"
   ],
   [
    "Hors tout",
@@ -42,30 +42,34 @@
    "Axe du manche à 59,1 mm du centre du tube, boulon des mâchoires à 51,0 mm, presque à l'opposé (photo de référence). Axe et boulon de Ø 1/2 po"
   ],
   [
+   "Dents de carbure",
+   "7 plaquettes de carbure de 10 mm × 4,5 mm brasées dans les faces de prise (3 sur la mâchoire de liaison, 4 sur la mâchoire crochet), en saillie d'environ 0,9 mm. Indiquées par le client ; sa photo semble en montrer une (une plaquette claire dans une cuvette sombre, au bas de l'anneau). Nombre, place et taille supposés"
+  ],
+  [
    "Mécanisme",
-   "Les deux mâchoires enveloppent le tube sur 262°. Le manche tourne sur son axe entre les joues de la mâchoire de liaison ; son nez, à 31,6 mm de l'axe, touche le tube en avant de la ligne qui joint l'axe au centre du tube (angle de pression de 13°) : en appuyant sur le manche, la dent se coince contre le tube et le plaque dans les mâchoires — plus on tire, plus elle serre. Du côté de son bout, le frottement du tube tend alors à refermer la mâchoire crochet. Dans l'autre sens, le manche pivote de 18° et son nez s'écarte de 2,0 mm : les mâchoires glissent et la clé reprend sa course sans quitter le tube. Elle ne serre que dans un sens : pour tourner dans l'autre, on la retourne. Mécanisme lu sur les photos et vérifié par le tracé, sans notice du fabricant ; le rôle de l'ergot du crochet n'est pas établi"
+   "Les deux mâchoires enveloppent le tube sur 281° ; le bout de la mâchoire crochet porte un ergot sur son dos. Le manche tourne sur son axe entre les joues de la mâchoire de liaison. Quand on appuie sur le manche, la coche de sa tête vient coiffer l'ergot et son fond le presse sur le tube, presque droit vers son centre (à 9° près), à 33 mm de l'axe pour un manche de 450 mm : l'effort de la main est multiplié par 13 environ. Les mâchoires serrent le tube sur tout son tour et leurs dents de carbure mordent. Dans l'autre sens, le manche pivote de 18° et la coche s'écarte de l'ergot de 7,9 mm : les mâchoires prennent du jeu et la clé reprend sa course sans quitter le tube. Elle ne serre que dans un sens : pour tourner dans l'autre, on la retourne. La coche est une indication du client ; sa forme, que les photos ne montrent pas de face, est celle qui fait fonctionner le tracé (le manche et la mâchoire crochet ne se heurtent à aucun moment)"
   ],
   [
    "Fonctionnement en 3D",
-   "Sur le site, la page P02 anime la clé sur un tronçon de tube en 5 temps : coiffer le tube (mâchoire crochet ouverte de 100°, il reste 1,0 mm de jeu au passage), refermer la mâchoire, tirer (course de 35°, le tube tourne avec la clé), ramener le manche (la clé glisse), reprendre. La course de 35° est un choix de mise en scène"
+   "Sur le site, la page P02 anime la clé sur un tronçon de tube en 5 temps : coiffer le tube (mâchoire crochet ouverte de 100°, manche relevé de 24°), refermer la mâchoire, appuyer (la coche prend l'ergot, course de 35°, le tube tourne avec la clé), ramener le manche (la clé glisse), reprendre. La course de 35° est un choix de mise en scène"
   ],
   [
    "Masse",
-   "Environ 2,6 kg, calculée sur le modèle (acier, 7,85 kg/dm³) : manche 1,60 kg, mâchoire de liaison 0,53 kg, mâchoire crochet 0,29 kg, visserie environ 0,15 kg. Aucune masse publiée"
+   "Environ 2,7 kg, calculée sur le modèle (acier, 7,85 kg/dm³) : manche 1,61 kg, mâchoire de liaison 0,53 kg, mâchoire crochet 0,42 kg, visserie environ 0,15 kg. Aucune masse publiée"
   ],
   [
    "Non modélisé",
-   "Marque et numéro du fabricant (illisibles), trace de peinture bleue d'une joue, grains de carbure ou mordaches des faces de prise (certaines clés de ce type en ont ; la photo ne les montre pas), usure, et le boulon qui sert de crochet au mur"
+   "Marque et numéro du fabricant (illisibles), trace de peinture bleue d'une joue, usure, et ce qui tient les clés au mur"
   ],
   [
    "Pour faire mieux",
-   "Une clé posée à plat avec un ruban à mesurer, de face et de côté, et la longueur hors tout : les cotes supposées deviendraient des mesures. Une marque frappée sur le manche identifierait le fabricant"
+   "Une clé posée à plat avec un ruban à mesurer, de face et de côté, la longueur hors tout, et un gros plan de la tête du manche (la coche) et de l'intérieur des mâchoires (les dents de carbure) : les formes et les cotes supposées deviendraient des relevés. Une marque frappée sur le manche identifierait le fabricant"
   ]
  ],
  "weights": [
   [
    "Clé complète (calculée)",
-   "≈ 2,6 kg"
+   "≈ 2,7 kg"
   ]
  ],
  "sheetTitles": {
@@ -82,16 +86,16 @@
     "P01",
     "P02"
    ],
-   "note": "Reconstitution 3D d'après une photo du client et la photo du même type de clé publiée par TIME Limited, sans plan ni cote. Sûr : le diamètre du tube intérieur N, 55,6 mm. Photo du client : les épaisseurs, la fourche de la mâchoire de liaison, le boulon, sa rondelle et son écrou, l'axe à tête ronde, le creux du manche. Photo de référence : la place des deux articulations, l'étendue des arcs, l'ergot, le nez denté, le trou d'accrochage. Supposé : la longueur du manche, le dos de la clé, le bout de l'axe, le profil des dents. Les deux mâchoires enveloppent le tube sur 262°. Le manche tourne sur son axe entre les joues de la mâchoire de liaison ; son nez, à 31,6 mm de l'axe, touche le tube en avant de la ligne qui joint l'axe au centre du tube (angle de pression de 13°) : en appuyant sur le manche, la dent se coince contre le tube et le plaque dans les mâchoires — plus on tire, plus elle serre. Du côté de son bout, le frottement du tube tend alors à refermer la mâchoire crochet. Dans l'autre sens, le manche pivote de 18° et son nez s'écarte de 2,0 mm : les mâchoires glissent et la clé reprend sa course sans quitter le tube. Elle ne serre que dans un sens : pour tourner dans l'autre, on la retourne. Mécanisme lu sur les photos et vérifié par le tracé, sans notice du fabricant ; le rôle de l'ergot du crochet n'est pas établi. Clé couchée à plat, mâchoire crochet ouverte de 100° comme sur la photo de référence ; en vue éclatée, le manche et la mâchoire crochet s'écartent, l'axe et le boulon sortent vers le haut, l'écrou vers le bas.",
+   "note": "Reconstitution 3D d'après une photo du client et la photo du même type de clé publiée par TIME Limited, sans plan ni cote. Sûr : le diamètre du tube intérieur N, 55,6 mm. Photo du client : les épaisseurs, la fourche de la mâchoire de liaison, le boulon, sa rondelle et son écrou, l'axe à tête ronde, le creux du manche, une dent de carbure. Photo de référence : la place des deux articulations, l'étendue et l'épaisseur des arcs, l'ergot, le trou d'accrochage. Indications du client : la coche qui permet de serrer, les dents de carbure. Supposé : la longueur du manche, le dos de la clé, le bout de l'axe, la forme de la coche, le nombre et la place des dents. Les deux mâchoires enveloppent le tube sur 281° ; le bout de la mâchoire crochet porte un ergot sur son dos. Le manche tourne sur son axe entre les joues de la mâchoire de liaison. Quand on appuie sur le manche, la coche de sa tête vient coiffer l'ergot et son fond le presse sur le tube, presque droit vers son centre (à 9° près), à 33 mm de l'axe pour un manche de 450 mm : l'effort de la main est multiplié par 13 environ. Les mâchoires serrent le tube sur tout son tour et leurs dents de carbure mordent. Dans l'autre sens, le manche pivote de 18° et la coche s'écarte de l'ergot de 7,9 mm : les mâchoires prennent du jeu et la clé reprend sa course sans quitter le tube. Elle ne serre que dans un sens : pour tourner dans l'autre, on la retourne. La coche est une indication du client ; sa forme, que les photos ne montrent pas de face, est celle qui fait fonctionner le tracé (le manche et la mâchoire crochet ne se heurtent à aucun moment). Clé couchée à plat, mâchoire crochet ouverte de 100° comme sur la photo de référence ; en vue éclatée, le manche et la mâchoire crochet s'écartent, l'axe et le boulon sortent vers le haut, l'écrou vers le bas, les dents de carbure quittent leurs cuvettes.",
    "parts": [
     [
      "1",
      "",
      1,
-     "MANCHE forgé à nez denté, 450 mm de l'axe au bout",
+     "MANCHE forgé à coche, 450 mm de l'axe au bout",
      {
       "pseudo": true,
-      "note": "Section d'environ 35 mm × 19 mm à la tête (photo du client), 31 mm de large au bout ; âme de 8 mm au fond d'un creux sur chaque face, trou d'accrochage oblong de 28 mm × 10 mm (photo de référence). Nez à trois dents : celle du milieu touche le tube, celle du bas prend le relais 8° plus loin. Longueur supposée : le manche est coupé par le bas de la photo du client ; elle suit les proportions de la photo de référence. Profil des dents supposé."
+      "note": "Section d'environ 35 mm × 19 mm à la tête (photo du client), 31 mm de large au bout ; âme de 8 mm au fond d'un creux sur chaque face, trou d'accrochage oblong de 28 mm × 10 mm (photo de référence). Tête : un nez qui longe le tube à 2,5 mm sans le toucher, et sous lui la coche qui coiffe l'ergot de la mâchoire crochet, fermée par une dent ; son fond appuie sur l'ergot à 32,7 mm de l'axe. Longueur supposée : le manche est coupé par le bas de la photo du client ; elle suit les proportions de la photo de référence. Coche indiquée par le client ; sa forme et le talon qui la porte sont supposés."
      }
     ],
     [
@@ -101,7 +105,7 @@
      "MÂCHOIRE DE LIAISON en fourche, 39 mm de large",
      {
       "pseudo": true,
-      "note": "Deux joues de 8 mm, de l'axe du manche au boulon, à cheval sur la tête du manche et sur l'œil de la mâchoire crochet (jour de 23 mm) ; entre elles, un sabot qui porte sur le tube sur 124°, épais de 16 mm. Entraxe de 110,0 mm. D'une pièce ou assemblée : la photo ne le montre pas. La fente où paraît le nez du manche est le jour de la fourche."
+      "note": "Deux joues de 8 mm, de l'axe du manche au boulon, à cheval sur la tête du manche et sur l'œil de la mâchoire crochet (jour de 23 mm) ; entre elles, un sabot qui porte sur le tube sur 124°, épais de 16 mm, garni de 3 dents de carbure. Entraxe de 110,0 mm. D'une pièce ou assemblée : la photo ne le montre pas."
      }
     ],
     [
@@ -111,100 +115,7 @@
      "MÂCHOIRE CROCHET à ergot, 22 mm de large",
      {
       "pseudo": true,
-      "note": "Arc de prise de 138°, épais de 13 mm, qui commence sous le boulon : la mâchoire s'écarte du tube dès qu'elle s'ouvre. Ergot de 13 mm × 11 mm au bout, sur le dos (photo de référence) : sans doute pour la saisir, son rôle n'est pas établi. Épaisseur radiale estimée sur la photo de référence."
-     }
-    ],
-    [
-     "4",
-     "",
-     1,
-     "AXE du manche, Ø 1/2 po, à tête ronde",
-     {
-      "pseudo": true,
-      "note": "Tête ronde de Ø 22 mm visible sur la photo du client ; l'autre bout est caché : supposé riveté."
-     }
-    ],
-    [
-     "5",
-     "",
-     1,
-     "BOULON à tête hexagonale, 1/2 po × 2 1/4 po",
-     {
-      "pseudo": true,
-      "note": "Articulation des deux mâchoires (photo du client : tête hexagonale, rondelle, écrou, filet qui dépasse). Sur la photo de référence, cette articulation est un axe riveté : le boulon est peut-être une réparation. Diamètre estimé d'après la tête (environ 19,1 mm sur plats) ; longueur calculée sur l'épaisseur serrée."
-     }
-    ],
-    [
-     "6",
-     "",
-     1,
-     "RONDELLE plate 1/2 po, sous la tête du boulon",
-     {
-      "pseudo": true,
-      "note": "Ø 27 mm × 2,5 mm (supposé)."
-     }
-    ],
-    [
-     "7",
-     "",
-     1,
-     "ÉCROU hexagonal 1/2 po",
-     {
-      "pseudo": true,
-      "note": "Du côté opposé à la tête ; type (ordinaire ou à frein) non lisible sur la photo."
-     }
-    ],
-    [
-     "9",
-     "",
-     null,
-     "Fonctionnement : la clé coiffe le tube, serre et reprend sa course (scène animée)",
-     {
-      "link": "P02",
-      "no3d": true,
-      "pseudo": true
-     }
-    ]
-   ]
-  },
-  "P02": {
-   "title": "HOW IT WORKS",
-   "titleFr": "Fonctionnement : coiffer, serrer, reprendre",
-   "pn": "",
-   "sheets": [
-    "P02",
-    "P01"
-   ],
-   "note": "La même clé sur un tronçon de tube intérieur N debout, animée en 5 temps (boutons Lecture et étape suivante). La mâchoire crochet est ouverte en grand (100° autour de son boulon) et le manche relevé : rien ne dépasse dans le passage du tube. La clé vient de côté sur le tube, jusqu'à ce que le sabot de la mâchoire de liaison porte sur lui. Mâchoire ouverte et manche relevé, rien n'accroche le tube. La mâchoire crochet tourne sur son boulon et vient épouser le tube : avec la mâchoire de liaison, elle l'enveloppe sur 262°. C'est la « pleine prise » : l'effort se répartit sur tout le tour, sans écraser le tube mince. Le manche tourne de 18° sur son axe et la dent de son nez vient mordre le tube. La dent est en avant de la ligne qui joint l'axe au centre du tube (angle de pression de 13°) : plus on tire, plus elle se coince, et le tube est plaqué dans les mâchoires. Du côté de son bout, le frottement du tube tend à refermer la mâchoire crochet. Le tube tourne avec la clé (trait jaune). Dans l'autre sens, le manche pivote d'abord sur son axe : le nez quitte le tube, la mâchoire crochet prend du jeu et la clé glisse autour du tube, qui ne bouge pas. Pas besoin d'enlever la clé pour reprendre sa course. On tire de nouveau : le nez mord, les mâchoires se resserrent et le tube avance d'une autre course. Pour visser au lieu de dévisser, on retourne la clé : elle ne serre que dans un sens. Sur le site, la page P02 anime la clé sur un tronçon de tube en 5 temps : coiffer le tube (mâchoire crochet ouverte de 100°, il reste 1,0 mm de jeu au passage), refermer la mâchoire, tirer (course de 35°, le tube tourne avec la clé), ramener le manche (la clé glisse), reprendre. La course de 35° est un choix de mise en scène.",
-   "parts": [
-    [
-     "1",
-     "",
-     1,
-     "MANCHE forgé à nez denté, 450 mm de l'axe au bout",
-     {
-      "pseudo": true,
-      "note": "Section d'environ 35 mm × 19 mm à la tête (photo du client), 31 mm de large au bout ; âme de 8 mm au fond d'un creux sur chaque face, trou d'accrochage oblong de 28 mm × 10 mm (photo de référence). Nez à trois dents : celle du milieu touche le tube, celle du bas prend le relais 8° plus loin. Longueur supposée : le manche est coupé par le bas de la photo du client ; elle suit les proportions de la photo de référence. Profil des dents supposé."
-     }
-    ],
-    [
-     "2",
-     "",
-     1,
-     "MÂCHOIRE DE LIAISON en fourche, 39 mm de large",
-     {
-      "pseudo": true,
-      "note": "Deux joues de 8 mm, de l'axe du manche au boulon, à cheval sur la tête du manche et sur l'œil de la mâchoire crochet (jour de 23 mm) ; entre elles, un sabot qui porte sur le tube sur 124°, épais de 16 mm. Entraxe de 110,0 mm. D'une pièce ou assemblée : la photo ne le montre pas. La fente où paraît le nez du manche est le jour de la fourche."
-     }
-    ],
-    [
-     "3",
-     "",
-     1,
-     "MÂCHOIRE CROCHET à ergot, 22 mm de large",
-     {
-      "pseudo": true,
-      "note": "Arc de prise de 138°, épais de 13 mm, qui commence sous le boulon : la mâchoire s'écarte du tube dès qu'elle s'ouvre. Ergot de 13 mm × 11 mm au bout, sur le dos (photo de référence) : sans doute pour la saisir, son rôle n'est pas établi. Épaisseur radiale estimée sur la photo de référence."
+      "note": "Arc de prise de 157°, épais de 19 mm (photo de référence), garni de 4 dents de carbure ; il commence sous le boulon : la mâchoire s'écarte du tube dès qu'elle s'ouvre. Ergot de 13 mm × 8 mm au bout, sur le dos : c'est lui que prend la coche du manche."
      }
     ],
     [
@@ -249,6 +160,119 @@
     ],
     [
      "8",
+     "",
+     7,
+     "DENT DE CARBURE brasée dans une face de prise, 10 mm × 4,5 mm",
+     {
+      "pseudo": true,
+      "note": "Plaquette de carbure couchée le long du tube, dans une cuvette, qui dépasse de la face d'environ 0,9 mm et mord le tube. La photo du client semble en montrer une, claire dans une cuvette sombre, au bas de l'anneau ; le client indique des dents de carbure à l'intérieur des mâchoires. Nombre (3 sur la mâchoire de liaison, 4 sur la mâchoire crochet), place, taille et saillie supposés."
+     }
+    ],
+    [
+     "9",
+     "",
+     null,
+     "Fonctionnement : la clé coiffe le tube, serre et reprend sa course (scène animée)",
+     {
+      "link": "P02",
+      "no3d": true,
+      "pseudo": true
+     }
+    ]
+   ]
+  },
+  "P02": {
+   "title": "HOW IT WORKS",
+   "titleFr": "Fonctionnement : coiffer, serrer, reprendre",
+   "pn": "",
+   "sheets": [
+    "P02",
+    "P01"
+   ],
+   "note": "La même clé sur un tronçon de tube intérieur N debout, animée en 5 temps (boutons Lecture et étape suivante). La mâchoire crochet est ouverte en grand (100° autour de son boulon) et le manche relevé de 24° : la coche de sa tête est hors du chemin du tube et de l'ergot. La clé vient de côté sur le tube, jusqu'à ce que le sabot de la mâchoire de liaison porte sur lui. Mâchoire ouverte et manche relevé, rien n'accroche le tube. La mâchoire crochet tourne sur son boulon et vient épouser le tube : avec la mâchoire de liaison, elle l'enveloppe sur 281°. C'est la « pleine prise » : l'effort se répartit sur tout le tour, sans écraser le tube mince. L'ergot de son bout se présente devant la coche du manche. Le manche pivote sur son axe et la coche de sa tête vient coiffer l'ergot de la mâchoire crochet. Son fond presse l'ergot droit sur le tube, à 33 mm de l'axe pour un manche de 450 mm : l'effort de la main est multiplié par 13 environ. Les deux mâchoires serrent le tube sur tout son tour, les dents de carbure mordent, et le tube tourne avec la clé (trait jaune). Dans l'autre sens, le manche pivote d'abord sur son axe : la coche quitte l'ergot (18° suffisent), la mâchoire crochet prend du jeu et la clé glisse autour du tube, qui ne bouge pas. Pas besoin d'enlever la clé pour reprendre sa course. On appuie de nouveau : la coche reprend l'ergot, les mâchoires se resserrent et le tube avance d'une autre course. Pour visser au lieu de dévisser, on retourne la clé : elle ne serre que dans un sens. Sur le site, la page P02 anime la clé sur un tronçon de tube en 5 temps : coiffer le tube (mâchoire crochet ouverte de 100°, manche relevé de 24°), refermer la mâchoire, appuyer (la coche prend l'ergot, course de 35°, le tube tourne avec la clé), ramener le manche (la clé glisse), reprendre. La course de 35° est un choix de mise en scène.",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "MANCHE forgé à coche, 450 mm de l'axe au bout",
+     {
+      "pseudo": true,
+      "note": "Section d'environ 35 mm × 19 mm à la tête (photo du client), 31 mm de large au bout ; âme de 8 mm au fond d'un creux sur chaque face, trou d'accrochage oblong de 28 mm × 10 mm (photo de référence). Tête : un nez qui longe le tube à 2,5 mm sans le toucher, et sous lui la coche qui coiffe l'ergot de la mâchoire crochet, fermée par une dent ; son fond appuie sur l'ergot à 32,7 mm de l'axe. Longueur supposée : le manche est coupé par le bas de la photo du client ; elle suit les proportions de la photo de référence. Coche indiquée par le client ; sa forme et le talon qui la porte sont supposés."
+     }
+    ],
+    [
+     "2",
+     "",
+     1,
+     "MÂCHOIRE DE LIAISON en fourche, 39 mm de large",
+     {
+      "pseudo": true,
+      "note": "Deux joues de 8 mm, de l'axe du manche au boulon, à cheval sur la tête du manche et sur l'œil de la mâchoire crochet (jour de 23 mm) ; entre elles, un sabot qui porte sur le tube sur 124°, épais de 16 mm, garni de 3 dents de carbure. Entraxe de 110,0 mm. D'une pièce ou assemblée : la photo ne le montre pas."
+     }
+    ],
+    [
+     "3",
+     "",
+     1,
+     "MÂCHOIRE CROCHET à ergot, 22 mm de large",
+     {
+      "pseudo": true,
+      "note": "Arc de prise de 157°, épais de 19 mm (photo de référence), garni de 4 dents de carbure ; il commence sous le boulon : la mâchoire s'écarte du tube dès qu'elle s'ouvre. Ergot de 13 mm × 8 mm au bout, sur le dos : c'est lui que prend la coche du manche."
+     }
+    ],
+    [
+     "4",
+     "",
+     1,
+     "AXE du manche, Ø 1/2 po, à tête ronde",
+     {
+      "pseudo": true,
+      "note": "Tête ronde de Ø 22 mm visible sur la photo du client ; l'autre bout est caché : supposé riveté."
+     }
+    ],
+    [
+     "5",
+     "",
+     1,
+     "BOULON à tête hexagonale, 1/2 po × 2 1/4 po",
+     {
+      "pseudo": true,
+      "note": "Articulation des deux mâchoires (photo du client : tête hexagonale, rondelle, écrou, filet qui dépasse). Sur la photo de référence, cette articulation est un axe riveté : le boulon est peut-être une réparation. Diamètre estimé d'après la tête (environ 19,1 mm sur plats) ; longueur calculée sur l'épaisseur serrée."
+     }
+    ],
+    [
+     "6",
+     "",
+     1,
+     "RONDELLE plate 1/2 po, sous la tête du boulon",
+     {
+      "pseudo": true,
+      "note": "Ø 27 mm × 2,5 mm (supposé)."
+     }
+    ],
+    [
+     "7",
+     "",
+     1,
+     "ÉCROU hexagonal 1/2 po",
+     {
+      "pseudo": true,
+      "note": "Du côté opposé à la tête ; type (ordinaire ou à frein) non lisible sur la photo."
+     }
+    ],
+    [
+     "8",
+     "",
+     7,
+     "DENT DE CARBURE brasée dans une face de prise, 10 mm × 4,5 mm",
+     {
+      "pseudo": true,
+      "note": "Plaquette de carbure couchée le long du tube, dans une cuvette, qui dépasse de la face d'environ 0,9 mm et mord le tube. La photo du client semble en montrer une, claire dans une cuvette sombre, au bas de l'anneau ; le client indique des dents de carbure à l'intérieur des mâchoires. Nombre (3 sur la mâchoire de liaison, 4 sur la mâchoire crochet), place, taille et saillie supposés."
+     }
+    ],
+    [
+     "9",
      "",
      1,
      "TUBE INTÉRIEUR N, Ø 55,6 mm : tronçon de 260 mm",

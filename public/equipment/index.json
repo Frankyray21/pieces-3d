@@ -18,11 +18,11 @@
     },
     {
       "id": "cle-a-tube",
-      "name": "Clé à tube pleine prise, grosseur N (tube intérieur de carottier)",
-      "manufacturer": "Fabricant non identifié — type TIME Limited 92-21-460 / Fordia 3760006031",
+      "name": "Clé à tube pleine prise au carbure, grosseur N (tube intérieur de carottier)",
+      "manufacturer": "Fabricant non identifié — type TIME Limited 92-21-460CBD / Fordia 3760006031",
       "category": "Outils à main",
       "thumbnail": "equipment/cle-a-tube/thumbnail.webp",
-      "status": "3D d'après une photo du client (deux clés pendues, vues par la tranche) et la photo du même type de clé publiée par TIME Limited, sans plan ni cote : manche forgé à nez denté, mâchoire de liaison en fourche, mâchoire crochet à ergot, axe et boulon de 1/2 po, aux mesures du tube intérieur N (Ø 55,6 mm) ; scène animée du mécanisme sur un tronçon de tube (coiffer, refermer, serrer, reprendre sa course) ; fabricant non identifié, longueur du manche (569 mm hors tout) et profil des dents supposés"
+      "status": "3D d'après une photo du client (deux clés pendues, vues par la tranche), la photo du même type de clé publiée par TIME Limited et les indications du client, sans plan ni cote : manche forgé dont la coche coiffe l'ergot de la mâchoire crochet, mâchoire de liaison en fourche, dents de carbure dans les faces de prise, axe et boulon de 1/2 po, aux mesures du tube intérieur N (Ø 55,6 mm) ; scène animée du mécanisme sur un tronçon de tube (coiffer, refermer, appuyer — la coche prend l'ergot et la clé serre —, reprendre sa course) ; fabricant non identifié ; longueur du manche (569 mm hors tout), forme de la coche, nombre et place des dents supposés"
     },
     {
       "id": "cles-a-tuyau",
