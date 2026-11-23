@@ -1324,7 +1324,8 @@ export class Viewer {
         const c = box.getCenter(new THREE.Vector3());
         if (cap) c.y = box.min.y;
         obj.worldToLocal(c);
-        label.position.copy(c);
+        // Place choisie par le modèle (api.part, option labelAt), dans le repère de l'objet.
+        label.position.copy(obj.userData.labelAt || c);
         obj.add(label);
         this.labels.push({ key, owner: node, label, culled: false, caption: !!cap });
       }

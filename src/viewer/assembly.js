@@ -8,7 +8,9 @@ import * as shapes from './shapes.js';
  * api.S (bibliothèque de formes) puis les enregistre avec
  *   api.part(ref, objet, [dx, dy, dz])
  * où ref est le numéro de la liste de pièces et [dx, dy, dz] le déplacement
- * de l'objet en vue éclatée (mètres) ; options : { noLabel, caption }.
+ * de l'objet en vue éclatée (mètres) ; options : { noLabel, caption, labelAt }
+ * (labelAt : place de la bulle de repère, [x, y, z] dans le repère de l'objet,
+ * au lieu du centre de sa boîte — pièces concentriques, pièce qui doit rester lisible).
  * api.sub('F05', options) insère un sous-assemblage complet (assemblé) que
  * l'on enregistre ensuite comme une seule pièce du niveau courant.
  *
@@ -54,6 +56,7 @@ export function buildProcedural(builders, id, opts = {}) {
       obj.userData.noLabel = !!opts.noLabel;
       // Légende en clair sous l'objet (nom de l'outil sur une page d'accueil) au lieu de la bulle de repère.
       if (opts.caption) obj.userData.caption = String(opts.caption);
+      if (opts.labelAt) obj.userData.labelAt = new THREE.Vector3(...opts.labelAt);
       root.add(obj);
       parts.push(obj);
       return obj;

@@ -141,6 +141,14 @@
       "status": "3D sans plan ni photo, d'après les données publiées du Stabila 196-2 de 48 po : profilé caisson en aluminium d'environ 60 × 30 mm (détaillants), faces de mesure fraisées, flancs jaunes, fiole horizontale au milieu et deux fioles d'aplomb, deux poignées, embouts amortisseurs ; épaisseurs, fenêtres et poignées supposées, masse calculée de 1,25 kg contre 1,2 kg publié"
     },
     {
+      "id": "niveau-a-degres",
+      "name": "Niveau à degrés à fiole pivotante (rapporteur d'angle)",
+      "manufacturer": "Tajima — type SLANT 100 (logo lu en partie)",
+      "category": "Outil de mesure",
+      "thumbnail": "equipment/niveau-a-degres/thumbnail.webp",
+      "status": "3D d'après une photo du client (les 150 premiers millimètres, côté cadran) : boîtier noir, deux règles d'aluminium d'équerre, cadran fixe gradué en degrés (0 à 90, « PLUMB ») et en pente, fiole verte sur tambour pivotant à aiguille rouge, molette bleue, trou de main ; 10 po × 4 3/4 po publiés, bout droit, épaisseur et dos supposés. L'outil fonctionne : on penche la surface, on tourne la molette jusqu'à centrer la bulle et on lit l'angle"
+    },
+    {
       "id": "pince-a-sertir",
       "name": "Pince à sertir de 30 po pour manchons de câble (wire line)",
       "manufacturer": "VEVOR",

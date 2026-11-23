@@ -1,0 +1,170 @@
+{
+ "id": "niveau-a-degres",
+ "name": "Niveau à degrés à fiole pivotante (rapporteur d'angle)",
+ "manufacturer": "Tajima — type SLANT 100 (logo lu en partie)",
+ "category": "Outil de mesure",
+ "serial": "",
+ "document": {
+  "title": "Photo du client, données publiées (aucun manuel) et cotes supposées",
+  "reference": "SLT-100",
+  "preparedBy": "",
+  "date": "",
+  "sheets": 2,
+  "pagePattern": "pages/{sheet}.webp"
+ },
+ "specs": [
+  [
+   "Source",
+   "Une photo du client, prise de face, qui montre les 150 premiers millimètres de l'outil (cadran, fiole, les deux règles, molette, début du trou de main et du logo). Aucun manuel ni plan. Cotes hors tout et mode d'emploi repris des fiches publiées du Tajima SLANT 100 (SLT-100), le reste mesuré sur la photo ou supposé"
+  ],
+  [
+   "Identification",
+   "Le logo, coupé par le bord de la photo, se lit « Ta… » et « SLA… » dans un cadre arrondi : Tajima SLANT. Les fiches du SLANT 100 (SLT-100) décrivent le même outil — boîtier d'ABS, double échelle des angles et des pentes, fiole à deux paires de traits, molette au pouce. Identification probable, non confirmée par une plaque"
+  ],
+  [
+   "Données publiées",
+   "10 po × 4 3/4 po hors tout (un détaillant ; les autres ne donnent que l'emballage, environ 12 5/8 × 6 1/8 × 1 1/8 po) ; boîtier d'ABS épais (fabricant) ; double échelle, angle et pente ; graduations aux 2° ; précision de ±1° ; grande fiole à deux paires de traits ; réglage par une molette au pouce. Les fiches annoncent une échelle de 0 à 130° : le cadran de la photo est gradué de 0 à 90 dans chaque quart, et c'est la photo qui est suivie"
+  ],
+  [
+   "Échelle de la photo",
+   "Le couvercle du cadran est pris à 100 mm de diamètre (le « 100 » du nom) : 0,163 mm par pixel de la photo. La hauteur publiée de 4 3/4 po (120,6 mm) tombe alors juste hors du cadre, comme sur la photo, et la longueur publiée de 10 po (254 mm) laisse environ 105 mm du bout droit hors de la photo"
+  ],
+  [
+   "Mode d'emploi",
+   "Poser la règle de base (ou la règle de bout) à plat contre la surface ; tourner la molette bleue jusqu'à ce que la bulle soit entre les deux paires de traits ; lire l'angle sous l'aiguille rouge, en degrés sur l'échelle du dedans (ANGLE) ou en pouces par pied sur celle du dehors (PITCH). 0 : surface de niveau ; 90, « PLUMB » : surface d'aplomb"
+  ],
+  [
+   "Hors tout",
+   "10 po × 4 3/4 po (254 mm × 120,6 mm) — publiées par un détaillant ; épaisseur de 25 mm supposée"
+  ],
+  [
+   "Boîtier",
+   "ABS noir. Coin arrondi (14 mm) au-dessus de la règle de bout, vu sur la photo ; coins du bout droit supposés (16 mm en haut, 3 mm en bas) ; dos supposé plat et nu"
+  ],
+  [
+   "Règles",
+   "Deux règles d'aluminium d'équerre, de 8,5 mm de large vues de face, trois rainures près de l'arête : règle de base sur toute la longueur (face de mesure du dessous), règle de bout jusqu'à 104 mm de haut. Section et dos supposés"
+  ],
+  [
+   "Cadran",
+   "Fixe, à 63 mm du bout et 51 mm au-dessus de la face de mesure. Plaque blanche imprimée : arc de 76,4 mm de diamètre, traits aux 2° vers le dedans, chiffres aux 10° de 0 (haut et bas) à 90 (côtés, en rouge, « PLUMB ») ; pente vers le dehors, chiffrée 2, 3, 4, 6, 7, 8, 10, 12, 14, 20, 30, 40 po par pied. Couvercle transparent de 100 mm, à méplat du côté de la règle de base"
+  ],
+  [
+   "Tambour et aiguille",
+   "Tambour noir pivotant dans une fenêtre de 62,4 mm, qui porte la fiole en travers et une aiguille rouge d'équerre avec elle, de la fenêtre à l'arc des graduations. Profondeur et fond supposés"
+  ],
+  [
+   "Fiole",
+   "Tube de Ø 11 mm, 27 mm vus entre deux embouts noirs de Ø 14 mm, liquide vert, deux paires de traits à ±6 mm et ±7,6 mm du milieu (photo). Bulle de 10,5 mm supposée"
+  ],
+  [
+   "Molette",
+   "Bleue, cannelée, Ø 29 mm, centrée à 130 mm du bout et 108 mm de haut : elle dépasse du chant du haut d'environ 1,9 mm, sous le pouce. 28 cannelures (estimées), saillie de 8 mm sur la face et entraînement du tambour supposés"
+  ],
+  [
+   "Trou de main",
+   "De 46 mm de haut, coins de 13 mm, bord gauche à 131 mm du bout (photo) ; bord droit hors de la photo, supposé à 226 mm"
+  ],
+  [
+   "Fonctionnement en 3D",
+   "Sur le site, l'outil fonctionne : la surface se penche, la molette (ou la fiole, tirée à la souris ou au doigt) fait tourner le tambour, la bulle glisse vers le bout le plus haut et l'angle se lit sous l'aiguille. Fiole supposée en tonneau de 70 mm de rayon : la bulle glisse d'environ 1,2 mm par degré et bute au bout vers 8° ; démultiplication de la molette supposée de 3 tours pour un tour du tambour"
+  ],
+  [
+   "Non modélisé",
+   "Texte du logo (lu en partie seulement : seul son cadre est fait), aimants de la base (les fiches des détaillants se contredisent), entraînement interne de la molette, saletés et usure de la photo"
+  ]
+ ],
+ "weights": [],
+ "sheetTitles": {
+  "P01": "Photo du client : cadran, fiole pivotante, règles, molette",
+  "P02": "Cotes du niveau : vue de face (photo, publiées et supposées)"
+ },
+ "root": "P01",
+ "assemblies": {
+  "P01": {
+   "title": "ANGLE METER, ROTARY VIAL, DUAL SCALE",
+   "titleFr": "Niveau à degrés à fiole pivotante",
+   "pn": "",
+   "sheets": [
+    "P01",
+    "P02"
+   ],
+   "note": "Reconstitution 3D d'après une photo du client, sans manuel ni plan. Identification probable : Tajima SLANT 100 (SLT-100), le logo n'étant lisible qu'en partie. Mesuré sur la photo (couvercle du cadran pris à 100 mm) : cadran et graduations, tambour, fiole, aiguille rouge, règles, molette, bord gauche du trou de main, coin du boîtier. Publié : 10 po × 4 3/4 po hors tout, boîtier d'ABS, graduations aux 2°, mode d'emploi. Supposé : tout le bout droit hors de la photo, l'épaisseur de 25 mm, le dos, la profondeur du tambour, la saillie de la molette et son entraînement. Poser la règle de base (ou la règle de bout) à plat contre la surface ; tourner la molette bleue jusqu'à ce que la bulle soit entre les deux paires de traits ; lire l'angle sous l'aiguille rouge, en degrés sur l'échelle du dedans (ANGLE) ou en pouces par pied sur celle du dehors (PITCH). 0 : surface de niveau ; 90, « PLUMB » : surface d'aplomb. Sur le site, l'outil fonctionne : la surface se penche, la molette (ou la fiole, tirée à la souris ou au doigt) fait tourner le tambour, la bulle glisse vers le bout le plus haut et l'angle se lit sous l'aiguille. Fiole supposée en tonneau de 70 mm de rayon : la bulle glisse d'environ 1,2 mm par degré et bute au bout vers 8° ; démultiplication de la molette supposée de 3 tours pour un tour du tambour. Outil debout sur sa règle de base ; en vue éclatée, le cadran, le tambour, le couvercle et la fiole sortent vers l'avant, les règles s'écartent.",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "BOÎTIER en ABS noir, 254 mm × 120,6 mm × 25 mm",
+     {
+      "note": "Percé du logement du tambour et du trou de main ; cadre du marquage (45 mm × 10,5 mm) sous le trou de main, sans le texte du logo. Bout droit, épaisseur et dos supposés."
+     }
+    ],
+    [
+     "2",
+     "",
+     1,
+     "RÈGLE DE BASE en aluminium, 254 mm",
+     {
+      "note": "Face de mesure du dessous ; 8,5 mm de large vue de face, trois rainures près de l'arête. Longueur supposée égale à celle de l'outil."
+     }
+    ],
+    [
+     "3",
+     "",
+     1,
+     "RÈGLE DE BOUT en aluminium, 95,5 mm",
+     {
+      "note": "D'équerre avec la règle de base, pour mesurer contre une surface d'aplomb."
+     }
+    ],
+    [
+     "4",
+     "",
+     1,
+     "CADRAN fixe, degrés et pente",
+     {
+      "note": "Plaque blanche imprimée à méplat : 0 à 90 dans chaque quart, traits aux 2°, « PLUMB » à 90 ; pente en pouces par pied (2, 3, 4, 6, 7, 8, 10, 12, 14, 20, 30, 40)."
+     }
+    ],
+    [
+     "5",
+     "",
+     1,
+     "COUVERCLE transparent du cadran, Ø 100 mm",
+     {
+      "note": "Anneau à méplat du côté de la règle de base ; l'aiguille tourne dessous. Épaisseur supposée."
+     }
+    ],
+    [
+     "6",
+     "",
+     1,
+     "TAMBOUR pivotant et aiguille rouge",
+     {
+      "note": "Cuvette noire de Ø 62,4 mm qui porte la fiole ; l'aiguille, d'équerre avec la fiole, montre l'angle sur le cadran. Entraîné par la molette."
+     }
+    ],
+    [
+     "7",
+     "",
+     1,
+     "FIOLE à bulle, Ø 11 mm, et ses deux embouts",
+     {
+      "note": "Liquide vert, deux paires de traits : la bulle entre les traits, la fiole est de niveau. Sensibilité supposée (environ 1,2 mm par degré)."
+     }
+    ],
+    [
+     "8",
+     "",
+     1,
+     "MOLETTE de réglage bleue, Ø 29 mm",
+     {
+      "note": "Cannelée, sous le pouce au chant du haut ; fait tourner le tambour (démultiplication supposée de 3 pour 1)."
+     }
+    ]
+   ]
+  }
+ },
+ "documents": []
+}

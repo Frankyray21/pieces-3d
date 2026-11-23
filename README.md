@@ -711,6 +711,37 @@ pièces (numéro, quantité, page du manuel).
   section) sont écrites par `tools/niveau_4_pi_fiche.mjs` à partir des cotes
   du modèle (`src/models/niveau-4-pi/index.js`).
 
+- **Niveau à degrés à fiole pivotante (rapporteur d'angle)** (`niveau-a-degres`) :
+  outil de mesure d'angle reconstitué d'après une photo du client, sans manuel
+  ni plan. Le logo, coupé par le bord de la photo, se lit « Ta… » et « SLA… » :
+  identification probable d'un Tajima SLANT 100 (SLT-100), dont les fiches
+  décrivent le même outil. La photo ne montre que les 150 premiers millimètres,
+  côté cadran ; l'échelle vient du couvercle du cadran pris à 100 mm de
+  diamètre. Mesuré sur la photo : boîtier noir et son coin arrondi, deux règles
+  d'aluminium d'équerre de 8,5 mm (base et bout), cadran fixe à méplat gradué
+  aux 2° de 0 à 90 dans chaque quart (« PLUMB » à 90, chiffres 90 en rouge) et
+  en pente (« PITCH », pouces par pied, 2 à 40), tambour pivotant de 62,4 mm
+  avec la fiole verte de Ø 11 mm (deux paires de traits, embouts noirs) et
+  l'aiguille rouge, molette bleue de Ø 29 mm au chant du haut, bord gauche du
+  trou de main, cadre du logo. Publié : 10 po × 4 3/4 po hors tout (un
+  détaillant), boîtier d'ABS, mode d'emploi. Supposé et signalé : tout le bout
+  droit hors de la photo, l'épaisseur de 25 mm, le dos, la profondeur du
+  tambour, la saillie de la molette et son entraînement (3 tours pour 1), la
+  courbure de la fiole. Le texte du logo et les aimants ne sont pas faits.
+  **L'outil fonctionne** (`src/ui/features/niveau-degres.js`, outil « Mesurer »
+  de la vue 3D) : la surface mesurée se penche (l'outil pivote avec elle), la
+  molette ou la fiole se tirent dans la vue 3D ou se règlent au curseur, la
+  bulle glisse vers le bout le plus haut et bute au bout, l'angle se lit sous
+  l'aiguille (degrés, pouces par pied, pour cent) ; « Centrer la bulle » tourne
+  la molette, « Cadran de face » cadre le cadran ; sur un téléphone, « Suivre
+  le téléphone » lit ses capteurs d'inclinaison (le téléphone tenu debout
+  remplace l'outil). La place de la bulle, la pose sur la pente et la lecture
+  sont dans le modèle (`bulle()`, `regler()`, `lecture()` de
+  `src/models/niveau-a-degres/index.js`), contrôlées par
+  `scripts/check-niveau-degres.mjs` (`npm run check:niveau`). La fiche et la
+  page des cotes (P02, vue de face) sont écrites par
+  `tools/niveau_a_degres_fiche.mjs` ; P01 est la photo du client.
+
 - **Pince-monseigneur Garant CB60PC, 60 po, pointe en biseau**
   (`pince-monseigneur`) : barre-levier forgée d'une seule pièce, reconstituée
   d'après une photo du produit (P01 : barre debout, pointe en bas), sans plan.

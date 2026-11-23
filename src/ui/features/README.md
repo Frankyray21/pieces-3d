@@ -165,7 +165,7 @@ préfixés par `_`, ni `markObjs`, `insets`, `step` ou `userData.baseMaterial`).
 | `ctx.ui.setInsets(id, marges \| fonction \| élément \| null)` | parties de la scène couvertes par l'interface d'une fonction (`{ top, right, bottom, left }` en px, fonction qui les retourne, ou élément posé sur la scène, dégagé par son côté le plus économique) : le cadrage (`frame`, sélection, « Recadrer ») place le modèle dans le reste. Le panneau latéral est pris en compte d'office ; `null` retire les marges |
 | `ctx.ui.onEscape(fn, ordre) → off()` | couche fermée par Échap : `fn()` retourne vrai si elle a fermé quelque chose (voir « Touche Échap ») |
 | `ctx.ui.stage` | la scène (`#stage`) : élément où poser barres et calques |
-| `ctx.ui.addTool(bouton \| { id, label, title, icon, pressed, onClick, rank }) → bouton` | bouton dans le dock « Atelier » de la vue 3D, qui réunit toutes les fonctions (colonne de grands boutons au bord gauche de la scène ; rangée qui défile en bas d'une scène de moins de 720 px) ; reçoit les classes `tbtn ftool` ; `pressed` → `aria-pressed` ; `rank` : place dans le dock (Systèmes 10, Données 20, Entretien 30, Consignes 40, Circuits 50, Procédures 60, Schémas 70, page du manuel 90 ; défaut 100). Le dock n'est affiché que pour une vue 3D, et seulement s'il a un bouton visible : un outil sans objet pour la vue se masque (`hidden`) |
+| `ctx.ui.addTool(bouton \| { id, label, title, icon, pressed, onClick, rank }) → bouton` | bouton dans le dock « Atelier » de la vue 3D, qui réunit toutes les fonctions (colonne de grands boutons au bord gauche de la scène ; rangée qui défile en bas d'une scène de moins de 720 px) ; reçoit les classes `tbtn ftool` ; `pressed` → `aria-pressed` ; `rank` : place dans le dock (Systèmes 10, Mesurer 15 — niveau à degrés —, Données 20, Entretien 30, Consignes 40, Circuits 50, Procédures 60, Schémas 70, page du manuel 90 ; défaut 100). Le dock n'est affiché que pour une vue 3D, et seulement s'il a un bouton visible : un outil sans objet pour la vue se masque (`hidden`) |
 | `ctx.ui.searchSlot` | élément de l'en-tête, à droite du champ de recherche (fond sombre : boutons `btn` déjà adaptés) |
 | `ctx.ui.equipmentHome` | élément affiché en bas de la page de l'équipement (`#<équipement>.apercu`), après systèmes, schémas et fiche technique ; le même élément sert pour tous les équipements : le remplir à l'événement `'equipment'` |
 | `ctx.ui.equipmentHomeTop` | même chose, en tête de la page de l'équipement (sous les chiffres clés) : formations, manuel de l'utilisateur |
@@ -197,7 +197,8 @@ Le panneau latéral a **un propriétaire à la fois** (`owner`) ; c'est aussi
 l'arbitrage des **modes**, exclusifs : circuits (`'circuits'`), entretien
 (`'entretien'`), procédure (`'procedures'`, `'procedures-list'`),
 sous-ensemble isolé (`'systemes'`), systèmes en couleur (`'systemes3d'`) ; les panneaux des consignes
-(`'consignes'`) et des schémas (`'schemas'`) prennent aussi le panneau.
+(`'consignes'`), des schémas (`'schemas'`) et de la mesure d'angle du niveau à degrés
+(`'niveau-degres'`) prennent aussi le panneau.
 
 - Un mode qui ouvre le panneau le prend : l'ancien propriétaire reçoit
   `'sidepanel' { open: false, owner }` et se désactive proprement (couleurs,

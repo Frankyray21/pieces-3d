@@ -15,7 +15,8 @@
     "export:glb": "node scripts/export-glb.mjs",
     "export:anim": "node scripts/export-anim.mjs",
     "export:porte": "node scripts/export-porte.mjs",
-    "check:porte": "node scripts/check-porte.mjs"
+    "check:porte": "node scripts/check-porte.mjs",
+    "check:niveau": "node scripts/check-niveau-degres.mjs"
   },
   "dependencies": {
     "three": "^0.169.0"
