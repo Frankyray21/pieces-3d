@@ -15,7 +15,15 @@
  "specs": [
   [
    "Source",
-   "Une photo du client, prise de face, qui montre les 150 premiers millimètres de l'outil (cadran, fiole, les deux règles, molette, début du trou de main et du logo). Aucun manuel ni plan. Cotes hors tout et mode d'emploi repris des fiches publiées du Tajima SLANT 100 (SLT-100), le reste mesuré sur la photo ou supposé"
+   "Une photo du client, prise de face, qui montre les 150 premiers millimètres de l'outil (cadran, fiole, les deux règles, molette, début du trou de main et du logo), et deux indications du client : l'usage (angle du rack à tiges) et l'aimantation. Aucun manuel ni plan. Cotes hors tout et mode d'emploi repris des fiches publiées du Tajima SLANT 100 (SLT-100), le reste mesuré sur la photo ou supposé"
+  ],
+  [
+   "Usage",
+   "Indiqué par le client : vérifier l'angle du rack à tiges (support de tiges de forage), qui doit être entre 75° et 80° par rapport au sol — procédure PRO-DD-ST-008, étape 5. La règle de base se pose le long du poteau du support ; bulle entre les traits, l'aiguille doit lire de 75 à 80, soit de 10° à 15° avant « PLUMB ». Les graduations sont aux 2° : 80 est un trait chiffré, 75 se lit entre les traits de 74 et de 76 ; la précision publiée de l'outil est de ±1°"
+  ],
+  [
+   "Aimantation",
+   "Indiquée par le client : l'outil est aimanté et tient seul contre l'acier du rack à tiges, les deux mains restent libres pour tourner la molette. Les aimants sont cachés sur la photo : une bande aimantée de 6 mm × 1,5 mm est supposée dans la face de mesure de la règle de base, sur toute sa longueur, en retrait de 0,2 mm pour que l'outil porte sur l'aluminium. Rien n'est indiqué pour la règle de bout"
   ],
   [
    "Identification",
@@ -67,11 +75,11 @@
   ],
   [
    "Fonctionnement en 3D",
-   "Sur le site, l'outil fonctionne : la surface se penche, la molette (ou la fiole, tirée à la souris ou au doigt) fait tourner le tambour, la bulle glisse vers le bout le plus haut et l'angle se lit sous l'aiguille. Fiole supposée en tonneau de 70 mm de rayon : la bulle glisse d'environ 1,2 mm par degré et bute au bout vers 8° ; démultiplication de la molette supposée de 3 tours pour un tour du tambour"
+   "Sur le site, l'outil fonctionne : la surface se penche, la molette (ou la fiole, tirée à la souris ou au doigt) fait tourner le tambour, la bulle glisse vers le bout le plus haut et l'angle se lit sous l'aiguille. « Poser sur le rack à tiges » penche la surface à 78°, comme le support installé ; la plage de 75° à 80° est montrée en vert sur le cadran (repère visuel, absent de l'outil) et le panneau dit si l'angle lu convient, s'il est trop couché ou trop debout. Fiole supposée en tonneau de 70 mm de rayon : la bulle glisse d'environ 1,2 mm par degré et bute au bout vers 8° ; démultiplication de la molette supposée de 3 tours pour un tour du tambour"
   ],
   [
    "Non modélisé",
-   "Texte du logo (lu en partie seulement : seul son cadre est fait), aimants de la base (les fiches des détaillants se contredisent), entraînement interne de la molette, saletés et usure de la photo"
+   "Texte du logo (lu en partie seulement : seul son cadre est fait), entraînement interne de la molette, saletés et usure de la photo"
   ]
  ],
  "weights": [],
@@ -89,7 +97,7 @@
     "P01",
     "P02"
    ],
-   "note": "Reconstitution 3D d'après une photo du client, sans manuel ni plan. Identification probable : Tajima SLANT 100 (SLT-100), le logo n'étant lisible qu'en partie. Mesuré sur la photo (couvercle du cadran pris à 100 mm) : cadran et graduations, tambour, fiole, aiguille rouge, règles, molette, bord gauche du trou de main, coin du boîtier. Publié : 10 po × 4 3/4 po hors tout, boîtier d'ABS, graduations aux 2°, mode d'emploi. Supposé : tout le bout droit hors de la photo, l'épaisseur de 25 mm, le dos, la profondeur du tambour, la saillie de la molette et son entraînement. Poser la règle de base (ou la règle de bout) à plat contre la surface ; tourner la molette bleue jusqu'à ce que la bulle soit entre les deux paires de traits ; lire l'angle sous l'aiguille rouge, en degrés sur l'échelle du dedans (ANGLE) ou en pouces par pied sur celle du dehors (PITCH). 0 : surface de niveau ; 90, « PLUMB » : surface d'aplomb. Sur le site, l'outil fonctionne : la surface se penche, la molette (ou la fiole, tirée à la souris ou au doigt) fait tourner le tambour, la bulle glisse vers le bout le plus haut et l'angle se lit sous l'aiguille. Fiole supposée en tonneau de 70 mm de rayon : la bulle glisse d'environ 1,2 mm par degré et bute au bout vers 8° ; démultiplication de la molette supposée de 3 tours pour un tour du tambour. Outil debout sur sa règle de base ; en vue éclatée, le cadran, le tambour, le couvercle et la fiole sortent vers l'avant, les règles s'écartent.",
+   "note": "Reconstitution 3D d'après une photo du client, sans manuel ni plan. Identification probable : Tajima SLANT 100 (SLT-100), le logo n'étant lisible qu'en partie. Mesuré sur la photo (couvercle du cadran pris à 100 mm) : cadran et graduations, tambour, fiole, aiguille rouge, règles, molette, bord gauche du trou de main, coin du boîtier. Publié : 10 po × 4 3/4 po hors tout, boîtier d'ABS, graduations aux 2°, mode d'emploi. Indiqué par le client : l'outil sert à vérifier l'angle du rack à tiges, entre 75° et 80°, et il est aimanté (il tient seul contre l'acier du rack). Supposé : tout le bout droit hors de la photo, l'épaisseur de 25 mm, le dos, la profondeur du tambour, la saillie de la molette et son entraînement, la forme et la place de la bande aimantée. Poser la règle de base (ou la règle de bout) à plat contre la surface ; tourner la molette bleue jusqu'à ce que la bulle soit entre les deux paires de traits ; lire l'angle sous l'aiguille rouge, en degrés sur l'échelle du dedans (ANGLE) ou en pouces par pied sur celle du dehors (PITCH). 0 : surface de niveau ; 90, « PLUMB » : surface d'aplomb. Sur le site, l'outil fonctionne : la surface se penche, la molette (ou la fiole, tirée à la souris ou au doigt) fait tourner le tambour, la bulle glisse vers le bout le plus haut et l'angle se lit sous l'aiguille. « Poser sur le rack à tiges » penche la surface à 78°, comme le support installé ; la plage de 75° à 80° est montrée en vert sur le cadran (repère visuel, absent de l'outil) et le panneau dit si l'angle lu convient, s'il est trop couché ou trop debout. Fiole supposée en tonneau de 70 mm de rayon : la bulle glisse d'environ 1,2 mm par degré et bute au bout vers 8° ; démultiplication de la molette supposée de 3 tours pour un tour du tambour. Outil debout sur sa règle de base ; en vue éclatée, le cadran, le tambour, le couvercle et la fiole sortent vers l'avant, les règles s'écartent et la bande aimantée descend.",
    "parts": [
     [
      "1",
@@ -106,7 +114,7 @@
      1,
      "RÈGLE DE BASE en aluminium, 254 mm",
      {
-      "note": "Face de mesure du dessous ; 8,5 mm de large vue de face, trois rainures près de l'arête. Longueur supposée égale à celle de l'outil."
+      "note": "Face de mesure du dessous, aimantée (voir le repère 9) ; 8,5 mm de large vue de face, trois rainures près de l'arête. Longueur supposée égale à celle de l'outil."
      }
     ],
     [
@@ -161,6 +169,15 @@
      "MOLETTE de réglage bleue, Ø 29 mm",
      {
       "note": "Cannelée, sous le pouce au chant du haut ; fait tourner le tambour (démultiplication supposée de 3 pour 1)."
+     }
+    ],
+    [
+     "9",
+     "",
+     1,
+     "BANDE AIMANTÉE de la règle de base, 6 mm × 1,5 mm",
+     {
+      "note": "Aimantation indiquée par le client : l'outil colle au rack à tiges en acier. Cachée sur la photo : forme, taille et place supposées (logement au milieu de la face de mesure, en retrait de 0,2 mm)."
      }
     ]
    ]

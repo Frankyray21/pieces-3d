@@ -4,7 +4,7 @@
 // Usage : node scripts/check-niveau-degres.mjs
 import * as THREE from 'three';
 import { buildProcedural } from '../src/viewer/assembly.js';
-import builders, { L, H, RAPPORT, COURBURE, FIOLE, lecture, bulle, graduation, regler, mobiles } from '../src/models/niveau-a-degres/index.js';
+import builders, { L, H, RAPPORT, COURBURE, FIOLE, RACK, AIMANT, lecture, bulle, graduation, regler, mobiles, verdictRack } from '../src/models/niveau-a-degres/index.js';
 
 const RAD = Math.PI / 180;
 let echecs = 0;
@@ -40,10 +40,18 @@ controle('bulle contre la paroi du haut', bulle(haut(0), 0).y > 0 && retourne.y 
 const debout = bulle(haut(0), 90);
 controle('fiole debout', proche(debout.x, debout.course) && proche(debout.y, 0, 1e-9));
 
+// Rack à tiges : plage fermée de 75° à 80°, lue bulle centrée sur le support penché.
+controle('plage du rack à tiges', RACK.min === 75 && RACK.max === 80 && verdictRack(74.9) === 'couche' && verdictRack(75) === 'conforme' && verdictRack(77.5) === 'conforme'
+  && verdictRack(80) === 'conforme' && verdictRack(80.1) === 'debout' && verdictRack(lecture(-RACK.pose).deg) === 'conforme' && verdictRack(lecture(-72).deg) === 'couche' && verdictRack(lecture(-84).deg) === 'debout');
+
 // Modèle : pièces mobiles présentes, pose sur une pente.
 const model = buildProcedural(builders, 'P01');
 const m = mobiles(model.root);
 controle('pièces mobiles du modèle', !!(m.tambour && m.fiole && m.molette && m.bulle));
+// Bande aimantée : sous la règle de base, en retrait de la face de mesure (l'outil porte sur l'aluminium).
+const boiteAimant = new THREE.Box3().setFromObject(model.refs.get('9')[0]);
+// Sommets en simple précision : contrôle au micromètre.
+controle('bande aimantée en retrait de la face de mesure', proche(boiteAimant.min.y, AIMANT.retrait / 1000, 1e-6) && boiteAimant.max.y <= AIMANT.ep / 1000 + 1e-6 && proche(boiteAimant.max.x - boiteAimant.min.x, L / 1000, 1e-6));
 for (const [pente, cadran] of [[30, -30], [-47.5, 47.5], [90, -90], [0, 12]]) {
   regler(model.root, { pente, cadran });
   // Axe de la fiole dans le monde : horizontal si le tambour rattrape la pente.

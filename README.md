@@ -727,7 +727,12 @@ pièces (numéro, quantité, page du manuel).
   détaillant), boîtier d'ABS, mode d'emploi. Supposé et signalé : tout le bout
   droit hors de la photo, l'épaisseur de 25 mm, le dos, la profondeur du
   tambour, la saillie de la molette et son entraînement (3 tours pour 1), la
-  courbure de la fiole. Le texte du logo et les aimants ne sont pas faits.
+  courbure de la fiole. Le texte du logo n'est pas fait. Indiqué par le client :
+  l'outil sert à vérifier l'angle du rack à tiges (`rack-tiges-dd`), qui doit
+  être entre 75° et 80° (procédure PRO-DD-ST-008, étape 5), et il est aimanté
+  — il tient seul contre l'acier du rack ; les aimants étant cachés sur la
+  photo, une bande aimantée de 6 × 1,5 mm est supposée dans la face de mesure
+  de la règle de base (repère 9), en retrait de 0,2 mm.
   **L'outil fonctionne** (`src/ui/features/niveau-degres.js`, outil « Mesurer »
   de la vue 3D) : la surface mesurée se penche (l'outil pivote avec elle), la
   molette ou la fiole se tirent dans la vue 3D ou se règlent au curseur, la
@@ -735,8 +740,13 @@ pièces (numéro, quantité, page du manuel).
   l'aiguille (degrés, pouces par pied, pour cent) ; « Centrer la bulle » tourne
   la molette, « Cadran de face » cadre le cadran ; sur un téléphone, « Suivre
   le téléphone » lit ses capteurs d'inclinaison (le téléphone tenu debout
-  remplace l'outil). La place de la bulle, la pose sur la pente et la lecture
-  sont dans le modèle (`bulle()`, `regler()`, `lecture()` de
+  remplace l'outil). Rack à tiges : « Poser sur le rack à tiges » penche la
+  surface à 78°, comme le support de la scène d'installation ; panneau ouvert,
+  la plage de 75° à 80° est en vert sur le cadran, bordée de rouge pâle (repère
+  visuel, absent de l'outil), et le panneau dit, bulle centrée, si l'angle lu
+  est conforme, trop couché ou trop debout, avec un lien vers la procédure du
+  rack. La place de la bulle, la pose sur la pente, la lecture et le verdict
+  sont dans le modèle (`bulle()`, `regler()`, `lecture()`, `verdictRack()` de
   `src/models/niveau-a-degres/index.js`), contrôlées par
   `scripts/check-niveau-degres.mjs` (`npm run check:niveau`). La fiche et la
   page des cotes (P02, vue de face) sont écrites par

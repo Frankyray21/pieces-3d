@@ -13,9 +13,16 @@
 // publiée). Tout le bout droit (fin du trou de main, coins), l'épaisseur, le
 // dos et l'entraînement du tambour par la molette sont supposés et signalés.
 //
+// Indiqué par le client : l'outil sert à vérifier l'angle du support de tiges
+// de forage (rack à tiges, équipement « rack-tiges-dd »), qui doit être entre
+// 75° et 80° (procédure PRO-DD-ST-008, étape 5), et il est aimanté : il tient
+// seul contre l'acier du rack. Les aimants sont cachés sur la photo : une bande
+// aimantée dans la face de mesure de la règle de base est supposée.
+//
 // L'outil fonctionne (src/ui/features/niveau-degres.js) : regler() pose
 // l'outil sur une pente, tourne le tambour et la molette ; bulle() donne la
-// place de la bulle dans la fiole ; lecture() l'angle sous l'aiguille.
+// place de la bulle dans la fiole ; lecture() l'angle sous l'aiguille ;
+// verdictRack() dit si l'angle lu convient au rack à tiges.
 //
 // Repère de l'outil, en millimètres : x le long de la règle de base (0 au bout
 // du cadran), y vers le haut (0 sous la face de mesure), z en travers (0 au
@@ -37,6 +44,18 @@ export const H = 4.75 * IN;
 export const T = 25;
 /** Règles d'aluminium : largeur vue de face (photo), rainures près de l'arête (place et taille estimées). */
 export const REGLE = { ep: 8.5, rainures: [1.4, 2.6, 3.8], creux: 0.45, haut: 104 };
+/**
+ * Bande aimantée de la règle de base : l'aimantation est indiquée par le client,
+ * la forme, la taille et la place sont supposées (cachées sur la photo). En
+ * retrait de la face de mesure, pour que l'outil porte sur l'aluminium.
+ */
+export const AIMANT = { large: 6, ep: 1.5, retrait: 0.2 };
+/**
+ * Usage indiqué par le client : angle du rack à tiges, entre 75° et 80° par
+ * rapport au sol (procédure PRO-DD-ST-008, étape 5) ; `pose` : angle du support
+ * dans la scène d'installation du site (src/models/rack-tiges-dd/support.js).
+ */
+export const RACK = { min: 75, max: 80, pose: 78 };
 /** Coins du boîtier : au-dessus de la règle de bout (photo), puis ceux du bout droit (supposés). */
 export const COINS = { bout: 14, haut: 16, bas: 3 };
 /**
@@ -266,15 +285,18 @@ function boitier(S) {
  * Section d'une règle (mm) : u en travers de l'épaisseur, v depuis la face de
  * mesure ; trois rainures près de l'arête, sur les deux faces (dos supposé pareil).
  */
-function sectionRegle() {
+function sectionRegle(aimant = false) {
   const d = T / 2, c = REGLE.creux, l = 0.3;
   const face = (s) => REGLE.rainures.flatMap((v) => [[s * d, v - l], [s * (d - c), v - l / 3], [s * (d - c), v + l / 3], [s * d, v + l]]);
-  return [[-d, 0], [d, 0], ...face(1), [d, REGLE.ep], [-d, REGLE.ep], ...face(-1).reverse()];
+  // Logement de la bande aimantée, au milieu de la face de mesure.
+  const a = AIMANT.large / 2;
+  const logement = aimant ? [[-a, 0], [-a, AIMANT.ep], [a, AIMANT.ep], [a, 0]] : [];
+  return [[-d, 0], ...logement, [d, 0], ...face(1), [d, REGLE.ep], [-d, REGLE.ep], ...face(-1).reverse()];
 }
 
 /** Repère 2 : règle de base, sur toute la longueur ; sa face du dessous est la face de mesure. */
 function regleBase(S) {
-  const m = S.extrude(mm(sectionRegle()), L * MM, alu());
+  const m = S.extrude(mm(sectionRegle(true)), L * MM, alu());
   // Section (u, v) → (z, y) ; extrusion le long de x.
   m.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(new THREE.Vector3(0, 0, -1), new THREE.Vector3(0, 1, 0), new THREE.Vector3(1, 0, 0)));
   m.position.set((L / 2) * MM, 0, 0);
@@ -289,6 +311,12 @@ function regleBout(S) {
   m.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(new THREE.Vector3(0, 0, 1), new THREE.Vector3(1, 0, 0), new THREE.Vector3(0, 1, 0)));
   m.position.set(0, (REGLE.ep + long / 2) * MM, 0);
   return S.group(m);
+}
+
+/** Repère 9 : bande aimantée, dans son logement sous la règle de base (forme supposée). */
+function aimant(S) {
+  const a = AIMANT, h = a.ep - a.retrait;
+  return S.group(S.box(L * MM, h * MM, (a.large - 0.2) * MM, 'blackOxide', { pos: P(L / 2, a.retrait + h / 2, 0) }));
 }
 
 /** Repère 4 : cadran fixe, plaque blanche imprimée, à méplat, autour du tambour (origine au centre du cadran). */
@@ -391,6 +419,16 @@ export function lecture(cadran) {
 }
 
 /**
+ * Angle lu (degrés, 0 à 90) comparé à la plage du rack à tiges (RACK) :
+ * 'conforme', 'couche' (moins de 75° : trop couché) ou 'debout' (plus de 80°).
+ * La plage est fermée : 75° et 80° conviennent.
+ */
+export function verdictRack(deg) {
+  const e = 1e-9;
+  return deg < RACK.min - e ? 'couche' : deg > RACK.max + e ? 'debout' : 'conforme';
+}
+
+/**
  * Place de repos de la bulle (mm, repère de la fiole : x le long du tube) pour
  * la verticale `haut` ([x, y, z] unitaire, repère de l'outil) et le tambour
  * tourné de `cadran` degrés. La bulle monte le long de la paroi en tonneau
@@ -454,6 +492,7 @@ export function P01(api) {
   api.part('1', boitier(S), [0, 0, 0]);
   api.part('2', regleBase(S), [0, -0.03, 0]);
   api.part('3', regleBout(S), [-0.03, 0, 0]);
+  api.part('9', aimant(S), [0, -0.055, 0]);
   // Pièces concentriques : les bulles de repère sont écartées du milieu, où se lit la bulle de la fiole.
   const pol = (r, a, z) => ({ labelAt: P(r * Math.cos(a * RAD), r * Math.sin(a * RAD), z) });
   // Le cadran est sous le couvercle : sa bulle de repère se tient juste au-dessus de la glace, sans quoi elle serait masquée.

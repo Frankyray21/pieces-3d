@@ -10,15 +10,26 @@
 //   tourne la molette à la place de l'utilisateur.
 // - Sur un téléphone, « Suivre le téléphone » lit ses capteurs d'inclinaison : le téléphone
 //   tenu debout remplace l'outil, sa tranche du bas tient lieu de règle de base.
+// - Usage indiqué par le client : vérifier l'angle du rack à tiges, entre 75° et 80°
+//   (procédure PRO-DD-ST-008 du support de tiges de forage, étape 5). Panneau ouvert, la
+//   plage est en vert sur le cadran (repère visuel, absent de l'outil) et le panneau dit si
+//   l'angle lu convient ; « Poser sur le rack » penche la surface comme le support de la
+//   scène d'installation. L'outil est aimanté : il tient seul contre l'acier du rack.
 //
 // Les cotes, la place de la bulle et l'angle lu viennent du modèle
 // (src/models/niveau-a-degres/index.js) ; ce module ne fait que l'interface.
 import * as THREE from 'three';
 import './niveau-degres.css';
-import { L, T, CADRAN, MOLETTE, FIOLE, RAPPORT, lecture, bulle, placerBulle, regler, mobiles } from '../../models/niveau-a-degres/index.js';
+import { L, T, CADRAN, MOLETTE, FIOLE, RAPPORT, RACK, lecture, bulle, placerBulle, regler, mobiles, verdictRack } from '../../models/niveau-a-degres/index.js';
 
 const ID = 'niveau-degres';
 const EQ = 'niveau-a-degres';
+/** Équipement et page de la procédure du rack à tiges (étape 5 : vérifier l'angle). */
+const RACK_EQ = 'rack-tiges-dd';
+const RACK_PAGE = '#rack-tiges-dd.P02';
+const PLAGE = `${RACK.min}° à ${RACK.max}°`;
+/** Sous cet angle lu (degrés), l'outil n'est manifestement pas sur le rack : le verdict reste neutre. */
+const LOIN = 45;
 const MM = 0.001;
 const RAD = Math.PI / 180;
 /** La bulle est entre les traits à moins de cet écart du milieu (mm) : jeu entre la bulle et la paire de traits du dedans. */
@@ -47,6 +58,7 @@ export default {
     let racine = null; // modèle affiché (racine), ou null hors de la page du niveau
     let pieces = null; // pièces mobiles : { tambour, fiole, molette, bulle }
     let surface = null; // bande de la surface mesurée
+    let zone = null; // plage du rack à tiges, en vert sur le cadran
     let eclate = 0;
     let bx = 0; // place affichée de la bulle le long de la fiole (mm)
     let image = 0; // requestAnimationFrame en cours
@@ -69,6 +81,7 @@ export default {
         <b class="nvd-deg mono" data-nvd="deg">0,0°</b>
         <span class="nvd-pente" data-nvd="pente"></span>
         <span class="nvd-bulle" data-nvd="bulle" role="status"></span>
+        <span class="nvd-rack" data-nvd="rack"></span>
       </div>
       <div class="nvd-champ" data-nvd="champ-pente">
         <label for="nvd-pente">Pente de la surface mesurée</label>
@@ -87,6 +100,7 @@ export default {
       <div class="nvd-actions">
         <button type="button" class="btn primary" data-nvd="centrer">Centrer la bulle</button>
         <button type="button" class="btn" data-nvd="face">Cadran de face</button>
+        <button type="button" class="btn" data-nvd="poser" title="Pencher la surface à ${RACK.pose}°, comme le support de tiges installé">Poser sur le rack à tiges</button>
         <button type="button" class="btn" data-nvd="zero">Remettre à zéro</button>
       </div>
       <div class="nvd-capteur" data-nvd="zone-capteur" hidden>
@@ -94,10 +108,12 @@ export default {
         <p data-nvd="capteur-note">Tenez le téléphone debout, sa tranche du bas posée sur la surface : il remplace la règle de base.</p>
       </div>
       <ol class="nvd-emploi">
-        <li>Posez la règle de base sur la surface : ici, penchez la surface.</li>
+        <li>Posez la règle de base sur le poteau du rack à tiges : elle est aimantée, l'outil tient seul contre l'acier et les deux mains restent libres. Ici, penchez la surface ou choisissez « Poser sur le rack à tiges ».</li>
         <li>Tournez la molette bleue jusqu'à ce que la bulle soit entre les deux paires de traits. Dans la vue 3D, tirez la molette ou la fiole.</li>
         <li>Lisez l'angle sous l'aiguille rouge : degrés au-dedans (ANGLE), pouces par pied au-dehors (PITCH). 0 : de niveau ; 90, « PLUMB » : d'aplomb.</li>
-      </ol>`;
+        <li>Rack à tiges : l'aiguille doit être dans la zone verte, entre ${RACK.min}° et ${RACK.max}° (graduations aux 2° : ${RACK.min} se lit entre 74 et 76).</li>
+      </ol>
+      <p class="nvd-source" data-nvd="source">Plage de ${PLAGE} : procédure du support de tiges de forage, étape 5. <button type="button" class="nvd-lien" data-nvd="procedure">Voir la procédure du rack à tiges ›</button></p>`;
     const $ = (nom) => el.querySelector(`[data-nvd="${nom}"]`);
     const cPente = el.querySelector('#nvd-pente');
     const cCadran = el.querySelector('#nvd-cadran');
@@ -117,6 +133,18 @@ export default {
       etatBulle.textContent = plat ? 'Outil à plat : redressez-le pour mesurer une pente.'
         : centree ? `Bulle entre les traits : la surface est à ${fr(l.deg)}°.`
           : `Bulle ${Math.abs(b.x) >= b.course - 0.01 ? 'en butée' : 'décentrée'} : tournez la molette (écart de ${fr(Math.abs(b.ecart))}°).`;
+      // Rack à tiges : l'angle ne vaut que bulle entre les traits.
+      const rack = $('rack');
+      // Loin de la plage (outil à l'horizontale, autre mesure) : pas d'alerte, l'outil n'est pas sur le rack.
+      const v = !centree || plat ? 'attente' : l.deg < LOIN ? 'loin' : verdictRack(l.deg);
+      rack.dataset.etat = v;
+      rack.textContent = `Rack à tiges, ${PLAGE} : ${{
+        attente: 'centrez la bulle pour vérifier',
+        loin: 'posez l\'outil sur le poteau du rack',
+        conforme: `conforme (${fr(l.deg)}°)`,
+        couche: `trop couché (${fr(l.deg)}°, moins de ${RACK.min}°)`,
+        debout: `trop debout (${fr(l.deg)}°, plus de ${RACK.max}°)`,
+      }[v]}.`;
       if (document.activeElement !== cPente) cPente.value = String(etat.pente);
       if (document.activeElement !== nPente) nPente.value = String(Math.round(etat.pente * 10) / 10);
       if (document.activeElement !== cCadran) cCadran.value = String(etat.cadran);
@@ -137,6 +165,41 @@ export default {
       m.raycast = () => {}; // ni survol ni clic
       return m;
     }
+
+    /**
+     * Plage du rack à tiges sur le cadran : secteurs verts translucides aux quatre endroits où
+     * l'aiguille lit de 75° à 80° (de part et d'autre de chaque « PLUMB »), bordés de rouge pâle
+     * (trop couché, trop debout). Repère visuel posé sur le couvercle, absent de l'outil ;
+     * montré tant que le panneau de mesure est ouvert.
+     */
+    function creerZone() {
+      const g = new THREE.Group();
+      const teinte = (color, opacity) => new THREE.MeshBasicMaterial({ color, transparent: true, opacity, depthWrite: false, toneMapped: false, side: THREE.DoubleSide });
+      const vert = teinte(0x1fb85a, 0.5), rouge = teinte(0xe03a2e, 0.2);
+      const r0 = (CADRAN.rTrou + 0.4) * MM, r1 = (CADRAN.rArc + 4.6) * MM;
+      /** Secteurs où l'aiguille lit de v0 à v1 : la lecture v est à l'angle polaire 90 − v et à ses trois symétriques. */
+      const secteurs = (v0, v1, mat) => {
+        for (const debut of [90 - v1, 90 + v0, 270 - v1, 270 + v0]) {
+          const m = new THREE.Mesh(new THREE.RingGeometry(r0, r1, 12, 1, debut * RAD, (v1 - v0) * RAD), mat);
+          m.raycast = () => {}; // ni survol ni clic
+          g.add(m);
+        }
+      };
+      // Comme dans la scène d'installation du rack : permis en vert, trop couché et trop debout en rouge pâle.
+      secteurs(RACK.min, RACK.max, vert);
+      secteurs(RACK.min - 10, RACK.min, rouge);
+      secteurs(RACK.max, 90, rouge);
+      const c = CADRAN.couvercle;
+      g.position.set(CADRAN.x * MM, CADRAN.y * MM, (T / 2 + c.jour + c.ep + 0.15) * MM);
+      g.userData.stepOnly = true; // hors du cadrage du modèle
+      g.visible = false;
+      return g;
+    }
+    const montrerZone = () => {
+      if (!zone) return;
+      const v = ctx.ui.sidePanel.has(ID);
+      if (zone.visible !== v) { zone.visible = v; ctx.viewer.invalidate(); }
+    };
 
     /** Pose le modèle selon l'état ; la bulle suit en glissant (boucle). */
     function poser({ sec = false } = {}) {
@@ -203,7 +266,9 @@ export default {
       pieces = mobiles(racine);
       if (!pieces.tambour || !pieces.fiole || !pieces.bulle) { racine = null; return; }
       surface = creerSurface();
-      racine.add(surface);
+      zone = creerZone();
+      racine.add(surface, zone);
+      montrerZone();
       poser({ sec: true });
     }
 
@@ -211,7 +276,7 @@ export default {
       if (image) cancelAnimationFrame(image);
       image = 0;
       anim = null;
-      racine = pieces = surface = null;
+      racine = pieces = surface = zone = null;
       capteur(false);
     }
 
@@ -228,6 +293,15 @@ export default {
     cCadran.addEventListener('input', () => { anim = null; etat.cadran = Number(cCadran.value); poser(); });
     $('centrer').addEventListener('click', centrer);
     $('face').addEventListener('click', face);
+    // Rack à tiges : la surface penchée comme le support installé ; il reste à centrer la bulle et à lire.
+    $('poser').addEventListener('click', () => {
+      anim = null;
+      if (etat.capteur) capteur(false);
+      etat.pente = RACK.pose;
+      poser();
+      if (actif()) ctx.viewer.frame();
+    });
+    $('procedure').addEventListener('click', () => ctx.go(RACK_PAGE));
     $('zero').addEventListener('click', () => {
       anim = null;
       etat.pente = 0;
@@ -377,9 +451,15 @@ export default {
       onClick: () => (ctx.ui.sidePanel.owner === ID ? ctx.ui.sidePanel.close() : ouvrir()),
     });
     bouton.hidden = true;
-    ctx.on('sidepanel', ({ open, owner }) => { if (owner === ID) bouton.setAttribute('aria-pressed', String(open)); });
+    ctx.on('sidepanel', ({ open, owner }) => {
+      if (owner === ID) bouton.setAttribute('aria-pressed', String(open));
+      // Panneau ouvert, replié, recouvert par la fiche ou repris par un autre mode : la zone verte suit.
+      montrerZone();
+    });
     ctx.on('view-state', ({ explode }) => { eclate = explode || 0; });
     ctx.on('equipment', ({ id }) => {
+      // Le lien vers la procédure n'est offert que si le rack à tiges est au catalogue.
+      $('source').hidden = !ctx.index.some((e) => e.id === RACK_EQ);
       if (id === EQ) return;
       etat.pente = 0;
       etat.cadran = 0;
