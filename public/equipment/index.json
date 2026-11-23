@@ -17,6 +17,14 @@
       "status": "Clé à molette du « Tool Pack 1 » d'OpenGameArt (CC0, LonesomeDucky), chromée et piquée de rouille, ramenée à 12 po (305 mm) de long, en trois pièces (corps, mâchoire mobile, molette) ; cotes du modèle et non d'un catalogue ; fichier prêt pour Unreal Engine"
     },
     {
+      "id": "cle-a-tube",
+      "name": "Clé à tube pleine prise, grosseur N (tube intérieur de carottier)",
+      "manufacturer": "Fabricant non identifié — type TIME Limited 92-21-460 / Fordia 3760006031",
+      "category": "Outils à main",
+      "thumbnail": "equipment/cle-a-tube/thumbnail.webp",
+      "status": "3D d'après une photo du client (deux clés pendues, vues par la tranche) et la photo du même type de clé publiée par TIME Limited, sans plan ni cote : manche forgé à nez denté, mâchoire de liaison en fourche, mâchoire crochet à ergot, axe et boulon de 1/2 po, aux mesures du tube intérieur N (Ø 55,6 mm) ; scène animée du mécanisme sur un tronçon de tube (coiffer, refermer, serrer, reprendre sa course) ; fabricant non identifié, longueur du manche (569 mm hors tout) et profil des dents supposés"
+    },
+    {
       "id": "cles-a-tuyau",
       "name": "Clés à tuyau droites, 6 à 60 po",
       "manufacturer": "RIDGID (cotes publiées)",
