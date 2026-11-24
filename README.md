@@ -712,36 +712,45 @@ pièces (numéro, quantité, page du manuel).
   du modèle (`src/models/niveau-4-pi/index.js`).
 
 - **Niveau à degrés à fiole pivotante (rapporteur d'angle)** (`niveau-a-degres`) :
-  outil de mesure d'angle reconstitué d'après une photo du client, sans manuel
-  ni plan. Le logo, coupé par le bord de la photo, se lit « Ta… » et « SLA… » :
-  identification probable d'un Tajima SLANT 100 (SLT-100), dont les fiches
-  décrivent le même outil. La photo ne montre que les 150 premiers millimètres,
-  côté cadran ; l'échelle vient du couvercle du cadran pris à 100 mm de
-  diamètre. Mesuré sur la photo : boîtier noir et son coin arrondi, deux règles
+  outil de mesure d'angle reconstitué d'après deux photos du client, sans
+  manuel ni plan. Le logo, coupé par le bord de la première photo, se lit
+  « Ta… » et « SLA… » : identification probable d'un Tajima SLANT 100
+  (SLT-100), dont les fiches décrivent le même outil. Première photo, de près :
+  les 150 premiers millimètres, côté cadran, à l'échelle du couvercle du cadran
+  pris à 100 mm de diamètre — boîtier noir et son coin arrondi, deux règles
   d'aluminium d'équerre de 8,5 mm (base et bout), cadran fixe à méplat gradué
   aux 2° de 0 à 90 dans chaque quart (« PLUMB » à 90, chiffres 90 en rouge) et
   en pente (« PITCH », pouces par pied, 2 à 40), tambour pivotant de 62,4 mm
   avec la fiole verte de Ø 11 mm (deux paires de traits, embouts noirs) et
-  l'aiguille rouge, molette bleue de Ø 29 mm au chant du haut, bord gauche du
-  trou de main, cadre du logo. Publié : 10 po × 4 3/4 po hors tout (un
-  détaillant), boîtier d'ABS, mode d'emploi. Supposé et signalé : tout le bout
-  droit hors de la photo, l'épaisseur de 25 mm, le dos, la profondeur du
-  tambour, la saillie de la molette et son entraînement (3 tours pour 1), la
-  courbure de la fiole. Le texte du logo n'est pas fait. Indiqué par le client :
-  l'outil sert à vérifier l'angle du rack à tiges (`rack-tiges-dd`), qui doit
-  être entre 75° et 80° (procédure PRO-DD-ST-008, étape 5), et il est aimanté
-  — il tient seul contre l'acier du rack ; les aimants étant cachés sur la
-  photo, une bande aimantée de 6 × 1,5 mm est supposée dans la face de mesure
-  de la règle de base (repère 9), en retrait de 0,2 mm.
+  l'aiguille rouge, molette bleue de Ø 29 mm, début du trou de main et du cadre
+  du logo. Seconde photo : l'outil entier, petit (1,43 mm par pixel), collé au
+  poteau du rack à tiges — elle donne la longueur, environ 9 po (228,6 mm à
+  6 mm près, et non les 10 po d'un détaillant), et la forme du bout à 5 mm
+  près : chant du haut qui décroche sous la molette puis descend en biseau
+  d'environ 21°, trou de main en trapèze, bout tronqué à 66 mm de haut, cadre
+  du logo de 50 mm (`contourBoitier()`, `contourTrou()`). Publié : 4 3/4 po de
+  haut, boîtier d'ABS, mode d'emploi. Supposé et signalé : l'épaisseur de
+  25 mm, le dos, la profondeur du tambour, la saillie de la molette et son
+  entraînement (3 tours pour 1), la courbure de la fiole. Le texte du logo
+  n'est pas fait. Indiqué par le client : l'outil sert à vérifier l'angle du
+  rack à tiges (`rack-tiges-dd`), qui doit être entre 75° et 80° (procédure
+  PRO-DD-ST-008, étape 5), et il est aimanté — sur la seconde photo, il tient
+  seul par sa règle de base contre la face avant du poteau du rack, cadran
+  vers le haut ; les aimants étant cachés, une bande aimantée de 6 × 1,5 mm
+  est supposée dans la face de mesure de la règle de base (repère 9), en
+  retrait de 0,2 mm.
   **L'outil fonctionne** (`src/ui/features/niveau-degres.js`, outil « Mesurer »
-  de la vue 3D) : la surface mesurée se penche (l'outil pivote avec elle), la
+  de la vue 3D) : la surface mesurée — le poteau du rack à tiges, profilé carré
+  rouge de 2 po du support, repère de la scène et non pièce de l'outil — se
+  penche, et l'outil, collé dessus par sa règle de base, pivote avec elle ; la
   molette ou la fiole se tirent dans la vue 3D ou se règlent au curseur, la
   bulle glisse vers le bout le plus haut et bute au bout, l'angle se lit sous
   l'aiguille (degrés, pouces par pied, pour cent) ; « Centrer la bulle » tourne
   la molette, « Cadran de face » cadre le cadran ; sur un téléphone, « Suivre
   le téléphone » lit ses capteurs d'inclinaison (le téléphone tenu debout
-  remplace l'outil). Rack à tiges : « Poser sur le rack à tiges » penche la
-  surface à 78°, comme le support de la scène d'installation. Les degrés à ne
+  remplace l'outil). Rack à tiges : « Poser sur le rack à tiges » penche le
+  poteau à 78°, comme le support de la scène d'installation, et y colle l'outil
+  cadran vers le haut, comme sur la seconde photo. Les degrés à ne
   pas dépasser sont en rouge sur le cadran, en permanence (demande du client) :
   trait rouge épais à 75° et à 80°, zones interdites en rouge, zone permise en
   vert, étiquette rouge « MIN 75° · MAX 80° » du côté de l'aiguille — repères
@@ -753,7 +762,8 @@ pièces (numéro, quantité, page du manuel).
   `src/models/niveau-a-degres/index.js`), contrôlées par
   `scripts/check-niveau-degres.mjs` (`npm run check:niveau`). La fiche et la
   page des cotes (P02, vue de face) sont écrites par
-  `tools/niveau_a_degres_fiche.mjs` ; P01 est la photo du client.
+  `tools/niveau_a_degres_fiche.mjs` ; P01 et P03 sont les deux photos du
+  client (le cadran de près, l'outil collé au poteau du rack).
 
 - **Pince-monseigneur Garant CB60PC, 60 po, pointe en biseau**
   (`pince-monseigneur`) : barre-levier forgée d'une seule pièce, reconstituée

@@ -1,7 +1,10 @@
 // Niveau à degrés (équipement « niveau-a-degres ») : l'outil fonctionne dans la vue 3D.
 //
-// - La surface mesurée se penche (curseur) : l'outil, posé dessus par sa règle de base,
-//   pivote avec elle ; une bande orange translucide montre la surface.
+// - La surface mesurée se penche (curseur) : l'outil, collé dessus par sa règle de base
+//   aimantée, pivote avec elle. La surface est le poteau du rack à tiges (profilé carré
+//   rouge du support, src/models/rack-tiges-dd/support.js), comme sur la photo du client :
+//   règle de base contre la face avant du poteau, cadran vers le haut. Le poteau est un
+//   repère de la scène, pas une pièce de l'outil.
 // - La molette bleue ou la fiole se tirent dans la vue 3D (souris ou doigt), ou se règlent
 //   au curseur : le tambour tourne, l'aiguille rouge suit sur le cadran, la molette est
 //   entraînée.
@@ -25,6 +28,8 @@ import * as THREE from 'three';
 import { CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer.js';
 import './niveau-degres.css';
 import { L, T, CADRAN, MOLETTE, FIOLE, RAPPORT, RACK, lecture, bulle, placerBulle, regler, mobiles, verdictRack } from '../../models/niveau-a-degres/index.js';
+import { T2 } from '../../models/rack-tiges-dd/support.js';
+import { mat } from '../../viewer/materials.js';
 
 const ID = 'niveau-degres';
 const EQ = 'niveau-a-degres';
@@ -61,7 +66,7 @@ export default {
     const etat = { pente: 0, cadran: 0, capteur: false, haut: null };
     let racine = null; // modèle affiché (racine), ou null hors de la page du niveau
     let pieces = null; // pièces mobiles : { tambour, fiole, molette, bulle }
-    let surface = null; // bande de la surface mesurée
+    let surface = null; // surface mesurée : le poteau du rack à tiges
     let zone = null; // plage du rack à tiges sur le cadran : permis en vert, limites et interdit en rouge
     let coupe = false; // vue en coupe : la plage, posée sur le couvercle, est masquée
     let retour = 0; // délai avant de remontrer la plage, le temps que le couvercle revienne de la vue éclatée
@@ -93,10 +98,10 @@ export default {
         </span>
       </div>
       <div class="nvd-champ" data-nvd="champ-pente">
-        <label for="nvd-pente">Pente de la surface mesurée</label>
+        <label for="nvd-pente">Angle du poteau du rack (surface mesurée)</label>
         <div class="nvd-ligne">
           <input type="range" id="nvd-pente" min="-90" max="90" step="0.5" value="0">
-          <input type="number" class="mono" min="-90" max="90" step="0.5" value="0" aria-label="Pente de la surface, en degrés" data-nvd="pente-n"><span>°</span>
+          <input type="number" class="mono" min="-90" max="90" step="0.5" value="0" aria-label="Angle du poteau, en degrés" data-nvd="pente-n"><span>°</span>
         </div>
       </div>
       <div class="nvd-champ">
@@ -109,7 +114,7 @@ export default {
       <div class="nvd-actions">
         <button type="button" class="btn primary" data-nvd="centrer">Centrer la bulle</button>
         <button type="button" class="btn" data-nvd="face">Cadran de face</button>
-        <button type="button" class="btn" data-nvd="poser" title="Pencher la surface à ${RACK.pose}°, comme le support de tiges installé">Poser sur le rack à tiges</button>
+        <button type="button" class="btn" data-nvd="poser" title="Coller l'outil au poteau du rack penché à ${RACK.pose}°, cadran en haut, comme sur la photo">Poser sur le rack à tiges</button>
         <button type="button" class="btn" data-nvd="zero">Remettre à zéro</button>
       </div>
       <div class="nvd-capteur" data-nvd="zone-capteur" hidden>
@@ -117,7 +122,7 @@ export default {
         <p data-nvd="capteur-note">Tenez le téléphone debout, sa tranche du bas posée sur la surface : il remplace la règle de base.</p>
       </div>
       <ol class="nvd-emploi">
-        <li>Posez la règle de base sur le poteau du rack à tiges : elle est aimantée, l'outil tient seul contre l'acier et les deux mains restent libres. Ici, penchez la surface ou choisissez « Poser sur le rack à tiges ».</li>
+        <li>Collez la règle de base sur la face avant du poteau du rack à tiges, cadran vers le haut : elle est aimantée, l'outil tient seul contre l'acier et les deux mains restent libres. Ici, choisissez « Poser sur le rack à tiges » ou penchez le poteau.</li>
         <li>Tournez la molette bleue jusqu'à ce que la bulle soit entre les deux paires de traits. Dans la vue 3D, tirez la molette ou la fiole.</li>
         <li>Lisez l'angle sous l'aiguille rouge : degrés au-dedans (ANGLE), pouces par pied au-dehors (PITCH). 0 : de niveau ; 90, « PLUMB » : d'aplomb.</li>
         <li>Rack à tiges : l'aiguille doit être dans la zone verte, entre les deux traits rouges. <b class="nvd-rouge">Ne pas dépasser ${RACK.max}° ; pas moins de ${RACK.min}°.</b> Graduations aux 2° : ${RACK.min} se lit entre 74 et 76.</li>
@@ -140,7 +145,7 @@ export default {
       const etatBulle = $('bulle');
       etatBulle.dataset.etat = centree && !plat ? 'ok' : 'non';
       etatBulle.textContent = plat ? 'Outil à plat : redressez-le pour mesurer une pente.'
-        : centree ? `Bulle entre les traits : la surface est à ${fr(l.deg)}°.`
+        : centree ? `Bulle entre les traits : ${Math.abs(etat.pente) > 0.05 && !etat.capteur ? 'le poteau' : 'la surface'} est à ${fr(l.deg)}°.`
           : `Bulle ${Math.abs(b.x) >= b.course - 0.01 ? 'en butée' : 'décentrée'} : tournez la molette (écart de ${fr(Math.abs(b.ecart))}°).`;
       // Rack à tiges : l'angle ne vaut que bulle entre les traits.
       const rack = $('rack');
@@ -154,8 +159,9 @@ export default {
         couche: `trop couché (${fr(l.deg)}°), sous le minimum de ${RACK.min}°`,
         debout: `trop debout (${fr(l.deg)}°), au-delà du maximum de ${RACK.max}°`,
       }[v]}.`;
-      if (document.activeElement !== cPente) cPente.value = String(etat.pente);
-      if (document.activeElement !== nPente) nPente.value = String(Math.round(etat.pente * 10) / 10);
+      // Curseur : angle positif pour le poteau penché comme sur la photo (cadran en haut), d'où le signe.
+      if (document.activeElement !== cPente) cPente.value = String(-etat.pente || 0);
+      if (document.activeElement !== nPente) nPente.value = String(Math.round(-etat.pente * 10) / 10 || 0);
       if (document.activeElement !== cCadran) cCadran.value = String(etat.cadran);
       $('cadran-n').textContent = `${fr(etat.cadran)}°`;
       cPente.disabled = nPente.disabled = etat.capteur;
@@ -163,16 +169,35 @@ export default {
     }
 
     // ---------------------------------------------------------------- modèle
-    /** Bande translucide sous la règle de base : la surface mesurée (repère visuel, pas une pièce). */
+    /**
+     * Surface mesurée : un bout du poteau du rack à tiges, profilé carré creux de 2 po peint en
+     * rouge comme le support, sous la règle de base — l'outil y tient par sa bande aimantée,
+     * comme sur la photo du client. Repère de la scène, pas une pièce de l'outil.
+     */
     function creerSurface() {
-      const m = new THREE.Mesh(
-        new THREE.BoxGeometry((L + 90) * MM, 1.2 * MM, (T + 50) * MM),
-        new THREE.MeshBasicMaterial({ color: 0xff7a1a, transparent: true, opacity: 0.3, depthWrite: false, toneMapped: false }),
-      );
-      m.position.set((L / 2) * MM, -0.7 * MM, 0);
-      m.userData.stepOnly = true; // hors du cadrage du modèle
-      m.raycast = () => {}; // ni survol ni clic
-      return m;
+      const g = new THREE.Group();
+      const a = T2, long = (L + 360) * MM, ep = 0.0048, o = (a - ep) / 2;
+      const rouge = mat('red');
+      for (const [w, h, y, z] of [[a, ep, o, 0], [a, ep, -o, 0], [ep, a - 2 * ep, 0, o], [ep, a - 2 * ep, 0, -o]]) {
+        const m = new THREE.Mesh(new THREE.BoxGeometry(long, h, w), rouge);
+        m.position.set(0, y, z);
+        m.raycast = () => {}; // ni survol ni clic
+        g.add(m);
+      }
+      // Face avant du poteau au ras de la face de mesure (un cheveu dessous, pour ne pas se confondre avec elle).
+      g.position.set((L / 2) * MM, -a / 2 - 0.0002, 0);
+      g.userData.stepOnly = true; // hors du cadrage du modèle
+      return g;
+    }
+    const boite = new THREE.Box3();
+    /** Règle le modèle ; outil sur le poteau : l'ensemble est relevé pour que le bas du poteau ne passe pas sous le sol. */
+    function regle() {
+      regler(racine, { pente: etat.capteur ? 0 : etat.pente, cadran: etat.cadran });
+      if (!surface) return;
+      surface.visible = !etat.capteur && Math.abs(etat.pente) > 0.05;
+      if (!surface.visible) return;
+      const bas = boite.setFromObject(surface).min.y;
+      if (bas < 0) { racine.position.y -= bas; racine.updateMatrixWorld(true); }
     }
 
     /**
@@ -252,8 +277,7 @@ export default {
     /** Pose le modèle selon l'état ; la bulle suit en glissant (boucle). */
     function poser({ sec = false } = {}) {
       if (!actif()) return;
-      regler(racine, { pente: etat.capteur ? 0 : etat.pente, cadran: etat.cadran });
-      if (surface) surface.visible = !etat.capteur && Math.abs(etat.pente) > 0.05;
+      regle();
       const b = bulle(haut(), etat.cadran);
       if (sec || reduit.matches) bx = b.x;
       placerBulle(pieces.bulle, { ...b, x: bx });
@@ -278,7 +302,7 @@ export default {
         const k = Math.min(1, (t - anim.t0) / anim.duree);
         etat.cadran = tour(anim.de + (anim.a - anim.de) * (k * k * (3 - 2 * k)));
         if (k >= 1) anim = null;
-        regler(racine, { pente: etat.capteur ? 0 : etat.pente, cadran: etat.cadran });
+        regle();
       }
       const b = bulle(haut(), etat.cadran);
       bx += (b.x - bx) * (1 - Math.exp(-dt / TAU));
@@ -335,7 +359,7 @@ export default {
     // ---------------------------------------------------------------- commandes du panneau
     const regPente = (v) => {
       if (!Number.isFinite(v)) return;
-      etat.pente = Math.max(-90, Math.min(90, v));
+      etat.pente = -Math.max(-90, Math.min(90, v)) || 0;
       poser();
     };
     cPente.addEventListener('input', () => regPente(Number(cPente.value)));
@@ -345,11 +369,12 @@ export default {
     cCadran.addEventListener('input', () => { anim = null; etat.cadran = Number(cCadran.value); poser(); });
     $('centrer').addEventListener('click', centrer);
     $('face').addEventListener('click', face);
-    // Rack à tiges : la surface penchée comme le support installé ; il reste à centrer la bulle et à lire.
+    // Rack à tiges : le poteau penché comme le support installé, l'outil collé dessus cadran en haut,
+    // comme sur la photo du client ; il reste à centrer la bulle et à lire.
     $('poser').addEventListener('click', () => {
       anim = null;
       if (etat.capteur) capteur(false);
-      etat.pente = RACK.pose;
+      etat.pente = -RACK.pose;
       poser();
       if (actif()) ctx.viewer.frame();
     });

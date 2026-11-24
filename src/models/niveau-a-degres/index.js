@@ -1,5 +1,5 @@
-// Niveau à degrés (rapporteur d'angle à fiole pivotante), d'après une photo du
-// client : boîtier noir, deux règles d'aluminium d'équerre (base et bout),
+// Niveau à degrés (rapporteur d'angle à fiole pivotante), d'après deux photos
+// du client : boîtier noir, deux règles d'aluminium d'équerre (base et bout),
 // cadran fixe gradué en degrés (0 à 90 dans chaque quart, « PLUMB » à 90) et en
 // pente (« PITCH », pouces par pied), fiole verte montée en travers d'un
 // tambour pivotant qui porte une aiguille rouge, molette bleue, trou de main.
@@ -7,16 +7,21 @@
 // les fiches du SLANT 100 (SLT-100) décrivent le même outil : boîtier d'ABS,
 // molette au pouce, fiole à deux paires de traits, 10 po × 4 3/4 po.
 //
-// La photo ne montre que les 150 premiers millimètres, côté cadran : la
-// longueur et la hauteur hors tout viennent d'un détaillant, l'échelle du
-// diamètre du couvercle du cadran pris à 100 mm (ce qui redonne la hauteur
-// publiée). Tout le bout droit (fin du trou de main, coins), l'épaisseur, le
-// dos et l'entraînement du tambour par la molette sont supposés et signalés.
+// Première photo, de près : les 150 premiers millimètres, côté cadran, à
+// l'échelle du couvercle du cadran pris à 100 mm (ce qui redonne la hauteur
+// publiée de 4 3/4 po) — cadran, tambour, fiole, règles, molette, début du
+// trou de main et du logo. Seconde photo : l'outil entier, petit (1,4 mm par
+// pixel), collé au poteau du rack à tiges — elle donne la forme du bout :
+// chant du haut en biseau après la molette, trou de main en trapèze, bout
+// tronqué, et une longueur d'environ 9 po (229 mm à 6 mm près), et non les
+// 10 po d'un détaillant. L'épaisseur, le dos et l'entraînement du tambour par
+// la molette restent supposés et signalés.
 //
 // Indiqué par le client : l'outil sert à vérifier l'angle du support de tiges
 // de forage (rack à tiges, équipement « rack-tiges-dd »), qui doit être entre
-// 75° et 80° (procédure PRO-DD-ST-008, étape 5), et il est aimanté : il tient
-// seul contre l'acier du rack. Les aimants sont cachés sur la photo : une bande
+// 75° et 80° (procédure PRO-DD-ST-008, étape 5), et il est aimanté : sur la
+// seconde photo, il tient seul par sa règle de base contre la face avant du
+// poteau du rack, cadran vers le haut. Les aimants sont cachés : une bande
 // aimantée dans la face de mesure de la règle de base est supposée.
 //
 // L'outil fonctionne (src/ui/features/niveau-degres.js) : regler() pose
@@ -37,8 +42,12 @@ export const IN = 25.4;
 
 // ------------------------------------------------------------------ cotes (mm)
 
-/** Longueur et hauteur hors tout : 10 po × 4 3/4 po, publiées par un détaillant. */
-export const L = 10 * IN;
+/**
+ * Longueur hors tout : environ 9 po, mesurés sur la seconde photo (229 mm à 6 mm près, du
+ * bout du cadran au bout tronqué, à l'échelle de l'entraxe cadran–molette de la première) ;
+ * un détaillant annonce 10 po. Hauteur : 4 3/4 po publiés, que les deux photos confirment.
+ */
+export const L = 9 * IN;
 export const H = 4.75 * IN;
 /** Épaisseur du boîtier : supposée (l'emballage fait environ 1 po). */
 export const T = 25;
@@ -56,8 +65,16 @@ export const AIMANT = { large: 6, ep: 1.5, retrait: 0.2 };
  * dans la scène d'installation du site (src/models/rack-tiges-dd/support.js).
  */
 export const RACK = { min: 75, max: 80, pose: 78 };
-/** Coins du boîtier : au-dessus de la règle de bout (photo), puis ceux du bout droit (supposés). */
-export const COINS = { bout: 14, haut: 16, bas: 3 };
+/** Coins du boîtier : au-dessus de la règle de bout (première photo), à l'épaule et au bout tronqué (seconde photo, estimés). */
+export const COINS = { bout: 14, epaule: 4, fin: 7, bas: 3 };
+/**
+ * Chant du haut, après la molette (seconde photo) : il descend en biseau vers le bout, en
+ * passant par (x, y) avec la pente donnée (environ 21°) ; `epaule` : où le chant quitte la
+ * pleine hauteur, et où le biseau commence, sous la molette qui cache le décrochement.
+ */
+export const BISEAU = { x: 150, y: 95.9, pente: 0.382, epaule: [137, 147] };
+/** Hauteur du chant en biseau à la distance x du bout du cadran (mm). */
+export const biseau = (x) => BISEAU.y - BISEAU.pente * (x - BISEAU.x);
 /**
  * Cadran (photo) : centre, rayon du couvercle (échelle : Ø 100 mm), méplat du
  * côté de la règle de base, arc des graduations, chiffres, fenêtre du tambour.
@@ -73,10 +90,14 @@ export const TAMBOUR = { rExt: 31.2, rInt: 28.6, fond: 1.5, saillie: 3.8, coller
 export const FIOLE = { d: 11, vue: 27, traits: [6, 7.6], embout: { d: 14 }, recul: 5, bulle: { long: 10.5, haut: 4.2, large: 6.4 } };
 /** Molette bleue (photo) : centre, diamètre, cannelures (nombre estimé), saillie sur la face (supposée). */
 export const MOLETTE = { x: 130, y: 108, d: 29, cannelures: 28, saillie: 8 };
-/** Trou de main : bord gauche, hauteur et coins sur la photo ; bord droit supposé. */
-export const TROU = { x0: 131, x1: 226, y0: 40, y1: 86, r: 13 };
-/** Marquage sous le trou de main : cadre du logo (photo), longueur supposée. */
-export const MARQUE = { x0: 133, x1: 178, y0: 17.5, y1: 28, r: 2.5, trait: 0.6 };
+/**
+ * Trou de main, en trapèze : bord du côté du cadran (x0), bas (y0) et coin du haut sur la
+ * première photo ; côté du haut en pente, parallèle au biseau, et bout étroit (x1) sur la
+ * seconde. y1 : hauteur du côté en pente au bord x0 ; r : coins du côté du cadran, puis du bout.
+ */
+export const TROU = { x0: 131, x1: 212, y0: 40, y1: 88.2, pente: 0.469, r: [12, 5] };
+/** Marquage entre la règle de base et le trou de main : cadre du logo (début sur la première photo, longueur sur la seconde). */
+export const MARQUE = { x0: 133, x1: 183, y0: 17.5, y1: 28, r: 2.5, trait: 0.6 };
 /** Graduation de pente, en pouces par pied : traits, et valeurs chiffrées (lues sur la photo). */
 export const PENTES = [...Array.from({ length: 20 }, (_, i) => i + 1), 22, 24, 26, 28, 30, 32, 34, 36, 38, 40];
 export const PENTES_CHIFFREES = [2, 3, 4, 6, 7, 8, 10, 12, 14, 20, 30, 40];
@@ -251,17 +272,51 @@ function disqueMeplat(r, y, n = 96) {
   return arc(0, 0, r, a, 180 - a, n);
 }
 
-/** Contour du boîtier (mm) : au-dessus de la règle de base, à droite de la règle de bout, qu'il coiffe au coin. */
+/**
+ * Polygone aux sommets arrondis : sommets [x, y, r] (r : rayon du congé, 0 ou absent : angle
+ * vif), saillants ou rentrants ; retourne les points [x, y], dans l'ordre des sommets.
+ */
+function arrondir(sommets, n = 6) {
+  const pts = [];
+  const N = sommets.length;
+  for (let i = 0; i < N; i++) {
+    const [x, y, r = 0] = sommets[i];
+    if (!r) { pts.push([x, y]); continue; }
+    const [xa, ya] = sommets[(i + N - 1) % N], [xb, yb] = sommets[(i + 1) % N];
+    let ax = xa - x, ay = ya - y, bx = xb - x, by = yb - y;
+    const la = Math.hypot(ax, ay), lb = Math.hypot(bx, by);
+    ax /= la; ay /= la; bx /= lb; by /= lb;
+    const demi = Math.acos(Math.max(-1, Math.min(1, ax * bx + ay * by))) / 2;
+    // Le congé ne mange pas plus de la moitié de chaque côté.
+    const t = Math.min(r / Math.tan(demi), la / 2, lb / 2);
+    const rr = t * Math.tan(demi), d = rr / Math.sin(demi);
+    const lm = Math.hypot(ax + bx, ay + by);
+    const cx = x + ((ax + bx) / lm) * d, cy = y + ((ay + by) / lm) * d;
+    const a0 = Math.atan2(y + ay * t - cy, x + ax * t - cx);
+    let da = Math.atan2(y + by * t - cy, x + bx * t - cx) - a0;
+    da = Math.atan2(Math.sin(da), Math.cos(da)); // par le plus court
+    for (let k = 0; k <= n; k++) pts.push([cx + rr * Math.cos(a0 + (da * k) / n), cy + rr * Math.sin(a0 + (da * k) / n)]);
+  }
+  return pts;
+}
+
+/**
+ * Contour du boîtier (mm) : au-dessus de la règle de base, à droite de la règle de bout, qu'il
+ * coiffe au coin ; pleine hauteur jusqu'à la molette, épaule, biseau jusqu'au bout tronqué.
+ */
 export function contourBoitier() {
   const e = REGLE.ep;
-  const { bout, haut, bas } = COINS;
-  return [
-    [e, e],
-    ...arc(L - bas, e + bas, bas, -90, 0, 4),
-    ...arc(L - haut, H - haut, haut, 0, 90, 8),
-    ...arc(bout, H - bout, bout, 90, 180, 8),
-    [0, REGLE.haut], [e, REGLE.haut],
-  ];
+  const [x0, x1] = BISEAU.epaule;
+  return arrondir([
+    [e, e], [L, e, COINS.bas], [L, biseau(L), COINS.fin], [x1, biseau(x1), COINS.epaule], [x0, H, COINS.epaule],
+    [0, H, COINS.bout], [0, REGLE.haut], [e, REGLE.haut],
+  ]);
+}
+
+/** Contour du trou de main (mm) : trapèze aux coins arrondis, large du côté du cadran, étroit au bout. */
+export function contourTrou() {
+  const t = TROU;
+  return arrondir([[t.x0, t.y0, t.r[0]], [t.x1, t.y0, t.r[1]], [t.x1, t.y1 - t.pente * (t.x1 - t.x0), t.r[1]], [t.x0, t.y1, t.r[0]]], 8);
 }
 
 // ------------------------------------------------------------------ pièces
@@ -269,7 +324,7 @@ export function contourBoitier() {
 /** Repère 1 : boîtier d'ABS noir, percé du logement du tambour et du trou de main ; cadre du marquage. */
 function boitier(S) {
   const g = S.group();
-  const trous = [[CADRAN.x * MM, CADRAN.y * MM, (TAMBOUR.rExt + 0.5) * MM], mm(rectRond(TROU.x0, TROU.y0, TROU.x1, TROU.y1, TROU.r))];
+  const trous = [[CADRAN.x * MM, CADRAN.y * MM, (TAMBOUR.rExt + 0.5) * MM], mm(contourTrou())];
   g.add(S.extrude(mm(contourBoitier()), T * MM, noir(), { holes: trous }));
   // Marquage : seul le cadre est fait, le logo n'est lisible qu'en partie sur la photo.
   const q = MARQUE;
