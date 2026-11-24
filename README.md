@@ -850,6 +850,27 @@ pièces (numéro, quantité, page du manuel).
   sont écrites par `tools/ruban_cerclage_fiche.mjs` à partir des cotes du
   modèle (`src/models/ruban-cerclage-s5736/index.js`).
 
+- **Trousse de déversement universelle Zenith, baril de 30 gal US**
+  (`trousse-deversement-zenith`, Tenaquip SEJ274) : baril de polyéthylène bleu
+  à ouverture totale, couvercle, cerceau de fermeture, étiquette et contenu,
+  reconstitués d'après la photo du produit (P01) et mis à l'échelle par la
+  photo du chantier (P02), fournies par le client, sans plan. Le fabricant ne
+  publie pas les cotes du baril : celles d'un baril de 30 gal US à ouverture
+  totale du commerce sont prises (29 7/8 po de haut avec le couvercle,
+  Ø 18 3/4 po, cerceau de Ø 18 1/8 po). La photo du chantier les confirme :
+  hauteur corrigée de la plongée (17°) / Ø = 1,53, contre 1,59 au modèle, et
+  Ø d'environ 490 mm par comparaison au seau de 5 gal voisin (un peu plus
+  loin), contre 476 mm. Contenu publié pour la trousse d'atelier de 30 gal
+  (fiche d'un détaillant, à confirmer sur la trousse) : 4 boudins de
+  3 × 48 po, 50 feuilles de 15 × 17 po, 5 sacs, 2 paires de gants, mastic de
+  4 oz, couvre-drain (non modélisé : non distingué sur la photo). Supposé :
+  épaisseur des parois, levier du cerceau (caché sur les photos), rangement
+  dans le baril (boudins en spirale au fond, feuilles pliées en deux). En vue
+  éclatée, le contenu se dispose comme sur la photo du produit ; la coupe
+  proposée passe par l'axe. La fiche et la page des cotes (P03) sont écrites
+  par `tools/trousse_deversement_fiche.mjs` à partir des cotes du modèle
+  (`src/models/trousse-deversement-zenith/index.js`).
+
 - **Pompe à pistons Bean 420 (FMC L0918 / American AL0918B)**
   (`pompe-bean-420`) : pompe triplex à pistons de 2 1/4 × 2 1/4 po, 20,2 gal
   US/min à 625 tr/min, 700 lb/po², 200 lb, à réducteur de 3,6:1 dans le carter.
