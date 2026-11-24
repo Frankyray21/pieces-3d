@@ -17,6 +17,14 @@
       "status": "3D d'après les données publiées seulement (aucun manuel ni photo) : boîtier de 107 × 63 × 98 mm, tête optique et fenêtre, deux lignes rouges croisées, interrupteur de blocage du pendule, touche et voyants, deux piles AA, filetage 1/4-20, aimants ; formes et emplacements supposés, sans vue éclatée"
     },
     {
+      "id": "boulon-ancrage-time",
+      "name": "Boulon d'ancrage standard TIME 83-52, NW/L 5 pi",
+      "manufacturer": "TIME Limited",
+      "category": "Boulon (pine) d'ancrage de foreuse au diamant",
+      "thumbnail": "equipment/boulon-ancrage-time/thumbnail.webp",
+      "status": "3D d'après la page du produit de TIME Limited : boulon d'ancrage de calibre N câble, 5 pi (longueur publiée), auquel on fixe la foreuse au diamant ; corps rond de 69,9 mm (supposé), bout fileté mâle derrière un nez lisse, tige du bout en deux étages, proportions relevées sur la photo ; modèle plein, d'un seul repère"
+    },
+    {
       "id": "chaudieres-5-gal",
       "name": "Chaudières de 5 gallons : savon de lin, dégraisseur et chaudière coupée pour la guenille",
       "manufacturer": "Fabricant non identifié",
@@ -250,7 +258,7 @@
       "manufacturer": "Fabricant non identifié",
       "category": "Rack de transport des boîtes à carottes",
       "thumbnail": "equipment/rack-core-box/thumbnail.webp",
-      "status": "3D d'après une photo du client (portion du rack, sous terre) : plate-forme d'acier à deux passages de fourche, un cadre de tube bleu à chaque bout (montants, traverse haute, diagonale), 12 boîtes à carottes de 1,5 m en 3 colonnes de 4 ; échelle donnée par la boîte de 1,5 m, autres cotes relevées sur la photo ou supposées"
+      "status": "3D d'après une photo du client (portion du rack, sous terre) : plate-forme d'acier à deux passages de fourche, deux arceaux de tube bleu séparés de chaque côté (deux montants, traverse haute, diagonale), 12 boîtes à carottes de 1,5 m en 3 colonnes de 4 ; échelle donnée par la boîte de 1,5 m, autres cotes relevées sur la photo ou supposées"
     },
     {
       "id": "rack-outil",

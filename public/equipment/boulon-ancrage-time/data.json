@@ -1,0 +1,87 @@
+{
+ "id": "boulon-ancrage-time",
+ "name": "Boulon d'ancrage standard TIME 83-52, NW/L 5 pi",
+ "manufacturer": "TIME Limited",
+ "category": "Boulon (pine) d'ancrage de foreuse au diamant",
+ "serial": "",
+ "document": {
+  "title": "Page du produit (aucun plan) et cotes publiées, relevées ou supposées",
+  "reference": "83-52",
+  "preparedBy": "",
+  "date": "",
+  "sheets": 2,
+  "pagePattern": "pages/{sheet}.webp"
+ },
+ "specs": [
+  [
+   "Source",
+   "Page du produit « Boulons d'ancrage standard » de TIME Limited (Forage et exploration), fournie par le client (P01). Aucun plan"
+  ],
+  [
+   "Données publiées",
+   "« Les boulons d'ancrage sont conçus pour fixer la perceuse au diamant sur la paroi rocheuse, éliminant ainsi le mouvement latéral de la perceuse. » Avantages : aucun outil spécial n'est requis ; réutilisables. Numéro 83-52 : « ANCHOR BOLT NW/L 5' ». Aucune cote de détail, aucune masse"
+  ],
+  [
+   "Installation",
+   "Pour chaque boulon d'ancrage, un trou est percé à quelques degrés du trou de forage prévu ; le boulon est fixé dans la roche dans ce trou ; la foreuse est ensuite fixée au boulon, ce qui la rend stable (texte de la page)"
+  ],
+  [
+   "Gamme de la page",
+   "83-05 AW/L 3 pi · 83-06 AW/L 3,5 pi · 83-50 AW/L 4 pi · 83-07 AW/L 5,5 pi · 83-09 AW/L 8 pi · 83-30 BW/L 3 pi · 83-31 BW/L 4 pi · 83-32 BW/L 5,5 pi · 83-51 NW/L 4 pi · 83-52 NW/L 5 pi (modélisé) · 83-53 NW/L 6 pi · 83-54 NW/L 8 pi · 83-28 HW/L 4 pi · 83-29 HW/L 6 pi"
+  ],
+  [
+   "Longueur",
+   "5 pi (1524 mm) — publiée. Supposée hors tout, du nez fileté au bout de la tige"
+  ],
+  [
+   "Diamètre du corps",
+   "69,9 mm (2 3/4 po) — supposé : diamètre extérieur d'une tige de forage de calibre N câble (« NW/L »). Non publié"
+  ],
+  [
+   "Bout fileté",
+   "Nez lisse de 65 mm × 39 mm, puis filet mâle de 68 mm × 133 mm, 18 spires (pas d'environ 7,4 mm) — proportions relevées sur la photo, mises à l'échelle du corps. Type de filet non publié"
+  ],
+  [
+   "Tige du bout",
+   "Portée claire de 35 mm × 71 mm, puis bout sombre de 26 mm × 98 mm — proportions relevées sur la photo, mises à l'échelle du corps"
+  ],
+  [
+   "Corps",
+   "Rond, lisse, acier sombre : 1183 mm de long (le reste des 5 pi)"
+  ],
+  [
+   "Réserves",
+   "La page montre une seule photo pour ses quatorze boulons ; d'après ses proportions, c'est un boulon plus court et plus mince que le NW/L 5 pi. Les bouts du modèle en reprennent les proportions. L'intérieur du boulon et le mécanisme d'ancrage dans la roche ne sont pas montrés : modèle plein, d'un seul repère. Masse non publiée, non calculée"
+  ]
+ ],
+ "weights": [],
+ "sheetTitles": {
+  "P01": "Page du produit TIME Limited « Boulons d'ancrage standard », fournie par le client",
+  "P02": "Cotes du boulon NW/L 5 pi (publiées, relevées, supposées)"
+ },
+ "root": "P01",
+ "assemblies": {
+  "P01": {
+   "title": "ANCHOR BOLT NW/L 5'",
+   "titleFr": "Boulon d'ancrage standard, NW/L 5 pi",
+   "pn": "83-52",
+   "sheets": [
+    "P01",
+    "P02"
+   ],
+   "note": "Reconstitution 3D d'après la page du produit de TIME Limited (P01) : boulon d'ancrage de calibre N câble, 5 pi (1524 mm). Pour chaque boulon d'ancrage, un trou est percé à quelques degrés du trou de forage prévu ; le boulon est fixé dans la roche dans ce trou ; la foreuse est ensuite fixée au boulon, ce qui la rend stable (texte de la page). Publié : le numéro et la désignation seulement. Diamètre du corps supposé (69,9 mm, tige N câble) ; formes et proportions des deux bouts relevées sur la photo, qui sert aux quatorze boulons de la page. Voir la page P02 pour les cotes.",
+   "parts": [
+    [
+     "1",
+     "83-52",
+     1,
+     "BOULON D'ANCRAGE (anchor bolt) NW/L 5 pi",
+     {
+      "note": "Corps rond de 69,9 mm (supposé) ; bout fileté mâle de 18 spires derrière un nez lisse ; tige du bout en deux étages (portée claire, bout sombre). Longueur hors tout 1524 mm (5 pi, supposée hors tout). Réutilisable, posé sans outil spécial (page du produit)."
+     }
+    ]
+   ]
+  }
+ },
+ "documents": []
+}

@@ -951,16 +951,30 @@ pièces (numéro, quantité, page du manuel).
   schéma (P03) sont écrites par `tools/pince_tube_interieur_fiche.mjs`, qui
   contrôle aussi que la genouillère reste montée sur toute sa course.
 
+- **Boulon d'ancrage standard TIME 83-52, NW/L 5 pi**
+  (`boulon-ancrage-time`) : la pine d'ancrage à laquelle on fixe la foreuse
+  au diamant, reconstituée d'après la page du produit de TIME Limited fournie
+  par le client (P01), sans plan. Publié : le numéro 83-52 et la désignation
+  « ANCHOR BOLT NW/L 5' » ; aucune cote de détail. Supposé : les 5 pi sont la
+  longueur hors tout, et le corps a le diamètre d'une tige N câble (69,9 mm).
+  Relevé sur la photo (la même pour les quatorze boulons de la page, donc un
+  boulon plus petit) : les proportions du nez lisse, du filet mâle de
+  18 spires et de la tige du bout en deux étages, mises à l'échelle du corps.
+  Modèle plein, d'un seul repère ; masse non calculée. La fiche et la page des
+  cotes (P02) sont écrites par `tools/boulon_ancrage_fiche.mjs` à partir des
+  cotes du modèle (`src/models/boulon-ancrage-time/index.js`).
+
 - **Rack de boîtes à carottes (core box)** (`rack-core-box`) : plate-forme
-  d'acier à deux passages de fourche, fermée à chaque bout par un cadre de
-  tube bleu (deux montants, une traverse haute, une diagonale), où l'on empile
-  les boîtes à carottes pleines. Reconstitué d'après une photo du client prise
+  d'acier à deux passages de fourche, bordée de chaque côté par deux arceaux
+  de tube bleu séparés (chacun : deux montants, une traverse haute, une
+  diagonale ; côtés non continus, précision du client), où l'on empile les
+  boîtes à carottes pleines. Reconstitué d'après une photo du client prise
   sous terre (P01), qui ne montre qu'une portion du rack ; aucun plan. Échelle :
   la boîte à carottes de 1,5 m (donnée par le client, minimum). Relevé sur la
   photo à cette échelle : l'encombrement (1,08 × 1,60 × 0,96 m), la hauteur
-  des cadres, l'entraxe des passages de fourche, les 3 colonnes de 4 boîtes
+  et la largeur des arceaux, l'entraxe des passages de fourche, les 3 colonnes de 4 boîtes
   décalées. Supposé : largeur (300 mm) et hauteur (66 mm fermée) de la boîte,
-  sections des tubes, tôle, sens de la diagonale du second cadre. La fiche et
+  sections des tubes, tôle, sens de la diagonale des autres arceaux. La fiche et
   la page des cotes (P02) sont écrites par `tools/rack_core_box_fiche.mjs` à
   partir des cotes du modèle (`src/models/rack-core-box/index.js`).
 
