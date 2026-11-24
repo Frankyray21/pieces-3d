@@ -850,6 +850,20 @@ pièces (numéro, quantité, page du manuel).
   sont écrites par `tools/ruban_cerclage_fiche.mjs` à partir des cotes du
   modèle (`src/models/ruban-cerclage-s5736/index.js`).
 
+- **Chaudières de 5 gallons : savon de lin, dégraisseur et chaudière coupée**
+  (`chaudieres-5-gal`) : le poste de nettoyage des outils, reconstitué d'après
+  une photo du client (P01) et sa description, sans plan ni mesure. Une
+  chaudière de savon de lin, une chaudière de dégraisseur (couvercles à jupe,
+  anses de fil d'acier rabattues vers l'avant) et, posée sur la seconde, une
+  chaudière coupée sur le dessus (environ 115 mm de haut, coupe irrégulière
+  faite à la main) où l'on verse le savon de lin et où l'on met la guenille qui
+  sert à nettoyer les outils. Cotes usuelles d'un seau de 5 gallons US (14 1/2 po
+  de haut, Ø 303 mm en haut, Ø 262 mm en bas, paroi de 2,3 mm), supposées : ni
+  la marque ni le modèle ne se lisent sur la photo. Les étiquettes sont
+  redessinées en français, sans marque ; la quantité de savon, la taille et la
+  couleur de la guenille sont supposées. Le contenu des deux chaudières pleines
+  n'est pas représenté. La fiche est écrite par `tools/chaudieres_fiche.mjs` à
+  partir des cotes du modèle (`src/models/chaudieres-5-gal/index.js`).
 - **Graisse à filets : bidon de 1 gal US et pinceau** (`graisse-a-filets`) :
   le bidon de graisse des filets de tiges de forage et son pinceau,
   reconstitués d'après deux photos du client (P01), sans plan ni étiquette (la
