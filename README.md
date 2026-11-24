@@ -284,8 +284,12 @@ pièces (numéro, quantité, page du manuel).
     sa longueur), marques à 5 pi ;
   - `chantier.js` (paroi de roche grillagée et soutènement, plancher repris
     de `plancher-dd`), `outils.js` (boulon à œil, tendeur, foreuse à
-    percussion sans fil, tournevis), `reperes.js` (cotes, arcs, zones, niveau
-    numérique), `travailleur.js` (silhouette articulée : les mains et les
+    percussion sans fil, tournevis), `reperes.js` (cotes, arcs, zones),
+    le niveau à degrés aimanté de l'étape 5 (équipement `niveau-a-degres`,
+    `outil()` et `niveler()` : collé à la face avant du poteau de gauche,
+    cadran vers le haut, comme sur la photo du client, à la place du niveau
+    numérique de la photo de la procédure ; son aiguille lit les 78° du
+    support), `travailleur.js` (silhouette articulée : les mains et les
     pieds vont où on les pose, par cinématique inverse à deux segments ; le
     foreur tient la foreuse par ses deux poignées, les deux porteurs tiennent
     les poteaux, pieds en place ; à l'étape 14, une main tient le tournevis,
@@ -803,7 +807,9 @@ pièces (numéro, quantité, page du manuel).
   du site, absents de l'outil, masqués en vue éclatée et en coupe. Le panneau
   rappelle les deux limites en rouge et dit, bulle centrée, si l'angle lu est
   conforme, trop couché ou trop debout, avec un lien vers la procédure du
-  rack. La place de la bulle, la pose sur la pente, la lecture et le verdict
+  rack. Le même outil est posé dans la scène d'installation du rack à tiges
+  (`rack-tiges-dd`, étape 5), collé au poteau (`outil()`, `niveler()`). La
+  place de la bulle, la pose sur la pente, la lecture et le verdict
   sont dans le modèle (`bulle()`, `regler()`, `lecture()`, `verdictRack()` de
   `src/models/niveau-a-degres/index.js`), contrôlées par
   `scripts/check-niveau-degres.mjs` (`npm run check:niveau`). La fiche et la

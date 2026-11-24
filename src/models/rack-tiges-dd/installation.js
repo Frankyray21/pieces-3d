@@ -14,7 +14,8 @@
 import { IN, T2, T15, T25, NQ, SIDE, CLEAR, SPLIT, XP, H_TOP, H_LOW, WALL, FRONT, ANGLE, TILT, SIN, COS, LIFT, W, HOOK, LUG, CHAIN, chainAlong } from './support.js';
 import { WALL_Z, FT5, rockAt, solAt, fromDeck, decor, place, DECK, SEC, DRILL } from './chantier.js';
 import { HOLE, BOLT, LEVER, TENDEUR, eyeBolt, hole, binder, hammerDrill, tournevis } from './outils.js';
-import { cote, pointille, arc, rayon, secteur, fleche, bande, niveau, polar } from './reperes.js';
+import { cote, pointille, arc, rayon, secteur, fleche, bande, polar } from './reperes.js';
+import { outil as niveauDegres, niveler } from '../niveau-a-degres/index.js';
 import { travailleur } from './travailleur.js';
 
 const ROCK_EYE = rockAt(0, FT5); // face de la roche au trou
@@ -67,6 +68,10 @@ const PIED = [LIFT, 0]; // [y, z] du pied du support (sommet de l'angle du suppo
 // Chaîne de retenue : point bas au centre quand elle est lâche (5 pi 2 po) ; sa longueur, l'avance
 // du paquet qu'elle permet et l'angle où elle l'arrête sont calculés à la construction (P02).
 export const RETENUE = { low: 62 * IN, longueur: 0, avance: 0, arret: 0 };
+// Niveau à degrés de l'étape 5 : bout du cadran à 20 cm sous le crochet de la chaîne de retenue, le long du poteau
+// (photo du client) ; angle lu sous son aiguille une fois la fiole de niveau, calculé à la construction (P02).
+const NIVEAU_SOUS_CROCHET = 0.2;
+export const NIVEAU = { lu: 0 };
 
 export function P02(api) {
   const S = api.S;
@@ -193,17 +198,27 @@ export function P02(api) {
   } };
 
   // --------------------------------------------- étape 5 : vérifier l'angle
-  // Niveau numérique sur le poteau (photo de la procédure) ; au pied du poteau,
-  // zone permise de 75° à 80° en vert, trop couché et trop debout en rouge.
-  const lev = niveau(S, `${ANGLE.toFixed(1)}°`);
-  lev.rotation.x = -TILT;
-  guide(S.at(lev, W(XP, 1.36, T2 / 2 + 0.0005)), [5]);
-  const xg = XP + 0.1;
+  // Niveau à degrés aimanté (équipement « niveau-a-degres »), collé au poteau comme sur la photo
+  // du client : règle de base contre la face avant du poteau de gauche, cadran vers le haut et
+  // tourné vers l'extérieur du support, un peu sous le crochet de la chaîne de retenue. Il
+  // remplace le niveau numérique de la photo de la procédure (choix du client). Le tambour est
+  // réglé pour que la fiole soit de niveau : l'aiguille lit l'angle du support. Au pied du
+  // poteau, zone permise de 75° à 80° en vert, trop couché et trop debout en rouge.
+  const lev = niveauDegres(S);
+  const V = (x, y, z) => new api.THREE.Vector3(x, y, z);
+  // Repère de l'outil → repère du support : x vers le bas du poteau, y vers les tiges, z vers l'extérieur (−X) ; puis le support incliné.
+  lev.quaternion.setFromRotationMatrix(new api.THREE.Matrix4().makeBasis(V(0, -1, 0), V(0, 0, 1), V(-1, 0, 0)))
+    .premultiply(new api.THREE.Quaternion().setFromAxisAngle(V(1, 0, 0), -TILT));
+  lev.position.set(...W(-XP, HOOK - NIVEAU_SOUS_CROCHET, T2 / 2 + 0.0005));
+  guide(lev, [5]);
+  NIVEAU.lu = niveler(lev);
+  const xg = -XP - 0.1; // repères d'angle du côté du niveau (à gauche du support, face au mur)
   guide(S.group(
-    secteur(S, xg, PIED, 0.3, 1.15, 62, 75, { material: 'zoneRouge' }),
-    secteur(S, xg, PIED, 0.3, 1.3, 75, 80),
-    secteur(S, xg, PIED, 0.3, 1.15, 80, 90, { material: 'zoneRouge' }),
-    rayon(S, xg, PIED, 1.36, 75, { material: 'repereVert' }), rayon(S, xg, PIED, 1.36, 80, { material: 'repereVert' }),
+    // Zones et rayons arrêtés sous le niveau, collé au poteau à partir de 1,36 m.
+    secteur(S, xg, PIED, 0.3, 1.05, 62, 75, { material: 'zoneRouge' }),
+    secteur(S, xg, PIED, 0.3, 1.16, 75, 80),
+    secteur(S, xg, PIED, 0.3, 1.05, 80, 90, { material: 'zoneRouge' }),
+    rayon(S, xg, PIED, 1.2, 75, { material: 'repereVert' }), rayon(S, xg, PIED, 1.2, 80, { material: 'repereVert' }),
     rayon(S, xg, PIED, 0.85, 0), arc(S, xg, PIED, 0.55, 0, ANGLE),
   ), [5]);
 
@@ -455,7 +470,7 @@ const CAM = {
   site: { pos: [1.6, 2.6, 3.2], tgt: [-0.9, 0.6, 0.5] },
   wall: { pos: [-1.3, 1.7, 1.3], tgt: [-0.05, 1.3, WALL_Z] },
   bolt: { pos: [0.75, 1.65, -0.2], tgt: [0, FT5, WALL_Z] },
-  side: { pos: [3.4, 1.2, -0.2], tgt: [0.8, 1.05, -0.35] },
+  side: { pos: [-3.1, 1.3, -0.1], tgt: [-0.8, 1.12, -0.33] }, // du côté gauche : le mur à gauche de l'image, le cadran du niveau de face (photo du client) ; le front de taille est à x ≈ −3,5
   anchor: { pos: [0.9, 2.5, 0.9], tgt: [0, 1.85, -0.65] },
   top: { pos: [0.3, 5.2, 1.3], tgt: [0, 2.6, -0.3] },
   front: { pos: [-1.6, 1.75, 2.5], tgt: [0, 1.45, 0.2] },
@@ -494,9 +509,10 @@ const NOTES = [
   { steps: [3], tag: '+coupe', pos: [0.03, FT5 - 0.07, ROCK_EYE - (HOLE + BOLT.in) / 2], text: 'Pas jusqu’au fond', kind: 'no' },
   { steps: [3], tag: 'boulon', pos: [0, FT5 + 0.24, EYE[2]], text: 'Pas jusqu’au fond du trou' },
   { steps: [4], tag: 'appui', pos: [0, ARM_END[1] + 0.02, WALL_Z + 0.06], text: 'Pattes du haut bien appuyées au mur', kind: 'ok' },
-  { steps: [5], pos: polar(XP + 0.1, PIED, 0.7, 40), text: `${ANGLE}°` },
-  { steps: [5], pos: polar(XP + 0.1, PIED, 1.46, 73.2), text: '75°', kind: 'ok' },
-  { steps: [5], pos: polar(XP + 0.1, PIED, 1.46, 81.8), text: '80°', kind: 'ok' },
+  { steps: [5], pos: polar(-XP - 0.1, PIED, 0.7, 40), text: `${ANGLE}°` },
+  { steps: [5], pos: polar(-XP - 0.1, PIED, 1.26, 72.4), text: '75°', kind: 'ok' },
+  { steps: [5], pos: polar(-XP - 0.1, PIED, 1.26, 82.6), text: '80°', kind: 'ok' },
+  { steps: [5], pos: W(-XP - 0.02, HOOK - NIVEAU_SOUS_CROCHET + 0.1, T2 / 2 + 0.26), text: 'Niveau aimanté, collé au poteau' },
   { steps: [6], pos: [0, FT5 + 0.26, EYE[2]], text: 'Jusqu’au milieu de la chaîne' },
   { steps: [7], tag: 'oeilD', pos: [XP + 0.2, W(0, LUG, 0)[1] + 0.2, W(0, LUG, -0.08)[2]], text: "De l'extérieur vers l'intérieur" },
   { steps: [7], tag: 'oeilG', pos: [-XP - 0.2, W(0, LUG, 0)[1] + 0.2, W(0, LUG, -0.08)[2]], text: "De l'extérieur vers l'intérieur" },

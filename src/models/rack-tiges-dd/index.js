@@ -5,7 +5,8 @@
 // - installation.js : l'installation étape par étape (P02), d'après la
 //   procédure PRO-DD-ST-008 ; chantier.js (paroi de mine, plancher), outils.js
 //   (boulon à œil, tendeur, foreuse à percussion, tournevis), reperes.js (cotes,
-//   angles, zones, niveau numérique), travailleur.js (silhouette).
+//   angles, zones), travailleur.js (silhouette) ; à l'étape 5, le niveau à
+//   degrés aimanté de l'équipement « niveau-a-degres », collé au poteau.
 //
 // Contrôle chiffré contre la procédure : node scripts/check-rack.mjs
 import { P01, NQ } from './support.js';

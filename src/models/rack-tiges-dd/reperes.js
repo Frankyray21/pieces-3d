@@ -1,9 +1,9 @@
 // Repères de mesure et d'angle du montage par étapes (cotes, arcs, zones
-// permises, limites, flèches), et le niveau numérique de l'étape 5. Les
+// permises, limites, flèches). Le niveau de l'étape 5 est celui de l'équipement
+// « niveau-a-degres » (src/models/niveau-a-degres). Les
 // couleurs disent toujours la même chose : orange = mesure, vert = permis,
 // rouge = limite ou interdit, bleu = sens du geste.
 import * as THREE from 'three';
-import { mat } from '../../viewer/materials.js';
 
 const rad = (deg) => (deg * Math.PI) / 180;
 
@@ -68,50 +68,4 @@ export function fleche(S, a, b, { material = 'blue', r = 0.01, head = 0.11 } = {
 /** Bande d'une couleur autour d'un profilé carré de côté a (repère de hauteur sur un poteau), de hauteur h. */
 export function bande(S, a, h, material = 'repereVert') {
   return S.box(a + 0.004, h, a + 0.004, material);
-}
-
-/** Afficheur à cristaux liquides : texte clair sur une texture (navigateur seulement). */
-function afficheur(texte) {
-  if (typeof document === 'undefined') return 'lightGrey';
-  const c = document.createElement('canvas');
-  c.width = 256;
-  c.height = 128;
-  const g = c.getContext('2d');
-  g.fillStyle = '#b6d6b0';
-  g.fillRect(0, 0, 256, 128);
-  g.fillStyle = '#16261a';
-  g.font = '700 86px "IBM Plex Mono", "DejaVu Sans Mono", monospace';
-  g.textAlign = 'center';
-  g.textBaseline = 'middle';
-  g.fillText(texte, 128, 70);
-  const t = new THREE.CanvasTexture(c);
-  t.colorSpace = THREE.SRGBColorSpace;
-  return new THREE.MeshBasicMaterial({ map: t });
-}
-
-/**
- * Niveau numérique (photo de l'étape 5 de la procédure) : boîtier noir,
- * façade bleue, afficheur, deux fioles vertes. Long de 25 cm selon Y ; son
- * chant de mesure est dans le plan Z = 0 (posé contre le poteau), le boîtier
- * s'étend vers +Z et l'afficheur regarde vers +X, lecture le long du niveau.
- */
-export function niveau(S, texte = '78.0°') {
-  const L = 0.25, w = 0.058, t = 0.024;
-  const g = S.group(
-    S.box(t, L, w, 'black', { r: 0.006, pos: [0, 0, w / 2] }),
-    // Semelle usinée (chant de mesure).
-    S.box(t * 0.8, L - 0.01, 0.005, 'lightGrey', { pos: [0, 0, 0.0025] }),
-    S.box(0.003, 0.115, w * 0.84, 'umBlue', { r: 0.001, pos: [t / 2 + 0.0015, 0, w / 2] }),
-  );
-  const ecran = new THREE.Mesh(new THREE.PlaneGeometry(0.062, 0.034), mat(afficheur(texte)));
-  ecran.rotation.set(0, Math.PI / 2, Math.PI / 2, 'YXZ'); // face vers +X, lecture le long du niveau (comme sur la photo)
-  ecran.position.set(t / 2 + 0.0035, 0, w / 2);
-  g.add(ecran);
-  for (const s of [-1, 1]) {
-    // Fioles vertes dans leur lucarne, boutons de la façade.
-    g.add(S.cyl(0.016, t + 0.002, 'darkSteel', { axis: 'x', pos: [0, s * 0.092, w / 2], seg: 20 }));
-    g.add(S.cyl(0.0085, t + 0.004, 'green', { axis: 'x', pos: [0, s * 0.092, w / 2], seg: 12 }));
-    for (const b of [-1, 1]) g.add(S.cyl(0.0045, 0.003, 'black', { axis: 'x', pos: [t / 2 + 0.004, s * 0.047, w / 2 + b * 0.011], seg: 12 }));
-  }
-  return g;
 }
