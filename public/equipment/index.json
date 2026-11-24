@@ -117,6 +117,14 @@
       "status": "3D d'après une photo de 44 × 96 pixels : étui d'environ 5 po de haut, 3 po de large en haut et 2 1/2 po en bas, fourreau riveté ouvert en haut et en bas, clé à molette de 12 po rangée manche en bas, tronçon de ceinture pour situer ; dos, passant de ceinture et profondeur supposés ; fichiers prêts pour Unreal Engine"
     },
     {
+      "id": "graisse-a-filets",
+      "name": "Graisse à filets : bidon de 1 gal US et pinceau",
+      "manufacturer": "",
+      "category": "Graisse des filets de tiges de forage",
+      "thumbnail": "equipment/graisse-a-filets/thumbnail.webp",
+      "status": "3D d'après deux photos du client, mise à l'échelle avec les clés à tuyau de 18 et 24 po de la photo : bidon de fer-blanc à anneau pris à 1 gal US (Ø mesuré de 141 à 164 mm, Ø 6 1/2 × 7 1/2 po retenu, à vérifier), rouillé, à deux oreilles ; graisse brassée et pinceau plat à manche de bois ; marque de la graisse inconnue"
+    },
+    {
       "id": "grillage-cage",
       "name": "Panneau de grillage rigide à plis en V, maille 2 × 6 po",
       "manufacturer": "Type Oméga II Architectural (marque à confirmer)",

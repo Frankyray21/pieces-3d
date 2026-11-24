@@ -850,6 +850,23 @@ pièces (numéro, quantité, page du manuel).
   sont écrites par `tools/ruban_cerclage_fiche.mjs` à partir des cotes du
   modèle (`src/models/ruban-cerclage-s5736/index.js`).
 
+- **Graisse à filets : bidon de 1 gal US et pinceau** (`graisse-a-filets`) :
+  le bidon de graisse des filets de tiges de forage et son pinceau,
+  reconstitués d'après deux photos du client (P01), sans plan ni étiquette (la
+  marque de la graisse n'est pas lisible). L'échelle vient des deux clés à
+  tuyau de 18 et 24 po accrochées sur la photo d'ensemble : 1,37 à 1,59 mm par
+  pixel, soit un bidon de Ø 141 à 164 mm. Deux bidons du commerce encadrent la
+  mesure, le demi-gallon (Ø 137 mm) et le gallon US (Ø 165 mm) ; le gallon
+  (Ø 6 1/2 × 7 1/2 po) est retenu à cause des deux oreilles d'anse, à vérifier
+  sur place (`BIDON.d` et `BIDON.h` du modèle, tout le reste suit). Relevé sur
+  les photos : l'anneau à gorge, l'agrafe du flanc, les oreilles (anse
+  absente), la rouille, le niveau et le monticule de graisse, la pose du
+  pinceau, sa bande et son bout blancs. Supposé : la virole et les soies du
+  pinceau (2 po), enfouies dans la graisse. Trois pièces (bidon, graisse,
+  pinceau) ; coupe proposée par l'axe. La fiche et la page des cotes (P02) sont
+  écrites par `tools/graisse_a_filets_fiche.mjs` à partir des cotes du modèle
+  (`src/models/graisse-a-filets/index.js`).
+
 - **Pompe à pistons Bean 420 (FMC L0918 / American AL0918B)**
   (`pompe-bean-420`) : pompe triplex à pistons de 2 1/4 × 2 1/4 po, 20,2 gal
   US/min à 625 tr/min, 700 lb/po², 200 lb, à réducteur de 3,6:1 dans le carter.
