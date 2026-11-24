@@ -888,6 +888,21 @@ pièces (numéro, quantité, page du manuel).
   par `tools/trousse_deversement_fiche.mjs` à partir des cotes du modèle
   (`src/models/trousse-deversement-zenith/index.js`).
 
+- **Blocs de bois pour boîte à carottes TIME 92-1500, 2 × 3/4 × 3/4 po**
+  (`blocs-de-bois`) : les petits blocs sur lesquels on écrit le métrage et
+  qu'on pose dans la boîte à carottes au bout de chaque course, reconstitués
+  d'après la page du produit de TIME Limited fournie par le client (P01), sans
+  plan. Publié : le numéro 92-1500 et les cotes 2 po × 3/4 po × 3/4 po, vendus
+  en vrac au sac ; ni l'essence, ni le nombre par sac, ni la masse. Le sac
+  n'est pas modélisé (demande du client). Relevé sur la photo : les sept blocs
+  debout à côté du sac (quatre derrière, trois devant, un tourné de 25°), bois
+  résineux clair scié. Chaque bloc a sa texture, calculée dans le volume du
+  bloc (cernes autour d'un cœur d'arbre hors du bloc), si bien que ses six
+  faces montrent le même bois ; largeur des cernes supposée. Masse calculée
+  d'environ 8 g (épinette supposée). Blocs vierges, sans inscription. La fiche
+  et la page des cotes (P02) sont écrites par `tools/blocs_de_bois_fiche.mjs`
+  à partir des cotes du modèle (`src/models/blocs-de-bois/index.js`).
+
 - **Pompe à pistons Bean 420 (FMC L0918 / American AL0918B)**
   (`pompe-bean-420`) : pompe triplex à pistons de 2 1/4 × 2 1/4 po, 20,2 gal
   US/min à 625 tr/min, 700 lb/po², 200 lb, à réducteur de 3,6:1 dans le carter.

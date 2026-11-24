@@ -1,6 +1,14 @@
 {
   "equipment": [
     {
+      "id": "blocs-de-bois",
+      "name": "Blocs de bois pour boîte à carottes TIME 92-1500, 2 × 3/4 × 3/4 po",
+      "manufacturer": "TIME Limited",
+      "category": "Blocs repères de métrage (boîte à carottes)",
+      "thumbnail": "equipment/blocs-de-bois/thumbnail.webp",
+      "status": "3D d'après la page du produit de TIME Limited : blocs de bois de 2 × 3/4 × 3/4 po (cotes publiées) sur lesquels on écrit le métrage dans la boîte à carottes ; les sept blocs de la photo, debout, bois résineux clair scié, cernes propres à chaque bloc ; sac non modélisé"
+    },
+    {
       "id": "bosch-gll50-20",
       "name": "Niveau laser à lignes croisées Bosch GLL50-20",
       "manufacturer": "Bosch",
