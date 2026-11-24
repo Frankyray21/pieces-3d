@@ -4,7 +4,7 @@
 // 2 200 × 1 700 px) : le rack vu du côté des fourches et vu de côté.
 // Usage : node tools/rack_core_box_fiche.mjs [--page <fichier.html>]
 import { writeFileSync } from 'node:fs';
-import { IN, BOITE, PILE, TUBE, BASE, FOURCHE, CADRE, largeurPile, largeurBase, dessusTole, hautBoite, largeurRangee, horsTout, nombreBoites } from '../src/models/rack-core-box/index.js';
+import { IN, BOITE, PILE, TUBE, BASE, FOURCHE, CADRE, largeurPile, largeurBase, dessusTole, hautBoite, largeurRangee, horsTout, nombreBoites, passages } from '../src/models/rack-core-box/index.js';
 
 const fr = (v, n = 0) => v.toFixed(n).replace('.', ',');
 const mm = (v, n = 0) => `${fr(v, n)} mm`;
@@ -36,11 +36,11 @@ const data = {
     ['Source', SOURCE],
     ['Échelle', ECHELLE],
     ['Usage', USAGE],
-    ['Encombrement', `${m(h.large)} de large (d'un côté à l'autre) × ${m(h.profond)} (le long des boîtes) × ${m(h.haut)} de haut — relevé sur la photo, à l'échelle de la boîte`],
+    ['Encombrement', `${m(h.large)} de large (d'un côté à l'autre) × ${m(h.profond)} (le long des boîtes) × ${m(h.haut)} de haut — largeur calculée pour ${PILE.colonnes} boîtes de ${mm(BOITE.large)} (largeur de boîte supposée), le reste relevé sur la photo à l'échelle de la boîte`],
     ['Boîte à carottes', `Boîte de bois à couvercle, ${m(BOITE.long)} de long (donnée par le client). Supposé : ${mm(BOITE.large)} de large, ${mm(hautBoite())} de haut fermée, ${BOITE.rangees} rangées de ${mm(largeurRangee())} — proportions des bouts de boîtes de la photo. À remplacer par les cotes réelles de la boîte si elles sont connues`],
-    ['Empilement', `${PILE.colonnes} colonnes de ${PILE.etages} boîtes, soit ${N} boîtes, couchées en travers, bouts vers le côté des fourches, colonnes décalées de ${mm(PILE.decalage[1] - PILE.decalage[0])} l'une de l'autre comme sur la photo. Le bout droit du rack est caché sur la photo : le nombre de colonnes est celui qu'on y voit`],
+    ['Empilement', `${PILE.colonnes} colonnes de ${PILE.etages} boîtes, soit ${N} boîtes, couchées en travers, bouts vers le côté des fourches, colonnes décalées l'une de l'autre (jusqu'à ${mm(PILE.decalage[1] - PILE.decalage[0])}) comme sur la photo. Il entre ${PILE.colonnes} boîtes de large (donné par le client) ; ${PILE.etages} boîtes de haut relevées sur la photo`],
     ['Plate-forme', `Pâle sur la photo. ${m(largeurBase())} × ${m(BASE.profond)}, dessus à ${mm(dessusTole())} du sol. Supposé : cadre de tube de ${po(BASE.cadre.large)} × ${po(BASE.cadre.haut)}, deux traverses, tôle de ${po(BASE.tole)}`],
-    ['Passages de fourche', `Deux, sous la plate-forme, le long des boîtes, à ${mm(FOURCHE.entraxe)} d'entraxe (relevé). Supposé : tube de ${po(FOURCHE.large)} × ${po(FOURCHE.haut)}`],
+    ['Passages de fourche', `${FOURCHE.nombre}, sous la plate-forme, le long des boîtes, un sous une colonne sur deux, à ${mm(FOURCHE.entraxe)} d'entraxe : deux sont visibles sur la photo, le troisième est supposé par symétrie. Supposé aussi : tube de ${po(FOURCHE.large)} × ${po(FOURCHE.haut)}`],
     ['Arceaux', `Bleus sur la photo. Les côtés ne sont pas continus (précision du client) : chaque côté porte ${CADRE.parCote} arceaux séparés, un au bord avant et un au bord arrière, soit ${NA} en tout. Chaque arceau : deux montants, une traverse haute et une diagonale, ${mm(CADRE.large)} de large et ${mm(CADRE.haut)} au-dessus de la tôle (relevé). Supposé : tube carré de ${po(TUBE.cote)}, diagonale de ${po(TUBE.diagonale)}, même sens de diagonale partout ; un seul arceau est visible en entier sur la photo, les autres en partie`],
     ['Non modélisé', 'Le contenu des boîtes (carottes, blocs de métrage), les inscriptions et le cerclage des boîtes. Soudures non dessinées'],
   ],
@@ -58,12 +58,12 @@ const data = {
       sheets: ['P01', 'P02'],
       note: `Reconstitution 3D d'après une photo du client (P01), qui ne montre qu'une portion du rack. ${USAGE}. Échelle : la boîte à carottes de ${m(BOITE.long)} (donnée par le client) ; les autres cotes sont relevées sur la photo à cette échelle ou supposées (voir la fiche et P02). Largeur et hauteur de la boîte supposées. En vue éclatée, la pile monte et les couvercles se soulèvent.`,
       parts: [
-        ['1', '', 1, 'PLATE-FORME (cadre de tube et tôle)', { note: `${m(largeurBase())} × ${m(BASE.profond)}, relevée sur la photo. Sections supposées : tube de ${po(BASE.cadre.large)} × ${po(BASE.cadre.haut)}, tôle de ${po(BASE.tole)}.` }],
-        ['2', '', 2, 'PASSAGE DE FOURCHE', { note: `Sous la plate-forme, le long des boîtes, à ${mm(FOURCHE.entraxe)} d'entraxe (relevé). Tube de ${po(FOURCHE.large)} × ${po(FOURCHE.haut)} supposé.` }],
+        ['1', '', 1, 'PLATE-FORME (cadre de tube et tôle)', { note: `${m(largeurBase())} × ${m(BASE.profond)} : largeur pour ${PILE.colonnes} boîtes, profondeur relevée sur la photo. Sections supposées : tube de ${po(BASE.cadre.large)} × ${po(BASE.cadre.haut)}, tôle de ${po(BASE.tole)}.` }],
+        ['2', '', FOURCHE.nombre, 'PASSAGE DE FOURCHE', { note: `Sous la plate-forme, le long des boîtes, à ${mm(FOURCHE.entraxe)} d'entraxe ; deux visibles sur la photo, le troisième supposé. Tube de ${po(FOURCHE.large)} × ${po(FOURCHE.haut)} supposé.` }],
         ['3', '', 2 * NA, 'MONTANT D\'ARCEAU', { note: `Tube carré de ${po(TUBE.cote)} supposé ; arceau de ${mm(CADRE.haut)} de haut au-dessus de la tôle (relevé).` }],
         ['4', '', NA, 'TRAVERSE HAUTE D\'ARCEAU', { note: `Tube carré de ${po(TUBE.cote)} supposé, ${mm(CADRE.large)} de long (relevé).` }],
         ['5', '', NA, 'DIAGONALE D\'ARCEAU', { note: `Du pied du montant avant à la tête du montant arrière. Tube de ${po(TUBE.diagonale)} supposé ; sens relevé sur l'arceau avant gauche, supposé pour les autres.` }],
-        ['6', '', N, `BOÎTE À CAROTTES (core box) de ${m(BOITE.long)}`, { note: `Bois, ${BOITE.rangees} rangées. Longueur donnée par le client (minimum) ; largeur de ${mm(BOITE.large)} et hauteur de ${mm(BOITE.haut)} supposées. Quantité : celle des boîtes visibles sur la photo.` }],
+        ['6', '', N, `BOÎTE À CAROTTES (core box) de ${m(BOITE.long)}`, { note: `Bois, ${BOITE.rangees} rangées. Longueur donnée par le client (minimum) ; largeur de ${mm(BOITE.large)} et hauteur de ${mm(BOITE.haut)} supposées. Quantité : ${PILE.colonnes} de large (donné par le client) × ${PILE.etages} de haut (photo).` }],
         ['7', '', N, 'COUVERCLE DE BOÎTE À CAROTTES', { note: `Contreplaqué de ${mm(BOITE.couvercle)} supposé.` }],
       ],
     },
@@ -85,20 +85,20 @@ if (at >= 0) {
   const rect = (ox, sol, x0, x1, y0, y1, cls) => `<rect x="${ox + x0 * k}" y="${sol - y1 * k}" width="${(x1 - x0) * k}" height="${(y1 - y0) * k}" class="${cls}"/>`;
   const sol = 760, W = largeurBase() / 2, D = BASE.profond / 2, yT = dessusTole(), yB = FOURCHE.haut, c = TUBE.cote;
   // Vue du côté des fourches (bouts des boîtes) : X à l'horizontale.
-  const ox = 480;
+  const ox = 540;
   let face = rect(ox, sol, -W, W, yB, yT, 'pl');
+  for (const x of passages()) face += rect(ox, sol, x - FOURCHE.large / 2, x + FOURCHE.large / 2, 0, yB, 'pl');
   for (const s of [-1, 1]) {
-    face += rect(ox, sol, s * FOURCHE.entraxe / 2 - FOURCHE.large / 2, s * FOURCHE.entraxe / 2 + FOURCHE.large / 2, 0, yB, 'pl');
     face += rect(ox, sol, s > 0 ? W - c : -W, s > 0 ? W : -W + c, yT, yT + CADRE.haut, 'bl');
   }
   const pas = BOITE.large + PILE.jeu, x0 = -largeurPile() / 2;
   for (let col = 0; col < PILE.colonnes; col++) for (let et = 0; et < PILE.etages; et++) face += rect(ox, sol, x0 + col * pas, x0 + col * pas + BOITE.large, yT + et * hautBoite(), yT + (et + 1) * hautBoite(), 'bois');
-  face += hc(ox - W * k, ox + W * k, sol + 60, `${m(largeurBase())} †`)
+  face += hc(ox - W * k, ox + W * k, sol + 60, `${m(largeurBase())} (${PILE.colonnes} boîtes)`)
     + vc(ox + W * k + 40, sol - (yT + CADRE.haut) * k, sol, `${m(h.haut)} †`)
     + hc(ox + x0 * k, ox + (x0 + BOITE.large) * k, sol - (yT + PILE.etages * hautBoite()) * k - 30, `${mm(BOITE.large)} ‡`)
-    + hc(ox - FOURCHE.entraxe / 2 * k, ox + FOURCHE.entraxe / 2 * k, sol + 110, `entraxe ${mm(FOURCHE.entraxe)} †`);
+    + hc(ox + passages()[0] * k, ox + passages()[1] * k, sol + 110, `entraxe ${mm(FOURCHE.entraxe)} †`);
   // Vue de côté : Z à l'horizontale, l'avant (fourches) à gauche.
-  const oz = 1500;
+  const oz = 1640;
   let cote = rect(oz, sol, -D, D, yB, yT, 'pl') + rect(oz, sol, -D, D, 0, yB, 'pl');
   for (let et = 0; et < PILE.etages; et++) cote += rect(oz, sol, -BOITE.long / 2, BOITE.long / 2, yT + et * hautBoite(), yT + (et + 1) * hautBoite(), 'bois');
   // L'avant (fourches, +Z du modèle) est à gauche : z du modèle = -abscisse.
