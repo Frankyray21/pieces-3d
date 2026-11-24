@@ -1,0 +1,151 @@
+{
+ "id": "chaudieres-5-gal",
+ "name": "Chaudières de 5 gallons : savon de lin, dégraisseur et chaudière coupée pour la guenille",
+ "manufacturer": "Fabricant non identifié",
+ "category": "Poste de nettoyage des outils",
+ "serial": "",
+ "document": {
+  "title": "Photo du client (aucun plan) ; cotes usuelles d'un seau de 5 gallons, supposées",
+  "reference": "",
+  "preparedBy": "",
+  "date": "",
+  "sheets": 1,
+  "pagePattern": "pages/{sheet}.webp"
+ },
+ "specs": [
+  [
+   "Source",
+   "Photo du client (P01) et sa description : une chaudière de savon de lin, une chaudière de dégraisseur et une chaudière coupée sur le dessus, où l'on verse le savon et où l'on met la guenille qui sert à nettoyer les outils. Aucun plan, aucune mesure"
+  ],
+  [
+   "Usage",
+   "On verse du savon de lin dans la chaudière coupée, on y met la guenille, et l'on s'en sert pour nettoyer les outils. Les deux chaudières pleines sont la réserve de savon de lin et de dégraisseur"
+  ],
+  [
+   "Chaudière",
+   "Cotes usuelles d'un seau de 5 gallons US en polyéthylène, supposées (ni la marque ni le modèle ne se lisent sur la photo) : 14 1/2 po de haut (368 mm), Ø 303 mm en haut, Ø 262 mm en bas, paroi de 2,3 mm"
+  ],
+  [
+   "Contenance",
+   "5 gallons US (18,9 L) nominaux ; 22,0 L à ras bord, calculés sur le modèle"
+  ],
+  [
+   "Couvercle",
+   "À jupe, Ø 312 mm (supposé), jupe de 22 mm, dessus en creux"
+  ],
+  [
+   "Anse",
+   "Fil d'acier de Ø 4 mm et poignée de plastique blanc de Ø 24 mm × 110 mm (supposés), pivots entre les deux colliers de renfort, à 319 mm du sol ; rabattue vers l'avant, contre la paroi, comme sur la photo"
+  ],
+  [
+   "Colliers de renfort",
+   "Deux, à 303 mm et 332 mm du sol, saillie de 9 mm (supposés)"
+  ],
+  [
+   "Chaudière coupée",
+   "Bas d'une chaudière de 5 gallons coupée à environ 115 mm du sol (4 1/2 po), hauteur relevée sur la photo par proportion avec la chaudière, à 15 % près ; Ø 275 mm à la coupe ; coupe irrégulière, faite à la main (ondulation de 3 mm). Posée sur le couvercle de la chaudière de dégraisseur, comme sur la photo"
+  ],
+  [
+   "Savon de lin",
+   "Dans la chaudière coupée : 35 mm d'épaisseur, soit 1,9 L — quantité supposée, le dedans ne se voit pas sur la photo"
+  ],
+  [
+   "Guenille",
+   "Carré de coton d'environ 330 mm de côté, froissé, posé sur le savon. Taille et couleur (rouge d'atelier) supposées : la guenille ne se voit pas sur la photo, elle vient de la description du client"
+  ],
+  [
+   "Étiquettes",
+   "Environ 190 mm × 125 mm, à 55 mm du sol (taille relevée sur la photo, à 20 % près ; placées plus bas que sur la photo, sous la poignée de l'anse, pour rester lisibles). Sur la photo, on lit seulement « …D SOAP » et « Lin… » sur la chaudière de gauche ; les étiquettes sont redessinées en français, sans marque : « SAVON DE LIN » et « DÉGRAISSEUR »"
+  ],
+  [
+   "Encombrement",
+   "645 mm de large × 491 mm de haut × 312 mm de profond ; 20 mm entre les deux couvercles"
+  ],
+  [
+   "Non modélisé",
+   "Le contenu des deux chaudières pleines (niveau inconnu), la saleté des chaudières, la marque et le texte des étiquettes d'origine, la tablette de bois où elles sont posées"
+  ]
+ ],
+ "weights": [],
+ "sheetTitles": {
+  "P01": "Photo du client : chaudières de savon de lin et de dégraisseur, chaudière coupée posée dessus"
+ },
+ "root": "P01",
+ "assemblies": {
+  "P01": {
+   "title": "5 GALLON PAILS: LINSEED SOAP, DEGREASER, CUT PAIL FOR RAG",
+   "titleFr": "Chaudières de 5 gallons : savon de lin, dégraisseur et chaudière coupée",
+   "pn": "",
+   "sheets": [
+    "P01"
+   ],
+   "note": "Reconstitution 3D d'après la photo du client (P01) et sa description. Cotes usuelles d'un seau de 5 gallons US en polyéthylène, supposées (ni la marque ni le modèle ne se lisent sur la photo) : 14 1/2 po de haut (368 mm), Ø 303 mm en haut, Ø 262 mm en bas, paroi de 2,3 mm. Relevé sur la photo : la hauteur de la chaudière coupée (environ 115 mm), sa coupe irrégulière, l'anse rabattue vers l'avant, la place des étiquettes. La chaudière coupée repose sur le couvercle de la chaudière de dégraisseur ; on y verse le savon de lin et l'on y met la guenille qui sert à nettoyer les outils. En vue éclatée, les couvercles, la chaudière coupée, le savon et la guenille montent ; la coupe proposée passe par l'axe des deux chaudières.",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "CHAUDIÈRE de 5 gallons, SAVON DE LIN",
+     {
+      "note": "Seau de polyéthylène blanc, 14 1/2 po de haut, Ø 303 mm en haut ; étiquette redessinée. Contenu non représenté."
+     }
+    ],
+    [
+     "2",
+     "",
+     1,
+     "CHAUDIÈRE de 5 gallons, DÉGRAISSEUR",
+     {
+      "note": "Même seau ; étiquette redessinée. Contenu non représenté. Porte la chaudière coupée."
+     }
+    ],
+    [
+     "3",
+     "",
+     2,
+     "COUVERCLE de chaudière, Ø 312 mm",
+     {
+      "note": "À jupe, enfoncé sur le bord du seau."
+     }
+    ],
+    [
+     "4",
+     "",
+     2,
+     "ANSE de fil d'acier, poignée de plastique",
+     {
+      "note": "Fil de Ø 4 mm, rabattue vers l'avant."
+     }
+    ],
+    [
+     "5",
+     "",
+     1,
+     "CHAUDIÈRE COUPÉE (bac à savon), 115 mm de haut",
+     {
+      "note": "Bas d'une chaudière de 5 gallons dont on a coupé le dessus ; Ø 275 mm à la coupe. Reçoit le savon et la guenille."
+     }
+    ],
+    [
+     "6",
+     "",
+     1,
+     "SAVON DE LIN, dans la chaudière coupée",
+     {
+      "note": "35 mm d'épaisseur, 1,9 L (supposé)."
+     }
+    ],
+    [
+     "7",
+     "",
+     1,
+     "GUENILLE de coton, pour nettoyer les outils",
+     {
+      "note": "Environ 330 mm de côté, froissée (taille et couleur supposées)."
+     }
+    ]
+   ]
+  }
+ },
+ "documents": []
+}

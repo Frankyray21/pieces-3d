@@ -9,6 +9,14 @@
       "status": "3D d'après les données publiées seulement (aucun manuel ni photo) : boîtier de 107 × 63 × 98 mm, tête optique et fenêtre, deux lignes rouges croisées, interrupteur de blocage du pendule, touche et voyants, deux piles AA, filetage 1/4-20, aimants ; formes et emplacements supposés, sans vue éclatée"
     },
     {
+      "id": "chaudieres-5-gal",
+      "name": "Chaudières de 5 gallons : savon de lin, dégraisseur et chaudière coupée pour la guenille",
+      "manufacturer": "Fabricant non identifié",
+      "category": "Poste de nettoyage des outils",
+      "thumbnail": "equipment/chaudieres-5-gal/thumbnail.webp",
+      "status": "3D d'après une photo du client, sans plan : chaudière de savon de lin, chaudière de dégraisseur (couvercles, anses rabattues, étiquettes redessinées) et chaudière coupée à environ 115 mm, posée dessus, avec le savon de lin et la guenille qui sert à nettoyer les outils ; cotes usuelles d'un seau de 5 gallons, supposées"
+    },
+    {
       "id": "cle-a-molette",
       "name": "Clé à molette (Westcott) de 12 po",
       "manufacturer": "Modèle libre (OpenGameArt, CC0)",
