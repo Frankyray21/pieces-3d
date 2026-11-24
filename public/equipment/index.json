@@ -270,6 +270,14 @@
       "status": "3D tirée de la CAO SolidWorks du fabricant (8 pièces, facettes exactes), montée et rendue dans Blender ; plan d'assemblage et développé de la jupe"
     },
     {
+      "id": "trousse-deversement-zenith",
+      "name": "Trousse de déversement universelle Zenith, baril de 30 gal US",
+      "manufacturer": "Zenith Safety Products",
+      "category": "Trousse de déversement (baril, absorbants, équipement de protection)",
+      "thumbnail": "equipment/trousse-deversement-zenith/thumbnail.webp",
+      "status": "3D d'après la photo du produit, mise à l'échelle par la photo du chantier (aucun plan) : baril de polyéthylène bleu de 30 gal US (Ø 18 3/4 × 29 7/8 po avec le couvercle, cotes d'un baril du commerce confirmées par la photo), couvercle, cerceau de fermeture, étiquette ; contenu publié rangé dans le baril (4 boudins de 3 × 48 po, 50 feuilles de 15 × 17 po, sacs, gants, mastic), disposé comme sur la photo en vue éclatée"
+    },
+    {
       "id": "tube-eau",
       "name": "Tube à l'eau 1524010812, flotte 152042600 et pompe Bean 420",
       "manufacturer": "Machines Roger International",

@@ -1,0 +1,169 @@
+{
+ "id": "trousse-deversement-zenith",
+ "name": "Trousse de déversement universelle Zenith, baril de 30 gal US",
+ "manufacturer": "Zenith Safety Products",
+ "category": "Trousse de déversement (baril, absorbants, équipement de protection)",
+ "serial": "",
+ "document": {
+  "title": "Photo du produit, photo du chantier (aucun plan) et cotes prises, relevées ou supposées",
+  "reference": "SEJ274",
+  "preparedBy": "",
+  "date": "",
+  "sheets": 3,
+  "pagePattern": "pages/{sheet}.webp"
+ },
+ "specs": [
+  [
+   "Source",
+   "Photo du produit (P01) et photo du chantier (P02), fournies par le client. Aucun plan. Référence relevée chez le détaillant : Tenaquip SEJ274, « Zenith Safety Products Premium Shop Spill Kit, Universal, Drum, 30 US gal. ». Les fiches du fabricant et du détaillant n'ont pas pu être consultées d'ici : les données publiées viennent des résultats de recherche qui les citent"
+  ],
+  [
+   "Baril",
+   "Baril de polyéthylène bleu à ouverture totale de 30 gal US (114 L), couvercle et cerceau de fermeture. Le fabricant ne publie pas ses cotes : celles d'un baril de 30 gal US à ouverture totale du commerce sont prises, soit 29 7/8 po (759 mm) de haut avec le couvercle, 29 1/2 po (749 mm) sans, Ø 18 3/4 po (476 mm) à la ceinture, couvercle et cerceau de Ø 18 1/8 po (460 mm)"
+  ],
+  [
+   "Mise à l'échelle",
+   "Photo du chantier (P02), agrandie quatre fois : le baril mesure 495 pixels de large et 725 du bord avant du couvercle au bas ; l'ellipse du couvercle (145 sur 500 pixels) donne une prise de vue plongeante de 17°. Hauteur corrigée / Ø = 1,53, contre 1,59 au modèle (4 % d'écart, dans la précision du relevé) : avec un Ø de 18 3/4 po, la photo donne 729 mm de haut. Le seau de 5 gal voisin (Ø 11,9 po au bord) mesure 305 pixels : pris à la même distance, il donnerait un baril de Ø 491 mm ; il est un peu plus loin de l'appareil, le Ø réel est donc un peu moindre, ce qui s'accorde avec 476 mm. Un baril de 20 gal (Ø 16 po environ) ou de 55 gal (Ø 23 po) ne s'accorde pas"
+  ],
+  [
+   "Silhouette",
+   "Relevée sur la photo du produit : pied conique jusqu'à 97 mm du sol, ceinture large jusqu'à 593 mm, haut en retrait puis épaulement vers le col. La photo du produit montre un baril plus élancé (hauteur / Ø de 1,8) que celui du chantier : les proportions du chantier sont retenues"
+  ],
+  [
+   "Étiquette",
+   "Blanche, environ 250 mm × 150 mm (relevé sur la photo du produit), centre à 455 mm du sol : marque, « UNIVERSAL SPILL KIT, 30-GALLON », « TROUSSE DE DÉVERSEMENT UNIVERSELLE, 30 GALLONS » et code à barres. Texte peu lisible sur la photo : lecture probable"
+  ],
+  [
+   "Contenu",
+   "Contenu publié pour la trousse d'atelier universelle Zenith de 30 gal US (fiche d'un détaillant), à confirmer sur la trousse : 50 feuilles absorbantes de 15 po × 17 po, 4 boudins absorbants de 3 po × 48 po, 1 couvre-drain de 36 × 36 po, 1 mastic de colmatage de 4 oz, 2 paires de gants de nitrile, 5 sacs d'élimination de 26 po × 36 po. La photo du produit montre le baril, quatre boudins, une pile de feuilles, une liasse noire pliée, une paire de gants verts et un sachet transparent"
+  ],
+  [
+   "Rangement dans le baril",
+   "Rangement supposé (non montré sur les photos) : les 4 boudins enroulés à plat au fond (spirale de 1,9 tours, Ø hors tout de 405 mm, 72 mm de haut chacun), la pile de feuilles pliées en deux (381 mm × 216 mm, 360 mm de haut une fois tassée), les sacs pliés, le sachet et les gants. Dessus du contenu à 686 mm du sol, 51 mm sous le couvercle"
+  ],
+  [
+   "Supposé",
+   "Épaisseur de la paroi (3 mm) et du fond (4 mm) ; levier du cerceau, placé à l'arrière (caché sur les deux photos) ; hauteur de la pile de feuilles ; cotes des gants (318 mm de long), du sachet (230 mm × 150 mm) et de la liasse de sacs pliée (300 mm × 230 mm × 20 mm), relevées à vue sur la photo du produit"
+  ],
+  [
+   "Non modélisé",
+   "Couvre-drain de 36 × 36 po : publié dans le contenu, non distingué sur la photo du produit. Deuxième paire de gants : la photo n'en montre qu'une. Capacité d'absorption et masse : non trouvées dans les données consultées. La saleté du baril du chantier n'est pas reproduite"
+  ]
+ ],
+ "weights": [],
+ "sheetTitles": {
+  "P01": "Photo du produit (trousse Zenith, baril de 30 gal US), fournie par le client",
+  "P02": "Photo du chantier, fournie par le client : le baril près du seau de 5 gal, pour l'échelle",
+  "P03": "Cotes de la trousse : coupe par l'axe du baril et de son contenu (prises, relevées, supposées)"
+ },
+ "root": "P01",
+ "assemblies": {
+  "P01": {
+   "title": "PREMIUM SHOP SPILL KIT, UNIVERSAL, DRUM, 30 US GAL.",
+   "titleFr": "Trousse de déversement universelle, baril de 30 gal US",
+   "pn": "SEJ274",
+   "sheets": [
+    "P01",
+    "P02",
+    "P03"
+   ],
+   "note": "Reconstitution 3D d'après la photo du produit (P01), mise à l'échelle par la photo du chantier (P02). Baril de polyéthylène bleu à ouverture totale de 30 gal US (114 L), couvercle et cerceau de fermeture. Le fabricant ne publie pas ses cotes : celles d'un baril de 30 gal US à ouverture totale du commerce sont prises, soit 29 7/8 po (759 mm) de haut avec le couvercle, 29 1/2 po (749 mm) sans, Ø 18 3/4 po (476 mm) à la ceinture, couvercle et cerceau de Ø 18 1/8 po (460 mm). Photo du chantier (P02), agrandie quatre fois : le baril mesure 495 pixels de large et 725 du bord avant du couvercle au bas ; l'ellipse du couvercle (145 sur 500 pixels) donne une prise de vue plongeante de 17°. Hauteur corrigée / Ø = 1,53, contre 1,59 au modèle (4 % d'écart, dans la précision du relevé) : avec un Ø de 18 3/4 po, la photo donne 729 mm de haut. Le seau de 5 gal voisin (Ø 11,9 po au bord) mesure 305 pixels : pris à la même distance, il donnerait un baril de Ø 491 mm ; il est un peu plus loin de l'appareil, le Ø réel est donc un peu moindre, ce qui s'accorde avec 476 mm. Un baril de 20 gal (Ø 16 po environ) ou de 55 gal (Ø 23 po) ne s'accorde pas. Rangement supposé (non montré sur les photos) : les 4 boudins enroulés à plat au fond (spirale de 1,9 tours, Ø hors tout de 405 mm, 72 mm de haut chacun), la pile de feuilles pliées en deux (381 mm × 216 mm, 360 mm de haut une fois tassée), les sacs pliés, le sachet et les gants. Dessus du contenu à 686 mm du sol, 51 mm sous le couvercle. En vue éclatée, le contenu se dispose comme sur la photo du produit : boudins à gauche, feuilles et gants à droite, sacs et sachet devant ; la coupe proposée passe par l'axe du baril.",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "BARIL de polyéthylène bleu, 30 gal US, à ouverture totale, Ø 18 3/4 po × 29 1/2 po",
+     {
+      "note": "Cotes d'un baril de 30 gal US du commerce, confirmées par la photo du chantier (hauteur / Ø de 1,53 relevé, 1,59 au modèle). Paroi de 3 mm supposée."
+     }
+    ],
+    [
+     "2",
+     "",
+     1,
+     "COUVERCLE de polyéthylène bleu, Ø 18 1/8 po avec le cerceau",
+     {
+      "note": "Porte la hauteur de la trousse fermée à 29 7/8 po (759 mm)."
+     }
+    ],
+    [
+     "3",
+     "",
+     1,
+     "CERCEAU DE FERMETURE à levier, acier galvanisé",
+     {
+      "note": "Cerceau visible sur la photo du produit ; levier supposé, placé à l'arrière (caché sur les deux photos)."
+     }
+    ],
+    [
+     "4",
+     "",
+     1,
+     "ÉTIQUETTE de la trousse, environ 250 mm × 150 mm",
+     {
+      "note": "Marque, désignation en anglais et en français, code à barres ; lecture probable d'une photo peu lisible."
+     }
+    ],
+    [
+     "5",
+     "",
+     4,
+     "BOUDIN ABSORBANT universel, 3 po × 48 po",
+     {
+      "note": "Quatre comptés sur la photo du produit ; cotes du contenu publié. Enroulés à plat en spirale de 1,9 tours, au fond du baril."
+     }
+    ],
+    [
+     "6",
+     "",
+     50,
+     "FEUILLE ABSORBANTE universelle, 15 po × 17 po",
+     {
+      "qty3d": 1,
+      "note": "Contenu publié : 50 feuilles. Une seule pile en 3D, feuilles pliées en deux, 360 mm de haut (supposé)."
+     }
+    ],
+    [
+     "7",
+     "",
+     5,
+     "SAC D'ÉLIMINATION noir, 26 po × 36 po",
+     {
+      "qty3d": 1,
+      "note": "Contenu publié : 5 sacs. Une liasse pliée en 3D."
+     }
+    ],
+    [
+     "8",
+     "",
+     2,
+     "GANTS DE NITRILE, la paire",
+     {
+      "note": "Contenu publié : 2 paires. La photo du produit en montre une : deux gants en 3D."
+     }
+    ],
+    [
+     "9",
+     "",
+     1,
+     "MASTIC DE COLMATAGE, 4 oz, en sachet avec la notice",
+     {
+      "note": "Sachet transparent de la photo du produit ; contenu peu lisible, d'après le contenu publié."
+     }
+    ],
+    [
+     "10",
+     "",
+     1,
+     "COUVRE-DRAIN, 36 × 36 po",
+     {
+      "no3d": true,
+      "note": "Publié dans le contenu ; non distingué sur la photo du produit, non modélisé."
+     }
+    ]
+   ]
+  }
+ },
+ "documents": []
+}
