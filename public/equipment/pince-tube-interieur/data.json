@@ -35,7 +35,7 @@
   ],
   [
    "Épaisseurs (supposées)",
-   "Mâchoires 8 mm, tôle du corps et de la poignée 2,5 mm, profilés de 14 mm de large : aucune vue de côté ne permet de les mesurer"
+   "Mâchoires 8 mm, tôle du corps et de la poignée 2,5 mm, profilés de 14 mm de large, à dos rond ; toutes les arêtes sont arrondies (rayons supposés, demande du client) : aucune vue de côté ne permet de les mesurer"
   ],
   [
    "Mécanisme",
@@ -80,7 +80,7 @@
      "CORPS (poignée fixe) en tôle emboutie, bague taraudée au bout",
      {
       "pseudo": true,
-      "note": "Profilé en U de 14 mm de large, tôle de 2,5 mm (supposé), ouvert vers la poignée mobile. Il porte la mâchoire fixe (deux rivets), le pivot de la mâchoire mobile, le crochet du ressort et la vis de réglage. Contour relevé sur la photo de la page TIME."
+      "note": "Profilé en U à dos rond de 14 mm de large, tôle de 2,5 mm (supposé), ouvert vers la poignée mobile. Il porte la mâchoire fixe (deux rivets), le pivot de la mâchoire mobile, le crochet du ressort et la vis de réglage. Contour relevé sur la photo de la page TIME."
      }
     ],
     [
@@ -110,7 +110,7 @@
      "POIGNÉE MOBILE en tôle emboutie",
      {
       "pseudo": true,
-      "note": "Elle chevauche la mâchoire mobile et porte la biellette, à 29,5 mm de son articulation, et le levier de déverrouillage. Bout relevé, comme sur la photo."
+      "note": "Elle chevauche la mâchoire mobile et porte la biellette, à 29,5 mm de son articulation, et le levier de déverrouillage. Profilé à dos rond, bout relevé et arrondi en cuiller, comme sur la photo."
      }
     ],
     [
@@ -204,7 +204,7 @@
      "CORPS (poignée fixe) en tôle emboutie, bague taraudée au bout",
      {
       "pseudo": true,
-      "note": "Profilé en U de 14 mm de large, tôle de 2,5 mm (supposé), ouvert vers la poignée mobile. Il porte la mâchoire fixe (deux rivets), le pivot de la mâchoire mobile, le crochet du ressort et la vis de réglage. Contour relevé sur la photo de la page TIME."
+      "note": "Profilé en U à dos rond de 14 mm de large, tôle de 2,5 mm (supposé), ouvert vers la poignée mobile. Il porte la mâchoire fixe (deux rivets), le pivot de la mâchoire mobile, le crochet du ressort et la vis de réglage. Contour relevé sur la photo de la page TIME."
      }
     ],
     [
@@ -234,7 +234,7 @@
      "POIGNÉE MOBILE en tôle emboutie",
      {
       "pseudo": true,
-      "note": "Elle chevauche la mâchoire mobile et porte la biellette, à 29,5 mm de son articulation, et le levier de déverrouillage. Bout relevé, comme sur la photo."
+      "note": "Elle chevauche la mâchoire mobile et porte la biellette, à 29,5 mm de son articulation, et le levier de déverrouillage. Profilé à dos rond, bout relevé et arrondi en cuiller, comme sur la photo."
      }
     ],
     [

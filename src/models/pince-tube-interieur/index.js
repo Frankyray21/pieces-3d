@@ -169,18 +169,72 @@ function ruban(axe, largeur, cote = 0, bande = 0) {
   return [...d, ...bout(n - 1, n - 2), ...g.reverse(), ...bout(0, 1)];
 }
 
-/** Plaque découpée : contour [x, y] (mm) entre z0 et z1, arêtes cassées ; trous ronds [x, y, r]. */
-function plaque(contour, z0, z1, matiere, trous = []) {
+/** Plaque découpée : contour [x, y] (mm) entre z0 et z1, arêtes arrondies (rayon `arrondi`, au plus 30 % de l'épaisseur) ; trous ronds [x, y, r]. */
+function plaque(contour, z0, z1, matiere, trous = [], arrondi = 1) {
   const shape = new THREE.Shape(contour.map(([x, y]) => new THREE.Vector2(x * MM, y * MM)));
   for (const [x, y, r] of trous) {
     const p = new THREE.Path();
     p.absarc(x * MM, y * MM, r * MM, 0, 2 * Math.PI, true);
     shape.holes.push(p);
   }
-  const t = (z1 - z0) * MM, b = Math.min(t * 0.16, 0.0008);
-  const geo = new THREE.ExtrudeGeometry(shape, { depth: t - 2 * b, bevelEnabled: true, bevelSize: b, bevelThickness: b, bevelOffset: -b, bevelSegments: 1, curveSegments: 20 });
+  const t = (z1 - z0) * MM, b = Math.min(t * 0.3, arrondi * MM);
+  const geo = new THREE.ExtrudeGeometry(shape, { depth: t - 2 * b, bevelEnabled: true, bevelSize: b, bevelThickness: b, bevelOffset: -b, bevelSegments: 3, curveSegments: 20 });
   geo.translate(0, 0, z0 * MM + b);
-  return new THREE.Mesh(creaseNormals(geo), typeof matiere === 'string' ? mat(matiere) : matiere);
+  const lisse = creaseNormals(geo, 50 * RAD);
+  lisse.userData.edgeAngle = 60; // pas de contours sur les arrondis
+  return new THREE.Mesh(lisse, typeof matiere === 'string' ? mat(matiere) : matiere);
+}
+
+/**
+ * Profilé embouti en U à dos rond, balayé le long d'une ligne du plan de
+ * l'outil : axe [x, y] (mm), hauteur(i) dans le plan, dos du côté gauche de la
+ * marche (cote = 1) ou droit (−1), ouvert de l'autre. echelle(i) rétrécit la
+ * section (bout en cuiller). Bouts fermés.
+ */
+function profile(axe, hauteur, cote, matiere, { rayon = 5, echelle = () => 1 } = {}) {
+  const W = EP.large / 2, t = EP.tole, n = axe.length, pos = [], idx = [];
+  // Section (u vers le dos, z en travers) : contour extérieur puis intérieur, sens constant.
+  const section = (h) => {
+    const moitie = (w, haut, r) => {
+      const pts = [[-h / 2, -w]];
+      for (let k = 0; k <= 6; k++) { const a = Math.PI - (k / 6) * (Math.PI / 2); pts.push([haut - r + r * Math.sin(a), -w + r + r * Math.cos(a)]); }
+      for (let k = 0; k <= 6; k++) { const a = Math.PI / 2 - (k / 6) * (Math.PI / 2); pts.push([haut - r + r * Math.sin(a), w - r + r * Math.cos(a)]); }
+      pts.push([-h / 2, w]);
+      return pts;
+    };
+    const r = Math.min(rayon, h / 2 - 0.5, W);
+    return [...moitie(W, h / 2, r), ...moitie(W - t, h / 2 - t, Math.max(0.6, r - t)).reverse()];
+  };
+  let m = 0;
+  for (let i = 0; i < n; i++) {
+    const a = axe[Math.max(0, i - 1)], b = axe[Math.min(n - 1, i + 1)], l = Math.hypot(b[0] - a[0], b[1] - a[1]);
+    const nx = (-(b[1] - a[1]) / l) * cote, ny = ((b[0] - a[0]) / l) * cote, e = echelle(i);
+    const sec = section(hauteur(i));
+    m = sec.length;
+    for (const [u, z] of sec) pos.push((axe[i][0] + nx * u * e) * MM, (axe[i][1] + ny * u * e) * MM, z * e * MM);
+  }
+  for (let i = 0; i < n - 1; i++) for (let j = 0; j < m; j++) {
+    const a = i * m + j, b = i * m + ((j + 1) % m), c = a + m, d = b + m;
+    idx.push(a, b, d, a, d, c);
+  }
+  const faces = THREE.ShapeUtils.triangulateShape(section(hauteur(0)).map(([u, z]) => new THREE.Vector2(u, z)), []);
+  for (const f of faces) { idx.push(f[0], f[1], f[2]); idx.push((n - 1) * m + f[0], (n - 1) * m + f[2], (n - 1) * m + f[1]); }
+  let geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  geo.setIndex(idx);
+  geo = geo.toNonIndexed();
+  // Faces vers l'extérieur : flancs et bouts orientés chacun par son volume signé.
+  const p = geo.attributes.position.array;
+  const retourner = (i0, i1) => {
+    let vol = 0;
+    for (let i = i0; i < i1; i += 9) vol += p[i] * (p[i + 4] * p[i + 8] - p[i + 5] * p[i + 7]) - p[i + 1] * (p[i + 3] * p[i + 8] - p[i + 5] * p[i + 6]) + p[i + 2] * (p[i + 3] * p[i + 7] - p[i + 4] * p[i + 6]);
+    return vol;
+  };
+  const tourne = (i0, i1) => { for (let i = i0; i < i1; i += 9) for (let k = 0; k < 3; k++) { const v = p[i + 3 + k]; p[i + 3 + k] = p[i + 6 + k]; p[i + 6 + k] = v; } };
+  if (retourner(0, p.length) < 0) tourne(0, p.length);
+  geo = creaseNormals(geo, 50 * RAD);
+  geo.userData.edgeAngle = 75;
+  return new THREE.Mesh(geo, matiere);
 }
 
 // Acier nu de la pince (demande du client : garder la couleur métallique de sa photo d'atelier, pas l'orange de la page TIME), créé une fois.
@@ -202,15 +256,22 @@ function acier() {
 const JEU = RIVET.d / 2 + 0.2; // rayon des trous de rivet
 const zTole = [[-EP.large / 2, -EP.large / 2 + EP.tole], [EP.large / 2 - EP.tole, EP.large / 2]];
 
-/** Repère 1 : corps (poignée fixe) en tôle emboutie, ouvert vers la poignée mobile, bague taraudée au bout. */
+// Corps : dessus et dessous du profilé selon x, en arrière des mâchoires.
+const JOINT_CORPS = 128;
+const dessusCorps = (x) => (x < 136 ? 11 - (x - 128) * 0.06 : x < 156 ? 10.5 - 4.5 * (((x - 136) / 20) ** 2 * (3 - 2 * ((x - 136) / 20))) : 6);
+const dessousCorps = (x) => (x < 185 ? -16.3 + 8.3 * ((x - 128) / 57) : -8);
+
+/** Repère 1 : corps (poignée fixe) embouti en U à dos rond, ouvert vers la poignée mobile, bague taraudée au bout. */
 function corps(S) {
   const g = new THREE.Group(), m = acier();
-  const flanc = arrondir([[88, 11, 3], [88, -19, 4], [120, -17, 12], [185, -8, 30], [256, -8, 2], [256, 6, 2], [152, 6, 25], [134, 11, 8]]);
+  // Devant : deux joues plates qui tiennent les mâchoires (le dos s'arrête là, où sort la mâchoire fixe).
+  const flanc = arrondir([[88, 11, 4], [88, -19, 5], [112, -17.6, 6], [JOINT_CORPS, dessousCorps(JOINT_CORPS)], [JOINT_CORPS, dessusCorps(JOINT_CORPS)]]);
   const trous = [[...A, JEU], ...FIXES.map((p) => [...p, JEU])];
   for (const [z0, z1] of zTole) g.add(plaque(flanc, z0, z1, m, trous));
-  // Dos du profilé, le long du bord opposé à la poignée mobile ; ouvert devant, où sort la mâchoire fixe.
-  const dos = [[119, -17.1], [150, -12.6], [185, -8], [256, -8], [256, -8 + EP.tole], [185, -8 + EP.tole], [150, -12.6 + EP.tole], [119, -17.1 + EP.tole]];
-  g.add(plaque(dos, -EP.large / 2 + EP.tole, EP.large / 2 - EP.tole, m));
+  // Derrière : la poignée, à dos rond.
+  const axe = [], haut = [];
+  for (let x = JOINT_CORPS; x <= 256.01; x += 4) { axe.push([x, (dessusCorps(x) + dessousCorps(x)) / 2]); haut.push(dessusCorps(x) - dessousCorps(x)); }
+  g.add(profile(axe, (i) => haut[i], -1, m, { rayon: 6 }));
   g.add(S.cyl(VIS.bague * MM, 14 * MM, m, { axis: 'x', pos: [251 * MM, VIS.y * MM, 0] }));
   return g;
 }
@@ -219,9 +280,9 @@ function corps(S) {
 function coquille(cote) {
   const g = new THREE.Group(), demi = COQUILLE.angle / 2, a0 = cote * 90 - demi, a1 = cote * 90 + demi;
   const contour = [...arc(TUBE.x, TUBE.y, R_EXT, a0, a1, 28), ...arc(TUBE.x, TUBE.y, R_INT, a1, a0, 28)];
-  g.add(plaque(contour, -COQUILLE.long / 2, COQUILLE.long / 2, acier()));
+  g.add(plaque(contour, -COQUILLE.long / 2, COQUILLE.long / 2, acier(), [], 1.4));
   // Intérieur plus clair : acier poli par le frottement du tube.
-  const r = R_INT - 0.12, h = COQUILLE.long / 2 - 1, n = 28, pos = [], nor = [], idx = [];
+  const r = R_INT - 0.12, h = COQUILLE.long / 2 - 1.8, n = 28, pos = [], nor = [], idx = [];
   for (let i = 0; i <= n; i++) {
     const a = (a0 + 1.5 + ((a1 - a0 - 3) * i) / n) * RAD, c = Math.cos(a), s = Math.sin(a);
     for (const z of [-h, h]) { pos.push((TUBE.x + r * c) * MM, (TUBE.y + r * s) * MM, z * MM); nor.push(-c, -s, 0); }
@@ -245,7 +306,7 @@ function machoireFixe() {
   ]);
   // Dégagement rond autour du moyeu de la mâchoire mobile.
   contour.push(...arc(A[0], A[1], 10.5, 262, 145.2, 14));
-  return plaque(contour, -EP.machoire / 2, EP.machoire / 2, acier(), FIXES.map((p) => [...p, JEU]));
+  return plaque(contour, -EP.machoire / 2, EP.machoire / 2, acier(), FIXES.map((p) => [...p, JEU]), 2.2);
 }
 
 /** Repère 3 : mâchoire mobile en C — moyeu percé pour son pivot (A), pour la poignée (B) et pour le ressort. */
@@ -256,7 +317,7 @@ function machoireMobile() {
     [TUBE.x + h, 68.5, 5], [108, 28.5, 6], [109.5, 12, 3],
   ]);
   contour.push(...arc(A[0], A[1], 9, 140, 330, 16));
-  return plaque(contour, -EP.machoire / 2, EP.machoire / 2, acier(), [[...A, JEU], [...B0, JEU], [...RESSORT.machoire, 1.4]]);
+  return plaque(contour, -EP.machoire / 2, EP.machoire / 2, acier(), [[...A, JEU], [...B0, JEU], [...RESSORT.machoire, 1.4]], 2.2);
 }
 
 // Ligne médiane de la poignée mobile, de son articulation sur la mâchoire jusqu'au bout relevé.
@@ -266,16 +327,20 @@ const largeurPoignee = (i) => {
   return u < 0.3 ? 16 - 6 * (u / 0.3) : u > 0.8 ? 10 + 3 * ((u - 0.8) / 0.2) : 10;
 };
 
-/** Repère 4 : poignée mobile en tôle emboutie, ouverte vers le corps ; elle chevauche la mâchoire mobile. */
+/** Repère 4 : poignée mobile emboutie en U à dos rond, ouverte vers le corps ; sa chape plate chevauche la mâchoire mobile ; bout en cuiller. */
 function poignee() {
   const g = new THREE.Group(), m = acier();
-  const flanc = ruban(AXE_POIGNEE, largeurPoignee);
-  const trous = [[...B0, JEU], [...C0, JEU], [...LEVIER, JEU]];
-  for (const [z0, z1] of zTole) g.add(plaque(flanc, z0, z1, m, trous));
-  // Dos du profilé, du côté opposé au corps, en arrière de la mâchoire.
   const i0 = AXE_POIGNEE.findIndex((p) => p[0] > 140);
+  // Chape : deux joues plates, rondes autour de l'articulation, jusqu'au départ du dos.
+  const devant = AXE_POIGNEE.slice(0, i0 + 1), joue = ruban(devant, largeurPoignee);
+  const k = devant.length; // ruban : bord droit (k points), bout rond (7), bord gauche (k), bout rond (7) ; le bout du côté du dos reste droit
+  const contour = [...joue.slice(0, k), ...joue.slice(k + 7)];
+  for (const [z0, z1] of zTole) g.add(plaque(contour, z0, z1, m, [[...B0, JEU]]));
   const axe = AXE_POIGNEE.slice(i0);
-  g.add(plaque(ruban(axe, (i) => largeurPoignee(i + i0), 1, EP.tole), -EP.large / 2 + EP.tole, EP.large / 2 - EP.tole, m));
+  // Bout en cuiller : la section rétrécit en rond sur les 12 derniers millimètres.
+  const fin = axe[axe.length - 1][0];
+  const echelle = (i) => { const u = Math.max(0, 1 - (fin - axe[i][0]) / 12); return Math.max(0.3, Math.sqrt(1 - u * u * 0.92)); };
+  g.add(profile(axe, (i) => largeurPoignee(i + i0), 1, m, { rayon: 4.5, echelle }));
   return g;
 }
 
