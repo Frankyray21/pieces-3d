@@ -1,0 +1,109 @@
+{
+ "id": "graisse-a-filets",
+ "name": "Graisse à filets : bidon de 1 gal US et pinceau",
+ "manufacturer": "",
+ "category": "Graisse des filets de tiges de forage",
+ "serial": "",
+ "document": {
+  "title": "Photos du client (aucun plan) et cotes mises à l'échelle d'après les clés à tuyau de 18 et 24 po",
+  "reference": "",
+  "preparedBy": "",
+  "date": "",
+  "sheets": 2,
+  "pagePattern": "pages/{sheet}.webp"
+ },
+ "specs": [
+  [
+   "Source",
+   "Deux photos du client (P01) : le bidon de graisse sur son madrier, et la même scène avec deux clés à tuyau de 18 et de 24 po accrochées à la traverse pour donner l'échelle. Aucun plan, aucune étiquette : la marque de la graisse et celle du bidon ne sont pas lisibles"
+  ],
+  [
+   "Échelle",
+   "Sur la photo d'ensemble, la clé de 24 po mesure 384 pixels et celle de 18 po 297 pixels. Selon qu'on prend la longueur mâchoires fermées (22,3 et 16,0 po) ou la grandeur nominale, l'échelle va de 1,37 à 1,59 mm par pixel (1,49 en moyenne). Le bidon mesure 103 pixels de large : Ø de 141 à 164 mm (154 mm en moyenne) à la distance des clés. Le poteau derrière le bidon (59 pixels, soit 88 mm : un 2 × 4) confirme l'échelle"
+  ],
+  [
+   "Grandeur du bidon",
+   "Deux bidons ronds du commerce encadrent la mesure : le demi-gallon (Ø 137 mm) et le gallon US (Ø 165,1 mm). Le gallon est retenu : le bidon porte les deux oreilles d'une anse, que les bidons plus petits n'ont pas d'ordinaire. Écart avec la mesure moyenne : 7 %. À vérifier sur place avec un ruban à mesurer"
+  ],
+  [
+   "Bidon",
+   "Bidon rond de fer-blanc à anneau (type bidon de peinture), 1 gal US (3,79 L) : Ø du corps de 6 1/2 po (165,1 mm), hauteur de 7 1/2 po (190,5 mm), Ø de 168,1 mm aux sertis — grandeurs courantes du commerce, non mesurées. Terni et rouillé par plaques, comme sur la photo ; agrafe du flanc vers l'avant"
+  ],
+  [
+   "Anneau",
+   "Largeur d'environ 11 mm sur le rayon, gorge de 10 mm où s'enfonce le couvercle, ouverture de Ø 143,1 mm environ — relevé sur la photo. Le couvercle n'est pas sur la photo : il n'est pas modélisé"
+  ],
+  [
+   "Oreilles",
+   "Deux oreilles d'anse diamétralement opposées, pastille de Ø 18 mm à 24 mm sous le dessus, 179,1 mm hors tout d'une oreille à l'autre — relevé sur la photo. L'anse de fil n'y est plus : elle n'est pas modélisée"
+  ],
+  [
+   "Graisse",
+   "Pâte crème à jaunâtre, niveau courant à 24 mm sous le dessus, soit environ 3,4 L (0,91 gal US) pour un bidon plein jusqu'au fond ; monticule de graisse brassée qui recouvre la tête du pinceau jusqu'à hauteur de l'anneau, bavures sur l'anneau devant le pinceau — relevé sur la photo. Marque, grade et composition : inconnus"
+  ],
+  [
+   "Pinceau",
+   "Pinceau plat à manche de bois, pris à 2 po : manche de 185 mm × 19 mm × 13 mm, bande blanche de 43 mm et bout blanc — manche relevé sur la photo (environ 160 mm hors du bidon). Virole (28 mm) et soies (55 mm × 50 mm) sont enfouies dans la graisse : cotes d'un pinceau courant, supposées. Longueur totale de 268 mm"
+  ],
+  [
+   "Pose du pinceau",
+   "Le manche repose sur le serti du bidon, monte de 18° et part à 25° vers l'arrière par rapport à l'axe des oreilles ; son bout arrive à 253 mm du sol — relevé sur la photo"
+  ],
+  [
+   "Encombrement",
+   "Bidon seul : Ø 168,1 mm × 190,5 mm de haut. Avec le pinceau : 301 mm de long × 168,1 mm de large × 253 mm de haut"
+  ],
+  [
+   "Non relevé, non modélisé",
+   "Marque et fiche de la graisse (aucune étiquette sur le bidon), masse, couvercle, anse. Épaisseur de la tôle dessinée à 0,3 mm ; les sertis sont dessinés d'une seule tôle continue"
+  ]
+ ],
+ "weights": [],
+ "sheetTitles": {
+  "P01": "Photos du client : le bidon de graisse, et la scène avec les clés à tuyau de 18 et 24 po",
+  "P02": "Cotes du bidon et du pinceau : coupe par l'axe et vue de dessus (grandeurs du commerce, relevées)"
+ },
+ "root": "P01",
+ "assemblies": {
+  "P01": {
+   "title": "THREAD GREASE, 1 US GAL CAN AND BRUSH",
+   "titleFr": "Graisse à filets, bidon de 1 gal US et pinceau",
+   "pn": "",
+   "sheets": [
+    "P01",
+    "P02"
+   ],
+   "note": "Reconstitution 3D d'après deux photos du client (P01), sans plan ni étiquette. Sur la photo d'ensemble, la clé de 24 po mesure 384 pixels et celle de 18 po 297 pixels. Selon qu'on prend la longueur mâchoires fermées (22,3 et 16,0 po) ou la grandeur nominale, l'échelle va de 1,37 à 1,59 mm par pixel (1,49 en moyenne). Le bidon mesure 103 pixels de large : Ø de 141 à 164 mm (154 mm en moyenne) à la distance des clés. Le poteau derrière le bidon (59 pixels, soit 88 mm : un 2 × 4) confirme l'échelle. Deux bidons ronds du commerce encadrent la mesure : le demi-gallon (Ø 137 mm) et le gallon US (Ø 165,1 mm). Le gallon est retenu : le bidon porte les deux oreilles d'une anse, que les bidons plus petits n'ont pas d'ordinaire. Écart avec la mesure moyenne : 7 %. À vérifier sur place avec un ruban à mesurer. L'anneau, l'agrafe, les oreilles, la rouille, le niveau et le monticule de graisse, la pose du pinceau, sa bande et son bout blancs sont relevés sur les photos. Le madrier, le sac de jute et les clés à tuyau de la photo ne sont pas modélisés.",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "BIDON rond de fer-blanc à anneau, 1 gal US, Ø 6 1/2 po × 7 1/2 po",
+     {
+      "note": "Grandeur retenue d'après l'échelle des clés à tuyau (Ø mesuré de 141 à 164 mm) et les oreilles d'anse ; à vérifier sur place. Deux oreilles (anse absente), agrafe du flanc, anneau à gorge, ouverture de Ø 143,1 mm environ. Sans couvercle."
+     }
+    ],
+    [
+     "2",
+     "",
+     1,
+     "GRAISSE À FILETS pour tiges de forage",
+     {
+      "note": "Environ 3,4 L au niveau de la photo (24 mm sous le dessus). Marque et grade inconnus : aucune étiquette sur le bidon."
+     }
+    ],
+    [
+     "3",
+     "",
+     1,
+     "PINCEAU plat de 2 po, manche de bois",
+     {
+      "note": "Longueur totale de 268 mm ; bande blanche et bout blanc sur le manche. Largeur de 2 po, virole et soies supposées (enfouies dans la graisse sur la photo)."
+     }
+    ]
+   ]
+  }
+ },
+ "documents": []
+}

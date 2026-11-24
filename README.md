@@ -864,6 +864,43 @@ pièces (numéro, quantité, page du manuel).
   couleur de la guenille sont supposées. Le contenu des deux chaudières pleines
   n'est pas représenté. La fiche est écrite par `tools/chaudieres_fiche.mjs` à
   partir des cotes du modèle (`src/models/chaudieres-5-gal/index.js`).
+- **Graisse à filets : bidon de 1 gal US et pinceau** (`graisse-a-filets`) :
+  le bidon de graisse des filets de tiges de forage et son pinceau,
+  reconstitués d'après deux photos du client (P01), sans plan ni étiquette (la
+  marque de la graisse n'est pas lisible). L'échelle vient des deux clés à
+  tuyau de 18 et 24 po accrochées sur la photo d'ensemble : 1,37 à 1,59 mm par
+  pixel, soit un bidon de Ø 141 à 164 mm. Deux bidons du commerce encadrent la
+  mesure, le demi-gallon (Ø 137 mm) et le gallon US (Ø 165 mm) ; le gallon
+  (Ø 6 1/2 × 7 1/2 po) est retenu à cause des deux oreilles d'anse, à vérifier
+  sur place (`BIDON.d` et `BIDON.h` du modèle, tout le reste suit). Relevé sur
+  les photos : l'anneau à gorge, l'agrafe du flanc, les oreilles (anse
+  absente), la rouille, le niveau et le monticule de graisse, la pose du
+  pinceau, sa bande et son bout blancs. Supposé : la virole et les soies du
+  pinceau (2 po), enfouies dans la graisse. Trois pièces (bidon, graisse,
+  pinceau) ; coupe proposée par l'axe. La fiche et la page des cotes (P02) sont
+  écrites par `tools/graisse_a_filets_fiche.mjs` à partir des cotes du modèle
+  (`src/models/graisse-a-filets/index.js`).
+
+- **Trousse de déversement universelle Zenith, baril de 30 gal US**
+  (`trousse-deversement-zenith`, Tenaquip SEJ274) : baril de polyéthylène bleu
+  à ouverture totale, couvercle, cerceau de fermeture, étiquette et contenu,
+  reconstitués d'après la photo du produit (P01) et mis à l'échelle par la
+  photo du chantier (P02), fournies par le client, sans plan. Le fabricant ne
+  publie pas les cotes du baril : celles d'un baril de 30 gal US à ouverture
+  totale du commerce sont prises (29 7/8 po de haut avec le couvercle,
+  Ø 18 3/4 po, cerceau de Ø 18 1/8 po). La photo du chantier les confirme :
+  hauteur corrigée de la plongée (17°) / Ø = 1,53, contre 1,59 au modèle, et
+  Ø d'environ 490 mm par comparaison au seau de 5 gal voisin (un peu plus
+  loin), contre 476 mm. Contenu publié pour la trousse d'atelier de 30 gal
+  (fiche d'un détaillant, à confirmer sur la trousse) : 4 boudins de
+  3 × 48 po, 50 feuilles de 15 × 17 po, 5 sacs, 2 paires de gants, mastic de
+  4 oz, couvre-drain (non modélisé : non distingué sur la photo). Supposé :
+  épaisseur des parois, levier du cerceau (caché sur les photos), rangement
+  dans le baril (boudins en spirale au fond, feuilles pliées en deux). En vue
+  éclatée, le contenu se dispose comme sur la photo du produit ; la coupe
+  proposée passe par l'axe. La fiche et la page des cotes (P03) sont écrites
+  par `tools/trousse_deversement_fiche.mjs` à partir des cotes du modèle
+  (`src/models/trousse-deversement-zenith/index.js`).
 
 - **Pompe à pistons Bean 420 (FMC L0918 / American AL0918B)**
   (`pompe-bean-420`) : pompe triplex à pistons de 2 1/4 × 2 1/4 po, 20,2 gal
