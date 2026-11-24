@@ -27,7 +27,9 @@
 // L'outil fonctionne (src/ui/features/niveau-degres.js) : regler() pose
 // l'outil sur une pente, tourne le tambour et la molette ; bulle() donne la
 // place de la bulle dans la fiole ; lecture() l'angle sous l'aiguille ;
-// verdictRack() dit si l'angle lu convient au rack à tiges.
+// verdictRack() dit si l'angle lu convient au rack à tiges. outil() et niveler()
+// posent l'outil entier dans une autre scène : l'étape 5 de l'installation du
+// rack à tiges (src/models/rack-tiges-dd/installation.js), collé au poteau.
 //
 // Repère de l'outil, en millimètres : x le long de la règle de base (0 au bout
 // du cadran), y vers le haut (0 sous la face de mesure), z en travers (0 au
@@ -539,27 +541,69 @@ export function regler(racine, { pente = 0, cadran = 0 } = {}) {
 
 // ------------------------------------------------------------------ assemblage
 
-export function P01(api) {
-  const S = api.S;
+/**
+ * Pièces de l'outil, à leur place : [{ ref, obj, eclate, options }] — repère de la liste, objet,
+ * déplacement en vue éclatée (m), options d'api.part. Les pièces mobiles portent userData.mobile.
+ */
+function pieces(S) {
   const c = CADRAN;
   const mobile = (o, nom) => { o.userData.mobile = nom; return o; };
   const auCadran = (o, z) => { o.position.set(c.x * MM, c.y * MM, z * MM); return o; };
-  api.part('1', boitier(S), [0, 0, 0]);
-  api.part('2', regleBase(S), [0, -0.03, 0]);
-  api.part('3', regleBout(S), [-0.03, 0, 0]);
-  api.part('9', aimant(S), [0, -0.055, 0]);
   // Pièces concentriques : les bulles de repère sont écartées du milieu, où se lit la bulle de la fiole.
   const pol = (r, a, z) => ({ labelAt: P(r * Math.cos(a * RAD), r * Math.sin(a * RAD), z) });
-  // Le cadran est sous le couvercle : sa bulle de repère se tient juste au-dessus de la glace, sans quoi elle serait masquée.
-  api.part('4', auCadran(cadran(S), ZF + c.epPlaque / 2), [0, 0, 0.03], pol(43, 135, c.couvercle.jour + c.couvercle.ep + 0.3 - c.epPlaque / 2));
-  api.part('5', auCadran(couvercle(S), ZF), [0, 0, 0.095], pol(c.rCouvercle - 2, 35, c.couvercle.jour + c.couvercle.ep));
-  api.part('6', mobile(auCadran(tambour(S), ZF), 'tambour'), [0, 0, 0.06], pol((TAMBOUR.rExt + TAMBOUR.rInt) / 2, -90, TAMBOUR.saillie));
-  api.part('7', mobile(auCadran(fiole(S), ZV), 'fiole'), [0, 0, 0.14], pol(21, 0, FIOLE.embout.d / 2));
   const m = molette(S);
   m.position.set(MOLETTE.x * MM, MOLETTE.y * MM, ZF * MM);
-  api.part('8', mobile(m, 'molette'), [0, 0.02, 0.05]);
+  return [
+    { ref: '1', obj: boitier(S), eclate: [0, 0, 0] },
+    { ref: '2', obj: regleBase(S), eclate: [0, -0.03, 0] },
+    { ref: '3', obj: regleBout(S), eclate: [-0.03, 0, 0] },
+    { ref: '9', obj: aimant(S), eclate: [0, -0.055, 0] },
+    // Le cadran est sous le couvercle : sa bulle de repère se tient juste au-dessus de la glace, sans quoi elle serait masquée.
+    { ref: '4', obj: auCadran(cadran(S), ZF + c.epPlaque / 2), eclate: [0, 0, 0.03], options: pol(43, 135, c.couvercle.jour + c.couvercle.ep + 0.3 - c.epPlaque / 2) },
+    { ref: '5', obj: auCadran(couvercle(S), ZF), eclate: [0, 0, 0.095], options: pol(c.rCouvercle - 2, 35, c.couvercle.jour + c.couvercle.ep) },
+    { ref: '6', obj: mobile(auCadran(tambour(S), ZF), 'tambour'), eclate: [0, 0, 0.06], options: pol((TAMBOUR.rExt + TAMBOUR.rInt) / 2, -90, TAMBOUR.saillie) },
+    { ref: '7', obj: mobile(auCadran(fiole(S), ZV), 'fiole'), eclate: [0, 0, 0.14], options: pol(21, 0, FIOLE.embout.d / 2) },
+    { ref: '8', obj: mobile(m, 'molette'), eclate: [0, 0.02, 0.05] },
+  ];
+}
+
+export function P01(api) {
+  for (const p of pieces(api.S)) api.part(p.ref, p.obj, p.eclate, p.options);
   // Coupe proposée : en travers, par l'axe du cadran (boîtier, tambour, fiole, couvercle).
-  return { view: { dir: [0.35, 0.3, 1], section: { axis: 'x', pos: c.x / L } } };
+  return { view: { dir: [0.35, 0.3, 1], section: { axis: 'x', pos: CADRAN.x / L } } };
+}
+
+/**
+ * L'outil entier en un seul objet, pour le poser dans une autre scène (étape 5 de
+ * l'installation du rack à tiges) : repère de l'outil, en mètres — x le long de la règle de
+ * base depuis le bout du cadran, y depuis la face de mesure, z vers la face du cadran, origine
+ * au coin de la face de mesure, au milieu de l'épaisseur.
+ *
+ * Une fois l'objet posé (position, orientation), niveler(objet) tourne le tambour pour que la
+ * fiole soit de niveau dans la scène, entraîne la molette, centre la bulle, et retourne l'angle
+ * lu sous l'aiguille (degrés) : celui de la surface qui porte la règle de base.
+ */
+export function outil(S) {
+  const g = S.group();
+  for (const p of pieces(S)) g.add(p.obj);
+  return g;
+}
+
+export function niveler(objet) {
+  objet.updateMatrixWorld(true);
+  const e = objet.matrixWorld.elements;
+  // Composantes verticales (Y de la scène) des axes x, y, z de l'outil : la verticale dans son repère.
+  const n = [Math.hypot(e[0], e[1], e[2]), Math.hypot(e[4], e[5], e[6]), Math.hypot(e[8], e[9], e[10])];
+  const haut = [e[1] / n[0], e[5] / n[1], e[9] / n[2]];
+  // Fiole de niveau : sa direction cos(c)·x + sin(c)·y n'a plus de composante verticale.
+  const cadran = Math.atan2(-haut[0], haut[1]) / RAD;
+  const m = mobiles(objet);
+  m.tambour.rotation.z = cadran * RAD;
+  m.fiole.rotation.z = cadran * RAD;
+  m.molette.rotation.z = -cadran * RAD * RAPPORT;
+  placerBulle(m.bulle, bulle(haut, cadran));
+  objet.updateMatrixWorld(true);
+  return lecture(cadran).deg;
 }
 
 export default { P01 };

@@ -8,6 +8,8 @@
 import * as THREE from 'three';
 import { buildProcedural } from '../src/viewer/assembly.js';
 import builders, { RETENUE } from '../src/models/rack-tiges-dd/index.js';
+import { NIVEAU } from '../src/models/rack-tiges-dd/installation.js';
+import { RACK, verdictRack } from '../src/models/niveau-a-degres/index.js';
 import { NQ, T2, T15, CLEAR, SPLIT, FRONT, ANGLE } from '../src/models/rack-tiges-dd/support.js';
 import { LEVER } from '../src/models/rack-tiges-dd/outils.js';
 
@@ -247,5 +249,9 @@ const stop = rodDeg();
 check('Étape 12 — angle des tiges retenues par la chaîne, mesuré au plus fort du basculement (80° au plus)', stop.toFixed(2), stop > angle && stop <= 80, `° (chaîne de ${RETENUE.longueur.toFixed(2)} m, avance de ${(RETENUE.avance * 100).toFixed(1)} cm)`);
 at(12, 1);
 check('Étape 12 — tiges revenues à l’angle du support', rodDeg().toFixed(2), Math.abs(rodDeg() - angle) < 0.05, '°');
+
+// Étape 5 : le niveau à degrés aimanté, collé au poteau, fiole de niveau ; son aiguille lit l'angle du support,
+// dans la plage de la procédure.
+check('Étape 5 — angle lu par le niveau à degrés collé au poteau (fiole de niveau)', NIVEAU.lu.toFixed(2), Math.abs(NIVEAU.lu - ANGLE) < 0.01 && verdictRack(NIVEAU.lu) === 'conforme', `° (plage de ${RACK.min}° à ${RACK.max}°)`);
 
 process.exit(failed ? 1 : 0);
