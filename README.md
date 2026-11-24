@@ -934,15 +934,16 @@ pièces (numéro, quantité, page du manuel).
   à partir des cotes du modèle (`src/models/blocs-de-bois/index.js`).
 
 - **Rack de boîtes à carottes (core box)** (`rack-core-box`) : plate-forme
-  d'acier à deux passages de fourche, fermée à chaque bout par un cadre de
-  tube bleu (deux montants, une traverse haute, une diagonale), où l'on empile
-  les boîtes à carottes pleines. Reconstitué d'après une photo du client prise
+  d'acier à deux passages de fourche, bordée de chaque côté par deux arceaux
+  de tube bleu séparés (chacun : deux montants, une traverse haute, une
+  diagonale ; côtés non continus, précision du client), où l'on empile les
+  boîtes à carottes pleines. Reconstitué d'après une photo du client prise
   sous terre (P01), qui ne montre qu'une portion du rack ; aucun plan. Échelle :
   la boîte à carottes de 1,5 m (donnée par le client, minimum). Relevé sur la
   photo à cette échelle : l'encombrement (1,08 × 1,60 × 0,96 m), la hauteur
-  des cadres, l'entraxe des passages de fourche, les 3 colonnes de 4 boîtes
+  et la largeur des arceaux, l'entraxe des passages de fourche, les 3 colonnes de 4 boîtes
   décalées. Supposé : largeur (300 mm) et hauteur (66 mm fermée) de la boîte,
-  sections des tubes, tôle, sens de la diagonale du second cadre. La fiche et
+  sections des tubes, tôle, sens de la diagonale des autres arceaux. La fiche et
   la page des cotes (P02) sont écrites par `tools/rack_core_box_fiche.mjs` à
   partir des cotes du modèle (`src/models/rack-core-box/index.js`).
 

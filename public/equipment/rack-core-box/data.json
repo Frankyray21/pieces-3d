@@ -23,11 +23,11 @@
   ],
   [
    "Usage",
-   "Rack de transport et d'entreposage des boîtes à carottes pleines : on les empile couchées sur la plate-forme, entre les deux cadres, et on déplace le tout par les passages de fourche"
+   "Rack de transport et d'entreposage des boîtes à carottes pleines : on les empile couchées sur la plate-forme, entre les arceaux, et on déplace le tout par les passages de fourche"
   ],
   [
    "Encombrement",
-   "1,08 m de large (d'un cadre à l'autre) × 1,60 m (le long des boîtes) × 0,96 m de haut — relevé sur la photo, à l'échelle de la boîte"
+   "1,08 m de large (d'un côté à l'autre) × 1,60 m (le long des boîtes) × 0,96 m de haut — relevé sur la photo, à l'échelle de la boîte"
   ],
   [
    "Boîte à carottes",
@@ -46,8 +46,8 @@
    "Deux, sous la plate-forme, le long des boîtes, à 560 mm d'entraxe (relevé). Supposé : tube de 7 po × 3 po"
   ],
   [
-   "Cadres",
-   "Bleus sur la photo, un à chaque bout : deux montants, une traverse haute et une diagonale, 800 mm au-dessus de la tôle (relevé). Supposé : tube carré de 2 po, diagonale de 1 1/2 po, même sens de diagonale aux deux cadres (un seul est visible en entier)"
+   "Arceaux",
+   "Bleus sur la photo. Les côtés ne sont pas continus (précision du client) : chaque côté porte 2 arceaux séparés, un au bord avant et un au bord arrière, soit 4 en tout. Chaque arceau : deux montants, une traverse haute et une diagonale, 500 mm de large et 800 mm au-dessus de la tôle (relevé). Supposé : tube carré de 2 po, diagonale de 1 1/2 po, même sens de diagonale partout ; un seul arceau est visible en entier sur la photo, les autres en partie"
   ],
   [
    "Non modélisé",
@@ -69,7 +69,7 @@
     "P01",
     "P02"
    ],
-   "note": "Reconstitution 3D d'après une photo du client (P01), qui ne montre qu'une portion du rack. Rack de transport et d'entreposage des boîtes à carottes pleines : on les empile couchées sur la plate-forme, entre les deux cadres, et on déplace le tout par les passages de fourche. Échelle : la boîte à carottes de 1,50 m (donnée par le client) ; les autres cotes sont relevées sur la photo à cette échelle ou supposées (voir la fiche et P02). Largeur et hauteur de la boîte supposées. En vue éclatée, la pile monte et les couvercles se soulèvent.",
+   "note": "Reconstitution 3D d'après une photo du client (P01), qui ne montre qu'une portion du rack. Rack de transport et d'entreposage des boîtes à carottes pleines : on les empile couchées sur la plate-forme, entre les arceaux, et on déplace le tout par les passages de fourche. Échelle : la boîte à carottes de 1,50 m (donnée par le client) ; les autres cotes sont relevées sur la photo à cette échelle ou supposées (voir la fiche et P02). Largeur et hauteur de la boîte supposées. En vue éclatée, la pile monte et les couvercles se soulèvent.",
    "parts": [
     [
      "1",
@@ -92,28 +92,28 @@
     [
      "3",
      "",
-     4,
-     "MONTANT DE CADRE",
+     8,
+     "MONTANT D'ARCEAU",
      {
-      "note": "Tube carré de 2 po supposé ; cadre de 800 mm de haut au-dessus de la tôle (relevé)."
+      "note": "Tube carré de 2 po supposé ; arceau de 800 mm de haut au-dessus de la tôle (relevé)."
      }
     ],
     [
      "4",
      "",
-     2,
-     "TRAVERSE HAUTE DE CADRE",
+     4,
+     "TRAVERSE HAUTE D'ARCEAU",
      {
-      "note": "Tube carré de 2 po supposé, 1,60 m de long."
+      "note": "Tube carré de 2 po supposé, 500 mm de long (relevé)."
      }
     ],
     [
      "5",
      "",
-     2,
-     "DIAGONALE DE CADRE",
+     4,
+     "DIAGONALE D'ARCEAU",
      {
-      "note": "Du pied du montant avant à la tête du montant arrière. Tube de 1 1/2 po supposé ; sens relevé sur le cadre de gauche, supposé pour l'autre."
+      "note": "Du pied du montant avant à la tête du montant arrière. Tube de 1 1/2 po supposé ; sens relevé sur l'arceau avant gauche, supposé pour les autres."
      }
     ],
     [

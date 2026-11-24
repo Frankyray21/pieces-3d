@@ -11,12 +11,12 @@ const mm = (v, n = 0) => `${fr(v, n)} mm`;
 const pgcd = (a, b) => (b ? pgcd(b, a % b) : a);
 /** Pouces en fraction, au seizième près. */
 const po = (v) => { const q = Math.round((v / IN) * 16), e = Math.floor(q / 16), r = q % 16, d = pgcd(r, 16); return `${e || ''}${r ? ` ${r / d}/${16 / d}` : ''} po`.trim(); };
-const h = horsTout(), N = nombreBoites();
+const h = horsTout(), N = nombreBoites(), NA = 2 * CADRE.parCote;
 const m = (v) => `${fr(v / 1000, 2)} m`;
 
 const SOURCE = 'Une photo du client, prise sous terre (P01), qui ne montre qu\'une portion du rack. Aucun plan, aucune cote publiée, fabricant non identifié';
 const ECHELLE = `La longueur d'une boîte à carottes, donnée par le client : au moins ${m(BOITE.long)}. C'est la seule cote sûre ; toutes les autres sont relevées sur la photo à cette échelle (à ± 10 % environ) ou supposées`;
-const USAGE = 'Rack de transport et d\'entreposage des boîtes à carottes pleines : on les empile couchées sur la plate-forme, entre les deux cadres, et on déplace le tout par les passages de fourche';
+const USAGE = 'Rack de transport et d\'entreposage des boîtes à carottes pleines : on les empile couchées sur la plate-forme, entre les arceaux, et on déplace le tout par les passages de fourche';
 
 const data = {
   id: 'rack-core-box',
@@ -36,12 +36,12 @@ const data = {
     ['Source', SOURCE],
     ['Échelle', ECHELLE],
     ['Usage', USAGE],
-    ['Encombrement', `${m(h.large)} de large (d'un cadre à l'autre) × ${m(h.profond)} (le long des boîtes) × ${m(h.haut)} de haut — relevé sur la photo, à l'échelle de la boîte`],
+    ['Encombrement', `${m(h.large)} de large (d'un côté à l'autre) × ${m(h.profond)} (le long des boîtes) × ${m(h.haut)} de haut — relevé sur la photo, à l'échelle de la boîte`],
     ['Boîte à carottes', `Boîte de bois à couvercle, ${m(BOITE.long)} de long (donnée par le client). Supposé : ${mm(BOITE.large)} de large, ${mm(hautBoite())} de haut fermée, ${BOITE.rangees} rangées de ${mm(largeurRangee())} — proportions des bouts de boîtes de la photo. À remplacer par les cotes réelles de la boîte si elles sont connues`],
     ['Empilement', `${PILE.colonnes} colonnes de ${PILE.etages} boîtes, soit ${N} boîtes, couchées en travers, bouts vers le côté des fourches, colonnes décalées de ${mm(PILE.decalage[1] - PILE.decalage[0])} l'une de l'autre comme sur la photo. Le bout droit du rack est caché sur la photo : le nombre de colonnes est celui qu'on y voit`],
     ['Plate-forme', `Pâle sur la photo. ${m(largeurBase())} × ${m(BASE.profond)}, dessus à ${mm(dessusTole())} du sol. Supposé : cadre de tube de ${po(BASE.cadre.large)} × ${po(BASE.cadre.haut)}, deux traverses, tôle de ${po(BASE.tole)}`],
     ['Passages de fourche', `Deux, sous la plate-forme, le long des boîtes, à ${mm(FOURCHE.entraxe)} d'entraxe (relevé). Supposé : tube de ${po(FOURCHE.large)} × ${po(FOURCHE.haut)}`],
-    ['Cadres', `Bleus sur la photo, un à chaque bout : deux montants, une traverse haute et une diagonale, ${mm(CADRE.haut)} au-dessus de la tôle (relevé). Supposé : tube carré de ${po(TUBE.cote)}, diagonale de ${po(TUBE.diagonale)}, même sens de diagonale aux deux cadres (un seul est visible en entier)`],
+    ['Arceaux', `Bleus sur la photo. Les côtés ne sont pas continus (précision du client) : chaque côté porte ${CADRE.parCote} arceaux séparés, un au bord avant et un au bord arrière, soit ${NA} en tout. Chaque arceau : deux montants, une traverse haute et une diagonale, ${mm(CADRE.large)} de large et ${mm(CADRE.haut)} au-dessus de la tôle (relevé). Supposé : tube carré de ${po(TUBE.cote)}, diagonale de ${po(TUBE.diagonale)}, même sens de diagonale partout ; un seul arceau est visible en entier sur la photo, les autres en partie`],
     ['Non modélisé', 'Le contenu des boîtes (carottes, blocs de métrage), les inscriptions et le cerclage des boîtes. Soudures non dessinées'],
   ],
   weights: [],
@@ -60,9 +60,9 @@ const data = {
       parts: [
         ['1', '', 1, 'PLATE-FORME (cadre de tube et tôle)', { note: `${m(largeurBase())} × ${m(BASE.profond)}, relevée sur la photo. Sections supposées : tube de ${po(BASE.cadre.large)} × ${po(BASE.cadre.haut)}, tôle de ${po(BASE.tole)}.` }],
         ['2', '', 2, 'PASSAGE DE FOURCHE', { note: `Sous la plate-forme, le long des boîtes, à ${mm(FOURCHE.entraxe)} d'entraxe (relevé). Tube de ${po(FOURCHE.large)} × ${po(FOURCHE.haut)} supposé.` }],
-        ['3', '', 4, 'MONTANT DE CADRE', { note: `Tube carré de ${po(TUBE.cote)} supposé ; cadre de ${mm(CADRE.haut)} de haut au-dessus de la tôle (relevé).` }],
-        ['4', '', 2, 'TRAVERSE HAUTE DE CADRE', { note: `Tube carré de ${po(TUBE.cote)} supposé, ${m(BASE.profond)} de long.` }],
-        ['5', '', 2, 'DIAGONALE DE CADRE', { note: `Du pied du montant avant à la tête du montant arrière. Tube de ${po(TUBE.diagonale)} supposé ; sens relevé sur le cadre de gauche, supposé pour l'autre.` }],
+        ['3', '', 2 * NA, 'MONTANT D\'ARCEAU', { note: `Tube carré de ${po(TUBE.cote)} supposé ; arceau de ${mm(CADRE.haut)} de haut au-dessus de la tôle (relevé).` }],
+        ['4', '', NA, 'TRAVERSE HAUTE D\'ARCEAU', { note: `Tube carré de ${po(TUBE.cote)} supposé, ${mm(CADRE.large)} de long (relevé).` }],
+        ['5', '', NA, 'DIAGONALE D\'ARCEAU', { note: `Du pied du montant avant à la tête du montant arrière. Tube de ${po(TUBE.diagonale)} supposé ; sens relevé sur l'arceau avant gauche, supposé pour les autres.` }],
         ['6', '', N, `BOÎTE À CAROTTES (core box) de ${m(BOITE.long)}`, { note: `Bois, ${BOITE.rangees} rangées. Longueur donnée par le client (minimum) ; largeur de ${mm(BOITE.large)} et hauteur de ${mm(BOITE.haut)} supposées. Quantité : celle des boîtes visibles sur la photo.` }],
         ['7', '', N, 'COUVERCLE DE BOÎTE À CAROTTES', { note: `Contreplaqué de ${mm(BOITE.couvercle)} supposé.` }],
       ],
@@ -101,8 +101,13 @@ if (at >= 0) {
   const oz = 1500;
   let cote = rect(oz, sol, -D, D, yB, yT, 'pl') + rect(oz, sol, -D, D, 0, yB, 'pl');
   for (let et = 0; et < PILE.etages; et++) cote += rect(oz, sol, -BOITE.long / 2, BOITE.long / 2, yT + et * hautBoite(), yT + (et + 1) * hautBoite(), 'bois');
-  cote += rect(oz, sol, -D, -D + c, yT, yT + CADRE.haut, 'bl') + rect(oz, sol, D - c, D, yT, yT + CADRE.haut, 'bl') + rect(oz, sol, -D, D, yT + CADRE.haut - c, yT + CADRE.haut, 'bl');
-  cote += `<line x1="${oz - (D - c) * k}" y1="${sol - yT * k}" x2="${oz + (D - c) * k}" y2="${sol - (yT + CADRE.haut - c) * k}" class="dg"/>`;
+  // L'avant (fourches, +Z du modèle) est à gauche : z du modèle = -abscisse.
+  for (const b of [1, -1]) {
+    const a0 = -b * D, a1 = a0 + b * CADRE.large, g = Math.min(a0, a1), d = Math.max(a0, a1);
+    cote += rect(oz, sol, g, g + c, yT, yT + CADRE.haut, 'bl') + rect(oz, sol, d - c, d, yT, yT + CADRE.haut, 'bl') + rect(oz, sol, g, d, yT + CADRE.haut - c, yT + CADRE.haut, 'bl');
+    cote += `<line x1="${oz + (g + c) * k}" y1="${sol - yT * k}" x2="${oz + (d - c) * k}" y2="${sol - (yT + CADRE.haut - c) * k}" class="dg"/>`;
+  }
+  cote += hc(oz - D * k, oz - (D - CADRE.large) * k, sol - (yT + CADRE.haut) * k - 30, `${mm(CADRE.large)} †`);
   cote += hc(oz - D * k, oz + D * k, sol + 60, `${m(BASE.profond)} †`)
     + hc(oz - BOITE.long / 2 * k, oz + BOITE.long / 2 * k, sol + 110, `boîte : ${m(BOITE.long)} (donnée par le client)`)
     + vc(oz + D * k + 40, sol - (yT + CADRE.haut) * k, sol - yT * k, `${mm(CADRE.haut)} †`);
@@ -119,7 +124,7 @@ if (at >= 0) {
     <p class="s">Aucun plan. Échelle : la boîte de ${m(BOITE.long)} donnée par le client. † = relevé sur la photo à cette échelle (± 10 % environ) ; ‡ = supposé.</p>
     <svg width="2200" height="930"><defs><marker id="f" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#c0392b"/></marker></defs>
     <text x="${ox - W * k}" y="150" class="t">Vu du côté des fourches (bouts des boîtes)</text>${face}
-    <text x="${oz - D * k}" y="150" class="t">Vu de côté (un cadre)</text>${cote}</svg>
+    <text x="${oz - D * k}" y="150" class="t">Vu de côté (deux arceaux séparés)</text>${cote}</svg>
     <table>${lignes}</table></html>`;
   writeFileSync(out, html);
   console.log(`page écrite : ${out}`);
