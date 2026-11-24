@@ -933,6 +933,25 @@ pièces (numéro, quantité, page du manuel).
   et la page des cotes (P02) sont écrites par `tools/blocs_de_bois_fiche.mjs`
   à partir des cotes du modèle (`src/models/blocs-de-bois/index.js`).
 
+- **Pince pour tube intérieur de carottier, à mâchoires rondes** (`pince-tube-interieur`) :
+  la pince-étau en C de la page TIME Limited « Pinces pour tubes
+  intérieurs » (92-1005 ; P01), dont les patins carrés sont remplacés par deux
+  demi-coquilles rondes soudées aux becs, à la demande du client et d'après sa
+  photo d'atelier (P02) ; acier nu, de couleur métallique, et non orange
+  comme la pince TIME (demande du client). Aucun plan, aucune cote publiée : la pince est prise
+  pour une 11 po (280 mm), les rivets sont relevés sur la photo à cette
+  échelle ; épaisseurs, biellette cachée dans le corps et coquilles (tube
+  intérieur NQ de Ø 55,6 mm, tôle de 4,8 mm, 120°, 70 mm de long) sont
+  supposées et signalées dans la fiche. Mécanisme d'une pince-étau : poignée
+  mobile articulée sur la mâchoire mobile, biellette appuyée au bout de la vis
+  de réglage, verrouillage par dépassement du point mort ; `etat(t)` dans
+  `src/models/pince-tube-interieur/index.js` donne la place des articulations.
+  P01 : la pince serrée et sa vue éclatée en 16 pièces. P02 : la même, animée
+  en trois temps (verrouillée, ouverte, refermée). Non modélisés : la pince
+  double 92-1006, le tube, les cordons de soudure. La fiche et la page du
+  schéma (P03) sont écrites par `tools/pince_tube_interieur_fiche.mjs`, qui
+  contrôle aussi que la genouillère reste montée sur toute sa course.
+
 - **Boulon d'ancrage standard TIME 83-52, NW/L 5 pi**
   (`boulon-ancrage-time`) : la pine d'ancrage à laquelle on fixe la foreuse
   au diamant, reconstituée d'après la page du produit de TIME Limited fournie
