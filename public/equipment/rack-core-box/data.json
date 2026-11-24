@@ -27,7 +27,7 @@
   ],
   [
    "Encombrement",
-   "1,08 m de large (d'un côté à l'autre) × 1,60 m (le long des boîtes) × 0,96 m de haut — relevé sur la photo, à l'échelle de la boîte"
+   "1,70 m de large (d'un côté à l'autre) × 1,60 m (le long des boîtes) × 0,96 m de haut — largeur calculée pour 5 boîtes de 300 mm (largeur de boîte supposée), le reste relevé sur la photo à l'échelle de la boîte"
   ],
   [
    "Boîte à carottes",
@@ -35,15 +35,15 @@
   ],
   [
    "Empilement",
-   "3 colonnes de 4 boîtes, soit 12 boîtes, couchées en travers, bouts vers le côté des fourches, colonnes décalées de 45 mm l'une de l'autre comme sur la photo. Le bout droit du rack est caché sur la photo : le nombre de colonnes est celui qu'on y voit"
+   "5 colonnes de 8 boîtes, soit 40 boîtes, couchées en travers, bouts vers le côté des fourches, colonnes décalées l'une de l'autre (jusqu'à 45 mm) comme sur la photo. Il entre 5 boîtes de large et jusqu'à 8 de haut (donnés par le client) : le modèle montre le rack plein, la photo 4 boîtes de haut. Pile pleine : 528 mm de haut (hauteur de boîte supposée), sous le dessus des arceaux"
   ],
   [
    "Plate-forme",
-   "Pâle sur la photo. 1,08 m × 1,60 m, dessus à 157 mm du sol. Supposé : cadre de tube de 2 po × 3 po, deux traverses, tôle de 3/16 po"
+   "Pâle sur la photo. 1,70 m × 1,60 m, dessus à 157 mm du sol. Supposé : cadre de tube de 2 po × 3 po, deux traverses, tôle de 3/16 po"
   ],
   [
    "Passages de fourche",
-   "Deux, sous la plate-forme, le long des boîtes, à 560 mm d'entraxe (relevé). Supposé : tube de 7 po × 3 po"
+   "3, sous la plate-forme, le long des boîtes, un sous une colonne sur deux, à 620 mm d'entraxe : deux sont visibles sur la photo, le troisième est supposé par symétrie. Supposé aussi : tube de 7 po × 3 po"
   ],
   [
    "Arceaux",
@@ -77,16 +77,16 @@
      1,
      "PLATE-FORME (cadre de tube et tôle)",
      {
-      "note": "1,08 m × 1,60 m, relevée sur la photo. Sections supposées : tube de 2 po × 3 po, tôle de 3/16 po."
+      "note": "1,70 m × 1,60 m : largeur pour 5 boîtes, profondeur relevée sur la photo. Sections supposées : tube de 2 po × 3 po, tôle de 3/16 po."
      }
     ],
     [
      "2",
      "",
-     2,
+     3,
      "PASSAGE DE FOURCHE",
      {
-      "note": "Sous la plate-forme, le long des boîtes, à 560 mm d'entraxe (relevé). Tube de 7 po × 3 po supposé."
+      "note": "Sous la plate-forme, le long des boîtes, à 620 mm d'entraxe ; deux visibles sur la photo, le troisième supposé. Tube de 7 po × 3 po supposé."
      }
     ],
     [
@@ -119,16 +119,16 @@
     [
      "6",
      "",
-     12,
+     40,
      "BOÎTE À CAROTTES (core box) de 1,50 m",
      {
-      "note": "Bois, 4 rangées. Longueur donnée par le client (minimum) ; largeur de 300 mm et hauteur de 60 mm supposées. Quantité : celle des boîtes visibles sur la photo."
+      "note": "Bois, 4 rangées. Longueur donnée par le client (minimum) ; largeur de 300 mm et hauteur de 60 mm supposées. Quantité : 5 de large (donné par le client) × 8 de haut, rack plein (donnés par le client ; 4 de haut sur la photo)."
      }
     ],
     [
      "7",
      "",
-     12,
+     40,
      "COUVERCLE DE BOÎTE À CAROTTES",
      {
       "note": "Contreplaqué de 6 mm supposé."

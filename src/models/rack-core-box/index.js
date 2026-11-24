@@ -5,19 +5,22 @@
 // Reconstitué d'après une photo du client, prise sous terre (P01) : la photo
 // ne montre qu'une portion du rack. Aucun plan, aucune cote publiée.
 //
-// Donné par le client : une boîte à carottes fait au moins 1,5 m de long.
-// C'est la seule cote sûre ; elle sert d'échelle à tout le reste.
+// Donné par le client : une boîte à carottes fait au moins 1,5 m de long
+// (seule cote sûre, elle sert d'échelle à tout le reste) ; il entre cinq boîtes
+// de large dans le rack, jusqu'à huit de haut (la photo en montre quatre) ;
+// les côtés ne sont pas continus.
 //
 // Relevé sur la photo, à cette échelle (à ± 10 % environ) : les boîtes sont
 // couchées en travers, bouts vers le côté des fourches, en colonnes côte à
-// côte entre les arceaux ; trois colonnes de quatre boîtes sont visibles,
+// côte entre les arceaux ; les colonnes visibles ont quatre boîtes et sont
 // décalées d'une colonne à l'autre ; plate-forme pâle, arceaux bleus d'environ
-// 0,5 m de large, deux passages de fourche sous la plate-forme.
+// 0,5 m de large, passages de fourche sous la plate-forme (deux sont visibles,
+// sous la première et la troisième colonne).
 //
 // Supposé : la largeur et la hauteur d'une boîte (boîte de bois à quatre
 // rangées), les sections des tubes, l'épaisseur de la tôle, le sens de la
-// diagonale des arceaux que la photo ne montre pas en entier, le nombre total
-// de colonnes (le bout droit du rack est caché).
+// diagonale des arceaux que la photo ne montre pas en entier, le troisième
+// passage de fourche (sous la cinquième colonne, par symétrie).
 //
 // Repère : X dans la largeur du rack (d'un côté à l'autre), Y vers le haut
 // (sol à 0), Z le long des boîtes, +Z du côté des bouts de boîtes visibles sur
@@ -40,8 +43,11 @@ export const BOITE = {
   separation: 9,
   couvercle: 6,
 };
-/** Empilement relevé sur la photo : colonnes côte à côte, boîtes par colonne, décalage en Z de chaque colonne. */
-export const PILE = { colonnes: 3, etages: 4, jeu: 10, decalage: [-45, 0, 45] };
+/**
+ * Empilement, rack plein : cinq colonnes côte à côte, jusqu'à huit boîtes de haut (donnés par le client ;
+ * la photo en montre quatre). Décalage en Z de chaque colonne relevé sur la photo (colonnes cachées : supposé).
+ */
+export const PILE = { colonnes: 5, etages: 8, visibles: 4, jeu: 10, decalage: [-45, 0, 45, 15, -25] };
 
 /** Tube carré des arceaux et tube de la diagonale (supposés). */
 export const TUBE = { cote: 2 * IN, diagonale: 1.5 * IN };
@@ -52,8 +58,13 @@ export const BASE = {
   cadre: { haut: 3 * IN, large: 2 * IN },
   tole: 3 / 16 * IN,
 };
-/** Passages de fourche sous la plate-forme, le long des boîtes (relevés sur la photo, section supposée). */
-export const FOURCHE = { large: 7 * IN, haut: 3 * IN, paroi: 3 / 16 * IN, entraxe: 560 };
+/**
+ * Passages de fourche sous la plate-forme, le long des boîtes : un sous une colonne sur deux
+ * (relevé sur la photo pour les deux premiers ; le troisième et la section sont supposés).
+ */
+export const FOURCHE = { large: 7 * IN, haut: 3 * IN, paroi: 3 / 16 * IN, entraxe: 2 * (BOITE.large + PILE.jeu), nombre: 3 };
+/** Abscisses des passages de fourche (mm), rack centré. */
+export const passages = () => Array.from({ length: FOURCHE.nombre }, (_, i) => (i - (FOURCHE.nombre - 1) / 2) * FOURCHE.entraxe);
 /** Arceaux : hauteur au-dessus de la tôle et largeur hors tout, le long des boîtes (relevées sur la photo) ; deux par côté. */
 export const CADRE = { haut: 800, large: 500, parCote: 2 };
 
@@ -181,7 +192,7 @@ export function P01(api) {
   const yBase = FOURCHE.haut, yTole = dessusTole(), W = largeurBase() / 2, D = BASE.profond / 2, c = TUBE.cote / 2;
 
   put('1', S.at(plateForme(S, PLATE), [0, yBase * MM, 0]), [0, 0, 0]);
-  for (const s of [-1, 1]) put('2', S.at(passage(S, PLATE), [(s * FOURCHE.entraxe / 2) * MM, 0, 0]), [0, -0.25, 0]);
+  for (const x of passages()) put('2', S.at(passage(S, PLATE), [x * MM, 0, 0]), [0, -0.25, 0]);
   // Deux arceaux par côté : un au bord avant, un au bord arrière de la plate-forme.
   const L = CADRE.large / 2;
   for (const s of [-1, 1]) {
@@ -199,7 +210,7 @@ export function P01(api) {
     for (let et = 0; et < PILE.etages; et++) {
       const pos = [(x0 + col * pas) * MM, (yTole + et * haut) * MM, PILE.decalage[col] * MM];
       // Vue éclatée : la pile monte et s'étage ; le couvercle de chaque boîte se soulève et recule.
-      const e = [0, 0.35 + et * 0.2, 0.25 + col * 0.05];
+      const e = [0, 0.35 + et * 0.13, 0.25 + col * 0.05];
       const etiquette = col === PILE.colonnes - 1 && et === PILE.etages - 1;
       put('6', S.at(boite(S), pos), e, etiquette);
       put('7', S.at(couvercle(S), [pos[0], pos[1] + BOITE.haut * MM, pos[2]]), [e[0], e[1] + 0.07, e[2] - 0.45], etiquette);
