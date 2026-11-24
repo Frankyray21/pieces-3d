@@ -934,10 +934,11 @@ pièces (numéro, quantité, page du manuel).
   à partir des cotes du modèle (`src/models/blocs-de-bois/index.js`).
 
 - **Pince pour tube intérieur de carottier, à mâchoires rondes** (`pince-tube-interieur`) :
-  la pince-étau en C orange de la page TIME Limited « Pinces pour tubes
+  la pince-étau en C de la page TIME Limited « Pinces pour tubes
   intérieurs » (92-1005 ; P01), dont les patins carrés sont remplacés par deux
   demi-coquilles rondes soudées aux becs, à la demande du client et d'après sa
-  photo d'atelier (P02). Aucun plan, aucune cote publiée : la pince est prise
+  photo d'atelier (P02) ; acier nu, de couleur métallique, et non orange
+  comme la pince TIME (demande du client). Aucun plan, aucune cote publiée : la pince est prise
   pour une 11 po (280 mm), les rivets sont relevés sur la photo à cette
   échelle ; épaisseurs, biellette cachée dans le corps et coquilles (tube
   intérieur NQ de Ø 55,6 mm, tôle de 4,8 mm, 120°, 70 mm de long) sont

@@ -35,7 +35,7 @@ if (!(mort.theta < 0)) echec('pas de point mort entre la position verrouillée e
 const serrageMort = jour(0) - jour(mort.theta);
 const bec = pointMachoire([TUBE.x, TUBE.y + R_EXT], THETA_MAX);
 
-const SOURCE = 'Deux images fournies par le client, sans plan ni cote : la page du produit « Pinces pour tubes intérieurs » de TIME Limited (P01), qui montre une pince-étau en C orange à patins carrés, et une photo d\'atelier (P02) d\'une pince du même genre dont les patins sont deux coquilles rondes soudées aux becs. Demande du client : la pince de la page TIME, mais à patins ronds';
+const SOURCE = 'Deux images fournies par le client, sans plan ni cote : la page du produit « Pinces pour tubes intérieurs » de TIME Limited (P01), qui montre une pince-étau en C orange à patins carrés, et une photo d\'atelier (P02) d\'une pince du même genre dont les patins sont deux coquilles rondes soudées aux becs. Demande du client : la pince de la page TIME, mais à patins ronds et de couleur métallique';
 const PUBLIE = '« Cet outil est conçu pour saisir fermement et soutenir le tube intérieur, permettant l\'enlèvement des tubes intérieurs étendus. Ils sont réglables pour n\'importe quelle taille de tube intérieur. » Numéros 92-1005 (« Adjustable inner tube pliers single ») et 92-1006 (« double »). Aucune dimension n\'est publiée';
 const AFAIRE = 'Pour faire mieux : la pince sur une table avec une règle, de face et de côté, et le calibre du tube intérieur utilisé — la longueur, les épaisseurs et les coquilles seraient alors des mesures et non des hypothèses.';
 
@@ -49,7 +49,7 @@ const pieces = [
   ['7', '', 1, `VIS DE RÉGLAGE à bouton moleté (Ø ${mm(VIS.d, 1)} supposé)`, { pseudo: true, note: `Elle déplace l'appui de la biellette : c'est le réglage de la grandeur du tube et de la force du serrage. Bouton de Ø ${mm(VIS.bouton)} relevé sur la photo ; filet non dessiné.` }],
   ['8', '', 1, 'RESSORT de rappel de la mâchoire mobile', { pseudo: true, note: 'Tendu du corps au moyeu de la mâchoire mobile, visible dans l\'ouverture du corps sur la photo : il ouvre la mâchoire dès que la biellette est déverrouillée.' }],
   ['9', '', 6, `RIVET de Ø ${mm(RIVET.d)} (supposé), têtes bombées`, { pseudo: true, note: 'Deux pour la mâchoire fixe, un pour le pivot de la mâchoire mobile, un pour la poignée, un pour la biellette, un pour le levier. Places relevées sur la photo pour ceux qui s\'y voient (cinq) ; le second rivet de la mâchoire fixe est supposé.' }],
-  ['10', '', 2, `DEMI-COQUILLE RONDE soudée au bec, rayon intérieur de ${mm(R_INT, 1)}`, { pseudo: true, note: `Remplace le patin carré de la pince TIME, à la demande du client et d'après sa photo d'atelier. Sur le modèle : tôle roulée de ${mm(COQUILLE.ep, 1)}, ${fr(COQUILLE.angle)}° de tour, ${mm(COQUILLE.long)} le long du tube, pour le tube intérieur ${TUBE.nom} de Ø ${mm(TUBE.d, 1)} — calibre, épaisseur et longueur supposés. Peinte en orange dehors, à nu dedans. Cordons de soudure non dessinés.` }],
+  ['10', '', 2, `DEMI-COQUILLE RONDE soudée au bec, rayon intérieur de ${mm(R_INT, 1)}`, { pseudo: true, note: `Remplace le patin carré de la pince TIME, à la demande du client et d'après sa photo d'atelier. Sur le modèle : tôle roulée de ${mm(COQUILLE.ep, 1)}, ${fr(COQUILLE.angle)}° de tour, ${mm(COQUILLE.long)} le long du tube, pour le tube intérieur ${TUBE.nom} de Ø ${mm(TUBE.d, 1)} — calibre, épaisseur et longueur supposés. Acier nu, comme le reste de la pince. Cordons de soudure non dessinés.` }],
 ];
 
 const data = {
@@ -69,7 +69,7 @@ const data = {
   specs: [
     ['Source', SOURCE],
     ['Données publiées', PUBLIE],
-    ['Ce qui diffère du produit TIME', 'Les patins : deux demi-coquilles rondes au lieu des deux patins carrés. Le reste de la pince (corps, mâchoires en C, poignées, vis, couleur orange) est celui de la photo de la page TIME. Le numéro 92-1005 est celui de la pince à patins carrés ; la version à patins ronds n\'a pas de numéro connu'],
+    ['Ce qui diffère du produit TIME', 'Les patins : deux demi-coquilles rondes au lieu des deux patins carrés. Le reste de la pince (corps, mâchoires en C, poignées, vis) est celui de la photo de la page TIME. La couleur aussi diffère : acier nu, de couleur métallique, comme la pince de la photo d\'atelier, à la demande du client — la pince TIME est peinte en orange. Le numéro 92-1005 est celui de la pince à patins carrés ; la version à patins ronds n\'a pas de numéro connu'],
     ['Échelle du relevé', `La pince de la photo TIME est prise pour une pince-étau en C de 11 po (${mm(L)}), la grandeur courante : longueur supposée, non publiée. Elle mesure 492 pixels sur la capture, soit environ 0,57 mm par pixel ; places des rivets à 1 mm près sous cette hypothèse`],
     ['Coquilles (supposées)', `Pour le tube intérieur ${TUBE.nom} de Ø ${mm(TUBE.d, 1)} (cote usuelle du carottier ${TUBE.nom} à câble ; à confirmer) : rayon intérieur ${mm(R_INT, 1)}, épaisseur ${mm(COQUILLE.ep, 1)}, ${fr(COQUILLE.angle)}° de tour chacune, ${mm(COQUILLE.long)} de long. La photo d'atelier montre des coquilles de cet ordre de grandeur, sans repère d'échelle`],
     ['Épaisseurs (supposées)', `Mâchoires ${mm(EP.machoire)}, tôle du corps et de la poignée ${mm(EP.tole, 1)}, profilés de ${mm(EP.large)} de large : aucune vue de côté ne permet de les mesurer`],
@@ -91,7 +91,7 @@ const data = {
       titleFr: 'Pince pour tube intérieur, simple, à mâchoires rondes',
       pn: '92-1005',
       sheets: ['P01', 'P02', 'P03'],
-      note: `Reconstitution 3D d'après la page du produit de TIME Limited (P01) et une photo d'atelier du client (P02), sans plan ni cote : la pince-étau en C orange de la page TIME, dont les patins carrés sont remplacés par deux demi-coquilles rondes, comme sur la photo d'atelier. Elle sert à saisir et à soutenir le tube intérieur du carottier quand on le sort. Longueur de ${mm(L)} (11 po) supposée ; coquilles faites pour le tube intérieur ${TUBE.nom} (Ø ${mm(TUBE.d, 1)}), supposé. La pince est montrée serrée, couchée sur le bout de ses coquilles ; la coupe passe à mi-épaisseur et montre la genouillère dans le corps. ${AFAIRE}`,
+      note: `Reconstitution 3D d'après la page du produit de TIME Limited (P01) et une photo d'atelier du client (P02), sans plan ni cote : la pince-étau en C de la page TIME, dont les patins carrés sont remplacés par deux demi-coquilles rondes, comme sur la photo d'atelier, et laissée de couleur métallique (acier nu) plutôt que peinte en orange, à la demande du client. Elle sert à saisir et à soutenir le tube intérieur du carottier quand on le sort. Longueur de ${mm(L)} (11 po) supposée ; coquilles faites pour le tube intérieur ${TUBE.nom} (Ø ${mm(TUBE.d, 1)}), supposé. La pince est montrée serrée, couchée sur le bout de ses coquilles ; la coupe passe à mi-épaisseur et montre la genouillère dans le corps. ${AFAIRE}`,
       parts: [...pieces, ['11', '', null, 'Fonctionnement : la pince s\'ouvre et se verrouille (scène animée)', { link: 'P02', no3d: true, pseudo: true }]],
     },
     P02: {
@@ -147,8 +147,8 @@ if (at >= 0) {
     body{margin:0;width:2200px;height:1700px;background:#fff;font:22px/1.32 system-ui,sans-serif;color:#1d2125}
     h1{font-size:38px;margin:40px 70px 0}p.s{margin:6px 70px;color:#566}
     svg{position:absolute;left:0;top:110px}
-    .tube{fill:#eef1f4;stroke:#8a929b;stroke-width:2;stroke-dasharray:10 7}.coq{fill:none;stroke:#f07410;stroke-width:${COQUILLE.ep * k}}
-    .m,.f{stroke:#f07410;stroke-width:16;stroke-linecap:round;opacity:.55}.f{stroke:#c85a00}.v{stroke:#8a929b;stroke-width:14}
+    .tube{fill:#eef1f4;stroke:#8a929b;stroke-width:2;stroke-dasharray:10 7}.coq{fill:none;stroke:#8a929b;stroke-width:${COQUILLE.ep * k}}
+    .m,.f{stroke:#8a929b;stroke-width:16;stroke-linecap:round;opacity:.55}.f{stroke:#6b737c}.v{stroke:#b9bfc6;stroke-width:14}
     .b{stroke:#1d2125;stroke-width:5}.bi{stroke:#1b6fb5;stroke-width:5}.o{stroke:#1b6fb5;stroke-width:3;stroke-dasharray:9 7}
     .p{fill:#fff;stroke:#1d2125;stroke-width:4}.po{fill:#fff;stroke:#1b6fb5;stroke-width:3}.c{stroke:#c0392b;stroke-width:2}
     text{font-size:22px;fill:#1d2125}text.t{font-weight:700;font-size:26px}text.to,text.tb{fill:#1b6fb5}

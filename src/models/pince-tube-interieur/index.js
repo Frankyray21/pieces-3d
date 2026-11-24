@@ -6,7 +6,8 @@
 //    (92-1005 simple, 92-1006 double) : pince orange à patins carrés ;
 //  - une photo d'atelier d'une pince du même genre dont les patins sont deux
 //    coquilles rondes (bouts de tuyau fendu) soudées aux becs.
-// Demande du client : la pince de la page TIME, mais à patins ronds.
+// Demande du client : la pince de la page TIME, mais à patins ronds, et de
+// couleur métallique (acier nu, comme sur sa photo d'atelier) plutôt qu'orange.
 //
 // Rien n'est publié sur les dimensions. La pince de la photo TIME est prise
 // pour une pince-étau en C de 11 po (280 mm), la grandeur courante : c'est
@@ -182,18 +183,18 @@ function plaque(contour, z0, z1, matiere, trous = []) {
   return new THREE.Mesh(creaseNormals(geo), typeof matiere === 'string' ? mat(matiere) : matiere);
 }
 
-// Peinture orange de la pince TIME (plus vive que l'orange de la palette), créée une fois.
-let peinture = null;
-function orange() {
-  if (!peinture) {
-    peinture = new THREE.MeshPhysicalMaterial({ color: 0xf07410, metalness: 0, roughness: 0.4, clearcoat: 0.7, clearcoatRoughness: 0.18 });
-    peinture.polygonOffset = true;
-    peinture.polygonOffsetFactor = 1;
-    peinture.polygonOffsetUnits = 1;
-    peinture.name = 'pince-tube-orange';
-    withFinish(peinture, 'paint');
+// Acier nu de la pince (demande du client : garder la couleur métallique de sa photo d'atelier, pas l'orange de la page TIME), créé une fois.
+let metal = null;
+function acier() {
+  if (!metal) {
+    metal = new THREE.MeshPhysicalMaterial({ color: 0x9a9ea3, metalness: 1, roughness: 0.4 });
+    metal.polygonOffset = true;
+    metal.polygonOffsetFactor = 1;
+    metal.polygonOffsetUnits = 1;
+    metal.name = 'pince-tube-acier';
+    withFinish(metal, 'machined');
   }
-  return peinture;
+  return metal;
 }
 
 // ------------------------------------------------------------------ pièces (repère de l'outil, pince serrée sur le tube)
@@ -203,7 +204,7 @@ const zTole = [[-EP.large / 2, -EP.large / 2 + EP.tole], [EP.large / 2 - EP.tole
 
 /** Repère 1 : corps (poignée fixe) en tôle emboutie, ouvert vers la poignée mobile, bague taraudée au bout. */
 function corps(S) {
-  const g = new THREE.Group(), m = orange();
+  const g = new THREE.Group(), m = acier();
   const flanc = arrondir([[88, 11, 3], [88, -19, 4], [120, -17, 12], [185, -8, 30], [256, -8, 2], [256, 6, 2], [152, 6, 25], [134, 11, 8]]);
   const trous = [[...A, JEU], ...FIXES.map((p) => [...p, JEU])];
   for (const [z0, z1] of zTole) g.add(plaque(flanc, z0, z1, m, trous));
@@ -218,8 +219,8 @@ function corps(S) {
 function coquille(cote) {
   const g = new THREE.Group(), demi = COQUILLE.angle / 2, a0 = cote * 90 - demi, a1 = cote * 90 + demi;
   const contour = [...arc(TUBE.x, TUBE.y, R_EXT, a0, a1, 28), ...arc(TUBE.x, TUBE.y, R_INT, a1, a0, 28)];
-  g.add(plaque(contour, -COQUILLE.long / 2, COQUILLE.long / 2, orange()));
-  // Intérieur laissé à nu (acier), comme l'intérieur des patins de la photo.
+  g.add(plaque(contour, -COQUILLE.long / 2, COQUILLE.long / 2, acier()));
+  // Intérieur plus clair : acier poli par le frottement du tube.
   const r = R_INT - 0.12, h = COQUILLE.long / 2 - 1, n = 28, pos = [], nor = [], idx = [];
   for (let i = 0; i <= n; i++) {
     const a = (a0 + 1.5 + ((a1 - a0 - 3) * i) / n) * RAD, c = Math.cos(a), s = Math.sin(a);
@@ -244,7 +245,7 @@ function machoireFixe() {
   ]);
   // Dégagement rond autour du moyeu de la mâchoire mobile.
   contour.push(...arc(A[0], A[1], 10.5, 262, 145.2, 14));
-  return plaque(contour, -EP.machoire / 2, EP.machoire / 2, orange(), FIXES.map((p) => [...p, JEU]));
+  return plaque(contour, -EP.machoire / 2, EP.machoire / 2, acier(), FIXES.map((p) => [...p, JEU]));
 }
 
 /** Repère 3 : mâchoire mobile en C — moyeu percé pour son pivot (A), pour la poignée (B) et pour le ressort. */
@@ -255,7 +256,7 @@ function machoireMobile() {
     [TUBE.x + h, 68.5, 5], [108, 28.5, 6], [109.5, 12, 3],
   ]);
   contour.push(...arc(A[0], A[1], 9, 140, 330, 16));
-  return plaque(contour, -EP.machoire / 2, EP.machoire / 2, orange(), [[...A, JEU], [...B0, JEU], [...RESSORT.machoire, 1.4]]);
+  return plaque(contour, -EP.machoire / 2, EP.machoire / 2, acier(), [[...A, JEU], [...B0, JEU], [...RESSORT.machoire, 1.4]]);
 }
 
 // Ligne médiane de la poignée mobile, de son articulation sur la mâchoire jusqu'au bout relevé.
@@ -267,7 +268,7 @@ const largeurPoignee = (i) => {
 
 /** Repère 4 : poignée mobile en tôle emboutie, ouverte vers le corps ; elle chevauche la mâchoire mobile. */
 function poignee() {
-  const g = new THREE.Group(), m = orange();
+  const g = new THREE.Group(), m = acier();
   const flanc = ruban(AXE_POIGNEE, largeurPoignee);
   const trous = [[...B0, JEU], [...C0, JEU], [...LEVIER, JEU]];
   for (const [z0, z1] of zTole) g.add(plaque(flanc, z0, z1, m, trous));
@@ -287,7 +288,7 @@ function biellette() {
 /** Repère 6 : levier de déverrouillage, logé dans la poignée mobile ; son bout dépasse sous celui de la poignée. */
 function levier() {
   const axe = lisse([[194, 14.5], LEVIER.map((v, i) => v - (i ? 2.5 : 0)), [228, 15], [248, 18.5], [263, 25]], 24);
-  return plaque(ruban(axe, (i) => 5 + 4 * (i / 24)), -EP.levier / 2, EP.levier / 2, orange(), [[LEVIER[0], LEVIER[1] - 2.5, JEU]]);
+  return plaque(ruban(axe, (i) => 5 + 4 * (i / 24)), -EP.levier / 2, EP.levier / 2, acier(), [[LEVIER[0], LEVIER[1] - 2.5, JEU]]);
 }
 
 /** Repère 7 : vis de réglage à bouton moleté ; son bout pousse la biellette. */

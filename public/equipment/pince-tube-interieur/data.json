@@ -15,7 +15,7 @@
  "specs": [
   [
    "Source",
-   "Deux images fournies par le client, sans plan ni cote : la page du produit « Pinces pour tubes intérieurs » de TIME Limited (P01), qui montre une pince-étau en C orange à patins carrés, et une photo d'atelier (P02) d'une pince du même genre dont les patins sont deux coquilles rondes soudées aux becs. Demande du client : la pince de la page TIME, mais à patins ronds"
+   "Deux images fournies par le client, sans plan ni cote : la page du produit « Pinces pour tubes intérieurs » de TIME Limited (P01), qui montre une pince-étau en C orange à patins carrés, et une photo d'atelier (P02) d'une pince du même genre dont les patins sont deux coquilles rondes soudées aux becs. Demande du client : la pince de la page TIME, mais à patins ronds et de couleur métallique"
   ],
   [
    "Données publiées",
@@ -23,7 +23,7 @@
   ],
   [
    "Ce qui diffère du produit TIME",
-   "Les patins : deux demi-coquilles rondes au lieu des deux patins carrés. Le reste de la pince (corps, mâchoires en C, poignées, vis, couleur orange) est celui de la photo de la page TIME. Le numéro 92-1005 est celui de la pince à patins carrés ; la version à patins ronds n'a pas de numéro connu"
+   "Les patins : deux demi-coquilles rondes au lieu des deux patins carrés. Le reste de la pince (corps, mâchoires en C, poignées, vis) est celui de la photo de la page TIME. La couleur aussi diffère : acier nu, de couleur métallique, comme la pince de la photo d'atelier, à la demande du client — la pince TIME est peinte en orange. Le numéro 92-1005 est celui de la pince à patins carrés ; la version à patins ronds n'a pas de numéro connu"
   ],
   [
    "Échelle du relevé",
@@ -71,7 +71,7 @@
     "P02",
     "P03"
    ],
-   "note": "Reconstitution 3D d'après la page du produit de TIME Limited (P01) et une photo d'atelier du client (P02), sans plan ni cote : la pince-étau en C orange de la page TIME, dont les patins carrés sont remplacés par deux demi-coquilles rondes, comme sur la photo d'atelier. Elle sert à saisir et à soutenir le tube intérieur du carottier quand on le sort. Longueur de 280 mm (11 po) supposée ; coquilles faites pour le tube intérieur NQ (Ø 55,6 mm), supposé. La pince est montrée serrée, couchée sur le bout de ses coquilles ; la coupe passe à mi-épaisseur et montre la genouillère dans le corps. Pour faire mieux : la pince sur une table avec une règle, de face et de côté, et le calibre du tube intérieur utilisé — la longueur, les épaisseurs et les coquilles seraient alors des mesures et non des hypothèses.",
+   "note": "Reconstitution 3D d'après la page du produit de TIME Limited (P01) et une photo d'atelier du client (P02), sans plan ni cote : la pince-étau en C de la page TIME, dont les patins carrés sont remplacés par deux demi-coquilles rondes, comme sur la photo d'atelier, et laissée de couleur métallique (acier nu) plutôt que peinte en orange, à la demande du client. Elle sert à saisir et à soutenir le tube intérieur du carottier quand on le sort. Longueur de 280 mm (11 po) supposée ; coquilles faites pour le tube intérieur NQ (Ø 55,6 mm), supposé. La pince est montrée serrée, couchée sur le bout de ses coquilles ; la coupe passe à mi-épaisseur et montre la genouillère dans le corps. Pour faire mieux : la pince sur une table avec une règle, de face et de côté, et le calibre du tube intérieur utilisé — la longueur, les épaisseurs et les coquilles seraient alors des mesures et non des hypothèses.",
    "parts": [
     [
      "1",
@@ -170,7 +170,7 @@
      "DEMI-COQUILLE RONDE soudée au bec, rayon intérieur de 28,3 mm",
      {
       "pseudo": true,
-      "note": "Remplace le patin carré de la pince TIME, à la demande du client et d'après sa photo d'atelier. Sur le modèle : tôle roulée de 4,8 mm, 120° de tour, 70 mm le long du tube, pour le tube intérieur NQ de Ø 55,6 mm — calibre, épaisseur et longueur supposés. Peinte en orange dehors, à nu dedans. Cordons de soudure non dessinés."
+      "note": "Remplace le patin carré de la pince TIME, à la demande du client et d'après sa photo d'atelier. Sur le modèle : tôle roulée de 4,8 mm, 120° de tour, 70 mm le long du tube, pour le tube intérieur NQ de Ø 55,6 mm — calibre, épaisseur et longueur supposés. Acier nu, comme le reste de la pince. Cordons de soudure non dessinés."
      }
     ],
     [
@@ -294,7 +294,7 @@
      "DEMI-COQUILLE RONDE soudée au bec, rayon intérieur de 28,3 mm",
      {
       "pseudo": true,
-      "note": "Remplace le patin carré de la pince TIME, à la demande du client et d'après sa photo d'atelier. Sur le modèle : tôle roulée de 4,8 mm, 120° de tour, 70 mm le long du tube, pour le tube intérieur NQ de Ø 55,6 mm — calibre, épaisseur et longueur supposés. Peinte en orange dehors, à nu dedans. Cordons de soudure non dessinés."
+      "note": "Remplace le patin carré de la pince TIME, à la demande du client et d'après sa photo d'atelier. Sur le modèle : tôle roulée de 4,8 mm, 120° de tour, 70 mm le long du tube, pour le tube intérieur NQ de Ø 55,6 mm — calibre, épaisseur et longueur supposés. Acier nu, comme le reste de la pince. Cordons de soudure non dessinés."
      }
     ]
    ]
