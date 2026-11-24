@@ -973,8 +973,9 @@ pièces (numéro, quantité, page du manuel).
   sous terre (P01), qui ne montre qu'une portion du rack ; aucun plan. Échelle :
   la boîte à carottes de 1,5 m (donnée par le client, minimum). Relevé sur la
   photo à cette échelle : la profondeur et la hauteur (1,60 et 0,96 m), la hauteur
-  et la largeur des arceaux, les deux passages de fourche visibles, les 4 boîtes de haut. Donné par
-  le client : 5 boîtes de large (20 boîtes, rack de 1,70 m de large). Supposé : largeur (300 mm) et hauteur (66 mm fermée) de la boîte,
+  et la largeur des arceaux, les deux passages de fourche visibles, les 4 boîtes de haut de la photo.
+  Donné par le client : 5 boîtes de large et jusqu'à 8 de haut (rack plein de
+  40 boîtes au modèle, 1,70 m de large). Supposé : largeur (300 mm) et hauteur (66 mm fermée) de la boîte,
   sections des tubes, tôle, sens de la diagonale des autres arceaux. La fiche et
   la page des cotes (P02) sont écrites par `tools/rack_core_box_fiche.mjs` à
   partir des cotes du modèle (`src/models/rack-core-box/index.js`).

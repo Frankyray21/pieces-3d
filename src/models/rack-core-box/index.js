@@ -7,7 +7,8 @@
 //
 // Donné par le client : une boîte à carottes fait au moins 1,5 m de long
 // (seule cote sûre, elle sert d'échelle à tout le reste) ; il entre cinq boîtes
-// de large dans le rack ; les côtés ne sont pas continus.
+// de large dans le rack, jusqu'à huit de haut (la photo en montre quatre) ;
+// les côtés ne sont pas continus.
 //
 // Relevé sur la photo, à cette échelle (à ± 10 % environ) : les boîtes sont
 // couchées en travers, bouts vers le côté des fourches, en colonnes côte à
@@ -42,8 +43,11 @@ export const BOITE = {
   separation: 9,
   couvercle: 6,
 };
-/** Empilement : cinq colonnes côte à côte (donné par le client) ; boîtes par colonne et décalage en Z de chaque colonne relevés sur la photo (colonnes cachées : supposé). */
-export const PILE = { colonnes: 5, etages: 4, jeu: 10, decalage: [-45, 0, 45, 15, -25] };
+/**
+ * Empilement, rack plein : cinq colonnes côte à côte, jusqu'à huit boîtes de haut (donnés par le client ;
+ * la photo en montre quatre). Décalage en Z de chaque colonne relevé sur la photo (colonnes cachées : supposé).
+ */
+export const PILE = { colonnes: 5, etages: 8, visibles: 4, jeu: 10, decalage: [-45, 0, 45, 15, -25] };
 
 /** Tube carré des arceaux et tube de la diagonale (supposés). */
 export const TUBE = { cote: 2 * IN, diagonale: 1.5 * IN };
@@ -206,7 +210,7 @@ export function P01(api) {
     for (let et = 0; et < PILE.etages; et++) {
       const pos = [(x0 + col * pas) * MM, (yTole + et * haut) * MM, PILE.decalage[col] * MM];
       // Vue éclatée : la pile monte et s'étage ; le couvercle de chaque boîte se soulève et recule.
-      const e = [0, 0.35 + et * 0.2, 0.25 + col * 0.05];
+      const e = [0, 0.35 + et * 0.13, 0.25 + col * 0.05];
       const etiquette = col === PILE.colonnes - 1 && et === PILE.etages - 1;
       put('6', S.at(boite(S), pos), e, etiquette);
       put('7', S.at(couvercle(S), [pos[0], pos[1] + BOITE.haut * MM, pos[2]]), [e[0], e[1] + 0.07, e[2] - 0.45], etiquette);
