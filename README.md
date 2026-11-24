@@ -933,6 +933,19 @@ pièces (numéro, quantité, page du manuel).
   et la page des cotes (P02) sont écrites par `tools/blocs_de_bois_fiche.mjs`
   à partir des cotes du modèle (`src/models/blocs-de-bois/index.js`).
 
+- **Boulon d'ancrage standard TIME 83-52, NW/L 5 pi**
+  (`boulon-ancrage-time`) : la pine d'ancrage à laquelle on fixe la foreuse
+  au diamant, reconstituée d'après la page du produit de TIME Limited fournie
+  par le client (P01), sans plan. Publié : le numéro 83-52 et la désignation
+  « ANCHOR BOLT NW/L 5' » ; aucune cote de détail. Supposé : les 5 pi sont la
+  longueur hors tout, et le corps a le diamètre d'une tige N câble (69,9 mm).
+  Relevé sur la photo (la même pour les quatorze boulons de la page, donc un
+  boulon plus petit) : les proportions du nez lisse, du filet mâle de
+  18 spires et de la tige du bout en deux étages, mises à l'échelle du corps.
+  Modèle plein, d'un seul repère ; masse non calculée. La fiche et la page des
+  cotes (P02) sont écrites par `tools/boulon_ancrage_fiche.mjs` à partir des
+  cotes du modèle (`src/models/boulon-ancrage-time/index.js`).
+
 - **Pompe à pistons Bean 420 (FMC L0918 / American AL0918B)**
   (`pompe-bean-420`) : pompe triplex à pistons de 2 1/4 × 2 1/4 po, 20,2 gal
   US/min à 625 tr/min, 700 lb/po², 200 lb, à réducteur de 3,6:1 dans le carter.
