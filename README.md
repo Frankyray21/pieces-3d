@@ -711,6 +711,52 @@ pièces (numéro, quantité, page du manuel).
   section) sont écrites par `tools/niveau_4_pi_fiche.mjs` à partir des cotes
   du modèle (`src/models/niveau-4-pi/index.js`).
 
+- **Clé à tube pleine prise au carbure, grosseur N (tube intérieur de carottier)**
+  (`cle-a-tube`) : clé à tube « pleine prise » (full grip tube wrench)
+  reconstituée d'après une photo du client — deux clés pendues à un mur, vues
+  presque par la tranche, manches coupés par le bas de la photo —, la photo du
+  même type de clé publiée par TIME Limited (« Tube wrenches », vue à plat),
+  que le client a reconnue, et ses indications sur la première version du
+  modèle : la coche qui permet de serrer, les dents de carbure à l'intérieur
+  des mâchoires. Aucun plan, aucune cote publiée, aucune marque lisible : le
+  fabricant n'est pas identifié (clés du même type aux catalogues : TIME
+  Limited 92-21-460 et 92-21-460CBD, Fordia / Epiroc 3760006031). Seule cote
+  sûre : le tube intérieur N, Ø 55,6 mm (2 3/16 po), rayon des deux mâchoires ;
+  si les clés du client sont celles du tube extérieur N (Ø 73 mm), `TUBE.d`
+  est à changer dans `src/models/cle-a-tube/index.js`. Photo du client, à
+  0,53 mm par pixel : épaisseurs (mâchoire crochet de 22 mm, joues de 8 mm,
+  fourche de 23 mm, manche d'environ 35 × 19 mm), fourche de la mâchoire de
+  liaison à cheval sur la tête du manche et sur l'œil du crochet, boulon de
+  1/2 po avec rondelle et écrou à l'articulation des mâchoires, axe à tête
+  ronde du manche, creux du manche, et ce qui semble être une plaquette de
+  carbure dans sa cuvette au bas de l'anneau. Photo de référence, redressée et
+  mise à l'échelle du tube : place des deux articulations, étendue et
+  épaisseur des arcs, ergot au bout du crochet, trou d'accrochage — le tracé
+  du modèle s'y superpose. Supposé et signalé : la longueur du manche (450 mm
+  de l'axe au bout, 569 mm hors tout), le dos de la clé, le bout riveté de
+  l'axe, la forme de la coche et du talon qui la porte (aucune photo ne la
+  montre de face), le nombre et la place des dents de carbure (3 sur la
+  mâchoire de liaison, 4 sur la mâchoire crochet) ; masse calculée de 2,7 kg.
+  **Mécanisme** (indication du client, mise en forme par le tracé) : les deux
+  mâchoires enveloppent le tube sur 281° ; le bout de la mâchoire crochet
+  porte un ergot sur son dos ; quand on appuie sur le manche, la coche de sa
+  tête coiffe l'ergot et le presse sur le tube, à 33 mm de l'axe pour un
+  manche de 450 mm (effort multiplié par 13 environ) : les mâchoires serrent
+  le tube sur tout son tour et les dents de carbure mordent ; dans l'autre
+  sens, la coche quitte l'ergot et la clé reprend sa course. P01 : la clé à
+  plat, mâchoire crochet ouverte de 100° comme sur la photo de référence, et
+  sa vue éclatée (manche, mâchoire de liaison, mâchoire crochet, axe, boulon,
+  rondelle, écrou, 7 dents de carbure). P02 : la même sur un tronçon de tube,
+  animée en cinq temps (coiffer le tube, refermer la mâchoire, appuyer — la
+  coche prend l'ergot, le tube tourne avec la clé —, ramener le manche — la
+  clé glisse —, reprendre) ; la course de 35° est un choix de mise en scène.
+  `etat(k)`, `heurt()`, `jeuCoche()`, `jeuNez()`, `jeuCrochet()` et
+  `passage()` du modèle sont contrôlées par `scripts/check-cle-a-tube.mjs`
+  (`npm run check:cle-tube`) : le manche et la mâchoire crochet ne se
+  pénètrent à aucun moment de l'animation. La fiche et la page des cotes (P02)
+  sont écrites par `tools/cle_a_tube_fiche.mjs` ; P01 est la photo du client,
+  agrandie trois fois.
+
 - **Niveau à degrés à fiole pivotante (rapporteur d'angle)** (`niveau-a-degres`) :
   outil de mesure d'angle reconstitué d'après deux photos du client, sans
   manuel ni plan. Le logo, coupé par le bord de la première photo, se lit
@@ -791,6 +837,95 @@ pièces (numéro, quantité, page du manuel).
   la photo ; les détaillants indiquent d'ailleurs 1 1/4 ou 1 1/2 po de large là
   où Garant publie 1 1/8 po. La fiche et la page du relevé (P02) sont écrites
   par `tools/pince_monseigneur_fiche.mjs` à partir des cotes du modèle.
+
+- **Ruban de cerclage à filaments Uline S-5736, 1 po × 60 verges**
+  (`ruban-cerclage-s5736`) : un rouleau de ruban adhésif renforcé de filaments
+  de verre, reconstitué d'après la photo de la fiche du produit fournie par le
+  client (P01) et les données publiées par Uline, sans plan. Publié : largeur
+  de 1 po, longueur de 60 verges, épaisseur de 4,0 mil, résistance à la
+  traction de 100 lb, filaments de verre (la fiche complète n'a pas pu être
+  consultée : ces données viennent des résultats de recherche qui la citent).
+  Calculé : le Ø extérieur de 116,8 mm, soit environ 176 spires — 54,86 m de
+  ruban de 0,1016 mm occupent une couronne de 55,7 cm² autour du mandrin.
+  Relevé sur la photo : le mandrin de carton kraft (Ø intérieur pris à 3 po,
+  paroi d'environ 2,4 mm), son intérieur blanc imprimé de logos bleus (deux
+  visibles à 90°, donc quatre par tour), 15 mèches de filaments en travers du
+  ruban, l'amorce déroulée d'environ 115 mm qui descend du rouleau et se couche
+  sur le sol, dos vers le haut. Le rapport Ø du mandrin / Ø du rouleau mesuré
+  sur la photo (0,70) s'accorde avec celui du calcul (0,69), ce qui confirme le
+  mandrin de 3 po, non publié. Non trouvé : matière du film et de la colle,
+  masse. Le rouleau est debout sur sa tranche, comme sur la photo ; en vue
+  éclatée, le mandrin sort par la face avant ; la coupe proposée passe par
+  l'axe. La fiche et la page des cotes (P02, vue de face et coupe par l'axe)
+  sont écrites par `tools/ruban_cerclage_fiche.mjs` à partir des cotes du
+  modèle (`src/models/ruban-cerclage-s5736/index.js`).
+
+- **Chaudières de 5 gallons : savon de lin, dégraisseur et chaudière coupée**
+  (`chaudieres-5-gal`) : le poste de nettoyage des outils, reconstitué d'après
+  une photo du client (P01) et sa description, sans plan ni mesure. Une
+  chaudière de savon de lin, une chaudière de dégraisseur (couvercles à jupe,
+  anses de fil d'acier rabattues vers l'avant) et, posée sur la seconde, une
+  chaudière coupée sur le dessus (environ 115 mm de haut, coupe irrégulière
+  faite à la main) où l'on verse le savon de lin et où l'on met la guenille qui
+  sert à nettoyer les outils. Cotes usuelles d'un seau de 5 gallons US (14 1/2 po
+  de haut, Ø 303 mm en haut, Ø 262 mm en bas, paroi de 2,3 mm), supposées : ni
+  la marque ni le modèle ne se lisent sur la photo. Les étiquettes sont
+  redessinées en français, sans marque ; la quantité de savon, la taille et la
+  couleur de la guenille sont supposées. Le contenu des deux chaudières pleines
+  n'est pas représenté. La fiche est écrite par `tools/chaudieres_fiche.mjs` à
+  partir des cotes du modèle (`src/models/chaudieres-5-gal/index.js`).
+- **Graisse à filets : bidon de 1 gal US et pinceau** (`graisse-a-filets`) :
+  le bidon de graisse des filets de tiges de forage et son pinceau,
+  reconstitués d'après deux photos du client (P01), sans plan ni étiquette (la
+  marque de la graisse n'est pas lisible). L'échelle vient des deux clés à
+  tuyau de 18 et 24 po accrochées sur la photo d'ensemble : 1,37 à 1,59 mm par
+  pixel, soit un bidon de Ø 141 à 164 mm. Deux bidons du commerce encadrent la
+  mesure, le demi-gallon (Ø 137 mm) et le gallon US (Ø 165 mm) ; le gallon
+  (Ø 6 1/2 × 7 1/2 po) est retenu à cause des deux oreilles d'anse, à vérifier
+  sur place (`BIDON.d` et `BIDON.h` du modèle, tout le reste suit). Relevé sur
+  les photos : l'anneau à gorge, l'agrafe du flanc, les oreilles (anse
+  absente), la rouille, le niveau et le monticule de graisse, la pose du
+  pinceau, sa bande et son bout blancs. Supposé : la virole et les soies du
+  pinceau (2 po), enfouies dans la graisse. Trois pièces (bidon, graisse,
+  pinceau) ; coupe proposée par l'axe. La fiche et la page des cotes (P02) sont
+  écrites par `tools/graisse_a_filets_fiche.mjs` à partir des cotes du modèle
+  (`src/models/graisse-a-filets/index.js`).
+
+- **Trousse de déversement universelle Zenith, baril de 30 gal US**
+  (`trousse-deversement-zenith`, Tenaquip SEJ274) : baril de polyéthylène bleu
+  à ouverture totale, couvercle, cerceau de fermeture, étiquette et contenu,
+  reconstitués d'après la photo du produit (P01) et mis à l'échelle par la
+  photo du chantier (P02), fournies par le client, sans plan. Le fabricant ne
+  publie pas les cotes du baril : celles d'un baril de 30 gal US à ouverture
+  totale du commerce sont prises (29 7/8 po de haut avec le couvercle,
+  Ø 18 3/4 po, cerceau de Ø 18 1/8 po). La photo du chantier les confirme :
+  hauteur corrigée de la plongée (17°) / Ø = 1,53, contre 1,59 au modèle, et
+  Ø d'environ 490 mm par comparaison au seau de 5 gal voisin (un peu plus
+  loin), contre 476 mm. Contenu publié pour la trousse d'atelier de 30 gal
+  (fiche d'un détaillant, à confirmer sur la trousse) : 4 boudins de
+  3 × 48 po, 50 feuilles de 15 × 17 po, 5 sacs, 2 paires de gants, mastic de
+  4 oz, couvre-drain (non modélisé : non distingué sur la photo). Supposé :
+  épaisseur des parois, levier du cerceau (caché sur les photos), rangement
+  dans le baril (boudins en spirale au fond, feuilles pliées en deux). En vue
+  éclatée, le contenu se dispose comme sur la photo du produit ; la coupe
+  proposée passe par l'axe. La fiche et la page des cotes (P03) sont écrites
+  par `tools/trousse_deversement_fiche.mjs` à partir des cotes du modèle
+  (`src/models/trousse-deversement-zenith/index.js`).
+
+- **Blocs de bois pour boîte à carottes TIME 92-1500, 2 × 3/4 × 3/4 po**
+  (`blocs-de-bois`) : les petits blocs sur lesquels on écrit le métrage et
+  qu'on pose dans la boîte à carottes au bout de chaque course, reconstitués
+  d'après la page du produit de TIME Limited fournie par le client (P01), sans
+  plan. Publié : le numéro 92-1500 et les cotes 2 po × 3/4 po × 3/4 po, vendus
+  en vrac au sac ; ni l'essence, ni le nombre par sac, ni la masse. Le sac
+  n'est pas modélisé (demande du client). Relevé sur la photo : les sept blocs
+  debout à côté du sac (quatre derrière, trois devant, un tourné de 25°), bois
+  résineux clair scié. Chaque bloc a sa texture, calculée dans le volume du
+  bloc (cernes autour d'un cœur d'arbre hors du bloc), si bien que ses six
+  faces montrent le même bois ; largeur des cernes supposée. Masse calculée
+  d'environ 8 g (épinette supposée). Blocs vierges, sans inscription. La fiche
+  et la page des cotes (P02) sont écrites par `tools/blocs_de_bois_fiche.mjs`
+  à partir des cotes du modèle (`src/models/blocs-de-bois/index.js`).
 
 - **Pompe à pistons Bean 420 (FMC L0918 / American AL0918B)**
   (`pompe-bean-420`) : pompe triplex à pistons de 2 1/4 × 2 1/4 po, 20,2 gal

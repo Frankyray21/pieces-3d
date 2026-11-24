@@ -1,6 +1,14 @@
 {
   "equipment": [
     {
+      "id": "blocs-de-bois",
+      "name": "Blocs de bois pour boîte à carottes TIME 92-1500, 2 × 3/4 × 3/4 po",
+      "manufacturer": "TIME Limited",
+      "category": "Blocs repères de métrage (boîte à carottes)",
+      "thumbnail": "equipment/blocs-de-bois/thumbnail.webp",
+      "status": "3D d'après la page du produit de TIME Limited : blocs de bois de 2 × 3/4 × 3/4 po (cotes publiées) sur lesquels on écrit le métrage dans la boîte à carottes ; les sept blocs de la photo, debout, bois résineux clair scié, cernes propres à chaque bloc ; sac non modélisé"
+    },
+    {
       "id": "bosch-gll50-20",
       "name": "Niveau laser à lignes croisées Bosch GLL50-20",
       "manufacturer": "Bosch",
@@ -9,12 +17,28 @@
       "status": "3D d'après les données publiées seulement (aucun manuel ni photo) : boîtier de 107 × 63 × 98 mm, tête optique et fenêtre, deux lignes rouges croisées, interrupteur de blocage du pendule, touche et voyants, deux piles AA, filetage 1/4-20, aimants ; formes et emplacements supposés, sans vue éclatée"
     },
     {
+      "id": "chaudieres-5-gal",
+      "name": "Chaudières de 5 gallons : savon de lin, dégraisseur et chaudière coupée pour la guenille",
+      "manufacturer": "Fabricant non identifié",
+      "category": "Poste de nettoyage des outils",
+      "thumbnail": "equipment/chaudieres-5-gal/thumbnail.webp",
+      "status": "3D d'après une photo du client, sans plan : chaudière de savon de lin, chaudière de dégraisseur (couvercles, anses rabattues, étiquettes redessinées) et chaudière coupée à environ 115 mm, posée dessus, avec le savon de lin et la guenille qui sert à nettoyer les outils ; cotes usuelles d'un seau de 5 gallons, supposées"
+    },
+    {
       "id": "cle-a-molette",
       "name": "Clé à molette (Westcott) de 12 po",
       "manufacturer": "Modèle libre (OpenGameArt, CC0)",
       "category": "Outils à main",
       "thumbnail": "equipment/cle-a-molette/thumbnail.webp",
       "status": "Clé à molette du « Tool Pack 1 » d'OpenGameArt (CC0, LonesomeDucky), chromée et piquée de rouille, ramenée à 12 po (305 mm) de long, en trois pièces (corps, mâchoire mobile, molette) ; cotes du modèle et non d'un catalogue ; fichier prêt pour Unreal Engine"
+    },
+    {
+      "id": "cle-a-tube",
+      "name": "Clé à tube pleine prise au carbure, grosseur N (tube intérieur de carottier)",
+      "manufacturer": "Fabricant non identifié — type TIME Limited 92-21-460CBD / Fordia 3760006031",
+      "category": "Outils à main",
+      "thumbnail": "equipment/cle-a-tube/thumbnail.webp",
+      "status": "3D d'après une photo du client (deux clés pendues, vues par la tranche), la photo du même type de clé publiée par TIME Limited et les indications du client, sans plan ni cote : manche forgé dont la coche coiffe l'ergot de la mâchoire crochet, mâchoire de liaison en fourche, dents de carbure dans les faces de prise, axe et boulon de 1/2 po, aux mesures du tube intérieur N (Ø 55,6 mm) ; scène animée du mécanisme sur un tronçon de tube (coiffer, refermer, appuyer — la coche prend l'ergot et la clé serre —, reprendre sa course) ; fabricant non identifié ; longueur du manche (569 mm hors tout), forme de la coche, nombre et place des dents supposés"
     },
     {
       "id": "cles-a-tuyau",
@@ -107,6 +131,14 @@
       "category": "Étui de mineur en cuir riveté",
       "thumbnail": "equipment/etui-cle-molette/thumbnail.webp",
       "status": "3D d'après une photo de 44 × 96 pixels : étui d'environ 5 po de haut, 3 po de large en haut et 2 1/2 po en bas, fourreau riveté ouvert en haut et en bas, clé à molette de 12 po rangée manche en bas, tronçon de ceinture pour situer ; dos, passant de ceinture et profondeur supposés ; fichiers prêts pour Unreal Engine"
+    },
+    {
+      "id": "graisse-a-filets",
+      "name": "Graisse à filets : bidon de 1 gal US et pinceau",
+      "manufacturer": "",
+      "category": "Graisse des filets de tiges de forage",
+      "thumbnail": "equipment/graisse-a-filets/thumbnail.webp",
+      "status": "3D d'après deux photos du client, mise à l'échelle avec les clés à tuyau de 18 et 24 po de la photo : bidon de fer-blanc à anneau pris à 1 gal US (Ø mesuré de 141 à 164 mm, Ø 6 1/2 × 7 1/2 po retenu, à vérifier), rouillé, à deux oreilles ; graisse brassée et pinceau plat à manche de bois ; marque de la graisse inconnue"
     },
     {
       "id": "grillage-cage",
@@ -221,6 +253,14 @@
       "status": "3D de la procédure d'installation (août 2024) et du rapport de certification Forcetech : support incliné à 78°, ancré au boulon à œil, 184 tiges NQ en quinconce, chaîne de retenue ; montage en 15 étapes"
     },
     {
+      "id": "ruban-cerclage-s5736",
+      "name": "Ruban de cerclage à filaments Uline S-5736, 1 po × 60 verges",
+      "manufacturer": "Uline",
+      "category": "Ruban adhésif renforcé de filaments de verre",
+      "thumbnail": "equipment/ruban-cerclage-s5736/thumbnail.webp",
+      "status": "3D d'après la photo de la fiche du produit et les données publiées : 1 po × 60 verges, 4,0 mil, 100 lb, filaments de verre ; Ø extérieur calculé de 116,8 mm (environ 176 spires sur un mandrin de carton de 3 po, confirmé par les proportions de la photo) ; 15 mèches de filaments, logos de l'intérieur du mandrin et amorce déroulée relevés sur la photo"
+    },
+    {
       "id": "stm-1500",
       "name": "Usinage Marcotte STM-1500",
       "manufacturer": "Usinage Marcotte",
@@ -244,6 +284,14 @@
       "category": "Table d'atelier en aluminium",
       "thumbnail": "equipment/table-a-core/thumbnail.webp",
       "status": "3D tirée de la CAO SolidWorks du fabricant (8 pièces, facettes exactes), montée et rendue dans Blender ; plan d'assemblage et développé de la jupe"
+    },
+    {
+      "id": "trousse-deversement-zenith",
+      "name": "Trousse de déversement universelle Zenith, baril de 30 gal US",
+      "manufacturer": "Zenith Safety Products",
+      "category": "Trousse de déversement (baril, absorbants, équipement de protection)",
+      "thumbnail": "equipment/trousse-deversement-zenith/thumbnail.webp",
+      "status": "3D d'après la photo du produit, mise à l'échelle par la photo du chantier (aucun plan) : baril de polyéthylène bleu de 30 gal US (Ø 18 3/4 × 29 7/8 po avec le couvercle, cotes d'un baril du commerce confirmées par la photo), couvercle, cerceau de fermeture, étiquette ; contenu publié rangé dans le baril (4 boudins de 3 × 48 po, 50 feuilles de 15 × 17 po, sacs, gants, mastic), disposé comme sur la photo en vue éclatée"
     },
     {
       "id": "tube-eau",

@@ -1,0 +1,79 @@
+{
+ "id": "blocs-de-bois",
+ "name": "Blocs de bois pour boîte à carottes TIME 92-1500, 2 × 3/4 × 3/4 po",
+ "manufacturer": "TIME Limited",
+ "category": "Blocs repères de métrage (boîte à carottes)",
+ "serial": "",
+ "document": {
+  "title": "Page du produit (aucun plan) et cotes publiées ou relevées",
+  "reference": "92-1500",
+  "preparedBy": "",
+  "date": "",
+  "sheets": 2,
+  "pagePattern": "pages/{sheet}.webp"
+ },
+ "specs": [
+  [
+   "Source",
+   "Page du produit « Blocs de bois » de TIME Limited (Forage et exploration), fournie par le client (P01). Aucun plan"
+  ],
+  [
+   "Données publiées",
+   "« Sac en vrac de blocs de bois. » Numéro 92-1500 : « CORE BLOCKS 2\" X 3/4\" X 3/4\" ». Rien d'autre n'est publié sur la page : ni l'essence du bois, ni le nombre de blocs par sac, ni la masse"
+  ],
+  [
+   "Usage",
+   "Bloc repère de la boîte à carottes : on y écrit le métrage (la profondeur du trou) au crayon-feutre et on le pose dans la rangée, au bout de la carotte de chaque course. Les blocs du modèle sont vierges, comme sur la photo"
+  ],
+  [
+   "Cotes d'un bloc",
+   "2 po × 3/4 po × 3/4 po (50,8 mm × 19,05 mm × 19,05 mm) — publiées. Les proportions des blocs de la photo s'y accordent"
+  ],
+  [
+   "Bois",
+   "Résineux clair, scié (bouts rugueux), fil dans le sens de la longueur : relevé sur la photo. Essence non publiée. Sur le modèle, chaque bloc a ses propres cernes, les mêmes sur ses six faces (arcs sur les bouts, veines le long des côtés) ; leur largeur, de 2 à 4,5 mm, est supposée"
+  ],
+  [
+   "Masse",
+   "Environ 8 g par bloc — calculée : 18,4 cm³ × 0,42 g/cm³, masse volumique supposée (épinette sèche). Non publiée"
+  ],
+  [
+   "Disposition",
+   "Les 7 blocs de la photo, debout sur leur bout : quatre derrière, trois devant, le dernier de la rangée du fond tourné de 25°. Places relevées sur la photo à quelques millimètres près ; les blocs ne se touchent pas (jeu minimal de 0,5 mm). Encombrement : 87,4 mm × 49,3 mm × 50,8 mm de haut"
+  ],
+  [
+   "Non modélisé",
+   "Le sac (à la demande du client). Aucune inscription sur les blocs. Arêtes vives : les éclats du sciage ne sont pas dessinés"
+  ]
+ ],
+ "weights": [],
+ "sheetTitles": {
+  "P01": "Page du produit TIME Limited « Blocs de bois » (92-1500), fournie par le client",
+  "P02": "Cotes d'un bloc et disposition des sept blocs (publiées, relevées)"
+ },
+ "root": "P01",
+ "assemblies": {
+  "P01": {
+   "title": "CORE BLOCKS 2\" X 3/4\" X 3/4\"",
+   "titleFr": "Blocs de bois pour boîte à carottes, 2 po × 3/4 po × 3/4 po",
+   "pn": "92-1500",
+   "sheets": [
+    "P01",
+    "P02"
+   ],
+   "note": "Reconstitution 3D d'après la page du produit de TIME Limited (P01) : blocs de bois de 2 po × 3/4 po × 3/4 po, vendus en vrac au sac. Bloc repère de la boîte à carottes : on y écrit le métrage (la profondeur du trou) au crayon-feutre et on le pose dans la rangée, au bout de la carotte de chaque course. Les blocs du modèle sont vierges, comme sur la photo. Le sac n'est pas modélisé. Les 7 blocs sont ceux que la photo montre à côté du sac, debout sur leur bout ; en vue éclatée, ils s'écartent les uns des autres. Essence du bois non publiée : résineux clair scié, d'après la photo.",
+   "parts": [
+    [
+     "1",
+     "92-1500",
+     7,
+     "BLOC DE BOIS (core block), 2 po × 3/4 po × 3/4 po",
+     {
+      "note": "Bois résineux clair scié, fil dans le sens de la longueur ; 50,8 mm × 19,05 mm × 19,05 mm, environ 8 g (calculé, épinette supposée). Le numéro 92-1500 est celui du sac en vrac ; la quantité est celle des blocs montrés sur la photo, pas celle du sac (non publiée)."
+     }
+    ]
+   ]
+  }
+ },
+ "documents": []
+}
