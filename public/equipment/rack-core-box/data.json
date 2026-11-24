@@ -1,0 +1,141 @@
+{
+ "id": "rack-core-box",
+ "name": "Rack de boîtes à carottes (core box)",
+ "manufacturer": "Fabricant non identifié",
+ "category": "Rack de transport des boîtes à carottes",
+ "serial": "",
+ "document": {
+  "title": "Photo du client (aucun plan) et cotes relevées ou supposées",
+  "reference": "",
+  "preparedBy": "",
+  "date": "",
+  "sheets": 2,
+  "pagePattern": "pages/{sheet}.webp"
+ },
+ "specs": [
+  [
+   "Source",
+   "Une photo du client, prise sous terre (P01), qui ne montre qu'une portion du rack. Aucun plan, aucune cote publiée, fabricant non identifié"
+  ],
+  [
+   "Échelle",
+   "La longueur d'une boîte à carottes, donnée par le client : au moins 1,50 m. C'est la seule cote sûre ; toutes les autres sont relevées sur la photo à cette échelle (à ± 10 % environ) ou supposées"
+  ],
+  [
+   "Usage",
+   "Rack de transport et d'entreposage des boîtes à carottes pleines : on les empile couchées sur la plate-forme, entre les deux cadres, et on déplace le tout par les passages de fourche"
+  ],
+  [
+   "Encombrement",
+   "1,08 m de large (d'un cadre à l'autre) × 1,60 m (le long des boîtes) × 0,96 m de haut — relevé sur la photo, à l'échelle de la boîte"
+  ],
+  [
+   "Boîte à carottes",
+   "Boîte de bois à couvercle, 1,50 m de long (donnée par le client). Supposé : 300 mm de large, 66 mm de haut fermée, 4 rangées de 62 mm — proportions des bouts de boîtes de la photo. À remplacer par les cotes réelles de la boîte si elles sont connues"
+  ],
+  [
+   "Empilement",
+   "3 colonnes de 4 boîtes, soit 12 boîtes, couchées en travers, bouts vers le côté des fourches, colonnes décalées de 45 mm l'une de l'autre comme sur la photo. Le bout droit du rack est caché sur la photo : le nombre de colonnes est celui qu'on y voit"
+  ],
+  [
+   "Plate-forme",
+   "Pâle sur la photo. 1,08 m × 1,60 m, dessus à 157 mm du sol. Supposé : cadre de tube de 2 po × 3 po, deux traverses, tôle de 3/16 po"
+  ],
+  [
+   "Passages de fourche",
+   "Deux, sous la plate-forme, le long des boîtes, à 560 mm d'entraxe (relevé). Supposé : tube de 7 po × 3 po"
+  ],
+  [
+   "Cadres",
+   "Bleus sur la photo, un à chaque bout : deux montants, une traverse haute et une diagonale, 800 mm au-dessus de la tôle (relevé). Supposé : tube carré de 2 po, diagonale de 1 1/2 po, même sens de diagonale aux deux cadres (un seul est visible en entier)"
+  ],
+  [
+   "Non modélisé",
+   "Le contenu des boîtes (carottes, blocs de métrage), les inscriptions et le cerclage des boîtes. Soudures non dessinées"
+  ]
+ ],
+ "weights": [],
+ "sheetTitles": {
+  "P01": "Photo du client : une portion du rack de boîtes à carottes, sous terre",
+  "P02": "Cotes du rack (relevées sur la photo à l'échelle de la boîte de 1,5 m, ou supposées)"
+ },
+ "root": "P01",
+ "assemblies": {
+  "P01": {
+   "title": "CORE BOX RACK",
+   "titleFr": "Rack de boîtes à carottes",
+   "pn": "",
+   "sheets": [
+    "P01",
+    "P02"
+   ],
+   "note": "Reconstitution 3D d'après une photo du client (P01), qui ne montre qu'une portion du rack. Rack de transport et d'entreposage des boîtes à carottes pleines : on les empile couchées sur la plate-forme, entre les deux cadres, et on déplace le tout par les passages de fourche. Échelle : la boîte à carottes de 1,50 m (donnée par le client) ; les autres cotes sont relevées sur la photo à cette échelle ou supposées (voir la fiche et P02). Largeur et hauteur de la boîte supposées. En vue éclatée, la pile monte et les couvercles se soulèvent.",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "PLATE-FORME (cadre de tube et tôle)",
+     {
+      "note": "1,08 m × 1,60 m, relevée sur la photo. Sections supposées : tube de 2 po × 3 po, tôle de 3/16 po."
+     }
+    ],
+    [
+     "2",
+     "",
+     2,
+     "PASSAGE DE FOURCHE",
+     {
+      "note": "Sous la plate-forme, le long des boîtes, à 560 mm d'entraxe (relevé). Tube de 7 po × 3 po supposé."
+     }
+    ],
+    [
+     "3",
+     "",
+     4,
+     "MONTANT DE CADRE",
+     {
+      "note": "Tube carré de 2 po supposé ; cadre de 800 mm de haut au-dessus de la tôle (relevé)."
+     }
+    ],
+    [
+     "4",
+     "",
+     2,
+     "TRAVERSE HAUTE DE CADRE",
+     {
+      "note": "Tube carré de 2 po supposé, 1,60 m de long."
+     }
+    ],
+    [
+     "5",
+     "",
+     2,
+     "DIAGONALE DE CADRE",
+     {
+      "note": "Du pied du montant avant à la tête du montant arrière. Tube de 1 1/2 po supposé ; sens relevé sur le cadre de gauche, supposé pour l'autre."
+     }
+    ],
+    [
+     "6",
+     "",
+     12,
+     "BOÎTE À CAROTTES (core box) de 1,50 m",
+     {
+      "note": "Bois, 4 rangées. Longueur donnée par le client (minimum) ; largeur de 300 mm et hauteur de 60 mm supposées. Quantité : celle des boîtes visibles sur la photo."
+     }
+    ],
+    [
+     "7",
+     "",
+     12,
+     "COUVERCLE DE BOÎTE À CAROTTES",
+     {
+      "note": "Contreplaqué de 6 mm supposé."
+     }
+    ]
+   ]
+  }
+ },
+ "documents": []
+}

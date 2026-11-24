@@ -245,6 +245,14 @@
       "status": "3D d'après les plans 154011700 (2024-01-17) et 0103001 (2024-12-02) : virole roulée de Ø 14 1/4 × 27 po en plaque de 1/8 po, fond à tenons en retrait de 3/16 po, soudé tout le tour ; couvercle de Ø 15 po en plaque de 1/16 po, à jupe, anneau d'appui et poignée ; masses du modèle égales à celles des plans (47,9 lb et 6,9 lb), 51 mesures contrôlées"
     },
     {
+      "id": "rack-core-box",
+      "name": "Rack de boîtes à carottes (core box)",
+      "manufacturer": "Fabricant non identifié",
+      "category": "Rack de transport des boîtes à carottes",
+      "thumbnail": "equipment/rack-core-box/thumbnail.webp",
+      "status": "3D d'après une photo du client (portion du rack, sous terre) : plate-forme d'acier à deux passages de fourche, un cadre de tube bleu à chaque bout (montants, traverse haute, diagonale), 12 boîtes à carottes de 1,5 m en 3 colonnes de 4 ; échelle donnée par la boîte de 1,5 m, autres cotes relevées sur la photo ou supposées"
+    },
+    {
       "id": "rack-outil",
       "name": "Rack à outils 15083000",
       "manufacturer": "Machines Roger International",

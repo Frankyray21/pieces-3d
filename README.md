@@ -946,6 +946,19 @@ pièces (numéro, quantité, page du manuel).
   cotes (P02) sont écrites par `tools/boulon_ancrage_fiche.mjs` à partir des
   cotes du modèle (`src/models/boulon-ancrage-time/index.js`).
 
+- **Rack de boîtes à carottes (core box)** (`rack-core-box`) : plate-forme
+  d'acier à deux passages de fourche, fermée à chaque bout par un cadre de
+  tube bleu (deux montants, une traverse haute, une diagonale), où l'on empile
+  les boîtes à carottes pleines. Reconstitué d'après une photo du client prise
+  sous terre (P01), qui ne montre qu'une portion du rack ; aucun plan. Échelle :
+  la boîte à carottes de 1,5 m (donnée par le client, minimum). Relevé sur la
+  photo à cette échelle : l'encombrement (1,08 × 1,60 × 0,96 m), la hauteur
+  des cadres, l'entraxe des passages de fourche, les 3 colonnes de 4 boîtes
+  décalées. Supposé : largeur (300 mm) et hauteur (66 mm fermée) de la boîte,
+  sections des tubes, tôle, sens de la diagonale du second cadre. La fiche et
+  la page des cotes (P02) sont écrites par `tools/rack_core_box_fiche.mjs` à
+  partir des cotes du modèle (`src/models/rack-core-box/index.js`).
+
 - **Pompe à pistons Bean 420 (FMC L0918 / American AL0918B)**
   (`pompe-bean-420`) : pompe triplex à pistons de 2 1/4 × 2 1/4 po, 20,2 gal
   US/min à 625 tr/min, 700 lb/po², 200 lb, à réducteur de 3,6:1 dans le carter.
