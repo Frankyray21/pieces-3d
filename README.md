@@ -965,9 +965,13 @@ pièces (numéro, quantité, page du manuel).
   piston de Ø 3/8 po, poussoir à coupelle de cuir et son ressort. Pistolet
   montré vide, comme sur la photo. Non modélisés : clapets et joints de la
   tête, filets, inscriptions du levier. P01 : le pistolet et sa vue éclatée en
-  13 repères ; la fiche et la page des cotes (P02) sont écrites par
-  `tools/pistolet_graisse_fiche.mjs` à partir des cotes du modèle
-  (`src/models/pistolet-graisse-1142/index.js`).
+  13 repères. P02 : le levier animé en trois temps (rabattu, levé de 25° —
+  le piston remonte de sa course de 15,9 mm —, rabattu à nouveau) ; `etat(theta)`
+  donne la place des axes A et B et de la biellette, le piston glissant dans
+  sa tour. La fiche et la page des cotes (feuille P02, avec le levier levé en
+  pointillé) sont écrites par `tools/pistolet_graisse_fiche.mjs` à partir des
+  cotes du modèle (`src/models/pistolet-graisse-1142/index.js`), qui contrôle
+  aussi que le mécanisme reste monté sur toute la levée.
 
 - **Boulon d'ancrage standard TIME 83-52, NW/L 5 pi**
   (`boulon-ancrage-time`) : la pine d'ancrage à laquelle on fixe la foreuse

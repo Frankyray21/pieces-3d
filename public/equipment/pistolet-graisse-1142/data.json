@@ -27,7 +27,11 @@
   ],
   [
    "Mécanisme",
-   "Levier à biellette : le bout du levier (axe A) est tenu par deux flasques articulées sur la tête (axe C) ; le piston est accroché au levier 37 mm plus loin (axe B). En rabattant la poignée vers le corps, le levier pousse le piston dans la tour de la tête : rapport de levier d'environ 8,5 à 1. Le ressort du poussoir garde la graisse contre l'entrée de la pompe"
+   "Levier à biellette : le bout du levier (axe A) est tenu par deux flasques articulées sur la tête (axe C) ; le piston est accroché au levier 37 mm plus loin (axe B). On lève la poignée (le piston remonte et la graisse, poussée par le ressort du poussoir, entre sous lui), puis on la rabat contre le corps (le piston redescend et refoule la graisse). Levier rabattu, comme sur la photo, le piston est au fond de sa tour"
+  ],
+  [
+   "Course (modèle)",
+   "Pour 15,9 mm de course au piston (28 coups à l'once avec un piston de Ø 3/8 po, supposé), le levier se lève de 24,9° et le bout de la poignée parcourt 136 mm : rapport moyen de 8,6 à 1. Pour 10 000 psi sous le piston (4,9 kN), environ 571 N (58 kg) sur la poignée — valeurs du modèle, pas du fabricant"
   ],
   [
    "Encombrement",
@@ -62,6 +66,157 @@
     "P02"
    ],
    "note": "Reconstitution 3D d'après la photo du produit fournie par le client (P01), sans plan : la longueur hors tout publiée (21 3/4 po) donne l'échelle (0,80 mm par pixel). Pistolet montré vide, comme sur la photo : poussoir à l'avant du corps, poignée en T près du bouchon ; la coupe par l'axe montre le poussoir et son ressort. La tête de pompe, le levier, la biellette, les trois axes, le bouchon six pans, la rallonge coudée et le coupleur sont relevés sur la photo ; piston, poussoir et ressort, cachés, sont supposés. Les clapets internes de la tête, les joints et les inscriptions ne sont pas modélisés. Pour faire mieux : la fiche des pièces de rechange Lincoln du 1142 (vue éclatée et numéros), ou le pistolet mesuré au ruban.",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "TÊTE DE POMPE en fonte, collet taraudé sur le corps",
+     {
+      "pseudo": true,
+      "note": "Collet de Ø 68 mm vissé sur le corps, tour du piston, âme et oreille de l'axe de la biellette, bossage de sortie. Clapets internes (bille et ressort de refoulement) non visibles : non modélisés. Formes relevées sur la photo."
+     }
+    ],
+    [
+     "2",
+     "",
+     1,
+     "LEVIER embouti, poignée roulée",
+     {
+      "pseudo": true,
+      "note": "Profilé en U de 23 mm de large, ouvert vers le corps, roulé en poignée tubulaire de Ø 19 mm ; 316 mm de long. Les inscriptions embouties (« LINCOLN », « CAUTION ») ne sont pas dessinées. Vendu aussi seul chez Lincoln (« lever grease gun handle »)."
+     }
+    ],
+    [
+     "3",
+     "",
+     2,
+     "FLASQUE DE BIELLETTE, entraxe de 48,4 mm",
+     {
+      "pseudo": true,
+      "note": "Une de chaque côté, du bout du levier (axe A) à l'oreille de la tête (axe C) : elle laisse le bout du levier suivre la course du piston. Forme relevée sur la photo, épaisseur supposée."
+     }
+    ],
+    [
+     "4",
+     "",
+     1,
+     "PISTON DE POMPE trempé, Ø 3/8 po (supposé)",
+     {
+      "pseudo": true,
+      "note": "Poussé par le levier (axe B, à 37 mm de l'axe A) dans la tour de la tête. Pour 28 coups à l'once (donnée publiée), la course est d'environ 15,9 mm avec ce diamètre (supposé)."
+     }
+    ],
+    [
+     "5",
+     "",
+     3,
+     "AXE d'articulation, Ø 1/4 po (supposé)",
+     {
+      "pseudo": true,
+      "note": "Axes A (levier et biellette), B (levier et piston) et C (biellette et tête), visibles sur la photo ; arrêts dessinés comme de simples têtes."
+     }
+    ],
+    [
+     "6",
+     "",
+     1,
+     "BOUCHON SIX PANS de la tête, 7/16 po sur plats (supposé)",
+     {
+      "pseudo": true,
+      "note": "Visible sous la sortie, sur la face avant du collet. Sa fonction n'est pas lisible sur la photo (bouchon de clapet ou raccord de remplissage) : à confirmer sur la fiche des pièces Lincoln."
+     }
+    ],
+    [
+     "7",
+     "",
+     1,
+     "CORPS (réservoir) en tube d'acier, Ø 2 1/4 po, peint bleu-gris",
+     {
+      "pseudo": true,
+      "note": "278 mm de long entre le bouchon et la tête (vissé aux deux bouts), gorges roulées relevées sur la photo. Reçoit une cartouche de 14,5 oz ou 16 oz de graisse en vrac."
+     }
+    ],
+    [
+     "8",
+     "",
+     1,
+     "BOUCHON ARRIÈRE (« container cap »), percé pour la tige",
+     {
+      "pseudo": true,
+      "note": "Ø 61 mm, vissé sur le corps. La tige du poussoir s'y accroche (encoche de verrouillage) pour garder le ressort comprimé pendant le chargement ; encoche non dessinée."
+     }
+    ],
+    [
+     "9",
+     "",
+     1,
+     "TIGE DE POUSSOIR à poignée en T",
+     {
+      "pseudo": true,
+      "note": "Tige de Ø 3/8 po, poignée en T de 60 mm. Montrée pistolet vide, comme sur la photo : la poignée est près du bouchon ; elle sort du bouchon à mesure qu'on remplit le pistolet."
+     }
+    ],
+    [
+     "10",
+     "",
+     1,
+     "POUSSOIR (« follower ») à coupelle de cuir",
+     {
+      "pseudo": true,
+      "note": "Coupelle de Ø 55 mm entre deux rondelles, au bout de la tige ; pousse la graisse vers la pompe. Invisible sur la photo : forme courante, supposée. Montré en avant du corps (pistolet vide)."
+     }
+    ],
+    [
+     "11",
+     "",
+     1,
+     "RESSORT DU POUSSOIR",
+     {
+      "pseudo": true,
+      "note": "Du fond du bouchon au poussoir, Ø 46 mm, fil de 1,6 mm, 16 spires (supposé) ; il tient la graisse contre l'entrée de la pompe."
+     }
+    ],
+    [
+     "12",
+     "62028",
+     1,
+     "RALLONGE RIGIDE de 6 po, coudée",
+     {
+      "note": "Tube d'acier de 1/4 po (138 mm développés hors filets), vissé dans la sortie de la tête ; coudes relevés sur la photo. Numéro tiré du guide Lincoln (non vérifié sur la fiche des pièces)."
+     }
+    ],
+    [
+     "13",
+     "5852",
+     1,
+     "COUPLEUR HYDRAULIQUE à quatre mâchoires",
+     {
+      "note": "Six pans de 9/16 po, nez de Ø 15 mm, 34 mm de long (cotes usuelles, supposées) ; se pousse sur le graisseur. Numéro tiré du guide Lincoln."
+     }
+    ],
+    [
+     "14",
+     "",
+     null,
+     "Fonctionnement : le levier pousse le piston (scène animée)",
+     {
+      "link": "P02",
+      "no3d": true,
+      "pseudo": true
+     }
+    ]
+   ]
+  },
+  "P02": {
+   "title": "HOW IT WORKS",
+   "titleFr": "Fonctionnement : lever le levier, puis le rabattre",
+   "pn": "",
+   "sheets": [
+    "P02",
+    "P01"
+   ],
+   "note": "Le même pistolet, levier animé en trois temps. Le pistolet tel qu'il est rangé (comme sur la photo) : le levier est rabattu contre le corps et le piston de pompe est au fond de sa tour, dans la tête. Le bout du levier (axe A) est tenu par la biellette, articulée sur la tête (axe C) ; le piston est accroché au levier par l'axe B, 37 mm plus loin. On lève la poignée de 25° (son bout monte d'environ 136 mm). Le levier bascule presque autour de l'axe A, que la biellette tient en place : le piston remonte de 15,9 mm dans sa tour. Le ressort du poussoir pousse alors la graisse du corps sous le piston. En rabattant la poignée contre le corps, le piston redescend de 15,9 mm et chasse environ 1,1 cm³ de graisse (28 coups à l'once, donnée publiée) par le clapet de la tête, la rallonge et le coupleur. Rapport de levier moyen de 8,6 à 1 : pour 10 000 psi sous le piston (4,9 kN), il faut environ 58 kg sur la poignée. La cinématique est celle des axes relevés sur la photo et d'un piston de Ø 3/8 po supposé : la course réelle du levier peut différer.",
    "parts": [
     [
      "1",

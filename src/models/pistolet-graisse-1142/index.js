@@ -120,6 +120,40 @@ export function course() {
   return (cm3 * 1000) / (Math.PI * (PISTON.d / 2) ** 2);
 }
 
+// ------------------------------------------------------------------ cinématique du levier
+
+const rot = ([x, y], a) => [x * Math.cos(a) - y * Math.sin(a), x * Math.sin(a) + y * Math.cos(a)];
+
+/**
+ * État du mécanisme quand le levier a tourné de `theta` (radians, négatif :
+ * poignée levée) depuis la position de la photo (levier rabattu, piston au
+ * fond). Le piston glisse dans sa tour (B reste sur la verticale de B0) ; le
+ * bout du levier A reste à la longueur de la biellette de l'axe fixe C.
+ * Retourne B, A, la rotation de la biellette autour de C et la remontée du
+ * piston (mm), ou null si le mécanisme ne se monte pas.
+ */
+export function etat(theta) {
+  const B0 = B(), A0 = LEVIER.A, Lb = BIELLETTE();
+  const d = rot([A0[0] - B0[0], A0[1] - B0[1]], theta);
+  const ax = B0[0] + d[0], dx = ax - C[0];
+  if (Math.abs(dx) > Lb) return null;
+  const ay = C[1] + Math.sqrt(Lb * Lb - dx * dx);
+  const A = [ax, ay], b = [B0[0], ay - d[1]];
+  const alpha = Math.atan2(A[1] - C[1], A[0] - C[0]) - Math.atan2(A0[1] - C[1], A0[0] - C[0]);
+  return { theta, A, B: b, alpha, remonte: b[1] - B0[1] };
+}
+/** Bout de la poignée du levier (centre du tube, au bout) dans l'état e. */
+export function boutPoignee(e) {
+  const B0 = B(), p = surLevier(LEVIER.long, -1), q = rot([p[0] - B0[0], p[1] - B0[1]], e.theta);
+  return [e.B[0] + q[0], e.B[1] + q[1]];
+}
+/** Angle dont on lève le levier pour que le piston remonte de toute sa course (radians, négatif). */
+export const THETA_MAX = (() => {
+  let a = 0, b = -60 * RAD;
+  for (let i = 0; i < 60; i++) { const m = (a + b) / 2, e = etat(m); if (e && e.remonte < course()) a = m; else b = m; }
+  return a;
+})();
+
 // ------------------------------------------------------------------ matériaux
 
 const perso = new Map();
@@ -352,27 +386,96 @@ function coupleur(S) {
 
 // ------------------------------------------------------------------ assemblage
 
-export function P01(api) {
+/**
+ * Monte le pistolet et enregistre ses pièces. Retourne poser(theta), qui met
+ * le levier, la biellette, le piston et les axes A et B dans l'état etat(theta).
+ */
+function assemblage(api) {
   const S = api.S;
-  const b = B();
-  api.part('1', tete(S), [0.07, 0, 0], { labelAt: [20 * MM, -20 * MM, (TETE.collet.d / 2) * MM] });
-  api.part('2', levier(S), [0.03, 0.1, 0], { labelAt: [...surLevier(150, 8).map((v) => v * MM), 0] });
-  api.part('3', biellette(S, 1), [0.07, 0.08, 0.05]);
-  api.part('3', biellette(S, -1), [0.07, 0.08, -0.05], { noLabel: true });
-  api.part('4', piston(S), [0.06, 0.06, 0], { labelAt: [b[0] * MM, (b[1] - 12) * MM, 0] });
-  api.part('5', axe(S, LEVIER.A, LEVIER.large + 6), [0.07, 0.1, 0.09]);
-  api.part('5', axe(S, b, LEVIER.large + 2), [0.06, 0.08, 0.09], { noLabel: true });
-  api.part('5', axe(S, C, LEVIER.large + 6), [0.08, 0.07, 0.09], { noLabel: true });
-  api.part('6', sixPans(S), [0.1, -0.03, 0]);
-  api.part('7', corps(S), [0, 0, 0], { labelAt: [-200 * MM, 0, (CORPS.d / 2) * MM] });
-  api.part('8', bouchon(S), [-0.06, 0, 0], { labelAt: [(BOUCHON.x0 + 10) * MM, 0, (BOUCHON.d / 2) * MM] });
-  api.part('9', tige(S), [-0.2, 0, 0], { labelAt: [TIGE.xT * MM, 0, (TIGE.poignee.long / 2) * MM] });
-  api.part('10', poussoir(S), [-0.04, -0.1, 0], { labelAt: [(POUSSOIR.x - 7) * MM, 0, (POUSSOIR.d / 2) * MM] });
-  api.part('11', ressort(S), [0, -0.17, 0], { labelAt: [-150 * MM, 0, (RESSORT.d / 2) * MM] });
-  api.part('12', rallonge(S), [0.16, 0, 0], { labelAt: [100 * MM, -11 * MM, 0] });
-  api.part('13', coupleur(S), [0.22, -0.01, 0]);
+  const b0 = B(), A0 = LEVIER.A;
+  const mobiles = [];
+  // suit : 'fixe', 'levier', 'biellette', 'piston' (piston et axe B) ou 'A' (axe A).
+  const put = (ref, obj, explode, opts = {}, suit = 'fixe') => {
+    const pose = S.group(obj);
+    const g = S.group(pose);
+    if (suit !== 'fixe') mobiles.push({ pose, suit });
+    return api.part(ref, g, explode, opts);
+  };
+  put('1', tete(S), [0.07, 0, 0], { labelAt: [20 * MM, -20 * MM, (TETE.collet.d / 2) * MM] });
+  put('2', levier(S), [0.03, 0.1, 0], { labelAt: [...surLevier(150, 8).map((v) => v * MM), 0] }, 'levier');
+  put('3', biellette(S, 1), [0.07, 0.08, 0.05], {}, 'biellette');
+  put('3', biellette(S, -1), [0.07, 0.08, -0.05], { noLabel: true }, 'biellette');
+  put('4', piston(S), [0.06, 0.06, 0], { labelAt: [b0[0] * MM, (b0[1] - 12) * MM, 0] }, 'piston');
+  put('5', axe(S, A0, LEVIER.large + 6), [0.07, 0.1, 0.09], {}, 'A');
+  put('5', axe(S, b0, LEVIER.large + 2), [0.06, 0.08, 0.09], { noLabel: true }, 'piston');
+  put('5', axe(S, C, LEVIER.large + 6), [0.08, 0.07, 0.09], { noLabel: true });
+  put('6', sixPans(S), [0.1, -0.03, 0]);
+  put('7', corps(S), [0, 0, 0], { labelAt: [-200 * MM, 0, (CORPS.d / 2) * MM] });
+  put('8', bouchon(S), [-0.06, 0, 0], { labelAt: [(BOUCHON.x0 + 10) * MM, 0, (BOUCHON.d / 2) * MM] });
+  put('9', tige(S), [-0.2, 0, 0], { labelAt: [TIGE.xT * MM, 0, (TIGE.poignee.long / 2) * MM] });
+  put('10', poussoir(S), [-0.04, -0.1, 0], { labelAt: [(POUSSOIR.x - 7) * MM, 0, (POUSSOIR.d / 2) * MM] });
+  put('11', ressort(S), [0, -0.17, 0], { labelAt: [-150 * MM, 0, (RESSORT.d / 2) * MM] });
+  put('12', rallonge(S), [0.16, 0, 0], { labelAt: [100 * MM, -11 * MM, 0] });
+  put('13', coupleur(S), [0.22, -0.01, 0]);
+
+  /** Pose p ↦ centre + R(angle)·(p − origine), dans le plan du levier (mm). */
+  const placer = (pose, origine, centre, angle) => {
+    const o = rot(origine, angle);
+    pose.rotation.z = angle;
+    pose.position.set((centre[0] - o[0]) * MM, (centre[1] - o[1]) * MM, 0);
+  };
+  return (theta) => {
+    const e = etat(theta);
+    if (!e) return;
+    for (const { pose, suit } of mobiles) {
+      // La bulle de repère, posée par la visionneuse sur la pièce, passe sur le groupe mobile pour le suivre.
+      for (const c of [...pose.parent.children]) if (c.isCSS2DObject) pose.add(c);
+      if (suit === 'levier') placer(pose, b0, e.B, theta);
+      else if (suit === 'biellette') placer(pose, C, C, e.alpha);
+      else if (suit === 'piston') placer(pose, b0, e.B, 0);
+      else placer(pose, A0, e.A, 0);
+    }
+  };
+}
+
+/** P01 : le pistolet, levier rabattu comme sur la photo, et sa vue éclatée. */
+export function P01(api) {
+  assemblage(api)(0);
   // Vue de la photo : de trois quarts, côté du levier. Coupe proposée : par l'axe, pour voir le poussoir et le ressort.
   return { view: { dir: [0.15, 0.35, 1], section: { axis: 'z', pos: 0.5 } } };
 }
 
-export default { P01 };
+const smooth = (u) => u * u * (3 - 2 * u);
+const fr = (v, n = 0) => v.toFixed(n).replace('.', ',');
+/** Effort à la poignée pour 10 000 psi sous le piston, au rapport de levier moyen (N). */
+export function effortPoignee() {
+  const e = etat(THETA_MAX), p0 = boutPoignee(etat(0)), p1 = boutPoignee(e);
+  const rapport = Math.hypot(p1[0] - p0[0], p1[1] - p0[1]) / e.remonte;
+  const force = 10000 * 0.00689476 * Math.PI * (PISTON.d / 2) ** 2; // psi → MPa, × mm² = N
+  return { rapport, force, poignee: force / rapport, course: Math.hypot(p1[0] - p0[0], p1[1] - p0[1]) };
+}
+const EF = effortPoignee();
+export const STEPS = [
+  { label: 'Départ', title: 'Levier rabattu, piston au fond', text: `Le pistolet tel qu'il est rangé (comme sur la photo) : le levier est rabattu contre le corps et le piston de pompe est au fond de sa tour, dans la tête. Le bout du levier (axe A) est tenu par la biellette, articulée sur la tête (axe C) ; le piston est accroché au levier par l'axe B, ${fr(Math.hypot(...LEVIER.B))} mm plus loin.` },
+  { title: 'Lever le levier : le piston aspire', text: `On lève la poignée de ${fr(-THETA_MAX / RAD)}° (son bout monte d'environ ${fr(EF.course)} mm). Le levier bascule presque autour de l'axe A, que la biellette tient en place : le piston remonte de ${fr(course(), 1)} mm dans sa tour. Le ressort du poussoir pousse alors la graisse du corps sous le piston.` },
+  { title: 'Rabattre le levier : le piston refoule', text: `En rabattant la poignée contre le corps, le piston redescend de ${fr(course(), 1)} mm et chasse environ ${fr(28.35 / PISTON.coupsOnce / 0.9, 1)} cm³ de graisse (28 coups à l'once, donnée publiée) par le clapet de la tête, la rallonge et le coupleur. Rapport de levier moyen de ${fr(EF.rapport, 1)} à 1 : pour 10 000 psi sous le piston (${fr(EF.force / 1000, 1)} kN), il faut environ ${fr(EF.poignee / 9.81)} kg sur la poignée.` },
+];
+
+/** P02 : le même pistolet, levier animé en trois temps (repos, levé, rabattu). */
+export function P02(api) {
+  const poser = assemblage(api);
+  const k = [0, 0];
+  const maj = () => poser(THETA_MAX * (smooth(k[0]) - smooth(k[1])));
+  maj();
+  k.forEach((_, i) => {
+    const g = api.S.group();
+    g.userData.stepAnim = { step: i + 1, delay: 300, dur: 2200, update: (v) => { k[i] = v; maj(); } };
+    api.add(g);
+  });
+  // Même point de vue aux trois étapes, de côté (côté du levier), assez large pour le levier levé.
+  const cible = [-0.05, 0.05, 0], recul = [0.04, 0.1, 0.56];
+  const cam = { pos: cible.map((v, i) => v + recul[i]), tgt: cible };
+  return { view: { dir: [0.07, 0.16, 1], steps: STEPS.map((s) => ({ ...s, cam })), stepsAuto: true } };
+}
+
+export default { P01, P02 };

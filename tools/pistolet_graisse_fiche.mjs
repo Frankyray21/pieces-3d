@@ -7,6 +7,7 @@ import { writeFileSync } from 'node:fs';
 import {
   IN, ECHELLE, CORPS, BOUCHON, TIGE, POUSSOIR, RESSORT, TETE, LEVIER, C, PISTON, AXE, SIXPANS, SORTIE, RALLONGE, COUPLEUR,
   mmParPixel, surLevier, B, BIELLETTE, longRallonge, boutCoupleur, horsTout, volumeCorps, course,
+  etat, boutPoignee, THETA_MAX, effortPoignee, STEPS,
 } from '../src/models/pistolet-graisse-1142/index.js';
 
 const fr = (v, n = 0) => v.toFixed(n).replace('.', ',');
@@ -15,6 +16,23 @@ const FRACTIONS = ['', ' 1/8', ' 1/4', ' 3/8', ' 1/2', ' 5/8', ' 3/4', ' 7/8'];
 const po = (v) => { const q = Math.round((v / IN) * 8), e = Math.floor(q / 8); return `${e || ''}${FRACTIONS[q % 8]} po`.trim(); };
 
 const k = mmParPixel(), h = horsTout(), b = B();
+const RAD = Math.PI / 180;
+const EF = effortPoignee(), haut = etat(THETA_MAX);
+
+// Contrôle du mécanisme, du levier rabattu au levier levé : biellette de longueur constante,
+// piston sur sa verticale, qui remonte sans revenir en arrière.
+let ok = true;
+const echec = (msg) => { ok = false; console.log(`✕ ${msg}`); };
+const N = 60;
+for (let i = 0; i <= N; i++) {
+  const t = (THETA_MAX * i) / N, e = etat(t);
+  if (!e) { echec(`mécanisme démonté à ${fr(t / RAD, 1)}°`); continue; }
+  if (Math.abs(Math.hypot(e.A[0] - C[0], e.A[1] - C[1]) - BIELLETTE()) > 1e-6) echec(`biellette faussée à ${fr(t / RAD, 1)}°`);
+  if (Math.abs(e.B[0] - b[0]) > 1e-9) echec(`piston hors de sa tour à ${fr(t / RAD, 1)}°`);
+  const avant = i > 0 ? etat((THETA_MAX * (i - 1)) / N) : null;
+  if (avant && e.remonte <= avant.remonte) echec(`piston qui redescend à ${fr(t / RAD, 1)}°`);
+}
+if (Math.abs(haut.remonte - course()) > 0.01) echec(`course de ${fr(haut.remonte, 2)} mm au lieu de ${fr(course(), 2)}`);
 const longCorps = CORPS.x1 - CORPS.x0;
 
 const SOURCE = 'Photo du produit fournie par le client (capture d\'une fiche de détaillant, P01) : pistolet Lincoln 1142 de trois quarts, côté du levier ; aucun plan. Le guide d\'installation Lincoln des modèles 1142, 1147 et 1151 et la fiche des pièces de rechange existent mais n\'ont pas pu être consultés : les pièces internes et leurs numéros Lincoln ne sont donc pas tous connus';
@@ -57,7 +75,8 @@ const data = {
     ['Source', SOURCE],
     ['Données publiées', PUBLIE],
     ['Échelle du relevé', ECH],
-    ['Mécanisme', `Levier à biellette : le bout du levier (axe A) est tenu par deux flasques articulées sur la tête (axe C) ; le piston est accroché au levier ${mm(Math.hypot(...LEVIER.B))} plus loin (axe B). En rabattant la poignée vers le corps, le levier pousse le piston dans la tour de la tête : rapport de levier d'environ ${fr((LEVIER.long) / Math.hypot(...LEVIER.B), 1)} à 1. Le ressort du poussoir garde la graisse contre l'entrée de la pompe`],
+    ['Mécanisme', `Levier à biellette : le bout du levier (axe A) est tenu par deux flasques articulées sur la tête (axe C) ; le piston est accroché au levier ${mm(Math.hypot(...LEVIER.B))} plus loin (axe B). On lève la poignée (le piston remonte et la graisse, poussée par le ressort du poussoir, entre sous lui), puis on la rabat contre le corps (le piston redescend et refoule la graisse). Levier rabattu, comme sur la photo, le piston est au fond de sa tour`],
+    ['Course (modèle)', `Pour ${fr(course(), 1)} mm de course au piston (28 coups à l'once avec un piston de Ø ${po(PISTON.d)}, supposé), le levier se lève de ${fr(-THETA_MAX / RAD, 1)}° et le bout de la poignée parcourt ${mm(EF.course)} : rapport moyen de ${fr(EF.rapport, 1)} à 1. Pour 10 000 psi sous le piston (${fr(EF.force / 1000, 1)} kN), environ ${fr(EF.poignee)} N (${fr(EF.poignee / 9.81)} kg) sur la poignée — valeurs du modèle, pas du fabricant`],
     ['Encombrement', `${mm(h.long, 1)} hors tout (${po(h.long)}), de la poignée en T au bout du coupleur ; ${mm(h.haut)} du dessous du corps au-dessus de la poignée du levier ; poignée en T de ${mm(h.large)}`],
     ['Volume du corps', `${fr(volumeCorps())} cm³ entre le bouchon et la tête, ressort et poussoir compris — la capacité publiée est de 16 oz en vrac (environ 500 cm³) ou une cartouche de 14,5 oz`],
     ['Non modélisé', 'Clapets et joints de la tête, filets, encoche de verrouillage du bouchon, inscriptions du levier, cartouche de graisse'],
@@ -76,6 +95,14 @@ const data = {
       pn: '1142',
       sheets: ['P01', 'P02'],
       note: NOTE,
+      parts: [...pieces, ['14', '', null, 'Fonctionnement : le levier pousse le piston (scène animée)', { link: 'P02', no3d: true, pseudo: true }]],
+    },
+    P02: {
+      title: 'HOW IT WORKS',
+      titleFr: 'Fonctionnement : lever le levier, puis le rabattre',
+      pn: '',
+      sheets: ['P02', 'P01'],
+      note: `Le même pistolet, levier animé en trois temps. ${STEPS.map((x) => x.text).join(' ')} La cinématique est celle des axes relevés sur la photo et d'un piston de Ø ${po(PISTON.d)} supposé : la course réelle du levier peut différer.`,
       parts: pieces,
     },
   },
@@ -83,14 +110,16 @@ const data = {
 };
 
 writeFileSync(new URL('../public/equipment/pistolet-graisse-1142/data.json', import.meta.url), `${JSON.stringify(data, null, 1)}\n`);
-console.log(`hors tout ${mm(h.long, 1)} ; corps ${mm(longCorps)} ; B (${fr(b[0], 1)}, ${fr(b[1], 1)}) ; biellette ${mm(BIELLETTE(), 1)} ; course ${mm(course(), 1)} ; volume ${fr(volumeCorps())} cm³`);
+console.log(ok ? `✓ mécanisme monté sur toute la levée (${N + 1} positions)` : '✕ mécanisme à revoir');
+if (!ok) process.exitCode = 1;
+console.log(`levée ${fr(-THETA_MAX / RAD, 1)}° ; poignée ${mm(EF.course)} ; rapport ${fr(EF.rapport, 2)} ; hors tout ${mm(h.long, 1)} ; corps ${mm(longCorps)} ; B (${fr(b[0], 1)}, ${fr(b[1], 1)}) ; biellette ${mm(BIELLETTE(), 1)} ; course ${mm(course(), 1)} ; volume ${fr(volumeCorps())} cm³`);
 
 // ------------------------------------------------------------------ page des cotes
 
 const at = process.argv.indexOf('--page');
 if (at >= 0) {
   const out = process.argv[at + 1];
-  const K = 3.4, ox = 1230, oy = 480; // px/mm ; origine du repère du pistolet sur la page
+  const K = 2.8, ox = 1257, oy = 700; // px/mm ; origine du repère du pistolet sur la page
   const X = (x) => ox + x * K, Y = (y) => oy - y * K;
   const poly = (pts, cls) => `<polyline points="${pts.map(([x, y]) => `${X(x)},${Y(y)}`).join(' ')}" class="${cls}"/>`;
   const rect = (x0, x1, r, cls, y = 0) => `<rect x="${X(x0)}" y="${Y(y + r)}" width="${(x1 - x0) * K}" height="${2 * r * K}" class="${cls}"/>`;
@@ -113,8 +142,11 @@ if (at >= 0) {
     <line x1="${X(b[0])}" y1="${Y(8)}" x2="${X(b[0])}" y2="${Y(b[1])}" class="pis"/>
     <line x1="${X(L.A[0])}" y1="${Y(L.A[1])}" x2="${X(C[0])}" y2="${Y(C[1])}" class="bie"/>
     ${poly(r, 'ral')}<line x1="${X(r[r.length - 1][0])}" y1="${Y(r[r.length - 1][1])}" x2="${X(bout[0])}" y2="${Y(bout[1])}" class="cou"/>
+    ${poly(joue.map(([X0, Y0]) => { const q = surLevier(-X0, Y0), r0 = [q[0] - b[0], q[1] - b[1]], c = Math.cos(THETA_MAX), sn = Math.sin(THETA_MAX); return [haut.B[0] + r0[0] * c - r0[1] * sn, haut.B[1] + r0[0] * sn + r0[1] * c]; }), 'leve')}
+    ${poly([etat(0), haut].map((e) => { const q = surLevier(p.de, -1), r0 = [q[0] - b[0], q[1] - b[1]], c = Math.cos(e.theta), sn = Math.sin(e.theta); return [e.B[0] + r0[0] * c - r0[1] * sn, e.B[1] + r0[0] * sn + r0[1] * c]; }).slice(1).concat([boutPoignee(haut)]), 'levePoi')}
+    <text x="${X(-40)}" y="${Y(170)}" class="tb">levier levé de ${fr(-THETA_MAX / RAD)}° : piston remonté de ${mm(course(), 1)}</text>
     ${pt(L.A, 'A', -10, -18)}${pt(b, 'B', -34, -14)}${pt(C, 'C', 14, 6)}
-    ${cote(arr, bout[0], -88, `${mm(h.long, 1)} hors tout (21 3/4 po, publié)`)}
+    ${cote(arr, bout[0], -80, `${mm(h.long, 1)} hors tout (21 3/4 po, publié)`)}
     ${cote(CORPS.x0, CORPS.x1, -60, `corps ${mm(CORPS.x1 - CORPS.x0)}`)}
     ${cote(r[0][0], bout[0], -60, `rallonge 62028 et coupleur 5852`)}
     ${coteV(-120, -CORPS.d / 2, CORPS.d / 2, `Ø ${mm(CORPS.d)}`)}
@@ -132,13 +164,13 @@ if (at >= 0) {
     .lev{fill:#dfe2e5;stroke:#1d2125;stroke-width:3}.poi{stroke:#9aa1a8;stroke-width:${LEVIER.poignee.d * K};stroke-linecap:round}
     .pis{stroke:#7d858c;stroke-width:${PISTON.d * K}}.bie{stroke:#1b6fb5;stroke-width:${13 * K};stroke-linecap:round;opacity:.8}
     .ral{fill:none;stroke:#8a929b;stroke-width:${RALLONGE.d * K};stroke-linejoin:round}.cou{stroke:#6b737c;stroke-width:${COUPLEUR.d * K}}
-    .p{fill:#fff;stroke:#1d2125;stroke-width:3}.c{stroke:#c0392b;stroke-width:2}
+    .p{fill:#fff;stroke:#1d2125;stroke-width:3}.leve{fill:none;stroke:#1b6fb5;stroke-width:3;stroke-dasharray:10 7}.levePoi{fill:none;stroke:#1b6fb5;stroke-width:${LEVIER.poignee.d * K};stroke-linecap:round;opacity:.35}.c{stroke:#c0392b;stroke-width:2}
     text{font-size:22px;fill:#1d2125}text.t{font-weight:700;font-size:26px}text.blanc{fill:#fff}text.tb{fill:#1b6fb5}text.tp{fill:#555}
-    table{position:absolute;left:70px;top:930px;width:2060px;border-collapse:collapse;font-size:17px;line-height:1.24}
+    table{position:absolute;left:70px;top:1060px;width:2060px;border-collapse:collapse;font-size:16px;line-height:1.22}
     th{width:250px;text-align:left;vertical-align:top;padding:3px 12px 3px 0;color:#444}td{padding:3px 0;border-top:1px solid #ddd}
     </style><h1>Pistolet à graisse à levier Lincoln 1142 — vue de côté et cotes du modèle</h1>
     <p class="s">Aucun plan : cotes relevées sur la photo du produit, mise à l'échelle par la longueur hors tout publiée (${fr(k, 3)} mm par pixel). A, B, C : axes du levier, du piston et de la biellette.</p>
-    <svg width="2200" height="820"><defs><marker id="f" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#c0392b"/></marker></defs>${schema}</svg>
+    <svg width="2200" height="990"><defs><marker id="f" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#c0392b"/></marker></defs>${schema}</svg>
     <table>${lignes}</table></html>`;
   writeFileSync(out, html);
   console.log(`page écrite : ${out}`);
