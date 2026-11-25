@@ -105,6 +105,22 @@ pièces (numéro, quantité, page du manuel).
   sol et ordre des étapes dans `src/models/plancher-dd/plan.js` : chaque objet
   porte son numéro d'étape (`userData.step`) pour animer le montage
   (vidéo de formation).
+  **Carte 3D de la place de travail** (`#plancher-dd.carte`,
+  `src/ui/features/carte.js` et `src/ui/features/carte/`) : la mine à
+  parcourir à pied, à la 1re ou à la 3e personne (touche V) — galerie
+  principale, baie de forage avec ce plancher tel quel et la foreuse STM-1500
+  (P010) posée sur la section 1, refuge dans sa recoupe, conduite de
+  ventilation, support de terrain (boulons et grillage), lampe frontale.
+  Minicarte qui tourne avec la vue, itinéraire (A\* sur la grille de la mine),
+  carte plein écran (M) où un toucher trace l'itinéraire. Tournée
+  d'inspection du formulaire MA4657078 « Forage au diamant sous-terre »
+  (Machines Roger International) : 7 points (refuge, barricade, extincteur,
+  escalier et garde-corps, foreuse, ventilation, conditions de terrain) avec
+  les questions #R de l'analyse de risque sur le terrain ; une réponse sur une
+  case ombrée demande le type de risque et le moyen de contrôle (listes du
+  formulaire) pour la planification ; bilan à copier en fin de tournée. Le
+  plan de la mine (galeries, refuge) est fictif ; la barricade se franchit
+  une fois vérifiée.
 
 - **Coffre à outils ITH** (`coffre-dd`, dessin 087 « Coffre à outil ITH » de
   M.R.I. Inc., D. Côté, juin 2011, et deux photos) : 3D aux cotes du dessin,

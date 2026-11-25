@@ -1,0 +1,178 @@
+/* Carte 3D de la place de travail : interface de jeu par-dessus la vue 3D. */
+
+.carte-accueil { padding: 16px; display: flex; gap: 16px; align-items: center; justify-content: space-between; flex-wrap: wrap; margin-bottom: 16px;
+  background: linear-gradient(120deg, color-mix(in srgb, #ff3ea5 12%, var(--surface, #fff)), color-mix(in srgb, #ff9a3d 10%, var(--surface, #fff))); }
+.carte-accueil h3 { margin: 0 0 4px; }
+.carte-accueil p { margin: 0; max-width: 62ch; color: var(--muted, #555); }
+
+/* La page plein écran de la carte occupe tout l'espace de travail. */
+.wp-body:has(> .carte) { padding: 0; overflow: hidden; }
+.wp-body > .carte { max-width: none; margin: 0; }
+
+.carte {
+  --neon: #ff3ea5; --neon2: #ff9a3d; --cyan: #38e1ff; --nuit: rgba(8, 10, 18, 0.72); --bord: rgba(255, 255, 255, 0.14);
+  position: relative; width: 100%; height: 100%; min-height: 420px; overflow: hidden; background: #05070a; color: #f1f3fa;
+  font-family: "IBM Plex Sans", system-ui, sans-serif; user-select: none; -webkit-user-select: none;
+}
+.carte:fullscreen { height: 100vh; }
+.carte-vue { position: absolute; inset: 0; width: 100%; height: 100%; display: block; outline: none; touch-action: none; }
+.carte kbd { display: inline-block; min-width: 1.5em; padding: 0 5px; margin: 0 1px; border-radius: 4px; border: 1px solid rgba(255,255,255,.35);
+  background: rgba(255,255,255,.1); font: 600 .8em/1.6 "IBM Plex Mono", monospace; text-align: center; color: #fff; }
+.carte-pt { --c: #fff; display: inline-grid; place-items: center; width: 1.6em; height: 1.6em; border-radius: 50%; background: var(--c); color: #0b0d12;
+  font: 800 .85em/1 "Barlow Condensed", sans-serif; border: 2px solid #fff; flex: none; vertical-align: middle; }
+.carte-petit { font-size: .82rem; color: rgba(241, 243, 250, .7); }
+
+/* HUD */
+.carte-hud { position: absolute; inset: 0; pointer-events: none; }
+.carte-hud button, .carte-tactile { pointer-events: auto; }
+.carte-mini { position: absolute; left: 18px; bottom: 18px; width: 190px; height: 190px; border-radius: 50%;
+  box-shadow: 0 0 0 3px rgba(10, 12, 20, .9), 0 0 0 6px var(--neon), 0 0 22px 6px rgba(255, 62, 165, .35), 0 10px 30px rgba(0,0,0,.6);
+  background: #0a0e17; }
+.carte-mini::after { content: ""; position: absolute; inset: -6px; border-radius: 50%; padding: 3px;
+  background: conic-gradient(from 200deg, var(--neon), var(--neon2), var(--cyan), var(--neon)); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; opacity: .9; }
+.carte-mini canvas { width: 100%; height: 100%; border-radius: 50%; display: block; }
+
+.carte-quart { position: absolute; top: 16px; right: 16px; display: grid; gap: 8px; justify-items: end; text-align: right; }
+.carte-heure b { display: block; font: 700 2.1rem/1 "Barlow Condensed", sans-serif; letter-spacing: .02em;
+  background: linear-gradient(90deg, #fff, #ffd0e8); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 2px 18px rgba(255,62,165,.35); }
+.carte-heure span { font: 600 .78rem/1.2 "Barlow Condensed", sans-serif; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.78); }
+.carte-prog { display: grid; grid-template-columns: auto auto; gap: 2px 10px; align-items: center; padding: 6px 10px; border-radius: 8px; background: var(--nuit); border: 1px solid var(--bord); min-width: 150px; }
+.carte-prog span { font: 600 .74rem/1 "Barlow Condensed", sans-serif; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.7); text-align: left; }
+.carte-prog b { font: 700 1.1rem/1 "Barlow Condensed", sans-serif; }
+.carte-prog i { grid-column: 1 / -1; height: 4px; border-radius: 2px; background: rgba(255,255,255,.15); position: relative; overflow: hidden; }
+.carte-prog i::after { content: ""; position: absolute; inset: 0 auto 0 0; width: calc(var(--p) * 100%); background: linear-gradient(90deg, var(--neon), var(--neon2)); transition: width .4s; }
+.carte-gaz { display: flex; gap: 6px; padding: 5px 8px; border-radius: 8px; background: var(--nuit); border: 1px solid var(--bord); font: 500 .72rem/1.1 "IBM Plex Mono", monospace; }
+.carte-gaz span { display: grid; justify-items: center; min-width: 38px; }
+.carte-gaz i { font-style: normal; color: #7dffb0; font-size: .66rem; }
+.carte-gaz b { font-weight: 600; color: #fff; }
+
+.carte-objectif { position: absolute; left: 50%; bottom: 26px; transform: translateX(-50%); max-width: min(640px, calc(100% - 460px)); text-align: center;
+  font: 600 1.15rem/1.35 "Barlow Condensed", sans-serif; letter-spacing: .02em; color: #fff; text-shadow: 0 2px 6px #000, 0 0 2px #000; }
+.carte-objectif b { color: var(--neon2); }
+.carte-invite { position: absolute; left: 50%; top: 62%; transform: translateX(-50%); padding: 8px 14px; border-radius: 8px; background: var(--nuit);
+  border: 1px solid var(--bord); border-left: 4px solid var(--neon); font: 500 1rem/1.3 "Barlow Condensed", sans-serif; letter-spacing: .02em; white-space: nowrap; max-width: calc(100% - 32px); overflow: hidden; text-overflow: ellipsis; }
+.carte-invite b { color: var(--neon2); }
+.carte-aide { position: absolute; top: 16px; left: 16px; padding: 6px 10px; border-radius: 8px; background: var(--nuit); border: 1px solid var(--bord);
+  font-size: .78rem; color: rgba(255,255,255,.85); max-width: min(560px, calc(100% - 260px)); animation: carte-fondu 1s 14s forwards; }
+@keyframes carte-fondu { to { opacity: 0; visibility: hidden; } }
+.carte-outils { position: absolute; right: 16px; bottom: 18px; display: flex; gap: 8px; }
+.carte-viseur { position: absolute; left: 50%; top: 50%; width: 4px; height: 4px; margin: -2px; border-radius: 50%; background: rgba(255,255,255,.7); box-shadow: 0 0 4px #000; }
+
+.carte-btn { appearance: none; border: 1px solid var(--bord); background: var(--nuit); color: #fff; border-radius: 8px; padding: 7px 12px; cursor: pointer;
+  font: 600 .9rem/1.2 "Barlow Condensed", sans-serif; letter-spacing: .06em; text-transform: uppercase; backdrop-filter: blur(6px); }
+.carte-btn:hover { border-color: var(--neon); }
+.carte-btn:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+.carte-btn.primaire { background: linear-gradient(100deg, var(--neon), var(--neon2)); border-color: transparent; color: #12060c; }
+.carte-btn.primaire:disabled { filter: grayscale(1); opacity: .5; cursor: not-allowed; }
+.carte-btn.grand { padding: 12px 22px; font-size: 1.1rem; }
+.carte-btn[aria-pressed="true"] { border-color: var(--neon); box-shadow: inset 0 0 0 1px var(--neon); }
+
+/* Bannière (style « mission ») */
+.carte-banniere { position: absolute; left: 0; right: 0; top: 28%; display: grid; justify-items: center; gap: 4px; padding: 14px 16px; pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(5, 6, 12, .78) 20%, rgba(5, 6, 12, .78) 80%, transparent); animation: carte-entree .45s ease-out; }
+.carte-banniere strong { font: 700 clamp(1.8rem, 5vw, 3.2rem)/1 "Barlow Condensed", sans-serif; letter-spacing: .06em; text-transform: uppercase;
+  background: linear-gradient(90deg, #fff, #ffd5ea 40%, var(--neon2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.carte-banniere.ok strong { background-image: linear-gradient(90deg, #b6ffd6, #fff 50%, #7dffb0); }
+.carte-banniere.fin strong { background-image: linear-gradient(90deg, var(--neon), #fff 50%, var(--neon2)); font-size: clamp(2rem, 6vw, 3.8rem); }
+.carte-banniere span { font: 600 .95rem/1.2 "Barlow Condensed", sans-serif; letter-spacing: .18em; text-transform: uppercase; color: rgba(255,255,255,.85); }
+@keyframes carte-entree { from { opacity: 0; transform: scaleX(1.2); } to { opacity: 1; transform: none; } }
+
+/* Carte plein écran */
+.carte-carte { position: absolute; inset: 0; display: grid; grid-template-columns: 1fr minmax(240px, 300px); background: rgba(4, 6, 12, .93); backdrop-filter: blur(4px); }
+.carte-carte-cadre { position: relative; min-height: 0; }
+.carte-carte-cadre canvas { position: absolute; inset: 0; cursor: crosshair; touch-action: none; }
+.carte-zoom { position: absolute; left: 12px; top: 12px; display: flex; gap: 6px; }
+.carte-zoom .carte-btn { min-width: 40px; font-size: 1.1rem; }
+.carte-legende { padding: 20px 16px; overflow: auto; border-left: 1px solid var(--bord); display: flex; flex-direction: column; gap: 8px; }
+.carte-legende h3 { margin: 0; font: 700 1.6rem/1 "Barlow Condensed", sans-serif; letter-spacing: .04em; text-transform: uppercase; }
+.carte-legende h4 { margin: 10px 0 0; font: 700 1rem/1 "Barlow Condensed", sans-serif; letter-spacing: .1em; text-transform: uppercase; color: var(--neon2); }
+.carte-legende ul, .carte-legende ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.carte-legende li { display: flex; gap: 8px; align-items: center; font-size: .9rem; }
+.carte-legende li.fait { opacity: .55; text-decoration: line-through; }
+.carte-legende li.actif { color: var(--neon2); font-weight: 600; }
+.carte-legende-pied { margin-top: auto; display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* Fiche de question (formulaire) */
+.carte-fiche { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(560px, calc(100% - 32px)); max-height: calc(100% - 32px); overflow: auto;
+  background: rgba(12, 14, 24, .96); border: 1px solid var(--bord); border-radius: 14px; padding: 0 0 16px; box-shadow: 0 20px 60px rgba(0,0,0,.6); animation: carte-entree .25s ease-out; }
+.carte-fiche header { display: flex; gap: 12px; align-items: center; padding: 14px 16px; border-bottom: 3px solid #d92b2b; background: linear-gradient(90deg, rgba(217,43,43,.25), transparent); }
+.carte-fiche header.planif { border-color: #1f9e4a; background: linear-gradient(90deg, rgba(31,158,74,.22), transparent); }
+.carte-fiche header.bilan { border-color: #1b9be0; background: linear-gradient(90deg, rgba(27,155,224,.22), transparent); }
+.carte-fiche header .carte-pt { font-size: 1.3rem; }
+.carte-fiche header small { font: 600 .72rem/1.2 "Barlow Condensed", sans-serif; letter-spacing: .14em; color: rgba(255,255,255,.7); }
+.carte-fiche header h3 { margin: 2px 0 0; font: 700 1.5rem/1.05 "Barlow Condensed", sans-serif; letter-spacing: .03em; }
+.carte-fiche header em { margin-left: auto; font: 600 .9rem/1 "IBM Plex Mono", monospace; font-style: normal; color: rgba(255,255,255,.6); }
+.carte-fiche > *:not(header):not(footer) { margin-left: 16px; margin-right: 16px; }
+.carte-q { display: flex; gap: 12px; align-items: flex-start; margin-top: 16px; }
+.carte-q p { margin: 0; font-size: 1.12rem; line-height: 1.4; }
+.carte-num { flex: none; padding: 3px 7px; border-radius: 6px; background: #d92b2b; font: 700 .85rem/1.2 "IBM Plex Mono", monospace; }
+.carte-q-court { margin-top: 12px; color: rgba(255,255,255,.8); }
+.carte-oui-non { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+.carte-rep { appearance: none; padding: 14px; border-radius: 10px; border: 2px solid var(--bord); background: rgba(255,255,255,.06); color: #fff; cursor: pointer;
+  font: 700 1.3rem/1 "Barlow Condensed", sans-serif; letter-spacing: .08em; text-transform: uppercase; position: relative; }
+.carte-rep.ombre { background: rgba(239, 196, 178, .2); border-color: rgba(239, 196, 178, .55); }
+.carte-rep:hover, .carte-rep:focus-visible { border-color: var(--neon); outline: none; }
+.carte-champ { display: grid; gap: 6px; margin-top: 14px; font: 600 .8rem/1 "Barlow Condensed", sans-serif; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.75); }
+.carte-champ textarea { font: 400 1rem/1.4 "IBM Plex Sans", sans-serif; text-transform: none; letter-spacing: 0; color: #fff; background: rgba(255,255,255,.07); border: 1px solid var(--bord); border-radius: 8px; padding: 8px 10px; resize: vertical; }
+.carte-fiche h4 { margin: 16px 0 8px; font: 700 .95rem/1 "Barlow Condensed", sans-serif; letter-spacing: .12em; text-transform: uppercase; }
+.carte-rouge { color: #ff6b6b; } .carte-vert { color: #4ade80; } .carte-bleu { color: #4fc3f7; }
+.carte-puces { display: flex; flex-wrap: wrap; gap: 6px; }
+.carte-puce { appearance: none; border: 1px solid var(--bord); background: rgba(255,255,255,.05); color: #fff; border-radius: 999px; padding: 6px 11px; cursor: pointer; font: 500 .88rem/1.2 "IBM Plex Sans", sans-serif; }
+.carte-puce.sugg { border-color: rgba(255,154,61,.6); }
+.carte-puce[aria-pressed="true"] { background: linear-gradient(100deg, var(--neon), var(--neon2)); color: #12060c; border-color: transparent; font-weight: 600; }
+.carte-fiche footer { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; padding: 16px 16px 0; }
+.carte-bilan table { width: 100%; border-collapse: collapse; font-size: .86rem; }
+.carte-bilan th, .carte-bilan td { border: 1px solid rgba(255,255,255,.14); padding: 5px 7px; text-align: left; vertical-align: top; }
+.carte-bilan th { font: 700 .78rem/1.2 "Barlow Condensed", sans-serif; letter-spacing: .1em; text-transform: uppercase; background: rgba(255,255,255,.05); }
+.carte-bilan td.ombre { background: rgba(239, 196, 178, .18); }
+.carte-bilan td:nth-child(3), .carte-bilan td:nth-child(4) { text-align: center; font-weight: 700; }
+.carte-bilan td.carte-endroit { text-align: left; font-weight: 400; }
+
+/* Écran d'accueil */
+.carte-intro { position: absolute; inset: 0; display: grid; place-items: center; padding: 16px; overflow: auto;
+  background: radial-gradient(120% 90% at 70% 10%, rgba(255, 62, 165, .35), transparent 55%), radial-gradient(90% 80% at 10% 100%, rgba(56, 225, 255, .22), transparent 60%), linear-gradient(180deg, rgba(10, 6, 20, .55), rgba(4, 5, 10, .92)); }
+.carte-intro-boite { max-width: 620px; display: grid; gap: 14px; text-align: left; }
+.carte-intro-sur { margin: 0; font: 600 .8rem/1 "Barlow Condensed", sans-serif; letter-spacing: .22em; text-transform: uppercase; color: rgba(255,255,255,.75); }
+.carte-intro h2 { margin: 0; display: grid; font: 700 clamp(2.6rem, 9vw, 5.2rem)/.86 "Barlow Condensed", sans-serif; text-transform: uppercase; letter-spacing: .01em; }
+.carte-intro h2 span:first-child { background: linear-gradient(95deg, #ffe0ef, var(--neon) 45%, var(--neon2)); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 4px 24px rgba(255, 62, 165, .45)); }
+.carte-intro h2 span:last-child { color: #fff; font-size: .62em; letter-spacing: .28em; }
+.carte-intro-sous { margin: 0; font-size: 1.05rem; color: rgba(255,255,255,.88); }
+.carte-intro-champs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.carte-intro-champs label { display: grid; gap: 5px; font: 600 .78rem/1 "Barlow Condensed", sans-serif; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.75); }
+.carte-intro-champs input { font: 400 1rem/1.3 "IBM Plex Sans", sans-serif; color: #fff; background: rgba(255,255,255,.08); border: 1px solid var(--bord); border-radius: 8px; padding: 9px 10px; user-select: text; }
+.carte-intro-champs input:focus { outline: 2px solid var(--neon); outline-offset: 1px; }
+.carte-intro-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.carte-intro-aide { margin: 0; font-size: .82rem; color: rgba(255,255,255,.7); line-height: 1.8; }
+.carte-chargement { position: absolute; inset: 0; display: grid; place-items: center; font: 600 1.2rem/1 "Barlow Condensed", sans-serif; letter-spacing: .14em; text-transform: uppercase; }
+.carte-erreur { padding: 16px; }
+
+/* Commandes tactiles */
+.carte-tactile { position: absolute; inset: 0; pointer-events: none; }
+.carte-manette { position: absolute; left: 90px; top: 62%; width: 110px; height: 110px; margin: -55px 0 0 -55px; border-radius: 50%; border: 2px solid rgba(255,255,255,.35);
+  background: rgba(255,255,255,.06); opacity: .55; transition: opacity .2s; }
+.carte-manette.active { opacity: 1; }
+.carte-manette span { position: absolute; left: 50%; top: 50%; width: 46px; height: 46px; margin: -23px; border-radius: 50%; background: linear-gradient(135deg, var(--neon), var(--neon2)); box-shadow: 0 0 16px rgba(255,62,165,.6); }
+.carte-tbtn { pointer-events: auto; position: absolute; right: 18px; width: 64px; height: 64px; border-radius: 50%; border: 2px solid rgba(255,255,255,.4); background: var(--nuit); color: #fff;
+  font: 700 1.1rem/1 "Barlow Condensed", sans-serif; text-transform: uppercase; }
+.carte-tbtn[data-c="action"] { bottom: 150px; background: linear-gradient(135deg, var(--neon), var(--neon2)); color: #12060c; border-color: transparent; }
+.carte-tbtn[data-c="course"] { bottom: 76px; right: 90px; font-size: .8rem; }
+.carte-tbtn[aria-pressed="true"] { border-color: var(--neon); box-shadow: 0 0 12px var(--neon); }
+
+@container stage (max-width: 719px) { .carte-mini { width: 140px; height: 140px; } }
+@media (max-width: 760px) {
+  .carte-mini { width: 128px; height: 128px; left: 12px; top: 12px; bottom: auto; }
+  .carte-quart { top: 10px; right: 10px; gap: 5px; }
+  .carte-heure b { font-size: 1.5rem; }
+  .carte-gaz { display: none; }
+  .carte-objectif { max-width: calc(100% - 32px); bottom: auto; top: 150px; font-size: 1rem; }
+  .carte-aide { display: none; }
+  .carte-outils { bottom: 16px; right: auto; left: 12px; }
+  .carte-objectif { left: 12px; right: 12px; transform: none; max-width: none; padding: 6px 10px; border-radius: 8px; background: var(--nuit); }
+  .carte-invite { top: 54%; }
+  .carte-carte { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) minmax(0, 40%); }
+  .carte-legende { border-left: 0; border-top: 1px solid var(--bord); }
+  .carte-intro-champs { grid-template-columns: 1fr; }
+}
+
+/* Écran tactile : pas de touches de clavier dans les boutons. */
+.carte.tactile .carte-outils kbd, .carte.tactile .carte-legende kbd { display: none; }
