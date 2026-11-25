@@ -1,7 +1,7 @@
-// Mine de la carte 3D : galerie principale, baie de forage (plancher 16 × 32 pi
-// de la procédure PRO-DD-ST-003, tel quel), refuge, conduite de ventilation et
-// support de terrain — les éléments nommés au formulaire MA4657078 « Forage au
-// diamant sous-terre » (analyse de risque sur le terrain, questions 14, 15 et 18).
+// Mine de la place de travail en 3D : galerie principale, baie de forage
+// (plancher 16 × 32 pi de la procédure PRO-DD-ST-003, tel quel), refuge,
+// conduite de ventilation et support de terrain, nommés au formulaire MA4657078
+// « Forage au diamant sous-terre ». Le plan des galeries est fictif.
 //
 // Repère : celui du plancher (src/models/plancher-dd/plan.js), en mètres. X le
 // long de la baie (front de taille à X ≈ 0, entrée vers X positif), Z en travers,
@@ -9,8 +9,7 @@
 //
 // Le plan de la mine est un champ de distance signé en 2D (négatif dans les
 // galeries) : les murs suivent le contour d = 0 (carrés marchants), la voûte
-// s'arrondit avec la distance au mur, et le même champ sert aux collisions, à la
-// minicarte et au calcul d'itinéraire (GPS).
+// s'arrondit avec la distance au mur, et le même champ sert aux collisions.
 import * as THREE from 'three';
 import { mergeVertices } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { mat } from '../../../viewer/materials.js';
@@ -228,7 +227,7 @@ function parois() {
 }
 
 /** Grille (sol ou voûte) sur les cellules dans les galeries ou au ras des murs. */
-function grille(h, hauteur, versLeBas, marge = 0.4, garder = null) {
+function grille(h, hauteur, versLeBas, marge = 0.4) {
   const { x0, x1, z0, z1 } = BORNES;
   const nx = Math.ceil((x1 - x0) / h), nz = Math.ceil((z1 - z0) / h);
   const idx = new Int32Array((nx + 1) * (nz + 1)).fill(-1);
@@ -245,8 +244,7 @@ function grille(h, hauteur, versLeBas, marge = 0.4, garder = null) {
   const index = [];
   for (let j = 0; j < nz; j++) for (let i = 0; i < nx; i++) {
     const cx = x0 + (i + 0.5) * h, cz = z0 + (j + 0.5) * h;
-    const dc = sdf(cx, cz);
-    if (garder ? !garder(dc) : dc > marge) continue;
+    if (sdf(cx, cz) > marge) continue;
     const a = sommet(i, j), b = sommet(i + 1, j), c = sommet(i + 1, j + 1), d = sommet(i, j + 1);
     if (versLeBas) index.push(a, b, d, b, c, d);
     else index.push(a, d, b, b, d, c);
@@ -499,7 +497,6 @@ function signalisation() {
 
 /**
  * Construit la mine. Retourne { group, gyro, sortieVent, directionVent }.
- * Les maillages de roche reçoivent userData.roche (pour la caméra et la carte).
  */
 export function construireMine() {
   const g = new THREE.Group();
@@ -511,7 +508,6 @@ export function construireMine() {
   for (const m of [murs, toit, fond]) { m.userData.roche = true; m.receiveShadow = true; g.add(m); }
   // Grillage du support de terrain, juste sous la voûte.
   const tg = textureGrillage();
-  let grillage = null;
   if (tg) {
     const geo = grille(0.5, (x, z) => voute(x, z) - 0.03, true, -0.15);
     const p = geo.attributes.position;
@@ -521,37 +517,15 @@ export function construireMine() {
     const gm = new THREE.MeshStandardMaterial({ color: 0x9aa0a6, metalness: 0.6, roughness: 0.55, alphaMap: tg, transparent: false, alphaTest: 0.5, side: THREE.DoubleSide });
     // L'alphaMap lit le canal vert : la texture blanche sur fond transparent donne les fils.
     gm.map = null;
-    grillage = new THREE.Mesh(geo, gm);
-    g.add(grillage);
+    g.add(new THREE.Mesh(geo, gm));
   }
-  const plaques = boulons();
-  g.add(plaques);
-  // Crête des parois (carte 3D, vue de dessus, toit enlevé) : bande de roc à la
-  // hauteur du haut des murs, autour des galeries.
-  // Massif rocheux autour des galeries, à la hauteur du haut des murs : plus clair au
-  // bord des galeries, plus sombre au loin.
-  const geoCretes = grille(0.5, (x, z) => baseVoute(x, z) + MUR_H + 0.02, false, 0, (d) => d > -0.25);
-  {
-    const p = geoCretes.attributes.position;
-    const col = new Float32Array(p.count * 3);
-    const pres = new THREE.Color(0x6a645b), loin = new THREE.Color(0x262422), c = new THREE.Color();
-    for (let i = 0; i < p.count; i++) {
-      const d = sdf(p.getX(i), p.getZ(i));
-      c.copy(pres).lerp(loin, Math.min(1, Math.max(0, (d - 0.2) / 3.5)));
-      const v = 0.92 + 0.08 * bruit(p.getX(i) * 0.7, 0, p.getZ(i) * 0.7);
-      col[3 * i] = c.r * v; col[3 * i + 1] = c.g * v; col[3 * i + 2] = c.b * v;
-    }
-    geoCretes.setAttribute('color', new THREE.BufferAttribute(col, 3));
-  }
-  const cretes = new THREE.Mesh(geoCretes, new THREE.MeshLambertMaterial({ vertexColors: true }));
-  cretes.visible = false;
-  g.add(cretes);
+  g.add(boulons());
   const vent = ventilation();
   g.add(vent);
   const ref = refuge();
   g.add(ref);
   g.add(signalisation());
-  return { group: g, gyro: ref.userData.gyro, sortieVent: vent.userData.sortie, directionVent: vent.userData.direction, toit: [toit, grillage, plaques].filter(Boolean), cretes };
+  return { group: g, gyro: ref.userData.gyro, sortieVent: vent.userData.sortie, directionVent: vent.userData.direction };
 }
 
 export { Y0, ESC, surPlancher };
