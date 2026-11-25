@@ -18,6 +18,7 @@
 // chaudière de dégraisseur à droite (+x). Modèle en mètres.
 import * as THREE from 'three';
 import { withFinish } from '../../viewer/materials.js';
+import { bac, caillebotis, affiche, dessusCaillebotis, HORS_TOUT, CAILLEBOTIS } from '../bac-retention-100l/index.js';
 
 const MM = 0.001;
 export const IN = 25.4;
@@ -140,6 +141,7 @@ function papier(cle, { fond, bandeau, encre, titre, sousTitre }) {
 const ETIQUETTES = {
   savon: { fond: '#f3f0e4', bandeau: '#7a5a1c', encre: '#2a2418', titre: 'SAVON DE LIN', sousTitre: '5 gallons US · 18,9 L' },
   degraisseur: { fond: '#dfe6cf', bandeau: '#c8401c', encre: '#1f2a1c', titre: 'DÉGRAISSEUR', sousTitre: '5 gallons US · 18,9 L' },
+  huile: { fond: '#f1efe6', bandeau: '#b8860b', encre: '#1d1a14', titre: 'HUILE HYDRAULIQUE', sousTitre: '5 gallons US · 18,9 L' },
 };
 
 // ------------------------------------------------------------------ pièces
@@ -289,4 +291,42 @@ export function P01(api) {
   return { view: { dir: [0.28, 0.42, 0.86], section: { axis: 'z', pos: 0.5 } } };
 }
 
-export default { P01 };
+/**
+ * P02 : chaudières d'huile sur le bac de rétention 100 L (demande du client :
+ * « bac de rétention avec max 5 chaudières d'huile 5 gallons »). Même seau que
+ * P01, fermé, étiquette « HUILE HYDRAULIQUE » (redessinée, sans marque). Le bac
+ * est le modèle bac-retention-100l (P01), avec son caillebotis et son affiche
+ * « MAX 100 LITRES » : 5 chaudières × 18,9 L = 94,6 L, sous les 100 L publiés.
+ * Rangées en quinconce : 3 au fond, 2 devant, couvercles à HUILE.jeu l'un de
+ * l'autre ; les anses du fond sont rabattues vers l'arrière, celles de devant
+ * vers l'avant, les étiquettes regardent toutes vers l'avant (+z).
+ */
+export const HUILE = { nombre: 5, jeu: 3 };
+/** Centres (mm) des chaudières sur le bac : x, z (fond : z < 0). */
+export function placesHuile() {
+  const pas = COUVERCLE.d + HUILE.jeu, dz = Math.sqrt(pas * pas - (pas / 2) ** 2) / 2;
+  return [[-pas, -dz], [0, -dz], [pas, -dz], [-pas / 2, dz], [pas / 2, dz]].slice(0, HUILE.nombre);
+}
+
+export function P02(api) {
+  const { S } = api;
+  const y0 = dessusCaillebotis() * MM, yc = y0 + dessusCouvercle() * MM;
+  api.part('8', bac(S), [0, 0, 0], { labelAt: [(-HORS_TOUT.L / 2 + 40) * MM, 60 * MM, (HORS_TOUT.P / 2) * MM] });
+  api.part('9', caillebotis(S), [0, 0.12, 0], { labelAt: [(-CAILLEBOTIS.L / 2 + 30) * MM, y0, 0] });
+  api.part('10', affiche(), [0, 0, 0.1], { labelAt: [0, 115 * MM, (HORS_TOUT.P / 2) * MM] });
+  for (const [x, z] of placesHuile()) {
+    const s = seau(S, 'huile');
+    s.position.set(x * MM, y0, z * MM);
+    api.part('11', s, [0, 0.25, 0], { labelAt: [x * MM, y0 + 150 * MM, (z + rayon(150)) * MM] });
+    const c = couvercle(S);
+    c.position.set(x * MM, y0, z * MM);
+    api.part('3', c, [0, 0.4, 0], { labelAt: [x * MM, yc, z * MM] });
+    const a = anse(S);
+    a.position.set(x * MM, y0, z * MM);
+    if (z < 0) a.rotation.y = Math.PI;
+    api.part('4', a, [0, 0.25, z < 0 ? -0.1 : 0.1], { labelAt: [x * MM, y0 + a.userData.poignee[1], (z + (z < 0 ? -1 : 1) * a.userData.poignee[2] / MM) * MM] });
+  }
+  return { view: { dir: [0.4, 0.55, 0.75], section: { axis: 'z', pos: 0.5 } } };
+}
+
+export default { P01, P02 };

@@ -198,7 +198,7 @@ function galette(S, dehors, trou, y0, y1, matiere) {
 // ------------------------------------------------------------------ pièces
 
 /** Repère 1 : bac en PEHD jaune (rotomoulé) — lèvre, ceinture, passages au pied, épaulement, cuve. */
-function bac(S) {
+export function bac(S) {
   const H = HORS_TOUT, Lp = H.L - 2 * PAROI.retrait, Pp = H.P - 2 * PAROI.retrait;
   const ouv = contour(OUVERTURE.L, OUVERTURE.P, OUVERTURE.r);
   const c = cuve(), bas = contour(c.L, c.P, OUVERTURE.r);
@@ -216,7 +216,7 @@ function bac(S) {
 }
 
 /** Repère 2 : caillebotis amovible — cadre et grille de 30 × 13 alvéoles, posé sur l'épaulement. */
-function caillebotis(S) {
+export function caillebotis(S) {
   const C = CAILLEBOTIS, h = C.haut * MM, y = (EPAULEMENT.y + C.haut / 2) * MM;
   const l = C.L - 2 * C.cadre, p = C.P - 2 * C.cadre;
   const pieces = [
@@ -237,7 +237,7 @@ function caillebotis(S) {
 }
 
 /** Repère 3 : affiche « MAX 100 LITRES » collée au milieu de la ceinture, côté avant. */
-function affiche() {
+export function affiche() {
   const A = AFFICHE, zf = (HORS_TOUT.P / 2 - PAROI.retrait + A.ep) * MM;
   const y = ((CEINTURE.y + HORS_TOUT.H - LEVRE.haut) / 2) * MM;
   const m = new THREE.Mesh(new THREE.PlaneGeometry(A.L * MM, A.H * MM), papier());

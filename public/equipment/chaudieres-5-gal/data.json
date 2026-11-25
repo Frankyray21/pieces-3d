@@ -1,6 +1,6 @@
 {
  "id": "chaudieres-5-gal",
- "name": "Chaudières de 5 gallons : savon de lin, dégraisseur et chaudière coupée pour la guenille",
+ "name": "Chaudières de 5 gallons : savon de lin, dégraisseur et chaudière coupée pour la guenille ; chaudières d'huile sur bac de rétention",
  "manufacturer": "Fabricant non identifié",
  "category": "Poste de nettoyage des outils",
  "serial": "",
@@ -60,6 +60,10 @@
   [
    "Encombrement",
    "645 mm de large × 491 mm de haut × 312 mm de profond ; 20 mm entre les deux couvercles"
+  ],
+  [
+   "Chaudières d'huile (P02)",
+   "Demande du client : un bac de rétention avec au plus 5 chaudières d'huile de 5 gallons. Même seau que P01, fermé, étiquette « HUILE HYDRAULIQUE » redessinée (aucune photo : marque, couleur et contenu exact supposés). Posées sur le bac de rétention 100 L (modèle bac-retention-100l) : 3 au fond, 2 devant, en quinconce, couvercles à 3 mm l'un de l'autre ; 5 × 18,9 L = 94,6 L, sous les 100 L publiés du bac (affiche « MAX 100 LITRES ») ; environ 95 kg pleines, sous la charge publiée de 150 kg. Encombrement : 990 mm × 645 mm (le bac), 509 mm de haut ; les couvercles débordent du caillebotis, pas du bac (586 mm de profond)"
   ],
   [
    "Non modélisé",
@@ -142,6 +146,73 @@
      "GUENILLE de coton, pour nettoyer les outils",
      {
       "note": "Environ 330 mm de côté, froissée (taille et couleur supposées)."
+     }
+    ]
+   ]
+  },
+  "P02": {
+   "title": "5 GALLON OIL PAILS ON 100 L SPILL PALLET",
+   "titleFr": "Chaudières d'huile de 5 gallons (5 au plus) sur le bac de rétention 100 L",
+   "pn": "",
+   "sheets": [
+    "P01"
+   ],
+   "note": "Demande du client : « bac de rétention avec max 5 chaudières d'huile 5 gallons ». Seau de P01 (cotes usuelles supposées), fermé, étiquette « HUILE HYDRAULIQUE » redessinée, sans marque ; aucune photo des chaudières d'huile. Bac : le mini bac de rétention 100 L avec caillebotis (fiche bac-retention-100l). 5 chaudières × 18,9 L = 94,6 L, sous les 100 L de l'affiche ; d'où le maximum de 5. Rangées en quinconce (3 au fond, 2 devant) ; anses rabattues vers l'extérieur, étiquettes vers l'avant. En vue éclatée, les chaudières, les couvercles et les anses montent.",
+   "parts": [
+    [
+     "8",
+     "PFCP100006F",
+     1,
+     "BAC DE RÉTENTION 100 L, PEHD jaune",
+     {
+      "note": "990 mm × 645 mm × 145 mm ; charge publiée 150 kg. Voir la fiche bac-retention-100l."
+     }
+    ],
+    [
+     "9",
+     "",
+     1,
+     "CAILLEBOTIS du bac, noir",
+     {
+      "pseudo": true,
+      "note": "Porte les chaudières."
+     }
+    ],
+    [
+     "10",
+     "",
+     1,
+     "AFFICHE « MAX 100 LITRES »",
+     {
+      "pseudo": true,
+      "note": "Collée sur la ceinture avant du bac."
+     }
+    ],
+    [
+     "11",
+     "",
+     5,
+     "CHAUDIÈRE de 5 gallons, HUILE HYDRAULIQUE",
+     {
+      "note": "Même seau que P01, 14 1/2 po de haut, Ø 303 mm en haut ; étiquette redessinée. Contenu non représenté."
+     }
+    ],
+    [
+     "3",
+     "",
+     5,
+     "COUVERCLE de chaudière, Ø 312 mm",
+     {
+      "note": "À jupe, enfoncé sur le bord du seau."
+     }
+    ],
+    [
+     "4",
+     "",
+     5,
+     "ANSE de fil d'acier, poignée de plastique",
+     {
+      "note": "Rabattue vers l'extérieur du bac."
      }
     ]
    ]
