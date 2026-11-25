@@ -13,10 +13,11 @@ import { buildProcedural } from '../../../viewer/assembly.js';
 import plancherModeles from '../../../models/plancher-dd/index.js';
 import stmModeles from '../../../models/stm-1500/index.js';
 import { L, W, GAL, GAL_X1 } from '../../../models/plancher-dd/plan.js';
-import { construireMine, sdf, gradient, marche, voute, segments, BORNES, XD, REFUGE, REFUGE_Z, ESC } from './mine.js';
+import { construireMine, sdf, gradient, marche, voute, segments, BORNES, XD, REFUGE, REFUGE_Z, ESC, Y0 } from './mine.js';
 import { creerAvatar } from './avatar.js';
 import { grilleChemins } from './chemin.js';
 import { imagePlan, pastille, flecheJoueur, trace, PX } from './plan2d.js';
+import { creerCarte3D, texturePastille } from './carte3d.js';
 import { POINTS, QUESTIONS, RISQUES, CONTROLES, SOURCE } from './formulaire.js';
 
 const R = 0.33; // rayon du travailleur
@@ -25,6 +26,8 @@ const MARCHE_MAX = 0.4; // plus haute marche franchie
 const V_MARCHE = 1.7, V_COURSE = 3.8;
 const BARRICADE_X = L + 4.3;
 const TACTILE = matchMedia('(pointer: coarse)').matches;
+// Itinéraire : couleur d'accent du site.
+const ROUTE = '#ff7c24';
 
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
@@ -70,27 +73,17 @@ function fusionner(racine) {
 
 // ------------------------------------------------------------------ marqueurs
 
-function marqueur(couleur) {
+/** Point à inspecter, dans la vue à pied : anneau au sol et pastille au-dessus. */
+function marqueur(couleur, lettre) {
   const g = new THREE.Group();
-  const c = new THREE.Color(couleur);
-  const faisceau = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.55, 0.55, 3.2, 40, 1, true),
-    new THREE.ShaderMaterial({
-      uniforms: { uCouleur: { value: c }, uT: { value: 0 } },
-      vertexShader: 'varying float vY; void main(){ vY = position.y / 3.2 + 0.5; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
-      fragmentShader: 'uniform vec3 uCouleur; uniform float uT; varying float vY; void main(){ float a = pow(1.0 - vY, 1.6) * (0.55 + 0.15 * sin(uT * 3.0)); gl_FragColor = vec4(uCouleur * 1.6, a); }',
-      transparent: true, depthWrite: false, side: THREE.DoubleSide, blending: THREE.AdditiveBlending,
-    }),
-  );
-  faisceau.position.y = 1.6;
-  const anneau = new THREE.Mesh(new THREE.RingGeometry(0.5, 0.62, 48), new THREE.MeshBasicMaterial({ color: c, transparent: true, opacity: 0.9, side: THREE.DoubleSide, depthWrite: false }));
+  const anneau = new THREE.Mesh(new THREE.RingGeometry(0.45, 0.56, 48), new THREE.MeshBasicMaterial({ color: couleur, transparent: true, opacity: 0.85, side: THREE.DoubleSide, depthWrite: false }));
   anneau.rotation.x = -Math.PI / 2;
   anneau.position.y = 0.03;
-  const chevron = new THREE.Mesh(new THREE.ConeGeometry(0.16, 0.3, 4), new THREE.MeshBasicMaterial({ color: c.clone().multiplyScalar(2) }));
-  chevron.rotation.x = Math.PI;
-  chevron.position.y = 2.1;
-  g.add(faisceau, anneau, chevron);
-  g.userData = { faisceau, anneau, chevron };
+  const icone = new THREE.Sprite(new THREE.SpriteMaterial({ map: texturePastille(couleur, lettre), transparent: true, depthWrite: false }));
+  icone.scale.set(0.32, 0.32, 1);
+  icone.position.y = 1.95;
+  g.add(anneau, icone);
+  g.userData = { anneau, icone };
   return g;
 }
 
@@ -170,21 +163,15 @@ export function lancer(el, opts = {}) {
   el.innerHTML = `
     <canvas class="carte-vue" tabindex="0" aria-label="Vue 3D de la mine"></canvas>
     <div class="carte-hud">
-      <div class="carte-mini" aria-hidden="true"><canvas></canvas><span class="carte-mini-rue"></span></div>
-      <div class="carte-quart">
-        <div class="carte-heure"><b></b><span></span></div>
-        <div class="carte-prog"></div>
-        <div class="carte-gaz" title="Détecteur de gaz (valeurs de simulation)">
-          <span><i>O₂</i><b>20,9</b>%</span><span><i>CO</i><b>0</b>ppm</span><span><i>H₂S</i><b>0</b>ppm</span><span><i>LIE</i><b>0</b>%</span>
-        </div>
-      </div>
+      <div class="carte-mini" aria-hidden="true"><canvas></canvas></div>
+      <div class="carte-prog"></div>
       <div class="carte-objectif" aria-live="polite"></div>
       <div class="carte-invite" hidden></div>
       <div class="carte-aide"></div>
       <div class="carte-outils">
-        <button type="button" class="carte-btn" data-c="vue" title="Changer de vue (V)">Vue <kbd>V</kbd></button>
-        <button type="button" class="carte-btn" data-c="plan" title="Carte (M)">Carte <kbd>M</kbd></button>
-        <button type="button" class="carte-btn" data-c="plein" title="Plein écran (F)">⛶</button>
+        <button type="button" class="btn" data-c="vue" title="Changer de vue (V)">Vue <kbd>V</kbd></button>
+        <button type="button" class="btn" data-c="plan" title="Carte 3D (M)">Carte <kbd>M</kbd></button>
+        <button type="button" class="btn" data-c="plein" title="Plein écran (F)" aria-label="Plein écran">⛶</button>
       </div>
       <div class="carte-tactile" ${TACTILE ? '' : 'hidden'}>
         <div class="carte-manette"><span></span></div>
@@ -193,13 +180,19 @@ export function lancer(el, opts = {}) {
       </div>
       <div class="carte-viseur"></div>
     </div>
-    <div class="carte-banniere" hidden></div>
     <div class="carte-carte" hidden>
-      <div class="carte-carte-cadre"><canvas></canvas>
-        <div class="carte-zoom"><button type="button" class="carte-btn" data-c="zoom+" aria-label="Rapprocher">+</button><button type="button" class="carte-btn" data-c="zoom-" aria-label="Éloigner">−</button><button type="button" class="carte-btn" data-c="zoom0" title="Tout le plan">Tout</button></div>
+      <div class="carte-carte-outils">
+        <button type="button" class="btn" data-c="zoom+" aria-label="Rapprocher">+</button>
+        <button type="button" class="btn" data-c="zoom-" aria-label="Éloigner">−</button>
+        <button type="button" class="btn" data-c="tourner-g" aria-label="Tourner à gauche">⟲</button>
+        <button type="button" class="btn" data-c="tourner-d" aria-label="Tourner à droite">⟳</button>
+        <button type="button" class="btn" data-c="incliner">Incliner</button>
+        <button type="button" class="btn" data-c="nord">Nord</button>
+        <button type="button" class="btn" data-c="centrer">Me centrer</button>
       </div>
       <aside class="carte-legende"></aside>
     </div>
+    <div class="carte-avis" role="status" aria-live="polite" hidden></div>
     <div class="carte-fiche" hidden role="dialog" aria-modal="true"></div>
     <div class="carte-intro"></div>
     <div class="carte-chargement">Chargement de la mine…</div>
@@ -283,7 +276,8 @@ export function lancer(el, opts = {}) {
 
   // Rendu avec halo lumineux (marqueurs, lentilles, gyrophare).
   const composer = new EffectComposer(renderer);
-  composer.addPass(new RenderPass(scene, camera));
+  const rendu = new RenderPass(scene, camera);
+  composer.addPass(rendu);
   const bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), 0.5, 0.5, 0.92);
   composer.addPass(bloom);
   composer.addPass(new OutputPass());
@@ -387,7 +381,7 @@ export function lancer(el, opts = {}) {
   const points = POINTS.map((p) => {
     const [x, z] = POS[p.id];
     const y = marche(x, z);
-    const m = marqueur(p.couleur);
+    const m = marqueur(p.couleur, p.icone);
     m.position.set(x, y, z);
     m.visible = false;
     scene.add(m);
@@ -399,20 +393,11 @@ export function lancer(el, opts = {}) {
   const cheminRefuge = gps.trouver([GAL_X1, 0], POS.refuge);
   const distRefuge = cheminRefuge ? Math.round(gps.longueur(cheminRefuge)) : null;
 
-  // ---------------------------------------------------------------- plan 2D
+  // ---------------------------------------------------------------- minicarte (plan 2D)
 
   const plan = imagePlan(BORNES, sdf, { refuge: { ...REFUGE, zc: REFUGE_Z }, escalier: ESC });
   const mini = $('.carte-mini canvas');
   const miniX = mini.getContext('2d');
-  const grand = $('.carte-carte canvas');
-  const grandX = grand.getContext('2d');
-  const ETIQUETTES = [
-    ['Galerie principale', XD, 18, -Math.PI / 2],
-    ['Place de travail', L / 2 + 3, -GAL - 1.4, 0],
-    ['Front de taille', -1.6, 0, -Math.PI / 2],
-    ['Refuge', REFUGE.x0 + 3, REFUGE_Z - 3.2, 0],
-    ['Rampe d’accès', XD - 14, 56.5, -0.5],
-  ];
 
   function blips() {
     const out = [];
@@ -421,27 +406,24 @@ export function lancer(el, opts = {}) {
     // Repères permanents : refuge et extincteur (questions 18 et 19).
     out.push({ x: REFUGE.x0 + 0.5, z: REFUGE_Z, couleur: '#22d36b', lettre: 'R', fixe: true });
     out.push({ x: L + 3.65, z: 2.35, couleur: '#ff4d4d', lettre: 'E', fixe: true });
-    if (etat.destination) out.push({ x: etat.destination[0], z: etat.destination[1], couleur: '#ff3ea5', lettre: '', actif: true });
+    if (etat.destination) out.push({ x: etat.destination[0], z: etat.destination[1], couleur: ROUTE, lettre: '', actif: true });
     return out;
   }
 
   function dessinerMini() {
     const dpr = Math.min(2, window.devicePixelRatio || 1);
-    const taille = mini.clientWidth || 190;
+    const taille = mini.clientWidth || 180;
     if (mini.width !== Math.round(taille * dpr)) { mini.width = mini.height = Math.round(taille * dpr); }
     const x = miniX;
     const r = mini.width / 2;
-    const ech = (r / 21) / PX * (etat.course ? 0.82 : 1); // ~21 m au rayon
+    const ech = (r / 21) / PX;
     x.setTransform(1, 0, 0, 1, 0, 0);
     x.clearRect(0, 0, mini.width, mini.height);
     x.save();
     x.beginPath();
     x.arc(r, r, r - 1, 0, Math.PI * 2);
     x.clip();
-    const fond = x.createRadialGradient(r, r, r * 0.2, r, r, r);
-    fond.addColorStop(0, '#141b2b');
-    fond.addColorStop(1, '#0a0e17');
-    x.fillStyle = fond;
+    x.fillStyle = '#0e1218';
     x.fillRect(0, 0, mini.width, mini.height);
     const rot = etat.lacet + Math.PI;
     const pu = plan.U(etat.pos.x), pv = plan.V(etat.pos.z);
@@ -450,7 +432,7 @@ export function lancer(el, opts = {}) {
     x.scale(ech, ech);
     x.translate(-pu, -pv);
     x.drawImage(plan.canvas, 0, 0);
-    if (etat.chemin) trace(x, etat.chemin.map(([wx, wz]) => [plan.U(wx), plan.V(wz)]), (4.5 * dpr) / ech);
+    if (etat.chemin) trace(x, etat.chemin.map(([wx, wz]) => [plan.U(wx), plan.V(wz)]), (4 * dpr) / ech, ROUTE);
     x.restore();
     // Repères (droits), ramenés au bord s'ils sont hors de la minicarte.
     const versEcran = (wx, wz) => {
@@ -460,153 +442,86 @@ export function lancer(el, opts = {}) {
     };
     for (const b of blips()) {
       let [sx, sy] = versEcran(b.x, b.z);
-      const l = Math.hypot(sx, sy), lim = r - 13 * dpr;
-      const dehors = l > lim;
-      if (dehors) { sx *= lim / l; sy *= lim / l; }
-      if (dehors && !b.actif && !b.fixe) continue;
-      pastille(x, r + sx, r + sy, (b.actif ? 8.5 : 7) * dpr, b.couleur, b.lettre, { alpha: dehors ? 0.85 : 1 });
+      const l = Math.hypot(sx, sy), lim = r - 12 * dpr;
+      if (l > lim) { sx *= lim / l; sy *= lim / l; }
+      pastille(x, r + sx, r + sy, (b.actif ? 8 : 6.5) * dpr, b.couleur, b.lettre);
     }
-    flecheJoueur(x, r, r, etat.lacet - etat.cap, 9 * dpr);
-    // Nord sur le pourtour.
-    const lim = r - 11 * dpr;
-    const npx = r + Math.sin(rot) * lim, npy = r - Math.cos(rot) * lim;
-    pastille(x, npx, npy, 8 * dpr, '#f6f7fb', 'N', { anneau: '#0b0d12' });
+    flecheJoueur(x, r, r, etat.lacet - etat.cap, 8 * dpr);
+    const lim = r - 10 * dpr;
+    pastille(x, r + Math.sin(rot) * lim, r - Math.cos(rot) * lim, 7 * dpr, '#e5eaf0', 'N', { anneau: '#10151b' });
   }
 
-  function dessinerGrand() {
-    const cadre = grand.parentElement;
-    const dpr = Math.min(2, window.devicePixelRatio || 1);
-    const W_ = cadre.clientWidth, H_ = cadre.clientHeight;
-    grand.width = Math.round(W_ * dpr); grand.height = Math.round(H_ * dpr);
-    grand.style.width = `${W_}px`; grand.style.height = `${H_}px`;
-    const x = grandX;
-    const ech = Math.min(grand.width / plan.canvas.width, grand.height / plan.canvas.height) * 0.94 * vuePlan.zoom;
-    // Centre de la vue (point du plan) : au zoom 1, tout le plan ; au-delà, le point suivi.
-    const cu = vuePlan.zoom <= 1 ? plan.canvas.width / 2 : plan.U(vuePlan.cx), cv = vuePlan.zoom <= 1 ? plan.canvas.height / 2 : plan.V(vuePlan.cz);
-    const ox = grand.width / 2 - cu * ech, oy = grand.height / 2 - cv * ech;
-    grand.userData = { ech, ox, oy };
-    x.setTransform(1, 0, 0, 1, 0, 0);
-    x.clearRect(0, 0, grand.width, grand.height);
-    x.save();
-    x.translate(ox, oy);
-    x.scale(ech, ech);
-    x.drawImage(plan.canvas, 0, 0);
-    x.restore();
-    const E = (wx, wz) => [ox + plan.U(wx) * ech, oy + plan.V(wz) * ech];
-    if (etat.chemin) trace(x, etat.chemin.map(([a, b]) => E(a, b)), 4 * dpr);
-    x.save();
-    x.fillStyle = 'rgba(232, 238, 255, 0.85)';
-    x.font = `600 ${Math.round((vuePlan.zoom > 1.5 ? 14 : 12) * dpr)}px "Barlow Condensed", "Arial Narrow", sans-serif`;
-    x.textAlign = 'center';
-    x.textBaseline = 'middle';
-    for (const [t, wx, wz, ang] of ETIQUETTES) {
-      const [px, py] = E(wx, wz);
-      x.save(); x.translate(px, py); x.rotate(ang); x.fillText(t.toUpperCase(), 0, 0); x.restore();
+  // ---------------------------------------------------------------- carte 3D (touche M)
+
+  const carte3d = creerCarte3D({
+    scene, canvas, mine, bornes: BORNES, sdf, marche, y0: Y0, couleurRoute: ROUTE,
+    etiquettes: [
+      ['Galerie principale', XD, 22],
+      ['Place de travail', L / 2 + 2, -GAL - 1.6],
+      ['Front de taille', -1.2, 0],
+      ['Refuge', REFUGE.x0 + 3, REFUGE_Z - 3.4],
+      ['Rampe d\u2019accès', XD - 13, 55],
+    ],
+    surClic: (x, z) => { etat.destination = [x, z]; majChemin(true); legende(); avis('Destination placée : suivez l\u2019itinéraire'); },
+  });
+  const planOuvert = () => carte3d.ouverte;
+  let renduChemin = null;
+
+  /** Pastilles de la carte 3D : points de la tournée, refuge, extincteur, destination. */
+  function pastillesCarte() {
+    const l = [];
+    if (!etat.libre) for (const p of points) l.push({ x: p.x, z: p.z, couleur: p.fait ? '#7d8597' : p.couleur, lettre: p.fait ? '✓' : p.icone, actif: p === pointActif() });
+    if (etat.libre || etat.fini) {
+      l.push({ x: REFUGE.x0 + 0.5, z: REFUGE_Z, couleur: '#22d36b', lettre: 'R' });
+      l.push({ x: L + 3.65, z: 2.35, couleur: '#ff4d4d', lettre: 'E' });
     }
-    x.restore();
-    for (const p of points) if (!etat.libre && !etat.fini) {
-      const [px, py] = E(p.x, p.z);
-      const actif = p === pointActif();
-      pastille(x, px, py, (actif ? 10 : 7.5) * dpr, p.fait ? '#7d8597' : p.couleur, p.fait ? '✓' : p.icone, { alpha: actif || p.fait ? 1 : 0.75 });
-    }
-    for (const b of blips()) if (b.fixe || !pointActif()) {
-      const [px, py] = E(b.x, b.z);
-      pastille(x, px, py, 8 * dpr, b.couleur, b.lettre);
-    }
-    const [jx, jy] = E(etat.pos.x, etat.pos.z);
-    flecheJoueur(x, jx, jy, Math.PI - etat.cap, 11 * dpr);
+    if (etat.destination) l.push({ x: etat.destination[0], z: etat.destination[1], couleur: ROUTE, lettre: '', actif: true });
+    carte3d.majPastilles(l);
   }
 
   function legende() {
     const l = $('.carte-legende');
     const ligne = (c, t, d) => `<li><span class="carte-pt" style="--c:${c}">${esc(t)}</span><span>${esc(d)}</span></li>`;
+    const aide = TACTILE
+      ? 'Glisser : déplacer · pincer : rapprocher · deux doigts : tourner et incliner · toucher une galerie : itinéraire.'
+      : 'Glisser : déplacer · clic droit ou Maj + glisser : tourner et incliner · molette : rapprocher · clic sur une galerie : itinéraire.';
     l.innerHTML = `
       <h3>Carte de la mine</h3>
-      <p class="carte-petit">Touchez ou cliquez un endroit de la carte pour y tracer l’itinéraire.</p>
+      <p class="carte-petit">${aide}</p>
       <ul>
         ${ligne('#22d36b', 'R', `Refuge${distRefuge ? ` — ${distRefuge} m à pied de la place de travail` : ''}`)}
         ${ligne('#ff4d4d', 'E', 'Extincteur et armoire de premiers soins')}
-        ${ligne('#c4925a', '', 'Plancher 16 × 32 pi et escalier')}
-        ${ligne('#ff3ea5', '', 'Itinéraire')}
+        ${ligne(ROUTE, '', 'Itinéraire')}
       </ul>
-      ${etat.libre ? '' : `<h4>Tournée d’inspection</h4><ol>${points.map((p) => `<li class="${p.fait ? 'fait' : p === pointActif() ? 'actif' : ''}"><span class="carte-pt" style="--c:${p.couleur}">${p.icone}</span>${esc(p.titre)}</li>`).join('')}</ol>`}
+      ${etat.libre ? '' : `<h4>Tournée d\u2019inspection</h4><ol>${points.map((p) => `<li class="${p.fait ? 'fait' : p === pointActif() ? 'actif' : ''}"><span class="carte-pt" style="--c:${p.couleur}">${p.icone}</span>${esc(p.titre)}</li>`).join('')}</ol>`}
       <div class="carte-legende-pied">
-        <button type="button" class="carte-btn" data-c="effacer" ${etat.destination ? '' : 'hidden'}>Effacer l’itinéraire</button>
-        <button type="button" class="carte-btn primaire" data-c="fermer-plan">Retour <kbd>M</kbd></button>
+        <button type="button" class="btn" data-c="effacer" ${etat.destination ? '' : 'hidden'}>Effacer l\u2019itinéraire</button>
+        <button type="button" class="btn primary" data-c="fermer-plan">Retour à pied</button>
       </div>`;
+    pastillesCarte();
   }
 
-  // Vue de la carte plein écran : zoom (1 = tout le plan) et centre (monde).
-  const vuePlan = { zoom: 1, cx: 0, cz: 0 };
-  const planOuvert = () => !$('.carte-carte').hidden;
   function basculerPlan(ouvrir = !planOuvert()) {
+    if (ouvrir === planOuvert()) return;
     $('.carte-carte').hidden = !ouvrir;
+    $('.carte-hud').hidden = ouvrir;
     if (ouvrir) {
       document.exitPointerLock?.();
-      // Ouverte sur le travailleur, assez près pour lire la place de travail.
-      Object.assign(vuePlan, { zoom: 2.6, cx: etat.pos.x, cz: etat.pos.z });
+      touches.clear();
+      carte3d.ouvrir(etat.pos, etat.lacet + Math.PI);
+      majChemin(true);
       legende();
-      requestAnimationFrame(dessinerGrand);
+      tailleCarte();
+    } else {
+      carte3d.fermer();
+      tailleCarte();
+      canvas.focus();
     }
+    rendu.camera = ouvrir ? carte3d.camera : camera;
+    // Pas de halo sur la carte : les surfaces éclairées d'en haut resteraient éblouissantes.
+    bloom.enabled = !ouvrir;
+    renduChemin = null;
   }
-  const versMonde = (cx, cy) => {
-    const r = grand.getBoundingClientRect();
-    const dpr = grand.width / r.width;
-    const { ech, ox, oy } = grand.userData || {};
-    const u = ((cx - r.left) * dpr - ox) / ech, v = ((cy - r.top) * dpr - oy) / ech;
-    return [BORNES.x1 - u / PX, BORNES.z1 - v / PX];
-  };
-  const zoomer = (k, cx, cy) => {
-    const [wx, wz] = cx == null ? [vuePlan.cx, vuePlan.cz] : versMonde(cx, cy);
-    if (vuePlan.zoom <= 1) [vuePlan.cx, vuePlan.cz] = versMonde(grand.getBoundingClientRect().left + grand.clientWidth / 2, grand.getBoundingClientRect().top + grand.clientHeight / 2);
-    const z = clamp(vuePlan.zoom * k, 1, 8);
-    // Le point sous le pointeur reste en place.
-    const f = 1 - vuePlan.zoom / z;
-    vuePlan.cx += (wx - vuePlan.cx) * f;
-    vuePlan.cz += (wz - vuePlan.cz) * f;
-    vuePlan.zoom = z;
-    dessinerGrand();
-  };
-  grand.addEventListener('wheel', (e) => { e.preventDefault(); zoomer(e.deltaY < 0 ? 1.2 : 1 / 1.2, e.clientX, e.clientY); }, { passive: false });
-  // Glisser : déplacer la carte (deux doigts : zoom) ; toucher sans glisser : itinéraire.
-  const doigts = new Map();
-  let deplace = 0, ecart0 = 0;
-  grand.addEventListener('pointerdown', (e) => {
-    grand.setPointerCapture?.(e.pointerId);
-    doigts.set(e.pointerId, [e.clientX, e.clientY]);
-    deplace = 0;
-    if (doigts.size === 2) { const [a, b] = [...doigts.values()]; ecart0 = Math.hypot(a[0] - b[0], a[1] - b[1]); }
-  });
-  grand.addEventListener('pointermove', (e) => {
-    if (!doigts.has(e.pointerId)) return;
-    const [px, py] = doigts.get(e.pointerId);
-    doigts.set(e.pointerId, [e.clientX, e.clientY]);
-    if (doigts.size === 2) {
-      const [a, b] = [...doigts.values()];
-      const ec = Math.hypot(a[0] - b[0], a[1] - b[1]);
-      if (ecart0) zoomer(ec / ecart0, (a[0] + b[0]) / 2, (a[1] + b[1]) / 2);
-      ecart0 = ec;
-      deplace = 99;
-      return;
-    }
-    deplace += Math.abs(e.clientX - px) + Math.abs(e.clientY - py);
-    if (deplace < 6 || vuePlan.zoom <= 1) return;
-    const [ax, az] = versMonde(px, py), [bx, bz] = versMonde(e.clientX, e.clientY);
-    vuePlan.cx -= bx - ax; vuePlan.cz -= bz - az;
-    dessinerGrand();
-  });
-  const leve = (e) => { doigts.delete(e.pointerId); if (doigts.size < 2) ecart0 = 0; };
-  grand.addEventListener('pointerup', leve);
-  grand.addEventListener('pointercancel', leve);
-  grand.addEventListener('click', (e) => {
-    if (deplace >= 6 || !grand.userData?.ech) return;
-    const [wx, wz] = versMonde(e.clientX, e.clientY);
-    if (sdf(wx, wz) > 0.2) return;
-    etat.destination = [wx, wz];
-    majChemin(true);
-    legende();
-    dessinerGrand();
-  });
 
   // ---------------------------------------------------------------- itinéraire
 
@@ -620,7 +535,7 @@ export function lancer(el, opts = {}) {
     etat.chemin = gps.trouver([etat.pos.x, etat.pos.z], cible);
     if (etat.destination && Math.hypot(etat.destination[0] - etat.pos.x, etat.destination[1] - etat.pos.z) < 1.5) {
       etat.destination = null;
-      banniere('Destination atteinte', '', 1600);
+      avis('Destination atteinte', 1600);
     }
   }
 
@@ -631,27 +546,21 @@ export function lancer(el, opts = {}) {
   const prog = $('.carte-prog');
   function majObjectif() {
     const a = pointActif();
-    if (etat.libre) objectif.innerHTML = `<b>Exploration libre</b> — ouvrez la carte (<kbd>M</kbd>) pour choisir une destination.`;
+    if (etat.libre) objectif.innerHTML = `<b>Exploration libre</b> — ouvrez la carte 3D (<kbd>M</kbd>) pour choisir une destination.`;
     else if (etat.fini) objectif.innerHTML = '<b>Tournée terminée</b> — place de travail vérifiée.';
     else if (a) objectif.innerHTML = `<span class="carte-pt" style="--c:${a.couleur}">${a.icone}</span> ${esc(a.consigne)}`;
     const n = points.filter((p) => p.fait).length;
-    prog.innerHTML = etat.libre ? '<span>Exploration libre</span>' : `<span>Inspection</span><b>${n}/${points.length}</b><i style="--p:${n / points.length}"></i>`;
+    prog.hidden = etat.libre;
+    prog.innerHTML = `<span>Inspection</span><b>${n}/${points.length}</b><i style="--p:${n / points.length}"></i>`;
   }
-  function majHeure() {
-    const d = new Date();
-    const h = d.getHours();
-    $('.carte-heure b').textContent = d.toLocaleTimeString('fr-CA', { hour: '2-digit', minute: '2-digit' });
-    $('.carte-heure span').textContent = `Quart de ${h >= 7 && h < 19 ? 'jour' : 'nuit'}${etat.foreuse ? ` · foreuse ${etat.foreuse}` : ''}`;
-  }
-
-  let tBanniere = 0;
-  function banniere(titre, sous = '', ms = 2600, cls = '') {
-    const b = $('.carte-banniere');
-    b.className = `carte-banniere ${cls}`;
-    b.innerHTML = `<strong>${esc(titre)}</strong>${sous ? `<span>${esc(sous)}</span>` : ''}`;
+  let tAvis = 0;
+  /** Message bref en bas de la vue. */
+  function avis(msg, ms = 2600) {
+    const b = $('.carte-avis');
+    b.textContent = msg;
     b.hidden = false;
-    clearTimeout(tBanniere);
-    tBanniere = setTimeout(() => { b.hidden = true; }, ms);
+    clearTimeout(tAvis);
+    tAvis = setTimeout(() => { b.hidden = true; }, ms);
   }
 
   const AIDE = TACTILE
@@ -681,7 +590,7 @@ export function lancer(el, opts = {}) {
         if (p.id === 'barricade') etat.barricadeOuverte = true;
         etat.etape++;
         if (etat.etape >= points.length) terminer();
-        else { banniere('Vérifié', p.titre, 2200, 'ok'); majObjectif(); majChemin(true); }
+        else { avis(`Vérifié : ${p.titre}`); majObjectif(); majChemin(true); }
         canvas.focus();
         return;
       }
@@ -691,7 +600,7 @@ export function lancer(el, opts = {}) {
       if (q.endroit) {
         fiche.innerHTML = `${entete}<div class="carte-q"><span class="carte-num">#R ${n}</span><p>${esc(q.texte)}</p></div>
           <label class="carte-champ">Endroit<textarea rows="2">${esc(texteEndroit(n))}</textarea></label>
-          <footer><button type="button" class="carte-btn primaire" data-r="noter">Noter</button></footer>`;
+          <footer><button type="button" class="btn primary" data-r="noter">Noter</button></footer>`;
         fiche.querySelector('[data-r="noter"]').onclick = () => { etat.reponses[n] = fiche.querySelector('textarea').value.trim() || texteEndroit(n); i++; rendre(); };
       } else {
         const ombre = (r) => (q.ombre === r ? ' ombre' : '');
@@ -721,7 +630,7 @@ export function lancer(el, opts = {}) {
       <p class="carte-q-court">${esc(QUESTIONS[n].texte)} — <b>${esc(etat.reponses[n] === 'oui' ? 'Oui' : 'Non')}</b></p>
       <h4 class="carte-rouge">Types de risques</h4><div class="carte-puces">${puces(RISQUES, p.risques, 'risques')}</div>
       <h4 class="carte-vert">Moyens de contrôle</h4><div class="carte-puces">${puces(CONTROLES, p.controles, 'controles')}</div>
-      <footer><button type="button" class="carte-btn" data-a="plus">Toute la liste du formulaire</button><button type="button" class="carte-btn primaire" data-a="ok" disabled>Ajouter à la planification</button></footer>`;
+      <footer><button type="button" class="btn" data-a="plus">Toute la liste du formulaire</button><button type="button" class="btn primary" data-a="ok" disabled>Ajouter à la planification</button></footer>`;
     const ok = fiche.querySelector('[data-a="ok"]');
     fiche.querySelector('[data-a="plus"]').onclick = (e) => { for (const b of fiche.querySelectorAll('[data-plus]')) b.hidden = false; e.target.hidden = true; };
     for (const b of fiche.querySelectorAll('.carte-puce')) b.onclick = () => {
@@ -738,8 +647,8 @@ export function lancer(el, opts = {}) {
     etat.barricadeOuverte = true;
     majObjectif();
     majChemin(true);
-    banniere('Place de travail vérifiée', 'Tournée d’inspection terminée', 3200, 'fin');
-    setTimeout(bilan, 1400);
+    avis('Tournée terminée : place de travail vérifiée', 3000);
+    setTimeout(bilan, 900);
   }
 
   function bilan() {
@@ -764,7 +673,7 @@ export function lancer(el, opts = {}) {
         <table><thead><tr><th>#T</th><th>#R</th><th>Type de risques</th><th>Moyen de contrôle</th></tr></thead><tbody>${plan}</tbody></table>
         <p class="carte-petit">Les questions 2, 6, 7, 9, 10, 11, 17, 20 et 21 se répondent avant la tournée, sur le formulaire papier : elles ne dépendent pas d’un endroit de la carte.</p>
       </div>
-      <footer><button type="button" class="carte-btn" data-a="copier">Copier le bilan</button><button type="button" class="carte-btn" data-a="refaire">Recommencer</button><button type="button" class="carte-btn primaire" data-a="libre">Exploration libre</button></footer>`;
+      <footer><button type="button" class="btn" data-a="copier">Copier le bilan</button><button type="button" class="btn" data-a="refaire">Recommencer</button><button type="button" class="btn primary" data-a="libre">Exploration libre</button></footer>`;
     fiche.hidden = false;
     fiche.querySelector('[data-a="libre"]').onclick = () => { fiche.hidden = true; etat.libre = true; majObjectif(); canvas.focus(); };
     fiche.querySelector('[data-a="refaire"]').onclick = () => { fiche.hidden = true; recommencer(false); };
@@ -789,26 +698,26 @@ export function lancer(el, opts = {}) {
     etat.lacet = 0; etat.cap = 0; etat.tangage = -0.08;
     majObjectif();
     majChemin(true);
-    if (!libre) banniere('Tournée d’inspection', 'Suivez l’itinéraire rose jusqu’à chaque point', 3000);
+    if (!libre) avis('Suivez l’itinéraire orange jusqu’à chaque point', 3000);
   }
 
   // ---------------------------------------------------------------- écran d'accueil
 
   const intro = $('.carte-intro');
   intro.innerHTML = `
-    <div class="carte-intro-boite">
-      <p class="carte-intro-sur">Machines Roger International · formulaire MA4657078</p>
-      <h2><span>Forage au diamant</span><span>sous terre</span></h2>
-      <p class="carte-intro-sous">Carte 3D de la place de travail — à la 1<sup>re</sup> ou à la 3<sup>e</sup> personne</p>
+    <div class="carte-intro-boite card-box">
+      <h3>Carte 3D de la place de travail</h3>
+      <p>Forage au diamant sous terre — tournée d\u2019inspection du formulaire MA4657078 (Machines Roger International).
+      Marchez à la 1<sup>re</sup> ou à la 3<sup>e</sup> personne ; la carte 3D (<kbd>M</kbd>) montre la mine vue du ciel.</p>
       <div class="carte-intro-champs">
         <label>Nom du travailleur <input type="text" autocomplete="name" data-i="nom" placeholder="facultatif"></label>
         <label>No. de la foreuse <input type="text" data-i="foreuse" placeholder="facultatif"></label>
       </div>
       <div class="carte-intro-actions">
-        <button type="button" class="carte-btn primaire grand" data-a="tournee">Tournée d’inspection</button>
-        <button type="button" class="carte-btn grand" data-a="libre">Exploration libre</button>
+        <button type="button" class="btn primary" data-a="tournee">Commencer la tournée d\u2019inspection</button>
+        <button type="button" class="btn" data-a="libre">Exploration libre</button>
       </div>
-      <p class="carte-intro-aide">${AIDE}</p>
+      <p class="carte-petit">${AIDE}</p>
     </div>`;
   const demarrer = (libre) => {
     etat.nom = intro.querySelector('[data-i="nom"]').value.trim();
@@ -816,7 +725,6 @@ export function lancer(el, opts = {}) {
     intro.hidden = true;
     etat.pause = false;
     recommencer(libre);
-    majHeure();
     canvas.focus();
     if (!TACTILE) canvas.requestPointerLock?.();
   };
@@ -841,7 +749,11 @@ export function lancer(el, opts = {}) {
     if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright', ' '].includes(k)) e.preventDefault();
     if (ficheOuverte()) return;
     if (k === 'm') { basculerPlan(); return; }
-    if (planOuvert()) return;
+    if (planOuvert()) {
+      if (k === '+' || k === '=') carte3d.zoom(1 / 1.3);
+      else if (k === '-') carte3d.zoom(1.3);
+      return;
+    }
     if (k === 'v') basculerVue();
     else if (k === 'e' || k === 'enter') action = true;
     else if (k === 'f') pleinEcran();
@@ -863,15 +775,15 @@ export function lancer(el, opts = {}) {
     etat.lacet -= dx * k;
     etat.tangage = clamp(etat.tangage - dy * k, -1.25, etat.vue < 0.5 ? 1.3 : 0.75);
   };
-  canvas.addEventListener('click', () => { if (!TACTILE && !etat.pause && !ficheOuverte()) canvas.requestPointerLock?.(); });
+  canvas.addEventListener('click', () => { if (!TACTILE && !etat.pause && !ficheOuverte() && !planOuvert()) canvas.requestPointerLock?.(); });
   const surSouris = (e) => { if (document.pointerLockElement === canvas) regarder(e.movementX, e.movementY); };
   document.addEventListener('mousemove', surSouris);
-  canvas.addEventListener('wheel', (e) => { e.preventDefault(); etat.dist = clamp(etat.dist + e.deltaY * 0.003, 1.8, 6); etat.distReglee = true; }, { passive: false });
+  canvas.addEventListener('wheel', (e) => { if (planOuvert()) return; e.preventDefault(); etat.dist = clamp(etat.dist + e.deltaY * 0.003, 1.8, 6); etat.distReglee = true; }, { passive: false });
 
   // Tactile : manette à gauche, regard à droite.
   const bouton = $('.carte-manette span');
   canvas.addEventListener('pointerdown', (e) => {
-    if (e.pointerType === 'mouse') return;
+    if (e.pointerType === 'mouse' || planOuvert()) return;
     const r = canvas.getBoundingClientRect();
     if (e.clientX - r.left < r.width * 0.42 && manette.id == null) {
       manette.id = e.pointerId; manette.ox = e.clientX; manette.oy = e.clientY;
@@ -882,6 +794,7 @@ export function lancer(el, opts = {}) {
     canvas.setPointerCapture?.(e.pointerId);
   });
   canvas.addEventListener('pointermove', (e) => {
+    if (planOuvert()) return;
     if (e.pointerId === manette.id) {
       const dx = e.clientX - manette.ox, dy = e.clientY - manette.oy;
       const l = Math.hypot(dx, dy), max = 48;
@@ -912,10 +825,14 @@ export function lancer(el, opts = {}) {
     else if (c === 'plein') pleinEcran();
     else if (c === 'action') action = true;
     else if (c === 'course') { etat.course = !etat.course; b.setAttribute('aria-pressed', etat.course); }
-    else if (c === 'zoom+') zoomer(1.4);
-    else if (c === 'zoom-') zoomer(1 / 1.4);
-    else if (c === 'zoom0') { vuePlan.zoom = 1; dessinerGrand(); }
-    else if (c === 'effacer') { etat.destination = null; majChemin(true); legende(); dessinerGrand(); }
+    else if (c === 'zoom+') carte3d.zoom(1 / 1.4);
+    else if (c === 'zoom-') carte3d.zoom(1.4);
+    else if (c === 'tourner-g') carte3d.tourner(-Math.PI / 4);
+    else if (c === 'tourner-d') carte3d.tourner(Math.PI / 4);
+    else if (c === 'incliner') carte3d.incliner();
+    else if (c === 'nord') carte3d.nord();
+    else if (c === 'centrer') carte3d.centrer(etat.pos);
+    else if (c === 'effacer') { etat.destination = null; majChemin(true); legende(); }
   });
 
   // ---------------------------------------------------------------- boucle
@@ -925,7 +842,6 @@ export function lancer(el, opts = {}) {
   const lampeMonde = new THREE.Vector3();
   let precedent = performance.now();
   let raf = 0;
-  let tAide = 0;
 
   function deplacer(dt) {
     let ix = 0, iy = 0;
@@ -1021,18 +937,19 @@ export function lancer(el, opts = {}) {
     mine.gyro.light.intensity = 1 + 5 * gy;
     mine.gyro.mesh.material.emissiveIntensity = 1 + 3 * gy;
 
-    // Marqueur de l'objectif.
+    // Point à inspecter (vue à pied seulement ; la carte 3D a ses pastilles).
     const a = pointActif();
     for (const p of points) {
-      p.marqueur.visible = p === a;
-      if (p === a) {
-        const u = p.marqueur.userData;
-        u.faisceau.material.uniforms.uT.value = etat.t;
-        u.chevron.position.y = 2.0 + 0.12 * Math.sin(etat.t * 2.6);
-        u.chevron.rotation.y = etat.t * 1.5;
-        const s = 1 + 0.08 * Math.sin(etat.t * 4);
-        u.anneau.scale.set(s, s, s);
-      }
+      p.marqueur.visible = p === a && !planOuvert();
+      if (p === a) p.marqueur.userData.icone.position.y = 1.95 + 0.06 * Math.sin(etat.t * 2);
+    }
+    // Carte 3D : toit enlevé, lampe et poussière éteintes, le travailleur toujours visible.
+    const carte = planOuvert();
+    lampe.visible = lueur.visible = poussieres.visible = !carte;
+    if (carte) {
+      av.group.visible = true;
+      carte3d.maj(dt, etat.pos, etat.cap);
+      if (renduChemin !== etat.chemin) { renduChemin = etat.chemin; carte3d.majRoute(etat.chemin); }
     }
 
     // Invite d'inspection.
@@ -1056,9 +973,7 @@ export function lancer(el, opts = {}) {
     action = false;
 
     if (!etat.pause) majChemin();
-    dessinerMini();
-    tAide += dt;
-    if (tAide > 1) { tAide = 0; majHeure(); }
+    if (!carte) dessinerMini();
     composer.render(dt);
   }
 
@@ -1074,13 +989,20 @@ export function lancer(el, opts = {}) {
     if (!etat.distReglee) etat.dist = w < h ? 3.8 : 3.1;
     camera.updateProjectionMatrix();
     poussieres.material.uniforms.uEchelle.value = (h * renderer.getPixelRatio()) / (2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)));
-    if (planOuvert()) dessinerGrand();
+    tailleCarte();
+  }
+  /** La carte 3D se centre dans la partie laissée libre par la légende. */
+  function tailleCarte() {
+    const w = el.clientWidth || 1, h = el.clientHeight || 1;
+    const lg = $('.carte-legende');
+    const r = planOuvert() && lg ? lg.getBoundingClientRect() : null;
+    const etroit = w <= 760;
+    carte3d.taille(w, h, !r ? {} : etroit ? { bas: r.height + 12 } : { droite: r.width + 16 });
   }
   const ro = new ResizeObserver(taille);
   ro.observe(el);
   taille();
   majObjectif();
-  majHeure();
   $('.carte-chargement').remove();
   raf = requestAnimationFrame(boucle);
   if (opts.debut) demarrer(opts.debut === 'libre');
@@ -1091,6 +1013,7 @@ export function lancer(el, opts = {}) {
     /** Échap : ferme la carte plein écran ou la fiche ; vrai si une couche a été fermée. */
     echap() {
       if (planOuvert()) { basculerPlan(false); return true; }
+      if (ficheOuverte()) return true;
       if (document.pointerLockElement === canvas || performance.now() - tLibere < 400) return true;
       return false;
     },
@@ -1107,7 +1030,8 @@ export function lancer(el, opts = {}) {
       document.removeEventListener('pointerlockchange', surVerrou);
       if (document.pointerLockElement === canvas) document.exitPointerLock?.();
       if (document.fullscreenElement === el) document.exitFullscreen?.();
-      clearTimeout(tBanniere);
+      clearTimeout(tAvis);
+      carte3d.dispose();
       scene.traverse((o) => {
         o.geometry?.dispose();
         const ms = Array.isArray(o.material) ? o.material : o.material ? [o.material] : [];

@@ -111,8 +111,12 @@ pièces (numéro, quantité, page du manuel).
   principale, baie de forage avec ce plancher tel quel et la foreuse STM-1500
   (P010) posée sur la section 1, refuge dans sa recoupe, conduite de
   ventilation, support de terrain (boulons et grillage), lampe frontale.
-  Minicarte qui tourne avec la vue, itinéraire (A\* sur la grille de la mine),
-  carte plein écran (M) où un toucher trace l'itinéraire. Tournée
+  Minicarte qui tourne avec la vue, itinéraire (A\* sur la grille de la mine).
+  Carte 3D (M, `carte/carte3d.js`) : la mine vue du ciel, toit enlevé, dans
+  l'esprit de la carte d'un jeu en monde ouvert (GTA 6) — déplacer, tourner,
+  incliner, rapprocher, pastilles des lieux, itinéraire tracé au sol ; un
+  toucher sur une galerie y place la destination. Le reste de l'interface
+  suit le style du site. Tournée
   d'inspection du formulaire MA4657078 « Forage au diamant sous-terre »
   (Machines Roger International) : 7 points (refuge, barricade, extincteur,
   escalier et garde-corps, foreuse, ventilation, conditions de terrain) avec

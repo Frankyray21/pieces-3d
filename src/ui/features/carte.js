@@ -20,8 +20,8 @@ export default {
     card.innerHTML = `
       <div class="carte-accueil-texte">
         <h3>Carte 3D de la place de travail</h3>
-        <p>Marchez dans la mine à la 1<sup>re</sup> ou à la 3<sup>e</sup> personne : galerie, plancher 16 × 32 pi,
-        foreuse, refuge et ventilation, minicarte et itinéraire. Tournée d’inspection du formulaire
+        <p>Marchez dans la mine à la 1<sup>re</sup> ou à la 3<sup>e</sup> personne (galerie, plancher 16 × 32 pi,
+        foreuse, refuge, ventilation) ou survolez-la sur la carte 3D. Tournée d’inspection du formulaire
         MA4657078 « Forage au diamant sous-terre ».</p>
       </div>
       <button type="button" class="btn primary" data-go="${ID}">Entrer dans la mine</button>`;

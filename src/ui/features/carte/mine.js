@@ -228,7 +228,7 @@ function parois() {
 }
 
 /** Grille (sol ou voûte) sur les cellules dans les galeries ou au ras des murs. */
-function grille(h, hauteur, versLeBas, marge = 0.4) {
+function grille(h, hauteur, versLeBas, marge = 0.4, garder = null) {
   const { x0, x1, z0, z1 } = BORNES;
   const nx = Math.ceil((x1 - x0) / h), nz = Math.ceil((z1 - z0) / h);
   const idx = new Int32Array((nx + 1) * (nz + 1)).fill(-1);
@@ -245,7 +245,8 @@ function grille(h, hauteur, versLeBas, marge = 0.4) {
   const index = [];
   for (let j = 0; j < nz; j++) for (let i = 0; i < nx; i++) {
     const cx = x0 + (i + 0.5) * h, cz = z0 + (j + 0.5) * h;
-    if (sdf(cx, cz) > marge) continue;
+    const dc = sdf(cx, cz);
+    if (garder ? !garder(dc) : dc > marge) continue;
     const a = sommet(i, j), b = sommet(i + 1, j), c = sommet(i + 1, j + 1), d = sommet(i, j + 1);
     if (versLeBas) index.push(a, b, d, b, c, d);
     else index.push(a, d, b, b, d, c);
@@ -510,6 +511,7 @@ export function construireMine() {
   for (const m of [murs, toit, fond]) { m.userData.roche = true; m.receiveShadow = true; g.add(m); }
   // Grillage du support de terrain, juste sous la voûte.
   const tg = textureGrillage();
+  let grillage = null;
   if (tg) {
     const geo = grille(0.5, (x, z) => voute(x, z) - 0.03, true, -0.15);
     const p = geo.attributes.position;
@@ -519,16 +521,37 @@ export function construireMine() {
     const gm = new THREE.MeshStandardMaterial({ color: 0x9aa0a6, metalness: 0.6, roughness: 0.55, alphaMap: tg, transparent: false, alphaTest: 0.5, side: THREE.DoubleSide });
     // L'alphaMap lit le canal vert : la texture blanche sur fond transparent donne les fils.
     gm.map = null;
-    const gr = new THREE.Mesh(geo, gm);
-    g.add(gr);
+    grillage = new THREE.Mesh(geo, gm);
+    g.add(grillage);
   }
-  g.add(boulons());
+  const plaques = boulons();
+  g.add(plaques);
+  // Crête des parois (carte 3D, vue de dessus, toit enlevé) : bande de roc à la
+  // hauteur du haut des murs, autour des galeries.
+  // Massif rocheux autour des galeries, à la hauteur du haut des murs : plus clair au
+  // bord des galeries, plus sombre au loin.
+  const geoCretes = grille(0.5, (x, z) => baseVoute(x, z) + MUR_H + 0.02, false, 0, (d) => d > -0.25);
+  {
+    const p = geoCretes.attributes.position;
+    const col = new Float32Array(p.count * 3);
+    const pres = new THREE.Color(0x6a645b), loin = new THREE.Color(0x262422), c = new THREE.Color();
+    for (let i = 0; i < p.count; i++) {
+      const d = sdf(p.getX(i), p.getZ(i));
+      c.copy(pres).lerp(loin, Math.min(1, Math.max(0, (d - 0.2) / 3.5)));
+      const v = 0.92 + 0.08 * bruit(p.getX(i) * 0.7, 0, p.getZ(i) * 0.7);
+      col[3 * i] = c.r * v; col[3 * i + 1] = c.g * v; col[3 * i + 2] = c.b * v;
+    }
+    geoCretes.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  }
+  const cretes = new THREE.Mesh(geoCretes, new THREE.MeshLambertMaterial({ vertexColors: true }));
+  cretes.visible = false;
+  g.add(cretes);
   const vent = ventilation();
   g.add(vent);
   const ref = refuge();
   g.add(ref);
   g.add(signalisation());
-  return { group: g, gyro: ref.userData.gyro, sortieVent: vent.userData.sortie, directionVent: vent.userData.direction };
+  return { group: g, gyro: ref.userData.gyro, sortieVent: vent.userData.sortie, directionVent: vent.userData.direction, toit: [toit, grillage, plaques].filter(Boolean), cretes };
 }
 
 export { Y0, ESC, surPlancher };

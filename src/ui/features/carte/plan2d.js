@@ -17,10 +17,10 @@ export function imagePlan(bornes, sdf, { refuge, escalier }) {
     const s = sdf(wx, wz);
     const k = (j * w + i) * 4;
     if (s > 0.35) { d[k + 3] = 0; continue; }
-    if (s > -0.05) { d[k] = 196; d[k + 1] = 214; d[k + 2] = 255; d[k + 3] = Math.round(255 * Math.max(0, Math.min(1, (0.35 - s) / 0.3))); continue; }
-    // Intérieur : bleu nuit, un peu plus clair près des parois.
+    if (s > -0.05) { d[k] = 200; d[k + 1] = 206; d[k + 2] = 214; d[k + 3] = Math.round(255 * Math.max(0, Math.min(1, (0.35 - s) / 0.3))); continue; }
+    // Intérieur : gris ardoise, un peu plus clair près des parois.
     const t = Math.min(1, -s / 2.2);
-    d[k] = 58 - 22 * t; d[k + 1] = 70 - 24 * t; d[k + 2] = 104 - 26 * t; d[k + 3] = 235;
+    d[k] = 66 - 18 * t; d[k + 1] = 74 - 18 * t; d[k + 2] = 86 - 18 * t; d[k + 3] = 240;
   }
   x.putImageData(img, 0, 0);
   const U = (wx) => (bornes.x1 - wx) * PX, V = (wz) => (bornes.z1 - wz) * PX;
@@ -80,18 +80,18 @@ export function flecheJoueur(x, px, py, ang, r) {
   x.restore();
 }
 
-/** Tracé d'itinéraire (rose néon, halo). pts : points écran. */
-export function trace(x, pts, epaisseur) {
+/** Tracé d'itinéraire (trait de couleur sur un liseré sombre). pts : points écran. */
+export function trace(x, pts, epaisseur, couleur = '#ff7c24') {
   if (!pts || pts.length < 2) return;
   x.save();
   x.lineJoin = x.lineCap = 'round';
   x.beginPath();
   x.moveTo(...pts[0]);
   for (const p of pts.slice(1)) x.lineTo(...p);
-  x.strokeStyle = 'rgba(255, 62, 165, 0.35)';
-  x.lineWidth = epaisseur * 2.4;
+  x.strokeStyle = 'rgba(16, 21, 27, 0.8)';
+  x.lineWidth = epaisseur * 1.8;
   x.stroke();
-  x.strokeStyle = '#ff3ea5';
+  x.strokeStyle = couleur;
   x.lineWidth = epaisseur;
   x.stroke();
   x.restore();
