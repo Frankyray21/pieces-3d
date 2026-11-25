@@ -1,0 +1,156 @@
+{
+ "id": "boite-lunch-mineur",
+ "name": "Boîte à lunch de mineur en acier galvanisé, 12 × 4 1/2 × 7 1/4 po",
+ "manufacturer": "Canada Tuff (logo sur la photo)",
+ "category": "Effets personnels du mineur",
+ "serial": "",
+ "document": {
+  "title": "Photo du client avec les cotes hors tout (aucun plan)",
+  "reference": "",
+  "preparedBy": "",
+  "date": "",
+  "sheets": 1,
+  "pagePattern": "pages/{sheet}.webp"
+ },
+ "specs": [
+  [
+   "Source",
+   "Photo du client (P01) : la boîte vue de face, avec ses cotes hors tout écrites dessus — 12\" L × 4 1/2\" W × 7 1/4\" H — et le logo « Canada Tuff — Lifetime Guarantee — 1956 » en filigrane. Aucun plan"
+  ],
+  [
+   "Hors tout",
+   "12 po de long × 4 1/2 po de large × 7 1/4 po de haut (304,8 mm × 114,3 mm × 184,1 mm), cotes écrites sur la photo ; 228 mm de haut avec la poignée levée (relevé)"
+  ],
+  [
+   "Tôle",
+   "Acier galvanisé, 0,6 mm d'épaisseur (calibre 24, supposé), arêtes pliées"
+  ],
+  [
+   "Caisson",
+   "78 mm de haut jusqu'au joint (3 1/8 po). Relevé sur la photo, à l'échelle des 12 po de long (environ 1,83 pixel par millimètre, à 5 % près)"
+  ],
+  [
+   "Couvercle",
+   "106 mm de haut : jupe droite de 64 mm (relevée), pans inclinés devant et derrière de 42 mm de montée (relevée) et 32 mm d'avancée, soit 52° sur l'horizontale ; dessus plat de 50 mm de large (supposé : la photo est prise de face) ; flancs en pentagone"
+  ],
+  [
+   "Contenance",
+   "5,9 L, calculée sur le modèle (caisson 2,7 L, couvercle 3,2 L)"
+  ],
+  [
+   "Poignée",
+   "Tige d'acier chromée de Ø 8 mm (relevé), cintrée : barre du haut de 78 mm à 40 mm au-dessus du couvercle, pieds couchés écartés de 114 mm ; ses bouts tournent dans deux pattes"
+  ],
+  [
+   "Pattes de poignée",
+   "Feuillard nickelé en selle sur la tige, 18 mm × 22 mm, entraxe 146 mm (relevé) ; deux rivets chacune (supposés)"
+  ],
+  [
+   "Fermoirs",
+   "Deux fermoirs à levier nickelés, entraxe 190 mm (relevé) : gâche en ogive de 36 mm × 23 mm sur la jupe du couvercle, platine de 36 mm × 34 mm sur le caisson, levier jusqu'à 41 mm sous le joint ; deux rivets par platine, boucle de fil qui prend le crochet de la gâche. Formes simplifiées d'après la photo"
+  ],
+  [
+   "Rivets du couvercle",
+   "Deux têtes de rivet de Ø 3 mm sur la jupe, à 102 mm du dessous et à 84,5 mm du milieu (relevés) ; ce qu'ils tiennent dedans ne se voit pas"
+  ],
+  [
+   "Charnière",
+   "Charnière continue de 250 mm au dos, nœud de Ø 5 mm, ailes de 12 mm rivetées (supposée : le dos ne se voit pas sur la photo)"
+  ],
+  [
+   "Non modélisé",
+   "Le marquage estampé de la jupe du couvercle (illisible sur la photo), le dedans de la boîte (rien n'en paraît sur la photo), l'ouverture du couvercle"
+  ]
+ ],
+ "weights": [],
+ "sheetTitles": {
+  "P01": "Photo du client : boîte à lunch de face, cotes hors tout"
+ },
+ "root": "P01",
+ "assemblies": {
+  "P01": {
+   "title": "MINER'S LUNCH BOX, GALVANIZED STEEL, 12\" × 4 1/2\" × 7 1/4\"",
+   "titleFr": "Boîte à lunch de mineur en acier galvanisé",
+   "pn": "",
+   "sheets": [
+    "P01"
+   ],
+   "note": "Reconstitution 3D d'après la photo du client (P01), vue de face, et les cotes hors tout écrites dessus : 12 po × 4 1/2 po × 7 1/4 po. Relevé sur la photo, à l'échelle des 12 po de long (environ 1,83 pixel par millimètre, à 5 % près) : hauteur du caisson (78 mm) et de la jupe du couvercle (64 mm), pans inclinés, poignée, pattes, fermoirs et rivets. Supposé : la largeur du dessus plat, l'épaisseur de la tôle, la charnière du dos. En vue éclatée, le couvercle et sa gâche montent, la poignée et ses pattes au-dessus, les fermoirs avancent, la charnière recule ; la coupe proposée passe en travers, par le milieu de la boîte.",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "CAISSON, tôle d'acier galvanisé",
+     {
+      "note": "Fond et quatre côtés, 78 mm de haut."
+     }
+    ],
+    [
+     "2",
+     "",
+     1,
+     "COUVERCLE à pans, tôle d'acier galvanisé",
+     {
+      "note": "Jupe de 64 mm, pans à 52°, dessus plat de 50 mm (supposé)."
+     }
+    ],
+    [
+     "3",
+     "",
+     1,
+     "POIGNÉE, tige d'acier chromée Ø 8 mm",
+     {
+      "note": "Cintrée, 40 mm au-dessus du couvercle."
+     }
+    ],
+    [
+     "4",
+     "",
+     2,
+     "PATTE DE POIGNÉE, feuillard nickelé",
+     {
+      "note": "En selle sur le bout de la poignée, rivetée sur le dessus du couvercle."
+     }
+    ],
+    [
+     "5",
+     "",
+     1,
+     "CHARNIÈRE continue",
+     {
+      "note": "250 mm, au dos (supposée)."
+     }
+    ],
+    [
+     "6",
+     "",
+     2,
+     "FERMOIR À LEVIER, nickelé",
+     {
+      "note": "Platine rivetée sur le caisson, levier et boucle de fil."
+     }
+    ],
+    [
+     "7",
+     "",
+     2,
+     "GÂCHE de fermoir, nickelée",
+     {
+      "note": "Platine en ogive rivetée sur la jupe du couvercle, crochet embouti."
+     }
+    ],
+    [
+     "8",
+     "",
+     2,
+     "RIVET, tête de Ø 3 mm",
+     {
+      "note": "Sur la jupe du couvercle, au-dessus des fermoirs ; fonction non visible."
+     }
+    ]
+   ]
+  }
+ },
+ "documents": []
+}

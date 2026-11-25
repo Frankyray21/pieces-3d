@@ -892,6 +892,19 @@ pièces (numéro, quantité, page du manuel).
   sont écrites par `tools/ruban_cerclage_fiche.mjs` à partir des cotes du
   modèle (`src/models/ruban-cerclage-s5736/index.js`).
 
+- **Boîte à lunch de mineur en acier galvanisé** (`boite-lunch-mineur`) :
+  reconstituée d'après une photo du client (P01, vue de face, logo « Canada
+  Tuff » en filigrane) et les cotes hors tout écrites dessus : 12 po de long ×
+  4 1/2 po de large × 7 1/4 po de haut. Relevé sur la photo, à l'échelle des
+  12 po : caisson de 78 mm, couvercle à jupe droite de 64 mm et pans inclinés
+  devant et derrière, poignée en tige chromée de Ø 8 mm et ses deux pattes en
+  selle, deux fermoirs à levier nickelés (gâche en ogive sur le couvercle,
+  platine, levier et boucle de fil sur le caisson), deux rivets sur la jupe.
+  Supposé : le dessus plat de 50 mm (la photo est prise de face), la tôle de
+  0,6 mm, la charnière continue du dos. Marquage estampé et dedans non
+  modélisés. La fiche est écrite par `tools/boite_lunch_fiche.mjs` à partir
+  des cotes du modèle (`src/models/boite-lunch-mineur/index.js`).
+
 - **Chaudières de 5 gallons : savon de lin, dégraisseur et chaudière coupée**
   (`chaudieres-5-gal`) : le poste de nettoyage des outils, reconstitué d'après
   une photo du client (P01) et sa description, sans plan ni mesure. Une

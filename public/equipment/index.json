@@ -17,6 +17,14 @@
       "status": "3D d'après la page du produit de TIME Limited : blocs de bois de 2 × 3/4 × 3/4 po (cotes publiées) sur lesquels on écrit le métrage dans la boîte à carottes ; les sept blocs de la photo, debout, bois résineux clair scié, cernes propres à chaque bloc ; sac non modélisé"
     },
     {
+      "id": "boite-lunch-mineur",
+      "name": "Boîte à lunch de mineur en acier galvanisé, 12 × 4 1/2 × 7 1/4 po",
+      "manufacturer": "Canada Tuff (logo sur la photo)",
+      "category": "Effets personnels du mineur",
+      "thumbnail": "equipment/boite-lunch-mineur/thumbnail.webp",
+      "status": "3D d'après une photo du client avec les cotes hors tout (12 × 4 1/2 × 7 1/4 po), sans plan : caisson et couvercle à pans en tôle galvanisée, poignée chromée et ses deux pattes, deux fermoirs à levier et leurs gâches, deux rivets ; hauteurs, poignée et fermoirs relevés sur la photo, dessus plat du couvercle et charnière du dos supposés"
+    },
+    {
       "id": "bosch-gll50-20",
       "name": "Niveau laser à lignes croisées Bosch GLL50-20",
       "manufacturer": "Bosch",
