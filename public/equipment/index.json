@@ -1,6 +1,14 @@
 {
   "equipment": [
     {
+      "id": "bac-retention-100l",
+      "name": "Mini bac de rétention 100 L en PEHD jaune, avec caillebotis",
+      "manufacturer": "neatfx (distributeur)",
+      "category": "Rétention des produits chimiques",
+      "thumbnail": "equipment/bac-retention-100l/thumbnail.webp",
+      "status": "3D d'après la page du produit fournie par le client, sans plan : bac à poser en PEHD jaune de 990 × 645 × 145 mm (cotes publiées), lèvre, ceinture et passages au pied relevés sur la photo, épaulement et cuve supposés ; caillebotis amovible noir de 930 × 525 mm ; affiche « MAX 100 LITRES » ajoutée à la demande du client ; vue éclatée en 3 repères"
+    },
+    {
       "id": "blocs-de-bois",
       "name": "Blocs de bois pour boîte à carottes TIME 92-1500, 2 × 3/4 × 3/4 po",
       "manufacturer": "TIME Limited",

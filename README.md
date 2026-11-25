@@ -973,6 +973,20 @@ pièces (numéro, quantité, page du manuel).
   cotes du modèle (`src/models/pistolet-graisse-1142/index.js`), qui contrôle
   aussi que le mécanisme reste monté sur toute la levée.
 
+- **Mini bac de rétention 100 L en PEHD jaune, avec caillebotis**
+  (`bac-retention-100l`) : reconstitué d'après la page du produit fournie par
+  le client (capture de la fiche du distributeur neatfx, sans plan) : photo et
+  choix des deux versions (P01, réf. PF100006F sans caillebotis, PFCP100006F
+  avec caillebotis), description et caractéristiques (P02). Publié : 990 × 645
+  × 145 mm hors tout, caillebotis de 930 × 525 mm, jaune TEIN006 (proche RAL
+  1028), 100 L, charge de 150 kg. Relevés sur la photo : lèvre, ceinture,
+  passages au pied des parois, grille du caillebotis ; épaulement et cuve
+  supposés. Le volume publié (100 L) dépasse celui de l'encombrement publié
+  (92,6 L) : le modèle retient 62 L, écart signalé dans la fiche. Affiche
+  « MAX 100 LITRES » collée sur la ceinture avant, à la demande du client. La
+  fiche est écrite par `tools/bac_retention_fiche.mjs` à partir des cotes du
+  modèle (`src/models/bac-retention-100l/index.js`).
+
 - **Boulon d'ancrage standard TIME 83-52, NW/L 5 pi**
   (`boulon-ancrage-time`) : la pine d'ancrage à laquelle on fixe la foreuse
   au diamant, reconstituée d'après la page du produit de TIME Limited fournie

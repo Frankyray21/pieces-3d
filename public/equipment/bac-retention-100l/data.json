@@ -1,0 +1,103 @@
+{
+ "id": "bac-retention-100l",
+ "name": "Mini bac de rétention 100 L en PEHD jaune, avec caillebotis",
+ "manufacturer": "neatfx (distributeur)",
+ "category": "Rétention des produits chimiques",
+ "serial": "",
+ "document": {
+  "title": "Page du produit fournie par le client (capture de la fiche du distributeur neatfx), aucun plan",
+  "reference": "PFCP100006F",
+  "preparedBy": "",
+  "date": "",
+  "sheets": 2,
+  "pagePattern": "pages/{sheet}.webp"
+ },
+ "specs": [
+  [
+   "Source",
+   "Page du produit fournie par le client (capture de la fiche du distributeur neatfx) : photo du bac avec son caillebotis et choix des deux versions (P01), description et caractéristiques techniques (P02). Les fiches techniques (PDF) et le dessin coté de la galerie n'ont pas pu être consultés : l'intérieur du bac est supposé"
+  ],
+  [
+   "Données publiées",
+   "Mini bac de rétention 100 L en PEHD jaune, à poser, pour produits chimiques corrosifs : 990 × 645 × 145 mm hors tout (L × l × h), caillebotis de 930 × 525 mm (« amovible en PP » dans le texte, « caillebotis PEHD » dans le choix de la version), jaune TEIN006 (proche RAL 1028), volume de rétention de 100 L, capacité de charge (UR) de 150 kg, pour des contenants d'une capacité pouvant atteindre 100 L. Réf. PF100006F sans caillebotis, PFCP100006F avec caillebotis"
+  ],
+  [
+   "Relevé sur la photo",
+   "Relevés sur la photo, par proportion avec la longueur hors tout : lèvre de 18 mm sur tout le pourtour, paroi en retrait de 6 mm sous la lèvre, ceinture pleine de 82 mm de haut jusqu'à la lèvre, passages au pied des parois (4 par côté long, 2 par côté court, 118 mm de large, 82 mm de haut), grille du caillebotis de 30 × 13 alvéoles. Cotes à ±10 % environ (photo en perspective)"
+  ],
+  [
+   "Intérieur (supposé)",
+   "Supposés : ouverture de 940 × 535 mm sous la lèvre (5 mm de jeu autour du caillebotis), épaulement à 108 mm du sol qui porte le caillebotis (dessus du caillebotis à 138 mm, 7 mm sous la lèvre), cuve de 910 × 505 mm sous l'épaulement, fond de 14 mm ; caillebotis de 30 mm d'épaisseur. Parois dessinées pleines (le bac rotomoulé est en fait creux, à paroi de quelques millimètres)"
+  ],
+  [
+   "Volume de rétention",
+   "Le volume publié (100 L) dépasse le volume de l'encombrement publié lui-même (99 × 64,5 × 14,5 cm = 92,6 L) : il ne peut pas être le volume de rétention réel. Dans le modèle, la cuve retient 62 L jusqu'au haut de la lèvre (58 L caillebotis en place). Les « 100 L » semblent désigner la capacité des contenants à poser sur le bac. À vérifier sur la fiche technique avant de s'y fier pour une rétention réglementaire"
+  ],
+  [
+   "Encombrement",
+   "990 × 645 × 145 mm (publié) ; caillebotis 930 × 525 × 30 mm, 3,6 L de matière"
+  ],
+  [
+   "Affiche",
+   "Affiche « MAX 100 LITRES » ajoutée à la demande du client : 300 × 38 mm, texte noir sur fond blanc à cadre rouge, collée au milieu de la ceinture, côté long avant. Elle reprend la capacité publiée (100 L) ; ce n'est pas une pièce du fabricant"
+  ],
+  [
+   "Non modélisé",
+   "Paroi creuse du bac rotomoulé, renforts sous le caillebotis, marquages moulés, contenants (bidons de la galerie)"
+  ],
+  [
+   "À confirmer",
+   "Volume de rétention réel, forme intérieure (épaulement ou plots sous le caillebotis), épaisseur et grille du caillebotis, nombre et taille des passages au pied"
+  ]
+ ],
+ "weights": [],
+ "sheetTitles": {
+  "P01": "Page du produit fournie par le client : photo du bac avec caillebotis et choix des deux versions (PF100006F, PFCP100006F)",
+  "P02": "Page du produit : description et caractéristiques techniques publiées"
+ },
+ "root": "P01",
+ "assemblies": {
+  "P01": {
+   "title": "MINI SPILL PALLET 100 L, HDPE, WITH GRATING",
+   "titleFr": "Mini bac de rétention 100 L à poser, PEHD jaune, avec caillebotis",
+   "pn": "PFCP100006F",
+   "sheets": [
+    "P01",
+    "P02"
+   ],
+   "note": "Reconstitution 3D d'après la page du produit fournie par le client (photo, P01, et caractéristiques, P02), sans plan : les cotes hors tout et celles du caillebotis sont publiées, la lèvre, la ceinture, les passages au pied et la grille sont relevés sur la photo, l'intérieur (épaulement et cuve) est supposé. La coupe par le milieu montre le caillebotis posé sur l'épaulement. L'affiche « MAX 100 LITRES » est ajoutée à la demande du client. Attention : le volume publié de 100 L dépasse l'encombrement du bac (92,6 L) ; le modèle retient 62 L. Pour faire mieux : la fiche technique du bac (PDF du distributeur) ou le bac mesuré au ruban.",
+   "parts": [
+    [
+     "1",
+     "PF100006F",
+     1,
+     "BAC DE RÉTENTION 100 L à poser, PEHD jaune, sans caillebotis",
+     {
+      "note": "990 × 645 × 145 mm hors tout, jaune TEIN006 (proche RAL 1028) ; lèvre, ceinture et passages au pied relevés sur la photo ; épaulement et cuve supposés. Charge admissible publiée : 150 kg. Retient 62 L dans le modèle (100 L publiés : voir « Volume de rétention »). Réf. du bac vendu seul."
+     }
+    ],
+    [
+     "2",
+     "",
+     1,
+     "CAILLEBOTIS amovible, 930 × 525 mm, noir",
+     {
+      "pseudo": true,
+      "note": "Cotes publiées ; 30 mm d'épaisseur et grille de 30 × 13 alvéoles relevées sur la photo. Posé sur l'épaulement, dessus à 7 mm sous la lèvre : les contenants restent au-dessus d'un éventuel déversement. En PP (texte) ou PEHD (choix de la version). Vendu avec le bac sous la réf. PFCP100006F (bac avec caillebotis) ; pas de réf. seule publiée."
+     }
+    ],
+    [
+     "3",
+     "",
+     1,
+     "AFFICHE « MAX 100 LITRES »",
+     {
+      "pseudo": true,
+      "note": "300 × 38 mm, collée au milieu de la ceinture, côté long avant. Ajoutée à la demande du client : ne figure pas sur la fiche du produit."
+     }
+    ]
+   ]
+  }
+ },
+ "documents": []
+}
