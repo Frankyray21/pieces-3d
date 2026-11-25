@@ -400,7 +400,7 @@
      {
       "link": "P023",
       "pseudo": true,
-      "no3d": true
+      "note": "En 3D : l'arrêt d'urgence à câble seulement (interrupteur Telemecanique XY2-CH sur son support, câble tendu le long du flanc du mât jusqu'à la plaque d'attache avant). Le garde-corps grillagé n'est pas monté (retiré du modèle à la demande de l'utilisateur)."
      }
     ],
     [
@@ -425,7 +425,7 @@
      }
     ]
    ],
-   "note": "Avance à 0° (horizontale) comme sur la page 1.01. Garde-corps grillagé (page 1.13) et vérin d'avance supérieur (pages 1.12 et 1.15) retirés du modèle 3D à la demande de l'utilisateur ; le vérin d'avance UM-064-100Z (page 1.11) est dans la poutre. Treuil de câble posé sur l'arrière du traîneau, capot en position haute comme à la page 1.01 (volant sous la poutre) ; vérins de bascule de la chape des longerons à la patte avant du support d'avance, vérin de relevage couché dans le support, sous la poutre ; jambes et attelage non posés (page 1.01). Les sous-ensembles qui ont leur liste ouvrent leur page (dessins du manuel)."
+   "note": "Avance à 0° (horizontale) comme sur la page 1.01. Garde-corps grillagé (page 1.13) et vérin d'avance supérieur (pages 1.12 et 1.15) retirés du modèle 3D à la demande de l'utilisateur ; de la page 1.13, seul l'arrêt d'urgence à câble (page 1.13.2) est posé, sur le flanc −Z du mât ; le vérin d'avance UM-064-100Z (page 1.11) est dans la poutre. Treuil de câble posé sur l'arrière du traîneau, capot en position haute comme à la page 1.01 (volant sous la poutre) ; vérins de bascule de la chape des longerons à la patte avant du support d'avance, vérin de relevage couché dans le support, sous la poutre ; jambes et attelage non posés (page 1.01). Les sous-ensembles qui ont leur liste ouvrent leur page (dessins du manuel)."
   },
   "P011": {
    "title": "Frame",
@@ -1731,73 +1731,121 @@
      "1",
      "UM-102-1860AA",
      1,
-     "SAFETY SWITCH"
+     "SAFETY SWITCH",
+     {
+      "note": "Interrupteur du garde-corps UM-102-1860AA (détail de la page 1.13.2) : il se monte avec le garde-corps grillagé, non monté en 3D.",
+      "no3d": true
+     }
     ],
     [
      "2",
      "UM-064-1201GG",
      1,
-     "GUARD"
+     "GUARD",
+     {
+      "note": "Garde-corps grillagé non monté en 3D (retiré du modèle à la demande de l'utilisateur) : seul l'arrêt d'urgence à câble est posé sur le mât.",
+      "no3d": true
+     }
     ],
     [
      "3",
      "UM-064-1202GG",
      1,
-     "FRONT BRACKET"
+     "FRONT BRACKET",
+     {
+      "note": "Garde-corps grillagé non monté en 3D (retiré du modèle à la demande de l'utilisateur) : seul l'arrêt d'urgence à câble est posé sur le mât.",
+      "no3d": true
+     }
     ],
     [
      "4",
      "UM-064-1203GG",
      1,
-     "REAR BRACKET"
+     "REAR BRACKET",
+     {
+      "note": "Garde-corps grillagé non monté en 3D (retiré du modèle à la demande de l'utilisateur) : seul l'arrêt d'urgence à câble est posé sur le mât.",
+      "no3d": true
+     }
     ],
     [
      "5",
      "UM-064-1204GG",
      1,
-     "MAIN TUBE"
+     "MAIN TUBE",
+     {
+      "note": "Garde-corps grillagé non monté en 3D (retiré du modèle à la demande de l'utilisateur) : seul l'arrêt d'urgence à câble est posé sur le mât.",
+      "no3d": true
+     }
     ],
     [
      "6",
      "UM-064-1206GG",
      1,
-     "ADJUSTMENT BOLT"
+     "ADJUSTMENT BOLT",
+     {
+      "note": "Garde-corps grillagé non monté en 3D (retiré du modèle à la demande de l'utilisateur) : seul l'arrêt d'urgence à câble est posé sur le mât.",
+      "no3d": true
+     }
     ],
     [
      "7",
      "UM-064-1219G",
      1,
-     "SPACER"
+     "SPACER",
+     {
+      "note": "Garde-corps grillagé non monté en 3D (retiré du modèle à la demande de l'utilisateur) : seul l'arrêt d'urgence à câble est posé sur le mât.",
+      "no3d": true
+     }
     ],
     [
      "8",
      "W750",
      6,
-     "FLAT WASHER 3/4"
+     "FLAT WASHER 3/4",
+     {
+      "note": "Garde-corps grillagé non monté en 3D (retiré du modèle à la demande de l'utilisateur) : seul l'arrêt d'urgence à câble est posé sur le mât.",
+      "no3d": true
+     }
     ],
     [
      "9",
      "B750-6000",
      2,
-     "BOLT 3/4-UNC x 6\""
+     "BOLT 3/4-UNC x 6\"",
+     {
+      "note": "Garde-corps grillagé non monté en 3D (retiré du modèle à la demande de l'utilisateur) : seul l'arrêt d'urgence à câble est posé sur le mât.",
+      "no3d": true
+     }
     ],
     [
      "10",
      "UM-064-1202G",
      1,
-     "SIDE BRACKET"
+     "SIDE BRACKET",
+     {
+      "note": "Garde-corps grillagé non monté en 3D (retiré du modèle à la demande de l'utilisateur) : seul l'arrêt d'urgence à câble est posé sur le mât.",
+      "no3d": true
+     }
     ],
     [
      "11",
      "UM-064-1223G",
      1,
-     "SPECIAL WASHER"
+     "SPECIAL WASHER",
+     {
+      "note": "Garde-corps grillagé non monté en 3D (retiré du modèle à la demande de l'utilisateur) : seul l'arrêt d'urgence à câble est posé sur le mât.",
+      "no3d": true
+     }
     ],
     [
      "12",
      "UM-038-101A",
      1,
-     "SPRING"
+     "SPRING",
+     {
+      "note": "Garde-corps grillagé non monté en 3D (retiré du modèle à la demande de l'utilisateur) : seul l'arrêt d'urgence à câble est posé sur le mât.",
+      "no3d": true
+     }
     ],
     [
      "13",
@@ -1809,27 +1857,43 @@
      "14",
      "UM-064-1300SS",
      1,
-     "ASSEMBLY FOR EMERGENCY STOP CONTROL BOX AND SWITCH, PULL CORD"
+     "ASSEMBLY FOR EMERGENCY STOP CONTROL BOX AND SWITCH, PULL CORD",
+     {
+      "link": "P025"
+     }
     ],
     [
      "15",
      "LN750NC",
      2,
-     "LOCK NUT 3/4-UNC"
+     "LOCK NUT 3/4-UNC",
+     {
+      "note": "Garde-corps grillagé non monté en 3D (retiré du modèle à la demande de l'utilisateur) : seul l'arrêt d'urgence à câble est posé sur le mât.",
+      "no3d": true
+     }
     ],
     [
      "16",
      "B750-3000",
      2,
-     "BOLT 3/4\"-UNC x 3\""
+     "BOLT 3/4\"-UNC x 3\"",
+     {
+      "note": "Garde-corps grillagé non monté en 3D (retiré du modèle à la demande de l'utilisateur) : seul l'arrêt d'urgence à câble est posé sur le mât.",
+      "no3d": true
+     }
     ],
     [
      "17",
      "UM-064-1350S",
      1,
-     "CHAIN 3-16"
+     "CHAIN 3-16",
+     {
+      "note": "Garde-corps grillagé non monté en 3D (retiré du modèle à la demande de l'utilisateur) : seul l'arrêt d'urgence à câble est posé sur le mât.",
+      "no3d": true
+     }
     ]
-   ]
+   ],
+   "note": "En 3D : l'arrêt d'urgence à câble seulement, à sa place sur le flanc −Z du mât (côté console) : plaque d'attache UM-064-960G à l'avant, câble UM-064-925G tendu sur la longueur du mât, interrupteur XY2-CH sur son support à l'arrière. Le garde-corps grillagé, son interrupteur de porte et sa visserie ne sont pas montés (retirés du modèle à la demande de l'utilisateur)."
   },
   "P024": {
    "title": "Control box for safety switch",
@@ -1925,57 +1989,94 @@
      "9",
      "UM-102-1862A",
      1,
-     "SAFETY SWITCH HANDLE"
+     "SAFETY SWITCH HANDLE",
+     {
+      "note": "Interrupteur du garde-corps UM-102-1860AA (détail de la page 1.13.2) : il se monte avec le garde-corps grillagé, non monté en 3D.",
+      "no3d": true
+     }
     ],
     [
      "10",
      "XCS-ZR5902 NUT",
      2,
-     "SAFETY SWITCH NUT"
+     "SAFETY SWITCH NUT",
+     {
+      "note": "Interrupteur du garde-corps UM-102-1860AA (détail de la page 1.13.2) : il se monte avec le garde-corps grillagé, non monté en 3D.",
+      "no3d": true
+     }
     ],
     [
      "11",
      "XCS-ZR5902",
      1,
-     "SAFETY SWITCH (EMITTER)"
+     "SAFETY SWITCH (EMITTER)",
+     {
+      "note": "Interrupteur du garde-corps UM-102-1860AA (détail de la page 1.13.2) : il se monte avec le garde-corps grillagé, non monté en 3D.",
+      "no3d": true
+     }
     ],
     [
      "12",
      "UM-102-1861A",
      1,
-     "SAFETY SWITCH SOCKET"
+     "SAFETY SWITCH SOCKET",
+     {
+      "note": "Interrupteur du garde-corps UM-102-1860AA (détail de la page 1.13.2) : il se monte avec le garde-corps grillagé, non monté en 3D.",
+      "no3d": true
+     }
     ],
     [
      "13",
      "XCS-ZR1",
      1,
-     "SAFETY SWITCH (RECEPTOR)"
+     "SAFETY SWITCH (RECEPTOR)",
+     {
+      "note": "Interrupteur du garde-corps UM-102-1860AA (détail de la page 1.13.2) : il se monte avec le garde-corps grillagé, non monté en 3D.",
+      "no3d": true
+     }
     ],
     [
      "14",
      "NC375",
      1,
-     "NUT 3/8-UNC"
+     "NUT 3/8-UNC",
+     {
+      "note": "Interrupteur du garde-corps UM-102-1860AA (détail de la page 1.13.2) : il se monte avec le garde-corps grillagé, non monté en 3D.",
+      "no3d": true
+     }
     ],
     [
      "15",
      "B375-1500",
      1,
-     "BOLT 3/8 -16 NC X 1 1/2"
+     "BOLT 3/8 -16 NC X 1 1/2",
+     {
+      "note": "Interrupteur du garde-corps UM-102-1860AA (détail de la page 1.13.2) : il se monte avec le garde-corps grillagé, non monté en 3D.",
+      "no3d": true
+     }
     ],
     [
      "16",
      "8487A15",
      1,
-     "SPRING PLUNGER 1/4\""
+     "SPRING PLUNGER 1/4\"",
+     {
+      "note": "Interrupteur du garde-corps UM-102-1860AA (détail de la page 1.13.2) : il se monte avec le garde-corps grillagé, non monté en 3D.",
+      "no3d": true
+     }
     ],
     [
      "17",
      "3-16 link",
      9,
-     "CHAIN 3/16 LINK"
+     "CHAIN 3/16 LINK",
+     {
+      "note": "Interrupteur du garde-corps UM-102-1860AA (détail de la page 1.13.2) : il se monte avec le garde-corps grillagé, non monté en 3D.",
+      "no3d": true
+     }
     ]
-   ]
+   ],
+   "note": "Interrupteur d'arrêt d'urgence à câble Telemecanique (Schneider Electric) XY2-CH, « H7 » sur l'étiquette (référence actuelle probable : XY2CH13250H7) : corps jaune, couvercle bleu, bouton de réarmement et deux fenêtres (tension du câble, état des contacts : vert réarmé, jaune déclenché). Posé sur son support UM-064-907GG au bout arrière du flanc −Z du mât, œil tourné vers l'avant ; câble UM-064-925G tendu jusqu'à la plaque UM-064-960G près du pied. Presse-étoupe TSRC10 et raccords 2404-8-8 et 5406-12-8 au bout arrière. L'interrupteur du garde-corps (UM-102-1860AA, en bas de la page) n'est pas monté."
   },
   "P027": {
    "title": "Drill rotative platform",

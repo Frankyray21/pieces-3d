@@ -115,6 +115,7 @@ LINKS = {
              'UM-064-300Z': 'P019', 'UM-064-351D': 'P020', 'UM-064-800B': 'P014', 'UM-079-100A-12': 'P032',
              'UM-064-100Z': 'P021'},
     'P013': {'UM-064-1000DD': 'P015', 'UM-064-180C_R1': 'P017', 'UM-064-200C': 'P016'},
+    'P023': {'UM-064-1300SS': 'P025'},
     'P042': {},
     'P048': {'UM-012-142': 'P052'},
     'P068': {'FMX-005-300TD': 'P072', 'UM-064-STM-1500-600V': 'P069', 'UM-064-102P-N': 'P071', 'UM-064-1601RM': 'P030'},
@@ -140,9 +141,11 @@ PSEUDO = {
 }
 NOTES = {
     'P002': "Prêt à forer, disposé d'après le plan de l'atelier : foreuse à gauche, inclinée vers le trou ; console STM à droite de la foreuse, à plus de 3 m (3,3 m), commandes tournées vers l'opérateur qui se tient entre la console et le groupe et regarde la foreuse par-dessus la console ; groupe hydraulique en haut à droite, à plus de 3 m (5,5 m), raccords au bout tourné vers la console, interrupteur principal accessible du côté bas. Boyaux branchés au sol : groupe → console (pression, retour, drain) ; console → tête (rotation A et B), bloc du traîneau (avance, vérins) et eau vers l'émerillon (par-dessus le moteur de la tête), chaque boyau dans sa voie. Seul le matériel du manuel est en 3D.",
-    'P010': "Avance à 0° (horizontale) comme sur la page 1.01. Garde-corps grillagé (page 1.13) et vérin d'avance supérieur (pages 1.12 et 1.15) retirés du modèle 3D à la demande de l'utilisateur ; le vérin d'avance UM-064-100Z (page 1.11) est dans la poutre. Treuil de câble posé sur l'arrière du traîneau, capot en position haute comme à la page 1.01 (volant sous la poutre) ; vérins de bascule de la chape des longerons à la patte avant du support d'avance, vérin de relevage couché dans le support, sous la poutre ; jambes et attelage non posés (page 1.01). Les sous-ensembles qui ont leur liste ouvrent leur page (dessins du manuel).",
+    'P010': "Avance à 0° (horizontale) comme sur la page 1.01. Garde-corps grillagé (page 1.13) et vérin d'avance supérieur (pages 1.12 et 1.15) retirés du modèle 3D à la demande de l'utilisateur ; de la page 1.13, seul l'arrêt d'urgence à câble (page 1.13.2) est posé, sur le flanc −Z du mât ; le vérin d'avance UM-064-100Z (page 1.11) est dans la poutre. Treuil de câble posé sur l'arrière du traîneau, capot en position haute comme à la page 1.01 (volant sous la poutre) ; vérins de bascule de la chape des longerons à la patte avant du support d'avance, vérin de relevage couché dans le support, sous la poutre ; jambes et attelage non posés (page 1.01). Les sous-ensembles qui ont leur liste ouvrent leur page (dessins du manuel).",
     'P068': "Groupe posé sur ses patins : roues, moyeux et timon (options, pages 3.01 et 3.2) ne sont pas montés en 3D.",
     'P012': "Liste de débit (matériaux, longueur et largeur en pouces).",
+    'P023': "En 3D : l'arrêt d'urgence à câble seulement, à sa place sur le flanc −Z du mât (côté console) : plaque d'attache UM-064-960G à l'avant, câble UM-064-925G tendu sur la longueur du mât, interrupteur XY2-CH sur son support à l'arrière. Le garde-corps grillagé, son interrupteur de porte et sa visserie ne sont pas montés (retirés du modèle à la demande de l'utilisateur).",
+    'P025': "Interrupteur d'arrêt d'urgence à câble Telemecanique (Schneider Electric) XY2-CH, « H7 » sur l'étiquette (référence actuelle probable : XY2CH13250H7) : corps jaune, couvercle bleu, bouton de réarmement et deux fenêtres (tension du câble, état des contacts : vert réarmé, jaune déclenché). Posé sur son support UM-064-907GG au bout arrière du flanc −Z du mât, œil tourné vers l'avant ; câble UM-064-925G tendu jusqu'à la plaque UM-064-960G près du pied. Presse-étoupe TSRC10 et raccords 2404-8-8 et 5406-12-8 au bout arrière. L'interrupteur du garde-corps (UM-102-1860AA, en bas de la page) n'est pas monté.",
     'P029': "Le manuel donne deux assemblages : UM-106-100AA-SC (surface compacte) et UM-106-10011-UG (sous terre compacte) ; dessin UM-106-100AAA. La foreuse étant souterraine, c'est le second qui est retenu.",
     'P042': "Treuil en position haute (page 8.0 : 642 mm hors tout), câble enroulé sur le tambour. Les listes des pages 8.1 à 8.4 valent pour les versions gauche et droite (UM-032-100A_L et _R) : une machine porte un tambour, une transmission par chaîne 80 et un moteur White ; côté transmissions comme sur la foreuse (page 1.01). Le cadre « option underground » de la page 8.0 (hors liste) n'est pas monté.",
 }
@@ -179,7 +182,25 @@ GROUPS = {
                              'UM-041-176F', 'UM-041-174F', 'CTP-125-2250']},
 }
 # Renvois d'étape dont l'assemblage a sa 3D (inséré dans le treuil complet).
-PSEUDO_3D = {'P039', 'P040', 'P041', 'P049', 'P079'}
+PSEUDO_3D = {'P023', 'P039', 'P040', 'P041', 'P049', 'P079'}
+# Arrêt d'urgence à câble (pages 1.13 et 1.13.2) : seul l'interrupteur XY2-CH, son support, son câble et la plaque
+# d'attache sont en 3D ; le garde-corps grillagé et son interrupteur de porte (UM-102-1860AA) ne sont pas montés.
+GUARD_NOTE = ("Garde-corps grillagé non monté en 3D (retiré du modèle à la demande de l'utilisateur) : "
+              "seul l'arrêt d'urgence à câble est posé sur le mât.")
+GUARD_SWITCH_NOTE = ("Interrupteur du garde-corps UM-102-1860AA (détail de la page 1.13.2) : il se monte avec le "
+                     "garde-corps grillagé, non monté en 3D.")
+NO3D_ROWS = {
+    'P023': {pn: GUARD_NOTE for pn in ('UM-064-1201GG', 'UM-064-1202GG', 'UM-064-1203GG', 'UM-064-1204GG', 'UM-064-1206GG',
+                                       'UM-064-1219G', 'W750', 'B750-6000', 'UM-064-1202G', 'UM-064-1223G', 'UM-038-101A',
+                                       'LN750NC', 'B750-3000', 'UM-064-1350S')} | {'UM-102-1860AA': GUARD_SWITCH_NOTE},
+    'P025': {pn: GUARD_SWITCH_NOTE for pn in ('UM-102-1862A', 'XCS-ZR5902 NUT', 'XCS-ZR5902', 'UM-102-1861A', 'XCS-ZR1',
+                                              'NC375', 'B375-1500', '8487A15', '3-16 link')},
+}
+PSEUDO_NOTES = {
+    ('P010', 'P023'): ("En 3D : l'arrêt d'urgence à câble seulement (interrupteur Telemecanique XY2-CH sur son support, "
+                       "câble tendu le long du flanc du mât jusqu'à la plaque d'attache avant). Le garde-corps grillagé "
+                       "n'est pas monté (retiré du modèle à la demande de l'utilisateur)."),
+}
 
 # ------------------------------------------------------------------ transcriptions à la main
 HAND = {
@@ -406,6 +427,9 @@ for aid, (title, fr, pn, sheets) in ASM.items():
             extra['note'] = 'Option non montée (groupe posé sur ses patins).'
             extra['no3d'] = True
             extra.pop('link', None)
+        if r['pn'] in NO3D_ROWS.get(aid, {}):
+            extra['note'] = NO3D_ROWS[aid][r['pn']]
+            extra['no3d'] = True
         if (aid, r['pn']) in NOT_DRAWN:
             extra['note'] = 'Non dessiné sur les pages de la console (4.1 à 4.4) : pas de 3D.'
             extra['no3d'] = True
@@ -425,7 +449,8 @@ for aid, (title, fr, pn, sheets) in ASM.items():
             row[4]['group'] = [rmap[m] for m in members]
     for j, (ppn, q, desc, link) in enumerate(PSEUDO.get(aid, []), len(out) + 1):
         no3d = link not in PSEUDO_3D and ('OPTION' in desc or q is None)
-        out.append([str(j), ppn, q, desc, {'link': link, 'pseudo': True, **({'no3d': True} if no3d else {})}])
+        note = PSEUDO_NOTES.get((aid, link))
+        out.append([str(j), ppn, q, desc, {'link': link, 'pseudo': True, **({'no3d': True} if no3d else {}), **({'note': note} if note else {})}])
         rmap.setdefault(ppn, str(j))
     a = {'title': title, 'titleFr': fr, 'pn': pn, 'sheets': sheets, 'parts': out}
     if aid in NOTES:

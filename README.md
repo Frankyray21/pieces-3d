@@ -426,8 +426,14 @@ pièces (numéro, quantité, page du manuel).
   au bout de la broche, treuil de câble posé sur le traîneau au bout arrière,
   sous la poutre, avec son câble passé par le guide-câble et la poulie double
   jusqu'au guide de tiges, boyaux des vérins (avance, bascule, relevage) et du
-  moteur du treuil sur les blocs de raccords des longerons ; sans le
-  garde-corps ni le vérin supérieur ; mandrin rouge), le treuil de câble
+  moteur du treuil sur les blocs de raccords des longerons ; arrêt d'urgence à
+  câble sur le flanc −Z du mât ; sans le garde-corps grillagé ni le vérin
+  supérieur ; mandrin rouge), l'arrêt d'urgence à câble (P023 et P025,
+  `src/models/stm-1500/estop.js` : interrupteur Telemecanique XY2-CH sur son
+  support UM-064-907GG au bout arrière du mât, câble UM-064-925G tendu sur la
+  longueur du mât jusqu'à la plaque UM-064-960G près du pied, presse-étoupe
+  et raccords ; le garde-corps et son interrupteur de porte ne sont pas
+  montés), le treuil de câble
   10 000 pi (P042 et ses étapes P039 à P041 : bâti, tambour à flasques et câble
   enroulé, paliers, transmission par chaîne 80 depuis le moteur White, capots,
   vis-mère et guide-câble à rouleaux, chaîne 35, volant, bras réglables ; une

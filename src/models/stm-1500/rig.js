@@ -117,7 +117,7 @@ function trancannage(angle) {
 /** Pièces entières rattachées à un corps : assemblage, numéros de pièce, corps. */
 export const RULES = [
   ['P010', ['FBRA-002-600BB'], 'Support'],
-  ['P010', ['FBRA-002-300BB', 'FBRA-002-305BB', 'UM-079-100A-12', 'UM-064-800B'], 'Mat'],
+  ['P010', ['FBRA-002-300BB', 'FBRA-002-305BB', 'UM-079-100A-12', 'UM-064-800B', 'UM-064-1200GG'], 'Mat'],
   ['P010', ['UM-064-200C'], 'Rallonge'],
   ['P010', ['FBRA-002-400HH'], 'Treuil'],
   ['P010', ['UM-064-200DS'], 'Table'],

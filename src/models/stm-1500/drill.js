@@ -28,8 +28,8 @@
 // couche extérieure du tambour, rouleaux du guide-câble, presque à plat sous la poutre jusqu'au réa bas de la
 // poulie, réa haut, rouleau du guide de tiges. Boyaux : console → raccords avant des deux sélecteurs ; sélecteur
 // gauche → vannes de l'avance (tiges creuses du vérin d'avance) et moteur White du treuil ; sélecteur droit → blocs
-// YEJ des vérins de bascule (le second branchement d'un vérin à l'autre) et du vérin de relevage. Sans le
-// garde-corps grillagé (P023) ni le vérin supérieur (P022, P028). Tout en rouge comme le groupe hydraulique, vérins
+// YEJ des vérins de bascule (le second branchement d'un vérin à l'autre) et du vérin de relevage. Arrêt d'urgence à
+// câble (P023, P025, estop.js) sur le flanc −Z du mât ; sans le garde-corps grillagé ni le vérin supérieur (P022, P028). Tout en rouge comme le groupe hydraulique, vérins
 // et moteurs hydrauliques noirs. Repère : layout.js.
 import { lister, each, entretien, SLED, AXIS_Y, BEAM, PIVOT, FOOT_X } from './layout.js';
 import { SPY, HEAD_PORTS as HEAD_LOCAL, HEAD_PORT_N } from './head.js';
@@ -867,6 +867,10 @@ export function P010(api) {
     skin(tube(wire.pts, 0.004, 'darkSteel', { seg: wire.pts.length, tension: 0.5 }), 'Cable', 'Rallonge', wire.free),
     body('Rallonge', at(cyl(0.007, 0.016, 'darkSteel', { axis: 'y', seg: 12 }), [wire.tip[0], wire.tip[1] - 0.008, 0])),
   ));
+
+  // 19 — Arrêt d'urgence à câble (page 1.13, détail 1.13.2) sur le flanc −Z du mât : interrupteur XY2-CH à l'arrière,
+  // câble tendu jusqu'à la plaque d'attache près du pied. Le garde-corps grillagé n'est pas monté.
+  P('UM-064-1200GG', api.sub('P023'), [0, 0, -0.5]);
 
   // Boyaux de la foreuse, des sélecteurs DF10 aux appareils (les raccords sont décrits avec leurs pièces).
   const [l0, l1] = [0, 1].map((k) => dfZ(-1, k)), [r0, r1] = [0, 1].map((k) => dfZ(1, k));
