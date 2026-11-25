@@ -23,7 +23,7 @@
   ],
   [
    "Usage",
-   "Rack de transport et d'entreposage des boîtes à carottes pleines : on les empile couchées sur la plate-forme, entre les arceaux, et on déplace le tout par les passages de fourche"
+   "Rack de transport et d'entreposage des boîtes à carottes pleines : on les empile couchées sur la plate-forme, entre les arceaux, et on déplace le tout par les deux passages de fourche, en travers des boîtes"
   ],
   [
    "Encombrement",
@@ -35,15 +35,15 @@
   ],
   [
    "Empilement",
-   "5 colonnes de 8 boîtes, soit 40 boîtes, couchées en travers, bouts vers le côté des fourches, colonnes décalées l'une de l'autre (jusqu'à 45 mm) comme sur la photo. Il entre 5 boîtes de large et jusqu'à 8 de haut (donnés par le client) : le modèle montre le rack plein, la photo 4 boîtes de haut. Pile pleine : 528 mm de haut (couvercles compris), sous le dessus des arceaux"
+   "5 colonnes de 8 boîtes, soit 40 boîtes, couchées côte à côte, colonnes décalées l'une de l'autre (jusqu'à 45 mm) comme sur la photo. Il entre 5 boîtes de large et jusqu'à 8 de haut (donnés par le client) : le modèle montre le rack plein, la photo 4 boîtes de haut. Pile pleine : 528 mm de haut (couvercles compris), sous le dessus des arceaux"
   ],
   [
    "Plate-forme",
-   "Pâle sur la photo. 1,19 m × 1,60 m, dessus à 157 mm du sol. Supposé : cadre de tube de 2 po × 3 po, deux traverses, tôle de 3/16 po"
+   "Bleue comme les arceaux : le rack est bleu au complet (précision du client). 1,19 m × 1,60 m, dessus à 157 mm du sol. Supposé : cadre de tube de 2 po × 3 po, deux traverses, tôle de 3/16 po"
   ],
   [
    "Passages de fourche",
-   "3, sous la plate-forme, le long des boîtes, un sous une colonne sur deux, à 414 mm d'entraxe : deux sont visibles sur la photo, le troisième est supposé par symétrie. Supposé aussi : tube de 7 po × 3 po"
+   "2, sous la plate-forme, en travers des boîtes, d'un côté à l'autre du rack (donnés par le client). Supposés : l'entraxe de 800 mm, le tube de 7 po × 3 po"
   ],
   [
    "Arceaux",
@@ -69,7 +69,7 @@
     "P01",
     "P02"
    ],
-   "note": "Reconstitution 3D d'après une photo du client (P01), qui ne montre qu'une portion du rack. Rack de transport et d'entreposage des boîtes à carottes pleines : on les empile couchées sur la plate-forme, entre les arceaux, et on déplace le tout par les passages de fourche. Échelle : la boîte à carottes de 1,50 m (donnée par le client) ; les autres cotes sont relevées sur la photo à cette échelle ou supposées (voir la fiche et P02). Largeur et hauteur de la boîte supposées. En vue éclatée, la pile monte et les couvercles se soulèvent.",
+   "note": "Reconstitution 3D d'après une photo du client (P01), qui ne montre qu'une portion du rack. Rack de transport et d'entreposage des boîtes à carottes pleines : on les empile couchées sur la plate-forme, entre les arceaux, et on déplace le tout par les deux passages de fourche, en travers des boîtes. Échelle : la boîte à carottes de 1,50 m (donnée par le client) ; les autres cotes sont relevées sur la photo à cette échelle ou supposées (voir la fiche et P02). Largeur et hauteur de la boîte supposées. En vue éclatée, la pile monte et les couvercles se soulèvent.",
    "parts": [
     [
      "1",
@@ -83,10 +83,10 @@
     [
      "2",
      "",
-     3,
+     2,
      "PASSAGE DE FOURCHE",
      {
-      "note": "Sous la plate-forme, le long des boîtes, à 414 mm d'entraxe ; deux visibles sur la photo, le troisième supposé. Tube de 7 po × 3 po supposé."
+      "note": "Sous la plate-forme, en travers des boîtes, 1,19 m de long (2, donnés par le client). Entraxe de 800 mm et tube de 7 po × 3 po supposés."
      }
     ],
     [

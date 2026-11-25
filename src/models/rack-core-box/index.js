@@ -11,20 +11,21 @@
 // les côtés ne sont pas continus.
 //
 // Relevé sur la photo, à cette échelle (à ± 10 % environ) : les boîtes sont
-// couchées en travers, bouts vers le côté des fourches, en colonnes côte à
+// couchées en travers, en colonnes côte à
 // côte entre les arceaux ; les colonnes visibles ont quatre boîtes et sont
-// décalées d'une colonne à l'autre ; plate-forme pâle, arceaux bleus d'environ
-// 0,5 m de large, passages de fourche sous la plate-forme (deux sont visibles,
-// sous la première et la troisième colonne).
+// décalées d'une colonne à l'autre ; arceaux bleus d'environ 0,5 m de large.
+// Précisé par le client (2026-11-25) : le rack est bleu au complet (plate-forme
+// comprise) ; deux passages de fourche, en travers des boîtes (d'un côté à
+// l'autre du rack, sous les arceaux).
 //
 // Boîte : celle de la table à carottes de la visite (donnée par le client le
 // 2026-11-25). Supposé : les sections des tubes, l'épaisseur de la tôle, le sens de la
-// diagonale des arceaux que la photo ne montre pas en entier, le troisième
-// passage de fourche (sous la cinquième colonne, par symétrie).
+// diagonale des arceaux que la photo ne montre pas en entier, l'entraxe et la
+// section des passages de fourche.
 //
 // Repère : X dans la largeur du rack (d'un côté à l'autre), Y vers le haut
 // (sol à 0), Z le long des boîtes, +Z du côté des bouts de boîtes visibles sur
-// la photo (côté des fourches). Cotes en millimètres, modèle en mètres.
+// la photo. Cotes en millimètres, modèle en mètres.
 import * as THREE from 'three';
 
 const MM = 0.001;
@@ -63,11 +64,11 @@ export const BASE = {
   tole: 3 / 16 * IN,
 };
 /**
- * Passages de fourche sous la plate-forme, le long des boîtes : un sous une colonne sur deux
- * (relevé sur la photo pour les deux premiers ; le troisième et la section sont supposés).
+ * Passages de fourche sous la plate-forme : deux, en travers des boîtes (le long de X), donnés par le client
+ * (2026-11-25 : « les trous des fourches sont dans l'autre sens, pas 3 mais 2 »). Entraxe et section supposés.
  */
-export const FOURCHE = { large: 7 * IN, haut: 3 * IN, paroi: 3 / 16 * IN, entraxe: 2 * (BOITE.large + PILE.jeu), nombre: 3 };
-/** Abscisses des passages de fourche (mm), rack centré. */
+export const FOURCHE = { large: 7 * IN, haut: 3 * IN, paroi: 3 / 16 * IN, entraxe: 800, nombre: 2 };
+/** Positions en Z des passages de fourche (mm), rack centré. */
 export const passages = () => Array.from({ length: FOURCHE.nombre }, (_, i) => (i - (FOURCHE.nombre - 1) / 2) * FOURCHE.entraxe);
 /** Arceaux : hauteur au-dessus de la tôle et largeur hors tout, le long des boîtes (relevées sur la photo) ; deux par côté. */
 export const CADRE = { haut: 800, large: 500, parCote: 2 };
@@ -129,12 +130,14 @@ function plateForme(S, matiere) {
   return g;
 }
 
-/** Repère 2 : passage de fourche, tube rectangulaire le long de Z. Origine au centre, dessous à y = 0. */
+/** Repère 2 : passage de fourche, tube rectangulaire le long de X (en travers des boîtes). Origine au centre, dessous à y = 0. */
 function passage(S, matiere) {
   const w = FOURCHE.large, h = FOURCHE.haut, e = FOURCHE.paroi;
   const contour = [[-w / 2, 0], [w / 2, 0], [w / 2, h], [-w / 2, h]].map(([x, y]) => [x * MM, y * MM]);
   const trou = [[-w / 2 + e, e], [w / 2 - e, e], [w / 2 - e, h - e], [-w / 2 + e, h - e]].map(([x, y]) => [x * MM, y * MM]);
-  return S.group(S.extrude(contour, BASE.profond * MM, matiere, { holes: [trou] }));
+  const p = S.extrude(contour, largeurBase() * MM, matiere, { holes: [trou] });
+  p.rotation.y = Math.PI / 2; // tube dessiné le long de Z, tourné le long de X
+  return S.group(p);
 }
 
 /** Repère 3 : montant d'un arceau, debout sur la tôle. */
@@ -187,7 +190,7 @@ function couvercle(S) {
 
 export function P01(api) {
   const S = api.S;
-  const PLATE = 'lightGrey', BLEU = 'bleuRoi';
+  const BLEU = 'bleuRoi', PLATE = BLEU; // bleu au complet (précision du client)
   const vus = new Set();
   const put = (ref, obj, eclate, premier = true) => {
     api.part(ref, obj, eclate, { noLabel: vus.has(ref) || !premier });
@@ -196,7 +199,7 @@ export function P01(api) {
   const yBase = FOURCHE.haut, yTole = dessusTole(), W = largeurBase() / 2, D = BASE.profond / 2, c = TUBE.cote / 2;
 
   put('1', S.at(plateForme(S, PLATE), [0, yBase * MM, 0]), [0, 0, 0]);
-  for (const x of passages()) put('2', S.at(passage(S, PLATE), [x * MM, 0, 0]), [0, -0.25, 0]);
+  for (const z of passages()) put('2', S.at(passage(S, PLATE), [0, 0, z * MM]), [0, -0.25, 0]);
   // Deux arceaux par côté : un au bord avant, un au bord arrière de la plate-forme.
   const L = CADRE.large / 2;
   for (const s of [-1, 1]) {

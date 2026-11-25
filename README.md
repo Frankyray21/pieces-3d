@@ -1001,14 +1001,15 @@ pièces (numéro, quantité, page du manuel).
   cotes du modèle (`src/models/boulon-ancrage-time/index.js`).
 
 - **Rack de boîtes à carottes (core box)** (`rack-core-box`) : plate-forme
-  d'acier à trois passages de fourche, bordée de chaque côté par deux arceaux
-  de tube bleu séparés (chacun : deux montants, une traverse haute, une
+  d'acier à deux passages de fourche en travers des boîtes, bordée de chaque côté
+  par deux arceaux de tube séparés, bleu au complet (chacun : deux montants, une traverse haute, une
   diagonale ; côtés non continus, précision du client), où l'on empile les
   boîtes à carottes pleines. Reconstitué d'après une photo du client prise
   sous terre (P01), qui ne montre qu'une portion du rack ; aucun plan. Échelle :
   la boîte à carottes de 1,5 m (donnée par le client, minimum). Relevé sur la
   photo à cette échelle : la profondeur et la hauteur (1,60 et 0,96 m), la hauteur
-  et la largeur des arceaux, les deux passages de fourche visibles, les 4 boîtes de haut de la photo.
+  et la largeur des arceaux, les 4 boîtes de haut de la photo. Donné par le client : rack bleu au complet,
+  2 passages de fourche en travers des boîtes (entraxe supposé).
   Donné par le client : 5 boîtes de large et jusqu'à 8 de haut (rack plein de
   40 boîtes au modèle, 1,19 m de large). Boîte : celle de la table à carottes (donnée par le client : 1,50 m ×
   197 mm × 60 mm, 3 rangées NQ). Supposé : le couvercle, sections des tubes, tôle, sens de la diagonale des autres arceaux. La fiche et
