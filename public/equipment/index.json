@@ -213,6 +213,14 @@
       "status": "3D d'après la page du produit de TIME Limited et une photo d'atelier du client, sans plan : pince-étau en C de 11 po (supposé), de couleur métallique (acier nu), dont les patins carrés sont remplacés par deux demi-coquilles rondes, pour le tube intérieur NQ (supposé) ; genouillère, vis de réglage, ressort, levier de déverrouillage ; vue éclatée en 16 pièces et scène animée (déverrouiller, ouvrir, refermer)"
     },
     {
+      "id": "pistolet-graisse-1142",
+      "name": "Pistolet à graisse à levier Lincoln 1142",
+      "manufacturer": "Lincoln Industrial (SKF)",
+      "category": "Graissage manuel",
+      "thumbnail": "equipment/pistolet-graisse-1142/thumbnail.webp",
+      "status": "3D d'après la photo du produit fournie par le client, sans plan, mise à l'échelle par la longueur publiée de 21 3/4 po : tête de pompe en fonte, levier embouti à biellette, corps bleu-gris de Ø 2 1/4 po, bouchon, tige de poussoir à poignée en T, poussoir et ressort (cachés, supposés), rallonge rigide 62028 et coupleur 5852 ; vue éclatée en 13 repères"
+    },
+    {
       "id": "pompe-bean-420",
       "name": "Pompe à pistons Bean 420 (FMC L0918 / American AL0918B)",
       "manufacturer": "American Manufacturing (interchangeable FMC Bean)",

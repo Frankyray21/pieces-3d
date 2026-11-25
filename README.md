@@ -952,6 +952,23 @@ pièces (numéro, quantité, page du manuel).
   schéma (P03) sont écrites par `tools/pince_tube_interieur_fiche.mjs`, qui
   contrôle aussi que la genouillère reste montée sur toute sa course.
 
+- **Pistolet à graisse à levier Lincoln 1142** (`pistolet-graisse-1142`) :
+  reconstitué d'après la photo du produit fournie par le client (P01), sans
+  plan, mise à l'échelle par la longueur hors tout publiée (21 3/4 po, de la
+  poignée en T au bout du coupleur : 0,80 mm par pixel). Publié : 10 000 psi,
+  cartouche de 14,5 oz ou 16 oz en vrac, 28 coups à l'once ; rallonge rigide
+  62028 et coupleur 5852 (guide Lincoln des modèles 1142, 1147 et 1151).
+  Relevés sur la photo : tête de pompe en fonte (collet, tour du piston,
+  oreille), levier embouti en U roulé en poignée, biellette à deux flasques,
+  trois axes, bouchon six pans, corps bleu-gris de Ø 2 1/4 po et ses gorges,
+  bouchon arrière, tige à poignée en T, rallonge coudée. Supposés (cachés) :
+  piston de Ø 3/8 po, poussoir à coupelle de cuir et son ressort. Pistolet
+  montré vide, comme sur la photo. Non modélisés : clapets et joints de la
+  tête, filets, inscriptions du levier. P01 : le pistolet et sa vue éclatée en
+  13 repères ; la fiche et la page des cotes (P02) sont écrites par
+  `tools/pistolet_graisse_fiche.mjs` à partir des cotes du modèle
+  (`src/models/pistolet-graisse-1142/index.js`).
+
 - **Boulon d'ancrage standard TIME 83-52, NW/L 5 pi**
   (`boulon-ancrage-time`) : la pine d'ancrage à laquelle on fixe la foreuse
   au diamant, reconstituée d'après la page du produit de TIME Limited fournie
