@@ -40,16 +40,27 @@ function demiPage(page, moitie) {
 }
 
 const papier = (map) => new THREE.MeshStandardMaterial({ color: 0xffffff, map, roughness: 0.82, metalness: 0 });
-const tranche = new THREE.MeshStandardMaterial({ color: 0xf3f1ec, roughness: 0.9 });
 
 /**
- * Volet : face avant (+Z) et face arrière (−Z), [page, moitié] chacune.
- * Ordre des faces d'une boîte : +x, −x, +y, −y, +z, −z.
+ * Volet : deux feuilles minces, recto (+Z) et verso (−Z), [page, moitié]
+ * chacune, à ± t/2 (un matériau par maillage : la visionneuse ne gère pas les
+ * maillages à plusieurs matériaux). segments : bandes selon la largeur (pour
+ * courber la couverture). Les sommets de départ sont gardés (userData.sommets).
  */
 function volet(avant, arriere, segments = 1) {
   const { w, h, t } = VOLET;
-  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, t, segments, 1, 1), [tranche, tranche, tranche, tranche, papier(demiPage(...avant)), papier(demiPage(...arriere))]);
-  return m;
+  const g = new THREE.Group();
+  const face = (page, dos) => {
+    const geo = new THREE.PlaneGeometry(w, h, segments, 1);
+    // Verso : feuille retournée (l'image se lit sans miroir vue de derrière).
+    if (dos) geo.rotateY(Math.PI);
+    geo.translate(0, 0, dos ? -t / 2 : t / 2);
+    const m = new THREE.Mesh(geo, papier(demiPage(...page)));
+    m.userData.sommets = Float32Array.from(geo.attributes.position.array);
+    return m;
+  };
+  g.add(face(avant, false), face(arriere, true));
+  return g;
 }
 
 /** Angles du pli : carte ouverte (tenue pour la lire) et fermée (couverture qui bâille de 3°). */
@@ -63,18 +74,19 @@ const COURBE = 0.035; // retard du bord libre au plus fort de la page tournée (
  */
 export function poser(pli, angle, courbure = 0) {
   pli.rotation.y = angle;
-  const m = pli.userData.couverture;
-  const g = m.geometry, p = g.attributes.position, base = m.userData.base;
   const { w } = VOLET;
-  for (let i = 0; i < p.count; i++) {
-    const x = base[3 * i];
-    const s = (w / 2 - x) / w; // 0 au pli, 1 au bord libre
-    p.setXYZ(i, x, base[3 * i + 1], base[3 * i + 2] - courbure * COURBE * s * s);
+  for (const m of pli.userData.couverture.children) {
+    const g = m.geometry, p = g.attributes.position, base = m.userData.sommets;
+    for (let i = 0; i < p.count; i++) {
+      const x = base[3 * i];
+      const s = (w / 2 - x) / w; // 0 au pli, 1 au bord libre
+      p.setXYZ(i, x, base[3 * i + 1], base[3 * i + 2] - courbure * COURBE * s * s);
+    }
+    p.needsUpdate = true;
+    g.computeVertexNormals();
+    g.computeBoundingBox();
+    g.computeBoundingSphere();
   }
-  p.needsUpdate = true;
-  g.computeVertexNormals();
-  g.computeBoundingBox();
-  g.computeBoundingSphere();
 }
 
 /** Carte pliée à l'angle donné (0 = ouverte à plat, π = fermée). */
@@ -89,7 +101,6 @@ function carte(api, angle) {
   // couverture (page 1, à droite) derrière, donc dessus une fois fermée.
   // Couverture découpée en bandes le long de la largeur : elle se courbe en tournant.
   const couverture = volet(['P02', 0], ['P01', 1], 24);
-  couverture.userData.base = Float32Array.from(couverture.geometry.attributes.position.array);
   couverture.position.set(-w / 2, 0, -t / 2);
   const pli = new THREE.Group();
   pli.position.set(0, h / 2, t / 2);
