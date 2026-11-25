@@ -108,6 +108,10 @@ const caoutchouc = () => teinte('coupleur-caoutchouc', () => withFinish(new THRE
 const caoutchoucSale = () => teinte('coupleur-caoutchouc-sale', () => withFinish(new THREE.MeshPhysicalMaterial({
   color: 0x55534d, metalness: 0, roughness: 0.9, specularIntensity: 0.3,
 }), 'rubber'));
+/** Gaine jaune du câble portatif 600 V (précision du client : « le câble 600 V est jaune »). */
+const gaineJaune = () => teinte('coupleur-gaine-jaune', () => withFinish(new THREE.MeshPhysicalMaterial({
+  color: 0xd9a90f, metalness: 0, roughness: 0.62, specularIntensity: 0.45,
+}), 'rubber'));
 /** Ruban isolant blanc (vinyle). */
 const ruban = () => teinte('coupleur-ruban', () => withFinish(new THREE.MeshStandardMaterial({
   color: 0xf0efea, metalness: 0, roughness: 0.5,
@@ -273,13 +277,13 @@ function attache(S) {
   return S.group(boucle, queue);
 }
 
-/** Repère 11 : amorce de câble portatif 3 × 4/0 AWG, en haut (alimentation) et en bas. */
+/** Repère 11 : amorce de câble portatif 3 × 4/0 AWG à gaine jaune, en haut (alimentation) et en bas. */
 function cableHaut(S) {
-  return S.tube([V3(0, FEMELLE.bout - 4, 0), V3(0, FEMELLE.bout + 120, 0), V3(0, FEMELLE.bout + 240, -6)], CABLE.r * MM, caoutchouc(), { ends: 'none', radial: 20 });
+  return S.tube([V3(0, FEMELLE.bout - 4, 0), V3(0, FEMELLE.bout + 120, 0), V3(0, FEMELLE.bout + 240, -6)], CABLE.r * MM, gaineJaune(), { ends: 'none', radial: 20 });
 }
 function cableBas(S) {
   const y0 = MALE.bout.y + 4;
-  return S.tube([V3(0, y0, 0), V3(0, y0 - 70, 0), V3(-25, y0 - 150, 4), V3(-90, y0 - 205, 8)], CABLE.r * MM, caoutchouc(), { ends: 'none', radial: 20 });
+  return S.tube([V3(0, y0, 0), V3(0, y0 - 70, 0), V3(-25, y0 - 150, 4), V3(-90, y0 - 205, 8)], CABLE.r * MM, gaineJaune(), { ends: 'none', radial: 20 });
 }
 
 // ------------------------------------------------------------------ assemblage

@@ -47,7 +47,7 @@ const pieces = [
   ['8', '', 2, 'ÉCROU 1/2 po, inox (bout fileté des tiges)', { pseudo: true, note: 'Derrière la patte.' }],
   ['9', '', 2, 'RUBAN ISOLANT BLANC', { pseudo: true, note: 'Tel que sur la photo : un tour sur la bague d\'accouplement, un autre sur le presse-étoupe et la sortie du câble de la fiche mâle.' }],
   ['10', '', 1, 'ATTACHE AUTOBLOQUANTE en nylon', { pseudo: true, note: 'Autour du presse-étoupe de la fiche mâle, passée dans le trou bas de la patte droite (sur la photo).' }],
-  ['11', '', 2, `CÂBLE PORTATIF 3 × ${T.awg} AWG (amorce)`, { pseudo: true, note: `Ø ≈ ${mm(2 * CABLE.r)} (supposé, câble de mine 2 kV) ; en haut vers l'alimentation, en bas vers l'équipement.` }],
+  ['11', '', 2, `CÂBLE PORTATIF 3 × ${T.awg} AWG (amorce)`, { pseudo: true, note: `Gaine jaune (précision du client). Ø ≈ ${mm(2 * CABLE.r)} (supposé, câble de mine 2 kV) ; en haut vers l'alimentation, en bas vers l'équipement.` }],
 ];
 
 const NOTE = `Reconstitution 3D d'après la photo fournie par le client et les cotes du catalogue Crouse-Hinds Quik-Loc 600 V : fiche femelle ${T.femelle} et fiche mâle ${T.male} (${T.awg} AWG, ${T.amp} A, Ø ${po(T.A)} × ${po(T.B)} chacune) accouplées, dans un support en inox fabriqué à la mine (colliers à oreilles, tiges à crochet, pattes plates). La taille est déduite de l'échelle de la photo : lire le numéro sur le corps pour la confirmer. Formes relevées sur la photo, contacts supposés ; la coupe par l'axe montre le nez de la fiche mâle dans la bague et les broches dans les douilles. Coupleur accouplé : ${mm(longueur)} du bout d'une fiche au bout de l'autre.`;
