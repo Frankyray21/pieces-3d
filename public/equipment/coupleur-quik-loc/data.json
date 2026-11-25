@@ -1,0 +1,180 @@
+{
+ "id": "coupleur-quik-loc",
+ "name": "Coupleur de câble 600 V Quik-Loc 4/0 AWG 325 A, dans son support en inox",
+ "manufacturer": "Crouse-Hinds (Eaton)",
+ "category": "Raccordement électrique 600 V (mine souterraine)",
+ "serial": "",
+ "document": {
+  "title": "Photo du coupleur fournie par le client ; cotes du catalogue Crouse-Hinds Quik-Loc 600 V",
+  "reference": "X8347-1D / X8347-2D",
+  "preparedBy": "",
+  "date": "",
+  "sheets": 1,
+  "pagePattern": "pages/{sheet}.webp"
+ },
+ "specs": [
+  [
+   "Source",
+   "Photo fournie par le client (coupleur suspendu dans une galerie, dans son support en inox) ; cotes des fiches tirées du catalogue Crouse-Hinds (Eaton) des connecteurs Quik-Loc 600 V (tableau des fiches, cotes A et B en pouces, « approximatives »), relevées par la recherche : les pages du fabricant n'ont pas pu être ouvertes depuis la session, le dessin coté n'est pas reproduit ici"
+  ],
+  [
+   "Identification",
+   "Connecteur Quik-Loc 600 V de Crouse-Hinds (Eaton), série standard (D), câble à câble : fiche femelle en haut, fiche mâle en bas, corps en caoutchouc noir, bague d'accouplement en bronze au manganèse, presse-étoupe côté câble, homologué MSHA pour les mines souterraines. Taille 4/0 AWG, 325 A : X8347-1D (femelle) et X8347-2D (mâle), 3 fils, 600 V c.a./c.c. Taille déduite de l'échelle de la photo (boulons de 3/8 po et pattes de 1 po du support, câble de ≈ 57 mm, celui d'un câble portatif 3 × 4/0) : à confirmer par le numéro imprimé sur le corps"
+  ],
+  [
+   "Données publiées",
+   "Fiche 4/0 AWG, 325 A : diamètre hors tout A = 6 7/16 po (163,5 mm), longueur B = 21 15/16 po (557,2 mm), pour la fiche mâle comme pour la femelle. Autres tailles du même tableau : #8 75 A (X8343-5D / X8343-4D, B = 13 7/16 po) ; #4 125 A (X8344-5D / X8344-4D, 3 7/8 po × 13 po) ; #2 160 A (X8345-5D / X8345-6D, 4 3/16 po × 14 1/16 po)"
+  ],
+  [
+   "Relevé sur la photo",
+   "Relevé sur la photo (≈ 0,72 mm par pixel, par le diamètre du corps de la fiche mâle) : bague d'accouplement de 62 mm sous le ruban (Ø 144 mm), corps de la fiche mâle conique de Ø 155 mm à Ø 133 mm sur 209 mm, puis presse-étoupe jusqu'au câble ; corps de la fiche femelle conique, de Ø 142 mm sous le collier intermédiaire à Ø 163,5 mm au collier supérieur, puis cylindrique. Cotes à ±10 % (photo de près, en perspective)"
+  ],
+  [
+   "Supposé",
+   "Supposés : nez de la fiche mâle de Ø 124 mm engagé de 85 mm dans la bague ; 3 broches de phase de Ø 15 mm sur un cercle de Ø 68 mm et une broche de mise à la terre au centre, de 75 mm ; bout de la fiche femelle (hors photo) refermé en presse-étoupe sur la longueur publiée. Femelle en haut, côté alimentation (les douilles restent hors tension à nu quand on désaccouple) : à confirmer"
+  ],
+  [
+   "Support",
+   "Fabriqué à la mine, relevé sur la photo, en inox : collier supérieur (sur la fiche femelle, Ø int. 163,5 mm) et collier intermédiaire (sous la bague, Ø int. 140 mm), chacun en deux demi-colliers à oreilles de 32 mm × 4 mm, 270 mm d'une oreille à l'autre, serrés par des boulons de 3/8 po ; deux tiges de 1/2 po accrochées par-dessus les oreilles du collier supérieur, bout fileté dans les pattes ; deux pattes plates de 1 × 1/4 po, de 390 mm, bout arrondi, boulonnées sous les oreilles du collier intermédiaire, percées de Ø 13 mm (gauche à 176 mm et 273 mm sous la bague, droite à 144 mm et 209 mm). Le support tient les deux fiches accouplées et reprend la traction des câbles"
+  ],
+  [
+   "Encombrement",
+   "Coupleur accouplé : Ø 163,5 mm × 1029 mm (2 fiches de 557,2 mm, nez de 85 mm engagé) ; support : 270 mm de large, 638 mm de haut"
+  ],
+  [
+   "Non modélisé",
+   "Filets de la bague d'accouplement, joints, bornes des conducteurs dans les corps, inscriptions moulées, ce qui retient le support à la paroi (hors photo)"
+  ],
+  [
+   "À confirmer",
+   "Numéro de catalogue et taille (lire le corps), série (D standard ou G à mise à la terre), fiche femelle en haut ou en bas, nombre de contacts (avec ou sans pilote), cotes du support au ruban"
+  ]
+ ],
+ "weights": [],
+ "sheetTitles": {
+  "P01": "Photo fournie par le client : coupleur 600 V accouplé, suspendu dans son support en inox"
+ },
+ "root": "P01",
+ "assemblies": {
+  "P01": {
+   "title": "QUIK-LOC 600 V CABLE-TO-CABLE CONNECTOR, 4/0 AWG, 325 A, IN STAINLESS HOLDER",
+   "titleFr": "Coupleur câble à câble Quik-Loc 600 V, 4/0 AWG, 325 A, dans son support en inox",
+   "pn": "X8347-1D / X8347-2D",
+   "sheets": [
+    "P01"
+   ],
+   "note": "Reconstitution 3D d'après la photo fournie par le client et les cotes du catalogue Crouse-Hinds Quik-Loc 600 V : fiche femelle X8347-1D et fiche mâle X8347-2D (4/0 AWG, 325 A, Ø 6 7/16 po × 21 15/16 po chacune) accouplées, dans un support en inox fabriqué à la mine (colliers à oreilles, tiges à crochet, pattes plates). La taille est déduite de l'échelle de la photo : lire le numéro sur le corps pour la confirmer. Formes relevées sur la photo, contacts supposés ; la coupe par l'axe montre le nez de la fiche mâle dans la bague et les broches dans les douilles. Coupleur accouplé : 1029 mm du bout d'une fiche au bout de l'autre.",
+   "parts": [
+    [
+     "1",
+     "X8347-1D",
+     1,
+     "FICHE FEMELLE QUIK-LOC 600 V, 325 A, 4/0 AWG, 3 fils (série standard)",
+     {
+      "note": "Catalogue : Ø 6 7/16 po × 21 15/16 po (163,5 mm × 557,2 mm). Corps en caoutchouc, bague d'accouplement en bronze au manganèse (recouverte de ruban sur la photo), douilles de contact. Corps conique poussiéreux sur la photo. En haut, côté alimentation (supposé)."
+     }
+    ],
+    [
+     "2",
+     "X8347-2D",
+     1,
+     "FICHE MÂLE QUIK-LOC 600 V, 325 A, 4/0 AWG, 3 fils (série standard)",
+     {
+      "note": "Catalogue : Ø 6 7/16 po × 21 15/16 po. Corps noir légèrement conique (Ø 155 mm à 133 mm relevés), nez engagé dans la bague de la femelle, broches supposées. Presse-étoupe sous le ruban blanc."
+     }
+    ],
+    [
+     "3",
+     "",
+     1,
+     "COLLIER SUPÉRIEUR en inox, deux demi-colliers à oreilles (support du coupleur)",
+     {
+      "pseudo": true,
+      "note": "Sur la fiche femelle, Ø int. 163,5 mm, 32 mm de large. Les tiges s'accrochent par-dessus ses oreilles. Fabriqué à la mine (relevé sur la photo)."
+     }
+    ],
+    [
+     "4",
+     "",
+     1,
+     "COLLIER INTERMÉDIAIRE en inox, deux demi-colliers à oreilles",
+     {
+      "pseudo": true,
+      "note": "Sous la bague d'accouplement, sur le col de la fiche femelle (Ø int. 140 mm). Les pattes sont boulonnées sous ses oreilles."
+     }
+    ],
+    [
+     "5",
+     "",
+     2,
+     "TIGE À CROCHET en inox, Ø 1/2 po",
+     {
+      "pseudo": true,
+      "note": "Crochet par-dessus l'oreille du collier supérieur, bout fileté dans le trou de la patte, 318 mm entre les deux."
+     }
+    ],
+    [
+     "6",
+     "",
+     2,
+     "PATTE PLATE en inox, 1 × 1/4 po, percée, bout arrondi",
+     {
+      "pseudo": true,
+      "note": "390 mm de long, de part et d'autre de la fiche mâle ; trous de Ø 13 mm relevés sur la photo (l'attache autobloquante passe dans le trou bas de la patte droite)."
+     }
+    ],
+    [
+     "7",
+     "",
+     6,
+     "BOULON 3/8 po avec rondelle et écrou, inox",
+     {
+      "pseudo": true,
+      "note": "2 serrent le collier supérieur, 2 le collier intermédiaire (à 95 mm de l'axe), 2 fixent les pattes à ses oreilles. Sur la photo on voit les 2 du collier supérieur."
+     }
+    ],
+    [
+     "8",
+     "",
+     2,
+     "ÉCROU 1/2 po, inox (bout fileté des tiges)",
+     {
+      "pseudo": true,
+      "note": "Derrière la patte."
+     }
+    ],
+    [
+     "9",
+     "",
+     2,
+     "RUBAN ISOLANT BLANC",
+     {
+      "pseudo": true,
+      "note": "Tel que sur la photo : un tour sur la bague d'accouplement, un autre sur le presse-étoupe et la sortie du câble de la fiche mâle."
+     }
+    ],
+    [
+     "10",
+     "",
+     1,
+     "ATTACHE AUTOBLOQUANTE en nylon",
+     {
+      "pseudo": true,
+      "note": "Autour du presse-étoupe de la fiche mâle, passée dans le trou bas de la patte droite (sur la photo)."
+     }
+    ],
+    [
+     "11",
+     "",
+     2,
+     "CÂBLE PORTATIF 3 × 4/0 AWG (amorce)",
+     {
+      "pseudo": true,
+      "note": "Ø ≈ 57 mm (supposé, câble de mine 2 kV) ; en haut vers l'alimentation, en bas vers l'équipement."
+     }
+    ]
+   ]
+  }
+ },
+ "documents": []
+}

@@ -973,6 +973,22 @@ pièces (numéro, quantité, page du manuel).
   cotes du modèle (`src/models/pistolet-graisse-1142/index.js`), qui contrôle
   aussi que le mécanisme reste monté sur toute la levée.
 
+- **Coupleur de câble 600 V Quik-Loc 4/0 AWG 325 A, dans son support en
+  inox** (`coupleur-quik-loc`) : reconstitué d'après la photo fournie par le
+  client (coupleur suspendu dans une galerie, P01) et les cotes du catalogue
+  Crouse-Hinds (Eaton) des connecteurs Quik-Loc 600 V : fiche femelle
+  X8347-1D et fiche mâle X8347-2D accouplées, Ø 6 7/16 po × 21 15/16 po
+  chacune. La taille (4/0 AWG, 325 A) est déduite de l'échelle de la photo
+  (boulons de 3/8 po et pattes de 1 po du support, câble de ≈ 57 mm) : à
+  confirmer par le numéro imprimé sur le corps. Formes des corps, bague
+  d'accouplement et presse-étoupe relevées sur la photo, contacts supposés ;
+  support fabriqué à la mine (colliers à oreilles, tiges à crochet de 1/2 po,
+  pattes plates de 1 × 1/4 po), ruban blanc et attache autobloquante tels que
+  sur la photo. La fiche est écrite par `tools/coupleur_quik_loc_fiche.mjs` à
+  partir des cotes du modèle (`src/models/coupleur-quik-loc/index.js`), qui
+  contrôle aussi que le nez entre dans la bague et que le support reste
+  dégagé des fiches.
+
 - **Mini bac de rétention 100 L en PEHD jaune, avec caillebotis**
   (`bac-retention-100l`) : reconstitué d'après la page du produit fournie par
   le client (capture de la fiche du distributeur neatfx, sans plan) : photo et
