@@ -33,6 +33,14 @@
       "status": "3D d'après la page du produit de TIME Limited : boulon d'ancrage de calibre N câble, 5 pi (longueur publiée), auquel on fixe la foreuse au diamant ; corps rond de 69,9 mm (supposé), bout fileté mâle derrière un nez lisse, tige du bout en deux étages, proportions relevées sur la photo ; modèle plein, d'un seul repère"
     },
     {
+      "id": "carte-forage-dd",
+      "name": "Carte de travail — Forage au diamant sous-terre",
+      "manufacturer": "Machines Roger International",
+      "category": "Formulaire MA4657078 (carte pliée)",
+      "thumbnail": "equipment/carte-forage-dd/thumbnail.webp",
+      "status": "3D du formulaire : carte pliée de 5 1/2 × 8 1/2 po, fermée (couverture et description du travail) et ouverte (inspection, planification, décision), avec les pages du PDF"
+    },
+    {
       "id": "chaudieres-5-gal",
       "name": "Chaudières de 5 gallons : savon de lin, dégraisseur et chaudière coupée pour la guenille ; chaudières d'huile sur bac de rétention",
       "manufacturer": "Fabricant non identifié",

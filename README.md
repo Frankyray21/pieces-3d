@@ -105,15 +105,16 @@ pièces (numéro, quantité, page du manuel).
   sol et ordre des étapes dans `src/models/plancher-dd/plan.js` : chaque objet
   porte son numéro d'étape (`userData.step`) pour animer le montage
   (vidéo de formation).
-  **Place de travail en 3D** (`#plancher-dd.carte`, `src/ui/features/carte.js`
-  et `src/ui/features/carte/`) : visite à la première personne, comme sur
-  place — galerie principale, baie de forage avec ce plancher tel quel et la
-  foreuse STM-1500 (P010) posée sur la section 1, barricade, armoire et
-  extincteur, refuge dans sa recoupe, conduite de ventilation, support de
-  terrain (boulons et grillage), éclairage par la lampe du casque. On marche
-  au clavier et à la souris (ou au pouce sur téléphone), on monte sur le
-  plancher par l'escalier ; parois, garde-corps et foreuse arrêtent le pas. Le
-  plan des galeries et du refuge est fictif.
+
+- **Carte de travail — Forage au diamant sous-terre** (`carte-forage-dd`,
+  formulaire MA4657078 de Machines Roger International, PDF de 2 pages) : la
+  carte elle-même en 3D, feuille de 11 × 8 1/2 po pliée en deux (volets de
+  5 1/2 × 8 1/2 po), avec les deux pages du PDF posées telles quelles en
+  texture. P01 : carte fermée (couverture au recto, description du travail,
+  rapport journalier, types de risques et moyens de contrôle au dos) ; P02 :
+  carte ouverte, comme on la tient pour la remplir (inspection à gauche,
+  planification, décision et exécution 2e visite à droite). Épaisseur du
+  carton supposée (0,25 mm).
 
 - **Coffre à outils ITH** (`coffre-dd`, dessin 087 « Coffre à outil ITH » de
   M.R.I. Inc., D. Côté, juin 2011, et deux photos) : 3D aux cotes du dessin,

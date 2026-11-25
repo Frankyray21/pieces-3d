@@ -1,0 +1,100 @@
+{
+ "id": "carte-forage-dd",
+ "name": "Carte de travail — Forage au diamant sous-terre",
+ "manufacturer": "Machines Roger International",
+ "category": "Formulaire MA4657078 (carte pliée)",
+ "serial": "MA4657078",
+ "document": {
+  "title": "Forage au diamant sous-terre : carte de travail sécuritaire (formulaire MA4657078)",
+  "reference": "MA4657078",
+  "preparedBy": "",
+  "date": "",
+  "sheets": 2,
+  "pagePattern": "pages/{sheet}.webp"
+ },
+ "specs": [
+  [
+   "Format",
+   "Feuille de 11 × 8 1/2 po imprimée des deux côtés, pliée en deux : carte de 5 1/2 × 8 1/2 po"
+  ],
+  [
+   "Extérieur (page 1)",
+   "Couverture : date, quart, no. de la foreuse, place de travail, travailleur, superviseur, tâches à accomplir, détecteur de gaz, outils et matériaux, permis, signatures. Dos : description du travail, rapport journalier, vérification de fin de quart, types de risques, moyens de contrôle"
+  ],
+  [
+   "Intérieur (page 2)",
+   "Inspection (analyse de risque sur le terrain, 21 questions), planification, décision, exécution 2e visite, commentaires en santé sécurité"
+  ],
+  [
+   "Épaisseur",
+   "Carton de formulaire, 0,25 mm (supposée)"
+  ]
+ ],
+ "weights": [],
+ "sheetTitles": {
+  "P01": "Extérieur de la carte : description du travail (dos) et couverture",
+  "P02": "Intérieur de la carte : inspection, planification, décision, exécution"
+ },
+ "root": "P01",
+ "assemblies": {
+  "P01": {
+   "title": "Carte fermée",
+   "titleFr": "Carte fermée",
+   "sheets": [
+    "P01"
+   ],
+   "note": "Le formulaire PDF en 3D : les deux pages sont posées telles quelles sur la carte pliée. Fermée, on voit la couverture ; au dos, la description du travail. Ouvrir P02 pour l'intérieur.",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "VOLET DE COUVERTURE : couverture au recto, INSPECTION au verso",
+     {
+      "note": "Recto : logo, date, quart, no. de la foreuse, place de travail, travailleur, superviseur, tâches à accomplir, situation des places de travail, conditions spéciales, détecteur de gaz, outils et matériaux, permis, signatures. Verso : analyse de risque sur le terrain (questions 1 à 21) et vérification des places de travail.",
+      "pseudo": true
+     }
+    ],
+    [
+     "2",
+     "",
+     1,
+     "VOLET ARRIÈRE : DESCRIPTION DU TRAVAIL au recto, PLANIFICATION et DÉCISION au verso",
+     {
+      "note": "Recto : description du travail (foreuse, calibre BQ, NQ, HQ, trous), rapport journalier, vérification de fin de quart, types de risques, moyens de contrôle. Verso : planification, décision, signatures, exécution 2e visite, commentaires en santé sécurité.",
+      "pseudo": true
+     }
+    ]
+   ]
+  },
+  "P02": {
+   "title": "Carte ouverte",
+   "titleFr": "Carte ouverte",
+   "sheets": [
+    "P02"
+   ],
+   "note": "Intérieur de la carte, ouverte comme on la tient pour la remplir : INSPECTION à gauche, PLANIFICATION, DÉCISION et EXÉCUTION 2e visite à droite.",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "VOLET DE COUVERTURE : INSPECTION (analyse de risque sur le terrain)",
+     {
+      "pseudo": true
+     }
+    ],
+    [
+     "2",
+     "",
+     1,
+     "VOLET ARRIÈRE : PLANIFICATION, DÉCISION, EXÉCUTION 2e visite",
+     {
+      "pseudo": true
+     }
+    ]
+   ]
+  }
+ },
+ "documents": []
+}
