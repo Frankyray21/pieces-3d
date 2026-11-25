@@ -1010,8 +1010,8 @@ pièces (numéro, quantité, page du manuel).
   photo à cette échelle : la profondeur et la hauteur (1,60 et 0,96 m), la hauteur
   et la largeur des arceaux, les deux passages de fourche visibles, les 4 boîtes de haut de la photo.
   Donné par le client : 5 boîtes de large et jusqu'à 8 de haut (rack plein de
-  40 boîtes au modèle, 1,70 m de large). Supposé : largeur (300 mm) et hauteur (66 mm fermée) de la boîte,
-  sections des tubes, tôle, sens de la diagonale des autres arceaux. La fiche et
+  40 boîtes au modèle, 1,19 m de large). Boîte : celle de la table à carottes (donnée par le client : 1,50 m ×
+  197 mm × 60 mm, 3 rangées NQ). Supposé : le couvercle, sections des tubes, tôle, sens de la diagonale des autres arceaux. La fiche et
   la page des cotes (P02) sont écrites par `tools/rack_core_box_fiche.mjs` à
   partir des cotes du modèle (`src/models/rack-core-box/index.js`).
 

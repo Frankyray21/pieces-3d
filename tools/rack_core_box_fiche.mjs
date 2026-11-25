@@ -36,9 +36,9 @@ const data = {
     ['Source', SOURCE],
     ['Échelle', ECHELLE],
     ['Usage', USAGE],
-    ['Encombrement', `${m(h.large)} de large (d'un côté à l'autre) × ${m(h.profond)} (le long des boîtes) × ${m(h.haut)} de haut — largeur calculée pour ${PILE.colonnes} boîtes de ${mm(BOITE.large)} (largeur de boîte supposée), le reste relevé sur la photo à l'échelle de la boîte`],
-    ['Boîte à carottes', `Boîte de bois à couvercle, ${m(BOITE.long)} de long (donnée par le client). Supposé : ${mm(BOITE.large)} de large, ${mm(hautBoite())} de haut fermée, ${BOITE.rangees} rangées de ${mm(largeurRangee())} — proportions des bouts de boîtes de la photo. À remplacer par les cotes réelles de la boîte si elles sont connues`],
-    ['Empilement', `${PILE.colonnes} colonnes de ${PILE.etages} boîtes, soit ${N} boîtes, couchées en travers, bouts vers le côté des fourches, colonnes décalées l'une de l'autre (jusqu'à ${mm(PILE.decalage[1] - PILE.decalage[0])}) comme sur la photo. Il entre ${PILE.colonnes} boîtes de large et jusqu'à ${PILE.etages} de haut (donnés par le client) : le modèle montre le rack plein, la photo ${PILE.visibles} boîtes de haut. Pile pleine : ${mm(PILE.etages * hautBoite())} de haut (hauteur de boîte supposée), sous le dessus des arceaux`],
+    ['Encombrement', `${m(h.large)} de large (d'un côté à l'autre) × ${m(h.profond)} (le long des boîtes) × ${m(h.haut)} de haut — largeur calculée pour ${PILE.colonnes} boîtes de ${mm(BOITE.large)} (boîte de la table à carottes), le reste relevé sur la photo à l'échelle de la boîte`],
+    ['Boîte à carottes', `La boîte de la table à carottes (donnée par le client) : boîte de bois de ${m(BOITE.long)} de long, ${mm(BOITE.large)} de large, ${mm(BOITE.haut)} de haut, ${BOITE.rangees} rangées NQ de ${mm(largeurRangee())}. Supposé : le couvercle de ${mm(BOITE.couvercle)} (${mm(hautBoite())} de haut fermée)`],
+    ['Empilement', `${PILE.colonnes} colonnes de ${PILE.etages} boîtes, soit ${N} boîtes, couchées en travers, bouts vers le côté des fourches, colonnes décalées l'une de l'autre (jusqu'à ${mm(PILE.decalage[1] - PILE.decalage[0])}) comme sur la photo. Il entre ${PILE.colonnes} boîtes de large et jusqu'à ${PILE.etages} de haut (donnés par le client) : le modèle montre le rack plein, la photo ${PILE.visibles} boîtes de haut. Pile pleine : ${mm(PILE.etages * hautBoite())} de haut (couvercles compris), sous le dessus des arceaux`],
     ['Plate-forme', `Pâle sur la photo. ${m(largeurBase())} × ${m(BASE.profond)}, dessus à ${mm(dessusTole())} du sol. Supposé : cadre de tube de ${po(BASE.cadre.large)} × ${po(BASE.cadre.haut)}, deux traverses, tôle de ${po(BASE.tole)}`],
     ['Passages de fourche', `${FOURCHE.nombre}, sous la plate-forme, le long des boîtes, un sous une colonne sur deux, à ${mm(FOURCHE.entraxe)} d'entraxe : deux sont visibles sur la photo, le troisième est supposé par symétrie. Supposé aussi : tube de ${po(FOURCHE.large)} × ${po(FOURCHE.haut)}`],
     ['Arceaux', `Bleus sur la photo. Les côtés ne sont pas continus (précision du client) : chaque côté porte ${CADRE.parCote} arceaux séparés, un au bord avant et un au bord arrière, soit ${NA} en tout. Chaque arceau : deux montants, une traverse haute et une diagonale, ${mm(CADRE.large)} de large et ${mm(CADRE.haut)} au-dessus de la tôle (relevé). Supposé : tube carré de ${po(TUBE.cote)}, diagonale de ${po(TUBE.diagonale)}, même sens de diagonale partout ; un seul arceau est visible en entier sur la photo, les autres en partie`],
@@ -63,7 +63,7 @@ const data = {
         ['3', '', 2 * NA, 'MONTANT D\'ARCEAU', { note: `Tube carré de ${po(TUBE.cote)} supposé ; arceau de ${mm(CADRE.haut)} de haut au-dessus de la tôle (relevé).` }],
         ['4', '', NA, 'TRAVERSE HAUTE D\'ARCEAU', { note: `Tube carré de ${po(TUBE.cote)} supposé, ${mm(CADRE.large)} de long (relevé).` }],
         ['5', '', NA, 'DIAGONALE D\'ARCEAU', { note: `Du pied du montant avant à la tête du montant arrière. Tube de ${po(TUBE.diagonale)} supposé ; sens relevé sur l'arceau avant gauche, supposé pour les autres.` }],
-        ['6', '', N, `BOÎTE À CAROTTES (core box) de ${m(BOITE.long)}`, { note: `Bois, ${BOITE.rangees} rangées. Longueur donnée par le client (minimum) ; largeur de ${mm(BOITE.large)} et hauteur de ${mm(BOITE.haut)} supposées. Quantité : ${PILE.colonnes} de large (donné par le client) × ${PILE.etages} de haut, rack plein (donnés par le client ; ${PILE.visibles} de haut sur la photo).` }],
+        ['6', '', N, `BOÎTE À CAROTTES (core box) de ${m(BOITE.long)}`, { note: `Bois, ${BOITE.rangees} rangées. Boîte de la table à carottes (donnée par le client) : ${mm(BOITE.large)} de large, ${mm(BOITE.haut)} de haut. Quantité : ${PILE.colonnes} de large (donné par le client) × ${PILE.etages} de haut, rack plein (donnés par le client ; ${PILE.visibles} de haut sur la photo).` }],
         ['7', '', N, 'COUVERCLE DE BOÎTE À CAROTTES', { note: `Contreplaqué de ${mm(BOITE.couvercle)} supposé.` }],
       ],
     },
@@ -95,7 +95,7 @@ if (at >= 0) {
   for (let col = 0; col < PILE.colonnes; col++) for (let et = 0; et < PILE.etages; et++) face += rect(ox, sol, x0 + col * pas, x0 + col * pas + BOITE.large, yT + et * hautBoite(), yT + (et + 1) * hautBoite(), 'bois');
   face += hc(ox - W * k, ox + W * k, sol + 60, `${m(largeurBase())} (${PILE.colonnes} boîtes)`)
     + vc(ox + W * k + 40, sol - (yT + CADRE.haut) * k, sol, `${m(h.haut)} †`)
-    + hc(ox + x0 * k, ox + (x0 + BOITE.large) * k, sol - (yT + PILE.etages * hautBoite()) * k - 30, `${mm(BOITE.large)} ‡`)
+    + hc(ox + x0 * k, ox + (x0 + BOITE.large) * k, sol - (yT + PILE.etages * hautBoite()) * k - 30, `${mm(BOITE.large)}`)
     + hc(ox + passages()[0] * k, ox + passages()[1] * k, sol + 110, `entraxe ${mm(FOURCHE.entraxe)} †`);
   // Vue de côté : Z à l'horizontale, l'avant (fourches) à gauche.
   const oz = 1640;

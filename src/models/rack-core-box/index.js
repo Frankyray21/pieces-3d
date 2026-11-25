@@ -17,8 +17,8 @@
 // 0,5 m de large, passages de fourche sous la plate-forme (deux sont visibles,
 // sous la première et la troisième colonne).
 //
-// Supposé : la largeur et la hauteur d'une boîte (boîte de bois à quatre
-// rangées), les sections des tubes, l'épaisseur de la tôle, le sens de la
+// Boîte : celle de la table à carottes de la visite (donnée par le client le
+// 2026-11-25). Supposé : les sections des tubes, l'épaisseur de la tôle, le sens de la
 // diagonale des arceaux que la photo ne montre pas en entier, le troisième
 // passage de fourche (sous la cinquième colonne, par symétrie).
 //
@@ -32,16 +32,20 @@ export const IN = 25.4;
 
 // ------------------------------------------------------------------ cotes (mm)
 
-/** Boîte à carottes de bois, à quatre rangées. Longueur donnée par le client ; le reste est supposé. */
+/**
+ * Boîte à carottes de bois : la boîte de la table à carottes de la visite (demande du client, 2026-11-25 : « prend celles qu'on
+ * utilise sur la table à core ») : 1,50 m de long, 197 mm de large, 60 mm de haut, 3 rangées NQ (canal de 51 mm, lattes de 9 mm,
+ * côtés de 13 mm). Le couvercle reste supposé.
+ */
 export const BOITE = {
   long: 1500, // donnée par le client (minimum)
-  large: 300, // supposée, d'après les proportions des bouts sur la photo
-  haut: 60, // supposée (sans le couvercle)
-  rangees: 4, // supposé
-  paroi: 12, // côtés et bouts
+  large: 197, // boîte de la table à carottes : 3 × 51 + 2 × 9 + 2 × 13
+  haut: 60, // boîte de la table à carottes
+  rangees: 3, // NQ
+  paroi: 13, // côtés et bouts
   fond: 6,
   separation: 9,
-  couvercle: 6,
+  couvercle: 6, // supposé
 };
 /**
  * Empilement, rack plein : cinq colonnes côte à côte, jusqu'à huit boîtes de haut (donnés par le client ;
