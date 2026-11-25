@@ -5,12 +5,15 @@
 //    elle se pose ouverte ou fermée (le plus proche, ou dans le sens du geste).
 //  - Saisir la carte ailleurs : elle tourne (glisser de côté) et s'incline
 //    (glisser de haut en bas) autour de son centre, comme tenue dans la main.
-//  - Boutons du dock : Ouvrir / Fermer (page tournée), Retourner (demi-tour),
-//    Redresser (remet la carte droite, face à soi).
+//  - Boutons du dock : Lire (la carte tenue devant soi, plein écran :
+//    carte-forage/lecture.js, adresse #carte-forage-dd.lire), Ouvrir / Fermer
+//    (page tournée), Retourner (demi-tour), Redresser (carte remise droite).
 // Un toucher sans glisser sélectionne la pièce, comme ailleurs sur le site ;
 // glisser hors de la carte fait tourner la vue, comme d'habitude.
 import * as THREE from 'three';
 import { poser, ANGLE, VOLET } from '../../models/carte-forage-dd/index.js';
+import { lire } from './carte-forage/lecture.js';
+import './carte-forage.css';
 
 const EQ = 'carte-forage-dd';
 const DUREE_PAGE = 1100, DUREE_RETOURNER = 1200, DUREE_POSE = 450, DUREE_REDRESSER = 700; // ms
@@ -25,6 +28,10 @@ export default {
   id: 'carte-forage',
   order: 120,
   init(ctx) {
+    const bLire = ctx.ui.addTool({
+      id: 'carte-lire', label: 'Lire', title: 'Lire la carte : tenue devant soi, en plein écran', icon: 'page', rank: 11,
+      onClick: () => ctx.go('lire'),
+    });
     const bPage = ctx.ui.addTool({
       id: 'carte-page', label: 'Ouvrir', title: 'Tourner la page : ouvrir ou fermer la carte (ou tirer la couverture)', icon: 'page', rank: 12,
       onClick: () => tournerPage(),
@@ -37,14 +44,14 @@ export default {
       id: 'carte-redresser', label: 'Redresser', title: 'Remettre la carte droite, face à soi', icon: 'accueil', rank: 14,
       onClick: () => redresser(),
     });
-    const boutons = [bPage, bRetourner, bRedresser];
+    const boutons = [bLire, bPage, bRetourner, bRedresser];
     for (const b of boutons) b.hidden = true;
 
     let carte = null; // { root, pli, arriere }
     let anim = 0;
     const libelle = (b, t) => { const s = b.querySelector('span'); if (s) s.textContent = t; };
     const fermee = () => carte.pli.rotation.y > Math.PI / 2;
-    const majBoutons = () => { if (carte) libelle(bPage, fermee() ? 'Ouvrir' : 'Fermer'); };
+    const majBoutons = () => { if (carte) { libelle(bPage, fermee() ? 'Ouvrir' : 'Fermer'); ouverteVue = !fermee(); } };
 
     function arreter() {
       cancelAnimationFrame(anim);
@@ -231,6 +238,25 @@ export default {
       if (h) ctx.viewer.canvas.style.cursor = h.quoi === 'page' ? 'ew-resize' : 'grab';
     });
 
+    // Mode « Lire » : page plein écran liée à l'adresse #carte-forage-dd.lire.
+    let lecture = null;
+    let ouverteVue = false; // la carte affichée dans la vue 3D est-elle ouverte ?
+    ctx.registerRoute('lire', () => {
+      if (ctx.equipment?.id !== EQ) { ctx.go(`#${EQ}.lire`); return; }
+      lecture?.dispose();
+      const el = document.createElement('div');
+      ctx.ui.showPage('Lire la carte de travail — MA4657078', el, {
+        icon: 'page', repli: 'P01',
+        onClose: () => { lecture?.dispose(); lecture = null; },
+      });
+      try {
+        lecture = lire(el, { ouverte: ouverteVue });
+      } catch (err) {
+        console.error(err);
+        el.innerHTML = '<p>La lecture en 3D n\u2019a pas pu démarrer (WebGL indisponible ?).</p>';
+      }
+    });
+
     ctx.on('assembly', ({ is3d, model, equipment }) => {
       arreter();
       geste = null;
@@ -241,6 +267,7 @@ export default {
         carte = { root: model.root, pli, arriere };
         poser(pli, pli.rotation.y, 0);
         majBoutons();
+        ouverteVue = !fermee();
       }
       for (const b of boutons) b.hidden = !carte;
     });

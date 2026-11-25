@@ -120,8 +120,15 @@ pièces (numéro, quantité, page du manuel).
   selon la vitesse (bord libre en retard d'au plus 35 mm), puis se pose ouverte
   ou fermée au relâcher ; saisie ailleurs, la carte tourne et s'incline autour
   de son centre ; glisser hors de la carte fait tourner la vue. Boutons du
-  dock : « Ouvrir / Fermer » (page tournée en animation), « Retourner »
-  (demi-tour pour voir l'autre face), « Redresser » (carte remise droite).
+  dock : « Lire », « Ouvrir / Fermer » (page tournée en animation),
+  « Retourner » (demi-tour pour voir l'autre face), « Redresser » (carte
+  remise droite). **Mode Lire** (`#carte-forage-dd.lire`,
+  `src/ui/features/carte-forage/lecture.js`) : la carte tenue devant soi, à la
+  première personne, légèrement inclinée et assombrie autour, cadrée dans
+  l'espace libre entre le titre et les commandes ; ← → feuillettent
+  (couverture, intérieur, dos), R retourne, la molette, le pincement ou un
+  toucher sur le texte rapprochent (de près, glisser se déplace sur la carte ;
+  au loin, glisser l'incline dans la main), Échap ou Retour ferme.
   Chaque volet est fait de deux feuilles minces, recto et verso, un matériau
   par maillage.
 

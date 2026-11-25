@@ -1,0 +1,30 @@
+/* Mode « Lire » de la carte de travail : la carte tenue devant soi, fond assombri. */
+
+.wp-body:has(> .cf-lire) { padding: 0; overflow: hidden; }
+.wp-body > .cf-lire { max-width: none; margin: 0; }
+
+.cf-lire {
+  position: relative; width: 100%; height: 100%; min-height: 420px; overflow: hidden;
+  background: radial-gradient(ellipse at 50% 45%, #3a3d42 0%, #1c1e22 55%, #0c0d10 100%);
+  color: var(--ink); user-select: none; -webkit-user-select: none;
+}
+.cf-lire-vue { position: absolute; inset: 0; width: 100%; height: 100%; display: block; outline: none; touch-action: none; cursor: zoom-in; }
+.cf-lire kbd { display: inline-block; min-width: 1.4em; padding: 0 4px; border-radius: 4px; border: 1px solid var(--line-strong);
+  background: var(--surface-2); color: var(--ink); font: 500 .8em/1.5 var(--f-mono); text-align: center; }
+.cf-lire-titre { position: absolute; top: 14px; left: 50%; transform: translateX(-50%); margin: 0; max-width: calc(100% - 32px);
+  padding: 6px 12px; border-radius: 999px; background: color-mix(in srgb, var(--surface) 90%, transparent); border: 1px solid var(--line);
+  font: 600 .95rem/1.3 var(--f-display); letter-spacing: .03em; text-align: center; box-shadow: var(--shadow); pointer-events: none; }
+.cf-lire-barre { position: absolute; left: 50%; bottom: 40px; transform: translateX(-50%); display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+  max-width: calc(100% - 32px); }
+.cf-lire-barre .btn { box-shadow: var(--shadow); white-space: nowrap; }
+.cf-lire-aide { position: absolute; left: 16px; right: 16px; bottom: 8px; width: fit-content; margin: 0 auto; text-align: center;
+  padding: 3px 10px; border-radius: 999px; background: rgba(12, 13, 16, .72); font-size: .78rem; color: #d5dae1; pointer-events: none; }
+.cf-lire-aide kbd { background: transparent; color: #e5eaf0; border-color: #6b7380; }
+
+@media (max-width: 760px) {
+  .cf-lire-titre { font-size: .82rem; top: 10px; }
+  .cf-lire-barre { bottom: 12px; gap: 6px; flex-wrap: nowrap; }
+  .cf-lire-barre .btn { padding: 0 12px; }
+  .cf-mot { display: none; }
+  .cf-lire-aide { display: none; }
+}
