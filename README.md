@@ -880,6 +880,12 @@ pièces (numéro, quantité, page du manuel).
   couleur de la guenille sont supposées. Le contenu des deux chaudières pleines
   n'est pas représenté. La fiche est écrite par `tools/chaudieres_fiche.mjs` à
   partir des cotes du modèle (`src/models/chaudieres-5-gal/index.js`).
+  P02 (demande du client : « bac de rétention avec max 5 chaudières d'huile
+  5 gallons ») : 5 chaudières du même seau, fermées, étiquette « HUILE
+  HYDRAULIQUE » redessinée, en quinconce (3 au fond, 2 devant) sur le mini bac
+  de rétention 100 L (`bac-retention-100l`, dont le bac, le caillebotis et
+  l'affiche sont réutilisés) : 5 × 18,9 L = 94,6 L, sous les 100 L de l'affiche.
+  Posé dans la visite du plancher (version 169), près du power pack.
 - **Graisse à filets : bidon de 1 gal US et pinceau** (`graisse-a-filets`) :
   le bidon de graisse des filets de tiges de forage et son pinceau,
   reconstitués d'après deux photos du client (P01), sans plan ni étiquette (la
