@@ -114,7 +114,11 @@ pièces (numéro, quantité, page du manuel).
   rapport journalier, types de risques et moyens de contrôle au dos) ; P02 :
   carte ouverte, comme on la tient pour la remplir (inspection à gauche,
   planification, décision et exécution 2e visite à droite). Épaisseur du
-  carton supposée (0,25 mm).
+  carton supposée (0,25 mm). Deux animations dans le dock
+  (`src/ui/features/carte-forage.js`) : « Ouvrir / Fermer » tourne la page
+  (la couverture pivote sur le pli et se courbe en tournant, bord libre en
+  retard d'au plus 35 mm) et « Retourner » fait faire un demi-tour à la carte
+  pour en montrer l'autre face.
 
 - **Coffre à outils ITH** (`coffre-dd`, dessin 087 « Coffre à outil ITH » de
   M.R.I. Inc., D. Côté, juin 2011, et deux photos) : 3D aux cotes du dessin,

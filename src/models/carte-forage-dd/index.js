@@ -46,10 +46,35 @@ const tranche = new THREE.MeshStandardMaterial({ color: 0xf3f1ec, roughness: 0.9
  * Volet : face avant (+Z) et face arrière (−Z), [page, moitié] chacune.
  * Ordre des faces d'une boîte : +x, −x, +y, −y, +z, −z.
  */
-function volet(avant, arriere) {
+function volet(avant, arriere, segments = 1) {
   const { w, h, t } = VOLET;
-  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, t), [tranche, tranche, tranche, tranche, papier(demiPage(...avant)), papier(demiPage(...arriere))]);
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, t, segments, 1, 1), [tranche, tranche, tranche, tranche, papier(demiPage(...avant)), papier(demiPage(...arriere))]);
   return m;
+}
+
+/** Angles du pli : carte ouverte (tenue pour la lire) et fermée (couverture qui bâille de 3°). */
+export const ANGLE = { ouverte: 0.32, fermee: Math.PI - 0.055 };
+const COURBE = 0.035; // retard du bord libre au plus fort de la page tournée (m)
+
+/**
+ * Pose la couverture (animation « tourner la page ») : angle du pli et courbure
+ * (−1 à 1 : le bord libre traîne derrière le pli, comme un carton qu'on tourne ;
+ * signe = sens du mouvement, 0 = à plat). pli : le repère 1 du modèle.
+ */
+export function poser(pli, angle, courbure = 0) {
+  pli.rotation.y = angle;
+  const m = pli.userData.couverture;
+  const g = m.geometry, p = g.attributes.position, base = m.userData.base;
+  const { w } = VOLET;
+  for (let i = 0; i < p.count; i++) {
+    const x = base[3 * i];
+    const s = (w / 2 - x) / w; // 0 au pli, 1 au bord libre
+    p.setXYZ(i, x, base[3 * i + 1], base[3 * i + 2] - courbure * COURBE * s * s);
+  }
+  p.needsUpdate = true;
+  g.computeVertexNormals();
+  g.computeBoundingBox();
+  g.computeBoundingSphere();
 }
 
 /** Carte pliée à l'angle donné (0 = ouverte à plat, π = fermée). */
@@ -62,12 +87,15 @@ function carte(api, angle) {
   // 1 — Couverture, tournée autour du pli (bord avant du volet arrière) :
   // INSPECTION (page 2, à gauche) devant quand la carte est ouverte,
   // couverture (page 1, à droite) derrière, donc dessus une fois fermée.
-  const couverture = volet(['P02', 0], ['P01', 1]);
+  // Couverture découpée en bandes le long de la largeur : elle se courbe en tournant.
+  const couverture = volet(['P02', 0], ['P01', 1], 24);
+  couverture.userData.base = Float32Array.from(couverture.geometry.attributes.position.array);
   couverture.position.set(-w / 2, 0, -t / 2);
   const pli = new THREE.Group();
   pli.position.set(0, h / 2, t / 2);
   pli.rotation.y = angle;
   pli.add(couverture);
+  pli.userData.couverture = couverture;
   const ouverte = angle < Math.PI / 2;
   api.part('1', pli, ouverte ? [-0.03, 0, 0.04] : [0, 0, 0.05]);
   api.part('2', arriere, ouverte ? [0.03, 0, 0] : [0, 0, -0.03]);
@@ -77,14 +105,14 @@ function carte(api, angle) {
 export function P01(api) {
   // Un carton plié ne reste pas tout à fait à plat : la couverture bâille de 3°
   // (un peu moins de 8 mm au bord libre).
-  carte(api, Math.PI - 0.055);
+  carte(api, ANGLE.fermee);
   return { view: { dir: [0.35, 0.25, 1] } };
 }
 
 /** P02 — Carte ouverte : INSPECTION à gauche, PLANIFICATION et DÉCISION à droite. */
 export function P02(api) {
   // Ouverte comme on la tient pour la lire : couverture un peu rabattue vers soi.
-  carte(api, 0.32);
+  carte(api, ANGLE.ouverte);
   return { view: { dir: [0.1, 0.15, 1] } };
 }
 
