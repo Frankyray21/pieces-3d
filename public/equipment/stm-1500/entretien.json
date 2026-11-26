@@ -1,6 +1,6 @@
 {
   "titre": "Entretien et graissage — STM-1500",
-  "note": "Points tirés du manuel de pièces (page 1.04 « Grease position » et pages des assemblages). Le manuel ne donne ni lubrifiant ni intervalle pour les graisseurs ; seule la tête a une huile et un intervalle de vidange (page 2.4).",
+  "note": "Points tirés du manuel de pièces (page 1.04 « Grease position » et pages des assemblages). Le manuel ne donne ni lubrifiant ni intervalle ni nombre de coups pour les graisseurs ; seule la tête a une huile et un intervalle de vidange (page 2.4). Consigne de graissage (hors manuel) : porte de la cage ouverte avant de graisser, ce qui coupe toutes les fonctions hydrauliques (pratique du plancher). Essuyer le graisseur ; pomper lentement jusqu'à voir la graisse propre sortir, 1 à 5 coups selon les guides de graissage d'équipement lourd (Vermeer, FieldFix, IsoHiTech), et arrêter si ça résiste. Trop peu : métal sur métal, usure, grippage. Trop : joint crevé, la saleté entre et la graisse retient la poussière (AMSOIL, Construction Equipment). Doigts loin du coupleur : une injection de graisse sous la peau est une urgence médicale (Lincoln, HSE).",
   "points": [
     {
       "id": "A",
@@ -9,7 +9,8 @@
       "lieu": "Œil de tige dans les joues de la patte avant du support d'avance (un par vérin, de chaque côté)",
       "assemblage": "P019",
       "pages": ["P008", "P019"],
-      "source": "Page 1.04, détail A"
+      "source": "Page 1.04, détail A",
+      "consigne": "Porte de la cage ouverte (plus de fonction hydraulique). Pomper lentement jusqu'à voir la graisse propre sortir, 1 à 5 coups selon les guides (le manuel n'en donne pas) ; arrêter si ça résiste."
     },
     {
       "id": "B",
@@ -18,7 +19,8 @@
       "lieu": "Bloc du fond du vérin HBU-3010, sur la chape du longeron du traîneau : graisseur 1/8 NPT Z125-S (un par vérin)",
       "assemblage": "P019",
       "pages": ["P008", "P019"],
-      "source": "Page 1.04, détail B ; page 1.9 (Z125-S)"
+      "source": "Page 1.04, détail B ; page 1.9 (Z125-S)",
+      "consigne": "Porte de la cage ouverte (plus de fonction hydraulique). Pomper lentement jusqu'à voir la graisse propre sortir, 1 à 5 coups selon les guides (le manuel n'en donne pas) ; arrêter si ça résiste."
     },
     {
       "id": "C",
@@ -28,6 +30,7 @@
       "assemblage": "P018",
       "pages": ["P008", "P018"],
       "source": "Page 1.04, détail C ; page 1.8 (Z125 ×2, UM-064-210DS ×2)",
+      "consigne": "Porte de la cage ouverte (plus de fonction hydraulique). Pomper lentement jusqu'à voir la graisse propre sortir, 1 à 5 coups selon les guides (le manuel n'en donne pas) ; arrêter si ça résiste.",
       "approx": true,
       "marqueurs": [{ "assemblage": "P010", "repere": "11", "pos": [0.555, 0.966, 0.345] }]
     },
@@ -39,6 +42,7 @@
       "assemblage": "P018",
       "pages": ["P008", "P018"],
       "source": "Page 1.04, détail D ; page 1.8 (Z125 ×2, UM-064-210DS ×2)",
+      "consigne": "Porte de la cage ouverte (plus de fonction hydraulique). Pomper lentement jusqu'à voir la graisse propre sortir, 1 à 5 coups selon les guides (le manuel n'en donne pas) ; arrêter si ça résiste.",
       "approx": true,
       "marqueurs": [{ "assemblage": "P010", "repere": "11", "pos": [0.555, 0.966, -0.345] }]
     },
@@ -49,7 +53,8 @@
       "lieu": "Dessus des paliers fendus des quatre poteaux du traîneau : graisseurs 1/4-UNF Z250NF (4)",
       "assemblage": "P011",
       "pages": ["P008", "P011"],
-      "source": "Page 1.04, détail E ; page 1.1 (Z250NF ×4)"
+      "source": "Page 1.04, détail E ; page 1.1 (Z250NF ×4)",
+      "consigne": "Porte de la cage ouverte (plus de fonction hydraulique). Pomper lentement jusqu'à voir la graisse propre sortir, 1 à 5 coups selon les guides (le manuel n'en donne pas) ; arrêter si ça résiste."
     },
     {
       "id": "F",
@@ -58,7 +63,8 @@
       "lieu": "Dessus du corps du serre-tiges (2920455) : graisseur ZNPT250 (1/4 NPT selon la liste)",
       "assemblage": "P032",
       "pages": ["P008", "P031", "P032", "P028"],
-      "source": "Page 1.04, détail F ; pages 1.20 à 1.22 (ZNPT250) ; page 1.15, détail A"
+      "source": "Page 1.04, détail F ; pages 1.20 à 1.22 (ZNPT250) ; page 1.15, détail A",
+      "consigne": "Porte de la cage ouverte (plus de fonction hydraulique). Pomper lentement jusqu'à voir la graisse propre sortir, 1 à 5 coups selon les guides (le manuel n'en donne pas) ; arrêter si ça résiste."
     },
     {
       "id": "pivot-poulie",
@@ -67,7 +73,8 @@
       "lieu": "Axe du pivot de poulie de la rallonge : graisseur 1/4-UNF UM-064-1014D",
       "assemblage": "P015",
       "pages": ["P015"],
-      "source": "Page 1.5"
+      "source": "Page 1.5",
+      "consigne": "Porte de la cage ouverte (plus de fonction hydraulique). Pomper lentement jusqu'à voir la graisse propre sortir, 1 à 5 coups selon les guides (le manuel n'en donne pas) ; arrêter si ça résiste. Une poulie mal graissée use aussi le câble."
     },
     {
       "id": "guide-tiges",
@@ -76,7 +83,8 @@
       "lieu": "Axe du rouleau du guide de tiges : graisseur 1/8 NPT UM-064-140C",
       "assemblage": "P016",
       "pages": ["P016"],
-      "source": "Page 1.6"
+      "source": "Page 1.6",
+      "consigne": "Porte de la cage ouverte (plus de fonction hydraulique). Pomper lentement jusqu'à voir la graisse propre sortir, 1 à 5 coups selon les guides (le manuel n'en donne pas) ; arrêter si ça résiste."
     },
     {
       "id": "treuil-guide",
@@ -85,7 +93,8 @@
       "lieu": "Bloc du guide-câble, au-dessus de la vis à double hélice : graisseur (repère 21)",
       "assemblage": "P041",
       "pages": ["P041"],
-      "source": "Page 8.3 (Grease Zerk)"
+      "source": "Page 8.3 (Grease Zerk)",
+      "consigne": "Porte de la cage ouverte (plus de fonction hydraulique). Pomper lentement jusqu'à voir la graisse propre sortir, 1 à 5 coups selon les guides (le manuel n'en donne pas) ; arrêter si ça résiste."
     },
     {
       "id": "tete-niveau",
