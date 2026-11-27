@@ -3,7 +3,7 @@
 // Usage : node tools/train_forage_ith_fiche.mjs
 import { writeFileSync } from 'node:fs';
 import {
-  IN, TIGE, MARTEAUX, BITS, CASSE_BITS, SAVER_SUBS, CHARIOT, API_REG,
+  IN, TIGE, TIGES, MARTEAUX, BITS, CASSE_BITS, SAVER_SUBS, CHARIOT, API_REG,
   tige, marteau, bit, casseBit, cotesMarteau, cotesBit, volume,
 } from '../src/models/train-forage-ith/forme.js';
 
@@ -18,12 +18,15 @@ const SRC001 = 'PRO-OP-ITH-001 « Changements de bit de forage sur les Cubex » 
 const SRC004 = 'PRO-OP-ITH-004 « Forage long-trou ITH-Cubex » (révision mars 2025)';
 
 const tiges = [];
-for (const pieds of [4, 5, 6]) {
-  for (const couleur of TIGE.couleurs) {
-    const m = kg(tige(pieds, couleur).surfaces);
-    tiges.push([String(tiges.length + 1), '', 1, `TIGE DE FORAGE Ø 3 1/2 po × ${pieds} pi, peinte en ${couleur}`, {
-      note: `${pieds} pi (${fr(TIGE.longueurs[pieds])} mm) d'épaulement à épaulement, filet mâle 2 3/8 API REG en haut, femelle en bas. Bouts d'acier nu à deux entailles plates (méplats à ${po(TIGE.plats.entre)} l'un de l'autre, ${TIGE.plats.long} mm de long). Masse calculée : ${fr(m, 1)} kg (${fr(lb(m))} lb). Export Unreal : SM_Tige_${pieds}pi_${couleur === 'jaune' ? 'Jaune' : 'Noire'}.glb.`,
-    }]);
+for (const [diam, nomD, marteauD] of [['3-1-2', '3 1/2', '3 et 4'], ['5-1-2', '5 1/2', '6']]) {
+  const T = TIGES[diam];
+  for (const pieds of [4, 5, 6]) {
+    for (const couleur of T.couleurs) {
+      const m = kg(tige(pieds, couleur, diam).surfaces);
+      tiges.push([String(tiges.length + 1), '', 1, `TIGE DE FORAGE Ø ${nomD} po × ${pieds} pi, peinte en ${couleur}`, {
+        note: `Pour les marteaux de ${marteauD} po. ${pieds} pi (${fr(T.longueurs[pieds])} mm) d'épaulement à épaulement, filet mâle ${T.filet} API REG en haut, femelle en bas. Bouts d'acier nu à deux entailles plates (méplats à ${po(T.plats.entre)} l'un de l'autre, ${T.plats.long} mm de long). Paroi de ${po(T.paroi)} (supposée${diam === '5-1-2' ? ', comme les méplats' : ''}). Masse calculée : ${fr(m, 1)} kg (${fr(lb(m))} lb). Export Unreal : SM_Tige_${diam === '3-1-2' ? '' : '5_1_2po_'}${pieds}pi_${couleur === 'jaune' ? 'Jaune' : 'Noire'}.glb.`,
+      }]);
+    }
   }
 }
 
@@ -94,7 +97,7 @@ const data = {
     ['Sources', `${SRC016} : masses des marteaux, chariot, casse-bit, driver sub, saver sub, anneaux de retenue. ${SRC001} : bits de 3 5/8 à 10 po. ${SRC004} : 7 pi 6 po entre la slip plate et le bout des taillants. Manuel de la Cubex MRI 5200 (F15, F18) : slip plates pour tiges de 3 1/2 et 5 1/2 po, saver sub 2216208. Fiches techniques Epiroc (COP 32, COP 44, catalogue DTH). Photos de chantier du client.`],
     ['Marteaux', Object.values(MARTEAUX).map((M) => `${M.nom} : ${Math.round(lb(M.kg))} lb (${fr(M.kg, 1)} kg), Ø ${M.d} mm, ${fr(M.long, 1)} mm sans bit (${M.ref})`).join(' ; ')],
     ['Choix des modèles Epiroc', 'La procédure ne nomme pas les marteaux. Les masses qu\'elle donne sont celles des COP 32 HD (26 kg), COP 44 Gold (40,5 kg) et COP 64 Gold (96 kg) : leurs diamètres, longueurs et raccords sont repris. À corriger si la flotte compte d\'autres marteaux (Sandvik, Mincon…)'],
-    ['Tiges', `Ø 3 1/2 po (slip plate « FOR 3 1/2" ROD » du manuel de la Cubex), 4, 5 et 6 pi d'épaulement à épaulement, paroi de 1/4 po (supposée), filets 2 3/8 API REG (mâle en haut, femelle en bas). Peintes en jaune ou en noir comme sur les photos, bouts d'acier nu à deux entailles plates. Les tiges de 5 1/2 po (marteau de 6 po) ne sont pas modélisées : longueur et couleur à confirmer`],
+    ['Tiges', `Ø 3 1/2 po (slip plate « FOR 3 1/2" ROD » du manuel de la Cubex), 4, 5 et 6 pi d'épaulement à épaulement, paroi de 1/4 po (supposée), filets 2 3/8 API REG (mâle en haut, femelle en bas). Peintes en jaune ou en noir comme sur les photos, bouts d'acier nu à deux entailles plates. Tiges de 5 1/2 po (slip plate « FOR 5 1/2\" ROD », marteau de 6 po) : mêmes longueurs et couleurs (demande du client), filets 3 1/2 API REG, paroi de 3/8 po et méplats à 4 1/2 po supposés`],
     ['Bits', BITS.map((b) => `${b.nom} (marteau de ${b.marteau} po)`).join(', ')],
     ['Filets', Object.entries(API_REG).map(([k, F]) => `${k} API REG : Ø ${fr(F.grand, 1)} mm à l'épaulement, ${fr(F.long, 1)} mm de long, ${fr(IN / F.pas)} filets au pouce, conicité 1/6`).join(' ; ') + ' (filets représentés par des gorges, sans hélice)'],
     ['Usure', 'Pièces qui ont servi : peinture partie aux arêtes et sur les bouts, rayée par les mâchoires, acier nu piqué de rouille, filets graissés et sombres, bits rouillés, boutons de carbure ternis. Mise en apparence seulement : aucune cote ne change'],
@@ -121,7 +124,7 @@ const data = {
       sheets: ['F01', 'F02', 'F03', 'F04', 'F05', 'F06', 'F07', 'F08', 'F09', 'F10', 'F11'],
       note: `Toutes les pièces du train de forage ITH nommées dans les procédures ${['PRO-OP-ITH-001', '004', '016'].join(', ')}, chacune sur sa page. Pièces debout, telles qu'on les pose au chantier. Rendu usé : pièces qui ont servi. Chaque pièce a son export .glb pour Unreal Engine.`,
       parts: [
-        ['1', '', 1, 'TIGES DE FORAGE (4, 5 et 6 pi, jaunes et noires)', { link: 'P02' }],
+        ['1', '', 1, 'TIGES DE FORAGE (3 1/2 et 5 1/2 po ; 4, 5 et 6 pi ; jaunes et noires)', { link: 'P02' }],
         ['2', '', 1, 'MARTEAUX DE 3, 4 ET 6 PO', { link: 'P03' }],
         ['3', '', 1, 'BITS DE 3 5/8 À 10 PO', { link: 'P04' }],
         ['4', '', 1, 'DRIVER SUBS, ANNEAUX DE RETENUE, SAVER SUBS', { link: 'P05' }],
@@ -129,7 +132,7 @@ const data = {
         ['6', '', 1, 'CHARIOT À MARTEAU ET SA CHAÎNE', { link: 'P07' }],
       ],
     },
-    P02: { title: 'DRILL RODS 3 1/2 IN', titleFr: 'Tiges de forage de 3 1/2 po', pn: '', sheets: ['F11', 'F10'], note: 'Tiges debout, filet mâle en haut, de gauche à droite : 4 pi jaune et noire, 5 pi, 6 pi. Les entailles plates (deux méplats opposés) sont sur les bouts d\'acier nu, en haut et en bas. Pour installer ou enlever une tige, le gear box doit être relevé et arrêté et la foreuse au neutre (PRO-OP-ITH-004, point 22).', parts: tiges },
+    P02: { title: 'DRILL RODS 3 1/2 AND 5 1/2 IN', titleFr: 'Tiges de forage de 3 1/2 et 5 1/2 po', pn: '', sheets: ['F11', 'F10'], note: 'Tiges debout, filet mâle en haut. Devant, les tiges de 3 1/2 po (marteaux de 3 et 4 po) ; derrière, celles de 5 1/2 po (marteau de 6 po). De gauche à droite : 4 pi jaune et noire, 5 pi, 6 pi. Les entailles plates (deux méplats opposés) sont sur les bouts d\'acier nu, en haut et en bas. Pour installer ou enlever une tige, le gear box doit être relevé et arrêté et la foreuse au neutre (PRO-OP-ITH-004, point 22).', parts: tiges },
     P03: { title: 'DTH HAMMERS', titleFr: 'Marteaux fond-de-trou de 3, 4 et 6 po', pn: '', sheets: ['F01', 'F02'], note: 'Marteaux debout, raccord de tête (mâle) en haut, sans driver sub ni bit. Les marteaux de 3 et 4 po s\'installent à la main comme les tiges ; celui de 6 po se transporte toujours sur le chariot (P07).', parts: marteaux },
     P04: { title: 'BUTTON BITS', titleFr: 'Bits à boutons de 3 5/8 à 10 po', pn: '', sheets: ['F08', 'F09', 'F04'], note: 'Bits posés sur leur face de coupe, queue vers le haut (comme sur le casse-bit), du plus petit au plus grand. Serrage dans les jaws ou les tables : 1000 psi minimum, 2000 psi maximum (PRO-OP-ITH-001).', parts: bits },
     P05: { title: 'DRIVER SUBS, RETAINING RINGS, SAVER SUBS', titleFr: 'Driver subs, anneaux de retenue et saver subs', pn: '', sheets: ['F08', 'F04', 'F06'], note: 'Devant : driver subs des marteaux de 3, 4 et 6 po. Au milieu : les paires d\'anneaux de retenue. Derrière : saver subs 2 3/8 et 3 1/2 API REG.', parts: raccords },

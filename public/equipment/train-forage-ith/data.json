@@ -27,7 +27,7 @@
   ],
   [
    "Tiges",
-   "Ø 3 1/2 po (slip plate « FOR 3 1/2\" ROD » du manuel de la Cubex), 4, 5 et 6 pi d'épaulement à épaulement, paroi de 1/4 po (supposée), filets 2 3/8 API REG (mâle en haut, femelle en bas). Peintes en jaune ou en noir comme sur les photos, bouts d'acier nu à deux entailles plates. Les tiges de 5 1/2 po (marteau de 6 po) ne sont pas modélisées : longueur et couleur à confirmer"
+   "Ø 3 1/2 po (slip plate « FOR 3 1/2\" ROD » du manuel de la Cubex), 4, 5 et 6 pi d'épaulement à épaulement, paroi de 1/4 po (supposée), filets 2 3/8 API REG (mâle en haut, femelle en bas). Peintes en jaune ou en noir comme sur les photos, bouts d'acier nu à deux entailles plates. Tiges de 5 1/2 po (slip plate « FOR 5 1/2\" ROD », marteau de 6 po) : mêmes longueurs et couleurs (demande du client), filets 3 1/2 API REG, paroi de 3/8 po et méplats à 4 1/2 po supposés"
   ],
   [
    "Bits",
@@ -98,7 +98,7 @@
      "1",
      "",
      1,
-     "TIGES DE FORAGE (4, 5 et 6 pi, jaunes et noires)",
+     "TIGES DE FORAGE (3 1/2 et 5 1/2 po ; 4, 5 et 6 pi ; jaunes et noires)",
      {
       "link": "P02"
      }
@@ -151,14 +151,14 @@
    ]
   },
   "P02": {
-   "title": "DRILL RODS 3 1/2 IN",
-   "titleFr": "Tiges de forage de 3 1/2 po",
+   "title": "DRILL RODS 3 1/2 AND 5 1/2 IN",
+   "titleFr": "Tiges de forage de 3 1/2 et 5 1/2 po",
    "pn": "",
    "sheets": [
     "F11",
     "F10"
    ],
-   "note": "Tiges debout, filet mâle en haut, de gauche à droite : 4 pi jaune et noire, 5 pi, 6 pi. Les entailles plates (deux méplats opposés) sont sur les bouts d'acier nu, en haut et en bas. Pour installer ou enlever une tige, le gear box doit être relevé et arrêté et la foreuse au neutre (PRO-OP-ITH-004, point 22).",
+   "note": "Tiges debout, filet mâle en haut. Devant, les tiges de 3 1/2 po (marteaux de 3 et 4 po) ; derrière, celles de 5 1/2 po (marteau de 6 po). De gauche à droite : 4 pi jaune et noire, 5 pi, 6 pi. Les entailles plates (deux méplats opposés) sont sur les bouts d'acier nu, en haut et en bas. Pour installer ou enlever une tige, le gear box doit être relevé et arrêté et la foreuse au neutre (PRO-OP-ITH-004, point 22).",
    "parts": [
     [
      "1",
@@ -166,7 +166,7 @@
      1,
      "TIGE DE FORAGE Ø 3 1/2 po × 4 pi, peinte en jaune",
      {
-      "note": "4 pi (1219 mm) d'épaulement à épaulement, filet mâle 2 3/8 API REG en haut, femelle en bas. Bouts d'acier nu à deux entailles plates (méplats à 3 po l'un de l'autre, 100 mm de long). Masse calculée : 22,4 kg (49 lb). Export Unreal : SM_Tige_4pi_Jaune.glb."
+      "note": "Pour les marteaux de 3 et 4 po. 4 pi (1219 mm) d'épaulement à épaulement, filet mâle 2 3/8 API REG en haut, femelle en bas. Bouts d'acier nu à deux entailles plates (méplats à 3 po l'un de l'autre, 100 mm de long). Paroi de 1/4 po (supposée). Masse calculée : 22,4 kg (49 lb). Export Unreal : SM_Tige_4pi_Jaune.glb."
      }
     ],
     [
@@ -175,7 +175,7 @@
      1,
      "TIGE DE FORAGE Ø 3 1/2 po × 4 pi, peinte en noire",
      {
-      "note": "4 pi (1219 mm) d'épaulement à épaulement, filet mâle 2 3/8 API REG en haut, femelle en bas. Bouts d'acier nu à deux entailles plates (méplats à 3 po l'un de l'autre, 100 mm de long). Masse calculée : 22,4 kg (49 lb). Export Unreal : SM_Tige_4pi_Noire.glb."
+      "note": "Pour les marteaux de 3 et 4 po. 4 pi (1219 mm) d'épaulement à épaulement, filet mâle 2 3/8 API REG en haut, femelle en bas. Bouts d'acier nu à deux entailles plates (méplats à 3 po l'un de l'autre, 100 mm de long). Paroi de 1/4 po (supposée). Masse calculée : 22,4 kg (49 lb). Export Unreal : SM_Tige_4pi_Noire.glb."
      }
     ],
     [
@@ -184,7 +184,7 @@
      1,
      "TIGE DE FORAGE Ø 3 1/2 po × 5 pi, peinte en jaune",
      {
-      "note": "5 pi (1524 mm) d'épaulement à épaulement, filet mâle 2 3/8 API REG en haut, femelle en bas. Bouts d'acier nu à deux entailles plates (méplats à 3 po l'un de l'autre, 100 mm de long). Masse calculée : 26,4 kg (58 lb). Export Unreal : SM_Tige_5pi_Jaune.glb."
+      "note": "Pour les marteaux de 3 et 4 po. 5 pi (1524 mm) d'épaulement à épaulement, filet mâle 2 3/8 API REG en haut, femelle en bas. Bouts d'acier nu à deux entailles plates (méplats à 3 po l'un de l'autre, 100 mm de long). Paroi de 1/4 po (supposée). Masse calculée : 26,4 kg (58 lb). Export Unreal : SM_Tige_5pi_Jaune.glb."
      }
     ],
     [
@@ -193,7 +193,7 @@
      1,
      "TIGE DE FORAGE Ø 3 1/2 po × 5 pi, peinte en noire",
      {
-      "note": "5 pi (1524 mm) d'épaulement à épaulement, filet mâle 2 3/8 API REG en haut, femelle en bas. Bouts d'acier nu à deux entailles plates (méplats à 3 po l'un de l'autre, 100 mm de long). Masse calculée : 26,4 kg (58 lb). Export Unreal : SM_Tige_5pi_Noire.glb."
+      "note": "Pour les marteaux de 3 et 4 po. 5 pi (1524 mm) d'épaulement à épaulement, filet mâle 2 3/8 API REG en haut, femelle en bas. Bouts d'acier nu à deux entailles plates (méplats à 3 po l'un de l'autre, 100 mm de long). Paroi de 1/4 po (supposée). Masse calculée : 26,4 kg (58 lb). Export Unreal : SM_Tige_5pi_Noire.glb."
      }
     ],
     [
@@ -202,7 +202,7 @@
      1,
      "TIGE DE FORAGE Ø 3 1/2 po × 6 pi, peinte en jaune",
      {
-      "note": "6 pi (1829 mm) d'épaulement à épaulement, filet mâle 2 3/8 API REG en haut, femelle en bas. Bouts d'acier nu à deux entailles plates (méplats à 3 po l'un de l'autre, 100 mm de long). Masse calculée : 30,3 kg (67 lb). Export Unreal : SM_Tige_6pi_Jaune.glb."
+      "note": "Pour les marteaux de 3 et 4 po. 6 pi (1829 mm) d'épaulement à épaulement, filet mâle 2 3/8 API REG en haut, femelle en bas. Bouts d'acier nu à deux entailles plates (méplats à 3 po l'un de l'autre, 100 mm de long). Paroi de 1/4 po (supposée). Masse calculée : 30,3 kg (67 lb). Export Unreal : SM_Tige_6pi_Jaune.glb."
      }
     ],
     [
@@ -211,7 +211,61 @@
      1,
      "TIGE DE FORAGE Ø 3 1/2 po × 6 pi, peinte en noire",
      {
-      "note": "6 pi (1829 mm) d'épaulement à épaulement, filet mâle 2 3/8 API REG en haut, femelle en bas. Bouts d'acier nu à deux entailles plates (méplats à 3 po l'un de l'autre, 100 mm de long). Masse calculée : 30,3 kg (67 lb). Export Unreal : SM_Tige_6pi_Noire.glb."
+      "note": "Pour les marteaux de 3 et 4 po. 6 pi (1829 mm) d'épaulement à épaulement, filet mâle 2 3/8 API REG en haut, femelle en bas. Bouts d'acier nu à deux entailles plates (méplats à 3 po l'un de l'autre, 100 mm de long). Paroi de 1/4 po (supposée). Masse calculée : 30,3 kg (67 lb). Export Unreal : SM_Tige_6pi_Noire.glb."
+     }
+    ],
+    [
+     "7",
+     "",
+     1,
+     "TIGE DE FORAGE Ø 5 1/2 po × 4 pi, peinte en jaune",
+     {
+      "note": "Pour les marteaux de 6 po. 4 pi (1219 mm) d'épaulement à épaulement, filet mâle 3 1/2 API REG en haut, femelle en bas. Bouts d'acier nu à deux entailles plates (méplats à 4 1/2 po l'un de l'autre, 130 mm de long). Paroi de 3/8 po (supposée, comme les méplats). Masse calculée : 60,1 kg (132 lb). Export Unreal : SM_Tige_5_1_2po_4pi_Jaune.glb."
+     }
+    ],
+    [
+     "8",
+     "",
+     1,
+     "TIGE DE FORAGE Ø 5 1/2 po × 4 pi, peinte en noire",
+     {
+      "note": "Pour les marteaux de 6 po. 4 pi (1219 mm) d'épaulement à épaulement, filet mâle 3 1/2 API REG en haut, femelle en bas. Bouts d'acier nu à deux entailles plates (méplats à 4 1/2 po l'un de l'autre, 130 mm de long). Paroi de 3/8 po (supposée, comme les méplats). Masse calculée : 60,1 kg (132 lb). Export Unreal : SM_Tige_5_1_2po_4pi_Noire.glb."
+     }
+    ],
+    [
+     "9",
+     "",
+     1,
+     "TIGE DE FORAGE Ø 5 1/2 po × 5 pi, peinte en jaune",
+     {
+      "note": "Pour les marteaux de 6 po. 5 pi (1524 mm) d'épaulement à épaulement, filet mâle 3 1/2 API REG en haut, femelle en bas. Bouts d'acier nu à deux entailles plates (méplats à 4 1/2 po l'un de l'autre, 130 mm de long). Paroi de 3/8 po (supposée, comme les méplats). Masse calculée : 69,4 kg (153 lb). Export Unreal : SM_Tige_5_1_2po_5pi_Jaune.glb."
+     }
+    ],
+    [
+     "10",
+     "",
+     1,
+     "TIGE DE FORAGE Ø 5 1/2 po × 5 pi, peinte en noire",
+     {
+      "note": "Pour les marteaux de 6 po. 5 pi (1524 mm) d'épaulement à épaulement, filet mâle 3 1/2 API REG en haut, femelle en bas. Bouts d'acier nu à deux entailles plates (méplats à 4 1/2 po l'un de l'autre, 130 mm de long). Paroi de 3/8 po (supposée, comme les méplats). Masse calculée : 69,4 kg (153 lb). Export Unreal : SM_Tige_5_1_2po_5pi_Noire.glb."
+     }
+    ],
+    [
+     "11",
+     "",
+     1,
+     "TIGE DE FORAGE Ø 5 1/2 po × 6 pi, peinte en jaune",
+     {
+      "note": "Pour les marteaux de 6 po. 6 pi (1829 mm) d'épaulement à épaulement, filet mâle 3 1/2 API REG en haut, femelle en bas. Bouts d'acier nu à deux entailles plates (méplats à 4 1/2 po l'un de l'autre, 130 mm de long). Paroi de 3/8 po (supposée, comme les méplats). Masse calculée : 78,7 kg (174 lb). Export Unreal : SM_Tige_5_1_2po_6pi_Jaune.glb."
+     }
+    ],
+    [
+     "12",
+     "",
+     1,
+     "TIGE DE FORAGE Ø 5 1/2 po × 6 pi, peinte en noire",
+     {
+      "note": "Pour les marteaux de 6 po. 6 pi (1829 mm) d'épaulement à épaulement, filet mâle 3 1/2 API REG en haut, femelle en bas. Bouts d'acier nu à deux entailles plates (méplats à 4 1/2 po l'un de l'autre, 130 mm de long). Paroi de 3/8 po (supposée, comme les méplats). Masse calculée : 78,7 kg (174 lb). Export Unreal : SM_Tige_5_1_2po_6pi_Noire.glb."
      }
     ]
    ]

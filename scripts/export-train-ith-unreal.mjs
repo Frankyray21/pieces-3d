@@ -56,10 +56,11 @@ const pieces = [];
 const ajoute = (p) => { if (!filtres.length || filtres.some((f) => p.nom.includes(f))) pieces.push(p); };
 const kgModele = (ss) => F.volume(ss) * 7850;
 
-for (const pieds of [4, 5, 6]) {
+for (const diam of ['3-1-2', '5-1-2']) for (const pieds of [4, 5, 6]) {
   for (const couleur of F.TIGE.couleurs) {
-    const t = F.tige(pieds, couleur);
-    const nom = `SM_Tige_${pieds}pi_${couleur === 'jaune' ? 'Jaune' : 'Noire'}`;
+    const t = F.tige(pieds, couleur, diam);
+    // Tiges de 3 1/2 po : noms d'origine (SM_Tige_6pi_Jaune) ; 5 1/2 po : SM_Tige_5_1_2po_6pi_Jaune.
+    const nom = `SM_Tige_${diam === '3-1-2' ? '' : '5_1_2po_'}${pieds}pi_${couleur === 'jaune' ? 'Jaune' : 'Noire'}`;
     ajoute({ nom, maillages: [{ nom, t }], kg: kgModele(t.surfaces), source: 'masse calculée (acier 7 850 kg/m³)' });
   }
 }

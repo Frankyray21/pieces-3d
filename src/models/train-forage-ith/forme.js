@@ -60,6 +60,24 @@ export const TIGE = {
 };
 
 /**
+ * Tiges de 5 1/2 po (slip plate « FOR 5 1/2" ROD » du manuel de la Cubex), pour le marteau de 6 po : mêmes
+ * longueurs et mêmes couleurs que les tiges de 3 1/2 po (demande du client). Filet 3 1/2 API REG, celui du raccord
+ * de tête du marteau de 6 po. Paroi de 3/8 po, alésage des bouts de 2 1/4 po, méplats à 4 1/2 po : supposés.
+ */
+export const TIGE_55 = {
+  ...TIGE,
+  d: 5.5 * IN,
+  paroi: 0.375 * IN,
+  filet: '3 1/2',
+  boutBas: 210,
+  boutHaut: 185,
+  alesageBout: 2.25 * IN,
+  plats: { entre: 4.5 * IN, long: 130, recul: 26 },
+};
+/** Tiges par diamètre. */
+export const TIGES = { '3-1-2': TIGE, '5-1-2': TIGE_55 };
+
+/**
  * Marteaux fond-de-trou (masses de PRO-OP-ITH-016 ; cotes Epiroc des modèles de même masse) :
  * d diamètre du fourreau, long longueur sans bit (raccord mâle exclu), kg masse publiée sans bit.
  * Les proportions internes (épaisseur du fourreau, longueur du raccord de tête) sont supposées.
@@ -451,8 +469,9 @@ function boutFemelle(y0, f, alesage) {
   ];
 }
 
-/** Tige de forage de 4, 5 ou 6 pi, peinte en jaune ou en noir. */
-export function tige(pieds, couleur = 'jaune') {
+/** Tige de forage de 4, 5 ou 6 pi, Ø 3 1/2 ou 5 1/2 po (diam : '3-1-2' ou '5-1-2'), peinte en jaune ou en noir. */
+export function tige(pieds, couleur = 'jaune', diam = '3-1-2') {
+  const TIGE = TIGES[diam];
   const L = TIGE.longueurs[pieds], R = TIGE.d / 2, r = R - TIGE.paroi, ra = TIGE.alesageBout / 2;
   const P = TIGE.plats;
   const peint = couleur === 'noire' ? 'peinture-noire' : 'peinture-jaune';

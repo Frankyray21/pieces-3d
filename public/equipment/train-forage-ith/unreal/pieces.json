@@ -80,6 +80,84 @@
    "mo": 1.29
   },
   {
+   "fichier": "SM_Tige_5_1_2po_4pi_Jaune.glb",
+   "kg": 60.1,
+   "lb": 132,
+   "masse": "masse calculée (acier 7 850 kg/m³)",
+   "tailleM": [
+    0.14,
+    1.314,
+    0.14
+   ],
+   "triangles": 27072,
+   "mo": 1.37
+  },
+  {
+   "fichier": "SM_Tige_5_1_2po_4pi_Noire.glb",
+   "kg": 60.1,
+   "lb": 132,
+   "masse": "masse calculée (acier 7 850 kg/m³)",
+   "tailleM": [
+    0.14,
+    1.314,
+    0.14
+   ],
+   "triangles": 27072,
+   "mo": 1.37
+  },
+  {
+   "fichier": "SM_Tige_5_1_2po_5pi_Jaune.glb",
+   "kg": 69.4,
+   "lb": 153,
+   "masse": "masse calculée (acier 7 850 kg/m³)",
+   "tailleM": [
+    0.14,
+    1.619,
+    0.14
+   ],
+   "triangles": 27072,
+   "mo": 1.36
+  },
+  {
+   "fichier": "SM_Tige_5_1_2po_5pi_Noire.glb",
+   "kg": 69.4,
+   "lb": 153,
+   "masse": "masse calculée (acier 7 850 kg/m³)",
+   "tailleM": [
+    0.14,
+    1.619,
+    0.14
+   ],
+   "triangles": 27072,
+   "mo": 1.35
+  },
+  {
+   "fichier": "SM_Tige_5_1_2po_6pi_Jaune.glb",
+   "kg": 78.7,
+   "lb": 174,
+   "masse": "masse calculée (acier 7 850 kg/m³)",
+   "tailleM": [
+    0.14,
+    1.924,
+    0.14
+   ],
+   "triangles": 27072,
+   "mo": 1.37
+  },
+  {
+   "fichier": "SM_Tige_5_1_2po_6pi_Noire.glb",
+   "kg": 78.7,
+   "lb": 174,
+   "masse": "masse calculée (acier 7 850 kg/m³)",
+   "tailleM": [
+    0.14,
+    1.924,
+    0.14
+   ],
+   "triangles": 27072,
+   "mo": 1.35
+  },
+  {
    "fichier": "SM_Marteau_3po.glb",
    "kg": 27.2,
    "lb": 60,
@@ -90,7 +168,7 @@
     0.082
    ],
    "triangles": 14832,
-   "mo": 0.76
+   "mo": 0.75
   },
   {
    "fichier": "SM_DriverSub_3po.glb",
@@ -116,7 +194,7 @@
     0.063
    ],
    "triangles": 976,
-   "mo": 0.15
+   "mo": 0.14
   },
   {
    "fichier": "SM_Marteau_4po.glb",
@@ -155,7 +233,7 @@
     0.075
    ],
    "triangles": 976,
-   "mo": 0.15
+   "mo": 0.14
   },
   {
    "fichier": "SM_Marteau_6po.glb",
@@ -168,7 +246,7 @@
     0.142
    ],
    "triangles": 17712,
-   "mo": 0.96
+   "mo": 0.97
   },
   {
    "fichier": "SM_DriverSub_6po.glb",
@@ -181,7 +259,7 @@
     0.139
    ],
    "triangles": 9984,
-   "mo": 0.54
+   "mo": 0.53
   },
   {
    "fichier": "SM_Anneaux_6po.glb",
@@ -194,7 +272,7 @@
     0.104
    ],
    "triangles": 976,
-   "mo": 0.15
+   "mo": 0.14
   },
   {
    "fichier": "SM_Bit_3_5_8po.glb",
@@ -207,7 +285,7 @@
     0.092
    ],
    "triangles": 6624,
-   "mo": 0.49
+   "mo": 0.48
   },
   {
    "fichier": "SM_Bit_4_1_2po.glb",
@@ -220,7 +298,7 @@
     0.114
    ],
    "triangles": 6624,
-   "mo": 0.49
+   "mo": 0.48
   },
   {
    "fichier": "SM_Bit_5_1_8po.glb",
@@ -233,7 +311,7 @@
     0.13
    ],
    "triangles": 6624,
-   "mo": 0.53
+   "mo": 0.51
   },
   {
    "fichier": "SM_Bit_6po.glb",
@@ -259,7 +337,7 @@
     0.165
    ],
    "triangles": 6624,
-   "mo": 0.6
+   "mo": 0.58
   },
   {
    "fichier": "SM_Bit_8po.glb",
@@ -272,7 +350,7 @@
     0.203
    ],
    "triangles": 7344,
-   "mo": 0.61
+   "mo": 0.59
   },
   {
    "fichier": "SM_Bit_10po.glb",
@@ -298,7 +376,7 @@
     0.144
    ],
    "triangles": 25728,
-   "mo": 1.3
+   "mo": 1.29
   },
   {
    "fichier": "SM_SaverSub_3_1_2.glb",
@@ -324,7 +402,7 @@
     0.221
    ],
    "triangles": 1712,
-   "mo": 0.25
+   "mo": 0.28
   },
   {
    "fichier": "SM_CasseBit_6_1_2po.glb",
@@ -337,7 +415,7 @@
     0.235
    ],
    "triangles": 1712,
-   "mo": 0.33
+   "mo": 0.35
   },
   {
    "fichier": "SM_CasseBit_8po.glb",
@@ -350,7 +428,7 @@
     0.276
    ],
    "triangles": 1712,
-   "mo": 0.34
+   "mo": 0.35
   },
   {
    "fichier": "SM_CasseBit_10po.glb",
@@ -363,7 +441,7 @@
     0.331
    ],
    "triangles": 1712,
-   "mo": 0.35
+   "mo": 0.34
   },
   {
    "fichier": "SM_Chariot_Marteau.glb",
@@ -376,7 +454,7 @@
     0.427
    ],
    "triangles": 4384,
-   "mo": 0.49
+   "mo": 0.53
   },
   {
    "fichier": "SM_Chariot_Chaine.glb",
@@ -389,7 +467,7 @@
     0.109
    ],
    "triangles": 9216,
-   "mo": 0.37
+   "mo": 0.34
   }
  ]
 }

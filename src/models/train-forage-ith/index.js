@@ -65,7 +65,7 @@ const pose = (o, p, r = null) => { o.position.set(...p); if (r) o.rotation.set(.
 // ------------------------------------------------------------------ pièces (objets three.js)
 
 export const pieces = {
-  tige: (pieds, couleur) => objet(tige(pieds, couleur).surfaces),
+  tige: (pieds, couleur, diam) => objet(tige(pieds, couleur, diam).surfaces),
   marteau: (t) => objet(marteau(t).surfaces),
   driver: (t) => objet(driverSub(t).surfaces),
   saver: (i) => objet(saverSub(i).surfaces),
@@ -88,14 +88,17 @@ export function P01(api) {
   return { view: { dir: [0.35, 0.45, 1] } };
 }
 
-/** P02 — tiges de 4, 5 et 6 pi, jaunes et noires, debout, filet mâle en haut. */
+/** P02 — tiges de 4, 5 et 6 pi, jaunes et noires, debout, filet mâle en haut : 3 1/2 po devant, 5 1/2 po derrière. */
 export function P02(api) {
   let k = 0;
-  for (const pieds of [4, 5, 6]) {
-    for (const couleur of TIGE.couleurs) {
-      const x = (k - 2.5) * 0.16;
-      api.part(String(k + 1), pose(pieces.tige(pieds, couleur), [x, 0, 0]), [0, 0, (k % 2 ? -1 : 1) * 0.08]);
-      k++;
+  for (const [diam, z, pas] of [['3-1-2', 0.12, 0.16], ['5-1-2', -0.14, 0.22]]) {
+    let n = 0;
+    for (const pieds of [4, 5, 6]) {
+      for (const couleur of TIGE.couleurs) {
+        const x = (n - 2.5) * pas;
+        api.part(String(k + 1), pose(pieces.tige(pieds, couleur, diam), [x, 0, z]), [0, 0, (z > 0 ? 1 : -1) * 0.12]);
+        k++; n++;
+      }
     }
   }
   return { view: { dir: [0.25, 0.3, 1] } };
