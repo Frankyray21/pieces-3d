@@ -6,6 +6,20 @@ pièces (numéro, quantité, page du manuel).
 
 Équipements :
 
+- **Air, eau et électricité de la place de travail ITH Cubex**
+  (`air-eau-electricite`, simulateur SST) : d'après les photos de places de
+  travail du client, sans plan. Boyaux d'air de 2 po basse et haute pression,
+  boyau tressé inox 800 °F, boyau d'eau de 1 po, raccords à joint sphérique
+  (tiges et colliers, écrous à oreilles « stem nut », embouts mâles), whip
+  checks ; câble 600 V sur crochets au mur, boîte de défaut à la terre,
+  console électrique 600 V de la photo (porte vitrée, CB1, DANGER 600 VOLTS,
+  transformateur), arrêt d'urgence, crochets de plastique ; trépieds, bidons
+  et banderole DANGER ; vue d'ensemble P00. Rendu usé et sale : textures
+  dessinées par `tools/air_eau_elec_textures.mjs` ; fiche par
+  `tools/air_eau_elec_fiche.mjs`. **Unreal Engine** :
+  `node scripts/export-air-eau-elec-unreal.mjs` (un `.glb` par lot dans
+  `public/equipment/air-eau-electricite/unreal/`), voir
+  `docs/air-eau-elec-unreal.md`.
 - **Compresseur simple R-55 (MRI)** : page autonome
   `compresseur-r55/` bâtie à partir des 75 plans PDF du dossier
   « 35 COMPRESSEUR SIMPLE R-55 » (assemblage 35290000). Frame, structure,

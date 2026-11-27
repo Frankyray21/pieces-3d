@@ -1,6 +1,14 @@
 {
   "equipment": [
     {
+      "id": "air-eau-electricite",
+      "name": "Air, eau et électricité de la place de travail ITH Cubex",
+      "manufacturer": "Divers (matériel de chantier minier)",
+      "category": "Services de la place de travail (simulateur SST)",
+      "thumbnail": "equipment/air-eau-electricite/thumbnail.webp",
+      "status": "3D d'après les photos de places de travail du client, sans plan : boyaux d'air de 2 po basse et haute pression, boyau tressé inox 800 °F, boyau d'eau de 1 po, raccords à joint sphérique (tiges, écrous à oreilles « stem nut », embouts mâles), whip checks ; câble 600 V sur crochets au mur, boîte de défaut à la terre, console électrique 600 V de la photo (porte vitrée, CB1, DANGER 600 VOLTS, transformateur), arrêt d'urgence, crochets de plastique ; trépieds, bidons et banderole DANGER ; rendu usé et sale (textures de boue, coulures, éclats) ; export GLB pour Unreal Engine"
+    },
+    {
       "id": "bac-retention-100l",
       "name": "Mini bac de rétention 100 L en PEHD jaune, avec caillebotis",
       "manufacturer": "neatfx (distributeur)",
