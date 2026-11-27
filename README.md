@@ -132,6 +132,18 @@ pièces (numéro, quantité, page du manuel).
   Chaque volet est fait de deux feuilles minces, recto et verso, un matériau
   par maillage.
 
+- **Fiche d'inspection — Foreuse au diamant sous-terre** (`fiche-inspection-dd`,
+  formulaire MA4657056 de Machines Roger International, août 2026, PDF de
+  2 pages de 5 1/2 × 8 1/2 po) : la feuille en 3D, la page 1 du PDF au recto
+  (en-tête, légende, vérifications avant démarrage 1 à 25, après démarrage 1
+  à 4) et la page 2 au verso (après démarrage 5 à 10, supplémentaires si
+  applicable 1 à 7, consigne des items rouges, signatures, inspection
+  conjointe, commentaires), posées telles quelles en texture. Recto verso sur
+  une seule feuille et épaisseur du papier (0,1 mm) supposés. P01 : recto ;
+  P02 : verso. Manipulation (`src/ui/features/fiche-inspection.js`) : saisie,
+  la feuille tourne et s'incline autour de son centre ; boutons « Retourner »
+  et « Redresser ».
+
 - **Coffre à outils ITH** (`coffre-dd`, dessin 087 « Coffre à outil ITH » de
   M.R.I. Inc., D. Côté, juin 2011, et deux photos) : 3D aux cotes du dessin,
   tôle par tôle (P01 : caisse de 48 × 39 1/2 × 54 po, devant de 21 po, dessus

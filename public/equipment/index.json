@@ -173,6 +173,14 @@
       "status": "3D d'après une photo de 44 × 96 pixels : étui d'environ 5 po de haut, 3 po de large en haut et 2 1/2 po en bas, fourreau riveté ouvert en haut et en bas, clé à molette de 12 po rangée manche en bas, tronçon de ceinture pour situer ; dos, passant de ceinture et profondeur supposés ; fichiers prêts pour Unreal Engine"
     },
     {
+      "id": "fiche-inspection-dd",
+      "name": "Fiche d'inspection — Foreuse au diamant sous-terre",
+      "manufacturer": "Machines Roger International",
+      "category": "Formulaire MA4657056 (feuille recto verso)",
+      "thumbnail": "equipment/fiche-inspection-dd/thumbnail.webp",
+      "status": "3D du formulaire : feuille de 5 1/2 × 8 1/2 po, avec la page 1 du PDF au recto (en-tête, vérifications avant démarrage) et la page 2 au verso (après démarrage, supplémentaires, signatures)"
+    },
+    {
       "id": "graisse-a-filets",
       "name": "Graisse à filets : bidon de 1 gal US et pinceau",
       "manufacturer": "",

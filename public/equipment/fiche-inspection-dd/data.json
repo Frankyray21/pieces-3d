@@ -1,0 +1,89 @@
+{
+ "id": "fiche-inspection-dd",
+ "name": "Fiche d'inspection — Foreuse au diamant sous-terre",
+ "manufacturer": "Machines Roger International",
+ "category": "Formulaire MA4657056 (feuille recto verso)",
+ "serial": "MA4657056",
+ "document": {
+  "title": "Fiche d'inspection : foreuse au diamant sous-terre (formulaire MA4657056, août 2026)",
+  "reference": "MA4657056",
+  "preparedBy": "",
+  "date": "Août 2026",
+  "sheets": 2,
+  "pagePattern": "pages/{sheet}.webp"
+ },
+ "specs": [
+  [
+   "Format",
+   "Feuille de 5 1/2 × 8 1/2 po (format des pages du PDF), imprimée des deux côtés (recto verso supposé)"
+  ],
+  [
+   "Recto (page 1)",
+   "Nom, date, no de la foreuse, quart de travail (jour, nuit), heures de début et de fin ; légende (conforme ✔, non-conforme X) ; vérifications avant démarrage (1 à 25) ; vérifications après démarrage (1 à 4)"
+  ],
+  [
+   "Verso (page 2)",
+   "Vérifications après démarrage (5 à 10) ; vérifications supplémentaires, si applicable (1 à 7) ; « Si un item rouge est non-conforme, arrêt des travaux et appel au superviseur » ; signatures de l'inspecteur et du superviseur, heures ; inspection conjointe (1 fois par cédule) ; commentaires"
+  ],
+  [
+   "Colonnes",
+   "T et S pour chaque vérification (sens non précisé sur le formulaire)"
+  ],
+  [
+   "Items en rouge",
+   "Avant démarrage : 4, 11, 21, 22 ; après démarrage : 2, 3, 5, 6, 7 ; supplémentaires : 2"
+  ],
+  [
+   "Épaisseur",
+   "Papier, 0,1 mm (supposée)"
+  ]
+ ],
+ "weights": [],
+ "sheetTitles": {
+  "P01": "Recto : en-tête, vérifications avant démarrage et début des vérifications après démarrage",
+  "P02": "Verso : vérifications après démarrage et supplémentaires, signatures, commentaires"
+ },
+ "root": "P01",
+ "assemblies": {
+  "P01": {
+   "title": "Recto",
+   "titleFr": "Recto",
+   "sheets": [
+    "P01"
+   ],
+   "note": "Le formulaire PDF en 3D : la page 1 au recto de la feuille, la page 2 au verso. Bouton « Retourner » ou page P02 pour lire le verso.",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "FICHE D'INSPECTION MA4657056 : page 1 au recto, page 2 au verso",
+     {
+      "note": "Recto : nom, date, no de la foreuse, quart, heures, légende, vérifications avant démarrage (1 à 25), après démarrage (1 à 4). Verso : après démarrage (5 à 10), supplémentaires (1 à 7), signatures, inspection conjointe, commentaires.",
+      "pseudo": true
+     }
+    ]
+   ]
+  },
+  "P02": {
+   "title": "Verso",
+   "titleFr": "Verso",
+   "sheets": [
+    "P02"
+   ],
+   "note": "La feuille retournée : fin des vérifications après démarrage, vérifications supplémentaires (si applicable), consigne des items rouges, signatures et commentaires.",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "FICHE D'INSPECTION MA4657056 : verso (page 2)",
+     {
+      "pseudo": true
+     }
+    ]
+   ]
+  }
+ },
+ "documents": []
+}

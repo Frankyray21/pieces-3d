@@ -21,6 +21,8 @@ import * as THREE from 'three';
 const IN = 0.0254;
 export const VOLET = { w: 5.5 * IN, h: 8.5 * IN, t: 0.00025 };
 
+// Texture chargée après coup : la visionneuse (rendu à la demande) doit redessiner.
+const redessiner = () => window.dispatchEvent(new Event('pieces3d:redessiner'));
 const cache = new Map();
 /** Moitié (0 : gauche, 1 : droite) d'une page du PDF, en texture. */
 function demiPage(page, moitie) {
@@ -29,7 +31,7 @@ function demiPage(page, moitie) {
   let tex = null;
   if (typeof document !== 'undefined') {
     const base = (import.meta.env && import.meta.env.BASE_URL) || './';
-    tex = new THREE.TextureLoader().load(`${base}equipment/carte-forage-dd/pages/${page}.webp`);
+    tex = new THREE.TextureLoader().load(`${base}equipment/carte-forage-dd/pages/${page}.webp`, redessiner);
     tex.colorSpace = THREE.SRGBColorSpace;
     tex.anisotropy = 8;
     tex.repeat.set(0.5, 1);
