@@ -1,0 +1,203 @@
+{
+ "unites": "mètres, Y vers le haut, origine au sol (glTF) ; Unreal : échelle d'import 1",
+ "fichiers": {
+  "SM_Barricade_Ruban.glb": {
+   "octets": 269724,
+   "triangles": 4496,
+   "taille_m": [
+    4.044,
+    0.342,
+    0.049
+   ]
+  },
+  "SM_Ruban_Danger_4m.glb": {
+   "octets": 167600,
+   "triangles": 3548,
+   "taille_m": [
+    4.044,
+    0.342,
+    0.049
+   ]
+  },
+  "SM_Carte_Barricade.glb": {
+   "octets": 102252,
+   "triangles": 948,
+   "taille_m": [
+    0.083,
+    0.163,
+    0.011
+   ]
+  },
+  "SM_Affiche_Acces_Interdit.glb": {
+   "octets": 218156,
+   "triangles": 892,
+   "taille_m": [
+    0.305,
+    0.457,
+    0.001
+   ]
+  },
+  "SM_Affiche_Forage_En_Cours.glb": {
+   "octets": 210376,
+   "triangles": 892,
+   "taille_m": [
+    0.305,
+    0.457,
+    0.001
+   ]
+  },
+  "SM_Affiche_Forage_Distance.glb": {
+   "octets": 216348,
+   "triangles": 892,
+   "taille_m": [
+    0.305,
+    0.457,
+    0.001
+   ]
+  },
+  "SM_Cone_Collet.glb": {
+   "octets": 170440,
+   "triangles": 708,
+   "taille_m": [
+    0.267,
+    0.457,
+    0.267
+   ]
+  },
+  "SM_Casing_Rouge.glb": {
+   "octets": 288772,
+   "triangles": 352,
+   "taille_m": [
+    0.219,
+    0.306,
+    0.219
+   ]
+  },
+  "SM_Couvercle_Trou.glb": {
+   "octets": 594604,
+   "triangles": 1560,
+   "taille_m": [
+    0.764,
+    0.013,
+    0.762
+   ]
+  },
+  "SM_Couvercle_Monterie.glb": {
+   "octets": 926044,
+   "triangles": 1404,
+   "taille_m": [
+    1.219,
+    0.124,
+    1.219
+   ]
+  },
+  "SM_Boite_Cadenassage.glb": {
+   "octets": 710948,
+   "triangles": 6792,
+   "taille_m": [
+    0.314,
+    0.266,
+    0.106
+   ]
+  },
+  "SM_Pince_Multilock.glb": {
+   "octets": 344832,
+   "triangles": 3848,
+   "taille_m": [
+    0.041,
+    0.097,
+    0.01
+   ]
+  },
+  "SM_Cadenas_Rouge.glb": {
+   "octets": 130340,
+   "triangles": 1442,
+   "taille_m": [
+    0.038,
+    0.099,
+    0.019
+   ]
+  },
+  "SM_Cadenas_Bleu.glb": {
+   "octets": 129240,
+   "triangles": 1442,
+   "taille_m": [
+    0.038,
+    0.099,
+    0.019
+   ]
+  },
+  "SM_Etiquette_Cadenassage.glb": {
+   "octets": 99384,
+   "triangles": 624,
+   "taille_m": [
+    0.076,
+    0.146,
+    0.003
+   ]
+  },
+  "SM_Cadenassage_Ensemble.glb": {
+   "octets": 1606048,
+   "triangles": 18904,
+   "taille_m": [
+    0.314,
+    0.463,
+    0.15
+   ]
+  },
+  "SM_Harnais.glb": {
+   "octets": 378796,
+   "triangles": 8936,
+   "taille_m": [
+    0.377,
+    0.869,
+    0.288
+   ]
+  },
+  "SM_Harnais_Avec_Longe.glb": {
+   "octets": 695048,
+   "triangles": 15934,
+   "taille_m": [
+    0.377,
+    1.535,
+    0.905
+   ]
+  },
+  "SM_Bloc_Retractable.glb": {
+   "octets": 402456,
+   "triangles": 8816,
+   "taille_m": [
+    0.229,
+    0.99,
+    0.092
+   ]
+  },
+  "SM_Extincteur_5lb.glb": {
+   "octets": 348616,
+   "triangles": 6012,
+   "taille_m": [
+    0.182,
+    0.361,
+    0.112
+   ]
+  },
+  "SM_Trousse_Premiers_Soins.glb": {
+   "octets": 48276,
+   "triangles": 650,
+   "taille_m": [
+    0.253,
+    0.345,
+    0.089
+   ]
+  },
+  "Lot_Securite_Complet.glb": {
+   "octets": 6390080,
+   "triangles": 70328,
+   "taille_m": [
+    8.338,
+    1.697,
+    3.032
+   ]
+  }
+ }
+}

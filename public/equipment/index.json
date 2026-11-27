@@ -369,6 +369,14 @@
       "status": "3D d'après la photo de la fiche du produit et les données publiées : 1 po × 60 verges, 4,0 mil, 100 lb, filaments de verre ; Ø extérieur calculé de 116,8 mm (environ 176 spires sur un mandrin de carton de 3 po, confirmé par les proportions de la photo) ; 15 mèches de filaments, logos de l'intérieur du mandrin et amorce déroulée relevés sur la photo"
     },
     {
+      "id": "securite-chantier",
+      "name": "Lot de sécurité de la place de travail : barricade, affiches, casings, couvercles, cadenassage, antichute",
+      "manufacturer": "Articles courants du commerce",
+      "category": "Sécurité de la place de travail (poste ITH Cubex)",
+      "thumbnail": "equipment/securite-chantier/thumbnail.webp",
+      "status": "3D d'après six photos de places de travail du client, sans plan : ruban de barricade rouge et carte, trois affiches (Accès interdit, Forage en cours, Forage à distance), cône rouge de collet, casings rouges, couvercle de trou rouillé, couvercle de monterie (supposé), boîte de cadenassage de groupe, pince multi-lock, cadenas et étiquettes, harnais, longe et bloc rétractable ; extincteur et trousse repris du poste de secours. Textures usées et fichiers GLB en mètres pour Unreal"
+    },
+    {
       "id": "stm-1500",
       "name": "Usinage Marcotte STM-1500",
       "manufacturer": "Usinage Marcotte",

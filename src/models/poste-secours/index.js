@@ -295,7 +295,7 @@ function facade(S) {
 }
 
 /** Repère 6 : trousse de premiers soins en plastique blanc, debout sur son côté. */
-function trousse(S) {
+export function trousse(S) {
   const { w, h, d } = TROUSSE;
   const g = S.group();
   g.add(S.box(w * IN, h * IN, d * IN, 'white', { r: 0.5 * IN }));
@@ -365,7 +365,7 @@ function etiquetteQR(w, h) {
 // ------------------------------------------------------------------ extincteur
 
 /** Repère 8 : extincteur portatif à poudre de 5 lb. Origine : centre du fond du cylindre. */
-function extincteur(S) {
+export function extincteur(S) {
   const { r, droit, dome, col } = EXT;
   const g = S.group();
   const m = (pts) => pts.map(([a, b]) => [a * IN, b * IN]);

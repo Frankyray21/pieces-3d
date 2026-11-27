@@ -1,0 +1,433 @@
+{
+ "id": "securite-chantier",
+ "name": "Lot de sécurité de la place de travail (poste ITH Cubex)",
+ "manufacturer": "Articles courants du commerce (fabricants non identifiés)",
+ "category": "Signalisation, cadenassage et protection contre les chutes",
+ "serial": "",
+ "document": {
+  "title": "Photos de places de travail du client (aucun plan)",
+  "reference": "Photos",
+  "preparedBy": "",
+  "date": "",
+  "sheets": 6,
+  "pagePattern": "pages/{sheet}.webp"
+ },
+ "specs": [
+  [
+   "Source",
+   "Six photos de places de travail fournies par le client (PH1 à PH6). Aucune fiche de fabricant : cotes des articles courants du commerce, ou relevées à l'œil sur les photos"
+  ],
+  [
+   "Unités",
+   "Mètres, Y vers le haut, sol à y = 0 (comme les fichiers GLB pour Unreal)"
+  ],
+  [
+   "Usure",
+   "Textures procédurales : peinture écaillée sur acier rouillé, rouille franche, boue, éraflures, sangles poussiéreuses ; exportées avec les GLB"
+  ],
+  [
+   "Barricade",
+   "Ruban rouge « DANGER » de 3 po tendu sur 4,0 m à 1,2 m du sol, flèche de 140 mm ; noué à deux fils du grillage ; carte d'identification de 3 1/4 po × 5 1/2 po"
+  ],
+  [
+   "Affiches",
+   "Aluminium de 12 po × 18 po : « Accès interdit », « Forage en cours », « Forage à distance », pendues au ruban par des attaches"
+  ],
+  [
+   "Cône de collet",
+   "Cône rouge de 18 po, base carrée noire de 10 1/2 po"
+  ],
+  [
+   "Casings",
+   "Tube d'acier de 8 5/8 po (paroi de 3/8 po) peint rouge, 100 à 200 mm hors sol, modélisé sur 150 mm sous le sol"
+  ],
+  [
+   "Couvercle de trou",
+   "Disque d'acier de Ø 30 po × 1/2 po, peinture rouge presque partie, rouillé, 6 trous"
+  ],
+  [
+   "Couvercle de monterie",
+   "Tôle larmée de 48 po × 48 po × 3/8 po, jaune usé, rebord de 2 po dessous, quatre oreilles de levage (supposé : aucune photo)"
+  ],
+  [
+   "Cadenassage",
+   "Boîte de groupe de 12 po × 9 po × 4 po, 12 trous de cadenassage ; pince multi-lock de 1 po à 6 trous ; cadenas de 1 1/2 po × 1 3/4 po, anse de 1/4 po ; étiquettes de 3 po × 5 3/4 po"
+  ],
+  [
+   "Antichute",
+   "Harnais complet à sangles de 1 3/4 po, anneau dorsal ; longe de 6 pi à absorbeur ; bloc rétractable de Ø 9 po à câble de 1/8 po"
+  ],
+  [
+   "Repris",
+   "Extincteur à poudre de 5 lb et trousse de premiers soins : les modèles du poste de secours (équipement « poste-secours »)"
+  ]
+ ],
+ "weights": [],
+ "sheetTitles": {
+  "PH1": "Place de travail : casings rouges au sol, couvercle de trou rouge, câbles",
+  "PH2": "Foreuse sur sa grille, galerie grillagée",
+  "PH3": "Place de travail : casings rouges, ruban de barricade, console",
+  "PH4": "Armoire électrique : affiche « DANGER 600 VOLTS » (style des affiches)",
+  "PH5": "Pied du mât : tiges, chevalet, outils",
+  "PH6": "Foreuse au collet : casings dans le cadre de bois, couvercle rouillé, barrière jaune et noire"
+ },
+ "root": "P01",
+ "assemblies": {
+  "P01": {
+   "title": "WORKPLACE SAFETY KIT",
+   "titleFr": "Lot de sécurité de la place de travail",
+   "pn": "",
+   "sheets": [
+    "PH1",
+    "PH2",
+    "PH3",
+    "PH4",
+    "PH5",
+    "PH6"
+   ],
+   "note": "Le lot complet disposé comme sur une place de travail, d'après les six photos du client : barricade et affiches au fond, cône, casings et couvercles au sol, boîte de cadenassage au mur, extincteur et trousse, protection antichute. Les supports (grillage, mur, ancrage du bloc rétractable, porteur du harnais) ne sont pas modélisés. Chaque article s'ouvre sur sa page ; le fichier GLB de chacun, en mètres, est dans le dossier unreal/ de l'équipement.",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "BARRICADE : ruban, nœuds, carte d'identification",
+     {
+      "link": "P02"
+     }
+    ],
+    [
+     "2",
+     "",
+     3,
+     "AFFICHE pendue au ruban",
+     {
+      "link": "P03",
+      "qty3d": 1
+     }
+    ],
+    [
+     "3",
+     "",
+     1,
+     "CÔNE ROUGE de collet",
+     {
+      "link": "P04"
+     }
+    ],
+    [
+     "4",
+     "",
+     3,
+     "CASING rouge de collet",
+     {
+      "link": "P05"
+     }
+    ],
+    [
+     "5",
+     "",
+     1,
+     "COUVERCLE DE TROU en acier rouillé",
+     {
+      "link": "P06"
+     }
+    ],
+    [
+     "6",
+     "",
+     1,
+     "COUVERCLE DE MONTERIE",
+     {
+      "link": "P07"
+     }
+    ],
+    [
+     "7",
+     "",
+     1,
+     "CADENASSAGE : boîte, pince, cadenas, étiquettes",
+     {
+      "link": "P08"
+     }
+    ],
+    [
+     "8",
+     "",
+     1,
+     "PROTECTION CONTRE LES CHUTES : harnais, longe, bloc rétractable",
+     {
+      "link": "P09"
+     }
+    ],
+    [
+     "9",
+     "",
+     1,
+     "EXTINCTEUR à poudre de 5 lb",
+     {
+      "note": "Modèle repris du poste de secours, posé debout au sol."
+     }
+    ],
+    [
+     "10",
+     "",
+     1,
+     "TROUSSE DE PREMIERS SOINS",
+     {
+      "note": "Modèle repris du poste de secours, couchée."
+     }
+    ]
+   ]
+  },
+  "P02": {
+   "title": "BARRICADE",
+   "titleFr": "Barricade (ruban rouge)",
+   "pn": "",
+   "sheets": [
+    "PH3",
+    "PH6"
+   ],
+   "note": "Ruban de barricade rouge imprimé « DANGER » en blanc, 3 po de large (largeur courante), tendu sur 4,0 m à 1,2 m du sol avec une flèche de 140 mm et un léger vrillage. Sur la photo PH3, le ruban traverse la place à hauteur de genou ; ici il est montré à hauteur de taille. Chaque bout est noué à un fil du grillage, les deux bouts libres pendent. La carte d'identification (qui a posé la barricade, quand, pourquoi) est pendue au ruban par une attache. Les fils de grillage ne servent qu'à situer les nœuds.",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "RUBAN DE BARRICADE rouge « DANGER », 3 po",
+     {
+      "note": "4,0 m entre les nœuds ; motif répété tous les 600 mm."
+     }
+    ],
+    [
+     "2",
+     "",
+     2,
+     "NŒUD du ruban et bouts pendants",
+     {}
+    ],
+    [
+     "3",
+     "",
+     1,
+     "CARTE D'IDENTIFICATION DE LA BARRICADE, 3 1/4 po × 5 1/2 po",
+     {
+      "note": "Champs Nom, Date, Heure, Raison ; écriture au crayon-feutre volontairement illisible."
+     }
+    ],
+    [
+     "4",
+     "",
+     2,
+     "FIL DE GRILLAGE (support, Ø 6 mm)",
+     {
+      "note": "Montré pour situer les nœuds ; ne fait pas partie du lot.",
+      "pseudo": true
+     }
+    ]
+   ]
+  },
+  "P03": {
+   "title": "SIGNS",
+   "titleFr": "Affiches",
+   "pn": "",
+   "sheets": [
+    "PH4"
+   ],
+   "note": "Trois affiches d'aluminium de 12 po × 18 po, coins arrondis, quatre trous de 1/8 po. En-tête à la manière de l'affiche « DANGER 600 VOLTS » de la photo PH4 (ovale rouge sur bandeau noir) ; « ATTENTION » noir sur jaune pour « Forage en cours ». Textes : ACCÈS INTERDIT (Personnel autorisé seulement), FORAGE EN COURS (Avisez le foreur avant d'entrer), FORAGE À DISTANCE (Foreuse en marche sans opérateur). Les petites lignes sont supposées : à remplacer par le texte des affiches de la mine. Salissures, éclaboussures de boue, éraflures et un coin plié.",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "AFFICHE « DANGER — ACCÈS INTERDIT »",
+     {}
+    ],
+    [
+     "2",
+     "",
+     1,
+     "AFFICHE « ATTENTION — FORAGE EN COURS »",
+     {}
+    ],
+    [
+     "3",
+     "",
+     1,
+     "AFFICHE « DANGER — FORAGE À DISTANCE »",
+     {}
+    ]
+   ]
+  },
+  "P04": {
+   "title": "COLLAR CONE",
+   "titleFr": "Cône rouge de collet",
+   "pn": "",
+   "sheets": [
+    "PH1"
+   ],
+   "note": "Cône de signalisation rouge de 18 po (format courant), base carrée noire de 10 1/2 po à coins coupés, posé sur le collet d'un trou. Plastique rayé, boue sur le bas. Le format exact du cône utilisé à la mine n'est pas connu : à confirmer.",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "CÔNE ROUGE de 18 po, base noire",
+     {}
+    ]
+   ]
+  },
+  "P05": {
+   "title": "COLLAR CASINGS",
+   "titleFr": "Casings rouges de collet",
+   "pn": "",
+   "sheets": [
+    "PH1",
+    "PH3",
+    "PH6"
+   ],
+   "note": "Bouts de tube d'acier peints rouge, enfoncés au collet des trous (photos PH1, PH3 et PH6). Pris de 8 5/8 po de diamètre extérieur (tube de 8 po, paroi de 3/8 po) d'après leur taille sur les photos : à mesurer. Sortie de 100 à 200 mm hors sol ; le tube est modélisé sur 150 mm sous le sol (à enfoncer dans le plancher dans Unreal) ; bout du haut coupé au chalumeau, peinture écaillée, rouille et boue. Le dedans est rouillé, l'eau boueuse est à 120 mm sous le sol.",
+   "parts": [
+    [
+     "1",
+     "",
+     3,
+     "CASING, tube d'acier de 8 5/8 po peint rouge",
+     {
+      "note": "Trois sorties différentes : 100, 150 et 200 mm."
+     }
+    ]
+   ]
+  },
+  "P06": {
+   "title": "HOLE COVER",
+   "titleFr": "Couvercle de trou en acier rouillé",
+   "pn": "",
+   "sheets": [
+    "PH1",
+    "PH6"
+   ],
+   "note": "Disque d'acier coupé au chalumeau, Ø 30 po × 1/2 po (estimé sur PH1, à côté des casings), percé de trous (deux de 1 1/2 po pour le crochet, quatre de 1 po). Peinture rouge presque partie (PH1), rouille franche et acier lustré aux endroits où l'on marche (PH6). Légèrement voilé.",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "COUVERCLE DE TROU, disque d'acier Ø 30 po",
+     {}
+    ]
+   ]
+  },
+  "P07": {
+   "title": "RAISE COVER",
+   "titleFr": "Couvercle de monterie",
+   "pn": "",
+   "sheets": [],
+   "note": "Aucune photo du couvercle de monterie : modèle supposé, à corriger d'après une photo. Tôle larmée de 48 po × 48 po × 3/8 po peinte jaune (usée, larmes frottées), rebord de cornière de 2 po dessous en retrait de 3 po qui la garde centrée sur l'ouverture, quatre oreilles de levage soudées à 6 po des coins (trou de 5/8 po pour la manille).",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "COUVERCLE DE MONTERIE, tôle larmée de 48 po",
+     {
+      "note": "Forme supposée."
+     }
+    ]
+   ]
+  },
+  "P08": {
+   "title": "LOCKOUT",
+   "titleFr": "Cadenassage",
+   "pn": "",
+   "sheets": [],
+   "note": "Boîte de cadenassage de groupe en acier peint rouge, 12 po × 9 po × 4 po, montée au mur (bas à 0,9 m) : fente sur le dessus pour les clés de l'équipement, couvercle à charnière avec fenêtre, deux pattes de 1 1/2 po sous la boîte, percées de 12 trous de 3/8 po en face l'un de l'autre. Un cadenas dans un trou empêche d'ouvrir. Dans le trou 3, une pince multi-lock (moraillon) de 1 po, poignée enrobée de vinyle rouge à six trous, porte trois cadenas personnels rouges ; un cadenas bleu est dans le trou 8. Chaque cadenas a son étiquette « DANGER — CADENASSÉ — NE PAS FAIRE FONCTIONNER » (nom illisible). Formats courants du commerce ; pas de photo du client.",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "BOÎTE DE CADENASSAGE DE GROUPE, 12 po × 9 po × 4 po",
+     {}
+    ],
+    [
+     "2",
+     "",
+     1,
+     "PINCE MULTI-LOCK de 1 po, six trous",
+     {}
+    ],
+    [
+     "3",
+     "",
+     4,
+     "CADENAS DE SÉCURITÉ, corps de nylon 1 1/2 po × 1 3/4 po, anse d'acier de 1/4 po",
+     {
+      "note": "Trois rouges (personnels), un bleu."
+     }
+    ],
+    [
+     "4",
+     "",
+     4,
+     "ÉTIQUETTE DE CADENASSAGE, 3 po × 5 3/4 po",
+     {}
+    ]
+   ]
+  },
+  "P09": {
+   "title": "FALL PROTECTION",
+   "titleFr": "Protection contre les chutes",
+   "pn": "",
+   "sheets": [],
+   "note": "Harnais complet montré porté (forme d'un travailleur de taille moyenne, sans le corps) : sangles de polyester jaune à bande noire de 1 3/4 po, bretelles croisées au dos sur une plaque dorsale, anneau en D dorsal forgé de 2 5/8 po, sangle de poitrine, tours de cuisse et sangle sous-fessière, boucles à passant. Longe de 6 pi à absorbeur d'énergie accrochée à l'anneau dorsal : mousqueton à double verrouillage, absorbeur dans sa housse, sangle tubulaire qui pend et repose au sol, crochet à armature au bout. Bloc rétractable (enrouleur-dérouleur) de Ø 9 po : carter, émerillon et mousqueton d'ancrage en haut, câble galvanisé de 1/8 po sorti de 450 mm, butée et mousqueton. Point d'ancrage non modélisé. Formats courants ; pas de photo du client.",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "HARNAIS COMPLET, sangles de 1 3/4 po",
+     {}
+    ],
+    [
+     "2",
+     "",
+     1,
+     "ANNEAU EN D dorsal, acier forgé",
+     {}
+    ],
+    [
+     "3",
+     "",
+     3,
+     "BOUCLE À PASSANT (poitrine, cuisses)",
+     {
+      "qty3d": 1
+     }
+    ],
+    [
+     "4",
+     "",
+     1,
+     "PLAQUE DORSALE",
+     {}
+    ],
+    [
+     "5",
+     "",
+     1,
+     "LONGE DE 6 PI À ABSORBEUR, mousqueton et crochet à armature",
+     {}
+    ],
+    [
+     "6",
+     "",
+     1,
+     "BLOC RÉTRACTABLE à câble de 1/8 po",
+     {}
+    ]
+   ]
+  }
+ },
+ "documents": []
+}

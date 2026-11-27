@@ -942,6 +942,23 @@ pièces (numéro, quantité, page du manuel).
   modélisés. La fiche est écrite par `tools/boite_lunch_fiche.mjs` à partir
   des cotes du modèle (`src/models/boite-lunch-mineur/index.js`).
 
+- **Lot de sécurité de la place de travail** (`securite-chantier`, poste ITH
+  Cubex) : d'après six photos de places de travail du client (PH1 à PH6),
+  sans fiche de fabricant (formats courants du commerce). P01 : le lot
+  disposé comme sur une place ; P02 : barricade (ruban rouge « DANGER » de
+  3 po, nœuds, carte d'identification) ; P03 : affiches « Accès interdit »,
+  « Forage en cours », « Forage à distance » ; P04 : cône rouge de collet ;
+  P05 : casings rouges de 8 5/8 po ; P06 : couvercle de trou en acier
+  rouillé ; P07 : couvercle de monterie (supposé, sans photo) ; P08 :
+  cadenassage (boîte de groupe, pince multi-lock, cadenas, étiquettes) ;
+  P09 : harnais porté, longe à absorbeur, bloc rétractable. Extincteur et
+  trousse repris du poste de secours. Usure (peinture écaillée, rouille,
+  boue, éraflures) par textures procédurales sur canevas
+  (`src/models/securite-chantier/textures.js`), exportées avec les modèles :
+  `npm run export:securite` (serveur de développement lancé) écrit un GLB
+  par article, en mètres, dans `public/equipment/securite-chantier/unreal/`.
+  Fiche : `tools/securite_chantier_fiche.mjs`.
+
 - **Chaudières de 5 gallons : savon de lin, dégraisseur et chaudière coupée**
   (`chaudieres-5-gal`) : le poste de nettoyage des outils, reconstitué d'après
   une photo du client (P01) et sa description, sans plan ni mesure. Une
