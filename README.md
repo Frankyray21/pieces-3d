@@ -6,6 +6,24 @@ pièces (numéro, quantité, page du manuel).
 
 Équipements :
 
+- **Air, eau et électricité de la place de travail ITH Cubex**
+  (`air-eau-electricite`, simulateur SST) : d'après les photos de places de
+  travail du client, sans plan. Boyaux d'air de 2 po basse et haute pression,
+  boyau tressé inox 800 °F, boyau d'eau de 1 po, raccords à joint sphérique
+  (tiges et colliers, écrous à oreilles « stem nut », embouts mâles), whip
+  checks ; câble 600 V sur crochets au mur, boîte de défaut à la terre,
+  console électrique 600 V de la photo (porte vitrée, CB1, DANGER 600 VOLTS,
+  transformateur), arrêt d'urgence, crochets de plastique ; trépieds, bidons
+  et banderole DANGER ; vue d'ensemble P00. Rendu usé et sale : textures
+  dessinées par `tools/air_eau_elec_textures.mjs` ; fiche par
+  `tools/air_eau_elec_fiche.mjs`. **Unreal Engine** :
+  `node scripts/export-air-eau-elec-unreal.mjs` (un `.glb` par lot dans
+  `public/equipment/air-eau-electricite/unreal/`), voir
+  `docs/air-eau-elec-unreal.md`.
+- **Surcompresseur (booster) des Cubex** : page autonome `surcompresseur/`,
+  première version sans plans (d'après PRO-OP-ITH-004 : refroidisseur d'eau,
+  filtre à air, receiver, raccords de 2 po), rendu usé, export GLB en mètres
+  pour Unreal. Source dans `tools/surcompresseur/`.
 - **Compresseur simple R-55 (MRI)** : page autonome
   `compresseur-r55/` bâtie à partir des 75 plans PDF du dossier
   « 35 COMPRESSEUR SIMPLE R-55 » (assemblage 35290000). Frame, structure,
@@ -951,6 +969,23 @@ pièces (numéro, quantité, page du manuel).
   0,6 mm, la charnière continue du dos. Marquage estampé et dedans non
   modélisés. La fiche est écrite par `tools/boite_lunch_fiche.mjs` à partir
   des cotes du modèle (`src/models/boite-lunch-mineur/index.js`).
+
+- **Lot de sécurité de la place de travail** (`securite-chantier`, poste ITH
+  Cubex) : d'après six photos de places de travail du client (PH1 à PH6),
+  sans fiche de fabricant (formats courants du commerce). P01 : le lot
+  disposé comme sur une place ; P02 : barricade (ruban rouge « DANGER » de
+  3 po, nœuds, carte d'identification) ; P03 : affiches « Accès interdit »,
+  « Forage en cours », « Forage à distance » ; P04 : cône rouge de collet ;
+  P05 : casings rouges de 8 5/8 po ; P06 : couvercle de trou en acier
+  rouillé ; P07 : couvercle de monterie (supposé, sans photo) ; P08 :
+  cadenassage (boîte de groupe, pince multi-lock, cadenas, étiquettes) ;
+  P09 : harnais porté, longe à absorbeur, bloc rétractable. Extincteur et
+  trousse repris du poste de secours. Usure (peinture écaillée, rouille,
+  boue, éraflures) par textures procédurales sur canevas
+  (`src/models/securite-chantier/textures.js`), exportées avec les modèles :
+  `npm run export:securite` (serveur de développement lancé) écrit un GLB
+  par article, en mètres, dans `public/equipment/securite-chantier/unreal/`.
+  Fiche : `tools/securite_chantier_fiche.mjs`.
 
 - **Chaudières de 5 gallons : savon de lin, dégraisseur et chaudière coupée**
   (`chaudieres-5-gal`) : le poste de nettoyage des outils, reconstitué d'après

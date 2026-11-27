@@ -1,6 +1,14 @@
 {
   "equipment": [
     {
+      "id": "air-eau-electricite",
+      "name": "Air, eau et électricité de la place de travail ITH Cubex",
+      "manufacturer": "Divers (matériel de chantier minier)",
+      "category": "Services de la place de travail (simulateur SST)",
+      "thumbnail": "equipment/air-eau-electricite/thumbnail.webp",
+      "status": "3D d'après les photos de places de travail du client, sans plan : boyaux d'air de 2 po basse et haute pression, boyau tressé inox 800 °F, boyau d'eau de 1 po, raccords à joint sphérique (tiges, écrous à oreilles « stem nut », embouts mâles), whip checks ; câble 600 V sur crochets au mur, boîte de défaut à la terre, console électrique 600 V de la photo (porte vitrée, CB1, DANGER 600 VOLTS, transformateur), arrêt d'urgence, crochets de plastique ; trépieds, bidons et banderole DANGER ; rendu usé et sale (textures de boue, coulures, éclats) ; export GLB pour Unreal Engine"
+    },
+    {
       "id": "bac-retention-100l",
       "name": "Mini bac de rétention 100 L en PEHD jaune, avec caillebotis",
       "manufacturer": "neatfx (distributeur)",
@@ -367,6 +375,14 @@
       "category": "Ruban adhésif renforcé de filaments de verre",
       "thumbnail": "equipment/ruban-cerclage-s5736/thumbnail.webp",
       "status": "3D d'après la photo de la fiche du produit et les données publiées : 1 po × 60 verges, 4,0 mil, 100 lb, filaments de verre ; Ø extérieur calculé de 116,8 mm (environ 176 spires sur un mandrin de carton de 3 po, confirmé par les proportions de la photo) ; 15 mèches de filaments, logos de l'intérieur du mandrin et amorce déroulée relevés sur la photo"
+    },
+    {
+      "id": "securite-chantier",
+      "name": "Lot de sécurité de la place de travail : barricade, affiches, casings, couvercles, cadenassage, antichute",
+      "manufacturer": "Articles courants du commerce",
+      "category": "Sécurité de la place de travail (poste ITH Cubex)",
+      "thumbnail": "equipment/securite-chantier/thumbnail.webp",
+      "status": "3D d'après six photos de places de travail du client, sans plan : ruban de barricade rouge et carte, trois affiches (Accès interdit, Forage en cours, Forage à distance), cône rouge de collet, casings rouges, couvercle de trou rouillé, couvercle de monterie (supposé), boîte de cadenassage de groupe, pince multi-lock, cadenas et étiquettes, harnais, longe et bloc rétractable ; extincteur et trousse repris du poste de secours. Textures usées et fichiers GLB en mètres pour Unreal"
     },
     {
       "id": "stm-1500",

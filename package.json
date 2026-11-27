@@ -15,6 +15,7 @@
     "export:glb": "node scripts/export-glb.mjs",
     "export:anim": "node scripts/export-anim.mjs",
     "export:porte": "node scripts/export-porte.mjs",
+    "export:securite": "node scripts/export-securite-unreal.mjs",
     "check:porte": "node scripts/check-porte.mjs",
     "check:niveau": "node scripts/check-niveau-degres.mjs",
     "check:cle-tube": "node scripts/check-cle-a-tube.mjs"
