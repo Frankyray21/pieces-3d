@@ -1,0 +1,535 @@
+{
+ "id": "train-forage-ith",
+ "name": "Train de forage ITH des Cubex : tiges, marteaux, bits, subs, casse-bits et chariot",
+ "manufacturer": "Machines Roger International (procédures) ; marteaux d'après Epiroc",
+ "category": "Outils de forage long-trou ITH",
+ "serial": "",
+ "document": {
+  "title": "PRO-OP-ITH-016 « Manipulation des marteaux de forage et de leurs composantes » (novembre 2021), PRO-OP-ITH-001 « Changements de bit de forage sur les Cubex » (février 2025) et PRO-OP-ITH-004 « Forage long-trou ITH-Cubex » (révision mars 2025) ; photos de chantier du client",
+  "reference": "PRO-OP-ITH-001, 004, 016",
+  "preparedBy": "Machines Roger International",
+  "date": "",
+  "sheets": 11,
+  "pagePattern": "pages/{sheet}.webp"
+ },
+ "specs": [
+  [
+   "Sources",
+   "PRO-OP-ITH-016 « Manipulation des marteaux de forage et de leurs composantes » (novembre 2021) : masses des marteaux, chariot, casse-bit, driver sub, saver sub, anneaux de retenue. PRO-OP-ITH-001 « Changements de bit de forage sur les Cubex » (février 2025) : bits de 3 5/8 à 10 po. PRO-OP-ITH-004 « Forage long-trou ITH-Cubex » (révision mars 2025) : 7 pi 6 po entre la slip plate et le bout des taillants. Manuel de la Cubex MRI 5200 (F15, F18) : slip plates pour tiges de 3 1/2 et 5 1/2 po, saver sub 2216208. Fiches techniques Epiroc (COP 32, COP 44, catalogue DTH). Photos de chantier du client."
+  ],
+  [
+   "Marteaux",
+   "3 po : 60 lb (27,2 kg), Ø 82 mm, 925,0 mm sans bit (COP 32 HD) ; 4 po : 89 lb (40,4 kg), Ø 100 mm, 1037,5 mm sans bit (COP 44 Gold) ; 6 po : 211 lb (95,7 kg), Ø 142 mm, 1258,0 mm sans bit (COP 64 Gold)"
+  ],
+  [
+   "Choix des modèles Epiroc",
+   "La procédure ne nomme pas les marteaux. Les masses qu'elle donne sont celles des COP 32 HD (26 kg), COP 44 Gold (40,5 kg) et COP 64 Gold (96 kg) : leurs diamètres, longueurs et raccords sont repris. À corriger si la flotte compte d'autres marteaux (Sandvik, Mincon…)"
+  ],
+  [
+   "Tiges",
+   "Ø 3 1/2 po (slip plate « FOR 3 1/2\" ROD » du manuel de la Cubex), 4, 5 et 6 pi d'épaulement à épaulement, paroi de 1/4 po (supposée), filets 2 3/8 API REG (mâle en haut, femelle en bas). Peintes en jaune ou en noir comme sur les photos, bouts d'acier nu à deux entailles plates. Les tiges de 5 1/2 po (marteau de 6 po) ne sont pas modélisées : longueur et couleur à confirmer"
+  ],
+  [
+   "Bits",
+   "3 5/8 po (marteau de 3 po), 4 1/2 po (marteau de 4 po), 5 1/8 po (marteau de 4 po), 6 po (casing) (marteau de 6 po), 6 1/2 po (marteau de 6 po), 8 po (marteau de 6 po), 10 po (marteau de 6 po)"
+  ],
+  [
+   "Filets",
+   "2 3/8 API REG : Ø 68,3 mm à l'épaulement, 76,2 mm de long, 5 filets au pouce, conicité 1/6 ; 3 1/2 API REG : Ø 95,3 mm à l'épaulement, 95,3 mm de long, 4 filets au pouce, conicité 1/6 (filets représentés par des gorges, sans hélice)"
+  ],
+  [
+   "Usure",
+   "Pièces qui ont servi : peinture partie aux arêtes et sur les bouts, rayée par les mâchoires, acier nu piqué de rouille, filets graissés et sombres, bits rouillés, boutons de carbure ternis. Mise en apparence seulement : aucune cote ne change"
+  ],
+  [
+   "Export Unreal Engine",
+   "Un .glb par pièce, en mètres, axe vertical, origine au centre de la face du bas : public/equipment/train-forage-ith/unreal/ (voir docs/train-forage-ith-unreal.md). Textures PBR usées propres à chaque pièce (couleur, normales, rugosité-métal), générées par scripts/export-train-ith-unreal.mjs"
+  ]
+ ],
+ "weights": [
+  [
+   "Marteau 3 po (PRO-OP-ITH-016)",
+   "60 lb (27,2 kg)"
+  ],
+  [
+   "Marteau 4 po (PRO-OP-ITH-016)",
+   "89 lb (40,4 kg)"
+  ],
+  [
+   "Marteau 6 po (PRO-OP-ITH-016)",
+   "211 lb (95,7 kg)"
+  ]
+ ],
+ "sheetTitles": {
+  "F01": "PRO-OP-ITH-016, page 1 : objet, mise en contexte, masses des marteaux",
+  "F02": "PRO-OP-ITH-016, page 2 : marteaux de 3, 4 et 6 po, chariot, étapes 1 à 5",
+  "F03": "PRO-OP-ITH-016, page 3 : spline piston, casse-bit dans la slip plate",
+  "F04": "PRO-OP-ITH-016, page 4 : bit sur le casse-bit, driver sub, anneaux de retenue",
+  "F05": "PRO-OP-ITH-016, page 5 : enlever une bit de 6, 8 ou 10 po",
+  "F06": "PRO-OP-ITH-016, page 6 : anneaux de retenue, driver sub",
+  "F07": "PRO-OP-ITH-016, page 7 : retour du marteau sur le chariot, chaîne de retenue",
+  "F08": "PRO-OP-ITH-001, page 3 : driver sub et anneaux de retenue sur la bit",
+  "F09": "PRO-OP-ITH-001, page 4 : queue de la bit dans le marteau",
+  "F10": "PRO-OP-ITH-004, page 2 : hauteur du chantier, 7 pi 6 po de la slip plate au bout des taillants",
+  "F11": "Photo de chantier du client : rack de tiges jaunes et noires, bouts à entailles plates, protecteurs de filets jaunes"
+ },
+ "root": "P01",
+ "assemblies": {
+  "P01": {
+   "title": "ITH DRILL STRING — CUBEX",
+   "titleFr": "Train de forage ITH (vue d'ensemble)",
+   "pn": "",
+   "sheets": [
+    "F01",
+    "F02",
+    "F03",
+    "F04",
+    "F05",
+    "F06",
+    "F07",
+    "F08",
+    "F09",
+    "F10",
+    "F11"
+   ],
+   "note": "Toutes les pièces du train de forage ITH nommées dans les procédures PRO-OP-ITH-001, 004, 016, chacune sur sa page. Pièces debout, telles qu'on les pose au chantier. Rendu usé : pièces qui ont servi. Chaque pièce a son export .glb pour Unreal Engine.",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "TIGES DE FORAGE (4, 5 et 6 pi, jaunes et noires)",
+     {
+      "link": "P02"
+     }
+    ],
+    [
+     "2",
+     "",
+     1,
+     "MARTEAUX DE 3, 4 ET 6 PO",
+     {
+      "link": "P03"
+     }
+    ],
+    [
+     "3",
+     "",
+     1,
+     "BITS DE 3 5/8 À 10 PO",
+     {
+      "link": "P04"
+     }
+    ],
+    [
+     "4",
+     "",
+     1,
+     "DRIVER SUBS, ANNEAUX DE RETENUE, SAVER SUBS",
+     {
+      "link": "P05"
+     }
+    ],
+    [
+     "5",
+     "",
+     1,
+     "CASSE-BITS",
+     {
+      "link": "P06"
+     }
+    ],
+    [
+     "6",
+     "",
+     1,
+     "CHARIOT À MARTEAU ET SA CHAÎNE",
+     {
+      "link": "P07"
+     }
+    ]
+   ]
+  },
+  "P02": {
+   "title": "DRILL RODS 3 1/2 IN",
+   "titleFr": "Tiges de forage de 3 1/2 po",
+   "pn": "",
+   "sheets": [
+    "F11",
+    "F10"
+   ],
+   "note": "Tiges debout, filet mâle en haut, de gauche à droite : 4 pi jaune et noire, 5 pi, 6 pi. Les entailles plates (deux méplats opposés) sont sur les bouts d'acier nu, en haut et en bas. Pour installer ou enlever une tige, le gear box doit être relevé et arrêté et la foreuse au neutre (PRO-OP-ITH-004, point 22).",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "TIGE DE FORAGE Ø 3 1/2 po × 4 pi, peinte en jaune",
+     {
+      "note": "4 pi (1219 mm) d'épaulement à épaulement, filet mâle 2 3/8 API REG en haut, femelle en bas. Bouts d'acier nu à deux entailles plates (méplats à 3 po l'un de l'autre, 100 mm de long). Masse calculée : 22,4 kg (49 lb). Export Unreal : SM_Tige_4pi_Jaune.glb."
+     }
+    ],
+    [
+     "2",
+     "",
+     1,
+     "TIGE DE FORAGE Ø 3 1/2 po × 4 pi, peinte en noire",
+     {
+      "note": "4 pi (1219 mm) d'épaulement à épaulement, filet mâle 2 3/8 API REG en haut, femelle en bas. Bouts d'acier nu à deux entailles plates (méplats à 3 po l'un de l'autre, 100 mm de long). Masse calculée : 22,4 kg (49 lb). Export Unreal : SM_Tige_4pi_Noire.glb."
+     }
+    ],
+    [
+     "3",
+     "",
+     1,
+     "TIGE DE FORAGE Ø 3 1/2 po × 5 pi, peinte en jaune",
+     {
+      "note": "5 pi (1524 mm) d'épaulement à épaulement, filet mâle 2 3/8 API REG en haut, femelle en bas. Bouts d'acier nu à deux entailles plates (méplats à 3 po l'un de l'autre, 100 mm de long). Masse calculée : 26,4 kg (58 lb). Export Unreal : SM_Tige_5pi_Jaune.glb."
+     }
+    ],
+    [
+     "4",
+     "",
+     1,
+     "TIGE DE FORAGE Ø 3 1/2 po × 5 pi, peinte en noire",
+     {
+      "note": "5 pi (1524 mm) d'épaulement à épaulement, filet mâle 2 3/8 API REG en haut, femelle en bas. Bouts d'acier nu à deux entailles plates (méplats à 3 po l'un de l'autre, 100 mm de long). Masse calculée : 26,4 kg (58 lb). Export Unreal : SM_Tige_5pi_Noire.glb."
+     }
+    ],
+    [
+     "5",
+     "",
+     1,
+     "TIGE DE FORAGE Ø 3 1/2 po × 6 pi, peinte en jaune",
+     {
+      "note": "6 pi (1829 mm) d'épaulement à épaulement, filet mâle 2 3/8 API REG en haut, femelle en bas. Bouts d'acier nu à deux entailles plates (méplats à 3 po l'un de l'autre, 100 mm de long). Masse calculée : 30,3 kg (67 lb). Export Unreal : SM_Tige_6pi_Jaune.glb."
+     }
+    ],
+    [
+     "6",
+     "",
+     1,
+     "TIGE DE FORAGE Ø 3 1/2 po × 6 pi, peinte en noire",
+     {
+      "note": "6 pi (1829 mm) d'épaulement à épaulement, filet mâle 2 3/8 API REG en haut, femelle en bas. Bouts d'acier nu à deux entailles plates (méplats à 3 po l'un de l'autre, 100 mm de long). Masse calculée : 30,3 kg (67 lb). Export Unreal : SM_Tige_6pi_Noire.glb."
+     }
+    ]
+   ]
+  },
+  "P03": {
+   "title": "DTH HAMMERS",
+   "titleFr": "Marteaux fond-de-trou de 3, 4 et 6 po",
+   "pn": "",
+   "sheets": [
+    "F01",
+    "F02"
+   ],
+   "note": "Marteaux debout, raccord de tête (mâle) en haut, sans driver sub ni bit. Les marteaux de 3 et 4 po s'installent à la main comme les tiges ; celui de 6 po se transporte toujours sur le chariot (P07).",
+   "parts": [
+    [
+     "1",
+     "COP 32 HD",
+     1,
+     "MARTEAU FOND-DE-TROU 3 po (27,2 kg, 60 lb)",
+     {
+      "note": "Masse publiée par la procédure (60 lb, sources Sandvik et Epiroc) : celle du COP 32 HD d'Epiroc, dont les cotes sont reprises : Ø 82 mm, 925,0 mm sans bit, raccord de tête mâle 2 3/8 API REG. Modèle : fourreau et raccord de tête (deux méplats de clé), sans driver sub (P05) ni bit ; 847 mm du bas du fourreau à l'épaulement. Pièces internes (piston, cylindre, clapet) non modélisées : 18,1 kg calculés sur le modèle. Installé à la main sur le gear box, comme une tige. Export Unreal : SM_Marteau_3po.glb."
+     }
+    ],
+    [
+     "2",
+     "COP 44 Gold",
+     1,
+     "MARTEAU FOND-DE-TROU 4 po (40,4 kg, 89 lb)",
+     {
+      "note": "Masse publiée par la procédure (89 lb, sources Sandvik et Epiroc) : celle du COP 44 Gold d'Epiroc, dont les cotes sont reprises : Ø 100 mm, 1037,5 mm sans bit, raccord de tête mâle 2 3/8 API REG. Modèle : fourreau et raccord de tête (deux méplats de clé), sans driver sub (P05) ni bit ; 943 mm du bas du fourreau à l'épaulement. Pièces internes (piston, cylindre, clapet) non modélisées : 29,7 kg calculés sur le modèle. Installé à la main sur le gear box, comme une tige. Export Unreal : SM_Marteau_4po.glb."
+     }
+    ],
+    [
+     "3",
+     "COP 64 Gold",
+     1,
+     "MARTEAU FOND-DE-TROU 6 po (95,7 kg, 211 lb)",
+     {
+      "note": "Masse publiée par la procédure (211 lb, sources Sandvik et Epiroc) : celle du COP 64 Gold d'Epiroc, dont les cotes sont reprises : Ø 142 mm, 1258,0 mm sans bit, raccord de tête mâle 3 1/2 API REG. Modèle : fourreau et raccord de tête (deux méplats de clé), sans driver sub (P05) ni bit ; 1123 mm du bas du fourreau à l'épaulement. Pièces internes (piston, cylindre, clapet) non modélisées : 70,6 kg calculés sur le modèle. Toujours transporté sur le chariot (P07), driver sub installé. Export Unreal : SM_Marteau_6po.glb."
+     }
+    ]
+   ]
+  },
+  "P04": {
+   "title": "BUTTON BITS",
+   "titleFr": "Bits à boutons de 3 5/8 à 10 po",
+   "pn": "",
+   "sheets": [
+    "F08",
+    "F09",
+    "F04"
+   ],
+   "note": "Bits posés sur leur face de coupe, queue vers le haut (comme sur le casse-bit), du plus petit au plus grand. Serrage dans les jaws ou les tables : 1000 psi minimum, 2000 psi maximum (PRO-OP-ITH-001).",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "BIT À BOUTONS 3 5/8 po (Ø 92,1 mm), pour le marteau de 3 po",
+     {
+      "note": "Tête de 89 mm, boutons de carbure de Ø 11 mm (calibre) et 10 mm (face), rainures d'évacuation, queue cannelée de Ø 57 mm × 153 mm avec le cou des anneaux de retenue, tube de pied en plastique blanc. Proportions de la tête et nombre de boutons supposés. Masse calculée : 6,0 kg. Changement : spline piston mis, dans les jaws (PRO-OP-ITH-001). Export Unreal : SM_Bit_3_5_8po.glb."
+     }
+    ],
+    [
+     "2",
+     "",
+     1,
+     "BIT À BOUTONS 4 1/2 po (Ø 114,3 mm), pour le marteau de 4 po",
+     {
+      "note": "Tête de 98 mm, boutons de carbure de Ø 14 mm (calibre) et 12 mm (face), rainures d'évacuation, queue cannelée de Ø 69 mm × 186 mm avec le cou des anneaux de retenue, tube de pied en plastique blanc. Proportions de la tête et nombre de boutons supposés. Masse calculée : 10,5 kg. Changement : spline piston mis, dans les jaws (PRO-OP-ITH-001). Export Unreal : SM_Bit_4_1_2po.glb."
+     }
+    ],
+    [
+     "3",
+     "",
+     1,
+     "BIT À BOUTONS 5 1/8 po (Ø 130,2 mm), pour le marteau de 4 po",
+     {
+      "note": "Tête de 105 mm, boutons de carbure de Ø 16 mm (calibre) et 14 mm (face), rainures d'évacuation, queue cannelée de Ø 69 mm × 186 mm avec le cou des anneaux de retenue, tube de pied en plastique blanc. Proportions de la tête et nombre de boutons supposés. Masse calculée : 13,2 kg. Changement : spline piston mis, dans les jaws (PRO-OP-ITH-001). Export Unreal : SM_Bit_5_1_8po.glb."
+     }
+    ],
+    [
+     "4",
+     "",
+     1,
+     "BIT À BOUTONS 6 po (casing) (Ø 152,4 mm), pour le marteau de 6 po",
+     {
+      "note": "Tête de 114 mm, boutons de carbure de Ø 18 mm (calibre) et 16 mm (face), rainures d'évacuation, queue cannelée de Ø 98 mm × 265 mm avec le cou des anneaux de retenue, tube de pied en plastique blanc. Proportions de la tête et nombre de boutons supposés. Masse calculée : 24,8 kg. Changement : spline piston mis, dans les jaws (PRO-OP-ITH-001). Export Unreal : SM_Bit_6po.glb."
+     }
+    ],
+    [
+     "5",
+     "",
+     1,
+     "BIT À BOUTONS 6 1/2 po (Ø 165,1 mm), pour le marteau de 6 po",
+     {
+      "note": "Tête de 119 mm, boutons de carbure de Ø 19 mm (calibre) et 17 mm (face), rainures d'évacuation, queue cannelée de Ø 98 mm × 265 mm avec le cou des anneaux de retenue, tube de pied en plastique blanc. Proportions de la tête et nombre de boutons supposés. Masse calculée : 28,1 kg. Changement : spline piston non mis, mât à 0°, dans les tables, ou sur le casse-bit (PRO-OP-ITH-016). Export Unreal : SM_Bit_6_1_2po.glb."
+     }
+    ],
+    [
+     "6",
+     "",
+     1,
+     "BIT À BOUTONS 8 po (Ø 203,2 mm), pour le marteau de 6 po",
+     {
+      "note": "Tête de 135 mm, boutons de carbure de Ø 19 mm (calibre) et 17 mm (face), rainures d'évacuation, queue cannelée de Ø 98 mm × 265 mm avec le cou des anneaux de retenue, tube de pied en plastique blanc. Proportions de la tête et nombre de boutons supposés. Masse calculée : 41,1 kg. Changement : spline piston non mis, mât à 0°, dans les tables, ou sur le casse-bit (PRO-OP-ITH-016). Export Unreal : SM_Bit_8po.glb."
+     }
+    ],
+    [
+     "7",
+     "",
+     1,
+     "BIT À BOUTONS 10 po (Ø 254,0 mm), pour le marteau de 6 po",
+     {
+      "note": "Tête de 157 mm, boutons de carbure de Ø 19 mm (calibre) et 17 mm (face), rainures d'évacuation, queue cannelée de Ø 98 mm × 265 mm avec le cou des anneaux de retenue, tube de pied en plastique blanc. Proportions de la tête et nombre de boutons supposés. Masse calculée : 67,1 kg. Changement : spline piston non mis, mât à 0°, dans les tables, ou sur le casse-bit (PRO-OP-ITH-016). Export Unreal : SM_Bit_10po.glb."
+     }
+    ]
+   ]
+  },
+  "P05": {
+   "title": "DRIVER SUBS, RETAINING RINGS, SAVER SUBS",
+   "titleFr": "Driver subs, anneaux de retenue et saver subs",
+   "pn": "",
+   "sheets": [
+    "F08",
+    "F04",
+    "F06"
+   ],
+   "note": "Devant : driver subs des marteaux de 3, 4 et 6 po. Au milieu : les paires d'anneaux de retenue. Derrière : saver subs 2 3/8 et 3 1/2 API REG.",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "DRIVER SUB du marteau de 3 po",
+     {
+      "note": "Douille d'entraînement : se visse sous le fourreau (filet de 41 mm), dépasse de 78 mm, cannelures intérieures (8) qui entraînent la queue du bit. Installé en tout temps lors de la manipulation du marteau (PRO-OP-ITH-016) ; filets à bien graisser (PRO-OP-ITH-001). Export Unreal : SM_DriverSub_3po.glb."
+     }
+    ],
+    [
+     "2",
+     "",
+     1,
+     "DRIVER SUB du marteau de 4 po",
+     {
+      "note": "Douille d'entraînement : se visse sous le fourreau (filet de 50 mm), dépasse de 95 mm, cannelures intérieures (8) qui entraînent la queue du bit. Installé en tout temps lors de la manipulation du marteau (PRO-OP-ITH-016) ; filets à bien graisser (PRO-OP-ITH-001). Export Unreal : SM_DriverSub_4po.glb."
+     }
+    ],
+    [
+     "3",
+     "",
+     1,
+     "DRIVER SUB du marteau de 6 po",
+     {
+      "note": "Douille d'entraînement : se visse sous le fourreau (filet de 71 mm), dépasse de 135 mm, cannelures intérieures (12) qui entraînent la queue du bit. Installé en tout temps lors de la manipulation du marteau (PRO-OP-ITH-016) ; filets à bien graisser (PRO-OP-ITH-001). Export Unreal : SM_DriverSub_6po.glb."
+     }
+    ],
+    [
+     "4",
+     "",
+     2,
+     "ANNEAU DE RETENUE (demi-anneau) du marteau de 3 po",
+     {
+      "note": "Deux demi-anneaux jaunes (photo de PRO-OP-ITH-001) posés dans le cou de la queue du bit, au-dessus du driver sub : ils retiennent le bit quand le marteau est relevé. Export Unreal : SM_Anneaux_3po.glb (les deux moitiés, chacune son maillage)."
+     }
+    ],
+    [
+     "5",
+     "",
+     2,
+     "ANNEAU DE RETENUE (demi-anneau) du marteau de 4 po",
+     {
+      "note": "Deux demi-anneaux jaunes (photo de PRO-OP-ITH-001) posés dans le cou de la queue du bit, au-dessus du driver sub : ils retiennent le bit quand le marteau est relevé. Export Unreal : SM_Anneaux_4po.glb (les deux moitiés, chacune son maillage)."
+     }
+    ],
+    [
+     "6",
+     "",
+     2,
+     "ANNEAU DE RETENUE (demi-anneau) du marteau de 6 po",
+     {
+      "note": "Deux demi-anneaux jaunes (photo de PRO-OP-ITH-001) posés dans le cou de la queue du bit, au-dessus du driver sub : ils retiennent le bit quand le marteau est relevé. Export Unreal : SM_Anneaux_6po.glb (les deux moitiés, chacune son maillage)."
+     }
+    ],
+    [
+     "7",
+     "2216208",
+     1,
+     "SAVER SUB 2 3/8 API REG",
+     {
+      "note": "Raccord d'usure sous la tête de rotation : filet mâle vers la tête, six pans de 110 mm, collet, bout femelle 2 3/8 API REG qui reçoit la tige ou le marteau (« visser le marteau dans le saver sub », PRO-OP-ITH-016). Forme d'après le manuel de la Cubex (F18, n° 2216208), cotes supposées. Export Unreal : SM_SaverSub_2_3_8.glb."
+     }
+    ],
+    [
+     "8",
+     "",
+     1,
+     "SAVER SUB 3 1/2 API REG",
+     {
+      "note": "Raccord d'usure sous la tête de rotation : filet mâle vers la tête, six pans de 130 mm, collet, bout femelle 3 1/2 API REG qui reçoit la tige ou le marteau (« visser le marteau dans le saver sub », PRO-OP-ITH-016). Forme d'après le manuel de la Cubex (F18, n° 2216208), cotes supposées. Export Unreal : SM_SaverSub_3_1_2.glb."
+     }
+    ]
+   ]
+  },
+  "P06": {
+   "title": "BIT BREAKERS",
+   "titleFr": "Casse-bits",
+   "pn": "",
+   "sheets": [
+    "F03",
+    "F05"
+   ],
+   "note": "Casse-bits pour les bits de 6, 6 1/2, 8 et 10 po du marteau de 6 po : on l'installe dans la slip plate et on ferme les jaws avant d'y déposer la bit (PRO-OP-ITH-016, étapes 11 et 18).",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "CASSE-BIT pour bit de 6 po",
+     {
+      "note": "Cuvette octogonale de 204 mm sur plats et 95 mm de haut (poche de 72 mm, quatre ergots qui prennent les rainures du bit) sur un fût de Ø 5 1/2 po qui entre dans la slip plate. Forme relevée sur les photos de PRO-OP-ITH-016, cotes supposées. Masse calculée : 35,8 kg. Export Unreal : SM_CasseBit_6po.glb."
+     }
+    ],
+    [
+     "2",
+     "",
+     1,
+     "CASSE-BIT pour bit de 6 1/2 po",
+     {
+      "note": "Cuvette octogonale de 217 mm sur plats et 95 mm de haut (poche de 72 mm, quatre ergots qui prennent les rainures du bit) sur un fût de Ø 5 1/2 po qui entre dans la slip plate. Forme relevée sur les photos de PRO-OP-ITH-016, cotes supposées. Masse calculée : 37,3 kg. Export Unreal : SM_CasseBit_6_1_2po.glb."
+     }
+    ],
+    [
+     "3",
+     "",
+     1,
+     "CASSE-BIT pour bit de 8 po",
+     {
+      "note": "Cuvette octogonale de 255 mm sur plats et 95 mm de haut (poche de 72 mm, quatre ergots qui prennent les rainures du bit) sur un fût de Ø 5 1/2 po qui entre dans la slip plate. Forme relevée sur les photos de PRO-OP-ITH-016, cotes supposées. Masse calculée : 41,9 kg. Export Unreal : SM_CasseBit_8po.glb."
+     }
+    ],
+    [
+     "4",
+     "",
+     1,
+     "CASSE-BIT pour bit de 10 po",
+     {
+      "note": "Cuvette octogonale de 306 mm sur plats et 95 mm de haut (poche de 72 mm, quatre ergots qui prennent les rainures du bit) sur un fût de Ø 5 1/2 po qui entre dans la slip plate. Forme relevée sur les photos de PRO-OP-ITH-016, cotes supposées. Masse calculée : 48,9 kg. Export Unreal : SM_CasseBit_10po.glb."
+     }
+    ]
+   ]
+  },
+  "P07": {
+   "title": "HAMMER CART",
+   "titleFr": "Chariot de transport du marteau de 6 po",
+   "pn": "",
+   "sheets": [
+    "F02",
+    "F07"
+   ],
+   "note": "Chariot conçu pour transporter le marteau de 6 po (211 lb), obligatoire selon PRO-OP-ITH-016, avec sa chaîne de sûreté. Montré avec le marteau de 6 po debout sur le pied, driver sub installé.",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "CADRE du chariot (montants, traverses, berceau, pied, essieu)",
+     {
+      "note": "Diable à bouteille peint en rouge (photo de PRO-OP-ITH-016) : montants tubulaires de Ø 1 po à 330 mm d'entraxe, 1150 mm de haut, pied de 300 × 210 mm, berceau cintré derrière le marteau, pattes de la chaîne. Cotes relevées sur la photo à l'échelle du marteau de 6 po (à 10 % près)."
+     }
+    ],
+    [
+     "2",
+     "",
+     2,
+     "ROUE à pneu, Ø 10 po",
+     {
+      "note": "Pneu noir, jante rouge, moyeu acier."
+     }
+    ],
+    [
+     "3",
+     "",
+     2,
+     "POIGNÉE gainée de caoutchouc gris",
+     {
+      "note": "Bouts des montants recourbés vers l'arrière."
+     }
+    ],
+    [
+     "4",
+     "",
+     1,
+     "CHAÎNE DE SÛRETÉ rouge",
+     {
+      "note": "Maillons de 6 mm, passée devant le marteau d'une patte à l'autre, le bout pendant. À enlever avant de remonter le marteau (étape 6) et à remettre pour sortir le chariot (étape 34)."
+     }
+    ],
+    [
+     "5",
+     "",
+     1,
+     "MARTEAU DE 6 PO (voir P03)",
+     {
+      "note": "Debout sur le pied, posé sur son driver sub."
+     }
+    ],
+    [
+     "6",
+     "",
+     1,
+     "DRIVER SUB du marteau de 6 po (voir P05)",
+     {
+      "note": "Installé en tout temps lors de la manipulation (PRO-OP-ITH-016)."
+     }
+    ]
+   ]
+  }
+ },
+ "documents": []
+}

@@ -400,6 +400,14 @@
       "status": "3D tirée de la CAO SolidWorks du fabricant (8 pièces, facettes exactes), montée et rendue dans Blender ; plan d'assemblage et développé de la jupe"
     },
     {
+      "id": "train-forage-ith",
+      "name": "Train de forage ITH des Cubex : tiges, marteaux, bits, subs, casse-bits et chariot",
+      "manufacturer": "Machines Roger International (procédures PRO-OP-ITH-001, 004, 016)",
+      "category": "Outils de forage long-trou ITH",
+      "thumbnail": "equipment/train-forage-ith/thumbnail.webp",
+      "status": "3D d'après les procédures PRO-OP-ITH-001, 004 et 016 et les photos de chantier : tiges de 3 1/2 po de 4, 5 et 6 pi (jaunes et noires, entailles plates), marteaux de 3, 4 et 6 po (60, 89 et 211 lb, cotes Epiroc), 7 bits de 3 5/8 à 10 po, driver subs, anneaux de retenue, saver subs, casse-bits, chariot à marteau et sa chaîne ; rendu usé ; un .glb par pièce pour Unreal Engine"
+    },
+    {
       "id": "trousse-deversement-zenith",
       "name": "Trousse de déversement universelle Zenith, baril de 30 gal US",
       "manufacturer": "Zenith Safety Products",

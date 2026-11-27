@@ -12,6 +12,16 @@ pièces (numéro, quantité, page du manuel).
   poutres, toit, jacks et boîte à cadrans d'après les plans ; compresseur,
   moteur, garde-courroie et réservoir en formes simplifiées. Source dans
   `tools/compresseur-r55/`.
+- **Train de forage ITH des Cubex** (`train-forage-ith`, procédures
+  PRO-OP-ITH-001, 004 et 016, photos de chantier) : tiges de 3 1/2 po de 4, 5
+  et 6 pi (jaunes et noires, bouts à entailles plates), marteaux de 3, 4 et
+  6 po (60, 89 et 211 lb ; cotes des Epiroc COP 32 HD, COP 44 Gold et COP 64
+  Gold, de même masse), bits à boutons de 3 5/8 à 10 po, driver subs, anneaux
+  de retenue, saver subs, casse-bits et chariot à marteau avec sa chaîne ;
+  rendu usé. Géométrie dans `src/models/train-forage-ith/forme.js`, fiche
+  écrite par `tools/train_forage_ith_fiche.mjs`. Un `.glb` par pièce pour
+  Unreal Engine (`scripts/export-train-ith-unreal.mjs`, voir
+  `docs/train-forage-ith-unreal.md`).
 - **Cubex / MRI 5200** (foreuse sur chenilles, manuel P15125-MRI rév. 03,
   28 pages) : assemblages en 3D.
 - **Sandvik DU311-TVK** n° de série 10680 (manuel de pièces du 2020-07-02,

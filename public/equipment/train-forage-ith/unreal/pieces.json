@@ -1,0 +1,395 @@
+{
+ "note": "Train de forage ITH des Cubex (PRO-OP-ITH-001, 004, 016). glTF en mètres, Y vers le haut, origine au centre de la face du bas de chaque pièce (pièce debout). Unreal : centimètres, Z vers le haut, à l'import.",
+ "pieces": [
+  {
+   "fichier": "SM_Tige_4pi_Jaune.glb",
+   "kg": 22.4,
+   "lb": 49,
+   "masse": "masse calculée (acier 7 850 kg/m³)",
+   "tailleM": [
+    0.089,
+    1.295,
+    0.089
+   ],
+   "triangles": 27072,
+   "mo": 1.29
+  },
+  {
+   "fichier": "SM_Tige_4pi_Noire.glb",
+   "kg": 22.4,
+   "lb": 49,
+   "masse": "masse calculée (acier 7 850 kg/m³)",
+   "tailleM": [
+    0.089,
+    1.295,
+    0.089
+   ],
+   "triangles": 27072,
+   "mo": 1.29
+  },
+  {
+   "fichier": "SM_Tige_5pi_Jaune.glb",
+   "kg": 26.4,
+   "lb": 58,
+   "masse": "masse calculée (acier 7 850 kg/m³)",
+   "tailleM": [
+    0.089,
+    1.6,
+    0.089
+   ],
+   "triangles": 27072,
+   "mo": 1.29
+  },
+  {
+   "fichier": "SM_Tige_5pi_Noire.glb",
+   "kg": 26.4,
+   "lb": 58,
+   "masse": "masse calculée (acier 7 850 kg/m³)",
+   "tailleM": [
+    0.089,
+    1.6,
+    0.089
+   ],
+   "triangles": 27072,
+   "mo": 1.29
+  },
+  {
+   "fichier": "SM_Tige_6pi_Jaune.glb",
+   "kg": 30.3,
+   "lb": 67,
+   "masse": "masse calculée (acier 7 850 kg/m³)",
+   "tailleM": [
+    0.089,
+    1.905,
+    0.089
+   ],
+   "triangles": 27072,
+   "mo": 1.29
+  },
+  {
+   "fichier": "SM_Tige_6pi_Noire.glb",
+   "kg": 30.3,
+   "lb": 67,
+   "masse": "masse calculée (acier 7 850 kg/m³)",
+   "tailleM": [
+    0.089,
+    1.905,
+    0.089
+   ],
+   "triangles": 27072,
+   "mo": 1.29
+  },
+  {
+   "fichier": "SM_Marteau_3po.glb",
+   "kg": 27.2,
+   "lb": 60,
+   "masse": "masse publiée (PRO-OP-ITH-016) : 60 lb, sans bit ni driver sub",
+   "tailleM": [
+    0.082,
+    0.923,
+    0.082
+   ],
+   "triangles": 14832,
+   "mo": 0.76
+  },
+  {
+   "fichier": "SM_DriverSub_3po.glb",
+   "kg": 0.9,
+   "lb": 2,
+   "masse": "masse calculée",
+   "tailleM": [
+    0.079,
+    0.119,
+    0.079
+   ],
+   "triangles": 6144,
+   "mo": 0.3
+  },
+  {
+   "fichier": "SM_Anneaux_3po.glb",
+   "kg": 0.2,
+   "lb": 0,
+   "masse": "masse calculée (les deux moitiés)",
+   "tailleM": [
+    0.063,
+    0.018,
+    0.063
+   ],
+   "triangles": 976,
+   "mo": 0.15
+  },
+  {
+   "fichier": "SM_Marteau_4po.glb",
+   "kg": 40.4,
+   "lb": 89,
+   "masse": "masse publiée (PRO-OP-ITH-016) : 89 lb, sans bit ni driver sub",
+   "tailleM": [
+    0.1,
+    1.019,
+    0.1
+   ],
+   "triangles": 15984,
+   "mo": 0.81
+  },
+  {
+   "fichier": "SM_DriverSub_4po.glb",
+   "kg": 1.8,
+   "lb": 4,
+   "masse": "masse calculée",
+   "tailleM": [
+    0.097,
+    0.145,
+    0.097
+   ],
+   "triangles": 6912,
+   "mo": 0.34
+  },
+  {
+   "fichier": "SM_Anneaux_4po.glb",
+   "kg": 0.3,
+   "lb": 1,
+   "masse": "masse calculée (les deux moitiés)",
+   "tailleM": [
+    0.075,
+    0.022,
+    0.075
+   ],
+   "triangles": 976,
+   "mo": 0.15
+  },
+  {
+   "fichier": "SM_Marteau_6po.glb",
+   "kg": 95.7,
+   "lb": 211,
+   "masse": "masse publiée (PRO-OP-ITH-016) : 211 lb, sans bit ni driver sub",
+   "tailleM": [
+    0.142,
+    1.218,
+    0.142
+   ],
+   "triangles": 17712,
+   "mo": 0.96
+  },
+  {
+   "fichier": "SM_DriverSub_6po.glb",
+   "kg": 5.9,
+   "lb": 13,
+   "masse": "masse calculée",
+   "tailleM": [
+    0.139,
+    0.206,
+    0.139
+   ],
+   "triangles": 9984,
+   "mo": 0.54
+  },
+  {
+   "fichier": "SM_Anneaux_6po.glb",
+   "kg": 0.6,
+   "lb": 1,
+   "masse": "masse calculée (les deux moitiés)",
+   "tailleM": [
+    0.104,
+    0.031,
+    0.104
+   ],
+   "triangles": 976,
+   "mo": 0.15
+  },
+  {
+   "fichier": "SM_Bit_3_5_8po.glb",
+   "kg": 6,
+   "lb": 13,
+   "masse": "masse calculée",
+   "tailleM": [
+    0.092,
+    0.263,
+    0.092
+   ],
+   "triangles": 6624,
+   "mo": 0.49
+  },
+  {
+   "fichier": "SM_Bit_4_1_2po.glb",
+   "kg": 10.5,
+   "lb": 23,
+   "masse": "masse calculée",
+   "tailleM": [
+    0.114,
+    0.311,
+    0.114
+   ],
+   "triangles": 6624,
+   "mo": 0.49
+  },
+  {
+   "fichier": "SM_Bit_5_1_8po.glb",
+   "kg": 13.2,
+   "lb": 29,
+   "masse": "masse calculée",
+   "tailleM": [
+    0.13,
+    0.318,
+    0.13
+   ],
+   "triangles": 6624,
+   "mo": 0.53
+  },
+  {
+   "fichier": "SM_Bit_6po.glb",
+   "kg": 24.8,
+   "lb": 55,
+   "masse": "masse calculée",
+   "tailleM": [
+    0.152,
+    0.416,
+    0.152
+   ],
+   "triangles": 6624,
+   "mo": 0.59
+  },
+  {
+   "fichier": "SM_Bit_6_1_2po.glb",
+   "kg": 28.1,
+   "lb": 62,
+   "masse": "masse calculée",
+   "tailleM": [
+    0.165,
+    0.422,
+    0.165
+   ],
+   "triangles": 6624,
+   "mo": 0.6
+  },
+  {
+   "fichier": "SM_Bit_8po.glb",
+   "kg": 41.1,
+   "lb": 91,
+   "masse": "masse calculée",
+   "tailleM": [
+    0.203,
+    0.438,
+    0.203
+   ],
+   "triangles": 7344,
+   "mo": 0.61
+  },
+  {
+   "fichier": "SM_Bit_10po.glb",
+   "kg": 67.1,
+   "lb": 148,
+   "masse": "masse calculée",
+   "tailleM": [
+    0.254,
+    0.459,
+    0.254
+   ],
+   "triangles": 9144,
+   "mo": 0.81
+  },
+  {
+   "fichier": "SM_SaverSub_2_3_8.glb",
+   "kg": 16.4,
+   "lb": 36,
+   "masse": "masse calculée",
+   "tailleM": [
+    0.144,
+    0.287,
+    0.144
+   ],
+   "triangles": 25728,
+   "mo": 1.3
+  },
+  {
+   "fichier": "SM_SaverSub_3_1_2.glb",
+   "kg": 20.6,
+   "lb": 45,
+   "masse": "masse calculée",
+   "tailleM": [
+    0.17,
+    0.306,
+    0.17
+   ],
+   "triangles": 25728,
+   "mo": 1.3
+  },
+  {
+   "fichier": "SM_CasseBit_6po.glb",
+   "kg": 35.8,
+   "lb": 79,
+   "masse": "masse calculée",
+   "tailleM": [
+    0.221,
+    0.265,
+    0.221
+   ],
+   "triangles": 1712,
+   "mo": 0.25
+  },
+  {
+   "fichier": "SM_CasseBit_6_1_2po.glb",
+   "kg": 37.3,
+   "lb": 82,
+   "masse": "masse calculée",
+   "tailleM": [
+    0.235,
+    0.265,
+    0.235
+   ],
+   "triangles": 1712,
+   "mo": 0.33
+  },
+  {
+   "fichier": "SM_CasseBit_8po.glb",
+   "kg": 41.9,
+   "lb": 92,
+   "masse": "masse calculée",
+   "tailleM": [
+    0.276,
+    0.265,
+    0.276
+   ],
+   "triangles": 1712,
+   "mo": 0.34
+  },
+  {
+   "fichier": "SM_CasseBit_10po.glb",
+   "kg": 48.9,
+   "lb": 108,
+   "masse": "masse calculée",
+   "tailleM": [
+    0.331,
+    0.265,
+    0.331
+   ],
+   "triangles": 1712,
+   "mo": 0.35
+  },
+  {
+   "fichier": "SM_Chariot_Marteau.glb",
+   "kg": 25,
+   "lb": 55,
+   "masse": "masse estimée (chariot à bouteille en tube d'acier)",
+   "tailleM": [
+    0.56,
+    1.166,
+    0.427
+   ],
+   "triangles": 4384,
+   "mo": 0.49
+  },
+  {
+   "fichier": "SM_Chariot_Chaine.glb",
+   "kg": 0.8,
+   "lb": 2,
+   "masse": "masse estimée",
+   "tailleM": [
+    0.238,
+    0.175,
+    0.109
+   ],
+   "triangles": 9216,
+   "mo": 0.37
+  }
+ ]
+}
