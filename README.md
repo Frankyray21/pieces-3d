@@ -6,6 +6,10 @@ pièces (numéro, quantité, page du manuel).
 
 Équipements :
 
+- **Surcompresseur (booster) des Cubex** : page autonome `surcompresseur/`,
+  première version sans plans (d'après PRO-OP-ITH-004 : refroidisseur d'eau,
+  filtre à air, receiver, raccords de 2 po), rendu usé, export GLB en mètres
+  pour Unreal. Source dans `tools/surcompresseur/`.
 - **Compresseur simple R-55 (MRI)** : page autonome
   `compresseur-r55/` bâtie à partir des 75 plans PDF du dossier
   « 35 COMPRESSEUR SIMPLE R-55 » (assemblage 35290000). Frame, structure,
