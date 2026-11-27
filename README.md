@@ -6,6 +6,12 @@ pièces (numéro, quantité, page du manuel).
 
 Équipements :
 
+- **Compresseur simple R-55 (MRI)** : page autonome
+  `compresseur-r55/` bâtie à partir des 75 plans PDF du dossier
+  « 35 COMPRESSEUR SIMPLE R-55 » (assemblage 35290000). Frame, structure,
+  poutres, toit, jacks et boîte à cadrans d'après les plans ; compresseur,
+  moteur, garde-courroie et réservoir en formes simplifiées. Source dans
+  `tools/compresseur-r55/`.
 - **Cubex / MRI 5200** (foreuse sur chenilles, manuel P15125-MRI rév. 03,
   28 pages) : assemblages en 3D.
 - **Sandvik DU311-TVK** n° de série 10680 (manuel de pièces du 2020-07-02,
