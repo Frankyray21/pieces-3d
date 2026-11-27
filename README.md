@@ -303,6 +303,19 @@ pièces (numéro, quantité, page du manuel).
   du plan, dont la masse d'acier (11,07 lb pour 11,2 lb au cartouche).
   `S.extrude` accepte maintenant des découpes en polygone (fentes de tenon).
 
+- **Rack de transport du bois 156072000** (`rack-transport-bois`, Machines
+  Roger International, plan du 2026-08-06, 2 pages, échelle 1:12) : 2
+  pochettes de fourche avec les croisillons de leur paroi (156072120), 4 pattes
+  avec poteau de 24 po et oreille de levage (156072121), 2 tubes de travers
+  (156072122), tubes carrés du plateau (156072006, 156072007), plaque perforée
+  (156072008) et les 15 pièces de bois de la charge dessinée (cylindres,
+  longueur non cotée). Le plan dessine le rack à l'envers ; le modèle est posé
+  à l'endroit, sur ses pochettes. Cotes du plan reprises (56 1/2 po hors tout,
+  51 1/2 po de cadre, 54 1/2 po aux oreilles, 24 po de poteau, croisillons à
+  70° arrêtés à 4 po du bout) ; le reste est relevé à l'échelle. Tendeurs,
+  crochets et manilles de la page 2 non modélisés. Utilisé dans la visite pour
+  les deux piles de bois, une par section de 16 × 16 pi.
+
 - **Support de tiges de forage — « rack à rods »** (`rack-tiges-dd`, procédure
   d'installation PRO-DD-ST-008 de Machines Roger International, révision août
   2024, 5 pages, et rapport de certification Forcetech P19113 du 2019-11-27,

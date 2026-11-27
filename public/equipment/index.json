@@ -118,7 +118,13 @@
       "manufacturer": "Machines Roger International",
       "category": "Foreuse sur chenilles",
       "thumbnail": "equipment/cubex-mri-5200/pages/F01.jpg",
-      "extras": ["bulles", "donnees", "entretien", "schemas", "systemes"],
+      "extras": [
+        "bulles",
+        "donnees",
+        "entretien",
+        "schemas",
+        "systemes"
+      ],
       "status": "3D procédurale — 14 assemblages, 7 schémas"
     },
     {
@@ -143,7 +149,14 @@
       "manufacturer": "Sandvik",
       "category": "Foreuse sur chenilles",
       "thumbnail": "equipment/du311/thumbnail.webp",
-      "extras": ["bulles", "donnees", "entretien", "consignes", "schemas", "systemes"],
+      "extras": [
+        "bulles",
+        "donnees",
+        "entretien",
+        "consignes",
+        "schemas",
+        "systemes"
+      ],
       "status": "3D détaillée : 157 assemblages sur 172 (machine complète, châssis, porteur et chenilles, avance V30, mât, tête de rotation, moteur Deutz, surpresseur Le Roi, glissière, options), le reste en cours — 15 schémas"
     },
     {
@@ -152,7 +165,16 @@
       "manufacturer": "Sandvik",
       "category": "Foreuse sur roues",
       "thumbnail": "equipment/du311-std/thumbnail.webp",
-      "extras": ["bulles", "donnees", "entretien", "consignes", "schemas", "systemes", "utilisation", "prise-en-main"],
+      "extras": [
+        "bulles",
+        "donnees",
+        "entretien",
+        "consignes",
+        "schemas",
+        "systemes",
+        "utilisation",
+        "prise-en-main"
+      ],
       "status": "3D détaillée : 189 assemblages sur 189, jusqu'à la plus petite pièce (porteur Pegasus, cabine, moteur, pont avant, distributeurs, pont arrière et surpresseur, glissière, MCP, avance 6 pi à carrousel, extinction d'incendie, autocollants ISO) — 29 schémas et listes électriques"
     },
     {
@@ -161,7 +183,13 @@
       "manufacturer": "Epiroc",
       "category": "Outils de carottage au câble",
       "thumbnail": "equipment/epiroc-ith/thumbnail.webp",
-      "extras": ["bulles", "donnees", "entretien", "consignes", "systemes"],
+      "extras": [
+        "bulles",
+        "donnees",
+        "entretien",
+        "consignes",
+        "systemes"
+      ],
       "status": "Catalogue « Core Drilling Tools — In-The-Hole » : têtes, overshots, carottiers, émerillons et presse-étoupes ; 3D refaite d'après les dessins pour les outils souterrains (BU, NU, HU, PU)"
     },
     {
@@ -261,20 +289,20 @@
       "status": "3D d'après la photo du produit fournie par le client, sans plan, mise à l'échelle par la longueur publiée de 21 3/4 po : tête de pompe en fonte, levier embouti à biellette, corps bleu-gris de Ø 2 1/4 po, bouchon, tige de poussoir à poignée en T, poussoir et ressort (cachés, supposés), rallonge rigide 62028 et coupleur 5852 ; vue éclatée en 13 repères et scène animée (le levier levé puis rabattu pousse le piston)"
     },
     {
-      "id": "pompe-bean-420",
-      "name": "Pompe à pistons Bean 420 (FMC L0918 / American AL0918B)",
-      "manufacturer": "American Manufacturing (interchangeable FMC Bean)",
-      "category": "Pompe triplex à pistons",
-      "thumbnail": "equipment/pompe-bean-420/thumbnail.webp",
-      "status": "3D d'après le manuel AL0918B (48 pages : coupes repérées, liste de 62 repères, plan coté) et la vue éclatée FMC L09-420 de TIME Ltd ; cotes du plan reprises (23,219 × 15 × 11,375 po), le reste relevé sur le tracé des coupes ; clapets à billes ; denture du réducteur calculée ; se monte sur le tube à l'eau"
-    },
-    {
       "id": "plancher-dd",
       "name": "Plancher pour foreuse aux diamants",
       "manufacturer": "Machines Roger International",
       "category": "Procédure PRO-DD-ST-003",
       "thumbnail": "equipment/plancher-dd/thumbnail.webp",
       "status": "3D de la procédure (juillet 2026) : plancher 16 × 32 pi pièce par pièce, blocages, cage, marches, garde-corps, plancher secondaire, démantèlement et critères de choix"
+    },
+    {
+      "id": "pompe-bean-420",
+      "name": "Pompe à pistons Bean 420 (FMC L0918 / American AL0918B)",
+      "manufacturer": "American Manufacturing (interchangeable FMC Bean)",
+      "category": "Pompe triplex à pistons",
+      "thumbnail": "equipment/pompe-bean-420/thumbnail.webp",
+      "status": "3D d'après le manuel AL0918B (48 pages : coupes repérées, liste de 62 repères, plan coté) et la vue éclatée FMC L09-420 de TIME Ltd ; cotes du plan reprises (23,219 × 15 × 11,375 po), le reste relevé sur le tracé des coupes ; clapets à billes ; denture du réducteur calculée ; se monte sur le tube à l'eau"
     },
     {
       "id": "porte-1801020",
@@ -325,6 +353,14 @@
       "status": "3D de la procédure d'installation (août 2024) et du rapport de certification Forcetech : support incliné à 78°, ancré au boulon à œil, 184 tiges NQ en quinconce, chaîne de retenue ; montage en 15 étapes"
     },
     {
+      "id": "rack-transport-bois",
+      "name": "Rack de transport du bois 156072000",
+      "manufacturer": "Machines Roger International",
+      "category": "Assemblage soudé en acier",
+      "thumbnail": "equipment/rack-transport-bois/thumbnail.webp",
+      "status": "3D d'après le plan 156072000 (2026-08-06) : rack de 56 1/2 × 51 1/2 po, 2 pochettes de fourche, 4 poteaux de 24 po, parois en croisillons, plaque perforée ; posé à l'endroit (le plan le dessine à l'envers), peint en rouge Machines Roger"
+    },
+    {
       "id": "ruban-cerclage-s5736",
       "name": "Ruban de cerclage à filaments Uline S-5736, 1 po × 60 verges",
       "manufacturer": "Uline",
@@ -338,7 +374,13 @@
       "manufacturer": "Usinage Marcotte",
       "category": "Foreuse souterraine",
       "thumbnail": "equipment/stm-1500/thumbnail.webp",
-      "extras": ["bulles", "donnees", "entretien", "procedures", "systemes"],
+      "extras": [
+        "bulles",
+        "donnees",
+        "entretien",
+        "procedures",
+        "systemes"
+      ],
       "status": "Manuel de pièces s/n STM-1500-128 (96 pages) : 42 assemblages et 7 documents ; 3D réaliste de la foreuse (traîneau, avance à 0°, tête Boyles, serre-tiges, vérins, treuil), du groupe hydraulique 125 HP et de la console ; rendus Blender"
     },
     {

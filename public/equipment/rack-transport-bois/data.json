@@ -1,0 +1,153 @@
+{
+ "id": "rack-transport-bois",
+ "name": "Rack de transport du bois 156072000",
+ "manufacturer": "Machines Roger International",
+ "category": "Assemblage soudé en acier",
+ "document": {
+  "title": "Plan 156072000 « RACK TRANSPORT DU BOIS »",
+  "reference": "156072000",
+  "preparedBy": "Machines Roger International, dessiné par V. Chyhrynau, approuvé par G. Arcand",
+  "date": "2026-08-06",
+  "sheets": 2,
+  "pagePattern": "pages/{sheet}.webp"
+ },
+ "specs": [
+  [
+   "Largeur hors tout",
+   "56 1/2 po (1435 mm), poteaux de 3/4 à 55 3/4 po"
+  ],
+  [
+   "Longueur",
+   "51 1/2 po de cadre, 54 1/2 po avec les oreilles de levage"
+  ],
+  [
+   "Poteaux",
+   "4 tubes carrés, 24 po au-dessus du plateau (plan) ; hauteur hors tout du modèle : 31 1/2 po"
+  ],
+  [
+   "Parois",
+   "Croisillons en X à 70° entre les poteaux avant et arrière, arrêtés à 4 po du bout des poteaux (coupe A-A)"
+  ],
+  [
+   "Manutention",
+   "2 pochettes de fourche (tubes de 7 3/4 × 3 3/4 po relevés), oreilles de levage aux 4 coins"
+  ],
+  [
+   "Arrimage (page 2)",
+   "2 crochets, 2 tendeurs à cliquet WLL6600, 4 manilles de 1/2 po (non modélisés)"
+  ],
+  [
+   "Charge dessinée",
+   "15 pièces de bois 156072012, dessinées en cylindres (longueur non cotée)"
+  ],
+  [
+   "Soudures",
+   "1/4 po au cadre, 1/8 po aux croisillons (symboles du plan)"
+  ],
+  [
+   "Tolérances générales",
+   "Fraction ± 1/16 po (± 1,5 mm), angle ± 1/2°"
+  ],
+  [
+   "Échelle du plan",
+   "1:12 (coupe A-A à 1:8)"
+  ],
+  [
+   "Couleur de surface",
+   "Rouge Machines Roger (comme les autres pièces Machines Roger du site ; non précisée au plan)"
+  ]
+ ],
+ "weights": [
+  [
+   "Rack seul (cartouche, page 1)",
+   "643,2 lb (291,8 kg)"
+  ],
+  [
+   "Rack chargé des 15 pièces de bois (cartouche, page 2)",
+   "2083,5 lb (945,1 kg)"
+  ]
+ ],
+ "sheetTitles": {
+  "P01": "Plan 156072000 : vue de dessus, vue de face, coupe A-A, nomenclature (7 lignes)",
+  "P02": "Plan 156072000 : vue isométrique avec la charge de bois, nomenclature détaillée (15 lignes)"
+ },
+ "root": "P01",
+ "assemblies": {
+  "P01": {
+   "title": "RACK TRANSPORT DU BOIS",
+   "titleFr": "Rack de transport du bois",
+   "pn": "156072000",
+   "sheets": [
+    "P01",
+    "P02"
+   ],
+   "note": "Modèle 3D construit d'après le plan 156072000 du 2026-08-06 (assemblage soudé). Le plan dessine le rack à l'envers (poteaux vers le bas, charge sous le plateau) ; le modèle est posé à l'endroit, sur ses pochettes de fourche, poteaux vers le haut, le bois couché entre les deux parois en croix. Cotes du plan reprises telles quelles : 56 1/2 po hors tout, poteaux de 3/4 à 55 3/4 po, 51 1/2 po de cadre et 54 1/2 po avec les oreilles, 24 po de poteau au-dessus du plateau, croisillons à 70° arrêtés à 4 po du bout des poteaux. Ce que le plan ne cote pas est relevé à l'échelle sur ses vues : pochettes de 7 3/4 × 3 3/4 po, tubes de 2 et 4 po, plaque perforée de 34 × 32 1/2 po et ses fentes, pièces de bois de 10 po de diamètre. La longueur des pièces de bois n'est pas cotée (60 po dans le modèle). Les crochets, tendeurs à cliquet et manilles de la page 2 ne sont pas modélisés. Peint en rouge Machines Roger : le plan ne précise pas de couleur de surface.",
+   "parts": [
+    [
+     "1",
+     "156072120",
+     2,
+     "TUBE ASS (pochette de fourche en long, avec les croisillons de sa paroi)",
+     {
+      "note": "Pochette de 7 3/4 × 3 3/4 po relevée ; croisillons de 2 po à 70° (coupe A-A), rattachés ici faute de repère à la page 1."
+     }
+    ],
+    [
+     "2",
+     "156072121",
+     4,
+     "PATTE ASS (plaque de bout percée, poteau et oreille de levage)",
+     {
+      "note": "Poteau de 2 po, face extérieure à 3/4 po du bord, 24 po au-dessus du plateau (plan)."
+     }
+    ],
+    [
+     "3",
+     "156072122",
+     2,
+     "TUBE TRAVERS ASS (tube en travers au bout du cadre)",
+     {
+      "note": "7 1/2 po de large, relevé sur la vue de dessus."
+     }
+    ],
+    [
+     "4",
+     "156072006",
+     2,
+     "TUBE CARRE (en travers du plateau, à 12 po des bouts)",
+     {
+      "note": "Position relevée."
+     }
+    ],
+    [
+     "5",
+     "156072007",
+     4,
+     "TUBE CARRE (bords du plateau : 2 en long, 2 en travers)",
+     {
+      "note": "Tube de 4 po relevé sur la coupe A-A."
+     }
+    ],
+    [
+     "6",
+     "156072008",
+     1,
+     "PLAQUE PL. (plaque perforée de fentes oblongues)",
+     {
+      "note": "34 × 32 1/2 po relevés ; fentes en quinconce comme sur la vue de dessus."
+     }
+    ],
+    [
+     "7",
+     "156072012 bois",
+     15,
+     "BOIS (charge dessinée au plan)",
+     {
+      "note": "Dessinées en cylindres de 10 po de diamètre relevé, 5 par rang ; longueur non cotée."
+     }
+    ]
+   ]
+  }
+ },
+ "documents": []
+}
