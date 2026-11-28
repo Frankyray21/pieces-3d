@@ -4,7 +4,7 @@
 import { writeFileSync } from 'node:fs';
 import {
   IN, TIGE, TIGES, MARTEAUX, BITS, CASSE_BITS, SAVER_SUBS, CHARIOT, API_REG,
-  tige, marteau, bit, casseBit, cotesMarteau, cotesBit, volume,
+  tige, marteau, bit, bitAvecChuck, casseBit, cotesMarteau, cotesBit, volume,
 } from '../src/models/train-forage-ith/forme.js';
 
 const fr = (v, n = 0) => v.toFixed(n).replace('.', ',');
@@ -43,7 +43,15 @@ const bits = BITS.map((b, k) => {
   const x = bit(b);
   const m = kg([...x.corps.surfaces]);
   return [String(k + 1), '', 1, `BIT À BOUTONS ${b.nom} (Ø ${fr(b.d, 1)} mm), pour le marteau de ${b.marteau} po`, {
-    note: `Tête de ${fr(c.tete)} mm, boutons de carbure de Ø ${fr(c.bg)} mm (calibre) et ${fr(c.bf)} mm (face), rainures d'évacuation, queue cannelée de Ø ${fr(c.queue)} mm × ${fr(c.queueLong)} mm avec le cou des anneaux de retenue, tube de pied en plastique blanc. Proportions de la tête et nombre de boutons supposés. Masse calculée : ${fr(m, 1)} kg. ${b.d <= 5.125 * IN || b.id === '6' ? 'Changement : spline piston mis, dans les jaws (PRO-OP-ITH-001).' : 'Changement : spline piston non mis, mât à 0°, dans les tables, ou sur le casse-bit (PRO-OP-ITH-016).'} Export Unreal : SM_Bit_${b.id.replace(/-/g, '_')}po.glb.`,
+    note: `Tête de ${fr(c.tete)} mm, boutons de carbure de Ø ${fr(c.bg)} mm (calibre) et ${fr(c.bf)} mm (face), ${x.cotes.nRain >= 8 ? `tête en couronne à ${x.cotes.nRain} encoches profondes (vidéos de chantier)` : `${x.cotes.nRain} rainures d'évacuation`}, queue cannelée de Ø ${fr(c.queue)} mm × ${fr(x.cotes.yQ - x.cotes.yT)} mm avec le cou des anneaux de retenue, tube de pied en plastique blanc. Proportions de la tête et nombre de boutons supposés. Masse calculée : ${fr(m, 1)} kg. ${b.d <= 5.125 * IN || b.id === '6' ? 'Changement : spline piston mis, dans les jaws (PRO-OP-ITH-001).' : 'Changement : spline piston non mis, mât à 0°, dans les tables, ou sur le casse-bit (PRO-OP-ITH-016).'} Export Unreal : SM_Bit_${b.id.replace(/-/g, '_')}po.glb (seul) et SM_Bit_${b.id.replace(/-/g, '_')}po_AvecChuck.glb (P08).`,
+  }];
+});
+
+const bitsChuck = BITS.map((b, k) => {
+  const a = bitAvecChuck(b);
+  const m = kg([...a.bit.corps.surfaces, ...a.driver.surfaces, ...a.anneaux]);
+  return [String(k + 1), '', 1, `BIT ${b.nom} AVEC SON CHUCK (driver sub du marteau de ${b.marteau} po) ET SES ANNEAUX`, {
+    note: `Bit, chuck et anneaux de retenue tels qu'on les manipule au changement de bit : le chuck reste sur la queue du bit et c'est lui qui se visse dans le fourreau du marteau (vidéos de chantier). Le chuck couvre les cannelures et s'appuie sur la tête ; anneaux juste au-dessus, tube de pied blanc qui dépasse de ${fr(0.32 * a.cotes.queue)} mm. Masse calculée : ${fr(m, 1)} kg. Export Unreal : SM_Bit_${b.id.replace(/-/g, '_')}po_AvecChuck.glb (maillages séparés : bit, boutons, tube de pied, chuck, anneaux).`,
   }];
 });
 
@@ -130,6 +138,7 @@ const data = {
         ['4', '', 1, 'DRIVER SUBS, ANNEAUX DE RETENUE, SAVER SUBS', { link: 'P05' }],
         ['5', '', 1, 'CASSE-BITS', { link: 'P06' }],
         ['6', '', 1, 'CHARIOT À MARTEAU ET SA CHAÎNE', { link: 'P07' }],
+        ['7', '', 1, 'BITS AVEC LEUR CHUCK ET LEURS ANNEAUX', { link: 'P08' }],
       ],
     },
     P02: { title: 'DRILL RODS 3 1/2 AND 5 1/2 IN', titleFr: 'Tiges de forage de 3 1/2 et 5 1/2 po', pn: '', sheets: ['F11', 'F10'], note: 'Tiges debout, filet mâle en haut. Devant, les tiges de 3 1/2 po (marteaux de 3 et 4 po) ; derrière, celles de 5 1/2 po (marteau de 6 po). De gauche à droite : 4 pi jaune et noire, 5 pi, 6 pi. Les entailles plates (deux méplats opposés) sont sur les bouts d\'acier nu, en haut et en bas. Pour installer ou enlever une tige, le gear box doit être relevé et arrêté et la foreuse au neutre (PRO-OP-ITH-004, point 22).', parts: tiges },
@@ -137,6 +146,7 @@ const data = {
     P04: { title: 'BUTTON BITS', titleFr: 'Bits à boutons de 3 5/8 à 10 po', pn: '', sheets: ['F08', 'F09', 'F04'], note: 'Bits posés sur leur face de coupe, queue vers le haut (comme sur le casse-bit), du plus petit au plus grand. Serrage dans les jaws ou les tables : 1000 psi minimum, 2000 psi maximum (PRO-OP-ITH-001).', parts: bits },
     P05: { title: 'DRIVER SUBS, RETAINING RINGS, SAVER SUBS', titleFr: 'Driver subs, anneaux de retenue et saver subs', pn: '', sheets: ['F08', 'F04', 'F06'], note: 'Devant : driver subs des marteaux de 3, 4 et 6 po. Au milieu : les paires d\'anneaux de retenue. Derrière : saver subs 2 3/8 et 3 1/2 API REG.', parts: raccords },
     P06: { title: 'BIT BREAKERS', titleFr: 'Casse-bits', pn: '', sheets: ['F03', 'F05'], note: 'Casse-bits pour les bits de 6, 6 1/2, 8 et 10 po du marteau de 6 po : on l\'installe dans la slip plate et on ferme les jaws avant d\'y déposer la bit (PRO-OP-ITH-016, étapes 11 et 18).', parts: casses },
+    P08: { title: 'BITS WITH DRIVER SUB', titleFr: 'Bits avec leur chuck et leurs anneaux de retenue', pn: '', sheets: ['F08', 'F09', 'F04'], note: 'Assemblages pour l\'animation du changement de bit : bit, chuck (driver sub) et anneaux, face de coupe en bas. Le chuck se visse et se dévisse dans le fourreau avec le bit (vidéos de chantier).', parts: bitsChuck },
     P07: { title: 'HAMMER CART', titleFr: 'Chariot de transport du marteau de 6 po', pn: '', sheets: ['F02', 'F07'], note: 'Chariot conçu pour transporter le marteau de 6 po (211 lb), obligatoire selon PRO-OP-ITH-016, avec sa chaîne de sûreté. Montré avec le marteau de 6 po debout sur le pied, driver sub installé.', parts: chariot },
   },
   documents: [],

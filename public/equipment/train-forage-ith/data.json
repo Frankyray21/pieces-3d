@@ -147,6 +147,15 @@
      {
       "link": "P07"
      }
+    ],
+    [
+     "7",
+     "",
+     1,
+     "BITS AVEC LEUR CHUCK ET LEURS ANNEAUX",
+     {
+      "link": "P08"
+     }
     ]
    ]
   },
@@ -326,7 +335,7 @@
      1,
      "BIT À BOUTONS 3 5/8 po (Ø 92,1 mm), pour le marteau de 3 po",
      {
-      "note": "Tête de 89 mm, boutons de carbure de Ø 11 mm (calibre) et 10 mm (face), rainures d'évacuation, queue cannelée de Ø 57 mm × 153 mm avec le cou des anneaux de retenue, tube de pied en plastique blanc. Proportions de la tête et nombre de boutons supposés. Masse calculée : 6,0 kg. Changement : spline piston mis, dans les jaws (PRO-OP-ITH-001). Export Unreal : SM_Bit_3_5_8po.glb."
+      "note": "Tête de 89 mm, boutons de carbure de Ø 11 mm (calibre) et 10 mm (face), 2 rainures d'évacuation, queue cannelée de Ø 57 mm × 158 mm avec le cou des anneaux de retenue, tube de pied en plastique blanc. Proportions de la tête et nombre de boutons supposés. Masse calculée : 6,0 kg. Changement : spline piston mis, dans les jaws (PRO-OP-ITH-001). Export Unreal : SM_Bit_3_5_8po.glb (seul) et SM_Bit_3_5_8po_AvecChuck.glb (P08)."
      }
     ],
     [
@@ -335,7 +344,7 @@
      1,
      "BIT À BOUTONS 4 1/2 po (Ø 114,3 mm), pour le marteau de 4 po",
      {
-      "note": "Tête de 98 mm, boutons de carbure de Ø 14 mm (calibre) et 12 mm (face), rainures d'évacuation, queue cannelée de Ø 69 mm × 186 mm avec le cou des anneaux de retenue, tube de pied en plastique blanc. Proportions de la tête et nombre de boutons supposés. Masse calculée : 10,5 kg. Changement : spline piston mis, dans les jaws (PRO-OP-ITH-001). Export Unreal : SM_Bit_4_1_2po.glb."
+      "note": "Tête de 98 mm, boutons de carbure de Ø 14 mm (calibre) et 12 mm (face), 2 rainures d'évacuation, queue cannelée de Ø 69 mm × 188 mm avec le cou des anneaux de retenue, tube de pied en plastique blanc. Proportions de la tête et nombre de boutons supposés. Masse calculée : 10,5 kg. Changement : spline piston mis, dans les jaws (PRO-OP-ITH-001). Export Unreal : SM_Bit_4_1_2po.glb (seul) et SM_Bit_4_1_2po_AvecChuck.glb (P08)."
      }
     ],
     [
@@ -344,7 +353,7 @@
      1,
      "BIT À BOUTONS 5 1/8 po (Ø 130,2 mm), pour le marteau de 4 po",
      {
-      "note": "Tête de 105 mm, boutons de carbure de Ø 16 mm (calibre) et 14 mm (face), rainures d'évacuation, queue cannelée de Ø 69 mm × 186 mm avec le cou des anneaux de retenue, tube de pied en plastique blanc. Proportions de la tête et nombre de boutons supposés. Masse calculée : 13,2 kg. Changement : spline piston mis, dans les jaws (PRO-OP-ITH-001). Export Unreal : SM_Bit_5_1_8po.glb."
+      "note": "Tête de 105 mm, boutons de carbure de Ø 16 mm (calibre) et 14 mm (face), 4 rainures d'évacuation, queue cannelée de Ø 69 mm × 188 mm avec le cou des anneaux de retenue, tube de pied en plastique blanc. Proportions de la tête et nombre de boutons supposés. Masse calculée : 13,1 kg. Changement : spline piston mis, dans les jaws (PRO-OP-ITH-001). Export Unreal : SM_Bit_5_1_8po.glb (seul) et SM_Bit_5_1_8po_AvecChuck.glb (P08)."
      }
     ],
     [
@@ -353,7 +362,7 @@
      1,
      "BIT À BOUTONS 6 po (casing) (Ø 152,4 mm), pour le marteau de 6 po",
      {
-      "note": "Tête de 114 mm, boutons de carbure de Ø 18 mm (calibre) et 16 mm (face), rainures d'évacuation, queue cannelée de Ø 98 mm × 265 mm avec le cou des anneaux de retenue, tube de pied en plastique blanc. Proportions de la tête et nombre de boutons supposés. Masse calculée : 24,8 kg. Changement : spline piston mis, dans les jaws (PRO-OP-ITH-001). Export Unreal : SM_Bit_6po.glb."
+      "note": "Tête de 114 mm, boutons de carbure de Ø 18 mm (calibre) et 16 mm (face), 4 rainures d'évacuation, queue cannelée de Ø 98 mm × 265 mm avec le cou des anneaux de retenue, tube de pied en plastique blanc. Proportions de la tête et nombre de boutons supposés. Masse calculée : 24,5 kg. Changement : spline piston mis, dans les jaws (PRO-OP-ITH-001). Export Unreal : SM_Bit_6po.glb (seul) et SM_Bit_6po_AvecChuck.glb (P08)."
      }
     ],
     [
@@ -362,7 +371,7 @@
      1,
      "BIT À BOUTONS 6 1/2 po (Ø 165,1 mm), pour le marteau de 6 po",
      {
-      "note": "Tête de 119 mm, boutons de carbure de Ø 19 mm (calibre) et 17 mm (face), rainures d'évacuation, queue cannelée de Ø 98 mm × 265 mm avec le cou des anneaux de retenue, tube de pied en plastique blanc. Proportions de la tête et nombre de boutons supposés. Masse calculée : 28,1 kg. Changement : spline piston non mis, mât à 0°, dans les tables, ou sur le casse-bit (PRO-OP-ITH-016). Export Unreal : SM_Bit_6_1_2po.glb."
+      "note": "Tête de 119 mm, boutons de carbure de Ø 19 mm (calibre) et 17 mm (face), 4 rainures d'évacuation, queue cannelée de Ø 98 mm × 265 mm avec le cou des anneaux de retenue, tube de pied en plastique blanc. Proportions de la tête et nombre de boutons supposés. Masse calculée : 27,8 kg. Changement : spline piston non mis, mât à 0°, dans les tables, ou sur le casse-bit (PRO-OP-ITH-016). Export Unreal : SM_Bit_6_1_2po.glb (seul) et SM_Bit_6_1_2po_AvecChuck.glb (P08)."
      }
     ],
     [
@@ -371,7 +380,7 @@
      1,
      "BIT À BOUTONS 8 po (Ø 203,2 mm), pour le marteau de 6 po",
      {
-      "note": "Tête de 135 mm, boutons de carbure de Ø 19 mm (calibre) et 17 mm (face), rainures d'évacuation, queue cannelée de Ø 98 mm × 265 mm avec le cou des anneaux de retenue, tube de pied en plastique blanc. Proportions de la tête et nombre de boutons supposés. Masse calculée : 41,1 kg. Changement : spline piston non mis, mât à 0°, dans les tables, ou sur le casse-bit (PRO-OP-ITH-016). Export Unreal : SM_Bit_8po.glb."
+      "note": "Tête de 135 mm, boutons de carbure de Ø 19 mm (calibre) et 17 mm (face), tête en couronne à 8 encoches profondes (vidéos de chantier), queue cannelée de Ø 98 mm × 265 mm avec le cou des anneaux de retenue, tube de pied en plastique blanc. Proportions de la tête et nombre de boutons supposés. Masse calculée : 37,4 kg. Changement : spline piston non mis, mât à 0°, dans les tables, ou sur le casse-bit (PRO-OP-ITH-016). Export Unreal : SM_Bit_8po.glb (seul) et SM_Bit_8po_AvecChuck.glb (P08)."
      }
     ],
     [
@@ -380,7 +389,7 @@
      1,
      "BIT À BOUTONS 10 po (Ø 254,0 mm), pour le marteau de 6 po",
      {
-      "note": "Tête de 157 mm, boutons de carbure de Ø 19 mm (calibre) et 17 mm (face), rainures d'évacuation, queue cannelée de Ø 98 mm × 265 mm avec le cou des anneaux de retenue, tube de pied en plastique blanc. Proportions de la tête et nombre de boutons supposés. Masse calculée : 67,1 kg. Changement : spline piston non mis, mât à 0°, dans les tables, ou sur le casse-bit (PRO-OP-ITH-016). Export Unreal : SM_Bit_10po.glb."
+      "note": "Tête de 157 mm, boutons de carbure de Ø 19 mm (calibre) et 17 mm (face), tête en couronne à 12 encoches profondes (vidéos de chantier), queue cannelée de Ø 98 mm × 265 mm avec le cou des anneaux de retenue, tube de pied en plastique blanc. Proportions de la tête et nombre de boutons supposés. Masse calculée : 61,3 kg. Changement : spline piston non mis, mât à 0°, dans les tables, ou sur le casse-bit (PRO-OP-ITH-016). Export Unreal : SM_Bit_10po.glb (seul) et SM_Bit_10po_AvecChuck.glb (P08)."
      }
     ]
    ]
@@ -514,6 +523,82 @@
      "CASSE-BIT pour bit de 10 po",
      {
       "note": "Cuvette octogonale de 306 mm sur plats et 95 mm de haut (poche de 72 mm, quatre ergots qui prennent les rainures du bit) sur un fût de Ø 5 1/2 po qui entre dans la slip plate. Forme relevée sur les photos de PRO-OP-ITH-016, cotes supposées. Masse calculée : 48,9 kg. Export Unreal : SM_CasseBit_10po.glb."
+     }
+    ]
+   ]
+  },
+  "P08": {
+   "title": "BITS WITH DRIVER SUB",
+   "titleFr": "Bits avec leur chuck et leurs anneaux de retenue",
+   "pn": "",
+   "sheets": [
+    "F08",
+    "F09",
+    "F04"
+   ],
+   "note": "Assemblages pour l'animation du changement de bit : bit, chuck (driver sub) et anneaux, face de coupe en bas. Le chuck se visse et se dévisse dans le fourreau avec le bit (vidéos de chantier).",
+   "parts": [
+    [
+     "1",
+     "",
+     1,
+     "BIT 3 5/8 po AVEC SON CHUCK (driver sub du marteau de 3 po) ET SES ANNEAUX",
+     {
+      "note": "Bit, chuck et anneaux de retenue tels qu'on les manipule au changement de bit : le chuck reste sur la queue du bit et c'est lui qui se visse dans le fourreau du marteau (vidéos de chantier). Le chuck couvre les cannelures et s'appuie sur la tête ; anneaux juste au-dessus, tube de pied blanc qui dépasse de 18 mm. Masse calculée : 7,1 kg. Export Unreal : SM_Bit_3_5_8po_AvecChuck.glb (maillages séparés : bit, boutons, tube de pied, chuck, anneaux)."
+     }
+    ],
+    [
+     "2",
+     "",
+     1,
+     "BIT 4 1/2 po AVEC SON CHUCK (driver sub du marteau de 4 po) ET SES ANNEAUX",
+     {
+      "note": "Bit, chuck et anneaux de retenue tels qu'on les manipule au changement de bit : le chuck reste sur la queue du bit et c'est lui qui se visse dans le fourreau du marteau (vidéos de chantier). Le chuck couvre les cannelures et s'appuie sur la tête ; anneaux juste au-dessus, tube de pied blanc qui dépasse de 22 mm. Masse calculée : 12,6 kg. Export Unreal : SM_Bit_4_1_2po_AvecChuck.glb (maillages séparés : bit, boutons, tube de pied, chuck, anneaux)."
+     }
+    ],
+    [
+     "3",
+     "",
+     1,
+     "BIT 5 1/8 po AVEC SON CHUCK (driver sub du marteau de 4 po) ET SES ANNEAUX",
+     {
+      "note": "Bit, chuck et anneaux de retenue tels qu'on les manipule au changement de bit : le chuck reste sur la queue du bit et c'est lui qui se visse dans le fourreau du marteau (vidéos de chantier). Le chuck couvre les cannelures et s'appuie sur la tête ; anneaux juste au-dessus, tube de pied blanc qui dépasse de 22 mm. Masse calculée : 15,2 kg. Export Unreal : SM_Bit_5_1_8po_AvecChuck.glb (maillages séparés : bit, boutons, tube de pied, chuck, anneaux)."
+     }
+    ],
+    [
+     "4",
+     "",
+     1,
+     "BIT 6 po (casing) AVEC SON CHUCK (driver sub du marteau de 6 po) ET SES ANNEAUX",
+     {
+      "note": "Bit, chuck et anneaux de retenue tels qu'on les manipule au changement de bit : le chuck reste sur la queue du bit et c'est lui qui se visse dans le fourreau du marteau (vidéos de chantier). Le chuck couvre les cannelures et s'appuie sur la tête ; anneaux juste au-dessus, tube de pied blanc qui dépasse de 31 mm. Masse calculée : 30,9 kg. Export Unreal : SM_Bit_6po_AvecChuck.glb (maillages séparés : bit, boutons, tube de pied, chuck, anneaux)."
+     }
+    ],
+    [
+     "5",
+     "",
+     1,
+     "BIT 6 1/2 po AVEC SON CHUCK (driver sub du marteau de 6 po) ET SES ANNEAUX",
+     {
+      "note": "Bit, chuck et anneaux de retenue tels qu'on les manipule au changement de bit : le chuck reste sur la queue du bit et c'est lui qui se visse dans le fourreau du marteau (vidéos de chantier). Le chuck couvre les cannelures et s'appuie sur la tête ; anneaux juste au-dessus, tube de pied blanc qui dépasse de 31 mm. Masse calculée : 34,2 kg. Export Unreal : SM_Bit_6_1_2po_AvecChuck.glb (maillages séparés : bit, boutons, tube de pied, chuck, anneaux)."
+     }
+    ],
+    [
+     "6",
+     "",
+     1,
+     "BIT 8 po AVEC SON CHUCK (driver sub du marteau de 6 po) ET SES ANNEAUX",
+     {
+      "note": "Bit, chuck et anneaux de retenue tels qu'on les manipule au changement de bit : le chuck reste sur la queue du bit et c'est lui qui se visse dans le fourreau du marteau (vidéos de chantier). Le chuck couvre les cannelures et s'appuie sur la tête ; anneaux juste au-dessus, tube de pied blanc qui dépasse de 31 mm. Masse calculée : 43,9 kg. Export Unreal : SM_Bit_8po_AvecChuck.glb (maillages séparés : bit, boutons, tube de pied, chuck, anneaux)."
+     }
+    ],
+    [
+     "7",
+     "",
+     1,
+     "BIT 10 po AVEC SON CHUCK (driver sub du marteau de 6 po) ET SES ANNEAUX",
+     {
+      "note": "Bit, chuck et anneaux de retenue tels qu'on les manipule au changement de bit : le chuck reste sur la queue du bit et c'est lui qui se visse dans le fourreau du marteau (vidéos de chantier). Le chuck couvre les cannelures et s'appuie sur la tête ; anneaux juste au-dessus, tube de pied blanc qui dépasse de 31 mm. Masse calculée : 67,7 kg. Export Unreal : SM_Bit_10po_AvecChuck.glb (maillages séparés : bit, boutons, tube de pied, chuck, anneaux)."
      }
     ]
    ]

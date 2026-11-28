@@ -79,6 +79,17 @@ for (const b of F.BITS) {
     nom, maillages: [{ nom, t: x.corps }, { nom: `${nom}_Boutons`, surfaces: x.boutons, tex: tuile('carbure') }, { nom: `${nom}_TubeDePied`, surfaces: x.tube, tex: tuile('plastique') }],
     kg: kgModele([...x.corps.surfaces]), source: 'masse calculée',
   });
+  // Bit avec son chuck (driver sub) et ses anneaux, comme on le manipule au changement de bit.
+  const a = F.bitAvecChuck(b), nc = `${nom}_AvecChuck`;
+  ajoute({
+    nom: nc,
+    maillages: [
+      { nom: `${nc}_Bit`, t: a.bit.corps }, { nom: `${nc}_Boutons`, surfaces: a.bit.boutons, tex: tuile('carbure') },
+      { nom: `${nc}_TubeDePied`, surfaces: a.bit.tube, tex: tuile('plastique') },
+      { nom: `${nc}_Chuck`, t: a.driver }, { nom: `${nc}_Anneaux`, surfaces: a.anneaux, tex: tuile('anneau') },
+    ],
+    kg: kgModele([...a.bit.corps.surfaces, ...a.driver.surfaces, ...a.anneaux]), source: 'masse calculée (bit, chuck et anneaux)',
+  });
 }
 F.SAVER_SUBS.forEach((s, i) => {
   const t = F.saverSub(i);

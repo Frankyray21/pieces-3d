@@ -5,7 +5,7 @@ import * as THREE from 'three';
 import { withFinish } from '../../viewer/materials.js';
 import {
   TIGE, MARTEAUX, BITS, CASSE_BITS, SAVER_SUBS,
-  tige, marteau, driverSub, saverSub, anneaux, bit, casseBit, chariot, cotesMarteau, placer, rot,
+  tige, marteau, driverSub, saverSub, anneaux, bit, bitAvecChuck, casseBit, chariot, cotesMarteau, placer, rot,
 } from './forme.js';
 
 // ------------------------------------------------------------------ matériaux
@@ -20,9 +20,12 @@ const ZONES = {
   acier: () => withFinish(new THREE.MeshStandardMaterial({ color: 0x8d8880, metalness: 0.9, roughness: 0.45 }), 'machined', { rust: 0.08, rs: 110 }),
   filet: () => withFinish(new THREE.MeshStandardMaterial({ color: 0x57493a, metalness: 0.75, roughness: 0.32 }), 'machined', { rust: 0.08, rs: 104 }),
   interieur: () => new THREE.MeshStandardMaterial({ color: 0x232120, metalness: 0.4, roughness: 0.85 }),
-  fourreau: () => withFinish(new THREE.MeshPhysicalMaterial({ color: 0x222325, roughness: 0.55, metalness: 0.2, clearcoat: 0.15 }), 'paintDark', { tint: 0.15, rough: 0.3, rust: 0.07, rs: 57, wear: 0.75 }),
-  tete: () => withFinish(new THREE.MeshPhysicalMaterial({ color: 0x2d2a27, roughness: 0.55, metalness: 0.2 }), 'paintDark', { tint: 0.18, rough: 0.3, rust: 0.17, rs: 62, wear: 0.85 }),
-  bit: () => withFinish(new THREE.MeshStandardMaterial({ color: 0x6b5d50, metalness: 0.7, roughness: 0.55 }), 'cast', { rust: 0.25, rs: 67 }),
+  // Fourreau et raccord de tête : acier nu beige-brun taché de boue claire (vidéos de chantier).
+  fourreau: () => withFinish(new THREE.MeshStandardMaterial({ color: 0x86725a, metalness: 0.7, roughness: 0.55 }), 'cast', { rust: 0.1, rs: 57 }),
+  tete: () => withFinish(new THREE.MeshStandardMaterial({ color: 0x73624c, metalness: 0.7, roughness: 0.55 }), 'cast', { rust: 0.15, rs: 62 }),
+  bleu: () => withFinish(new THREE.MeshPhysicalMaterial({ color: 0x24508f, roughness: 0.5, clearcoat: 0.3 }), 'paint', { tint: 0.15, rust: 0.05, rs: 67, wear: 0.5 }),
+  // Bit usé : brun rouille clair, poussière de roche grise.
+  bit: () => withFinish(new THREE.MeshStandardMaterial({ color: 0x7a6650, metalness: 0.6, roughness: 0.62 }), 'cast', { rust: 0.3, rs: 67 }),
   queue: () => withFinish(new THREE.MeshStandardMaterial({ color: 0x7c766e, metalness: 0.85, roughness: 0.42 }), 'machined', { rust: 0.14, rs: 88 }),
   carbure: () => new THREE.MeshStandardMaterial({ color: 0x8c8e90, metalness: 0.65, roughness: 0.28 }),
   plastique: () => withFinish(new THREE.MeshStandardMaterial({ color: 0xe6e2d6, roughness: 0.6 }), 'plastic'),
@@ -71,6 +74,11 @@ export const pieces = {
   saver: (i) => objet(saverSub(i).surfaces),
   anneau: (t, cote) => objet(anneaux(t)[cote]),
   bit: (b) => { const x = bit(b); return objet([...x.corps.surfaces, ...x.boutons, ...x.tube]); },
+  bitChuck: (b) => {
+    const a = bitAvecChuck(b), g = objet([...a.bit.corps.surfaces, ...a.bit.boutons, ...a.bit.tube]);
+    g.add(objet(a.driver.surfaces), objet(a.anneaux));
+    return g;
+  },
   casse: (i) => { const c = casseBit(i); return objet([...c.corps.surfaces, ...c.ergots]); },
 };
 
@@ -85,6 +93,7 @@ export function P01(api) {
   api.part('4', place(api.sub('P05'), 0.25, -0.35), [0, 0, -0.2]);
   api.part('5', place(api.sub('P06'), 1.6, 0.5), [0.3, 0, 0.2]);
   api.part('6', place(api.sub('P07'), 1.35, -0.45), [0.4, 0, -0.2]);
+  api.part('7', place(api.sub('P08'), -0.2, -0.85), [0, 0, -0.3]);
   return { view: { dir: [0.35, 0.45, 1] } };
 }
 
@@ -119,6 +128,17 @@ export function P04(api) {
     x += b.d / 2000;
   });
   return { view: { dir: [0.3, 0.6, 1] } };
+}
+
+/** P08 — bits avec leur chuck (driver sub) et leurs anneaux, tels qu'on les manipule au changement de bit. */
+export function P08(api) {
+  let x = -0.62;
+  BITS.forEach((b, k) => {
+    x += b.d / 2000 + 0.03;
+    api.part(String(k + 1), pose(pieces.bitChuck(b), [x, 0, 0]), [0, 0.1, 0]);
+    x += b.d / 2000;
+  });
+  return { view: { dir: [0.3, 0.35, 1] } };
 }
 
 /** P05 — driver subs, anneaux de retenue (paires), saver subs. */
@@ -159,5 +179,5 @@ export function P07(api) {
   return { view: { dir: [0.6, 0.35, 1] } };
 }
 
-export default { P01, P02, P03, P04, P05, P06, P07 };
+export default { P01, P02, P03, P04, P05, P06, P07, P08 };
 export { MARTEAUX, placer, rot };

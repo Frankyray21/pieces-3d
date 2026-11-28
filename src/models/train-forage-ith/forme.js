@@ -248,13 +248,19 @@ export function meplats(n, entre, a0 = 0) {
   };
 }
 
-/** Rainures droites : n gorges de `prof` mm, chacune large de l'angle `larg` (radians), flancs adoucis. */
-export function rainures(n, prof, larg) {
-  return (t, r) => {
-    const f = Math.abs(((t * n) / (2 * Math.PI)) % 1 - 0.5) * ((2 * Math.PI) / n); // angle au milieu de la gorge
-    const w = Math.max(0, Math.min(1, (larg / 2 - f) / (0.25 * larg) + 0.5));
-    return r - prof * w;
+/**
+ * Rainures droites : n gorges de `prof` mm, chacune large de l'angle `larg` (radians), centrées sur
+ * t = k·2π/n ; `doux` règle l'adoucissement des flancs (fraction de la largeur).
+ */
+export function rainures(n, prof, larg, doux = 0.25) {
+  const pas = (2 * Math.PI) / n;
+  const poids = (t) => {
+    const f = Math.abs((((t / pas) % 1) + 1.5) % 1 - 0.5) * pas; // écart angulaire au milieu de la gorge
+    return Math.max(0, Math.min(1, (larg / 2 - f) / (doux * larg) + 0.5));
   };
+  const mod = (t, r) => r - prof * poids(t);
+  mod.poids = poids;
+  return mod;
 }
 
 /** Cannelures droites : n dents, creux de `prof` mm, la dent occupe la moitié du pas (flancs adoucis). */
@@ -638,17 +644,29 @@ export function bit(b) {
   const R = c.R, rq = c.queue / 2, ch = c.chanfrein;
   const y0 = 4; // face de la tête (les boutons dépassent jusqu'à y ≈ 0)
   const yT = y0 + c.tete; // dessus de la tête
-  const yC = yT + 0.55 * c.queueLong; // fin des cannelures
-  const yA0 = yC + 6, yA1 = yA0 + c.anneauHaut + 4; // cou des anneaux
-  const yQ = yT + c.queueLong; // bout de la queue
-  // Rainures d'évacuation des déblais : 2 à 4 gorges droites le long de la tête (supposées).
-  const nRain = c.D < 125 ? 2 : c.D < 180 ? 3 : 4;
-  const lRain = Math.max(16, 0.13 * c.D), pRain = Math.max(5, 0.045 * c.D);
+  // Le driver sub (chuck) couvre les cannelures et s'appuie sur la tête ; les anneaux de retenue
+  // sont juste au-dessus du chuck, puis le bout de la queue et le tube de pied (vidéos de chantier).
+  const yC = yT + c.driverLong - 8; // fin des cannelures
+  const yA0 = yT + c.driverLong + 3, yA1 = yA0 + c.anneauHaut + 4; // cou des anneaux
+  const yQ = Math.max(yT + c.queueLong, yA1 + 14); // bout de la queue
+  // Rainures d'évacuation des déblais. Petits bits : 2 à 4 gorges (supposées). Bits de 8 et 10 po :
+  // tête en couronne, 8 et 12 encoches profondes à flancs droits tout autour (vidéos de chantier).
+  const couronne = c.D > 190;
+  const nRain = c.D < 125 ? 2 : c.D < 190 ? 4 : c.D < 230 ? 8 : 12;
+  const lRain = couronne ? 0.42 * (Math.PI * c.D) / nRain : Math.max(16, 0.13 * c.D);
+  const pRain = couronne ? 0.085 * c.D : Math.max(5, 0.045 * c.D);
+  const rain = rainures(nRain, pRain, lRain / R, couronne ? 0.08 : 0.25);
+  const encoche = (t) => rain.poids(t) > 0.05; // angle dans une encoche (pas de bouton)
   const ra = 0.22 * c.queue; // trou d'air central
   const profil = [
     // Face (bas), du trou central vers l'extérieur, chanfrein de calibre, flanc de tête
-    [ra, y0, { z: 'bit' }], [R - ch * 1.4, y0], [R - 1, y0 + ch, { lisse: false }], [R, y0 + ch + 2],
-    [R, y0 + ch + 2, { m: 'rain' }], [R, yT - 18, { m: 'rain' }],
+    // Bit de 6 po neuf : face et chanfrein peints en bleu (vidéo de chantier) ; les autres sont usés.
+    [ra, y0, { z: b.id === '6' ? 'bleu' : 'bit' }],
+    // Couronne : les encoches traversent le chanfrein et mordent dans le bord de la face.
+    ...(couronne
+      ? [[R - ch * 1.4, y0, { m: 'rain' }], [R - 1, y0 + ch, { m: 'rain', lisse: false }]]
+      : [[R - ch * 1.4, y0], [R - 1, y0 + ch, { lisse: false }], [R, y0 + ch + 2]]),
+    [R, y0 + ch + 2, { m: 'rain', z: 'bit' }], [R, yT - 18, { m: 'rain' }],
     [R - 6, yT - 6, { m: 'rain' }], [R - 6, yT - 6],
     [rq + 10, yT], [rq, yT + 6],
     // Queue cannelée
@@ -656,13 +674,14 @@ export function bit(b) {
     [c.cou / 2, yA0], [c.cou / 2, yA1], [rq - 1, yA1 + 3, { lisse: true }], [rq - 1, yQ - 4], [rq - 4, yQ],
     [ra + 6, yQ, { z: 'interieur' }], [ra, yQ - 6], [ra, y0 + 20], [ra, y0],
   ];
-  const corps = tour(profil, { seg: 96, mods: { rain: rainures(nRain, pRain, lRain / R), cann: cannelures(M.cannelures, 0.06 * c.queue) }, ferme: true });
+  const corps = tour(profil, { seg: 96, mods: { rain, cann: cannelures(M.cannelures, 0.06 * c.queue) }, ferme: true });
   // Boutons : rangée de calibre sur le chanfrein, rangées de face.
   const boutons = [];
   const nG = Math.max(6, Math.round((Math.PI * c.D * 0.8) / (c.bg * 2.1)));
   const angG = (35 * Math.PI) / 180; // normale des boutons de calibre, inclinée vers l'extérieur
   for (let k = 0; k < nG; k++) {
     const t = ((k + 0.5) / nG) * Math.PI * 2;
+    if (couronne && encoche(t)) continue;
     const rr = R - ch * 0.55;
     boutons.push(...calotte(c.bg / 2, c.bg * 0.36, [rr * Math.sin(t), y0 + ch * 0.45, rr * Math.cos(t)], [Math.sin(angG) * Math.sin(t), -Math.cos(angG), Math.sin(angG) * Math.cos(t)]));
   }
@@ -672,6 +691,7 @@ export function bit(b) {
     const n = Math.max(3, Math.floor((2 * Math.PI * rr) / (c.bf * 2.3)));
     for (let k = 0; k < n; k++) {
       const t = ((k + (rang % 2) * 0.5) / n) * Math.PI * 2;
+      if (couronne && rr + c.bf * 0.5 > R - ch * 1.4 - pRain * rain.poids(t)) continue;
       boutons.push(...calotte(c.bf / 2, c.bf * 0.38, [rr * Math.sin(t), y0, rr * Math.cos(t)], [0, -1, 0]));
     }
     rr -= c.bf * 1.6;
@@ -686,7 +706,21 @@ export function bit(b) {
   // Tube de pied (foot valve), plastique blanc, dans le haut de la queue.
   const ht = 0.32 * c.queue, rv = ra - 0.5; // dépasse de la queue (photo de PRO-OP-ITH-001)
   const tv = tour([[rv - 3.5, yQ - 10, { z: 'plastique' }], [rv, yQ - 10], [rv, yQ + ht - 1.5], [rv - 1.5, yQ + ht], [rv - 3.5, yQ + ht], [rv - 3.5, yQ - 10]], { seg: 32, ferme: true });
-  return { corps, boutons: fusion(boutons, trous), tube: tv.surfaces, cotes: { ...c, yT, yC, yA0, yA1, yQ } };
+  return { corps, boutons: fusion(boutons, trous), tube: tv.surfaces, cotes: { ...c, yT, yC, yA0, yA1, yQ, nRain } };
+}
+
+/**
+ * Bit avec son chuck (driver sub) et ses anneaux de retenue, tels qu'on les manipule au changement de bit :
+ * le chuck reste sur la queue et c'est lui qui se visse dans le fourreau (vidéos de chantier). Même origine
+ * que le bit (face de coupe en bas, queue vers le haut).
+ */
+export function bitAvecChuck(b) {
+  const x = bit(b), c = x.cotes;
+  const d = driverSub(b.marteau);
+  const driver = { ...d, surfaces: placer(d.surfaces, { t: [0, c.yT + 1, 0] }) }; // même texture que le driver sub seul
+  const a = anneaux(b.marteau);
+  const ann = placer([...a.gauche, ...a.droite], { t: [0, c.yA0 + 2, 0] });
+  return { bit: x, driver, anneaux: ann, cotes: c };
 }
 
 /** Casse-bit : cuvette octogonale qui tient la tête du bit, sur un fût qui entre dans la slip plate. */

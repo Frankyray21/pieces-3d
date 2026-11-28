@@ -65,9 +65,8 @@ def srgb(c):
 PEINTURES = {
     'peinture-jaune': ((178, 136, 50), 0.6),
     'peinture-noire': ((30, 31, 33), 0.5),
-    'fourreau': ((30, 30, 31), 0.55),
-    'tete': ((40, 37, 34), 0.55),
     'anneau': ((214, 172, 30), 0.5),
+    'bleu': ((38, 78, 150), 0.5),
     'rouge': ((165, 22, 26), 0.45),
     'chaine': ((160, 24, 26), 0.5),
 }
@@ -77,7 +76,11 @@ ACIERS = {
     'queue': ((120, 115, 108), 0.4, 1.0, 0.25),
     'filet': ((70, 58, 45), 0.3, 0.6, 0.1),
     'interieur': ((38, 35, 33), 0.8, 0.5, 0.2),
-    'bit': ((82, 74, 66), 0.6, 0.85, 0.35),
+    # Fourreau et raccord de tête : acier nu beige-brun (vidéos de chantier), boue sèche claire par plaques.
+    'fourreau': ((132, 112, 84), 0.5, 0.85, 0.12),
+    'tete': ((112, 96, 74), 0.52, 0.85, 0.18),
+    # Bit usé : brun rouille clair, poussière de roche grise collée (vidéos de chantier).
+    'bit': ((104, 84, 64), 0.62, 0.8, 0.4),
     'casse': ((72, 60, 52), 0.72, 0.7, 0.45),
     'acier-chariot': ((150, 148, 143), 0.45, 1.0, 0.3),
     'carbure': ((132, 134, 136), 0.32, 0.8, 0.0),
@@ -112,9 +115,9 @@ def surface(zone, h, w, vpx, upx, arete, bout, seed):
         c = srgb(col)[None, None, :] * (0.86 + 0.22 * taches[..., None])
         # Usure : peinture partie (champ d'usure + arêtes + bouts + rayures).
         usure = 0.55 * taches + 0.45 * fines + 0.75 * arete + 0.35 * bout
-        lourd = {'fourreau': 0.2, 'tete': 0.32, 'peinture-noire': 0.1, 'peinture-jaune': 0.1}.get(zone, 0.05)
+        lourd = {'bleu': -0.2, 'peinture-noire': 0.1, 'peinture-jaune': 0.1}.get(zone, 0.05)
         nu = lisse(usure, 1.05 - lourd, 1.12 - lourd)
-        nu = np.maximum(nu, rayures * (0.6 if zone in ('fourreau', 'tete') else 0.45))
+        nu = np.maximum(nu, rayures * 0.45)
         acier = srgb((104, 100, 94))[None, None, :] * (0.75 + 0.3 * fines[..., None])
         rr = lisse(rou, 0.6, 0.75) * (0.4 + 0.6 * nu)
         acier = acier * (1 - rr[..., None]) + rou_col * rr[..., None]
@@ -139,6 +142,26 @@ def surface(zone, h, w, vpx, upx, arete, bout, seed):
             gr = lisse(fbm(h, w, mm(8), 3, seed=rng.integers(1 << 30)), 0.35, 0.6)
             couleur = couleur * (1 - 0.5 * gr[..., None]) + srgb((40, 33, 25)) * 0.5 * gr[..., None]
             r = r * (1 - 0.6 * gr) + 0.12 * gr
+        if zone in ('fourreau', 'tete'):
+            # Plaques de boue sèche claire, bords nets.
+            pl = lisse(fbm(h, w, mm(22), 5, seed=rng.integers(1 << 30)) + 0.12 * fines, 0.64, 0.7)
+            boue = srgb((150, 140, 120))[None, None, :] * (0.88 + 0.2 * fines[..., None])
+            couleur = couleur * (1 - 0.6 * pl[..., None]) + boue * 0.6 * pl[..., None]
+            r = r * (1 - pl) + 0.9 * pl
+            met = met * (1 - pl)
+            haut = haut + 0.35 * pl
+            if zone == 'fourreau':
+                # Bas du fourreau usé brillant sur ~5 cm (frotte dans le trou et les tables).
+                br = lisse(bout, 0.6, 0.72) * (1 - pl)
+                couleur = couleur * (1 - br[..., None]) + srgb((178, 170, 156))[None, None, :] * (0.9 + 0.15 * stries[..., None]) * br[..., None]
+                r = r * (1 - br) + 0.28 * br
+                met = np.maximum(met, br)
+        if zone == 'bit':
+            # Poussière de roche grise dans les creux et vers la face.
+            po = lisse(fbm(h, w, mm(10), 4, seed=rng.integers(1 << 30)) * (0.7 + 0.6 * bout), 0.5, 0.7)
+            couleur = couleur * (1 - 0.8 * po[..., None]) + srgb((118, 116, 110))[None, None, :] * 0.8 * po[..., None]
+            r = r * (1 - po) + 0.92 * po
+            met = met * (1 - po)
     else:
         col, rugo, metal = AUTRES[zone]
         c = srgb(col)[None, None, :] * (0.85 + 0.25 * taches[..., None])

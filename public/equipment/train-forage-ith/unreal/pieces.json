@@ -168,7 +168,7 @@
     0.082
    ],
    "triangles": 14832,
-   "mo": 0.75
+   "mo": 0.78
   },
   {
    "fichier": "SM_DriverSub_3po.glb",
@@ -194,7 +194,7 @@
     0.063
    ],
    "triangles": 976,
-   "mo": 0.14
+   "mo": 0.13
   },
   {
    "fichier": "SM_Marteau_4po.glb",
@@ -207,7 +207,7 @@
     0.1
    ],
    "triangles": 15984,
-   "mo": 0.81
+   "mo": 0.82
   },
   {
    "fichier": "SM_DriverSub_4po.glb",
@@ -233,7 +233,7 @@
     0.075
    ],
    "triangles": 976,
-   "mo": 0.14
+   "mo": 0.13
   },
   {
    "fichier": "SM_Marteau_6po.glb",
@@ -246,7 +246,7 @@
     0.142
    ],
    "triangles": 17712,
-   "mo": 0.97
+   "mo": 1.02
   },
   {
    "fichier": "SM_DriverSub_6po.glb",
@@ -272,7 +272,7 @@
     0.104
    ],
    "triangles": 976,
-   "mo": 0.14
+   "mo": 0.13
   },
   {
    "fichier": "SM_Bit_3_5_8po.glb",
@@ -281,11 +281,24 @@
    "masse": "masse calculée",
    "tailleM": [
     0.092,
-    0.263,
+    0.269,
     0.092
    ],
    "triangles": 6624,
-   "mo": 0.48
+   "mo": 0.49
+  },
+  {
+   "fichier": "SM_Bit_3_5_8po_AvecChuck.glb",
+   "kg": 7.1,
+   "lb": 16,
+   "masse": "masse calculée (bit, chuck et anneaux)",
+   "tailleM": [
+    0.092,
+    0.269,
+    0.092
+   ],
+   "triangles": 13744,
+   "mo": 0.93
   },
   {
    "fichier": "SM_Bit_4_1_2po.glb",
@@ -294,29 +307,55 @@
    "masse": "masse calculée",
    "tailleM": [
     0.114,
-    0.311,
+    0.313,
     0.114
    ],
    "triangles": 6624,
-   "mo": 0.48
+   "mo": 0.49
+  },
+  {
+   "fichier": "SM_Bit_4_1_2po_AvecChuck.glb",
+   "kg": 12.6,
+   "lb": 28,
+   "masse": "masse calculée (bit, chuck et anneaux)",
+   "tailleM": [
+    0.114,
+    0.313,
+    0.114
+   ],
+   "triangles": 14512,
+   "mo": 0.96
   },
   {
    "fichier": "SM_Bit_5_1_8po.glb",
-   "kg": 13.2,
+   "kg": 13.1,
    "lb": 29,
    "masse": "masse calculée",
    "tailleM": [
     0.13,
-    0.318,
+    0.32,
     0.13
    ],
    "triangles": 6624,
-   "mo": 0.51
+   "mo": 0.53
+  },
+  {
+   "fichier": "SM_Bit_5_1_8po_AvecChuck.glb",
+   "kg": 15.2,
+   "lb": 33,
+   "masse": "masse calculée (bit, chuck et anneaux)",
+   "tailleM": [
+    0.13,
+    0.32,
+    0.13
+   ],
+   "triangles": 14512,
+   "mo": 1.01
   },
   {
    "fichier": "SM_Bit_6po.glb",
-   "kg": 24.8,
-   "lb": 55,
+   "kg": 24.5,
+   "lb": 54,
    "masse": "masse calculée",
    "tailleM": [
     0.152,
@@ -324,12 +363,25 @@
     0.152
    ],
    "triangles": 6624,
-   "mo": 0.59
+   "mo": 0.6
+  },
+  {
+   "fichier": "SM_Bit_6po_AvecChuck.glb",
+   "kg": 30.9,
+   "lb": 68,
+   "masse": "masse calculée (bit, chuck et anneaux)",
+   "tailleM": [
+    0.152,
+    0.416,
+    0.152
+   ],
+   "triangles": 17584,
+   "mo": 1.27
   },
   {
    "fichier": "SM_Bit_6_1_2po.glb",
-   "kg": 28.1,
-   "lb": 62,
+   "kg": 27.8,
+   "lb": 61,
    "masse": "masse calculée",
    "tailleM": [
     0.165,
@@ -337,33 +389,72 @@
     0.165
    ],
    "triangles": 6624,
-   "mo": 0.58
+   "mo": 0.6
+  },
+  {
+   "fichier": "SM_Bit_6_1_2po_AvecChuck.glb",
+   "kg": 34.2,
+   "lb": 75,
+   "masse": "masse calculée (bit, chuck et anneaux)",
+   "tailleM": [
+    0.165,
+    0.422,
+    0.165
+   ],
+   "triangles": 17584,
+   "mo": 1.26
   },
   {
    "fichier": "SM_Bit_8po.glb",
-   "kg": 41.1,
-   "lb": 91,
+   "kg": 37.4,
+   "lb": 83,
    "masse": "masse calculée",
    "tailleM": [
-    0.203,
+    0.199,
     0.438,
-    0.203
+    0.199
    ],
-   "triangles": 7344,
+   "triangles": 6192,
    "mo": 0.59
   },
   {
+   "fichier": "SM_Bit_8po_AvecChuck.glb",
+   "kg": 43.9,
+   "lb": 97,
+   "masse": "masse calculée (bit, chuck et anneaux)",
+   "tailleM": [
+    0.199,
+    0.438,
+    0.199
+   ],
+   "triangles": 17152,
+   "mo": 1.27
+  },
+  {
    "fichier": "SM_Bit_10po.glb",
-   "kg": 67.1,
-   "lb": 148,
+   "kg": 61.3,
+   "lb": 135,
    "masse": "masse calculée",
    "tailleM": [
-    0.254,
+    0.252,
     0.459,
-    0.254
+    0.252
    ],
-   "triangles": 9144,
-   "mo": 0.81
+   "triangles": 7392,
+   "mo": 0.79
+  },
+  {
+   "fichier": "SM_Bit_10po_AvecChuck.glb",
+   "kg": 67.7,
+   "lb": 149,
+   "masse": "masse calculée (bit, chuck et anneaux)",
+   "tailleM": [
+    0.252,
+    0.459,
+    0.252
+   ],
+   "triangles": 18352,
+   "mo": 1.45
   },
   {
    "fichier": "SM_SaverSub_2_3_8.glb",
@@ -376,7 +467,7 @@
     0.144
    ],
    "triangles": 25728,
-   "mo": 1.29
+   "mo": 1.31
   },
   {
    "fichier": "SM_SaverSub_3_1_2.glb",
@@ -389,7 +480,7 @@
     0.17
    ],
    "triangles": 25728,
-   "mo": 1.3
+   "mo": 1.29
   },
   {
    "fichier": "SM_CasseBit_6po.glb",
@@ -402,7 +493,7 @@
     0.221
    ],
    "triangles": 1712,
-   "mo": 0.28
+   "mo": 0.26
   },
   {
    "fichier": "SM_CasseBit_6_1_2po.glb",
@@ -415,7 +506,7 @@
     0.235
    ],
    "triangles": 1712,
-   "mo": 0.35
+   "mo": 0.34
   },
   {
    "fichier": "SM_CasseBit_8po.glb",
@@ -428,7 +519,7 @@
     0.276
    ],
    "triangles": 1712,
-   "mo": 0.35
+   "mo": 0.32
   },
   {
    "fichier": "SM_CasseBit_10po.glb",
@@ -454,7 +545,7 @@
     0.427
    ],
    "triangles": 4384,
-   "mo": 0.53
+   "mo": 0.5
   },
   {
    "fichier": "SM_Chariot_Chaine.glb",
